@@ -19,6 +19,7 @@ package org.sablecc.sablecc.alphabet;
 
 public class Interval<T extends Comparable<? super T>>
         implements Comparable<Interval<T>> {
+
     private final T lowerBound;
 
     private final T upperBound;
@@ -30,6 +31,7 @@ public class Interval<T extends Comparable<? super T>>
     public Interval(
             T lowerBound,
             T upperBound) {
+
         if (lowerBound == null || upperBound == null) {
             throw new IllegalArgumentException(
                     "Lower and upper bounds must be provided.");
@@ -46,20 +48,24 @@ public class Interval<T extends Comparable<? super T>>
 
     public Interval(
             T bound) {
+
         this(bound, bound);
     }
 
     public T getLowerBound() {
+
         return this.lowerBound;
     }
 
     public T getUpperBound() {
+
         return this.upperBound;
     }
 
     @Override
     public boolean equals(
             Object obj) {
+
         if (!(obj instanceof Interval)) {
             return false;
         }
@@ -72,6 +78,7 @@ public class Interval<T extends Comparable<? super T>>
 
     @Override
     public int hashCode() {
+
         if (this.hashCode == null) {
             this.hashCode = this.lowerBound.hashCode()
                     + this.upperBound.hashCode();
@@ -82,6 +89,7 @@ public class Interval<T extends Comparable<? super T>>
 
     @Override
     public String toString() {
+
         if (this.toString == null) {
             this.toString = "[" + this.lowerBound + ".." + this.upperBound
                     + "]";
@@ -92,6 +100,7 @@ public class Interval<T extends Comparable<? super T>>
 
     public int compareTo(
             Interval<T> interval) {
+
         int result = this.lowerBound.compareTo(interval.lowerBound);
 
         if (result == 0) {
@@ -104,11 +113,13 @@ public class Interval<T extends Comparable<? super T>>
     public boolean isAdjacentTo(
             Interval<T> interval,
             Adjacency<T> adjacency) {
+
         return adjacency.isAdjacent(this.upperBound, interval.lowerBound);
     }
 
     public boolean intersects(
             Interval<T> interval) {
+
         return this.lowerBound.compareTo(interval.upperBound) <= 0
                 && this.upperBound.compareTo(interval.lowerBound) >= 0;
     }
@@ -130,6 +141,7 @@ public class Interval<T extends Comparable<? super T>>
     public Interval<T> mergeWith(
             Interval<T> interval,
             Adjacency<T> adjacency) {
+
         if (!isAdjacentTo(interval, adjacency)) {
             throw new IllegalArgumentException("Interval must be adjacent.");
         }
@@ -140,6 +152,7 @@ public class Interval<T extends Comparable<? super T>>
     private static <T extends Comparable<? super T>> T min(
             T bound1,
             T bound2) {
+
         if (bound1.compareTo(bound2) <= 0) {
             return bound1;
         }
@@ -150,6 +163,7 @@ public class Interval<T extends Comparable<? super T>>
     private static <T extends Comparable<? super T>> T max(
             T bound1,
             T bound2) {
+
         if (bound1.compareTo(bound2) >= 0) {
             return bound1;
         }
@@ -160,6 +174,7 @@ public class Interval<T extends Comparable<? super T>>
     public static <T extends Comparable<? super T>> Interval<T> min(
             Interval<T> interval1,
             Interval<T> interval2) {
+
         if (interval1.compareTo(interval2) <= 0) {
             return interval1;
         }
@@ -170,6 +185,7 @@ public class Interval<T extends Comparable<? super T>>
     public static <T extends Comparable<? super T>> Interval<T> max(
             Interval<T> interval1,
             Interval<T> interval2) {
+
         if (interval1.compareTo(interval2) >= 0) {
             return interval1;
         }
