@@ -22,6 +22,7 @@ package org.sablecc.sablecc.alphabet;
  */
 
 public interface Adjacency<T extends Comparable<? super T>> {
+
     /*
      * Returns true if a T can be adjacent to another T.
      * 
