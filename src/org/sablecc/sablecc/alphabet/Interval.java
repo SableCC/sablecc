@@ -18,31 +18,37 @@
 package org.sablecc.sablecc.alphabet;
 
 /**
- * This class represent an interval and implements its major services.
+ * This class represents an interval.
+ * 
+ * An interval is defined by two bounds (upper and lower). This class provides
+ * various methods to maniplutate intervals.
  */
 public class Interval<T extends Comparable<? super T>>
         implements Comparable<Interval<T>> {
 
+    /** The lower bound. */
     private final T lowerBound;
 
+    /** The upper bound. */
     private final T upperBound;
 
+    /** Cached hashcode. Is null when not yet computed. */
     private Integer hashCode;
 
+    /** Cached string representation. Is null when not yet computed. */
     private String toString;
 
     /**
-     * Main constructor of an Interval.
-     * 
-     * Constructs an Interval with 2 bounds. Verifications are made for both
-     * bounds to be provided and for lowerbound to be <= than the upperbound.
+     * Constructs an interval with the provided lower and upper bounds.
+     * Verifications are made that both bounds are provided and that lowerbound <=
+     * upperbound.
      * 
      * @param lowerBound
-     *            the lower bound of the new Interval.
+     *            the lower bound.
      * @param upperBound
-     *            the upper bound of the new Interval.
+     *            the upper bound.
      * @throws IllegalArgumentException
-     *             if bounds are null or if lowerbound > upperbound.
+     *             if any bound is null or if lowerBound > upperBound.
      */
     public Interval(
             T lowerBound,
@@ -63,13 +69,11 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Secondary construtor of an Interval.
-     * 
-     * Constructs an Interval with only one bound. The main construtor is called
-     * with the single bound as lower and upper bound.
+     * Constructs an interval with a single bound used as both lower and upper
+     * bounds.
      * 
      * @param bound
-     *            the lower and upper bound of the new Interval.
+     *            the bound. Used as both upper and lower bound.
      */
     public Interval(
             T bound) {
@@ -78,9 +82,9 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Returns the lower bound of an Interval.
+     * Returns the lower bound of the interval.
      * 
-     * @return an element T representing the lowerbound.
+     * @return an element T representing the lowerBound.
      */
     public T getLowerBound() {
 
@@ -88,9 +92,9 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Returns the upper bound of an Interval.
+     * Returns the upper bound of an interval.
      * 
-     * @return an element T representing the upperbound.
+     * @return an element T representing the upperBound.
      */
     public T getUpperBound() {
 
@@ -98,14 +102,13 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Compare an Interval with an object for equality. Returns true if the
-     * object is an Interval and if its bounds are the same as the current
-     * Interval instance.
+     * Compares this interval with an object for equality. Returns true if the
+     * object is an Interval and if its bounds are the same as those of this
+     * instance.
      * 
      * @param obj
      *            the object to compare with.
-     * @return true if the Interval and the object are the same; false
-     *         otherwise.
+     * @return true if this interval and the object are equal; false otherwise.
      */
     @Override
     public boolean equals(
@@ -122,10 +125,10 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Returns a hash code value for this object. The result is the addition of
-     * both hashCode of the two bounds of this Interval.
+     * Returns a hash code value for this object. The result is the sum of the
+     * respective hash codes of the two bounds of this interval.
      * 
-     * @return a hash code value for this object.
+     * @return a hash code for this object.
      */
     @Override
     public int hashCode() {
@@ -139,10 +142,10 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Returns a String representation of this Interval. The representation
-     * takes the following form: [ lowerbound .. upperbound ]
+     * Returns a String representation for this interval. The representation
+     * takes the following form: <code>[lowerBound..upperBound]</code>
      * 
-     * @return a String representing this Interval.
+     * @return a String representing this interval.
      */
     @Override
     public String toString() {
@@ -156,14 +159,15 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Compare two Intervals by looking at their bounds. It starts by looking at
-     * their lower bounds and if they're equals compare their upper bounds.
+     * Compares this interval to another one. This interval is smaller if its
+     * lower bound is smaller, or if its lowerbound is equal and its upper bound
+     * is smaller.
      * 
      * @param interval
      *            the Interval to compare with.
-     * @return an int value of 0 if the two Intervals are the equals, less than
-     *         0 if this Interval's lowerbound is smaller and more than 0 if it
-     *         is bigger.
+     * @return an int value: 0 if the two intervals are the equals, a negative
+     *         value if this interval is smaller, and a positive value if it is
+     *         bigger.
      */
     public int compareTo(
             Interval<T> interval) {
@@ -178,15 +182,15 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Test two intervals for adjacency by testing the upperbound of this
-     * Interval with the lower bound of another Interval. It uses an Adjacency
-     * object to do so.
+     * Tests whether the provided interval is adjacent to this one. It is
+     * adjacent if this interval's upper bound is adjacent to the lower bound of
+     * the provided interval according to the provided Adjacency instance.
      * 
      * @param interval
-     *            the Interval to test adjacency with.
+     *            the interval to test for adjacency.
      * @param adjacency
-     *            an object of type Adjacency<T>.
-     * @return true if the two Intervals are adjacent; false otherwise.
+     *            an instance that implements Adjacency&lt;T&gt;.
+     * @return true if the two intervals are adjacent; false otherwise.
      */
     public boolean isAdjacentTo(
             Interval<T> interval,
@@ -196,12 +200,12 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Test if this Interal intersect with another one. Test the lowerbound of
-     * one with the upperbound of the other.
+     * Tests whether this interval intersects with the provided one. The two
+     * intervals intersect if they share a commun subinterval.
      * 
      * @param interval
      *            the Interval to compare with.
-     * @return true if the two Intervals intersect; false otherwise.
+     * @return true if the two intervals intersect; false otherwise.
      */
     public boolean intersects(
             Interval<T> interval) {
@@ -211,11 +215,12 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Return the Interval of the intersection of this Interval and another one.
-     * Null if this intersection does not exist.
+     * Creates an interval representing the intersection between this interval
+     * and the provided one. The result is null when both intervals do not
+     * intersect.
      * 
      * @param interval
-     *            the Interval to intersect with.
+     *            the interval to intersect with.
      * @return the intersection of the two Intervals; null if it's not possible.
      */
     public Interval<T> intersection(
@@ -233,14 +238,15 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Makes a new Interval by merging the two Intervals if this Interval is
-     * adjacent to the other one.
+     * Creates a new interval that spans from this interval's lower bound to the
+     * provided interval's upper bound. Merging fails if if this interval is not
+     * adjacent to the provided one.
      * 
      * @param interval
-     *            the Interval to merge this one with.
+     *            the interval to merge this one with.
      * @param adjacency
-     *            an object of type Adjacency<T>.
-     * @return the merge of the two Intervals.
+     *            an instance that implements Adjacency&lt;T&gt;.
+     * @return a new interval representing the merge of the two intervals.
      */
     public Interval<T> mergeWith(
             Interval<T> interval,
@@ -254,11 +260,13 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Compare two bounds to find the minimum.
+     * Compares two bounds to find the minimum.
      * 
      * @param bound1
+     *            a bound to compare.
      * @param bound2
-     * @return the lowest of the two bounds.
+     *            a bound to compare.
+     * @return the lowest of the two bounds, or bound 1 in case of equality.
      */
     private static <T extends Comparable<? super T>> T min(
             T bound1,
@@ -272,11 +280,13 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Compare two bounds to find the maximum.
+     * Compares two bounds to find the maximum.
      * 
      * @param bound1
+     *            a bound to compare.
      * @param bound2
-     * @return the highest of the two bounds.
+     *            a bound to compare.
+     * @return the highest of the two bounds, or bound 1 in case of equality.
      */
     private static <T extends Comparable<? super T>> T max(
             T bound1,
@@ -290,13 +300,14 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Compare two intervals and returns the lowest one (minimum).
+     * Compares two intervals and returns the lowest one (minimum).
      * 
      * @param interval1
      *            an interval to compare.
      * @param interval2
      *            an interval to compare.
-     * @return an Interval being the minimum between the two Intervals.
+     * @return the lowest of the two intervals, or interval1 in case of
+     *         equality.
      */
     public static <T extends Comparable<? super T>> Interval<T> min(
             Interval<T> interval1,
@@ -310,13 +321,14 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Compare two intervals and returns the highest one (maximum).
+     * Compares two intervals and returns the highest one (maximum).
      * 
      * @param interval1
      *            an interval to compare.
      * @param interval2
      *            an interval to compare.
-     * @return an Interval being the maximum between the two Intervals.
+     * @return the highest of the two intervals, or interval1 in case of
+     *         equality.
      */
     public static <T extends Comparable<? super T>> Interval<T> max(
             Interval<T> interval1,
