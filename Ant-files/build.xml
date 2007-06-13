@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+ This file is part of SableCC (http://sablecc.org/).
+ 
+ See the NOTICE file distributed with this work for copyright information.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<!-- ======================================================================                                                  
+     SableCC-4    
+     
+     Ant build file for SableCC-4
+                   
+     06/11/07                                                                         
+     ====================================================================== -->
+<project name="SableCC4" default="all" basedir=".">
+	
+	<property name="src.dir" location="../src"/>
+	<property name="classes.dir" location="../classes"/>
+	<property name="lib.dir" location="../lib"/>
+	<property name="tests.dir" location="../junit-tests"/>
+	<property name="doc.dir" location="../doc"/>
+	<property name="junit.dir" location="../junit-jar"/>
+	<property name="junit.lib" location="${junit.dir}/junit-4.3.1.jar"/>
+	
+	<path id="classpath.base"/>
+	<path id="classpath.test">
+		<pathelement location="${junit.lib}"/>
+		<pathelement location="${classes.dir}"/>
+		<path refid="classpath.base"/>
+	</path>
+	
+	<target name="all" depends="doc" description="Default target."/>
+	
+	<target name="init" description="Initiating build.">
+	</target>
+	
+	<target name="compile-src" depends="init" description="Compiling...">
+		<mkdir dir="${classes.dir}"/>
+		<javac srcdir="${src.dir}" destdir="${classes.dir}"/>
+	</target>
+	
+	<target name="jar" depends="compile-src" description="Creating jar file.">
+		<mkdir dir="${lib.dir}"/>
+		<jar destfile="${lib.dir}/SableCC-4.jar" basedir="${classes.dir}"/>
+	</target>
+	
+	<target name="compile-tests" depends="jar" description="Compiling JUnit Tests.">
+		<javac srcdir="${tests.dir}" destdir="${classes.dir}"/>
+	</target>
+	
+	<target name="tests" depends="compile-tests" description="Running JUnit tests.">
+		<junit>
+			<classpath refid="classpath.test"/>
+			<formatter type="brief" usefile="false" />
+			<batchtest>
+				<fileset dir="${classes.dir}" includes="**/*Test.class"/>
+			</batchtest>
+		</junit>
+	</target>
+	
+	<target name="doc" depends="tests" description="Generate JavaDoc">
+		<mkdir dir="${doc.dir}"/>
+		<javadoc destdir="${doc.dir}" author="true" use="true" windowtitle="SableCC-4" source="1.6">
+			<packageset dir="${src.dir}" />
+			<link href="http://java.sun.com/javase/6/docs/api/"/>
+		</javadoc>
+	</target>
+
+	<target name="clean-all" description="Deleting doc,bin and lib directories">
+		<delete dir="${classes.dir}"/>
+		<delete dir="${lib.dir}"/>
+		<delete dir="${doc.dir}"/>
+	</target>
+
+</project>
