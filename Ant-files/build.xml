@@ -103,6 +103,7 @@
 			srcdir="${src.dir}" 
 			destdir="${classes.dir}"
 			includes="**/*.java"
+			listfiles="yes"
 		/>
 	</target>
 	
