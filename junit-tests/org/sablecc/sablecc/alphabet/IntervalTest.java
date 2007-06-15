@@ -17,22 +17,27 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.math.BigInteger;
+import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
-import java.math.*;
-import java.util.Random;
 
 public class IntervalTest {
 
-    Interval<Integer> interval;
+    private Interval<Integer> interval;
 
-    Interval<String> intervalString;
+    private Interval<String> intervalString;
 
-    Interval<BigInteger> intervalBig;
+    private Interval<BigInteger> intervalBig;
 
-    Adjacency<Integer> integerAdjacency = new Adjacency<Integer>() {
+    private final Adjacency<Integer> integerAdjacency = new Adjacency<Integer>() {
 
         public boolean isAdjacent(
                 Integer bound1,
@@ -60,7 +65,7 @@ public class IntervalTest {
 
     };
 
-    Adjacency<String> stringAdjacency = new Adjacency<String>() {
+    private final Adjacency<String> stringAdjacency = new Adjacency<String>() {
 
         public boolean isSequential() {
 
@@ -87,7 +92,7 @@ public class IntervalTest {
         }
     };
 
-    Adjacency<BigInteger> bigIntegerAdjacency = new Adjacency<BigInteger>() {
+    private final Adjacency<BigInteger> bigIntegerAdjacency = new Adjacency<BigInteger>() {
 
         public boolean isAdjacent(
                 BigInteger bound1,
