@@ -31,7 +31,7 @@ public class IntervalTest {
     Interval<String> intervalString;
 
     Interval<BigInteger> intervalBig;
-        
+
     Adjacency<Integer> integerAdjacency = new Adjacency<Integer>() {
 
         public boolean isAdjacent(
@@ -59,7 +59,7 @@ public class IntervalTest {
         }
 
     };
-    
+
     Adjacency<String> stringAdjacency = new Adjacency<String>() {
 
         public boolean isSequential() {
@@ -315,8 +315,7 @@ public class IntervalTest {
         assertFalse("The two intervals should not be adjacent.",
                 interval.isAdjacentTo(new Interval<Integer>(200, 400),
                         integerAdjacency));
-        
-        
+
         // Test with String
         Interval<String> secondIntervalString = new Interval<String>("abc",
                 "ttt");
@@ -329,7 +328,7 @@ public class IntervalTest {
         }
 
         // Implementation of Adjacency<BigInteger>
-        
+
         // Test with BigInteger
         Interval<BigInteger> adjacentIntervalBig = new Interval<BigInteger>(
                 new BigInteger("201"), new BigInteger("999"));
@@ -438,7 +437,7 @@ public class IntervalTest {
         catch (IllegalArgumentException e) {
             // expected
         }
-    
+
         // Test with String
         try {
             intervalString.mergeWith(new Interval<String>("abc", "ttt"),
@@ -537,7 +536,7 @@ public class IntervalTest {
         resultInterval = Interval.max(interval, greaterInterval);
         assertTrue("The maximum should be greaterInterval.", greaterInterval
                 .equals(resultInterval));
-        
+
         // With String
         Interval<String> lowerIntervalString = new Interval<String>("aaa",
                 "ccc");
