@@ -120,9 +120,9 @@ public class IntervalTest {
     public void setUp()
             throws Exception {
 
-        interval = new Interval<Integer>(10, 20);
-        intervalString = new Interval<String>("def", "qrs");
-        intervalBig = new Interval<BigInteger>(new BigInteger("100"),
+        this.interval = new Interval<Integer>(10, 20);
+        this.intervalString = new Interval<String>("def", "qrs");
+        this.intervalBig = new Interval<BigInteger>(new BigInteger("100"),
                 new BigInteger("200"));
     }
 
@@ -130,8 +130,8 @@ public class IntervalTest {
     @SuppressWarnings("unused")
     public void testIntervalTT() {
 
-        assertEquals(10, interval.getLowerBound());
-        assertEquals(20, interval.getUpperBound());
+        assertEquals(10, this.interval.getLowerBound());
+        assertEquals(20, this.interval.getUpperBound());
 
         // Case with null bounds
         try {
@@ -202,24 +202,24 @@ public class IntervalTest {
     public void testEqualsObject() {
 
         // Case when two interval are not of the same instance
-        assertFalse("The objects should not be comparable.", interval
+        assertFalse("The objects should not be comparable.", this.interval
                 .equals(new String()));
 
         // With Integer
         Interval<Integer> differentInterval = new Interval<Integer>(10, 50);
         Interval<Integer> sameInterval = new Interval<Integer>(10, 20);
-        assertFalse("The two intervals should not be equals.", interval
+        assertFalse("The two intervals should not be equals.", this.interval
                 .equals(differentInterval));
-        assertTrue("The two intervals should be equals.", interval
+        assertTrue("The two intervals should be equals.", this.interval
                 .equals(sameInterval));
 
         // With String
         Interval<String> differentIntervalString = new Interval<String>(
                 "new String", "new String two");
         Interval<String> sameIntervalString = new Interval<String>("def", "qrs");
-        assertFalse("The two intervals should not be equals.", intervalString
-                .equals(differentIntervalString));
-        assertTrue("The two intervals should be equals.", intervalString
+        assertFalse("The two intervals should not be equals.",
+                this.intervalString.equals(differentIntervalString));
+        assertTrue("The two intervals should be equals.", this.intervalString
                 .equals(sameIntervalString));
 
         // With BigInteger
@@ -227,9 +227,9 @@ public class IntervalTest {
                 BigInteger.ONE, new BigInteger(1000, new Random()));
         Interval<BigInteger> sameIntervalBig = new Interval<BigInteger>(
                 new BigInteger("100"), new BigInteger("200"));
-        assertFalse("The two intervals should not be equals.", intervalBig
+        assertFalse("The two intervals should not be equals.", this.intervalBig
                 .equals(differentIntervalBig));
-        assertTrue("The two intervals should be equals.", intervalBig
+        assertTrue("The two intervals should be equals.", this.intervalBig
                 .equals(sameIntervalBig));
     }
 
@@ -240,25 +240,25 @@ public class IntervalTest {
         int upperBoundHash;
 
         // With Integer
-        lowerBoundHash = interval.getLowerBound().hashCode();
-        upperBoundHash = interval.getUpperBound().hashCode();
+        lowerBoundHash = this.interval.getLowerBound().hashCode();
+        upperBoundHash = this.interval.getUpperBound().hashCode();
         assertEquals(
                 "The hashCode of an interval should be the sum of the hashCode of its bounds.",
-                lowerBoundHash + upperBoundHash, interval.hashCode());
+                lowerBoundHash + upperBoundHash, this.interval.hashCode());
 
         // With String
-        lowerBoundHash = intervalString.getLowerBound().hashCode();
-        upperBoundHash = intervalString.getUpperBound().hashCode();
+        lowerBoundHash = this.intervalString.getLowerBound().hashCode();
+        upperBoundHash = this.intervalString.getUpperBound().hashCode();
         assertEquals(
                 "The hashCode of an interval should be the sum of the hashCode of its bounds.",
-                lowerBoundHash + upperBoundHash, intervalString.hashCode());
+                lowerBoundHash + upperBoundHash, this.intervalString.hashCode());
 
         // With BigInteger
-        lowerBoundHash = intervalBig.getLowerBound().hashCode();
-        upperBoundHash = intervalBig.getUpperBound().hashCode();
+        lowerBoundHash = this.intervalBig.getLowerBound().hashCode();
+        upperBoundHash = this.intervalBig.getUpperBound().hashCode();
         assertEquals(
                 "The hashCode of an interval should be the sum of the hashCode of its bounds.",
-                lowerBoundHash + upperBoundHash, intervalBig.hashCode());
+                lowerBoundHash + upperBoundHash, this.intervalBig.hashCode());
 
     }
 
@@ -269,12 +269,12 @@ public class IntervalTest {
         Interval<Integer> lowerInterval = new Interval<Integer>(0, 10);
         Interval<Integer> greaterInterval = new Interval<Integer>(10, 50);
 
-        assertTrue("interval should be greater than lowerInterval.", interval
-                .compareTo(lowerInterval) > 0);
-        assertTrue("interval should be lower than greaterInterval.", interval
-                .compareTo(greaterInterval) < 0);
-        assertTrue("The two intervals should be equals.", interval
-                .compareTo(interval) == 0);
+        assertTrue("interval should be greater than lowerInterval.",
+                this.interval.compareTo(lowerInterval) > 0);
+        assertTrue("interval should be lower than greaterInterval.",
+                this.interval.compareTo(greaterInterval) < 0);
+        assertTrue("The two intervals should be equals.", this.interval
+                .compareTo(this.interval) == 0);
 
         // With String
         Interval<String> lowerIntervalString = new Interval<String>("aaa",
@@ -284,12 +284,12 @@ public class IntervalTest {
 
         assertTrue(
                 "intervalString should be greater than lowerIntervalString.",
-                intervalString.compareTo(lowerIntervalString) > 0);
+                this.intervalString.compareTo(lowerIntervalString) > 0);
         assertTrue(
                 "intervalString should be lower than greaterIntervalString.",
-                intervalString.compareTo(greaterIntervalString) < 0);
-        assertTrue("The two intervals should be equals.", intervalString
-                .compareTo(intervalString) == 0);
+                this.intervalString.compareTo(greaterIntervalString) < 0);
+        assertTrue("The two intervals should be equals.", this.intervalString
+                .compareTo(this.intervalString) == 0);
 
         // With BigInteger
         Interval<BigInteger> lowerIntervalBig = new Interval<BigInteger>(
@@ -298,11 +298,11 @@ public class IntervalTest {
                 new BigInteger("999"), new BigInteger("999999"));
 
         assertTrue("intervalBig should be greater than lowerIntervalBig.",
-                intervalBig.compareTo(lowerIntervalBig) > 0);
+                this.intervalBig.compareTo(lowerIntervalBig) > 0);
         assertTrue("intervalBig should be lower than greaterIntervalBig.",
-                intervalBig.compareTo(greaterIntervalBig) < 0);
-        assertTrue("The two intervals should be equals.", intervalBig
-                .compareTo(intervalBig) == 0);
+                this.intervalBig.compareTo(greaterIntervalBig) < 0);
+        assertTrue("The two intervals should be equals.", this.intervalBig
+                .compareTo(this.intervalBig) == 0);
     }
 
     @Test
@@ -310,17 +310,18 @@ public class IntervalTest {
 
         // Test with Integer
         Interval<Integer> adjacentInterval = new Interval<Integer>(21, 40);
-        assertTrue("The two intervals should be adjacent.", interval
-                .isAdjacentTo(adjacentInterval, integerAdjacency));
-        assertFalse("The two intervals should not be adjacent.",
-                interval.isAdjacentTo(new Interval<Integer>(200, 400),
-                        integerAdjacency));
+        assertTrue("The two intervals should be adjacent.", this.interval
+                .isAdjacentTo(adjacentInterval, this.integerAdjacency));
+        assertFalse("The two intervals should not be adjacent.", this.interval
+                .isAdjacentTo(new Interval<Integer>(200, 400),
+                        this.integerAdjacency));
 
         // Test with String
         Interval<String> secondIntervalString = new Interval<String>("abc",
                 "ttt");
         try {
-            intervalString.isAdjacentTo(secondIntervalString, stringAdjacency);
+            this.intervalString.isAdjacentTo(secondIntervalString,
+                    this.stringAdjacency);
             fail("A RunTimeException should be thrown.");
         }
         catch (RuntimeException e) {
@@ -332,11 +333,11 @@ public class IntervalTest {
         // Test with BigInteger
         Interval<BigInteger> adjacentIntervalBig = new Interval<BigInteger>(
                 new BigInteger("201"), new BigInteger("999"));
-        assertTrue("The two intervals should be adjacent.", intervalBig
-                .isAdjacentTo(adjacentIntervalBig, bigIntegerAdjacency));
-        assertFalse("The two intervals should not be adjacent.", intervalBig
-                .isAdjacentTo(new Interval<BigInteger>(BigInteger.ONE),
-                        bigIntegerAdjacency));
+        assertTrue("The two intervals should be adjacent.", this.intervalBig
+                .isAdjacentTo(adjacentIntervalBig, this.bigIntegerAdjacency));
+        assertFalse("The two intervals should not be adjacent.",
+                this.intervalBig.isAdjacentTo(new Interval<BigInteger>(
+                        BigInteger.ONE), this.bigIntegerAdjacency));
 
     }
 
@@ -345,25 +346,25 @@ public class IntervalTest {
 
         // With Integer
         Interval<Integer> intersectingInterval = new Interval<Integer>(15, 50);
-        assertTrue("The two intervals should intersect.", interval
+        assertTrue("The two intervals should intersect.", this.interval
                 .intersects(intersectingInterval));
-        assertFalse("They should not intersect.", interval
+        assertFalse("They should not intersect.", this.interval
                 .intersects(new Interval<Integer>(200)));
 
         // With String
         Interval<String> intersectingIntervalString = new Interval<String>(
                 "klm", "zzz");
-        assertTrue("The two intervals should intersect.", intervalString
+        assertTrue("The two intervals should intersect.", this.intervalString
                 .intersects(intersectingIntervalString));
-        assertFalse("They should not intersect.", intervalString
+        assertFalse("They should not intersect.", this.intervalString
                 .intersects(new Interval<String>("zzz")));
 
         // With BigInteger
         Interval<BigInteger> intersectingIntervalBig = new Interval<BigInteger>(
                 new BigInteger("150"));
-        assertTrue("The two intervals should intersect.", intervalBig
+        assertTrue("The two intervals should intersect.", this.intervalBig
                 .intersects(intersectingIntervalBig));
-        assertFalse("They should not intersect.", intervalBig
+        assertFalse("They should not intersect.", this.intervalBig
                 .intersects(new Interval<BigInteger>(BigInteger.ZERO,
                         BigInteger.TEN)));
     }
@@ -373,7 +374,7 @@ public class IntervalTest {
 
         // With Integer
         Interval<Integer> intersectingInterval = new Interval<Integer>(15, 50);
-        Interval<Integer> resultInterval = interval
+        Interval<Integer> resultInterval = this.interval
                 .intersection(intersectingInterval);
 
         assertEquals("The lowerBound of the intersection should be 15.", 15,
@@ -381,13 +382,13 @@ public class IntervalTest {
         assertEquals("The upperBound of the intersection should be 20.", 20,
                 resultInterval.getUpperBound());
 
-        assertNull("No intersection expected.", interval
+        assertNull("No intersection expected.", this.interval
                 .intersection(new Interval<Integer>(40, 60)));
 
         // With String
         Interval<String> intersectingIntervalString = new Interval<String>(
                 "klm", "zzz");
-        Interval<String> resultIntervalString = intervalString
+        Interval<String> resultIntervalString = this.intervalString
                 .intersection(intersectingIntervalString);
 
         assertEquals("The lowerBound of the intersection should be klm.",
@@ -395,13 +396,13 @@ public class IntervalTest {
         assertEquals("The upperBound of the intersection should be qrs.",
                 "qrs", resultIntervalString.getUpperBound());
 
-        assertNull("No intersection expected.", intervalString
+        assertNull("No intersection expected.", this.intervalString
                 .intersection(new Interval<String>("zzz")));
 
         // With BigInteger
         Interval<BigInteger> intersectingIntervalBig = new Interval<BigInteger>(
                 new BigInteger("150"), new BigInteger("9999"));
-        Interval<BigInteger> resultIntervalBig = intervalBig
+        Interval<BigInteger> resultIntervalBig = this.intervalBig
                 .intersection(intersectingIntervalBig);
 
         assertEquals("The lowerBound of the intersection should be 150.",
@@ -409,7 +410,7 @@ public class IntervalTest {
         assertEquals("The upperBound of the intersection should be 200.",
                 "200", resultIntervalBig.getUpperBound().toString());
 
-        assertNull("No intersection expected.", intervalBig
+        assertNull("No intersection expected.", this.intervalBig
                 .intersection(new Interval<BigInteger>(new BigInteger(1000,
                         new Random()))));
     }
@@ -419,19 +420,19 @@ public class IntervalTest {
 
         // Test with Integer
         Interval<Integer> adjacentInterval = new Interval<Integer>(21, 40);
-        Interval<Integer> resultMerge = interval.mergeWith(adjacentInterval,
-                integerAdjacency);
+        Interval<Integer> resultMerge = this.interval.mergeWith(
+                adjacentInterval, this.integerAdjacency);
 
         assertEquals(
                 "The lower bound of the merging should be the lower bound of interval.",
-                interval.getLowerBound(), resultMerge.getLowerBound());
+                this.interval.getLowerBound(), resultMerge.getLowerBound());
         assertEquals(
                 "The upper bound of the merging should be the upper bound of adjacentInterval.",
                 adjacentInterval.getUpperBound(), resultMerge.getUpperBound());
 
         try {
-            resultMerge = interval.mergeWith(new Interval<Integer>(999, 9999),
-                    integerAdjacency);
+            resultMerge = this.interval.mergeWith(new Interval<Integer>(999,
+                    9999), this.integerAdjacency);
             fail("An IllegalArgumentException should be thrown because the two intervals are not adjacent.");
         }
         catch (IllegalArgumentException e) {
@@ -440,8 +441,8 @@ public class IntervalTest {
 
         // Test with String
         try {
-            intervalString.mergeWith(new Interval<String>("abc", "ttt"),
-                    stringAdjacency);
+            this.intervalString.mergeWith(new Interval<String>("abc", "ttt"),
+                    this.stringAdjacency);
             fail();
         }
         catch (RuntimeException e) {
@@ -451,20 +452,22 @@ public class IntervalTest {
         // With BigInteger
         Interval<BigInteger> adjacentIntervalBig = new Interval<BigInteger>(
                 new BigInteger("201"), new BigInteger("999"));
-        Interval<BigInteger> resultMergeBig = intervalBig.mergeWith(
-                adjacentIntervalBig, bigIntegerAdjacency);
+        Interval<BigInteger> resultMergeBig = this.intervalBig.mergeWith(
+                adjacentIntervalBig, this.bigIntegerAdjacency);
 
         assertEquals(
                 "The lower bound of the merging should be the lower bound of intervalBig.",
-                intervalBig.getLowerBound(), resultMergeBig.getLowerBound());
+                this.intervalBig.getLowerBound(), resultMergeBig
+                        .getLowerBound());
         assertEquals(
                 "The upper bound of the merging should be the upper bound of adjacentIntervalBig.",
                 adjacentIntervalBig.getUpperBound(), resultMergeBig
                         .getUpperBound());
 
         try {
-            resultMergeBig = intervalBig.mergeWith(new Interval<BigInteger>(
-                    BigInteger.ONE, BigInteger.TEN), bigIntegerAdjacency);
+            resultMergeBig = this.intervalBig.mergeWith(
+                    new Interval<BigInteger>(BigInteger.ONE, BigInteger.TEN),
+                    this.bigIntegerAdjacency);
             fail("An IllegalArgumentException should be thrown because the two intervals are not adjacent.");
         }
         catch (IllegalArgumentException e) {
@@ -479,30 +482,30 @@ public class IntervalTest {
         // With Integer
         Interval<Integer> lowerInterval = new Interval<Integer>(0, 5);
         Interval<Integer> greaterInterval = new Interval<Integer>(50, 200);
-        Interval<Integer> resultInterval = Interval
-                .min(interval, lowerInterval);
+        Interval<Integer> resultInterval = Interval.min(this.interval,
+                lowerInterval);
 
         assertTrue("The minimum should be lowerInterval.", lowerInterval
                 .equals(resultInterval));
 
-        resultInterval = Interval.min(interval, greaterInterval);
+        resultInterval = Interval.min(this.interval, greaterInterval);
         assertTrue("The minimum should be interval.", resultInterval
-                .equals(interval));
+                .equals(this.interval));
 
         // With String
         Interval<String> lowerIntervalString = new Interval<String>("aaa",
                 "ccc");
         Interval<String> greaterIntervalString = new Interval<String>("uvw",
                 "zzz");
-        Interval<String> resultIntervalString = Interval.min(intervalString,
-                lowerIntervalString);
+        Interval<String> resultIntervalString = Interval.min(
+                this.intervalString, lowerIntervalString);
 
         assertTrue("The minimum should be lowerIntervalString.",
                 lowerIntervalString.equals(resultIntervalString));
 
-        resultIntervalString = Interval.min(intervalString,
+        resultIntervalString = Interval.min(this.intervalString,
                 greaterIntervalString);
-        assertTrue("The minimum should be intervalString.", intervalString
+        assertTrue("The minimum should be intervalString.", this.intervalString
                 .equals(resultIntervalString));
 
         // With BigInteger
@@ -510,14 +513,14 @@ public class IntervalTest {
                 BigInteger.ZERO, BigInteger.TEN);
         Interval<BigInteger> greaterIntervalBig = new Interval<BigInteger>(
                 new BigInteger("999"), new BigInteger("99999"));
-        Interval<BigInteger> resultIntervalBig = Interval.min(intervalBig,
+        Interval<BigInteger> resultIntervalBig = Interval.min(this.intervalBig,
                 lowerIntervalBig);
 
         assertTrue("The minimum should be lowerIntervalBig.", lowerIntervalBig
                 .equals(resultIntervalBig));
 
-        resultIntervalBig = Interval.min(intervalBig, greaterIntervalBig);
-        assertTrue("The minimum should be intervalBig.", intervalBig
+        resultIntervalBig = Interval.min(this.intervalBig, greaterIntervalBig);
+        assertTrue("The minimum should be intervalBig.", this.intervalBig
                 .equals(resultIntervalBig));
     }
 
@@ -527,13 +530,13 @@ public class IntervalTest {
         // With Integer
         Interval<Integer> lowerInterval = new Interval<Integer>(0, 5);
         Interval<Integer> greaterInterval = new Interval<Integer>(50, 200);
-        Interval<Integer> resultInterval = Interval
-                .max(interval, lowerInterval);
+        Interval<Integer> resultInterval = Interval.max(this.interval,
+                lowerInterval);
 
-        assertTrue("The maximum should be interval.", interval
+        assertTrue("The maximum should be interval.", this.interval
                 .equals(resultInterval));
 
-        resultInterval = Interval.max(interval, greaterInterval);
+        resultInterval = Interval.max(this.interval, greaterInterval);
         assertTrue("The maximum should be greaterInterval.", greaterInterval
                 .equals(resultInterval));
 
@@ -542,13 +545,13 @@ public class IntervalTest {
                 "ccc");
         Interval<String> greaterIntervalString = new Interval<String>("uvw",
                 "zzz");
-        Interval<String> resultIntervalString = Interval.max(intervalString,
-                lowerIntervalString);
+        Interval<String> resultIntervalString = Interval.max(
+                this.intervalString, lowerIntervalString);
 
-        assertTrue("The maximum should be intervalString.", intervalString
+        assertTrue("The maximum should be intervalString.", this.intervalString
                 .equals(resultIntervalString));
 
-        resultIntervalString = Interval.max(intervalString,
+        resultIntervalString = Interval.max(this.intervalString,
                 greaterIntervalString);
         assertTrue("The maximum should be greaterIntervalString.",
                 greaterIntervalString.equals(resultIntervalString));
@@ -558,13 +561,13 @@ public class IntervalTest {
                 BigInteger.ZERO, BigInteger.TEN);
         Interval<BigInteger> greaterIntervalBig = new Interval<BigInteger>(
                 new BigInteger("999"), new BigInteger("99999"));
-        Interval<BigInteger> resultIntervalBig = Interval.max(intervalBig,
+        Interval<BigInteger> resultIntervalBig = Interval.max(this.intervalBig,
                 lowerIntervalBig);
 
-        assertTrue("The maximum should be intervalBig.", intervalBig
+        assertTrue("The maximum should be intervalBig.", this.intervalBig
                 .equals(resultIntervalBig));
 
-        resultIntervalBig = Interval.max(intervalBig, greaterIntervalBig);
+        resultIntervalBig = Interval.max(this.intervalBig, greaterIntervalBig);
         assertTrue("The maximum should be greaterIntervalBig.",
                 greaterIntervalBig.equals(resultIntervalBig));
     }
