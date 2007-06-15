@@ -107,8 +107,8 @@ public class Interval<T extends Comparable<? super T>>
 
     /**
      * Compares this interval with an object for equality. Returns
-     * <code>true</code> if the object is an interval and if
-     * its bounds are the same as those of this instance.
+     * <code>true</code> if the object is an interval and if its bounds are
+     * the same as those of this instance.
      * 
      * @param obj
      *            the object to compare with.
@@ -171,9 +171,9 @@ public class Interval<T extends Comparable<? super T>>
      * 
      * @param interval
      *            the interval to compare with.
-     * @return an <code>int</code> value: 0 if the two intervals are the equals, a negative
-     *         value if this interval is smaller, and a positive value if it is
-     *         bigger.
+     * @return an <code>int</code> value: 0 if the two intervals are the
+     *         equals, a negative value if this interval is smaller, and a
+     *         positive value if it is bigger.
      */
     public int compareTo(
             Interval<T> interval) {
@@ -225,8 +225,8 @@ public class Interval<T extends Comparable<? super T>>
 
     /**
      * Creates an interval representing the intersection between this interval
-     * and the provided one. The result is <code>null</code> when both intervals do not
-     * intersect.
+     * and the provided one. The result is <code>null</code> when both
+     * intervals do not intersect.
      * 
      * @param interval
      *            the interval to intersect with.
@@ -277,7 +277,8 @@ public class Interval<T extends Comparable<? super T>>
      *            a bound to compare.
      * @param bound2
      *            a bound to compare.
-     * @return the lowest of the two bounds, or <code>bound1</code> in case of equality.
+     * @return the lowest of the two bounds, or <code>bound1</code> in case of
+     *         equality.
      */
     private static <T extends Comparable<? super T>> T min(
             T bound1,
@@ -297,7 +298,8 @@ public class Interval<T extends Comparable<? super T>>
      *            a bound to compare.
      * @param bound2
      *            a bound to compare.
-     * @return the highest of the two bounds, or <code>bound1</code> in case of equality.
+     * @return the highest of the two bounds, or <code>bound1</code> in case
+     *         of equality.
      */
     private static <T extends Comparable<? super T>> T max(
             T bound1,
