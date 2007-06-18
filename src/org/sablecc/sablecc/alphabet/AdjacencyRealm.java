@@ -20,10 +20,13 @@ package org.sablecc.sablecc.alphabet;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * Instances implementing this interface are used to merge adjacent intervals.
+ * This class serves to create adjacency realms for intervals. It provides
+ * methods to create intervals, to determine whether the bounds of intervals it
+ * creates can be adjacent or not, and if yes, it provides methods to test
+ * adjacency.
  */
 
-public interface Adjacency<T extends Comparable<? super T>> {
+public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
 
     /**
      * Returns whether an element T can be adjacent to another T.
@@ -40,7 +43,7 @@ public interface Adjacency<T extends Comparable<? super T>> {
      * @return <code>true</code> if the two T can be adjacent;
      *         <code>false</code> otherwise.
      */
-    boolean isSequential();
+    public abstract boolean canBeAdjacent();
 
     /**
      * Returns whether two bounds are adjacents. For example, if T is an integer
@@ -56,7 +59,7 @@ public interface Adjacency<T extends Comparable<? super T>> {
      * @throws InternalException
      *             if <code>isSequential</code> is <code>false</code>.
      */
-    boolean isAdjacent(
+    public abstract boolean isAdjacent(
             T bound1,
             T bound2);
 
@@ -73,7 +76,7 @@ public interface Adjacency<T extends Comparable<? super T>> {
      * @throws InternalException
      *             if <code>isSequential</code> is <code>false</code>.
      */
-    T previous(
+    public abstract T previous(
             T bound);
 
     /**
@@ -89,6 +92,37 @@ public interface Adjacency<T extends Comparable<? super T>> {
      * @throws InternalException
      *             if <code>isSequential</code> is <code>false</code>.
      */
-    T next(
+    public abstract T next(
             T bound);
+
+    /**
+     * Returns a new interval with the provided lower and upper bounds.
+     * 
+     * @param lowerBound
+     *            the lower bound.
+     * @param upperBound
+     *            the upper bound.
+     * @return the newly created interval.
+     */
+    public Interval<T> createInterval(
+            T lowerBound,
+            T upperBound) {
+
+        return new Interval<T>(lowerBound, upperBound, this);
+    }
+
+    /**
+     * Returns a new interval with a single bound used as both lower and upper
+     * bounds.
+     * 
+     * @param bound
+     *            the bound. Used as both upper and lower bound.
+     * @return the newly created interval.
+     */
+    public Interval<T> createInterval(
+            T bound) {
+
+        return new Interval<T>(bound, this);
+
+    }
 }

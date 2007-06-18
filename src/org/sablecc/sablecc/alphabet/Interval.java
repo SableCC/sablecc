@@ -34,6 +34,9 @@ public class Interval<T extends Comparable<? super T>>
     /** The upper bound. */
     private final T upperBound;
 
+    /** Adjacency realm of this interval. */
+    private final AdjacencyRealm<T> adjacencyRealm;
+
     /** Cached hashcode. Is <code>null</code> when not yet computed. */
     private Integer hashCode;
 
@@ -52,13 +55,16 @@ public class Interval<T extends Comparable<? super T>>
      *            the lower bound.
      * @param upperBound
      *            the upper bound.
+     * @param adjacencyRealm
+     *            the adjacency realm of this interval.
      * @throws InternalException
      *             if any bound is <code>null</code> or if
      *             <code>lowerBound</code> > <code>upperBound</code>.
      */
-    public Interval(
+    Interval(
             T lowerBound,
-            T upperBound) {
+            T upperBound,
+            AdjacencyRealm<T> adjacencyRealm) {
 
         if (lowerBound == null) {
             throw new InternalException("lower bound may not be null");
@@ -68,6 +74,10 @@ public class Interval<T extends Comparable<? super T>>
             throw new InternalException("upper bound may not be null");
         }
 
+        if (adjacencyRealm == null) {
+            throw new InternalException("adjacency realm may not be null");
+        }
+
         if (lowerBound.compareTo(upperBound) > 0) {
             throw new InternalException(
                     "lower bound must be smaller or equal to upper bound");
@@ -75,6 +85,7 @@ public class Interval<T extends Comparable<? super T>>
 
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
+        this.adjacencyRealm = adjacencyRealm;
     }
 
     /**
@@ -83,11 +94,14 @@ public class Interval<T extends Comparable<? super T>>
      * 
      * @param bound
      *            the bound. Used as both upper and lower bound.
+     * @param adjacencyRealm
+     *            the adjacency realm of this interval.
      */
-    public Interval(
-            T bound) {
+    Interval(
+            T bound,
+            AdjacencyRealm<T> adjacencyRealm) {
 
-        this(bound, bound);
+        this(bound, bound, adjacencyRealm);
     }
 
     /**
@@ -124,6 +138,10 @@ public class Interval<T extends Comparable<? super T>>
     public boolean equals(
             Object obj) {
 
+        if (obj == null) {
+            return false;
+        }
+
         if (!(obj instanceof Interval)) {
             return false;
         }
@@ -131,12 +149,14 @@ public class Interval<T extends Comparable<? super T>>
         Interval interval = (Interval) obj;
 
         return this.lowerBound.equals(interval.lowerBound)
-                && this.upperBound.equals(interval.upperBound);
+                && this.upperBound.equals(interval.upperBound)
+                && this.adjacencyRealm == interval.adjacencyRealm;
     }
 
     /**
      * Returns a hash code value for this object. The result is the sum of the
-     * respective hash codes of the two bounds of this interval.
+     * respective hash codes of the two bounds and the adjacency realm of this
+     * interval.
      * 
      * @return a hash code for this object.
      */
@@ -145,7 +165,8 @@ public class Interval<T extends Comparable<? super T>>
 
         if (this.hashCode == null) {
             this.hashCode = this.lowerBound.hashCode()
-                    + this.upperBound.hashCode();
+                    + this.upperBound.hashCode()
+                    + this.adjacencyRealm.hashCode();
         }
 
         return this.hashCode;
@@ -183,6 +204,11 @@ public class Interval<T extends Comparable<? super T>>
     public int compareTo(
             Interval<T> interval) {
 
+        if (this.adjacencyRealm != interval.adjacencyRealm) {
+            throw new InternalException(
+                    "cannot compare intervals from distinct realms");
+        }
+
         int result = this.lowerBound.compareTo(interval.lowerBound);
 
         if (result == 0) {
@@ -195,21 +221,27 @@ public class Interval<T extends Comparable<? super T>>
     /**
      * Tests whether the provided interval is adjacent to this one. It is
      * adjacent if this interval's <code>uppeBound</code> is adjacent to the
-     * <code>lowerBound</code> of the provided interval according to the
-     * provided <code>Adjacency</code> instance.
+     * <code>lowerBound</code> of the provided interval.
      * 
      * @param interval
      *            the interval to test for adjacency.
-     * @param adjacency
-     *            an instance that implements <code>Adjacency&lt;T&gt;</code>.
      * @return <code>true</code> if the two intervals are adjacent;
      *         <code>false</code> otherwise.
      */
     public boolean isAdjacentTo(
-            Interval<T> interval,
-            Adjacency<T> adjacency) {
+            Interval<T> interval) {
 
-        return adjacency.isAdjacent(this.upperBound, interval.lowerBound);
+        if (interval == null) {
+            throw new InternalException("interval may not be null");
+        }
+
+        if (this.adjacencyRealm != interval.adjacencyRealm) {
+            throw new InternalException(
+                    "cannot test adjacency of intervals from distinct realms");
+        }
+
+        return this.adjacencyRealm.isAdjacent(this.upperBound,
+                interval.lowerBound);
     }
 
     /**
@@ -223,6 +255,15 @@ public class Interval<T extends Comparable<? super T>>
      */
     public boolean intersects(
             Interval<T> interval) {
+
+        if (interval == null) {
+            throw new InternalException("interval may not be null");
+        }
+
+        if (this.adjacencyRealm != interval.adjacencyRealm) {
+            throw new InternalException(
+                    "cannot intersect intervals from distinct realms");
+        }
 
         return this.lowerBound.compareTo(interval.upperBound) <= 0
                 && this.upperBound.compareTo(interval.lowerBound) >= 0;
@@ -241,12 +282,21 @@ public class Interval<T extends Comparable<? super T>>
     public Interval<T> intersection(
             Interval<T> interval) {
 
+        if (interval == null) {
+            throw new InternalException("interval may not be null");
+        }
+
+        if (this.adjacencyRealm != interval.adjacencyRealm) {
+            throw new InternalException(
+                    "cannot intersect intervals from distinct realms");
+        }
+
         T lowerBound = max(this.lowerBound, interval.lowerBound);
 
         T upperBound = min(this.upperBound, interval.upperBound);
 
         if (lowerBound.compareTo(upperBound) <= 0) {
-            return new Interval<T>(lowerBound, upperBound);
+            return new Interval<T>(lowerBound, upperBound, this.adjacencyRealm);
         }
 
         return null;
@@ -260,20 +310,26 @@ public class Interval<T extends Comparable<? super T>>
      * 
      * @param interval
      *            the interval to merge this one with.
-     * @param adjacency
-     *            an instance that implements <code>Adjacency&lt;T&gt;</code>.
      * @return a new interval representing the merge of the two intervals.
      */
     public Interval<T> mergeWith(
-            Interval<T> interval,
-            Adjacency<T> adjacency) {
+            Interval<T> interval) {
 
-        if (!isAdjacentTo(interval, adjacency)) {
-            throw new InternalException(
-                    "this instance must be adjacent to the provided interval");
+        if (interval == null) {
+            throw new InternalException("interval may not be null");
         }
 
-        return new Interval<T>(this.lowerBound, interval.upperBound);
+        if (this.adjacencyRealm != interval.adjacencyRealm) {
+            throw new InternalException(
+                    "cannot merge intervals from distinct realms");
+        }
+
+        if (!isAdjacentTo(interval)) {
+            throw new InternalException("cannot merge non-adjacent intervals");
+        }
+
+        return new Interval<T>(this.lowerBound, interval.upperBound,
+                this.adjacencyRealm);
     }
 
     /**
@@ -289,6 +345,14 @@ public class Interval<T extends Comparable<? super T>>
     private static <T extends Comparable<? super T>> T min(
             T bound1,
             T bound2) {
+
+        if (bound1 == null) {
+            throw new InternalException("bound1 may not be null");
+        }
+
+        if (bound2 == null) {
+            throw new InternalException("bound2 may not be null");
+        }
 
         if (bound1.compareTo(bound2) <= 0) {
             return bound1;
@@ -311,6 +375,14 @@ public class Interval<T extends Comparable<? super T>>
             T bound1,
             T bound2) {
 
+        if (bound1 == null) {
+            throw new InternalException("bound1 may not be null");
+        }
+
+        if (bound2 == null) {
+            throw new InternalException("bound2 may not be null");
+        }
+
         if (bound1.compareTo(bound2) >= 0) {
             return bound1;
         }
@@ -332,6 +404,14 @@ public class Interval<T extends Comparable<? super T>>
             Interval<T> interval1,
             Interval<T> interval2) {
 
+        if (interval1 == null) {
+            throw new InternalException("interval1 may not be null");
+        }
+
+        if (interval2 == null) {
+            throw new InternalException("interval2 may not be null");
+        }
+
         if (interval1.compareTo(interval2) <= 0) {
             return interval1;
         }
@@ -352,6 +432,14 @@ public class Interval<T extends Comparable<? super T>>
     public static <T extends Comparable<? super T>> Interval<T> max(
             Interval<T> interval1,
             Interval<T> interval2) {
+
+        if (interval1 == null) {
+            throw new InternalException("interval1 may not be null");
+        }
+
+        if (interval2 == null) {
+            throw new InternalException("interval2 may not be null");
+        }
 
         if (interval1.compareTo(interval2) >= 0) {
             return interval1;
