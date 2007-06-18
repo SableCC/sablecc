@@ -26,6 +26,7 @@
   <property name="lib.dir" location="lib" />
   <property name="tests.dir" location="junit-tests" />
   <property name="doc.dir" location="doc" />
+  <property name="devel-doc.dir" location="devel-doc" />
 
   <!-- Paths -->
   <path id="classpath.base" />
@@ -119,6 +120,16 @@
       <link href="http://java.sun.com/javase/6/docs/api/" />
     </javadoc>
 
+    <javadoc destdir="${devel-doc.dir}"
+             access="private"
+             author="true"
+             use="true"
+             windowtitle="SableCC-4"
+             source="1.6">
+      <packageset dir="${src.dir}" />
+      <link href="http://java.sun.com/javase/6/docs/api/" />
+    </javadoc>
+
   </target>
 
   <!-- Cleaning Stage -->
@@ -126,6 +137,7 @@
     <delete dir="${classes.dir}" />
     <delete dir="${lib.dir}" />
     <delete dir="${doc.dir}" />
+    <delete dir="${devel-doc.dir}" />
   </target>
 
 </project>
