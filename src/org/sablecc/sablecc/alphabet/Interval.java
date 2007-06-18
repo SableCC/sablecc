@@ -154,9 +154,7 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Returns a hash code value for this object. The result is the sum of the
-     * respective hash codes of the two bounds and the adjacency realm of this
-     * interval.
+     * Returns a hash code value for this object.
      * 
      * @return a hash code for this object.
      */
