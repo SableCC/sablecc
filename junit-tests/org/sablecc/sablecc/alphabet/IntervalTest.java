@@ -145,7 +145,7 @@ public class IntervalTest {
 
     @Test
     @SuppressWarnings("unused")
-    public void testIntervalTT() {
+    public void testIntervalTTAdjacencyRealmOfT() {
 
         assertEquals(10, this.intervalInt.getLowerBound());
         assertEquals(20, this.intervalInt.getUpperBound());
@@ -163,8 +163,8 @@ public class IntervalTest {
 
         // Case with incorrect bounds with Integer
         try {
-            Interval<Integer> wrongBoundInterval = this.integerAdjacencyRealm
-                    .createInterval(20, 10);
+            Interval<Integer> wrongBoundInterval = new Interval<Integer>(20,
+                    10, this.integerAdjacencyRealm);
             fail("An InternalException should be thrown.");
         }
         catch (InternalException e) {
@@ -173,8 +173,8 @@ public class IntervalTest {
 
         // Case with incorrect bounds with String
         try {
-            Interval<String> wrongBoundIntervalString = this.stringAdjacencyRealm
-                    .createInterval("zzz", "abc");
+            Interval<String> wrongBoundIntervalString = new Interval<String>(
+                    "zzz", "abc", this.stringAdjacencyRealm);
             fail("An InternalException should be thrown.");
         }
         catch (InternalException e) {
@@ -183,8 +183,9 @@ public class IntervalTest {
 
         // Case with incorrect bounds with BigInteger
         try {
-            Interval<BigInteger> wrongBoundIntervalBig = this.bigIntegerAdjacencyRealm
-                    .createInterval(new BigInteger("9999"), BigInteger.ZERO);
+            Interval<BigInteger> wrongBoundIntervalBig = new Interval<BigInteger>(
+                    new BigInteger("9999"), BigInteger.ZERO,
+                    this.bigIntegerAdjacencyRealm);
             fail("An InternalException should be thrown.");
         }
         catch (InternalException e) {
@@ -193,26 +194,27 @@ public class IntervalTest {
     }
 
     @Test
-    public void testIntervalT() {
+    public void testIntervalTAdjacencyRealmOfT() {
 
         // With Integer
-        Interval<Integer> oneBoundInterval = this.integerAdjacencyRealm
-                .createInterval(10);
+        Interval<Integer> oneBoundInterval = new Interval<Integer>(10,
+                this.integerAdjacencyRealm);
         assertTrue("The lower and upper bounds aren't and should be the same.",
                 oneBoundInterval.getUpperBound() == oneBoundInterval
                         .getLowerBound());
 
         // With String
-        Interval<String> oneBoundIntervalString = this.stringAdjacencyRealm
-                .createInterval("abc");
+        Interval<String> oneBoundIntervalString = new Interval<String>("abc",
+                this.stringAdjacencyRealm);
         assertTrue(
                 "The lower and upper bounds aren't and should be the same.",
                 oneBoundIntervalString.getUpperBound() == oneBoundIntervalString
                         .getLowerBound());
 
         // With BigInteger
-        Interval<BigInteger> oneBoundIntervalBig = this.bigIntegerAdjacencyRealm
-                .createInterval(new BigInteger(1000, new Random()));
+        Interval<BigInteger> oneBoundIntervalBig = new Interval<BigInteger>(
+                new BigInteger(1000, new Random()),
+                this.bigIntegerAdjacencyRealm);
         assertTrue("The lower and upper bounds aren't and should be the same.",
                 oneBoundIntervalBig.getUpperBound() == oneBoundIntervalBig
                         .getLowerBound());
