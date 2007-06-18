@@ -59,7 +59,8 @@ public class Interval<T extends Comparable<? super T>>
      *            the adjacency realm of this interval.
      * @throws InternalException
      *             if any bound is <code>null</code> or if
-     *             <code>lowerBound</code> > <code>upperBound</code>.
+     *             <code>lowerBound</code> > <code>upperBound</code>. Also
+     *             thrown if <code>adjacencyRealm</code> is <code>null</code>.
      */
     Interval(
             T lowerBound,
@@ -198,6 +199,8 @@ public class Interval<T extends Comparable<? super T>>
      * @return an <code>int</code> value: 0 if the two intervals are the
      *         equals, a negative value if this interval is smaller, and a
      *         positive value if it is bigger.
+     * @throws InternalException
+     *             if adjacency realms of compared intervals are not the same.
      */
     public int compareTo(
             Interval<T> interval) {
@@ -225,6 +228,9 @@ public class Interval<T extends Comparable<? super T>>
      *            the interval to test for adjacency.
      * @return <code>true</code> if the two intervals are adjacent;
      *         <code>false</code> otherwise.
+     * @throws InternalException
+     *             if the interval is <code>null</code> or if adjacency realms
+     *             of tested intervals are not the same.
      */
     public boolean isAdjacentTo(
             Interval<T> interval) {
@@ -250,6 +256,9 @@ public class Interval<T extends Comparable<? super T>>
      *            the interval to compare with.
      * @return <code>true</code> if the two intervals intersect;
      *         <code>false</code> otherwise.
+     * @throws InternalException
+     *             if the interval is <code>null</code> or if adjacency realms
+     *             of tested intervals are not the same.
      */
     public boolean intersects(
             Interval<T> interval) {
@@ -276,6 +285,9 @@ public class Interval<T extends Comparable<? super T>>
      *            the interval to intersect with.
      * @return the intersection of the two intervals; <code>null</code> if
      *         it's not possible.
+     * @throws InternalException
+     *             if the interval is <code>null</code> or if adjacency realms
+     *             of tested intervals are not the same.
      */
     public Interval<T> intersection(
             Interval<T> interval) {
@@ -309,6 +321,10 @@ public class Interval<T extends Comparable<? super T>>
      * @param interval
      *            the interval to merge this one with.
      * @return a new interval representing the merge of the two intervals.
+     * @throws InternalException
+     *             if the interval is <code>null</code> or not adjacent to
+     *             this one and if adjacency realms of merging intervals are not
+     *             the same.
      */
     public Interval<T> mergeWith(
             Interval<T> interval) {
@@ -339,6 +355,8 @@ public class Interval<T extends Comparable<? super T>>
      *            a bound to compare.
      * @return the lowest of the two bounds, or <code>bound1</code> in case of
      *         equality.
+     * @throws InternalException
+     *             if one of the two bounds is <code>null</code>.
      */
     private static <T extends Comparable<? super T>> T min(
             T bound1,
@@ -368,6 +386,8 @@ public class Interval<T extends Comparable<? super T>>
      *            a bound to compare.
      * @return the highest of the two bounds, or <code>bound1</code> in case
      *         of equality.
+     * @throws InternalException
+     *             if one of the two bounds is <code>null</code>.
      */
     private static <T extends Comparable<? super T>> T max(
             T bound1,
@@ -397,6 +417,8 @@ public class Interval<T extends Comparable<? super T>>
      *            an interval to compare.
      * @return the lowest of the two intervals, or <code>interval1</code> in
      *         case of equality.
+     * @throws InternalException
+     *             if one of the two intervals is <code>null</code>.
      */
     public static <T extends Comparable<? super T>> Interval<T> min(
             Interval<T> interval1,
@@ -426,6 +448,8 @@ public class Interval<T extends Comparable<? super T>>
      *            an interval to compare.
      * @return the highest of the two intervals, or <code>interval1</code> in
      *         case of equality.
+     * @throws InternalException
+     *             if one of the two intervals is <code>null</code>.
      */
     public static <T extends Comparable<? super T>> Interval<T> max(
             Interval<T> interval1,
