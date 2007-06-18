@@ -26,16 +26,42 @@ import java.util.TreeSet;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * This class represents a symbol.
+ * 
+ * A symbol is defined from one or more intervals. This class provides various
+ * methods to maniplutate symbols.
+ */
 public class Symbol<T extends Comparable<? super T>>
         implements Comparable<Symbol<T>> {
 
     /** Unmodifiable, sorted set of intervals represented by this symbol. */
     private final SortedSet<Interval<T>> intervals;
 
+    /** Cached hashcode. Is <code>null</code> when not yet computed. */
     private Integer hashCode;
 
+    /**
+     * Cached string representation. Is <code>null</code> when not yet
+     * computed.
+     */
     private String toString;
 
+    /**
+     * Constructs a symbol with a provided collection of intervals.
+     * 
+     * Verifications are made for the collection to contain at least one element
+     * (one interval) and not to be <code>null</code>. It also verify for
+     * intervals whitin the collection not to be <code>null</code> or
+     * intersect with each other.
+     * 
+     * @param intervals
+     *            a collection of intervals.
+     * @throws InternalException
+     *             if the collection is <code>null</code> or if it's size is
+     *             0. Also throws it if an interval within the collection is
+     *             <code>null</code> or intersect with another interval.
+     */
     public Symbol(
             Collection<Interval<T>> intervals) {
 
@@ -86,6 +112,16 @@ public class Symbol<T extends Comparable<? super T>>
         this.intervals = Collections.unmodifiableSortedSet(minimalSet);
     }
 
+    /**
+     * Constructs a symbol with a provided interval.
+     * 
+     * Verifications are made for the interval not to be <code>null</code>.
+     * 
+     * @param interval
+     *            the provided interval.
+     * @throws InternalException
+     *             if <code>interval</code> is <code>null</code>.
+     */
     public Symbol(
             Interval<T> interval) {
 
@@ -98,11 +134,26 @@ public class Symbol<T extends Comparable<? super T>>
         this.intervals = Collections.unmodifiableSortedSet(set);
     }
 
+    /**
+     * Returns a sorted sets containing the intervals of this symbol.
+     * 
+     * @return a sorted set of intervals.
+     */
     public SortedSet<Interval<T>> getIntervals() {
 
         return this.intervals;
     }
 
+    /**
+     * Compares this symbol with an object for equality. Returns
+     * <code>true</code> if the object is a symbol and if it as the same
+     * number of equal intervals as those of this instance.
+     * 
+     * @param obj
+     *            the object to compare with.
+     * @return <code>true</code> if this symbol and the object are equal;
+     *         <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(
             Object obj) {
@@ -131,6 +182,11 @@ public class Symbol<T extends Comparable<? super T>>
         return true;
     }
 
+    /**
+     * Returns a hash code value for this object.
+     * 
+     * @return a hash code for this object.
+     */
     @Override
     public int hashCode() {
 
@@ -148,6 +204,13 @@ public class Symbol<T extends Comparable<? super T>>
         return this.hashCode;
     }
 
+    /**
+     * Returns a <code>String</code> representation for this symbol. The
+     * representation takes the following form:
+     * <code>{interval1,interval2,...}</code>
+     * 
+     * @return a <code>String</code> representing this symbol.
+     */
     @Override
     public String toString() {
 
@@ -176,6 +239,19 @@ public class Symbol<T extends Comparable<? super T>>
         return this.toString;
     }
 
+    /**
+     * Compares this symbol to another one. This symbol is smaller (or bigger)
+     * if one of its interval is smaller (or bigger) than the equivalent
+     * interval of the other symbol. If there's no differences between intervals
+     * when it went through all the intervals of one or both symbols, it returns
+     * the difference of their sizes.
+     * 
+     * @param symbol
+     *            the symbol to compare with.
+     * @return an <code>int</code> value: 0 if the two symbols are equals, a
+     *         negative value if this symbol is smaller, and a positive value if
+     *         it is bigger.
+     */
     public int compareTo(
             Symbol<T> symbol) {
 
@@ -197,10 +273,20 @@ public class Symbol<T extends Comparable<? super T>>
         if (result == 0 && (i1.hasNext() || i2.hasNext())) {
             result = this.intervals.size() - symbol.intervals.size();
         }
-
         return result;
     }
 
+    /**
+     * Creates a new symbol by merging together the symbols provided in the
+     * collection.
+     * 
+     * @param symbols
+     *            a collection of symbols to merge.
+     * @return a new symbol representing the merge of the the symbols.
+     * @throws InternalException
+     *             if <code>symbols</code> is <code>null</code> or if it
+     *             does not contain any element.
+     */
     public static <T extends Comparable<? super T>> Symbol<T> merge(
             Collection<Symbol<T>> symbols) {
 
@@ -222,6 +308,19 @@ public class Symbol<T extends Comparable<? super T>>
         return new Symbol<T>(intervals);
     }
 
+    /**
+     * Compares two symbols and returns the lowest one (minimum). Verifications
+     * are made for symbols not to be <code>null</code>.
+     * 
+     * @param symbol1
+     *            a symbol to compare.
+     * @param symbol2
+     *            a symbol to compare.
+     * @return the lowest of the two symbols, or <code>symbol1</code> in case
+     *         of equality.
+     * @throws InternalException
+     *             if one of the two symbols is <code>null</code>.
+     */
     public static <T extends Comparable<? super T>> Symbol<T> min(
             Symbol<T> symbol1,
             Symbol<T> symbol2) {
@@ -241,6 +340,19 @@ public class Symbol<T extends Comparable<? super T>>
         return symbol2;
     }
 
+    /**
+     * Compares two symbols and returns the highest one (maximum). Verifications
+     * are made for symbols not to be <code>null</code>.
+     * 
+     * @param symbol1
+     *            a symbol to compare.
+     * @param symbol2
+     *            a symbol to compare.
+     * @return the highest of the two symbols, or <code>symbol1</code> in case
+     *         of equality.
+     * @throws InternalException
+     *             if one of the two symbols is <code>null</code>.
+     */
     public static <T extends Comparable<? super T>> Symbol<T> max(
             Symbol<T> symbol1,
             Symbol<T> symbol2) {
