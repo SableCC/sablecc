@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.alphabet;
 
+import org.sablecc.sablecc.exception.InternalException;
+
 /**
  * Instances implementing this interface are used to merge adjacent intervals.
  */
@@ -51,7 +53,7 @@ public interface Adjacency<T extends Comparable<? super T>> {
      *            a bound to compare.
      * @return <code>true</code> if the two bounds are adjacents;
      *         <code>false</code> otherwise.
-     * @throws RuntimeException
+     * @throws InternalException
      *             if <code>isSequential</code> is <code>false</code>.
      */
     boolean isAdjacent(
@@ -68,7 +70,7 @@ public interface Adjacency<T extends Comparable<? super T>> {
      * @param bound
      *            a bound to compare.
      * @return a T previous to the current instance.
-     * @throws RuntimeException
+     * @throws InternalException
      *             if <code>isSequential</code> is <code>false</code>.
      */
     T previous(
@@ -84,7 +86,7 @@ public interface Adjacency<T extends Comparable<? super T>> {
      * @param bound
      *            a bound to compare.
      * @return a T following the current instance.
-     * @throws RuntimeException
+     * @throws InternalException
      *             if <code>isSequential</code> is <code>false</code>.
      */
     T next(

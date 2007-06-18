@@ -28,6 +28,7 @@ import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sablecc.sablecc.exception.InternalException;
 
 public class IntervalTest {
 
@@ -76,19 +77,19 @@ public class IntervalTest {
                 String bound1,
                 String bound2) {
 
-            throw new RuntimeException();
+            throw new InternalException("instance is not sequential");
         }
 
         public String next(
                 String bound) {
 
-            throw new RuntimeException();
+            throw new InternalException("instance is not sequential");
         }
 
         public String previous(
                 String bound) {
 
-            throw new RuntimeException();
+            throw new InternalException("instance is not sequential");
         }
     };
 
@@ -143,18 +144,18 @@ public class IntervalTest {
 
             Interval<Integer> nullBoundInterval = new Interval<Integer>(null,
                     null);
-            fail("An IllegalArgumentException should be thrown.");
+            fail("An InternalException should be thrown.");
         }
-        catch (IllegalArgumentException e) {
+        catch (InternalException e) {
             // expected
         }
 
         // Case with incorrect bounds with Integer
         try {
             Interval<Integer> wrongBoundInterval = new Interval<Integer>(20, 10);
-            fail("An IllegalArgumentException should be thrown.");
+            fail("An InternalException should be thrown.");
         }
-        catch (IllegalArgumentException e) {
+        catch (InternalException e) {
             // expected
         }
 
@@ -162,9 +163,9 @@ public class IntervalTest {
         try {
             Interval<String> wrongBoundIntervalString = new Interval<String>(
                     "zzz", "abc");
-            fail("An IllegalArgumentException should be thrown.");
+            fail("An InternalException should be thrown.");
         }
-        catch (IllegalArgumentException e) {
+        catch (InternalException e) {
             // expected
         }
 
@@ -172,9 +173,9 @@ public class IntervalTest {
         try {
             Interval<BigInteger> wrongBoundIntervalBig = new Interval<BigInteger>(
                     new BigInteger("9999"), BigInteger.ZERO);
-            fail("An IllegalArgumentException should be thrown.");
+            fail("An InternalException should be thrown.");
         }
-        catch (IllegalArgumentException e) {
+        catch (InternalException e) {
             // expected
         }
     }
@@ -327,9 +328,9 @@ public class IntervalTest {
         try {
             this.intervalString.isAdjacentTo(secondIntervalString,
                     this.stringAdjacency);
-            fail("A RunTimeException should be thrown.");
+            fail("A InternalException should be thrown.");
         }
-        catch (RuntimeException e) {
+        catch (InternalException e) {
             // expected
         }
 
@@ -438,9 +439,9 @@ public class IntervalTest {
         try {
             resultMerge = this.interval.mergeWith(new Interval<Integer>(999,
                     9999), this.integerAdjacency);
-            fail("An IllegalArgumentException should be thrown because the two intervals are not adjacent.");
+            fail("An InternalException should be thrown because the two intervals are not adjacent.");
         }
-        catch (IllegalArgumentException e) {
+        catch (InternalException e) {
             // expected
         }
 
@@ -450,7 +451,7 @@ public class IntervalTest {
                     this.stringAdjacency);
             fail();
         }
-        catch (RuntimeException e) {
+        catch (InternalException e) {
             // excepted
         }
 
@@ -473,9 +474,9 @@ public class IntervalTest {
             resultMergeBig = this.intervalBig.mergeWith(
                     new Interval<BigInteger>(BigInteger.ONE, BigInteger.TEN),
                     this.bigIntegerAdjacency);
-            fail("An IllegalArgumentException should be thrown because the two intervals are not adjacent.");
+            fail("An InternalException should be thrown because the two intervals are not adjacent.");
         }
-        catch (IllegalArgumentException e) {
+        catch (InternalException e) {
             // expected
         }
 
