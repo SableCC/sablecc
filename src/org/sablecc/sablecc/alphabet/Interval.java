@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.alphabet;
 
+import org.sablecc.sablecc.exception.InternalException;
+
 /**
  * This class represents an interval.
  * 
@@ -50,7 +52,7 @@ public class Interval<T extends Comparable<? super T>>
      *            the lower bound.
      * @param upperBound
      *            the upper bound.
-     * @throws IllegalArgumentException
+     * @throws InternalException
      *             if any bound is <code>null</code> or if
      *             <code>lowerBound</code> > <code>upperBound</code>.
      */
@@ -59,12 +61,12 @@ public class Interval<T extends Comparable<? super T>>
             T upperBound) {
 
         if (lowerBound == null || upperBound == null) {
-            throw new IllegalArgumentException(
+            throw new InternalException(
                     "Lower and upper bounds must be provided.");
         }
 
         if (lowerBound.compareTo(upperBound) > 0) {
-            throw new IllegalArgumentException(
+            throw new InternalException(
                     "Lower bound must be smaller or equal to upper bound.");
         }
 
@@ -264,7 +266,7 @@ public class Interval<T extends Comparable<? super T>>
             Adjacency<T> adjacency) {
 
         if (!isAdjacentTo(interval, adjacency)) {
-            throw new IllegalArgumentException("Interval must be adjacent.");
+            throw new InternalException("Interval must be adjacent.");
         }
 
         return new Interval<T>(this.lowerBound, interval.upperBound);
