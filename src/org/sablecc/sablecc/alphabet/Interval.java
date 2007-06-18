@@ -60,14 +60,17 @@ public class Interval<T extends Comparable<? super T>>
             T lowerBound,
             T upperBound) {
 
-        if (lowerBound == null || upperBound == null) {
-            throw new InternalException(
-                    "Lower and upper bounds must be provided.");
+        if (lowerBound == null) {
+            throw new InternalException("lower bound may not be null");
+        }
+
+        if (upperBound == null) {
+            throw new InternalException("upper bound may not be null");
         }
 
         if (lowerBound.compareTo(upperBound) > 0) {
             throw new InternalException(
-                    "Lower bound must be smaller or equal to upper bound.");
+                    "lower bound must be smaller or equal to upper bound");
         }
 
         this.lowerBound = lowerBound;
@@ -266,7 +269,8 @@ public class Interval<T extends Comparable<? super T>>
             Adjacency<T> adjacency) {
 
         if (!isAdjacentTo(interval, adjacency)) {
-            throw new InternalException("Interval must be adjacent.");
+            throw new InternalException(
+                    "this instance must be adjacent to the provided interval");
         }
 
         return new Interval<T>(this.lowerBound, interval.upperBound);
