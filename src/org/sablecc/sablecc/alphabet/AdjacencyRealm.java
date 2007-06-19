@@ -96,6 +96,68 @@ public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
             T bound);
 
     /**
+     * Compares two bounds to find the minimum.
+     * 
+     * @param bound1
+     *            a bound to compare.
+     * @param bound2
+     *            a bound to compare.
+     * @return the lowest of the two bounds, or <code>bound1</code> in case of
+     *         equality.
+     * @throws InternalException
+     *             if one of the two bounds is <code>null</code>.
+     */
+    public static <T extends Comparable<? super T>> T min(
+            T bound1,
+            T bound2) {
+
+        if (bound1 == null) {
+            throw new InternalException("bound1 may not be null");
+        }
+
+        if (bound2 == null) {
+            throw new InternalException("bound2 may not be null");
+        }
+
+        if (bound1.compareTo(bound2) <= 0) {
+            return bound1;
+        }
+
+        return bound2;
+    }
+
+    /**
+     * Compares two bounds to find the maximum.
+     * 
+     * @param bound1
+     *            a bound to compare.
+     * @param bound2
+     *            a bound to compare.
+     * @return the highest of the two bounds, or <code>bound1</code> in case
+     *         of equality.
+     * @throws InternalException
+     *             if one of the two bounds is <code>null</code>.
+     */
+    public static <T extends Comparable<? super T>> T max(
+            T bound1,
+            T bound2) {
+
+        if (bound1 == null) {
+            throw new InternalException("bound1 may not be null");
+        }
+
+        if (bound2 == null) {
+            throw new InternalException("bound2 may not be null");
+        }
+
+        if (bound1.compareTo(bound2) >= 0) {
+            return bound1;
+        }
+
+        return bound2;
+    }
+
+    /**
      * Returns a new interval with the provided lower and upper bounds.
      * 
      * @param lowerBound

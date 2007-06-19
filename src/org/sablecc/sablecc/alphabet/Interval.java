@@ -301,9 +301,9 @@ public class Interval<T extends Comparable<? super T>>
                     "cannot intersect intervals from distinct realms");
         }
 
-        T lowerBound = max(this.lowerBound, interval.lowerBound);
+        T lowerBound = AdjacencyRealm.max(this.lowerBound, interval.lowerBound);
 
-        T upperBound = min(this.upperBound, interval.upperBound);
+        T upperBound = AdjacencyRealm.min(this.upperBound, interval.upperBound);
 
         if (lowerBound.compareTo(upperBound) <= 0) {
             return new Interval<T>(lowerBound, upperBound, this.adjacencyRealm);
@@ -344,68 +344,6 @@ public class Interval<T extends Comparable<? super T>>
 
         return new Interval<T>(this.lowerBound, interval.upperBound,
                 this.adjacencyRealm);
-    }
-
-    /**
-     * Compares two bounds to find the minimum.
-     * 
-     * @param bound1
-     *            a bound to compare.
-     * @param bound2
-     *            a bound to compare.
-     * @return the lowest of the two bounds, or <code>bound1</code> in case of
-     *         equality.
-     * @throws InternalException
-     *             if one of the two bounds is <code>null</code>.
-     */
-    private static <T extends Comparable<? super T>> T min(
-            T bound1,
-            T bound2) {
-
-        if (bound1 == null) {
-            throw new InternalException("bound1 may not be null");
-        }
-
-        if (bound2 == null) {
-            throw new InternalException("bound2 may not be null");
-        }
-
-        if (bound1.compareTo(bound2) <= 0) {
-            return bound1;
-        }
-
-        return bound2;
-    }
-
-    /**
-     * Compares two bounds to find the maximum.
-     * 
-     * @param bound1
-     *            a bound to compare.
-     * @param bound2
-     *            a bound to compare.
-     * @return the highest of the two bounds, or <code>bound1</code> in case
-     *         of equality.
-     * @throws InternalException
-     *             if one of the two bounds is <code>null</code>.
-     */
-    private static <T extends Comparable<? super T>> T max(
-            T bound1,
-            T bound2) {
-
-        if (bound1 == null) {
-            throw new InternalException("bound1 may not be null");
-        }
-
-        if (bound2 == null) {
-            throw new InternalException("bound2 may not be null");
-        }
-
-        if (bound1.compareTo(bound2) >= 0) {
-            return bound1;
-        }
-
-        return bound2;
     }
 
     /**
