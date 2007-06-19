@@ -41,12 +41,6 @@ public class IntervalTest {
     private final AdjacencyRealm<Integer> integerAdjacencyRealm = new AdjacencyRealm<Integer>() {
 
         @Override
-        public boolean canBeAdjacent() {
-
-            return true;
-        }
-
-        @Override
         public boolean isAdjacent(
                 Integer bound1,
                 Integer bound2) {
@@ -72,12 +66,6 @@ public class IntervalTest {
     private final AdjacencyRealm<String> stringAdjacencyRealm = new AdjacencyRealm<String>() {
 
         @Override
-        public boolean canBeAdjacent() {
-
-            return false;
-        }
-
-        @Override
         public boolean isAdjacent(
                 String bound1,
                 String bound2) {
@@ -101,12 +89,6 @@ public class IntervalTest {
     };
 
     private final AdjacencyRealm<BigInteger> bigIntegerAdjacencyRealm = new AdjacencyRealm<BigInteger>() {
-
-        @Override
-        public boolean canBeAdjacent() {
-
-            return true;
-        }
 
         @Override
         public boolean isAdjacent(
