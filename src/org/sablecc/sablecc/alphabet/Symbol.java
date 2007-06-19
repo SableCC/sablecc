@@ -191,14 +191,14 @@ public class Symbol<T extends Comparable<? super T>>
     public int hashCode() {
 
         if (this.hashCode == null) {
-            int sum = 0;
+            int hashCode = 0;
 
             for (Interval<T> interval : this.intervals) {
-                sum *= 7;
-                sum += interval.hashCode();
+                hashCode *= 7;
+                hashCode += interval.hashCode();
             }
 
-            this.hashCode = sum;
+            this.hashCode = hashCode;
         }
 
         return this.hashCode;
