@@ -126,6 +126,16 @@ public class Interval<T extends Comparable<? super T>>
     }
 
     /**
+     * Return the adjacencyRealm of this interval.
+     * 
+     * @return the adjacencyRealm.
+     */
+    public AdjacencyRealm<T> getAdjacencyRealm() {
+
+        return this.adjacencyRealm;
+    }
+
+    /**
      * Compares this interval with an object for equality. Returns
      * <code>true</code> if the object is an interval and if its bounds are
      * the same as those of this instance.
