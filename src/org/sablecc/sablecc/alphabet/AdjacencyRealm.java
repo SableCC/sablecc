@@ -21,29 +21,11 @@ import org.sablecc.sablecc.exception.InternalException;
 
 /**
  * This class serves to create adjacency realms for intervals. It provides
- * methods to create intervals, to determine whether the bounds of intervals it
- * creates can be adjacent or not, and if yes, it provides methods to test
- * adjacency.
+ * methods to create intervals, to determine whether two T values (bounds) are
+ * adjacent, and to compute the previous and next T value.
  */
 
 public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
-
-    /**
-     * Returns whether an element T can be adjacent to another T.
-     * 
-     * In situations where there is no intuitive definition of adjacency, this
-     * method must return <code>false</code>.
-     * 
-     * This method must return <code>true</code> in order for other methods of
-     * this interface to work.
-     * 
-     * The result of this method is always the same (in other words: constant)
-     * on a given instance of this interface.
-     * 
-     * @return <code>true</code> if the two T can be adjacent;
-     *         <code>false</code> otherwise.
-     */
-    public abstract boolean canBeAdjacent();
 
     /**
      * Returns whether two bounds are adjacents. For example, if T is an integer
@@ -56,8 +38,6 @@ public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
      *            a bound to compare.
      * @return <code>true</code> if the two bounds are adjacents;
      *         <code>false</code> otherwise.
-     * @throws InternalException
-     *             if <code>isSequential</code> is <code>false</code>.
      */
     public abstract boolean isAdjacent(
             T bound1,
@@ -73,8 +53,6 @@ public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
      * @param bound
      *            a bound to compare.
      * @return a T previous to the current instance.
-     * @throws InternalException
-     *             if <code>isSequential</code> is <code>false</code>.
      */
     public abstract T previous(
             T bound);
@@ -89,8 +67,6 @@ public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
      * @param bound
      *            a bound to compare.
      * @return a T following the current instance.
-     * @throws InternalException
-     *             if <code>isSequential</code> is <code>false</code>.
      */
     public abstract T next(
             T bound);
