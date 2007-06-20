@@ -173,8 +173,8 @@ public class Interval<T extends Comparable<? super T>>
     public int hashCode() {
 
         if (this.hashCode == null) {
-            this.hashCode = this.lowerBound.hashCode()
-                    + this.upperBound.hashCode()
+            this.hashCode = this.lowerBound.hashCode() * 121
+                    + this.upperBound.hashCode() * 11
                     + this.adjacencyRealm.hashCode();
         }
 
