@@ -187,25 +187,19 @@ public class IntervalTest {
     @Test
     public void testHashCode() {
 
-        int lowerBoundHash;
-        int upperBoundHash;
-        int adjacencyRealmHash;
-
         // With Integer
-        lowerBoundHash = this.intervalInt.getLowerBound().hashCode();
-        upperBoundHash = this.intervalInt.getUpperBound().hashCode();
-        adjacencyRealmHash = this.integerAdjacencyRealm.hashCode();
-        assertEquals("The hashCode calculation is broken.", lowerBoundHash
-                * 121 + upperBoundHash * 11 + adjacencyRealmHash,
-                this.intervalInt.hashCode());
+        Interval<Integer> sameIntervalInt = this.integerAdjacencyRealm
+                .createInterval(10, 20);
+        assertEquals(
+                "Two instance of the same symbol should have the same hashcode",
+                this.intervalInt.hashCode(), sameIntervalInt.hashCode());
 
         // With BigInteger
-        lowerBoundHash = this.intervalBig.getLowerBound().hashCode();
-        upperBoundHash = this.intervalBig.getUpperBound().hashCode();
-        adjacencyRealmHash = this.bigIntegerAdjacencyRealm.hashCode();
-        assertEquals("The hashCode calculation is broken.", lowerBoundHash
-                * 121 + upperBoundHash * 11 + adjacencyRealmHash,
-                this.intervalBig.hashCode());
+        Interval<BigInteger> sameIntervalBig = this.bigIntegerAdjacencyRealm
+                .createInterval(new BigInteger("100"), new BigInteger("200"));
+        assertEquals(
+                "Two instance of the same symbol should have the same hashcode",
+                this.intervalBig.hashCode(), sameIntervalBig.hashCode());
 
     }
 
