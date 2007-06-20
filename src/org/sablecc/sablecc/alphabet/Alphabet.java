@@ -231,7 +231,7 @@ public class Alphabet<T extends Comparable<? super T>>
         return result;
     }
 
-    public AlphabetMergeResult<T> merge(
+    public AlphabetMergeResult<T> mergeWith(
             Alphabet<T> alphabet) {
 
         if (alphabet == null) {
