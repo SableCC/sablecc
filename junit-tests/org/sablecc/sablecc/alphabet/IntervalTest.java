@@ -195,18 +195,16 @@ public class IntervalTest {
         lowerBoundHash = this.intervalInt.getLowerBound().hashCode();
         upperBoundHash = this.intervalInt.getUpperBound().hashCode();
         adjacencyRealmHash = this.integerAdjacencyRealm.hashCode();
-        assertEquals(
-                "The hashCode of an interval should be the sum of the hashCode of its bounds and adjacency realm.",
-                lowerBoundHash + upperBoundHash + adjacencyRealmHash,
+        assertEquals("The hashCode calculation is broken.", lowerBoundHash
+                * 121 + upperBoundHash * 11 + adjacencyRealmHash,
                 this.intervalInt.hashCode());
 
         // With BigInteger
         lowerBoundHash = this.intervalBig.getLowerBound().hashCode();
         upperBoundHash = this.intervalBig.getUpperBound().hashCode();
         adjacencyRealmHash = this.bigIntegerAdjacencyRealm.hashCode();
-        assertEquals(
-                "The hashCode of an interval should be the sum of the hashCode of its bounds and adjacency realm.",
-                lowerBoundHash + upperBoundHash + adjacencyRealmHash,
+        assertEquals("The hashCode calculation is broken.", lowerBoundHash
+                * 121 + upperBoundHash * 11 + adjacencyRealmHash,
                 this.intervalBig.hashCode());
 
     }
