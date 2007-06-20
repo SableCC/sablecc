@@ -36,60 +36,9 @@ public class SymbolTest {
 
     private Collection<Interval<Integer>> intervalsInt = new LinkedList<Interval<Integer>>();
 
-    private final AdjacencyRealm<Integer> integerAdjacencyRealm = new AdjacencyRealm<Integer>() {
-
-        @Override
-        public boolean isAdjacent(
-                Integer bound1,
-                Integer bound2) {
-
-            return bound1 + 1 == bound2;
-        }
-
-        @Override
-        public Integer next(
-                Integer bound) {
-
-            return bound++;
-        }
-
-        @Override
-        public Integer previous(
-                Integer bound) {
-
-            return bound--;
-        }
-    };
-
     private Symbol<BigInteger> symbolBig;
 
     private Collection<Interval<BigInteger>> intervalsBig = new LinkedList<Interval<BigInteger>>();
-
-    private final AdjacencyRealm<BigInteger> bigIntegerAdjacencyRealm = new AdjacencyRealm<BigInteger>() {
-
-        @Override
-        public boolean isAdjacent(
-                BigInteger bound1,
-                BigInteger bound2) {
-
-            return bound1.add(BigInteger.ONE).equals(bound2);
-        }
-
-        @Override
-        public BigInteger next(
-                BigInteger bound) {
-
-            return bound.add(BigInteger.ONE);
-        }
-
-        @Override
-        public BigInteger previous(
-                BigInteger bound) {
-
-            return bound.subtract(BigInteger.ONE);
-        }
-
-    };
 
     @Before
     public void setUp()
@@ -97,23 +46,23 @@ public class SymbolTest {
 
         // For Integer.
         this.intervalsInt.clear();
-        this.intervalsInt.add(new Interval<Integer>(10, 20,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(50, 100,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(200, 400,
-                this.integerAdjacencyRealm));
+        this.intervalsInt
+                .add(new Interval<Integer>(10, 20, Realms.getInteger()));
+        this.intervalsInt.add(new Interval<Integer>(50, 100, Realms
+                .getInteger()));
+        this.intervalsInt.add(new Interval<Integer>(200, 400, Realms
+                .getInteger()));
 
         this.symbolInt = new Symbol<Integer>(this.intervalsInt);
 
         // For BigInteger.
         this.intervalsBig.clear();
         this.intervalsBig.add(new Interval<BigInteger>(BigInteger.ZERO,
-                BigInteger.TEN, this.bigIntegerAdjacencyRealm));
+                BigInteger.TEN, Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("50"),
-                new BigInteger("100"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("100"), Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("200"),
-                new BigInteger("400"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("400"), Realms.getBigInteger()));
 
         this.symbolBig = new Symbol<BigInteger>(this.intervalsBig);
     }
@@ -169,8 +118,8 @@ public class SymbolTest {
         Collection<Interval<Integer>> intervalsNullInterval = new LinkedList<Interval<Integer>>();
 
         try {
-            intervalsNullInterval.add(new Interval<Integer>(null,
-                    this.integerAdjacencyRealm));
+            intervalsNullInterval.add(new Interval<Integer>(null, Realms
+                    .getInteger()));
 
             fail("an InternalException should be thrown");
         }
@@ -181,9 +130,9 @@ public class SymbolTest {
         // Case with collection having intersecting intervals with Integer.
         Collection<Interval<Integer>> intervalsIntersectingIntervalsInt = new LinkedList<Interval<Integer>>();
         intervalsIntersectingIntervalsInt.add(new Interval<Integer>(0, 50,
-                this.integerAdjacencyRealm));
+                Realms.getInteger()));
         intervalsIntersectingIntervalsInt.add(new Interval<Integer>(25, 999,
-                this.integerAdjacencyRealm));
+                Realms.getInteger()));
 
         try {
             Symbol<Integer> symbolIntersectingIntervalsInt = new Symbol<Integer>(
@@ -197,11 +146,11 @@ public class SymbolTest {
         // Case with collection having intersecting intervals with BigInteger.
         Collection<Interval<BigInteger>> intervalsIntersectingIntervalsBig = new LinkedList<Interval<BigInteger>>();
         intervalsIntersectingIntervalsBig.add(new Interval<BigInteger>(
-                new BigInteger("0"), new BigInteger("50"),
-                this.bigIntegerAdjacencyRealm));
+                new BigInteger("0"), new BigInteger("50"), Realms
+                        .getBigInteger()));
         intervalsIntersectingIntervalsBig.add(new Interval<BigInteger>(
-                new BigInteger("25"), new BigInteger("999"),
-                this.bigIntegerAdjacencyRealm));
+                new BigInteger("25"), new BigInteger("999"), Realms
+                        .getBigInteger()));
 
         try {
             Symbol<BigInteger> symbolIntersectingIntervalsBig = new Symbol<BigInteger>(
@@ -214,12 +163,12 @@ public class SymbolTest {
 
         // Case with collection having adjacent intervals using Integer.
         Collection<Interval<Integer>> intervalsAdjacentIntervalsInt = new LinkedList<Interval<Integer>>();
-        intervalsAdjacentIntervalsInt.add(new Interval<Integer>(0, 10,
-                this.integerAdjacencyRealm));
-        intervalsAdjacentIntervalsInt.add(new Interval<Integer>(11, 30,
-                this.integerAdjacencyRealm));
-        intervalsAdjacentIntervalsInt.add(new Interval<Integer>(31, 40,
-                this.integerAdjacencyRealm));
+        intervalsAdjacentIntervalsInt.add(new Interval<Integer>(0, 10, Realms
+                .getInteger()));
+        intervalsAdjacentIntervalsInt.add(new Interval<Integer>(11, 30, Realms
+                .getInteger()));
+        intervalsAdjacentIntervalsInt.add(new Interval<Integer>(31, 40, Realms
+                .getInteger()));
         Symbol<Integer> symbolAdjacentIntervalsInt = new Symbol<Integer>(
                 intervalsAdjacentIntervalsInt);
 
@@ -229,15 +178,13 @@ public class SymbolTest {
 
         // Case with collecting having adjacent intervals using BigInteger.
         Collection<Interval<BigInteger>> intervalsAdjacentIntervalsBig = new LinkedList<Interval<BigInteger>>();
-        intervalsAdjacentIntervalsBig
-                .add(new Interval<BigInteger>(BigInteger.ZERO, BigInteger.ONE,
-                        this.bigIntegerAdjacencyRealm));
         intervalsAdjacentIntervalsBig.add(new Interval<BigInteger>(
-                new BigInteger("2"), BigInteger.TEN,
-                this.bigIntegerAdjacencyRealm));
+                BigInteger.ZERO, BigInteger.ONE, Realms.getBigInteger()));
         intervalsAdjacentIntervalsBig.add(new Interval<BigInteger>(
-                new BigInteger("11"), new BigInteger("50"),
-                this.bigIntegerAdjacencyRealm));
+                new BigInteger("2"), BigInteger.TEN, Realms.getBigInteger()));
+        intervalsAdjacentIntervalsBig.add(new Interval<BigInteger>(
+                new BigInteger("11"), new BigInteger("50"), Realms
+                        .getBigInteger()));
         Symbol<BigInteger> symbolAdjacentIntervalsBig = new Symbol<BigInteger>(
                 intervalsAdjacentIntervalsBig);
 
@@ -254,8 +201,8 @@ public class SymbolTest {
         Collection<Interval<Integer>> intervalsNullInterval = new LinkedList<Interval<Integer>>();
 
         try {
-            intervalsNullInterval.add(new Interval<Integer>(null,
-                    this.integerAdjacencyRealm));
+            intervalsNullInterval.add(new Interval<Integer>(null, Realms
+                    .getInteger()));
 
             fail("An InternalException should be thrown.");
         }
@@ -265,7 +212,7 @@ public class SymbolTest {
 
         // Typical Case using Integer.
         Symbol<Integer> intervalsSingleIntervalInt = new Symbol<Integer>(
-                new Interval<Integer>(10, 30, this.integerAdjacencyRealm));
+                new Interval<Integer>(10, 30, Realms.getInteger()));
 
         assertTrue("There should be only one Interval in the symbol",
                 intervalsSingleIntervalInt.getIntervals().size() == 1);
@@ -273,7 +220,7 @@ public class SymbolTest {
         // Typical Case using BigInteger.
         Symbol<BigInteger> intervalsSingleIntervalBig = new Symbol<BigInteger>(
                 new Interval<BigInteger>(new BigInteger("1000"),
-                        new BigInteger("50000"), this.bigIntegerAdjacencyRealm));
+                        new BigInteger("50000"), Realms.getBigInteger()));
 
         assertTrue("There should be only one Interval in the symbol",
                 intervalsSingleIntervalBig.getIntervals().size() == 1);
@@ -303,8 +250,8 @@ public class SymbolTest {
                 .equals(sameSymbolBig));
 
         // Case with different symbol using Integer.
-        this.intervalsInt.add(new Interval<Integer>(500, 1000,
-                this.integerAdjacencyRealm));
+        this.intervalsInt.add(new Interval<Integer>(500, 1000, Realms
+                .getInteger()));
         Symbol<Integer> differentSymbolInt = new Symbol<Integer>(
                 this.intervalsInt);
 
@@ -313,7 +260,7 @@ public class SymbolTest {
 
         // Case with different symbol using BigInteger.
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("999"),
-                new BigInteger("9999"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("9999"), Realms.getBigInteger()));
         Symbol<BigInteger> differentSymbolBig = new Symbol<BigInteger>(
                 this.intervalsBig);
 
@@ -327,12 +274,12 @@ public class SymbolTest {
 
         // Case with smaller symbol using Integer.
         this.intervalsInt.clear();
-        this.intervalsInt.add(new Interval<Integer>(0, 10,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(30, 50,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(100, 200,
-                this.integerAdjacencyRealm));
+        this.intervalsInt
+                .add(new Interval<Integer>(0, 10, Realms.getInteger()));
+        this.intervalsInt
+                .add(new Interval<Integer>(30, 50, Realms.getInteger()));
+        this.intervalsInt.add(new Interval<Integer>(100, 200, Realms
+                .getInteger()));
         Symbol<Integer> smallerSymbolInt = new Symbol<Integer>(
                 this.intervalsInt);
 
@@ -342,11 +289,11 @@ public class SymbolTest {
         // Case with smaller symbol using BigInteger.
         this.intervalsBig.clear();
         this.intervalsBig.add(new Interval<BigInteger>(BigInteger.ZERO,
-                BigInteger.ONE, this.bigIntegerAdjacencyRealm));
+                BigInteger.ONE, Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("10"),
-                new BigInteger("20"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("20"), Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("30"),
-                new BigInteger("40"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("40"), Realms.getBigInteger()));
 
         Symbol<BigInteger> smallerSymbolBig = new Symbol<BigInteger>(
                 this.intervalsBig);
@@ -356,12 +303,12 @@ public class SymbolTest {
 
         // Case with greater Symbol using Integer.
         this.intervalsInt.clear();
-        this.intervalsInt.add(new Interval<Integer>(100, 200,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(500, 1000,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(2000, 4000,
-                this.integerAdjacencyRealm));
+        this.intervalsInt.add(new Interval<Integer>(100, 200, Realms
+                .getInteger()));
+        this.intervalsInt.add(new Interval<Integer>(500, 1000, Realms
+                .getInteger()));
+        this.intervalsInt.add(new Interval<Integer>(2000, 4000, Realms
+                .getInteger()));
         Symbol<Integer> greaterSymbolInt = new Symbol<Integer>(
                 this.intervalsInt);
 
@@ -371,11 +318,11 @@ public class SymbolTest {
         // Case with greater symbol using BigInteger.
         this.intervalsBig.clear();
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("30"),
-                new BigInteger("40"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("40"), Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("120"),
-                new BigInteger("180"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("180"), Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("500"),
-                new BigInteger("99999"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("99999"), Realms.getBigInteger()));
 
         Symbol<BigInteger> greaterSymbolBig = new Symbol<BigInteger>(
                 this.intervalsBig);
@@ -385,12 +332,12 @@ public class SymbolTest {
 
         // Case with equals symbol using Integer.
         this.intervalsInt.clear();
-        this.intervalsInt.add(new Interval<Integer>(10, 20,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(50, 100,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(200, 400,
-                this.integerAdjacencyRealm));
+        this.intervalsInt
+                .add(new Interval<Integer>(10, 20, Realms.getInteger()));
+        this.intervalsInt.add(new Interval<Integer>(50, 100, Realms
+                .getInteger()));
+        this.intervalsInt.add(new Interval<Integer>(200, 400, Realms
+                .getInteger()));
 
         Symbol<Integer> sameSymbolInt = new Symbol<Integer>(this.intervalsInt);
         assertTrue("The two symbols should be equals.", sameSymbolInt
@@ -399,11 +346,11 @@ public class SymbolTest {
         // Case with equals symbol using BigInteger.
         this.intervalsBig.clear();
         this.intervalsBig.add(new Interval<BigInteger>(BigInteger.ZERO,
-                BigInteger.TEN, this.bigIntegerAdjacencyRealm));
+                BigInteger.TEN, Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("50"),
-                new BigInteger("100"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("100"), Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("200"),
-                new BigInteger("400"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("400"), Realms.getBigInteger()));
 
         Symbol<BigInteger> sameSymbolBig = new Symbol<BigInteger>(
                 this.intervalsBig);
@@ -440,8 +387,8 @@ public class SymbolTest {
         // Case typical merging using Integer.
         Collection<Symbol<Integer>> symbolCollectionInt = new LinkedList<Symbol<Integer>>();
         symbolCollectionInt.add(this.symbolInt);
-        this.intervalsInt.add(new Interval<Integer>(500, 1000,
-                this.integerAdjacencyRealm));
+        this.intervalsInt.add(new Interval<Integer>(500, 1000, Realms
+                .getInteger()));
         symbolCollectionInt.add(new Symbol<Integer>(this.intervalsInt));
 
         Symbol<Integer> mergeSymbolInt = Symbol.merge(symbolCollectionInt);
@@ -453,7 +400,7 @@ public class SymbolTest {
         Collection<Symbol<BigInteger>> symbolCollectionBig = new LinkedList<Symbol<BigInteger>>();
         symbolCollectionBig.add(this.symbolBig);
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("500"),
-                new BigInteger("1000"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("1000"), Realms.getBigInteger()));
         symbolCollectionBig.add(new Symbol<BigInteger>(this.intervalsBig));
 
         Symbol<BigInteger> mergeSymbolBig = Symbol.merge(symbolCollectionBig);
@@ -480,12 +427,12 @@ public class SymbolTest {
 
         // Test typical min using Integer.
         this.intervalsInt.clear();
-        this.intervalsInt.add(new Interval<Integer>(0, 10,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(30, 50,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(100, 200,
-                this.integerAdjacencyRealm));
+        this.intervalsInt
+                .add(new Interval<Integer>(0, 10, Realms.getInteger()));
+        this.intervalsInt
+                .add(new Interval<Integer>(30, 50, Realms.getInteger()));
+        this.intervalsInt.add(new Interval<Integer>(100, 200, Realms
+                .getInteger()));
         Symbol<Integer> smallerSymbolInt = new Symbol<Integer>(
                 this.intervalsInt);
 
@@ -496,11 +443,11 @@ public class SymbolTest {
         // Test typical min using BigInteger.
         this.intervalsBig.clear();
         this.intervalsBig.add(new Interval<BigInteger>(BigInteger.ZERO,
-                BigInteger.ONE, this.bigIntegerAdjacencyRealm));
+                BigInteger.ONE, Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("10"),
-                new BigInteger("20"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("20"), Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("30"),
-                new BigInteger("40"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("40"), Realms.getBigInteger()));
         Symbol<BigInteger> smallerSymbolBig = new Symbol<BigInteger>(
                 this.intervalsBig);
 
@@ -528,12 +475,12 @@ public class SymbolTest {
 
         // Case typical use of max using Integer.
         this.intervalsInt.clear();
-        this.intervalsInt.add(new Interval<Integer>(100, 200,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(500, 1000,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(2000, 4000,
-                this.integerAdjacencyRealm));
+        this.intervalsInt.add(new Interval<Integer>(100, 200, Realms
+                .getInteger()));
+        this.intervalsInt.add(new Interval<Integer>(500, 1000, Realms
+                .getInteger()));
+        this.intervalsInt.add(new Interval<Integer>(2000, 4000, Realms
+                .getInteger()));
         Symbol<Integer> greaterSymbolInt = new Symbol<Integer>(
                 this.intervalsInt);
 
@@ -544,11 +491,11 @@ public class SymbolTest {
         // Case typical use of max using BigInteger.
         this.intervalsBig.clear();
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("30"),
-                new BigInteger("40"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("40"), Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("120"),
-                new BigInteger("180"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("180"), Realms.getBigInteger()));
         this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("500"),
-                new BigInteger("99999"), this.bigIntegerAdjacencyRealm));
+                new BigInteger("99999"), Realms.getBigInteger()));
         Symbol<BigInteger> greaterSymbolBig = new Symbol<BigInteger>(
                 this.intervalsBig);
 
