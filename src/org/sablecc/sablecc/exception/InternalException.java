@@ -36,7 +36,7 @@ public class InternalException
      * Verification is made for the provided message not to be <code>null</code>.
      * 
      * @param message
-     *            a <code>String</code> being the error message.
+     *            the error message.
      * @throws InternalException
      *             if the message is <code>null</code>.
      */
@@ -56,10 +56,9 @@ public class InternalException
      * and cause not to be <code>null</code>.
      * 
      * @param message
-     *            a <code>String</code> being the error message.
+     *            the error message.
      * @param cause
-     *            a <code>Throwable</code> object being the cause of the
-     *            error.
+     *            the cause of the error.
      * @throws InternalException
      *             if the message or the cause is <code>null</code>.
      */
