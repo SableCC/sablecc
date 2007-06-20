@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.alphabet;
+package org.sablecc.sablecc.exception;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.sablecc.sablecc.exception.InternalException;
 
 public class InternalExceptionTest {
 
