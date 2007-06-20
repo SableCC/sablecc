@@ -17,14 +17,30 @@
 
 package org.sablecc.sablecc.alphabet;
 
+/**
+ * This class represents a pair of symbols.
+ * 
+ * A symbol pair is defined by two distinct symbols.
+ */
 class SymbolPair<T extends Comparable<? super T>> {
 
+    /** The first unmodifiable symbol of the pair */
     private final Symbol<T> symbol1;
 
+    /** The second unmodifiable symbol of the pair */
     private final Symbol<T> symbol2;
 
+    /** Cached hashcode. Is <code>null</code> when not yet computed. */
     private Integer hashCode;
 
+    /**
+     * Constructs a symbol pair with two provided symbols.
+     * 
+     * @param symbol1
+     *            the first symbol of the pair.
+     * @param symbol2
+     *            the second symbol of the pair.
+     */
     SymbolPair(
             Symbol<T> symbol1,
             Symbol<T> symbol2) {
@@ -33,16 +49,36 @@ class SymbolPair<T extends Comparable<? super T>> {
         this.symbol2 = symbol2;
     }
 
+    /**
+     * Returns the first symbol of the pair.
+     * 
+     * @return the first symbol of the pair.
+     */
     public Symbol<T> getSymbol1() {
 
         return this.symbol1;
     }
 
+    /**
+     * Returns the second symbol of the pair.
+     * 
+     * @return the second symbol of the pair.
+     */
     public Symbol<T> getSymbol2() {
 
         return this.symbol2;
     }
 
+    /**
+     * Compares this symbol pair with an object for equality. Returns
+     * <code>true</code> if the object is a symbol pair and if it as the same
+     * two symbols as those of this instance.
+     * 
+     * @param obj
+     *            the object to compare with.
+     * @return <code>true</code> if this symbol pair and the object are equal;
+     *         <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(
             Object obj) {
@@ -70,6 +106,11 @@ class SymbolPair<T extends Comparable<? super T>> {
                         .equals(symbolPair.symbol2));
     }
 
+    /**
+     * Returns a hash code value for this object.
+     * 
+     * @return a hash code for this object.
+     */
     @Override
     public int hashCode() {
 
