@@ -36,63 +36,12 @@ public class IntervalTest {
 
     private Interval<BigInteger> intervalBig;
 
-    private final AdjacencyRealm<Integer> integerAdjacencyRealm = new AdjacencyRealm<Integer>() {
-
-        @Override
-        public boolean isAdjacent(
-                Integer bound1,
-                Integer bound2) {
-
-            return bound1 + 1 == bound2;
-        }
-
-        @Override
-        public Integer next(
-                Integer bound) {
-
-            return bound++;
-        }
-
-        @Override
-        public Integer previous(
-                Integer bound) {
-
-            return bound--;
-        }
-    };
-
-    private final AdjacencyRealm<BigInteger> bigIntegerAdjacencyRealm = new AdjacencyRealm<BigInteger>() {
-
-        @Override
-        public boolean isAdjacent(
-                BigInteger bound1,
-                BigInteger bound2) {
-
-            return bound1.add(BigInteger.ONE).equals(bound2);
-        }
-
-        @Override
-        public BigInteger next(
-                BigInteger bound) {
-
-            return bound.add(BigInteger.ONE);
-        }
-
-        @Override
-        public BigInteger previous(
-                BigInteger bound) {
-
-            return bound.subtract(BigInteger.ONE);
-        }
-
-    };
-
     @Before
     public void setUp()
             throws Exception {
 
-        this.intervalInt = this.integerAdjacencyRealm.createInterval(10, 20);
-        this.intervalBig = this.bigIntegerAdjacencyRealm.createInterval(
+        this.intervalInt = Realms.getInteger().createInterval(10, 20);
+        this.intervalBig = Realms.getBigInteger().createInterval(
                 new BigInteger("100"), new BigInteger("200"));
     }
 
@@ -117,7 +66,7 @@ public class IntervalTest {
         // Case with incorrect bounds with Integer
         try {
             Interval<Integer> wrongBoundInterval = new Interval<Integer>(20,
-                    10, this.integerAdjacencyRealm);
+                    10, Realms.getInteger());
             fail("An InternalException should be thrown.");
         }
         catch (InternalException e) {
@@ -127,8 +76,8 @@ public class IntervalTest {
         // Case with incorrect bounds with BigInteger
         try {
             Interval<BigInteger> wrongBoundIntervalBig = new Interval<BigInteger>(
-                    new BigInteger("9999"), BigInteger.ZERO,
-                    this.bigIntegerAdjacencyRealm);
+                    new BigInteger("9999"), BigInteger.ZERO, Realms
+                            .getBigInteger());
             fail("An InternalException should be thrown.");
         }
         catch (InternalException e) {
@@ -140,16 +89,15 @@ public class IntervalTest {
     public void testIntervalTAdjacencyRealmOfT() {
 
         // With Integer
-        Interval<Integer> oneBoundInterval = new Interval<Integer>(10,
-                this.integerAdjacencyRealm);
+        Interval<Integer> oneBoundInterval = new Interval<Integer>(10, Realms
+                .getInteger());
         assertTrue("The lower and upper bounds aren't and should be the same.",
                 oneBoundInterval.getUpperBound() == oneBoundInterval
                         .getLowerBound());
 
         // With BigInteger
         Interval<BigInteger> oneBoundIntervalBig = new Interval<BigInteger>(
-                new BigInteger(1000, new Random()),
-                this.bigIntegerAdjacencyRealm);
+                new BigInteger(1000, new Random()), Realms.getBigInteger());
         assertTrue("The lower and upper bounds aren't and should be the same.",
                 oneBoundIntervalBig.getUpperBound() == oneBoundIntervalBig
                         .getLowerBound());
@@ -163,20 +111,20 @@ public class IntervalTest {
                 .equals(new String()));
 
         // With Integer
-        Interval<Integer> differentInterval = this.integerAdjacencyRealm
+        Interval<Integer> differentInterval = Realms.getInteger()
                 .createInterval(10, 50);
-        Interval<Integer> sameInterval = this.integerAdjacencyRealm
-                .createInterval(10, 20);
+        Interval<Integer> sameInterval = Realms.getInteger().createInterval(10,
+                20);
         assertFalse("The two intervals should not be equals.", this.intervalInt
                 .equals(differentInterval));
         assertTrue("The two intervals should be equals.", this.intervalInt
                 .equals(sameInterval));
 
         // With BigInteger
-        Interval<BigInteger> differentIntervalBig = this.bigIntegerAdjacencyRealm
-                .createInterval(BigInteger.ONE, new BigInteger(1000,
-                        new Random()));
-        Interval<BigInteger> sameIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> differentIntervalBig = Realms.getBigInteger()
+                .createInterval(BigInteger.ONE,
+                        new BigInteger(1000, new Random()));
+        Interval<BigInteger> sameIntervalBig = Realms.getBigInteger()
                 .createInterval(new BigInteger("100"), new BigInteger("200"));
         assertFalse("The two intervals should not be equals.", this.intervalBig
                 .equals(differentIntervalBig));
@@ -188,14 +136,14 @@ public class IntervalTest {
     public void testHashCode() {
 
         // With Integer
-        Interval<Integer> sameIntervalInt = this.integerAdjacencyRealm
-                .createInterval(10, 20);
+        Interval<Integer> sameIntervalInt = Realms.getInteger().createInterval(
+                10, 20);
         assertEquals(
                 "Two instance of the same symbol should have the same hashcode",
                 this.intervalInt.hashCode(), sameIntervalInt.hashCode());
 
         // With BigInteger
-        Interval<BigInteger> sameIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> sameIntervalBig = Realms.getBigInteger()
                 .createInterval(new BigInteger("100"), new BigInteger("200"));
         assertEquals(
                 "Two instance of the same symbol should have the same hashcode",
@@ -207,10 +155,10 @@ public class IntervalTest {
     public void testCompareTo() {
 
         // With Integer
-        Interval<Integer> lowerInterval = this.integerAdjacencyRealm
-                .createInterval(0, 10);
-        Interval<Integer> greaterInterval = this.integerAdjacencyRealm
-                .createInterval(10, 50);
+        Interval<Integer> lowerInterval = Realms.getInteger().createInterval(0,
+                10);
+        Interval<Integer> greaterInterval = Realms.getInteger().createInterval(
+                10, 50);
 
         assertTrue("intervalInt should be greater than lowerInterval.",
                 this.intervalInt.compareTo(lowerInterval) > 0);
@@ -220,9 +168,10 @@ public class IntervalTest {
                 .compareTo(this.intervalInt) == 0);
 
         // With BigInteger
-        Interval<BigInteger> lowerIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> lowerIntervalBig = Realms.getBigInteger()
                 .createInterval(BigInteger.ZERO, new BigInteger("400"));
-        Interval<BigInteger> greaterIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> greaterIntervalBig = Realms
+                .getBigInteger()
                 .createInterval(new BigInteger("999"), new BigInteger("999999"));
 
         assertTrue("intervalBig should be greater than lowerIntervalBig.",
@@ -237,23 +186,23 @@ public class IntervalTest {
     public void testIsAdjacentTo() {
 
         // Test with Integer
-        Interval<Integer> adjacentInterval = this.integerAdjacencyRealm
+        Interval<Integer> adjacentInterval = Realms.getInteger()
                 .createInterval(21, 40);
         assertTrue("The two intervals should be adjacent.", this.intervalInt
                 .isAdjacentTo(adjacentInterval));
         assertFalse("The two intervals should not be adjacent.",
-                this.intervalInt.isAdjacentTo(this.integerAdjacencyRealm
+                this.intervalInt.isAdjacentTo(Realms.getInteger()
                         .createInterval(200, 400)));
 
         // Implementation of AdjacencyRealm<BigInteger>
 
         // Test with BigInteger
-        Interval<BigInteger> adjacentIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> adjacentIntervalBig = Realms.getBigInteger()
                 .createInterval(new BigInteger("201"), new BigInteger("999"));
         assertTrue("The two intervals should be adjacent.", this.intervalBig
                 .isAdjacentTo(adjacentIntervalBig));
         assertFalse("The two intervals should not be adjacent.",
-                this.intervalBig.isAdjacentTo(this.bigIntegerAdjacencyRealm
+                this.intervalBig.isAdjacentTo(Realms.getBigInteger()
                         .createInterval(BigInteger.ONE)));
 
     }
@@ -262,20 +211,20 @@ public class IntervalTest {
     public void testIntersects() {
 
         // With Integer
-        Interval<Integer> intersectingInterval = this.integerAdjacencyRealm
+        Interval<Integer> intersectingInterval = Realms.getInteger()
                 .createInterval(15, 50);
         assertTrue("The two intervals should intersect.", this.intervalInt
                 .intersects(intersectingInterval));
         assertFalse("They should not intersect.", this.intervalInt
-                .intersects(this.integerAdjacencyRealm.createInterval(200)));
+                .intersects(Realms.getInteger().createInterval(200)));
 
         // With BigInteger
-        Interval<BigInteger> intersectingIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> intersectingIntervalBig = Realms.getBigInteger()
                 .createInterval(new BigInteger("150"));
         assertTrue("The two intervals should intersect.", this.intervalBig
                 .intersects(intersectingIntervalBig));
         assertFalse("They should not intersect.", this.intervalBig
-                .intersects(this.bigIntegerAdjacencyRealm.createInterval(
+                .intersects(Realms.getBigInteger().createInterval(
                         BigInteger.ZERO, BigInteger.TEN)));
     }
 
@@ -283,7 +232,7 @@ public class IntervalTest {
     public void testIntersection() {
 
         // With Integer
-        Interval<Integer> intersectingInterval = this.integerAdjacencyRealm
+        Interval<Integer> intersectingInterval = Realms.getInteger()
                 .createInterval(15, 50);
         Interval<Integer> resultInterval = this.intervalInt
                 .intersection(intersectingInterval);
@@ -293,12 +242,11 @@ public class IntervalTest {
         assertEquals("The upperBound of the intersection should be 20.", 20,
                 resultInterval.getUpperBound());
 
-        assertNull("No intersection expected.",
-                this.intervalInt.intersection(this.integerAdjacencyRealm
-                        .createInterval(40, 60)));
+        assertNull("No intersection expected.", this.intervalInt
+                .intersection(Realms.getInteger().createInterval(40, 60)));
 
         // With BigInteger
-        Interval<BigInteger> intersectingIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> intersectingIntervalBig = Realms.getBigInteger()
                 .createInterval(new BigInteger("150"), new BigInteger("9999"));
         Interval<BigInteger> resultIntervalBig = this.intervalBig
                 .intersection(intersectingIntervalBig);
@@ -309,15 +257,15 @@ public class IntervalTest {
                 "200", resultIntervalBig.getUpperBound().toString());
 
         assertNull("No intersection expected.", this.intervalBig
-                .intersection(this.bigIntegerAdjacencyRealm
-                        .createInterval(new BigInteger(1000, new Random()))));
+                .intersection(Realms.getBigInteger().createInterval(
+                        new BigInteger(1000, new Random()))));
     }
 
     @Test
     public void testMergeWith() {
 
         // Test with Integer
-        Interval<Integer> adjacentInterval = this.integerAdjacencyRealm
+        Interval<Integer> adjacentInterval = Realms.getInteger()
                 .createInterval(21, 40);
         Interval<Integer> resultMerge = this.intervalInt
                 .mergeWith(adjacentInterval);
@@ -330,7 +278,7 @@ public class IntervalTest {
                 adjacentInterval.getUpperBound(), resultMerge.getUpperBound());
 
         try {
-            resultMerge = this.intervalInt.mergeWith(this.integerAdjacencyRealm
+            resultMerge = this.intervalInt.mergeWith(Realms.getInteger()
                     .createInterval(999, 9999));
             fail("An InternalException should be thrown because the two intervals are not adjacent.");
         }
@@ -339,7 +287,7 @@ public class IntervalTest {
         }
 
         // With BigInteger
-        Interval<BigInteger> adjacentIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> adjacentIntervalBig = Realms.getBigInteger()
                 .createInterval(new BigInteger("201"), new BigInteger("999"));
         Interval<BigInteger> resultMergeBig = this.intervalBig
                 .mergeWith(adjacentIntervalBig);
@@ -354,9 +302,8 @@ public class IntervalTest {
                         .getUpperBound());
 
         try {
-            resultMergeBig = this.intervalBig
-                    .mergeWith(this.bigIntegerAdjacencyRealm.createInterval(
-                            BigInteger.ONE, BigInteger.TEN));
+            resultMergeBig = this.intervalBig.mergeWith(Realms.getBigInteger()
+                    .createInterval(BigInteger.ONE, BigInteger.TEN));
             fail("An InternalException should be thrown because the two intervals are not adjacent.");
         }
         catch (InternalException e) {
@@ -369,10 +316,10 @@ public class IntervalTest {
     public void testMin() {
 
         // With Integer
-        Interval<Integer> lowerInterval = this.integerAdjacencyRealm
-                .createInterval(0, 5);
-        Interval<Integer> greaterInterval = this.integerAdjacencyRealm
-                .createInterval(50, 200);
+        Interval<Integer> lowerInterval = Realms.getInteger().createInterval(0,
+                5);
+        Interval<Integer> greaterInterval = Realms.getInteger().createInterval(
+                50, 200);
         Interval<Integer> resultInterval = Interval.min(this.intervalInt,
                 lowerInterval);
 
@@ -384,9 +331,9 @@ public class IntervalTest {
                 .equals(this.intervalInt));
 
         // With BigInteger
-        Interval<BigInteger> lowerIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> lowerIntervalBig = Realms.getBigInteger()
                 .createInterval(BigInteger.ZERO, BigInteger.TEN);
-        Interval<BigInteger> greaterIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> greaterIntervalBig = Realms.getBigInteger()
                 .createInterval(new BigInteger("999"), new BigInteger("99999"));
         Interval<BigInteger> resultIntervalBig = Interval.min(this.intervalBig,
                 lowerIntervalBig);
@@ -403,10 +350,10 @@ public class IntervalTest {
     public void testMax() {
 
         // With Integer
-        Interval<Integer> lowerInterval = this.integerAdjacencyRealm
-                .createInterval(0, 5);
-        Interval<Integer> greaterInterval = this.integerAdjacencyRealm
-                .createInterval(50, 200);
+        Interval<Integer> lowerInterval = Realms.getInteger().createInterval(0,
+                5);
+        Interval<Integer> greaterInterval = Realms.getInteger().createInterval(
+                50, 200);
         Interval<Integer> resultInterval = Interval.max(this.intervalInt,
                 lowerInterval);
 
@@ -418,9 +365,9 @@ public class IntervalTest {
                 .equals(resultInterval));
 
         // With BigInteger
-        Interval<BigInteger> lowerIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> lowerIntervalBig = Realms.getBigInteger()
                 .createInterval(BigInteger.ZERO, BigInteger.TEN);
-        Interval<BigInteger> greaterIntervalBig = this.bigIntegerAdjacencyRealm
+        Interval<BigInteger> greaterIntervalBig = Realms.getBigInteger()
                 .createInterval(new BigInteger("999"), new BigInteger("99999"));
         Interval<BigInteger> resultIntervalBig = Interval.max(this.intervalBig,
                 lowerIntervalBig);
