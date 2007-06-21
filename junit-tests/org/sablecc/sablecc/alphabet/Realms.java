@@ -35,14 +35,14 @@ public class Realms {
         public Integer next(
                 Integer bound) {
 
-            return bound++;
+            return bound + 1;
         }
 
         @Override
         public Integer previous(
                 Integer bound) {
 
-            return bound--;
+            return bound - 1;
         }
     };
 
