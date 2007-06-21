@@ -24,7 +24,8 @@
   <property name="src.dir" location="src" />
   <property name="classes.dir" location="classes" />
   <property name="lib.dir" location="lib" />
-  <property name="tests.dir" location="junit-tests" />
+  <property name="junit-tests.dir" location="junit-tests" />
+  <property name="regression-tests.dir" location="regression-tests" />
   <property name="doc.dir" location="doc" />
   <property name="devel-doc.dir" location="devel-doc" />
 
@@ -68,9 +69,11 @@
 
   <target name="compile-tests"
           depends="jar"
-          description="Compiling JUnit Tests.">
+          description="Compiling JUnit and regression tests.">
 
-    <javac srcdir="${tests.dir}" destdir="${classes.dir}" />
+    <javac srcdir="${junit-tests.dir}" destdir="${classes.dir}" />
+
+    <javac srcdir="${regression-tests.dir}" destdir="${classes.dir}" />
 
   </target>
 
@@ -88,13 +91,14 @@
 
   <target name="tests-execute"
           depends="compile-tests"
-          description="Running JUnit tests.">
+          description="Running JUnit and regression tests.">
 
     <junit failureProperty="test.failure">
       <classpath refid="classpath.test" />
       <formatter type="brief" usefile="false" />
       <batchtest>
         <fileset dir="${classes.dir}" includes="**/*Test.class" />
+        <fileset dir="${classes.dir}" includes="**/*Bug.class" />
       </batchtest>
     </junit>
 
