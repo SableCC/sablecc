@@ -54,7 +54,7 @@ class SymbolPair<T extends Comparable<? super T>> {
      * 
      * @return the first symbol of the pair.
      */
-    public Symbol<T> getSymbol1() {
+    Symbol<T> getSymbol1() {
 
         return this.symbol1;
     }
@@ -64,7 +64,7 @@ class SymbolPair<T extends Comparable<? super T>> {
      * 
      * @return the second symbol of the pair.
      */
-    public Symbol<T> getSymbol2() {
+    Symbol<T> getSymbol2() {
 
         return this.symbol2;
     }
