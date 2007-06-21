@@ -55,15 +55,29 @@ public class AlphabetMergeResult<T extends Comparable<? super T>> {
         return this.newAlphabet;
     }
 
-    public SortedMap<Symbol<T>, SortedSet<Symbol<T>>> getSymbolMap(
-            Alphabet<T> alphabet) {
+    public SortedSet<Symbol<T>> getNewSymbols(
+            Symbol<T> oldSymbol,
+            Alphabet<T> oldAlphabet) {
 
-        if (alphabet == this.oldAlphabet1) {
-            return this.oldAlphabet1SymbolMap;
+        if (oldSymbol == null) {
+            throw new InternalException("oldSymbol may not be null");
         }
 
-        if (alphabet == this.oldAlphabet2) {
-            return this.oldAlphabet2SymbolMap;
+        if (oldAlphabet == null) {
+            throw new InternalException("oldAlphabet may not be null");
+        }
+
+        if (!oldAlphabet.getSymbols().contains(oldSymbol)) {
+            throw new InternalException(
+                    "oldSymbol is not an element of oldAlphabet");
+        }
+
+        if (oldAlphabet == this.oldAlphabet1) {
+            return this.oldAlphabet1SymbolMap.get(oldSymbol);
+        }
+
+        if (oldAlphabet == this.oldAlphabet2) {
+            return this.oldAlphabet2SymbolMap.get(oldSymbol);
         }
 
         throw new InternalException("invalid alphabet");
