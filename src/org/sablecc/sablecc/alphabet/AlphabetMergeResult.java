@@ -1,4 +1,4 @@
-/* This file is part of SableCC (http://sablecc.org/).
+/* This file is part of SableCC ( http://sablecc.org ).
  * 
  * See the NOTICE file distributed with this work for copyright information.
  *
