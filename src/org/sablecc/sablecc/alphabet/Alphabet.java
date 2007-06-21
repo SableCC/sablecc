@@ -30,7 +30,9 @@ import java.util.TreeSet;
 
 import org.sablecc.sablecc.exception.InternalException;
 
-/*
+/**
+ * This class represents an alphabet.
+ * 
  * An alphabet is a collection of symbols. Two symbols of an alphabet may not
  * represent overlapping intervals.
  */
@@ -38,14 +40,31 @@ import org.sablecc.sablecc.exception.InternalException;
 public class Alphabet<T extends Comparable<? super T>>
         implements Comparable<Alphabet<T>> {
 
+    /** The symbols forming the alphabet. */
     private SortedSet<Symbol<T>> symbols;
 
+    /** A map of the intervals and symbols of the alphabet. */
     private SortedMap<Interval<T>, Symbol<T>> intervalMap;
 
+    /** Cached hashcode. Is <code>null</code> when not yet computed. */
     private Integer hashCode;
 
+    /**
+     * Cached string representation. Is <code>null</code> when not yet
+     * computed.
+     */
     private String toString;
 
+    /**
+     * Constructs an alphabet with the provided collection of symbols.
+     * Verification is made for the collection of symbols not to be
+     * <code>null</code>.
+     * 
+     * @param symbols
+     *            a collection of symbols.
+     * @throws InternalException
+     *             if the collection of symbols is <code>null</code>.
+     */
     public Alphabet(
             Collection<Symbol<T>> symbols) {
 
@@ -56,6 +75,15 @@ public class Alphabet<T extends Comparable<? super T>>
         init(symbols);
     }
 
+    /**
+     * Constructs an alphabet with a provided symbol. Verification is made for
+     * the symbol not to be <code>null</code>.
+     * 
+     * @param symbol
+     *            a symbol.
+     * @throws InternalException
+     *             if the symbol is <code>null</code>.
+     */
     public Alphabet(
             Symbol<T> symbol) {
 
@@ -69,6 +97,15 @@ public class Alphabet<T extends Comparable<? super T>>
         init(symbols);
     }
 
+    /**
+     * Constructs an alphabet with a provided interval. Verification is made for
+     * the interval not to be <code>null</code>.
+     * 
+     * @param interval
+     *            a interval.
+     * @throws InternalException
+     *             if the interval is <code>null</code>.
+     */
     public Alphabet(
             Interval<T> interval) {
 
@@ -82,11 +119,28 @@ public class Alphabet<T extends Comparable<? super T>>
         init(symbols);
     }
 
+    /**
+     * Constructs an empty alphabet.
+     */
     public Alphabet() {
 
         init(new LinkedList<Symbol<T>>());
     }
 
+    /**
+     * Instantiates an alphabet with a provided collection of symbols. This
+     * method is called by the different constructors to affect the collection
+     * of symbols to the <code>symbols</code> instance variable. It also
+     * generates an interval map and affect it to the <code>intervalMap</code>
+     * instance variable. Verifications are made for distinct symbols not have
+     * overlapping intervals or for symbols not to be <code>null</null>.
+     * 
+     * @param symbols
+     *            a collection of symbols.
+     * @throws InternalException 
+     *            if distinct symbols have overlapping intervals or if a symbol 
+     *            is <code>null</code>.
+     */
     private void init(
             Collection<Symbol<T>> symbols) {
 
@@ -123,16 +177,36 @@ public class Alphabet<T extends Comparable<? super T>>
         }
     }
 
+    /**
+     * Returns a sorted sets containing the symbols of this alphabet.
+     * 
+     * @return a sorted set of symbols.
+     */
     public SortedSet<Symbol<T>> getSymbols() {
 
         return this.symbols;
     }
 
+    /**
+     * Returns a sorted map of the intervals and the symbols of this alphabet.
+     * 
+     * @return a sorted map of intervals and symbols.
+     */
     public SortedMap<Interval<T>, Symbol<T>> getIntervalMap() {
 
         return this.intervalMap;
     }
 
+    /**
+     * Compares this alphabet with an object for equality. Returns
+     * <code>true</code> if the object is a alphabet and if it as the same
+     * number of equal symbols as those of this instance.
+     * 
+     * @param obj
+     *            the object to compare with.
+     * @return <code>true</code> if this alphabet and the object are equal;
+     *         <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(
             Object obj) {
@@ -161,6 +235,11 @@ public class Alphabet<T extends Comparable<? super T>>
         return true;
     }
 
+    /**
+     * Returns a hash code value for this object.
+     * 
+     * @return a hash code for this object.
+     */
     @Override
     public int hashCode() {
 
@@ -178,6 +257,13 @@ public class Alphabet<T extends Comparable<? super T>>
         return this.hashCode;
     }
 
+    /**
+     * Returns a <code>String</code> representation for this alphabet. The
+     * representation takes the following form:
+     * <code>Alphabet:{ symbol1,symbol2,... }</code>
+     * 
+     * @return a <code>String</code> representing this alphabet.
+     */
     @Override
     public String toString() {
 
@@ -206,6 +292,19 @@ public class Alphabet<T extends Comparable<? super T>>
         return this.toString;
     }
 
+    /**
+     * Compares this alphabet to another one. This alphabet is smaller (or
+     * bigger) if one of its symbols is smaller (or bigger) than the equivalent
+     * symbol of the other alphabet. If there's no differences between symbols
+     * when it went through all the symbols of one or both alphabets, it returns
+     * the difference of their sizes.
+     * 
+     * @param alphabet
+     *            the alphabet to compare with.
+     * @return an <code>int</code> value: 0 if the two alphabets are equals, a
+     *         negative value if this alphabet is smaller, and a positive value
+     *         if it is bigger.
+     */
     public int compareTo(
             Alphabet<T> alphabet) {
 
@@ -231,6 +330,22 @@ public class Alphabet<T extends Comparable<? super T>>
         return result;
     }
 
+    /**
+     * Merges this alphabet with the provided one. Verification is made for the
+     * alphabet not to be <code>null</code>.
+     * 
+     * Merging two alphabets A and B consists of creating a new alphabet C
+     * containing a minimal number of symbols, with the following property: For
+     * every symbol X element of (A union B), there exists a corresponding
+     * subset S of C, such that: merge(S) == X.
+     * 
+     * @param alphabet
+     *            the alphabet to merge with this one.
+     * @return a new object of type <code>AlphabetMergeResult</code>, the
+     *         result the merge.
+     * @throws InternalException
+     *             if the provided alphabet is <code>null</code>.
+     */
     public AlphabetMergeResult<T> mergeWith(
             Alphabet<T> alphabet) {
 
@@ -319,7 +434,7 @@ public class Alphabet<T extends Comparable<? super T>>
      * Computes a map that associate each symbol pair with a set of intervals
      * which are common to both symbols in a pair. A null member, in a symbol
      * pair, represents a hypothetical symbol which includes all intervals that
-     * are not covereved by any symbol of its alphabet.
+     * are not covered by any symbol of its alphabet.
      * 
      * @param alphabet1
      *            the first alphabet.
@@ -482,6 +597,16 @@ public class Alphabet<T extends Comparable<? super T>>
         return symbolPairIntervalSetMap;
     }
 
+    /**
+     * Compares two alphabets and returns the lowest one (minimum).
+     * 
+     * @param alphabet1
+     *            a alphabet to compare.
+     * @param alphabet2
+     *            a alphabet to compare.
+     * @return the lowest of the two alphabets, or <code>alphabet1</code> in
+     *         case of equality.
+     */
     public static <T extends Comparable<? super T>> Alphabet<T> min(
             Alphabet<T> alphabet1,
             Alphabet<T> alphabet2) {
@@ -493,6 +618,16 @@ public class Alphabet<T extends Comparable<? super T>>
         return alphabet2;
     }
 
+    /**
+     * Compares two alphabets and returns the highest one (maximum).
+     * 
+     * @param alphabet1
+     *            a alphabet to compare.
+     * @param alphabet2
+     *            a alphabet to compare.
+     * @return the highest of the two alphabets, or <code>alphabet1</code> in
+     *         case of equality.
+     */
     public static <T extends Comparable<? super T>> Alphabet<T> max(
             Alphabet<T> alphabet1,
             Alphabet<T> alphabet2) {
