@@ -15,46 +15,41 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.alphabet;
+package ticket20;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class BugMerge {
+import org.junit.Test;
+import org.sablecc.sablecc.alphabet.Alphabet;
+import org.sablecc.sablecc.alphabet.Interval;
+import org.sablecc.sablecc.alphabet.Realms;
+import org.sablecc.sablecc.alphabet.Symbol;
 
-    @SuppressWarnings("unused")
-    public static void main(
-            String[] args) {
+public class MergeBug {
+
+    @Test
+    public void bug() {
 
         Collection<Interval<Integer>> intervalsInt = new LinkedList<Interval<Integer>>();
-        Symbol<Integer> firstSymbol;
 
-        Symbol<Integer> secondSymbol;
-
-        Alphabet<Integer> completeAlphabet;
         Alphabet<Integer> firstPartAlphabet;
         Alphabet<Integer> secondPartAlphabet;
-        AlphabetMergeResult<Integer> mergeResult;
 
-        intervalsInt.add(new Interval<Integer>(0, 5, Realms.getInteger()));
-        intervalsInt.add(new Interval<Integer>(10, 15, Realms.getInteger()));
-        intervalsInt.add(new Interval<Integer>(20, 25, Realms.getInteger()));
+        intervalsInt.add(Realms.getInteger().createInterval(0, 5));
+        intervalsInt.add(Realms.getInteger().createInterval(10, 15));
+        intervalsInt.add(Realms.getInteger().createInterval(20, 25));
         firstPartAlphabet = new Alphabet<Integer>(new Symbol<Integer>(
                 intervalsInt));
 
         intervalsInt.clear();
-        intervalsInt.add(new Interval<Integer>(30, 35, Realms.getInteger()));
-        intervalsInt.add(new Interval<Integer>(40, 45, Realms.getInteger()));
-        intervalsInt.add(new Interval<Integer>(50, 55, Realms.getInteger()));
+        intervalsInt.add(Realms.getInteger().createInterval(30, 35));
+        intervalsInt.add(Realms.getInteger().createInterval(40, 45));
+        intervalsInt.add(Realms.getInteger().createInterval(50, 55));
         secondPartAlphabet = new Alphabet<Integer>(new Symbol<Integer>(
                 intervalsInt));
 
-        System.out.println(firstPartAlphabet + "\n" + secondPartAlphabet);
-
         // Line that cause the bug.
-        mergeResult = firstPartAlphabet.mergeWith(secondPartAlphabet);
-        System.out.print(mergeResult);
-
+        firstPartAlphabet.mergeWith(secondPartAlphabet);
     }
-
 }
