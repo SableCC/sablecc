@@ -22,18 +22,43 @@ import java.util.SortedSet;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * The class represents the result of a merge of alphabets.
+ * 
+ * An alphabet merge result is represented by the new merged alphabet, the two
+ * old alphabets and their symbol maps.
+ */
 public final class AlphabetMergeResult<T extends Comparable<? super T>> {
 
+    /** The new merged alphabet. */
     private final Alphabet<T> newAlphabet;
 
+    /** The first old alphabet to merge. */
     private final Alphabet<T> oldAlphabet1;
 
+    /** The symbol map for first alphabet. */
     private final SortedMap<Symbol<T>, SortedSet<Symbol<T>>> oldAlphabet1SymbolMap;
 
+    /** The second old alphabet to merge. */
     private final Alphabet<T> oldAlphabet2;
 
+    /** The symbol map for second alphabet. */
     private final SortedMap<Symbol<T>, SortedSet<Symbol<T>>> oldAlphabet2SymbolMap;
 
+    /**
+     * Constructs the result of an alphabet merge.
+     * 
+     * @param newAlphabet
+     *            the new merged alphabet.
+     * @param oldAlphabet1
+     *            the first old alphabet to merge.
+     * @param oldAlphabet1SymbolMap
+     *            the symbol map for first alphabet.
+     * @param oldAlphabet2
+     *            the second old alphabet to merge.
+     * @param oldAlphabet2SymbolMap
+     *            the symbol map for second alphabet.
+     */
     AlphabetMergeResult(
             Alphabet<T> newAlphabet,
             Alphabet<T> oldAlphabet1,
@@ -50,11 +75,30 @@ public final class AlphabetMergeResult<T extends Comparable<? super T>> {
         this.oldAlphabet2SymbolMap = oldAlphabet2SymbolMap;
     }
 
+    /**
+     * Returns the new alphabet created from the merge.
+     * 
+     * @return the new merged alphabet.
+     */
     public Alphabet<T> getNewAlphabet() {
 
         return this.newAlphabet;
     }
 
+    /**
+     * Returns a set of the new symbols representing one old symbol after a
+     * merge. Verifications are made for the provided alphabet and symbol not to
+     * be <code>null</code> and for the symbol to be an element of the
+     * alphabet.
+     * 
+     * @param oldSymbol
+     * @param oldAlphabet
+     * @return a set of the new symbols.
+     * @throws InternalException
+     *             if an old symbol or alphabet is <code>null</code>, if the
+     *             provided symbol is not an element of the alphabet or if the
+     *             alphabet is not valid.
+     */
     public SortedSet<Symbol<T>> getNewSymbols(
             Symbol<T> oldSymbol,
             Alphabet<T> oldAlphabet) {
