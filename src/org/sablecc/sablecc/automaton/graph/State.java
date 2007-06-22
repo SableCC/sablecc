@@ -15,25 +15,25 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.automaton;
+package org.sablecc.sablecc.automaton.graph;
 
 import java.util.Collections;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.sablecc.sablecc.exception.InternalException;
 
-abstract class State<T extends Comparable<? super T>> {
+public final class State<T extends Comparable<? super T>> {
 
-    private String name;
+    private final String name;
 
-    private SortedSet<Transition<T>> forwardTransitions;
+    private Set<Transition<T>> forwardTransitions;
 
-    private SortedSet<Transition<T>> backwardTransitions;
+    private Set<Transition<T>> backwardTransitions;
 
     private boolean isStable;
 
-    State(
+    public State(
             String name) {
 
         if (name == null) {
@@ -41,12 +41,12 @@ abstract class State<T extends Comparable<? super T>> {
         }
 
         this.name = name;
-        this.forwardTransitions = new TreeSet<Transition<T>>();
-        this.backwardTransitions = new TreeSet<Transition<T>>();
+        this.forwardTransitions = new LinkedHashSet<Transition<T>>();
+        this.backwardTransitions = new LinkedHashSet<Transition<T>>();
         this.isStable = false;
     }
 
-    SortedSet<Transition<T>> getForwardTransitions() {
+    public Set<Transition<T>> getForwardTransitions() {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
@@ -55,18 +55,13 @@ abstract class State<T extends Comparable<? super T>> {
         return this.forwardTransitions;
     }
 
-    SortedSet<Transition<T>> getBackwardTransitions() {
+    public Set<Transition<T>> getBackwardTransitions() {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
         }
 
         return this.backwardTransitions;
-    }
-
-    boolean isStable() {
-
-        return this.isStable;
     }
 
     @Override
@@ -113,12 +108,12 @@ abstract class State<T extends Comparable<? super T>> {
         this.backwardTransitions.add(transition);
     }
 
-    void stabilize() {
+    public void stabilize() {
 
         this.forwardTransitions = Collections
-                .unmodifiableSortedSet(this.forwardTransitions);
+                .unmodifiableSet(this.forwardTransitions);
         this.backwardTransitions = Collections
-                .unmodifiableSortedSet(this.backwardTransitions);
+                .unmodifiableSet(this.backwardTransitions);
         this.isStable = true;
     }
 
