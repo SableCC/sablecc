@@ -32,7 +32,7 @@ import org.sablecc.sablecc.exception.InternalException;
  * A symbol is defined from one or more intervals. This class provides various
  * methods to maniplutate symbols.
  */
-public class Symbol<T extends Comparable<? super T>>
+public final class Symbol<T extends Comparable<? super T>>
         implements Comparable<Symbol<T>> {
 
     /** Unmodifiable, sorted set of intervals represented by this symbol. */

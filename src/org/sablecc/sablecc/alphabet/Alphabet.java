@@ -37,7 +37,7 @@ import org.sablecc.sablecc.exception.InternalException;
  * represent overlapping intervals.
  */
 
-public class Alphabet<T extends Comparable<? super T>>
+public final class Alphabet<T extends Comparable<? super T>>
         implements Comparable<Alphabet<T>> {
 
     /** The symbols forming the alphabet. */

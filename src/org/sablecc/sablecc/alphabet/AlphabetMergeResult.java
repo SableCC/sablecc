@@ -22,7 +22,7 @@ import java.util.SortedSet;
 
 import org.sablecc.sablecc.exception.InternalException;
 
-public class AlphabetMergeResult<T extends Comparable<? super T>> {
+public final class AlphabetMergeResult<T extends Comparable<? super T>> {
 
     private final Alphabet<T> newAlphabet;
 

@@ -25,7 +25,7 @@ import org.sablecc.sablecc.exception.InternalException;
  * An interval is defined by two bounds (upper and lower). This class provides
  * various methods to maniplutate intervals.
  */
-public class Interval<T extends Comparable<? super T>>
+public final class Interval<T extends Comparable<? super T>>
         implements Comparable<Interval<T>> {
 
     /** The lower bound. */
