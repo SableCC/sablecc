@@ -21,13 +21,16 @@
 
   <!-- Global Properties -->
   <property name="package" value="SableCC" />
-  <property name="src.dir" location="src" />
-  <property name="classes.dir" location="classes" />
-  <property name="lib.dir" location="lib" />
-  <property name="junit-tests.dir" location="junit-tests" />
-  <property name="regression-tests.dir" location="regression-tests" />
-  <property name="doc.dir" location="doc" />
-  <property name="devel-doc.dir" location="devel-doc" />
+  <property name="src.dir" value="src" />
+  <property name="classes.dir" value="classes" />
+  <property name="lib.dir" value="lib" />
+  <property name="junit-tests.dir" value="junit-tests" />
+  <property name="regression-tests.dir" value="regression-tests" />
+  <property name="doc.dir" value="doc" />
+  <property name="devel-doc.dir" value="devel-doc" />
+  <property name="sablecc.version" value="4-alpha.1" />
+  <property name="dist.dir" value="sablecc-${sablecc.version}" />
+  <property name="dist.file" value="sablecc-${sablecc.version}.zip" />
 
   <!-- Paths -->
   <path id="classpath.base" />
@@ -82,7 +85,8 @@
 
     <mkdir dir="${lib.dir}" />
 
-    <jar destfile="${lib.dir}/SableCC-4.jar" basedir="${classes.dir}" />
+    <jar destfile="${lib.dir}/sable-${sablecc.version}.jar"
+         basedir="${classes.dir}" />
 
   </target>
 
@@ -142,6 +146,33 @@
     <delete dir="${lib.dir}" />
     <delete dir="${doc.dir}" />
     <delete dir="${devel-doc.dir}" />
+    <delete file="${dist.file}" />
+  </target>
+
+  <!-- Distribution Stage -->
+  <target name="dist"
+          depends="all"
+          description="Creating distribution zip file.">
+
+    <mkdir dir="${dist.dir}" />
+
+    <copy file="README" todir="${dist.dir}" />
+    <copy file="LICENSE" todir="${dist.dir}" />
+    <copy file="NOTICE" todir="${dist.dir}" />
+
+    <copy todir="${dist.dir}">
+      <fileset dir="." includes="${lib.dir}/**" />
+      <fileset dir="." includes="${doc.dir}/**" />
+      <fileset dir="." includes="${src.dir}/**" />
+      <fileset dir="." includes="ant-files/**" />
+      <fileset dir="." includes="${junit-tests.dir}/**" />
+      <fileset dir="." includes="${regression-tests.dir}/**" />
+    </copy>
+
+    <zip destfile="${dist.file}" basedir="." includes="${dist.dir}/**" />
+
+    <delete dir="${dist.dir}" />
+
   </target>
 
 </project>

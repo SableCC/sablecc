@@ -1,0 +1,71 @@
+----------------------------------------------------------------------
+WARNING: This is an early ("alpha") version of SableCC 4. It is
+targeted to developers that want to contribute to the development of
+SableCC4. IT IS NOT TARGETED TO NORMAL SABLECC USERS. If you are a
+normal user, please visit:
+
+    http://sablecc.org/wiki/DownloadPage
+----------------------------------------------------------------------
+
+Welcome to SableCC 4!
+=====================
+
+This version is a work in progress release. We hope that it will
+encourage you to join the team and help develop SableCC 4. You can
+participate in various ways: write new code, test existing code,
+suggest improvements, etc.
+
+SableCC 4 does not yet generate any code. However, you can use
+currently available code as a library for your own programs.  You will
+find the library jar file in the lib/ directory, and its API
+documentation in the doc/ directory.
+
+Package Content
+===============
+
+Here is a description of the content of this package:
+
+* README: This file.
+* LICENSE and NOTICE: License terms.
+
+* lib/: Compiled library jar files.
+* doc/: Contains the API documentation.
+
+* src/: Source code.
+* ant-files/: Build files.
+* junit-tests/: JUnit tests.
+* regression-tests/: Regression tests.
+
+About SableCC 4
+===============
+
+SableCC is a parser generator which generates fully featured
+object-oriented frameworks for building compilers, interpreters and
+other text parsers. In particular, generated frameworks include
+intuitive strictly-typed abstract syntax trees and tree
+walkers. SableCC also keeps a clean separation between
+machine-generated code and user-written code which leads to a shorter
+development cycle.
+
+SableCC 4 is a complete rewrite of SableCC to bring many new features:
+
+* Improved lexer engine (additional operators, semantic selectors, and
+  more).
+* Improved parser engine (linear approximate LR(K) parsing, semantic
+  selectors, and more).
+* Improved conflict reporting (enabling LR grammar debugging).
+* Flexible code generation (to enable back-ends for various
+  languages).
+* Improved syntax for CST->AST transformations.
+* And more.
+
+What's New in SableCC 4-alpha.1
+===============================
+
+This alpha version introduces some initial code providing the
+following functionality:
+
+* Implement the alphabet package to efficiently manage alphabets of
+  symbols made of sets of intervals.
+* Provide automated build using Ant.
+* Provide automated testing using JUnit.
