@@ -34,6 +34,12 @@ final class SymbolPair<T extends Comparable<? super T>> {
     private Integer hashCode;
 
     /**
+     * Cached string representation. Is <code>null</code> when not yet
+     * computed.
+     */
+    private String toString;
+
+    /**
      * Constructs a symbol pair with two provided symbols.
      * 
      * @param symbol1
@@ -130,5 +136,21 @@ final class SymbolPair<T extends Comparable<? super T>> {
         }
 
         return this.hashCode;
+    }
+
+    /**
+     * Returns a <code>String</code> representation for this symbol pair. The
+     * representation takes the following form: <code>(symbol1,symbol2)</code>
+     * 
+     * @return a <code>String</code> representing this symbol.
+     */
+    @Override
+    public String toString() {
+
+        if (this.toString == null) {
+            this.toString = "(" + this.symbol1 + "," + this.symbol2 + ")";
+        }
+
+        return this.toString;
     }
 }
