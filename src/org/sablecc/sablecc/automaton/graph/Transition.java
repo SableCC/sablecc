@@ -15,24 +15,24 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.automaton;
+package org.sablecc.sablecc.automaton.graph;
 
 import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 
-class Transition<T extends Comparable<? super T>> {
+public final class Transition<T extends Comparable<? super T>> {
 
-    private State<T> source;
+    private final State<T> source;
 
-    private State<T> destination;
+    private final State<T> destination;
 
-    private Symbol<T> symbol;
+    private final Symbol<T> symbol;
 
     private Integer hashCode;
 
     private String toString;
 
-    Transition(
+    public Transition(
             State<T> source,
             State<T> destination,
             Symbol<T> symbol) {
@@ -52,17 +52,17 @@ class Transition<T extends Comparable<? super T>> {
         destination.addBackwardTransition(this);
     }
 
-    State<T> getDestination() {
+    public State<T> getDestination() {
 
         return this.destination;
     }
 
-    State<T> getSource() {
+    public State<T> getSource() {
 
         return this.source;
     }
 
-    Symbol<T> getSymbol() {
+    public Symbol<T> getSymbol() {
 
         return this.symbol;
     }
@@ -118,7 +118,7 @@ class Transition<T extends Comparable<? super T>> {
     public String toString() {
 
         if (this.toString == null) {
-            this.toString = this.source + "-(" + this.symbol + ")->"
+            this.toString = this.source + "->(" + this.symbol + ")->"
                     + this.destination;
         }
 
