@@ -22,7 +22,7 @@ package org.sablecc.sablecc.alphabet;
  * 
  * A symbol pair is defined by two distinct symbols.
  */
-class SymbolPair<T extends Comparable<? super T>> {
+final class SymbolPair<T extends Comparable<? super T>> {
 
     /** The first unmodifiable symbol of the pair */
     private final Symbol<T> symbol1;
