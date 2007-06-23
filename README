@@ -59,13 +59,7 @@ SableCC 4 is a complete rewrite of SableCC to bring many new features:
 * Improved syntax for CST->AST transformations.
 * And more.
 
-What's New in SableCC 4-alpha.1
+What's New in SableCC [version]
 ===============================
 
-This alpha version introduces some initial code providing the
-following functionality:
-
-* Implement the alphabet package to efficiently manage alphabets of
-  symbols made of sets of intervals.
-* Provide automated build using Ant.
-* Provide automated testing using JUnit.
+[Milestone text]
