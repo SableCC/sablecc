@@ -89,8 +89,8 @@ public final class Transition<T extends Comparable<? super T>> {
             return false;
         }
 
-        if (this.symbol == null && transition.symbol != null) {
-            return false;
+        if (this.symbol == null) {
+            return transition.symbol == null;
         }
 
         return this.symbol.equals(transition.symbol);
