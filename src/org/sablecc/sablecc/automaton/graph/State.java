@@ -46,6 +46,11 @@ public final class State<T extends Comparable<? super T>> {
         this.isStable = false;
     }
 
+    public String getName() {
+
+        return this.name;
+    }
+
     public Set<Transition<T>> getForwardTransitions() {
 
         if (!this.isStable) {
