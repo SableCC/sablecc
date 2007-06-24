@@ -118,7 +118,8 @@ public final class Transition<T extends Comparable<? super T>> {
     public String toString() {
 
         if (this.toString == null) {
-            this.toString = this.source + "->(" + this.symbol + ")->"
+            this.toString = this.source + "->("
+                    + (this.symbol == null ? "epsilon" : this.symbol) + ")->"
                     + this.destination;
         }
 
