@@ -66,6 +66,38 @@ public final class AlphabetMergeResult<T extends Comparable<? super T>> {
             Alphabet<T> oldAlphabet2,
             SortedMap<Symbol<T>, SortedSet<Symbol<T>>> oldAlphabet2SymbolMap) {
 
+        if (newAlphabet == null) {
+            throw new InternalException("newAlphabet may not be null");
+        }
+
+        if (oldAlphabet1 == null) {
+            throw new InternalException("oldAlphabet1 may not be null");
+        }
+
+        if (oldAlphabet1SymbolMap == null) {
+            throw new InternalException("oldAlphabet1SymbolMap may not be null");
+        }
+
+        for (Symbol<T> oldSymbol : oldAlphabet1.getSymbols()) {
+            if (oldAlphabet1SymbolMap.get(oldSymbol) == null) {
+                throw new InternalException("oldAlphabet1SymbolMap is invalid");
+            }
+        }
+
+        if (oldAlphabet2 == null) {
+            throw new InternalException("oldAlphabet2 may not be null");
+        }
+
+        if (oldAlphabet2SymbolMap == null) {
+            throw new InternalException("oldAlphabet2SymbolMap may not be null");
+        }
+
+        for (Symbol<T> oldSymbol : oldAlphabet2.getSymbols()) {
+            if (oldAlphabet2SymbolMap.get(oldSymbol) == null) {
+                throw new InternalException("oldAlphabet2SymbolMap is invalid");
+            }
+        }
+
         this.newAlphabet = newAlphabet;
 
         this.oldAlphabet1 = oldAlphabet1;

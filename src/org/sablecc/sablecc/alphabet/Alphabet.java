@@ -611,6 +611,14 @@ public final class Alphabet<T extends Comparable<? super T>>
             Alphabet<T> alphabet1,
             Alphabet<T> alphabet2) {
 
+        if (alphabet1 == null) {
+            throw new InternalException("alphabet1 may not be null");
+        }
+
+        if (alphabet2 == null) {
+            throw new InternalException("alphabet2 may not be null");
+        }
+
         if (alphabet1.compareTo(alphabet2) <= 0) {
             return alphabet1;
         }
@@ -631,6 +639,14 @@ public final class Alphabet<T extends Comparable<? super T>>
     public static <T extends Comparable<? super T>> Alphabet<T> max(
             Alphabet<T> alphabet1,
             Alphabet<T> alphabet2) {
+
+        if (alphabet1 == null) {
+            throw new InternalException("alphabet1 may not be null");
+        }
+
+        if (alphabet2 == null) {
+            throw new InternalException("alphabet2 may not be null");
+        }
 
         if (alphabet1.compareTo(alphabet2) >= 0) {
             return alphabet1;

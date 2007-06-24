@@ -146,6 +146,14 @@ public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
             T lowerBound,
             T upperBound) {
 
+        if (lowerBound == null) {
+            throw new InternalException("lowerBound may not be null");
+        }
+
+        if (upperBound == null) {
+            throw new InternalException("upperBound may not be null");
+        }
+
         return new Interval<T>(lowerBound, upperBound, this);
     }
 
@@ -159,6 +167,10 @@ public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
      */
     public Interval<T> createInterval(
             T bound) {
+
+        if (bound == null) {
+            throw new InternalException("bound may not be null");
+        }
 
         return new Interval<T>(bound, this);
 
