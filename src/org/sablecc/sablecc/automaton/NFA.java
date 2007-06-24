@@ -113,7 +113,7 @@ public final class NFA<T extends Comparable<? super T>> {
     public Alphabet<T> getAlphabet() {
 
         if (!this.isStable) {
-            throw new InternalException("the NFA is not stable yet");
+            throw new InternalException("this NFA is not stable yet");
         }
 
         return this.alphabet;
@@ -122,7 +122,7 @@ public final class NFA<T extends Comparable<? super T>> {
     public Set<State<T>> getStates() {
 
         if (!this.isStable) {
-            throw new InternalException("the NFA is not stable yet");
+            throw new InternalException("this NFA is not stable yet");
         }
 
         return this.states;
@@ -131,7 +131,7 @@ public final class NFA<T extends Comparable<? super T>> {
     public Set<Transition<T>> getTransitions() {
 
         if (!this.isStable) {
-            throw new InternalException("the NFA is not stable yet");
+            throw new InternalException("this NFA is not stable yet");
         }
 
         return this.transitions;
@@ -140,7 +140,7 @@ public final class NFA<T extends Comparable<? super T>> {
     public State<T> getStartState() {
 
         if (!this.isStable) {
-            throw new InternalException("the NFA is not stable yet");
+            throw new InternalException("this NFA is not stable yet");
         }
 
         return this.startState;
@@ -149,7 +149,7 @@ public final class NFA<T extends Comparable<? super T>> {
     public State<T> getAcceptState() {
 
         if (!this.isStable) {
-            throw new InternalException("the NFA is not stable yet");
+            throw new InternalException("this NFA is not stable yet");
         }
 
         return this.acceptState;
@@ -159,8 +159,9 @@ public final class NFA<T extends Comparable<? super T>> {
     public String toString() {
 
         if (this.toString == null) {
+
             if (!this.isStable) {
-                throw new InternalException("the NFA is not stable yet");
+                throw new InternalException("this NFA is not stable yet");
             }
 
             StringBuilder sb = new StringBuilder();
@@ -233,7 +234,7 @@ public final class NFA<T extends Comparable<? super T>> {
         }
 
         if (!this.isStable) {
-            throw new InternalException("this instance is not stable yet");
+            throw new InternalException("this NFA is not stable yet");
         }
 
         if (!nfa.isStable) {
@@ -267,7 +268,7 @@ public final class NFA<T extends Comparable<? super T>> {
         }
 
         if (!this.isStable) {
-            throw new InternalException("this instance is not stable yet");
+            throw new InternalException("this NFA is not stable yet");
         }
 
         if (!nfa.isStable) {
@@ -295,6 +296,10 @@ public final class NFA<T extends Comparable<? super T>> {
     }
 
     public NFA<T> zeroOrMore() {
+
+        if (!this.isStable) {
+            throw new InternalException("this NFA is not stable yet");
+        }
 
         NFA<T> newNfa = new NFA<T>(this.alphabet);
 
@@ -326,6 +331,10 @@ public final class NFA<T extends Comparable<? super T>> {
 
     public NFA<T> zeroOrOne() {
 
+        if (!this.isStable) {
+            throw new InternalException("this NFA is not stable yet");
+        }
+
         NFA<T> newNfa = new NFA<T>(this.alphabet);
 
         // add old states and transitions to new NFA
@@ -352,6 +361,10 @@ public final class NFA<T extends Comparable<? super T>> {
     }
 
     public NFA<T> oneOrMore() {
+
+        if (!this.isStable) {
+            throw new InternalException("this NFA is not stable yet");
+        }
 
         NFA<T> newNfa = new NFA<T>(this.alphabet);
 
@@ -385,7 +398,7 @@ public final class NFA<T extends Comparable<? super T>> {
         }
 
         if (!this.isStable) {
-            throw new InternalException("this instance is not stable yet");
+            throw new InternalException("this NFA is not stable yet");
         }
 
         if (!nfa.isStable) {
