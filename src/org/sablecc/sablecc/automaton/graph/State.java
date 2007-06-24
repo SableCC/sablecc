@@ -110,6 +110,10 @@ public final class State<T extends Comparable<? super T>> {
 
     public void stabilize() {
 
+        if (this.isStable) {
+            throw new InternalException("state is already stable");
+        }
+
         this.forwardTransitions = Collections
                 .unmodifiableSet(this.forwardTransitions);
         this.backwardTransitions = Collections
