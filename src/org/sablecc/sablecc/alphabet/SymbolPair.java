@@ -18,16 +18,15 @@
 package org.sablecc.sablecc.alphabet;
 
 /**
- * This class represents a pair of symbols.
- * 
- * A symbol pair is defined by two distinct symbols.
+ * A symbol pair is a pair <code>(x,y)</code> where each of <code>x</code>
+ * and <code>y</code> is a symbol or <code>null</code>.
  */
 final class SymbolPair<T extends Comparable<? super T>> {
 
-    /** The first unmodifiable symbol of the pair */
+    /** The first symbol of the pair, possibly <code>null</code>. */
     private final Symbol<T> symbol1;
 
-    /** The second unmodifiable symbol of the pair */
+    /** The second symbol of the pair, possibly <code>null</code>. */
     private final Symbol<T> symbol2;
 
     /** Cached hashcode. Is <code>null</code> when not yet computed. */
@@ -76,9 +75,8 @@ final class SymbolPair<T extends Comparable<? super T>> {
     }
 
     /**
-     * Compares this symbol pair with an object for equality. Returns
-     * <code>true</code> if the object is a symbol pair and if it as the same
-     * two symbols as those of this instance.
+     * Returns whether this instance is equal to the provided object. They are
+     * equal if they contain identical symbols.
      * 
      * @param obj
      *            the object to compare with.
@@ -113,9 +111,9 @@ final class SymbolPair<T extends Comparable<? super T>> {
     }
 
     /**
-     * Returns a hash code value for this object.
+     * Returns the hash code of this symbol pair.
      * 
-     * @return a hash code for this object.
+     * @return the hash code.
      */
     @Override
     public int hashCode() {
@@ -139,10 +137,9 @@ final class SymbolPair<T extends Comparable<? super T>> {
     }
 
     /**
-     * Returns a <code>String</code> representation for this symbol pair. The
-     * representation takes the following form: <code>(symbol1,symbol2)</code>
+     * Returns the string representation of this symbol pair.
      * 
-     * @return a <code>String</code> representing this symbol.
+     * @return the string representation.
      */
     @Override
     public String toString() {
