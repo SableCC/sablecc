@@ -31,18 +31,19 @@ import java.util.TreeSet;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * This class represents an alphabet.
- * 
- * An alphabet is a collection of symbols. Two symbols of an alphabet may not
- * represent overlapping intervals.
+ * An alphabet is a set of symbols. Two symbols of an alphabet may not contain
+ * overlapping intervals.
  */
 
 public final class Alphabet<T extends Comparable<? super T>> {
 
-    /** The symbols forming the alphabet. */
+    /** The sorted set of symbols of this alphabet. */
     private SortedSet<Symbol<T>> symbols;
 
-    /** A map of the intervals and symbols of the alphabet. */
+    /**
+     * A <code>SortedMap</code> that maps each interval contained in a symbol
+     * of this alphabet to its symbol.
+     */
     private SortedMap<Interval<T>, Symbol<T>> intervalMap;
 
     /**
@@ -52,12 +53,10 @@ public final class Alphabet<T extends Comparable<? super T>> {
     private String toString;
 
     /**
-     * Constructs an alphabet with the provided collection of symbols.
-     * Verification is made for the collection of symbols not to be
-     * <code>null</code>.
+     * Constructs a new alphabet with the provided collection of symbols.
      * 
      * @param symbols
-     *            a collection of symbols.
+     *            the collection of symbols.
      * @throws InternalException
      *             if the collection of symbols is <code>null</code>.
      */
@@ -72,11 +71,10 @@ public final class Alphabet<T extends Comparable<? super T>> {
     }
 
     /**
-     * Constructs an alphabet with a provided symbol. Verification is made for
-     * the symbol not to be <code>null</code>.
+     * Constructs a new alphabet with the provided symbol.
      * 
      * @param symbol
-     *            a symbol.
+     *            the symbol.
      * @throws InternalException
      *             if the symbol is <code>null</code>.
      */
@@ -94,11 +92,10 @@ public final class Alphabet<T extends Comparable<? super T>> {
     }
 
     /**
-     * Constructs an alphabet with a provided interval. Verification is made for
-     * the interval not to be <code>null</code>.
+     * Constructs a new alphabet with the provided interval.
      * 
      * @param interval
-     *            a interval.
+     *            the interval.
      * @throws InternalException
      *             if the interval is <code>null</code>.
      */
@@ -124,18 +121,16 @@ public final class Alphabet<T extends Comparable<? super T>> {
     }
 
     /**
-     * Instantiates an alphabet with a provided collection of symbols. This
-     * method is called by the different constructors to affect the collection
-     * of symbols to the <code>symbols</code> instance variable. It also
-     * generates an interval map and affect it to the <code>intervalMap</code>
-     * instance variable. Verifications are made for distinct symbols not have
-     * overlapping intervals or for symbols not to be <code>null</null>.
+     * Initializes this alphabet using the provided collection of symbols. This
+     * method must be called by all constructors. It fills the
+     * <code>symbols</code> and <code>intervalMap</code> instance variables
+     * and detects overlapping intervals.
      * 
      * @param symbols
-     *            a collection of symbols.
-     * @throws InternalException 
-     *            if distinct symbols have overlapping intervals or if a symbol 
-     *            is <code>null</code>.
+     *            the collection of symbols.
+     * @throws InternalException
+     *             if two distinct symbols have overlapping intervals or if a
+     *             symbol is <code>null</code>.
      */
     private void init(
             Collection<Symbol<T>> symbols) {
@@ -174,9 +169,9 @@ public final class Alphabet<T extends Comparable<? super T>> {
     }
 
     /**
-     * Returns a sorted sets containing the symbols of this alphabet.
+     * Returns the set of symbols of this alphabet.
      * 
-     * @return a sorted set of symbols.
+     * @return the set of symbols.
      */
     public SortedSet<Symbol<T>> getSymbols() {
 
@@ -184,9 +179,10 @@ public final class Alphabet<T extends Comparable<? super T>> {
     }
 
     /**
-     * Returns a sorted map of the intervals and the symbols of this alphabet.
+     * Returns the interval map of this alphabet. The <code>SortedMap</code>
+     * maps each interval contained in a symbol of this alphabet to its symbol.
      * 
-     * @return a sorted map of intervals and symbols.
+     * @return the interval map.
      */
     public SortedMap<Interval<T>, Symbol<T>> getIntervalMap() {
 
@@ -194,11 +190,9 @@ public final class Alphabet<T extends Comparable<? super T>> {
     }
 
     /**
-     * Returns a <code>String</code> representation for this alphabet. The
-     * representation takes the following form:
-     * <code>Alphabet:{ symbol1,symbol2,... }</code>
+     * Returns the string representation of this alphabet.
      * 
-     * @return a <code>String</code> representing this alphabet.
+     * @return the string representation.
      */
     @Override
     public String toString() {
@@ -229,18 +223,19 @@ public final class Alphabet<T extends Comparable<? super T>> {
     }
 
     /**
-     * Merges this alphabet with the provided one. Verification is made for the
-     * alphabet not to be <code>null</code>.
+     * Merges this alphabet with the provided one.
      * 
-     * Merging two alphabets A and B consists of creating a new alphabet C
-     * containing a minimal number of symbols, with the following property: For
-     * every symbol X element of (A union B), there exists a corresponding
-     * subset S of C, such that: merge(S) == X.
+     * Merging two alphabets <code>A</code> and <code>B</code> consists of
+     * creating a new alphabet <code>C</code> containing a minimal number of
+     * symbols, with the following property: For every symbol <code>x</code>
+     * element of <code>(A union B)</code>, there exists a corresponding
+     * subset <code>S</code> of <code>C</code>, such that:
+     * <code>merge(S) == x</code>.
      * 
      * @param alphabet
-     *            the alphabet to merge with this one.
-     * @return a new object of type <code>AlphabetMergeResult</code>, the
-     *         result the merge.
+     *            the alphabet to merge this one with.
+     * @return an instance of <code>AlphabetMergeResult</code> containing the
+     *         merge result.
      * @throws InternalException
      *             if the provided alphabet is <code>null</code>.
      */
@@ -251,17 +246,22 @@ public final class Alphabet<T extends Comparable<? super T>> {
             throw new InternalException("alphabet may not be null");
         }
 
+        // no need to really merge, when merging with self
+        if (alphabet == this) {
+            return new AlphabetMergeResult<T>(this);
+        }
+
         /*
          * In theoretical terms, an alphabet is a set of symbols.
          * 
          * Merging two alphabets A and B consists of creating a new alphabet C
          * containing a minimal number of symbols, with the following property:
          * 
-         * For every symbol X element of (A union B), there exists a
-         * corresponding subset S of C, such that: merge(S) == X.
+         * For every symbol x element of (A union B), there exists a
+         * corresponding subset S of C, such that: merge(S) == x.
          * 
-         * As a direct consequence, every new symbol W element of C is related
-         * to a pair (X,Y) where X is element of (A union {null}) and Y is
+         * As a direct consequence, every new symbol w element of C is related
+         * to a pair (x,y) where x is element of (A union {null}) and y is
          * element of (B union {null}).
          * 
          * Our algorithm proceeds by finding these pairs to identify the symbols
@@ -329,16 +329,24 @@ public final class Alphabet<T extends Comparable<? super T>> {
     }
 
     /**
-     * Computes a map that associate each symbol pair with a set of intervals
-     * which are common to both symbols in a pair. A null member, in a symbol
-     * pair, represents a hypothetical symbol which includes all intervals that
-     * are not covered by any symbol of its alphabet.
+     * Computes a <code>Map</code> that maps each symbol pair
+     * <code>(x,y)</code> to a set of shared intervals, where <code>x</code>
+     * is a symbol of <code>alphabet1</code> or <code>null</code>, and
+     * <code>y</code> is a symbol of <code>alphabet2</code> or
+     * <code>null</code>. A <code>null</code> symbol represents a
+     * hypothetical symbol which includes all the intervals that are not covered
+     * by symbols of its related alphabet.
+     * <p>
+     * The particular property of this implementation is that it does so in
+     * linear time by only mapping pairs that have a non-empty shared interval
+     * set. The intuitive algorithm would have analyzed all possible pairs,
+     * leading to quadratic running time.
      * 
      * @param alphabet1
      *            the first alphabet.
      * @param alphabet2
      *            the second alphabet.
-     * @return the (symbol pair, interval set) map.
+     * @return the (symbol pair,interval set) map.
      */
     private static <T extends Comparable<? super T>> Map<SymbolPair<T>, SortedSet<Interval<T>>> computeSymbolPairIntervalSetMap(
             Alphabet<T> alphabet1,
