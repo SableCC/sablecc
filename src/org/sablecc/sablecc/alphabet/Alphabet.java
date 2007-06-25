@@ -37,17 +37,13 @@ import org.sablecc.sablecc.exception.InternalException;
  * represent overlapping intervals.
  */
 
-public final class Alphabet<T extends Comparable<? super T>>
-        implements Comparable<Alphabet<T>> {
+public final class Alphabet<T extends Comparable<? super T>> {
 
     /** The symbols forming the alphabet. */
     private SortedSet<Symbol<T>> symbols;
 
     /** A map of the intervals and symbols of the alphabet. */
     private SortedMap<Interval<T>, Symbol<T>> intervalMap;
-
-    /** Cached hashcode. Is <code>null</code> when not yet computed. */
-    private Integer hashCode;
 
     /**
      * Cached string representation. Is <code>null</code> when not yet
@@ -198,66 +194,6 @@ public final class Alphabet<T extends Comparable<? super T>>
     }
 
     /**
-     * Compares this alphabet with an object for equality. Returns
-     * <code>true</code> if the object is a alphabet and if it as the same
-     * number of equal symbols as those of this instance.
-     * 
-     * @param obj
-     *            the object to compare with.
-     * @return <code>true</code> if this alphabet and the object are equal;
-     *         <code>false</code> otherwise.
-     */
-    @Override
-    public boolean equals(
-            Object obj) {
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (!(obj instanceof Alphabet)) {
-            return false;
-        }
-
-        Alphabet alphabet = (Alphabet) obj;
-
-        if (this.symbols.size() != alphabet.symbols.size()) {
-            return false;
-        }
-
-        Iterator i = alphabet.symbols.iterator();
-        for (Symbol<T> symbol : this.symbols) {
-            if (!symbol.equals(i.next())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Returns a hash code value for this object.
-     * 
-     * @return a hash code for this object.
-     */
-    @Override
-    public int hashCode() {
-
-        if (this.hashCode == null) {
-            int hashCode = 0;
-
-            for (Symbol<T> symbol : this.symbols) {
-                hashCode *= 13;
-                hashCode += symbol.hashCode();
-            }
-
-            this.hashCode = hashCode;
-        }
-
-        return this.hashCode;
-    }
-
-    /**
      * Returns a <code>String</code> representation for this alphabet. The
      * representation takes the following form:
      * <code>Alphabet:{ symbol1,symbol2,... }</code>
@@ -290,44 +226,6 @@ public final class Alphabet<T extends Comparable<? super T>>
         }
 
         return this.toString;
-    }
-
-    /**
-     * Compares this alphabet to another one. This alphabet is smaller (or
-     * bigger) if one of its symbols is smaller (or bigger) than the equivalent
-     * symbol of the other alphabet. If there's no differences between symbols
-     * when it went through all the symbols of one or both alphabets, it returns
-     * the difference of their sizes.
-     * 
-     * @param alphabet
-     *            the alphabet to compare with.
-     * @return an <code>int</code> value: 0 if the two alphabets are equals, a
-     *         negative value if this alphabet is smaller, and a positive value
-     *         if it is bigger.
-     */
-    public int compareTo(
-            Alphabet<T> alphabet) {
-
-        int result = 0;
-        Iterator<Symbol<T>> i1 = this.symbols.iterator();
-        Iterator<Symbol<T>> i2 = alphabet.symbols.iterator();
-
-        while (result == 0 && i1.hasNext() && i2.hasNext()) {
-            Symbol<T> symbol1 = i1.next();
-            Symbol<T> symbol2 = i2.next();
-
-            result = symbol1.compareTo(symbol2);
-
-            if (result != 0) {
-                break;
-            }
-        }
-
-        if (result == 0 && (i1.hasNext() || i2.hasNext())) {
-            result = this.symbols.size() - alphabet.symbols.size();
-        }
-
-        return result;
     }
 
     /**
@@ -595,63 +493,5 @@ public final class Alphabet<T extends Comparable<? super T>>
         }
 
         return symbolPairIntervalSetMap;
-    }
-
-    /**
-     * Compares two alphabets and returns the lowest one (minimum).
-     * 
-     * @param alphabet1
-     *            a alphabet to compare.
-     * @param alphabet2
-     *            a alphabet to compare.
-     * @return the lowest of the two alphabets, or <code>alphabet1</code> in
-     *         case of equality.
-     */
-    public static <T extends Comparable<? super T>> Alphabet<T> min(
-            Alphabet<T> alphabet1,
-            Alphabet<T> alphabet2) {
-
-        if (alphabet1 == null) {
-            throw new InternalException("alphabet1 may not be null");
-        }
-
-        if (alphabet2 == null) {
-            throw new InternalException("alphabet2 may not be null");
-        }
-
-        if (alphabet1.compareTo(alphabet2) <= 0) {
-            return alphabet1;
-        }
-
-        return alphabet2;
-    }
-
-    /**
-     * Compares two alphabets and returns the highest one (maximum).
-     * 
-     * @param alphabet1
-     *            a alphabet to compare.
-     * @param alphabet2
-     *            a alphabet to compare.
-     * @return the highest of the two alphabets, or <code>alphabet1</code> in
-     *         case of equality.
-     */
-    public static <T extends Comparable<? super T>> Alphabet<T> max(
-            Alphabet<T> alphabet1,
-            Alphabet<T> alphabet2) {
-
-        if (alphabet1 == null) {
-            throw new InternalException("alphabet1 may not be null");
-        }
-
-        if (alphabet2 == null) {
-            throw new InternalException("alphabet2 may not be null");
-        }
-
-        if (alphabet1.compareTo(alphabet2) >= 0) {
-            return alphabet1;
-        }
-
-        return alphabet2;
     }
 }

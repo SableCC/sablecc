@@ -18,7 +18,6 @@
 package org.sablecc.sablecc.alphabet;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -112,24 +111,6 @@ public class AlphabetTest {
         this.symbolsBig.add(this.firstSymbolBig);
         this.symbolsBig.add(this.secondSymbolBig);
         this.alphaBig = new Alphabet<BigInteger>(this.symbolsBig);
-    }
-
-    @Test
-    public void testHashCode() {
-
-        // With Integer
-        Alphabet<Integer> sameAlphaInt = new Alphabet<Integer>(this.symbolsInt);
-        assertEquals(
-                "Two instance of the same alphabet should have the same hashCode.",
-                this.alphaInt.hashCode(), sameAlphaInt.hashCode());
-
-        // With BigInteger
-        Alphabet<BigInteger> sameAlphaBig = new Alphabet<BigInteger>(
-                this.symbolsBig);
-
-        assertEquals(
-                "Two instance of the same alphabet should have the same hashCode.",
-                this.alphaBig.hashCode(), sameAlphaBig.hashCode());
     }
 
     @SuppressWarnings("unused")
@@ -252,122 +233,6 @@ public class AlphabetTest {
     }
 
     @Test
-    public void testEqualsObject() {
-
-        // Case with null Object.
-        assertFalse("An Alphabet and a null Object should not be equals.",
-                this.alphaInt.equals(null));
-
-        // Case with not an instance of Alpabet.
-        assertFalse(
-                "A symbol and an object with instance other than Alphabet should not be equals.",
-                this.alphaInt.equals(2));
-
-        // Case with same alphabets using Integer.
-        Alphabet<Integer> sameAlphaInt = new Alphabet<Integer>(this.symbolsInt);
-
-        assertTrue("The two alphabets should be equals", this.alphaInt
-                .equals(sameAlphaInt));
-
-        // Case with same alphabets using BigInteger.
-        Alphabet<BigInteger> sameAlphaBig = new Alphabet<BigInteger>(
-                this.symbolsBig);
-
-        assertTrue("The two alphabets should be equals", this.alphaBig
-                .equals(sameAlphaBig));
-
-        // Case with different alphabets using Integer
-        Alphabet<Integer> differentAlphaInt = new Alphabet<Integer>(
-                new Interval<Integer>(999, this.integerAdjacencyRealm));
-
-        assertFalse("The two alphabets should not be equals", this.alphaInt
-                .equals(differentAlphaInt));
-
-        // Case with different alphabets using BigInteger
-        Alphabet<BigInteger> differentAlphaBig = new Alphabet<BigInteger>(
-                new Interval<BigInteger>(new BigInteger("999"),
-                        this.bigIntegerAdjacencyRealm));
-
-        assertFalse("The two alphabets should not be equals", this.alphaBig
-                .equals(differentAlphaBig));
-
-    }
-
-    @Test
-    public void testCompareTo() {
-
-        // Case with smaller alphabets using Integer.
-        this.intervalsInt.clear();
-        this.intervalsInt.add(new Interval<Integer>(0, 10,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(30, 50,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(100, 200,
-                this.integerAdjacencyRealm));
-        Alphabet<Integer> smallerAlphaInt = new Alphabet<Integer>(
-                new Symbol<Integer>(this.intervalsInt));
-
-        assertTrue("smallerAlphaInt should be smaller.", smallerAlphaInt
-                .compareTo(this.alphaInt) < 0);
-
-        // Case with smaller alphabets using BigInteger.
-        this.intervalsBig.clear();
-        this.intervalsBig.add(new Interval<BigInteger>(BigInteger.ZERO,
-                new BigInteger("5"), this.bigIntegerAdjacencyRealm));
-        this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("30"),
-                new BigInteger("50"), this.bigIntegerAdjacencyRealm));
-        this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("100"),
-                new BigInteger("200"), this.bigIntegerAdjacencyRealm));
-        Alphabet<BigInteger> smallerAlphaBig = new Alphabet<BigInteger>(
-                new Symbol<BigInteger>(this.intervalsBig));
-
-        assertTrue("smallerAlphaBig should be smaller.", smallerAlphaBig
-                .compareTo(this.alphaBig) < 0);
-
-        // Case with greater alphabets using Integer.
-        this.intervalsInt.clear();
-        this.intervalsInt.add(new Interval<Integer>(100, 200, Realms
-                .getInteger()));
-        this.intervalsInt.add(new Interval<Integer>(500, 1000, Realms
-                .getInteger()));
-        this.intervalsInt.add(new Interval<Integer>(2000, 4000, Realms
-                .getInteger()));
-        Alphabet<Integer> greaterAlphaInt = new Alphabet<Integer>(
-                new Symbol<Integer>(this.intervalsInt));
-
-        assertTrue("greaterAlphaInt should be greater", greaterAlphaInt
-                .compareTo(this.alphaInt) > 0);
-
-        // Case with greater alphabets using BigInteger.
-        this.intervalsBig.clear();
-        this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("30"),
-                new BigInteger("40"), this.bigIntegerAdjacencyRealm));
-        this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("120"),
-                new BigInteger("180"), this.bigIntegerAdjacencyRealm));
-        this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("500"),
-                new BigInteger("99999"), this.bigIntegerAdjacencyRealm));
-        Alphabet<BigInteger> greaterAlphaBig = new Alphabet<BigInteger>(
-                new Symbol<BigInteger>(this.intervalsBig));
-
-        assertTrue("greaterAlphaBig should be greater", greaterAlphaBig
-                .compareTo(this.alphaBig) > 0);
-
-        // Case with equals alphabets using Integer.
-        Alphabet<Integer> sameAlphaInt = new Alphabet<Integer>(this.symbolsInt);
-
-        assertTrue("The two alphabets should be equals", this.alphaInt
-                .equals(sameAlphaInt));
-
-        // Case with equals alphabets using BigInteger.
-        Alphabet<BigInteger> sameAlphaBig = new Alphabet<BigInteger>(
-                this.symbolsBig);
-
-        assertTrue("The two alphabets should be equals", this.alphaBig
-                .equals(sameAlphaBig));
-
-    }
-
-    @Test
     public void testMerge() {
 
         // With Integer
@@ -395,70 +260,6 @@ public class AlphabetTest {
         assertEquals("The merge result should equals the complete alphabet.",
                 this.alphaBig.toString(), mergeResultBig.getNewAlphabet()
                         .toString());
-    }
-
-    @Test
-    public void testMin() {
-
-        // Typical test with Integer.
-        this.intervalsInt.clear();
-        this.intervalsInt.add(new Interval<Integer>(0, 10,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(30, 50,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(100, 200, Realms
-                .getInteger()));
-        Alphabet<Integer> smallerAlphaInt = new Alphabet<Integer>(
-                new Symbol<Integer>(this.intervalsInt));
-
-        assertEquals("smallerAlphaInt should be the minimum.", smallerAlphaInt,
-                Alphabet.min(this.alphaInt, smallerAlphaInt));
-
-        // Typical test with BigInteger.
-        this.intervalsBig.clear();
-        this.intervalsBig.add(new Interval<BigInteger>(BigInteger.ZERO,
-                new BigInteger("5"), this.bigIntegerAdjacencyRealm));
-        this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("30"),
-                new BigInteger("50"), this.bigIntegerAdjacencyRealm));
-        this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("100"),
-                new BigInteger("200"), this.bigIntegerAdjacencyRealm));
-        Alphabet<BigInteger> smallerAlphaBig = new Alphabet<BigInteger>(
-                new Symbol<BigInteger>(this.intervalsBig));
-
-        assertEquals("smallerAlphaBig should be the minimum.", smallerAlphaBig,
-                Alphabet.min(this.alphaBig, smallerAlphaBig));
-    }
-
-    @Test
-    public void testMax() {
-
-        // Typical test with Integer.
-        this.intervalsInt.clear();
-        this.intervalsInt.add(new Interval<Integer>(100, 200,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(500, 1000,
-                this.integerAdjacencyRealm));
-        this.intervalsInt.add(new Interval<Integer>(2000, 4000,
-                this.integerAdjacencyRealm));
-        Alphabet<Integer> greaterAlphaInt = new Alphabet<Integer>(
-                new Symbol<Integer>(this.intervalsInt));
-
-        assertEquals("greaterAlphaInt should be the maximum", greaterAlphaInt,
-                Alphabet.max(this.alphaInt, greaterAlphaInt));
-
-        // Typical test with BigInteger.
-        this.intervalsBig.clear();
-        this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("30"),
-                new BigInteger("40"), this.bigIntegerAdjacencyRealm));
-        this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("120"),
-                new BigInteger("180"), this.bigIntegerAdjacencyRealm));
-        this.intervalsBig.add(new Interval<BigInteger>(new BigInteger("500"),
-                new BigInteger("99999"), this.bigIntegerAdjacencyRealm));
-        Alphabet<BigInteger> greaterAlphaBig = new Alphabet<BigInteger>(
-                new Symbol<BigInteger>(this.intervalsBig));
-
-        assertEquals("greaterAlphaBig should be the maximum", greaterAlphaBig,
-                Alphabet.max(this.alphaBig, greaterAlphaBig));
     }
 
 }
