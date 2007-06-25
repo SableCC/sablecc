@@ -20,23 +20,35 @@ package org.sablecc.sablecc.alphabet;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * This class serves to create adjacency realms for intervals. It provides
- * methods to create intervals, to determine whether two T values (bounds) are
- * adjacent, and to compute the previous and next T value.
+ * An adjacency realm defines adjacency rules for <code>T</code> elements. In
+ * other words, it defines the value of <code>(bound + 1)</code>. This allows
+ * for using non-integer types as interval bounds, as long as an adjacency realm
+ * is provided.
+ * <p>
+ * An adjacency realm also serves as a <em>universe</em> (or realm) to create
+ * <code>Interval</code> instances. Two intervals can only be compared when
+ * they belong to the same realm.
  */
 
 public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
 
     /**
-     * Returns whether two bounds are adjacents. For example, if T is an integer
-     * type, it returns <code>true</code> when
+     * Creates a new instance.
+     */
+    public AdjacencyRealm() {
+
+    }
+
+    /**
+     * Returns whether two bounds are adjacents. For example, if <code>T</code>
+     * is an integer type, it returns <code>true</code> when
      * <code>(bound1 + 1) == bound2</code>.
      * 
      * @param bound1
-     *            a bound to compare.
+     *            the first bound.
      * @param bound2
-     *            a bound to compare.
-     * @return <code>true</code> if the two bounds are adjacents;
+     *            the second bound.
+     * @return <code>true</code> if the first bound is adjacent to the second;
      *         <code>false</code> otherwise.
      */
     public abstract boolean isAdjacent(
@@ -44,42 +56,36 @@ public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
             T bound2);
 
     /**
-     * Returns the element T preceding the current instance. Generally bound - 1
-     * (or its equivalent).
-     * 
-     * Throws an exception when <code>isSequential</code> returns
-     * <code>false</code>.
+     * Returns the <code>T</code> element preceding the provided bound.
+     * Generally <code>(bound - 1)</code> or its equivalent.
      * 
      * @param bound
-     *            a bound to compare.
-     * @return a T previous to the current instance.
+     *            a bound.
+     * @return the <code>T</code> element that precedes to the provided bound.
      */
     public abstract T previous(
             T bound);
 
     /**
-     * Returns the element T following the current instance. Generally bound + 1
-     * (or its equivalent).
-     * 
-     * Throws an exception when <code>isSequential</code> returns
-     * <code>false</code>.
+     * Returns the <code>T</code> element following the provided bound.
+     * Generally <code>(bound + 1)</code> or its equivalent.
      * 
      * @param bound
-     *            a bound to compare.
-     * @return a T following the current instance.
+     *            a bound.
+     * @return the <code>T</code> element that follows the the provided bound.
      */
     public abstract T next(
             T bound);
 
     /**
-     * Compares two bounds to find the minimum.
+     * Returns the minimum of two bounds.
      * 
      * @param bound1
-     *            a bound to compare.
+     *            the first bound.
      * @param bound2
-     *            a bound to compare.
-     * @return the lowest of the two bounds, or <code>bound1</code> in case of
-     *         equality.
+     *            the second bound.
+     * @return the smallest of the two bounds, or <code>bound1</code> in case
+     *         of equality.
      * @throws InternalException
      *             if one of the two bounds is <code>null</code>.
      */
@@ -103,13 +109,13 @@ public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
     }
 
     /**
-     * Compares two bounds to find the maximum.
+     * Returns the maximum of two bounds.
      * 
      * @param bound1
-     *            a bound to compare.
+     *            the first bound.
      * @param bound2
-     *            a bound to compare.
-     * @return the highest of the two bounds, or <code>bound1</code> in case
+     *            the second bound.
+     * @return the biggest of the two bounds, or <code>bound1</code> in case
      *         of equality.
      * @throws InternalException
      *             if one of the two bounds is <code>null</code>.
@@ -134,7 +140,7 @@ public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
     }
 
     /**
-     * Returns a new interval with the provided lower and upper bounds.
+     * Creates a new interval with the provided lower and upper bounds.
      * 
      * @param lowerBound
      *            the lower bound.
@@ -158,7 +164,7 @@ public abstract class AdjacencyRealm<T extends Comparable<? super T>> {
     }
 
     /**
-     * Returns a new interval with a single bound used as both lower and upper
+     * Creates a new interval with a single bound used as both lower and upper
      * bounds.
      * 
      * @param bound
