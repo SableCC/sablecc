@@ -19,98 +19,141 @@ package org.sablecc.sablecc.alphabet;
 
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * The class represents the result of a merge of alphabets.
- * 
- * An alphabet merge result is represented by the new merged alphabet, the two
- * old alphabets and their symbol maps.
+ * An instance of this class encapsulates the result of merging two alphabets.
+ * It allows for retrieving the new alphabet and for mapping old symbols to sets
+ * of new symbols.
  */
 public final class AlphabetMergeResult<T extends Comparable<? super T>> {
 
-    /** The new merged alphabet. */
+    /** The new alphabet. */
     private final Alphabet<T> newAlphabet;
 
-    /** The first old alphabet to merge. */
-    private final Alphabet<T> oldAlphabet1;
-
-    /** The symbol map for first alphabet. */
-    private final SortedMap<Symbol<T>, SortedSet<Symbol<T>>> oldAlphabet1SymbolMap;
-
-    /** The second old alphabet to merge. */
-    private final Alphabet<T> oldAlphabet2;
-
-    /** The symbol map for second alphabet. */
-    private final SortedMap<Symbol<T>, SortedSet<Symbol<T>>> oldAlphabet2SymbolMap;
+    /** The first merged alphabet. */
+    private final Alphabet<T> mergedAlphabet1;
 
     /**
-     * Constructs the result of an alphabet merge.
+     * The symbol map of the first alphabet. It maps each old symbol to a set of
+     * new symbols that cover the same intervals.
+     */
+    private final SortedMap<Symbol<T>, SortedSet<Symbol<T>>> mergedAlphabet1SymbolMap;
+
+    /** The second merged alphabet. */
+    private final Alphabet<T> mergedAlphabet2;
+
+    /**
+     * The symbol map of the second alphabet. It maps each old symbol to a set
+     * of new symbols that cover the same intervals.
+     */
+    private final SortedMap<Symbol<T>, SortedSet<Symbol<T>>> mergedAlphabet2SymbolMap;
+
+    /**
+     * Constructs a new instance for the result of merging an alphabet with
+     * itself.
+     * 
+     * @param alphabet
+     *            the alphabet.
+     * @throws InternalException
+     *             if the alphabet is <code>null</code>.
+     */
+    AlphabetMergeResult(
+            Alphabet<T> alphabet) {
+
+        if (alphabet == null) {
+            throw new InternalException("alphabet may not be null");
+        }
+
+        this.newAlphabet = alphabet;
+
+        this.mergedAlphabet1 = null;
+        this.mergedAlphabet1SymbolMap = null;
+
+        this.mergedAlphabet2 = null;
+        this.mergedAlphabet2SymbolMap = null;
+    }
+
+    /**
+     * Constructs a new instance for the result of merging two distinct
+     * alphabets.
      * 
      * @param newAlphabet
-     *            the new merged alphabet.
-     * @param oldAlphabet1
-     *            the first old alphabet to merge.
-     * @param oldAlphabet1SymbolMap
-     *            the symbol map for first alphabet.
-     * @param oldAlphabet2
-     *            the second old alphabet to merge.
-     * @param oldAlphabet2SymbolMap
-     *            the symbol map for second alphabet.
+     *            the new alphabet.
+     * @param mergedAlphabet1
+     *            the first merged alphabet.
+     * @param mergedAlphabet1SymbolMap
+     *            the symbol map of the first alphabet.
+     * @param mergedAlphabet2
+     *            the second merged alphabet.
+     * @param mergedAlphabet2SymbolMap
+     *            the symbol map of the second alphabet.
+     * @throws InternalException
+     *             if any parameter is <code>null</code>, or if the merged
+     *             alphabets are not distinct.
      */
     AlphabetMergeResult(
             Alphabet<T> newAlphabet,
-            Alphabet<T> oldAlphabet1,
-            SortedMap<Symbol<T>, SortedSet<Symbol<T>>> oldAlphabet1SymbolMap,
-            Alphabet<T> oldAlphabet2,
-            SortedMap<Symbol<T>, SortedSet<Symbol<T>>> oldAlphabet2SymbolMap) {
+            Alphabet<T> mergedAlphabet1,
+            SortedMap<Symbol<T>, SortedSet<Symbol<T>>> mergedAlphabet1SymbolMap,
+            Alphabet<T> mergedAlphabet2,
+            SortedMap<Symbol<T>, SortedSet<Symbol<T>>> mergedAlphabet2SymbolMap) {
 
         if (newAlphabet == null) {
             throw new InternalException("newAlphabet may not be null");
         }
 
-        if (oldAlphabet1 == null) {
-            throw new InternalException("oldAlphabet1 may not be null");
+        if (mergedAlphabet1 == null) {
+            throw new InternalException("mergedAlphabet1 may not be null");
         }
 
-        if (oldAlphabet1SymbolMap == null) {
-            throw new InternalException("oldAlphabet1SymbolMap may not be null");
+        if (mergedAlphabet1SymbolMap == null) {
+            throw new InternalException(
+                    "mergedAlphabet1SymbolMap may not be null");
         }
 
-        for (Symbol<T> oldSymbol : oldAlphabet1.getSymbols()) {
-            if (oldAlphabet1SymbolMap.get(oldSymbol) == null) {
-                throw new InternalException("oldAlphabet1SymbolMap is invalid");
+        for (Symbol<T> oldSymbol : mergedAlphabet1.getSymbols()) {
+            if (mergedAlphabet1SymbolMap.get(oldSymbol) == null) {
+                throw new InternalException(
+                        "mergedAlphabet1SymbolMap is invalid");
             }
         }
 
-        if (oldAlphabet2 == null) {
-            throw new InternalException("oldAlphabet2 may not be null");
+        if (mergedAlphabet2 == null) {
+            throw new InternalException("mergedAlphabet2 may not be null");
         }
 
-        if (oldAlphabet2SymbolMap == null) {
-            throw new InternalException("oldAlphabet2SymbolMap may not be null");
+        if (mergedAlphabet2SymbolMap == null) {
+            throw new InternalException(
+                    "mergedAlphabet2SymbolMap may not be null");
         }
 
-        for (Symbol<T> oldSymbol : oldAlphabet2.getSymbols()) {
-            if (oldAlphabet2SymbolMap.get(oldSymbol) == null) {
-                throw new InternalException("oldAlphabet2SymbolMap is invalid");
+        if (mergedAlphabet1 == mergedAlphabet2) {
+            throw new InternalException("wrong constructor");
+        }
+
+        for (Symbol<T> oldSymbol : mergedAlphabet2.getSymbols()) {
+            if (mergedAlphabet2SymbolMap.get(oldSymbol) == null) {
+                throw new InternalException(
+                        "mergedAlphabet2SymbolMap is invalid");
             }
         }
 
         this.newAlphabet = newAlphabet;
 
-        this.oldAlphabet1 = oldAlphabet1;
-        this.oldAlphabet1SymbolMap = oldAlphabet1SymbolMap;
+        this.mergedAlphabet1 = mergedAlphabet1;
+        this.mergedAlphabet1SymbolMap = mergedAlphabet1SymbolMap;
 
-        this.oldAlphabet2 = oldAlphabet2;
-        this.oldAlphabet2SymbolMap = oldAlphabet2SymbolMap;
+        this.mergedAlphabet2 = mergedAlphabet2;
+        this.mergedAlphabet2SymbolMap = mergedAlphabet2SymbolMap;
     }
 
     /**
-     * Returns the new alphabet created from the merge.
+     * Returns the new alphabet resulting from the merge.
      * 
-     * @return the new merged alphabet.
+     * @return the new alphabet.
      */
     public Alphabet<T> getNewAlphabet() {
 
@@ -118,44 +161,53 @@ public final class AlphabetMergeResult<T extends Comparable<? super T>> {
     }
 
     /**
-     * Returns a set of the new symbols representing one old symbol after a
-     * merge. Verifications are made for the provided alphabet and symbol not to
-     * be <code>null</code> and for the symbol to be an element of the
-     * alphabet.
+     * Returns the set of new symbols covering the same interval as the provided
+     * old symbol from the provided merged alphabet.
      * 
      * @param oldSymbol
-     * @param oldAlphabet
-     * @return a set of the new symbols.
+     *            the symbol.
+     * @param mergedAlphabet
+     *            the alphabet.
+     * @return the set of new symbols.
      * @throws InternalException
-     *             if an old symbol or alphabet is <code>null</code>, if the
-     *             provided symbol is not an element of the alphabet or if the
-     *             alphabet is not valid.
+     *             if the old symbol or the old alphabet is <code>null</code>.
      */
     public SortedSet<Symbol<T>> getNewSymbols(
             Symbol<T> oldSymbol,
-            Alphabet<T> oldAlphabet) {
+            Alphabet<T> mergedAlphabet) {
 
         if (oldSymbol == null) {
             throw new InternalException("oldSymbol may not be null");
         }
 
-        if (oldAlphabet == null) {
-            throw new InternalException("oldAlphabet may not be null");
+        if (mergedAlphabet == null) {
+            throw new InternalException("mergedAlphabet may not be null");
         }
 
-        if (!oldAlphabet.getSymbols().contains(oldSymbol)) {
+        if (!mergedAlphabet.getSymbols().contains(oldSymbol)) {
             throw new InternalException(
-                    "oldSymbol is not an element of oldAlphabet");
+                    "oldSymbol is not an element of mergedAlphabet");
         }
 
-        if (oldAlphabet == this.oldAlphabet1) {
-            return this.oldAlphabet1SymbolMap.get(oldSymbol);
+        // special case for an alphabet merged with itslef
+        if (this.mergedAlphabet1 == null) {
+            if (mergedAlphabet != this.newAlphabet) {
+                throw new InternalException("mergedAlphabet is invalid");
+            }
+
+            TreeSet<Symbol<T>> set = new TreeSet<Symbol<T>>();
+            set.add(oldSymbol);
+            return set;
         }
 
-        if (oldAlphabet == this.oldAlphabet2) {
-            return this.oldAlphabet2SymbolMap.get(oldSymbol);
+        if (mergedAlphabet == this.mergedAlphabet1) {
+            return this.mergedAlphabet1SymbolMap.get(oldSymbol);
         }
 
-        throw new InternalException("invalid alphabet");
+        if (mergedAlphabet == this.mergedAlphabet2) {
+            return this.mergedAlphabet2SymbolMap.get(oldSymbol);
+        }
+
+        throw new InternalException("mergedAlphabet is invalid");
     }
 }
