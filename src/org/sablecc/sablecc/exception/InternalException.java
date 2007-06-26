@@ -18,12 +18,15 @@
 package org.sablecc.sablecc.exception;
 
 /**
- * This class represents an internal exception.
- * 
- * An internal exception is thrown when an error occurs during the normal
- * operation of the Virtual Machine. Since it is a subclass of RuntimeException,
- * it is not required to declare it in the heading of a method in which it might
- * be thrown.
+ * An internal exception is thrown when an unexpected error happens during the
+ * normal operation of the software. Ideally, this exception would never be
+ * thrown during execution. If it ever gets thrown, it is because a bug has been
+ * detected in the software.
+ * <p>
+ * In the source code of the software, this exception should be thrown whenever
+ * an unexpected situation is detected. For example, the exception should be
+ * thrown when some method argument is <code>null</code> and the method
+ * requires a non-null argument.
  */
 public class InternalException
         extends RuntimeException {
@@ -33,7 +36,6 @@ public class InternalException
 
     /**
      * Constructs a new internal exception with the provided error message.
-     * Verification is made for the provided message not to be <code>null</code>.
      * 
      * @param message
      *            the error message.
@@ -52,13 +54,12 @@ public class InternalException
 
     /**
      * Constructs a new internal exception with the provided error message and
-     * the cause of the error. Verifications are made for the provided message
-     * and cause not to be <code>null</code>.
+     * cause.
      * 
      * @param message
      *            the error message.
      * @param cause
-     *            the cause of the error.
+     *            the cause.
      * @throws InternalException
      *             if the message or the cause is <code>null</code>.
      */
