@@ -20,7 +20,8 @@ package org.sablecc.sablecc.automaton.graph;
 import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 
-public final class Transition<T extends Comparable<? super T>> {
+public final class Transition<T extends Comparable<? super T>>
+        implements Comparable<Transition<T>> {
 
     private final State<T> source;
 
@@ -124,5 +125,32 @@ public final class Transition<T extends Comparable<? super T>> {
         }
 
         return this.toString;
+    }
+
+    public int compareTo(
+            Transition<T> transition) {
+
+        int result = 0;
+
+        result = this.source.getName().compareTo(transition.source.getName());
+
+        if (result == 0) {
+            if (this.symbol == null) {
+                result = transition.symbol == null ? 0 : -1;
+            }
+            else if (transition.symbol == null) {
+                result = 1;
+            }
+            else {
+                result = this.symbol.compareTo(transition.symbol);
+            }
+        }
+
+        if (result == 0) {
+            result = this.destination.getName().compareTo(
+                    transition.destination.getName());
+        }
+
+        return result;
     }
 }
