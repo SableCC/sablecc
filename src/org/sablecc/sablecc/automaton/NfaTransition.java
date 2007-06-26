@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.automaton.graph;
+package org.sablecc.sablecc.automaton;
 
 import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 
-public final class Transition<T extends Comparable<? super T>>
-        implements Comparable<Transition<T>> {
+public final class NfaTransition<T extends Comparable<? super T>>
+        implements Comparable<NfaTransition<T>> {
 
-    private final State<T> source;
+    private final NfaState<T> source;
 
-    private final State<T> destination;
+    private final NfaState<T> destination;
 
     private final Symbol<T> symbol;
 
@@ -35,9 +35,9 @@ public final class Transition<T extends Comparable<? super T>>
 
     private boolean isDeleted = false;
 
-    public Transition(
-            State<T> source,
-            State<T> destination,
+    public NfaTransition(
+            NfaState<T> source,
+            NfaState<T> destination,
             Symbol<T> symbol) {
 
         if (source == null) {
@@ -55,7 +55,7 @@ public final class Transition<T extends Comparable<? super T>>
         destination.addBackwardTransition(this);
     }
 
-    public State<T> getDestination() {
+    public NfaState<T> getDestination() {
 
         if (this.isDeleted) {
             throw new InternalException("transition is deleted");
@@ -64,7 +64,7 @@ public final class Transition<T extends Comparable<? super T>>
         return this.destination;
     }
 
-    public State<T> getSource() {
+    public NfaState<T> getSource() {
 
         if (this.isDeleted) {
             throw new InternalException("transition is deleted");
@@ -94,11 +94,11 @@ public final class Transition<T extends Comparable<? super T>>
             return false;
         }
 
-        if (!(obj instanceof Transition)) {
+        if (!(obj instanceof NfaTransition)) {
             return false;
         }
 
-        Transition transition = (Transition) obj;
+        NfaTransition transition = (NfaTransition) obj;
 
         if (!this.source.equals(transition.source)) {
             return false;
@@ -154,7 +154,7 @@ public final class Transition<T extends Comparable<? super T>>
     }
 
     public int compareTo(
-            Transition<T> transition) {
+            NfaTransition<T> transition) {
 
         if (this.isDeleted) {
             throw new InternalException("transition is deleted");

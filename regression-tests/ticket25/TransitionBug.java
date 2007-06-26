@@ -18,17 +18,17 @@
 package ticket25;
 
 import org.junit.Test;
-import org.sablecc.sablecc.automaton.graph.State;
-import org.sablecc.sablecc.automaton.graph.Transition;
+import org.sablecc.sablecc.automaton.NfaState;
+import org.sablecc.sablecc.automaton.NfaTransition;
 
 public class TransitionBug {
 
     @Test
     public void bug() {
 
-        State<Integer> state = new State<Integer>("state");
-        Transition<Integer> transition = new Transition<Integer>(state, state,
-                null);
+        NfaState<Integer> state = new NfaState<Integer>("state");
+        NfaTransition<Integer> transition = new NfaTransition<Integer>(state,
+                state, null);
 
         // Line that causes the bug.
         transition.equals(transition);

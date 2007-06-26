@@ -23,18 +23,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.sablecc.sablecc.automaton.graph.State;
-import org.sablecc.sablecc.automaton.graph.Transition;
 import org.sablecc.sablecc.exception.InternalException;
 
 class EpsilonReach<T extends Comparable<? super T>> {
 
-    private NFA<T> nfa;
+    private Nfa<T> nfa;
 
-    private final Map<State<T>, Set<State<T>>> reachMap = new HashMap<State<T>, Set<State<T>>>();
+    private final Map<NfaState<T>, Set<NfaState<T>>> reachMap = new HashMap<NfaState<T>, Set<NfaState<T>>>();
 
     EpsilonReach(
-            NFA<T> nfa) {
+            Nfa<T> nfa) {
 
         if (nfa == null) {
             throw new InternalException("nfa may not be null");
@@ -43,8 +41,8 @@ class EpsilonReach<T extends Comparable<? super T>> {
         this.nfa = nfa;
     }
 
-    Set<State<T>> getEpsilonReach(
-            State<T> state) {
+    Set<NfaState<T>> getEpsilonReach(
+            NfaState<T> state) {
 
         if (state == null) {
             throw new InternalException("state may not be null");
@@ -54,7 +52,7 @@ class EpsilonReach<T extends Comparable<? super T>> {
             throw new InternalException("invalid state");
         }
 
-        Set<State<T>> reach = this.reachMap.get(state);
+        Set<NfaState<T>> reach = this.reachMap.get(state);
 
         if (reach == null) {
             reach = computeReach(state);
@@ -64,10 +62,10 @@ class EpsilonReach<T extends Comparable<? super T>> {
         return reach;
     }
 
-    private Set<State<T>> computeReach(
-            State<T> state) {
+    private Set<NfaState<T>> computeReach(
+            NfaState<T> state) {
 
-        Set<State<T>> reach = new HashSet<State<T>>();
+        Set<NfaState<T>> reach = new HashSet<NfaState<T>>();
 
         visit(state, reach);
 
@@ -75,8 +73,8 @@ class EpsilonReach<T extends Comparable<? super T>> {
     }
 
     private void visit(
-            State<T> state,
-            Set<State<T>> reach) {
+            NfaState<T> state,
+            Set<NfaState<T>> reach) {
 
         // did we visit it before?
         if (!reach.contains(state)) {
@@ -85,14 +83,15 @@ class EpsilonReach<T extends Comparable<? super T>> {
             reach.add(state);
 
             // do we know its reach?
-            Set<State<T>> stateReach = this.reachMap.get(state);
+            Set<NfaState<T>> stateReach = this.reachMap.get(state);
             if (stateReach != null) {
                 // yes, use it!
                 reach.addAll(stateReach);
             }
             else {
                 // no, we need to visit
-                for (Transition<T> transition : state.getForwardTransitions()) {
+                for (NfaTransition<T> transition : state
+                        .getForwardTransitions()) {
                     if (transition.getSymbol() == null) {
                         visit(transition.getDestination(), reach);
                     }

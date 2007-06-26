@@ -20,27 +20,26 @@ package org.sablecc.sablecc.automaton;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sablecc.sablecc.automaton.graph.State;
 import org.sablecc.sablecc.exception.InternalException;
 
-class NFACombineResult<T extends Comparable<? super T>> {
+class NfaCombineResult<T extends Comparable<? super T>> {
 
-    private NFA<T> newNfa;
+    private Nfa<T> newNfa;
 
-    private NFA<T> oldNfa1;
+    private Nfa<T> oldNfa1;
 
-    private Map<State<T>, State<T>> oldNfa1StateMap = new HashMap<State<T>, State<T>>();
+    private Map<NfaState<T>, NfaState<T>> oldNfa1StateMap = new HashMap<NfaState<T>, NfaState<T>>();
 
-    private NFA<T> oldNfa2;
+    private Nfa<T> oldNfa2;
 
-    private Map<State<T>, State<T>> oldNfa2StateMap = new HashMap<State<T>, State<T>>();
+    private Map<NfaState<T>, NfaState<T>> oldNfa2StateMap = new HashMap<NfaState<T>, NfaState<T>>();
 
-    NFACombineResult(
-            NFA<T> newNfa,
-            NFA<T> oldNfa1,
-            Map<State<T>, State<T>> oldNfa1StateMap,
-            NFA<T> oldNfa2,
-            Map<State<T>, State<T>> oldNfa2StateMap) {
+    NfaCombineResult(
+            Nfa<T> newNfa,
+            Nfa<T> oldNfa1,
+            Map<NfaState<T>, NfaState<T>> oldNfa1StateMap,
+            Nfa<T> oldNfa2,
+            Map<NfaState<T>, NfaState<T>> oldNfa2StateMap) {
 
         if (newNfa == null) {
             throw new InternalException("newNfa may not be null");
@@ -62,13 +61,13 @@ class NFACombineResult<T extends Comparable<? super T>> {
             throw new InternalException("oldNfa2StateMap may not be null");
         }
 
-        for (State<T> oldState : oldNfa1.getStates()) {
+        for (NfaState<T> oldState : oldNfa1.getStates()) {
             if (oldNfa1StateMap.get(oldState) == null) {
                 throw new InternalException("invalid oldNfa1StateMap");
             }
         }
 
-        for (State<T> oldState : oldNfa2.getStates()) {
+        for (NfaState<T> oldState : oldNfa2.getStates()) {
             if (oldNfa2StateMap.get(oldState) == null) {
                 throw new InternalException("invalid oldNfa2StateMap");
             }
@@ -81,14 +80,14 @@ class NFACombineResult<T extends Comparable<? super T>> {
         this.oldNfa2StateMap = oldNfa2StateMap;
     }
 
-    NFA<T> getNewNfa() {
+    Nfa<T> getNewNfa() {
 
         return this.newNfa;
     }
 
-    State<T> getNewState1(
-            State<T> oldState,
-            NFA<T> oldNfa) {
+    NfaState<T> getNewState1(
+            NfaState<T> oldState,
+            Nfa<T> oldNfa) {
 
         if (oldState == null) {
             throw new InternalException("oldState may not be null");
@@ -109,9 +108,9 @@ class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    State<T> getNewState2(
-            State<T> oldState,
-            NFA<T> oldNfa) {
+    NfaState<T> getNewState2(
+            NfaState<T> oldState,
+            Nfa<T> oldNfa) {
 
         if (oldState == null) {
             throw new InternalException("oldState may not be null");
@@ -132,8 +131,8 @@ class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    State<T> getStartStateMapping1(
-            NFA<T> oldNfa) {
+    NfaState<T> getStartStateMapping1(
+            Nfa<T> oldNfa) {
 
         if (oldNfa == null) {
             throw new InternalException("oldNfa may not be null");
@@ -146,8 +145,8 @@ class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    State<T> getStartStateMapping2(
-            NFA<T> oldNfa) {
+    NfaState<T> getStartStateMapping2(
+            Nfa<T> oldNfa) {
 
         if (oldNfa == null) {
             throw new InternalException("oldNfa may not be null");
@@ -160,8 +159,8 @@ class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    State<T> getAcceptStateMapping1(
-            NFA<T> oldNfa) {
+    NfaState<T> getAcceptStateMapping1(
+            Nfa<T> oldNfa) {
 
         if (oldNfa == null) {
             throw new InternalException("oldNfa may not be null");
@@ -174,8 +173,8 @@ class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    State<T> getAcceptStateMapping2(
-            NFA<T> oldNfa) {
+    NfaState<T> getAcceptStateMapping2(
+            Nfa<T> oldNfa) {
 
         if (oldNfa == null) {
             throw new InternalException("oldNfa may not be null");

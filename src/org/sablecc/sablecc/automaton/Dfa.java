@@ -29,44 +29,42 @@ import java.util.TreeSet;
 
 import org.sablecc.sablecc.alphabet.Alphabet;
 import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.automaton.graph.State;
-import org.sablecc.sablecc.automaton.graph.Transition;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.util.WorkSet;
 
-public class DFA<T extends Comparable<? super T>> {
+public class Dfa<T extends Comparable<? super T>> {
 
     private Alphabet<T> alphabet;
 
-    private Set<State<T>> states;
+    private Set<NfaState<T>> states;
 
-    private SortedSet<Transition<T>> transitions;
+    private SortedSet<NfaTransition<T>> transitions;
 
-    private State<T> startState;
+    private NfaState<T> startState;
 
-    private Set<State<T>> acceptStates;
+    private Set<NfaState<T>> acceptStates;
 
     private boolean isStable;
 
     private String toString;
 
-    private DFA() {
+    private Dfa() {
 
     }
 
-    public DFA(
-            NFA<T> nfa) {
+    public Dfa(
+            Nfa<T> nfa) {
 
         if (nfa == null) {
             throw new InternalException("nfa may not be null");
         }
 
         init(nfa);
-        StateMatcher<T> stateMapper = computeDFAStates(nfa);
+        StateMatcher<T> stateMapper = computeDfaStates(nfa);
 
         // compute accept states
-        State<T> nfaAccept = nfa.getAcceptState();
-        for (State<T> dfaState : this.states) {
+        NfaState<T> nfaAccept = nfa.getAcceptState();
+        for (NfaState<T> dfaState : this.states) {
             if (stateMapper.match(dfaState, nfaAccept)) {
                 this.acceptStates.add(dfaState);
             }
@@ -76,41 +74,42 @@ public class DFA<T extends Comparable<? super T>> {
     }
 
     private void init(
-            NFA<T> nfa) {
+            Nfa<T> nfa) {
 
         this.alphabet = nfa.getAlphabet();
-        this.states = new HashSet<State<T>>();
-        this.transitions = new TreeSet<Transition<T>>();
-        this.acceptStates = new HashSet<State<T>>();
+        this.states = new HashSet<NfaState<T>>();
+        this.transitions = new TreeSet<NfaTransition<T>>();
+        this.acceptStates = new HashSet<NfaState<T>>();
         this.isStable = false;
     }
 
-    private StateMatcher<T> computeDFAStates(
-            NFA<T> nfa) {
+    private StateMatcher<T> computeDfaStates(
+            Nfa<T> nfa) {
 
         StateMatcher<T> matcher = new StateMatcher<T>(this, nfa);
         EpsilonReach<T> reach = new EpsilonReach<T>(nfa);
-        WorkSet<State<T>> workSet = new WorkSet<State<T>>();
+        WorkSet<NfaState<T>> workSet = new WorkSet<NfaState<T>>();
 
-        this.startState = matcher.getDFAState(reach.getEpsilonReach(nfa
+        this.startState = matcher.getDfaState(reach.getEpsilonReach(nfa
                 .getStartState()));
         workSet.add(this.startState);
 
         while (workSet.hasNext()) {
-            State<T> sourceDfaState = workSet.next();
+            NfaState<T> sourceDfaState = workSet.next();
 
             // find direct destinations
-            SortedMap<Symbol<T>, LinkedHashSet<State<T>>> directDestinationMap = new TreeMap<Symbol<T>, LinkedHashSet<State<T>>>();
+            SortedMap<Symbol<T>, LinkedHashSet<NfaState<T>>> directDestinationMap = new TreeMap<Symbol<T>, LinkedHashSet<NfaState<T>>>();
 
-            for (State<T> sourceNfaState : matcher.getNFAStates(sourceDfaState)) {
-                for (Transition<T> transition : sourceNfaState
+            for (NfaState<T> sourceNfaState : matcher
+                    .getNfaStates(sourceDfaState)) {
+                for (NfaTransition<T> transition : sourceNfaState
                         .getForwardTransitions()) {
                     if (transition.getSymbol() != null) {
-                        LinkedHashSet<State<T>> directDesinations = directDestinationMap
+                        LinkedHashSet<NfaState<T>> directDesinations = directDestinationMap
                                 .get(transition.getSymbol());
 
                         if (directDesinations == null) {
-                            directDesinations = new LinkedHashSet<State<T>>();
+                            directDesinations = new LinkedHashSet<NfaState<T>>();
                             directDestinationMap.put(transition.getSymbol(),
                                     directDesinations);
                         }
@@ -121,21 +120,22 @@ public class DFA<T extends Comparable<? super T>> {
             }
 
             // add transitions
-            for (Map.Entry<Symbol<T>, LinkedHashSet<State<T>>> entry : directDestinationMap
+            for (Map.Entry<Symbol<T>, LinkedHashSet<NfaState<T>>> entry : directDestinationMap
                     .entrySet()) {
                 Symbol<T> symbol = entry.getKey();
-                LinkedHashSet<State<T>> directDestinations = entry.getValue();
+                LinkedHashSet<NfaState<T>> directDestinations = entry
+                        .getValue();
 
-                Set<State<T>> epsilonClosure = new HashSet<State<T>>();
+                Set<NfaState<T>> epsilonClosure = new HashSet<NfaState<T>>();
 
-                for (State<T> nfaState : directDestinations) {
+                for (NfaState<T> nfaState : directDestinations) {
                     epsilonClosure.addAll(reach.getEpsilonReach(nfaState));
                 }
 
-                State<T> destinationDfaState = matcher
-                        .getDFAState(epsilonClosure);
+                NfaState<T> destinationDfaState = matcher
+                        .getDfaState(epsilonClosure);
 
-                this.transitions.add(new Transition<T>(sourceDfaState,
+                this.transitions.add(new NfaTransition<T>(sourceDfaState,
                         destinationDfaState, symbol));
 
                 workSet.add(destinationDfaState);
@@ -154,7 +154,7 @@ public class DFA<T extends Comparable<? super T>> {
         return this.alphabet;
     }
 
-    public Set<State<T>> getStates() {
+    public Set<NfaState<T>> getStates() {
 
         if (!this.isStable) {
             throw new InternalException("this DFA is not stable yet");
@@ -163,12 +163,12 @@ public class DFA<T extends Comparable<? super T>> {
         return this.states;
     }
 
-    Set<State<T>> getUnstableStates() {
+    Set<NfaState<T>> getUnstableStates() {
 
         return this.states;
     }
 
-    public Set<Transition<T>> getTransitions() {
+    public Set<NfaTransition<T>> getTransitions() {
 
         if (!this.isStable) {
             throw new InternalException("this DFA is not stable yet");
@@ -177,7 +177,7 @@ public class DFA<T extends Comparable<? super T>> {
         return this.transitions;
     }
 
-    public State<T> getStartState() {
+    public NfaState<T> getStartState() {
 
         if (!this.isStable) {
             throw new InternalException("this DFA is not stable yet");
@@ -186,7 +186,7 @@ public class DFA<T extends Comparable<? super T>> {
         return this.startState;
     }
 
-    public Set<State<T>> getAcceptStates() {
+    public Set<NfaState<T>> getAcceptStates() {
 
         if (!this.isStable) {
             throw new InternalException("this DFA is not stable yet");
@@ -214,7 +214,7 @@ public class DFA<T extends Comparable<? super T>> {
 
             {
                 boolean first = true;
-                for (State<T> state : this.acceptStates) {
+                for (NfaState<T> state : this.acceptStates) {
                     if (first) {
                         first = false;
                     }
@@ -227,7 +227,7 @@ public class DFA<T extends Comparable<? super T>> {
 
             sb.append("; transitions : ");
 
-            for (Transition<T> transition : this.transitions) {
+            for (NfaTransition<T> transition : this.transitions) {
                 sb.append(transition);
                 sb.append(" ");
             }
@@ -246,7 +246,7 @@ public class DFA<T extends Comparable<? super T>> {
             throw new InternalException("this DFA is already stable");
         }
 
-        for (State<T> state : this.states) {
+        for (NfaState<T> state : this.states) {
             state.stabilize();
         }
 
@@ -257,14 +257,14 @@ public class DFA<T extends Comparable<? super T>> {
         // sanity check
         Set<String> stateNames = new HashSet<String>();
 
-        for (State<T> state : this.states) {
+        for (NfaState<T> state : this.states) {
             if (!stateNames.add(state.getName())) {
                 throw new InternalException(
                         "two states of the same DFA may not have the same name");
             }
         }
 
-        for (Transition<T> transition : this.transitions) {
+        for (NfaTransition<T> transition : this.transitions) {
             if (!this.states.contains(transition.getSource())) {
                 throw new InternalException(
                         "invalid source state in transition");
@@ -283,7 +283,7 @@ public class DFA<T extends Comparable<? super T>> {
             }
         }
 
-        for (State<T> state : this.acceptStates) {
+        for (NfaState<T> state : this.acceptStates) {
             if (!this.states.contains(state)) {
                 throw new InternalException("invalid accept state");
             }
@@ -292,30 +292,30 @@ public class DFA<T extends Comparable<? super T>> {
         this.isStable = true;
     }
 
-    static <T extends Comparable<? super T>> DFA<T> shortest(
-            NFA<T> nfa) {
+    static <T extends Comparable<? super T>> Dfa<T> shortest(
+            Nfa<T> nfa) {
 
         if (nfa == null) {
             throw new InternalException("nfa may not be null");
         }
 
-        DFA<T> dfa = new DFA<T>();
+        Dfa<T> dfa = new Dfa<T>();
 
         dfa.init(nfa);
-        StateMatcher<T> stateMapper = dfa.computeDFAStates(nfa);
+        StateMatcher<T> stateMapper = dfa.computeDfaStates(nfa);
 
         // compute accept states
-        State<T> nfaAccept = nfa.getAcceptState();
-        for (State<T> dfaState : dfa.states) {
+        NfaState<T> nfaAccept = nfa.getAcceptState();
+        for (NfaState<T> dfaState : dfa.states) {
             if (stateMapper.match(dfaState, nfaAccept)) {
                 dfa.acceptStates.add(dfaState);
             }
         }
 
         // remove transitions out of accept states
-        LinkedHashSet<Transition<T>> transitionsToDelete = new LinkedHashSet<Transition<T>>();
+        LinkedHashSet<NfaTransition<T>> transitionsToDelete = new LinkedHashSet<NfaTransition<T>>();
 
-        for (Transition<T> transition : dfa.transitions) {
+        for (NfaTransition<T> transition : dfa.transitions) {
             if (dfa.acceptStates.contains(transition.getSource())) {
                 transitionsToDelete.add(transition);
             }
@@ -323,7 +323,7 @@ public class DFA<T extends Comparable<? super T>> {
 
         dfa.transitions.removeAll(transitionsToDelete);
 
-        for (Transition<T> transition : transitionsToDelete) {
+        for (NfaTransition<T> transition : transitionsToDelete) {
             transition.delete();
         }
 
@@ -331,9 +331,9 @@ public class DFA<T extends Comparable<? super T>> {
         return dfa;
     }
 
-    static <T extends Comparable<? super T>> DFA<T> difference(
-            NFA<T> nfa1,
-            NFA<T> nfa2) {
+    static <T extends Comparable<? super T>> Dfa<T> difference(
+            Nfa<T> nfa1,
+            Nfa<T> nfa2) {
 
         if (nfa1 == null) {
             throw new InternalException("nfa1 may not be null");
@@ -343,28 +343,28 @@ public class DFA<T extends Comparable<? super T>> {
             throw new InternalException("nfa2 may not be null");
         }
 
-        NFACombineResult<T> nfaCombineResult = nfa1.combineWith(nfa2);
-        NFA<T> newNfa = nfaCombineResult.getNewNfa();
+        NfaCombineResult<T> nfaCombineResult = nfa1.combineWith(nfa2);
+        Nfa<T> newNfa = nfaCombineResult.getNewNfa();
 
         // add epsilon transitions from start to oldStart
         newNfa.getUnstableTransitions().add(
-                new Transition<T>(newNfa.getUnstableStartState(),
+                new NfaTransition<T>(newNfa.getUnstableStartState(),
                         nfaCombineResult.getStartStateMapping1(nfa1), null));
         newNfa.getUnstableTransitions().add(
-                new Transition<T>(newNfa.getUnstableStartState(),
+                new NfaTransition<T>(newNfa.getUnstableStartState(),
                         nfaCombineResult.getStartStateMapping2(nfa2), null));
 
         newNfa.stabilize();
 
-        DFA<T> dfa = new DFA<T>();
+        Dfa<T> dfa = new Dfa<T>();
 
         dfa.init(newNfa);
-        StateMatcher<T> stateMapper = dfa.computeDFAStates(newNfa);
+        StateMatcher<T> stateMapper = dfa.computeDfaStates(newNfa);
 
         // compute accept states
-        State<T> nfa1Accept = nfaCombineResult.getAcceptStateMapping1(nfa1);
-        State<T> nfa2Accept = nfaCombineResult.getAcceptStateMapping2(nfa2);
-        for (State<T> dfaState : dfa.states) {
+        NfaState<T> nfa1Accept = nfaCombineResult.getAcceptStateMapping1(nfa1);
+        NfaState<T> nfa2Accept = nfaCombineResult.getAcceptStateMapping2(nfa2);
+        for (NfaState<T> dfaState : dfa.states) {
             if (stateMapper.match(dfaState, nfa1Accept)
                     && !stateMapper.match(dfaState, nfa2Accept)) {
                 dfa.acceptStates.add(dfaState);
@@ -375,9 +375,9 @@ public class DFA<T extends Comparable<? super T>> {
         return dfa;
     }
 
-    static <T extends Comparable<? super T>> DFA<T> intersection(
-            NFA<T> nfa1,
-            NFA<T> nfa2) {
+    static <T extends Comparable<? super T>> Dfa<T> intersection(
+            Nfa<T> nfa1,
+            Nfa<T> nfa2) {
 
         if (nfa1 == null) {
             throw new InternalException("nfa1 may not be null");
@@ -387,28 +387,28 @@ public class DFA<T extends Comparable<? super T>> {
             throw new InternalException("nfa2 may not be null");
         }
 
-        NFACombineResult<T> nfaCombineResult = nfa1.combineWith(nfa2);
-        NFA<T> newNfa = nfaCombineResult.getNewNfa();
+        NfaCombineResult<T> nfaCombineResult = nfa1.combineWith(nfa2);
+        Nfa<T> newNfa = nfaCombineResult.getNewNfa();
 
         // add epsilon transitions from start to oldStart
         newNfa.getUnstableTransitions().add(
-                new Transition<T>(newNfa.getUnstableStartState(),
+                new NfaTransition<T>(newNfa.getUnstableStartState(),
                         nfaCombineResult.getStartStateMapping1(nfa1), null));
         newNfa.getUnstableTransitions().add(
-                new Transition<T>(newNfa.getUnstableStartState(),
+                new NfaTransition<T>(newNfa.getUnstableStartState(),
                         nfaCombineResult.getStartStateMapping2(nfa2), null));
 
         newNfa.stabilize();
 
-        DFA<T> dfa = new DFA<T>();
+        Dfa<T> dfa = new Dfa<T>();
 
         dfa.init(newNfa);
-        StateMatcher<T> stateMapper = dfa.computeDFAStates(newNfa);
+        StateMatcher<T> stateMapper = dfa.computeDfaStates(newNfa);
 
         // compute accept states
-        State<T> nfa1Accept = nfaCombineResult.getAcceptStateMapping1(nfa1);
-        State<T> nfa2Accept = nfaCombineResult.getAcceptStateMapping2(nfa2);
-        for (State<T> dfaState : dfa.states) {
+        NfaState<T> nfa1Accept = nfaCombineResult.getAcceptStateMapping1(nfa1);
+        NfaState<T> nfa2Accept = nfaCombineResult.getAcceptStateMapping2(nfa2);
+        for (NfaState<T> dfaState : dfa.states) {
             if (stateMapper.match(dfaState, nfa1Accept)
                     && stateMapper.match(dfaState, nfa2Accept)) {
                 dfa.acceptStates.add(dfaState);
