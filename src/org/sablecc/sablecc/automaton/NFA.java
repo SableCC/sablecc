@@ -407,6 +407,31 @@ public final class NFA<T extends Comparable<? super T>> {
         return newNfa;
     }
 
+    public DFA<T> shortest() {
+
+        return DFA.shortest(this);
+    }
+
+    public DFA<T> subtract(
+            NFA<T> nfa) {
+
+        if (nfa == null) {
+            throw new InternalException("nfa may not be null");
+        }
+
+        return DFA.difference(this, nfa);
+    }
+
+    public DFA<T> intersect(
+            NFA<T> nfa) {
+
+        if (nfa == null) {
+            throw new InternalException("nfa may not be null");
+        }
+
+        return DFA.intersection(this, nfa);
+    }
+
     public NFACombineResult<T> combineWith(
             NFA<T> nfa) {
 
