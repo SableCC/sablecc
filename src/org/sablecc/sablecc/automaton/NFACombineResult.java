@@ -23,7 +23,7 @@ import java.util.Map;
 import org.sablecc.sablecc.automaton.graph.State;
 import org.sablecc.sablecc.exception.InternalException;
 
-public class NFACombineResult<T extends Comparable<? super T>> {
+class NFACombineResult<T extends Comparable<? super T>> {
 
     private NFA<T> newNfa;
 
@@ -81,12 +81,12 @@ public class NFACombineResult<T extends Comparable<? super T>> {
         this.oldNfa2StateMap = oldNfa2StateMap;
     }
 
-    public NFA<T> getNewNfa() {
+    NFA<T> getNewNfa() {
 
         return this.newNfa;
     }
 
-    public State<T> getNewState1(
+    State<T> getNewState1(
             State<T> oldState,
             NFA<T> oldNfa) {
 
@@ -109,7 +109,7 @@ public class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    public State<T> getNewState2(
+    State<T> getNewState2(
             State<T> oldState,
             NFA<T> oldNfa) {
 
@@ -132,7 +132,7 @@ public class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    public State<T> getStartStateMapping1(
+    State<T> getStartStateMapping1(
             NFA<T> oldNfa) {
 
         if (oldNfa == null) {
@@ -146,7 +146,7 @@ public class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    public State<T> getStartStateMapping2(
+    State<T> getStartStateMapping2(
             NFA<T> oldNfa) {
 
         if (oldNfa == null) {
@@ -160,7 +160,7 @@ public class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    public State<T> getAcceptStateMapping1(
+    State<T> getAcceptStateMapping1(
             NFA<T> oldNfa) {
 
         if (oldNfa == null) {
@@ -174,7 +174,7 @@ public class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    public State<T> getAcceptStateMapping2(
+    State<T> getAcceptStateMapping2(
             NFA<T> oldNfa) {
 
         if (oldNfa == null) {
