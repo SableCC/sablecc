@@ -263,15 +263,15 @@ public final class NFA<T extends Comparable<? super T>> {
 
         // add epsilon transitions from start to oldStart
         newNfa.transitions.add(new Transition<T>(newNfa.startState,
-                nfaCombineResult.getStartStateMapping(this), null));
+                nfaCombineResult.getStartStateMapping1(this), null));
         newNfa.transitions.add(new Transition<T>(newNfa.startState,
-                nfaCombineResult.getStartStateMapping(nfa), null));
+                nfaCombineResult.getStartStateMapping2(nfa), null));
 
         // add epsilon transitions from oldAccept to accept
         newNfa.transitions.add(new Transition<T>(nfaCombineResult
-                .getAcceptStateMapping(this), newNfa.acceptState, null));
+                .getAcceptStateMapping1(this), newNfa.acceptState, null));
         newNfa.transitions.add(new Transition<T>(nfaCombineResult
-                .getAcceptStateMapping(nfa), newNfa.acceptState, null));
+                .getAcceptStateMapping2(nfa), newNfa.acceptState, null));
 
         newNfa.stabilize();
         return newNfa;
@@ -297,16 +297,16 @@ public final class NFA<T extends Comparable<? super T>> {
 
         // add epsilon transition from start to start(this)
         newNfa.transitions.add(new Transition<T>(newNfa.startState,
-                nfaCombineResult.getStartStateMapping(this), null));
+                nfaCombineResult.getStartStateMapping1(this), null));
 
         // add epsilon transition from this accept(this) to start(nfa)
         newNfa.transitions.add(new Transition<T>(nfaCombineResult
-                .getAcceptStateMapping(this), nfaCombineResult
-                .getStartStateMapping(nfa), null));
+                .getAcceptStateMapping1(this), nfaCombineResult
+                .getStartStateMapping2(nfa), null));
 
         // add epsilon transition from accept(nfa) to accept
         newNfa.transitions.add(new Transition<T>(nfaCombineResult
-                .getAcceptStateMapping(nfa), newNfa.acceptState, null));
+                .getAcceptStateMapping2(nfa), newNfa.acceptState, null));
 
         newNfa.stabilize();
         return newNfa;

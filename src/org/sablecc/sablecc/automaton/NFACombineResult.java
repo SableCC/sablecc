@@ -70,7 +70,7 @@ public class NFACombineResult<T extends Comparable<? super T>> {
 
         for (State<T> oldState : oldNfa2.getStates()) {
             if (oldNfa2StateMap.get(oldState) == null) {
-                throw new InternalException("invalid oldNfa1StateMap");
+                throw new InternalException("invalid oldNfa2StateMap");
             }
         }
 
@@ -86,7 +86,7 @@ public class NFACombineResult<T extends Comparable<? super T>> {
         return this.newNfa;
     }
 
-    public State<T> getNewState(
+    public State<T> getNewState1(
             State<T> oldState,
             NFA<T> oldNfa) {
 
@@ -106,6 +106,25 @@ public class NFACombineResult<T extends Comparable<? super T>> {
             return this.oldNfa1StateMap.get(oldState);
         }
 
+        throw new InternalException("invalid oldNfa");
+    }
+
+    public State<T> getNewState2(
+            State<T> oldState,
+            NFA<T> oldNfa) {
+
+        if (oldState == null) {
+            throw new InternalException("oldState may not be null");
+        }
+
+        if (oldNfa == null) {
+            throw new InternalException("oldNfa may not be null");
+        }
+
+        if (!oldNfa.getStates().contains(oldState)) {
+            throw new InternalException("oldState is not a state of oldNfa");
+        }
+
         if (oldNfa == this.oldNfa2) {
             return this.oldNfa2StateMap.get(oldState);
         }
@@ -113,7 +132,7 @@ public class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    public State<T> getStartStateMapping(
+    public State<T> getStartStateMapping1(
             NFA<T> oldNfa) {
 
         if (oldNfa == null) {
@@ -124,6 +143,16 @@ public class NFACombineResult<T extends Comparable<? super T>> {
             return this.oldNfa1StateMap.get(oldNfa.getStartState());
         }
 
+        throw new InternalException("invalid oldNfa");
+    }
+
+    public State<T> getStartStateMapping2(
+            NFA<T> oldNfa) {
+
+        if (oldNfa == null) {
+            throw new InternalException("oldNfa may not be null");
+        }
+
         if (oldNfa == this.oldNfa2) {
             return this.oldNfa2StateMap.get(oldNfa.getStartState());
         }
@@ -131,7 +160,7 @@ public class NFACombineResult<T extends Comparable<? super T>> {
         throw new InternalException("invalid oldNfa");
     }
 
-    public State<T> getAcceptStateMapping(
+    public State<T> getAcceptStateMapping1(
             NFA<T> oldNfa) {
 
         if (oldNfa == null) {
@@ -140,6 +169,16 @@ public class NFACombineResult<T extends Comparable<? super T>> {
 
         if (oldNfa == this.oldNfa1) {
             return this.oldNfa1StateMap.get(oldNfa.getAcceptState());
+        }
+
+        throw new InternalException("invalid oldNfa");
+    }
+
+    public State<T> getAcceptStateMapping2(
+            NFA<T> oldNfa) {
+
+        if (oldNfa == null) {
+            throw new InternalException("oldNfa may not be null");
         }
 
         if (oldNfa == this.oldNfa2) {
