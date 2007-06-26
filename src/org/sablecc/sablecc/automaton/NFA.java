@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.sablecc.sablecc.alphabet.Alphabet;
 import org.sablecc.sablecc.alphabet.AlphabetMergeResult;
@@ -38,7 +40,7 @@ public final class NFA<T extends Comparable<? super T>> {
 
     private Set<State<T>> states;
 
-    private Set<Transition<T>> transitions;
+    private SortedSet<Transition<T>> transitions;
 
     private State<T> startState;
 
@@ -99,7 +101,7 @@ public final class NFA<T extends Comparable<? super T>> {
     private void init() {
 
         this.states = new LinkedHashSet<State<T>>();
-        this.transitions = new LinkedHashSet<Transition<T>>();
+        this.transitions = new TreeSet<Transition<T>>();
 
         this.startState = new State<T>("start");
         this.states.add(this.startState);
@@ -137,6 +139,11 @@ public final class NFA<T extends Comparable<? super T>> {
         return this.transitions;
     }
 
+    Set<Transition<T>> getUnstableTransitions() {
+
+        return this.transitions;
+    }
+
     public State<T> getStartState() {
 
         if (!this.isStable) {
@@ -146,11 +153,21 @@ public final class NFA<T extends Comparable<? super T>> {
         return this.startState;
     }
 
+    State<T> getUnstableStartState() {
+
+        return this.startState;
+    }
+
     public State<T> getAcceptState() {
 
         if (!this.isStable) {
             throw new InternalException("this NFA is not stable yet");
         }
+
+        return this.acceptState;
+    }
+
+    State<T> getUnstableAcceptState() {
 
         return this.acceptState;
     }
@@ -192,7 +209,7 @@ public final class NFA<T extends Comparable<? super T>> {
         }
 
         this.states = Collections.unmodifiableSet(this.states);
-        this.transitions = Collections.unmodifiableSet(this.transitions);
+        this.transitions = Collections.unmodifiableSortedSet(this.transitions);
 
         // sanity check
         Set<String> stateNames = new HashSet<String>();
