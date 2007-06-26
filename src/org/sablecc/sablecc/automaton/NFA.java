@@ -198,7 +198,7 @@ public final class NFA<T extends Comparable<? super T>> {
         return this.toString;
     }
 
-    public void stabilize() {
+    void stabilize() {
 
         if (this.isStable) {
             throw new InternalException("this NFA is already stable");
@@ -432,7 +432,7 @@ public final class NFA<T extends Comparable<? super T>> {
         return DFA.intersection(this, nfa);
     }
 
-    public NFACombineResult<T> combineWith(
+    NFACombineResult<T> combineWith(
             NFA<T> nfa) {
 
         if (nfa == null) {

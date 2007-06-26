@@ -240,7 +240,7 @@ public class DFA<T extends Comparable<? super T>> {
         return this.toString;
     }
 
-    public void stabilize() {
+    private void stabilize() {
 
         if (this.isStable) {
             throw new InternalException("this DFA is already stable");
