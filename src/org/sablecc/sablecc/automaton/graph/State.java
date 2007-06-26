@@ -113,6 +113,49 @@ public final class State<T extends Comparable<? super T>> {
         this.backwardTransitions.add(transition);
     }
 
+    void removeForwardTransition(
+            Transition<T> transition) {
+
+        if (transition == null) {
+            throw new InternalException("transition may not be null");
+        }
+
+        if (transition.getSource() != this) {
+            throw new InternalException(
+                    "transition source must be this instance");
+        }
+
+        if (this.isStable) {
+            throw new InternalException("a stable state may not be modified");
+        }
+
+        if (!this.forwardTransitions.remove(transition)) {
+            throw new InternalException("corrupted data structure");
+        }
+
+    }
+
+    void removeBackwardTransition(
+            Transition<T> transition) {
+
+        if (transition == null) {
+            throw new InternalException("transition may not be null");
+        }
+
+        if (transition.getDestination() != this) {
+            throw new InternalException(
+                    "transition destination must be this instance");
+        }
+
+        if (this.isStable) {
+            throw new InternalException("a stable state may not be modified");
+        }
+
+        if (!this.backwardTransitions.remove(transition)) {
+            throw new InternalException("corrupted data structure");
+        }
+    }
+
     public void stabilize() {
 
         if (this.isStable) {

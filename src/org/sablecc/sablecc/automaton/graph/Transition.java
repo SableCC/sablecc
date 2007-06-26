@@ -33,6 +33,8 @@ public final class Transition<T extends Comparable<? super T>>
 
     private String toString;
 
+    private boolean isDeleted = false;
+
     public Transition(
             State<T> source,
             State<T> destination,
@@ -55,15 +57,27 @@ public final class Transition<T extends Comparable<? super T>>
 
     public State<T> getDestination() {
 
+        if (this.isDeleted) {
+            throw new InternalException("transition is deleted");
+        }
+
         return this.destination;
     }
 
     public State<T> getSource() {
 
+        if (this.isDeleted) {
+            throw new InternalException("transition is deleted");
+        }
+
         return this.source;
     }
 
     public Symbol<T> getSymbol() {
+
+        if (this.isDeleted) {
+            throw new InternalException("transition is deleted");
+        }
 
         return this.symbol;
     }
@@ -71,6 +85,10 @@ public final class Transition<T extends Comparable<? super T>>
     @Override
     public boolean equals(
             Object obj) {
+
+        if (this.isDeleted) {
+            throw new InternalException("transition is deleted");
+        }
 
         if (obj == null) {
             return false;
@@ -100,6 +118,10 @@ public final class Transition<T extends Comparable<? super T>>
     @Override
     public int hashCode() {
 
+        if (this.isDeleted) {
+            throw new InternalException("transition is deleted");
+        }
+
         if (this.hashCode == null) {
             int hashCode = this.source.hashCode();
 
@@ -118,6 +140,10 @@ public final class Transition<T extends Comparable<? super T>>
     @Override
     public String toString() {
 
+        if (this.isDeleted) {
+            throw new InternalException("transition is deleted");
+        }
+
         if (this.toString == null) {
             this.toString = this.source + "->("
                     + (this.symbol == null ? "epsilon" : this.symbol) + ")->"
@@ -129,6 +155,10 @@ public final class Transition<T extends Comparable<? super T>>
 
     public int compareTo(
             Transition<T> transition) {
+
+        if (this.isDeleted) {
+            throw new InternalException("transition is deleted");
+        }
 
         int result = 0;
 
@@ -152,5 +182,15 @@ public final class Transition<T extends Comparable<? super T>>
         }
 
         return result;
+    }
+
+    public void delete() {
+
+        if (this.isDeleted) {
+            throw new InternalException("transition is deleted");
+        }
+        this.source.removeForwardTransition(this);
+        this.destination.removeBackwardTransition(this);
+        this.isDeleted = true;
     }
 }
