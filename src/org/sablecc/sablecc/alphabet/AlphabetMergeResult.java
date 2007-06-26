@@ -161,8 +161,8 @@ public final class AlphabetMergeResult<T extends Comparable<? super T>> {
     }
 
     /**
-     * Returns the set of new symbols covering the same interval as the provided
-     * old symbol from the provided merged alphabet.
+     * Returns the set of new symbols covering the same intervals as the
+     * provided old symbol from the provided merged alphabet.
      * 
      * @param oldSymbol
      *            the symbol.
