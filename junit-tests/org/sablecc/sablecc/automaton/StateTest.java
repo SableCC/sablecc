@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.automaton.graph;
+package org.sablecc.sablecc.automaton;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,21 +28,21 @@ import org.sablecc.sablecc.exception.InternalException;
 
 public class StateTest {
 
-    private Transition<Integer> transition;
+    private NfaTransition<Integer> transition;
 
-    private State<Integer> firstState;
+    private NfaState<Integer> firstState;
 
-    private State<Integer> secondState;
+    private NfaState<Integer> secondState;
 
     @Before
     public void setUp()
             throws Exception {
 
-        this.firstState = new State<Integer>("firstStage");
+        this.firstState = new NfaState<Integer>("firstStage");
 
-        this.secondState = new State<Integer>("secondState");
+        this.secondState = new NfaState<Integer>("secondState");
 
-        this.transition = new Transition<Integer>(this.firstState,
+        this.transition = new NfaTransition<Integer>(this.firstState,
                 this.secondState, null);
 
         this.firstState.addForwardTransition(this.transition);
@@ -54,7 +54,7 @@ public class StateTest {
 
         // Case with null name
         try {
-            State nullNameState = new State(null);
+            NfaState nullNameState = new NfaState(null);
             fail("name may not be null");
         }
         catch (InternalException e) {
@@ -63,7 +63,7 @@ public class StateTest {
 
         // Case with an expected name
         String expectedName = "expectedName";
-        State newState = new State(expectedName);
+        NfaState newState = new NfaState(expectedName);
 
         assertEquals("The state should have the expected name.", expectedName,
                 newState.getName());
@@ -101,7 +101,7 @@ public class StateTest {
     public void testAddForwardTransition() {
 
         // Case with null transition
-        Transition<Integer> nullTransition = null;
+        NfaTransition<Integer> nullTransition = null;
         try {
             this.firstState.addForwardTransition(nullTransition);
             fail("transition may not be null");
@@ -133,7 +133,7 @@ public class StateTest {
     public void testAddBackwardTransition() {
 
         // Case with null transition
-        Transition<Integer> nullTransition = null;
+        NfaTransition<Integer> nullTransition = null;
         try {
             this.secondState.addBackwardTransition(nullTransition);
             fail("transition may not be null");
@@ -164,7 +164,7 @@ public class StateTest {
     public void testRemoveForwardTransition() {
 
         // Case with null Transition
-        Transition<Integer> nullTransition = null;
+        NfaTransition<Integer> nullTransition = null;
         try {
             this.firstState.removeForwardTransition(nullTransition);
             fail("transition may not be null");
@@ -195,7 +195,7 @@ public class StateTest {
     public void testRemoveBackwardTransition() {
 
         // Case with null Transition
-        Transition<Integer> nullTransition = null;
+        NfaTransition<Integer> nullTransition = null;
         try {
             this.secondState.removeBackwardTransition(nullTransition);
             fail("transition may not be null");

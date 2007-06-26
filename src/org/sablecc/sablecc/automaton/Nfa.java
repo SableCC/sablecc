@@ -30,21 +30,19 @@ import org.sablecc.sablecc.alphabet.Alphabet;
 import org.sablecc.sablecc.alphabet.AlphabetMergeResult;
 import org.sablecc.sablecc.alphabet.Interval;
 import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.automaton.graph.State;
-import org.sablecc.sablecc.automaton.graph.Transition;
 import org.sablecc.sablecc.exception.InternalException;
 
-public final class NFA<T extends Comparable<? super T>> {
+public final class Nfa<T extends Comparable<? super T>> {
 
     private Alphabet<T> alphabet;
 
-    private Set<State<T>> states;
+    private Set<NfaState<T>> states;
 
-    private SortedSet<Transition<T>> transitions;
+    private SortedSet<NfaTransition<T>> transitions;
 
-    private State<T> startState;
+    private NfaState<T> startState;
 
-    private State<T> acceptState;
+    private NfaState<T> acceptState;
 
     private boolean isStable;
 
@@ -53,7 +51,7 @@ public final class NFA<T extends Comparable<? super T>> {
     /**
      * Constructs a NFA for the empty language.
      */
-    public NFA() {
+    public Nfa() {
 
         init();
 
@@ -67,7 +65,7 @@ public final class NFA<T extends Comparable<? super T>> {
      * Constructs a NFA for the language <code>{"s"}</code> where
      * <code>s</code> is a symbol representing a single interval.
      */
-    public NFA(
+    public Nfa(
             Interval<T> interval) {
 
         if (interval == null) {
@@ -79,7 +77,7 @@ public final class NFA<T extends Comparable<? super T>> {
         // Add a transition: start->(symbol)->accept
         Symbol<T> symbol = new Symbol<T>(interval);
         this.alphabet = new Alphabet<T>(symbol);
-        this.transitions.add(new Transition<T>(this.startState,
+        this.transitions.add(new NfaTransition<T>(this.startState,
                 this.acceptState, symbol));
 
         stabilize();
@@ -91,7 +89,7 @@ public final class NFA<T extends Comparable<? super T>> {
      * <code>stabilize()</code> method should be called on this instance
      * before exposing it publicly.
      */
-    private NFA(
+    private Nfa(
             Alphabet<T> alphabet) {
 
         init();
@@ -100,13 +98,13 @@ public final class NFA<T extends Comparable<? super T>> {
 
     private void init() {
 
-        this.states = new LinkedHashSet<State<T>>();
-        this.transitions = new TreeSet<Transition<T>>();
+        this.states = new LinkedHashSet<NfaState<T>>();
+        this.transitions = new TreeSet<NfaTransition<T>>();
 
-        this.startState = new State<T>("start");
+        this.startState = new NfaState<T>("start");
         this.states.add(this.startState);
 
-        this.acceptState = new State<T>("accept");
+        this.acceptState = new NfaState<T>("accept");
         this.states.add(this.acceptState);
 
         this.isStable = false;
@@ -121,7 +119,7 @@ public final class NFA<T extends Comparable<? super T>> {
         return this.alphabet;
     }
 
-    public Set<State<T>> getStates() {
+    public Set<NfaState<T>> getStates() {
 
         if (!this.isStable) {
             throw new InternalException("this NFA is not stable yet");
@@ -130,7 +128,7 @@ public final class NFA<T extends Comparable<? super T>> {
         return this.states;
     }
 
-    public Set<Transition<T>> getTransitions() {
+    public Set<NfaTransition<T>> getTransitions() {
 
         if (!this.isStable) {
             throw new InternalException("this NFA is not stable yet");
@@ -139,12 +137,12 @@ public final class NFA<T extends Comparable<? super T>> {
         return this.transitions;
     }
 
-    Set<Transition<T>> getUnstableTransitions() {
+    Set<NfaTransition<T>> getUnstableTransitions() {
 
         return this.transitions;
     }
 
-    public State<T> getStartState() {
+    public NfaState<T> getStartState() {
 
         if (!this.isStable) {
             throw new InternalException("this NFA is not stable yet");
@@ -153,12 +151,12 @@ public final class NFA<T extends Comparable<? super T>> {
         return this.startState;
     }
 
-    State<T> getUnstableStartState() {
+    NfaState<T> getUnstableStartState() {
 
         return this.startState;
     }
 
-    public State<T> getAcceptState() {
+    public NfaState<T> getAcceptState() {
 
         if (!this.isStable) {
             throw new InternalException("this NFA is not stable yet");
@@ -167,7 +165,7 @@ public final class NFA<T extends Comparable<? super T>> {
         return this.acceptState;
     }
 
-    State<T> getUnstableAcceptState() {
+    NfaState<T> getUnstableAcceptState() {
 
         return this.acceptState;
     }
@@ -185,7 +183,7 @@ public final class NFA<T extends Comparable<? super T>> {
 
             sb.append("NFA:{ ");
 
-            for (Transition<T> transition : this.transitions) {
+            for (NfaTransition<T> transition : this.transitions) {
                 sb.append(transition);
                 sb.append(" ");
             }
@@ -204,7 +202,7 @@ public final class NFA<T extends Comparable<? super T>> {
             throw new InternalException("this NFA is already stable");
         }
 
-        for (State<T> state : this.states) {
+        for (NfaState<T> state : this.states) {
             state.stabilize();
         }
 
@@ -214,14 +212,14 @@ public final class NFA<T extends Comparable<? super T>> {
         // sanity check
         Set<String> stateNames = new HashSet<String>();
 
-        for (State<T> state : this.states) {
+        for (NfaState<T> state : this.states) {
             if (!stateNames.add(state.getName())) {
                 throw new InternalException(
                         "two states of the same NFA may not have the same name");
             }
         }
 
-        for (Transition<T> transition : this.transitions) {
+        for (NfaTransition<T> transition : this.transitions) {
             if (!this.states.contains(transition.getSource())) {
                 throw new InternalException(
                         "invalid source state in transition");
@@ -243,8 +241,8 @@ public final class NFA<T extends Comparable<? super T>> {
         this.isStable = true;
     }
 
-    public NFA<T> unionWith(
-            NFA<T> nfa) {
+    public Nfa<T> unionWith(
+            Nfa<T> nfa) {
 
         if (nfa == null) {
             throw new InternalException("nfa may not be null");
@@ -258,27 +256,27 @@ public final class NFA<T extends Comparable<? super T>> {
             throw new InternalException("nfa is not stable yet");
         }
 
-        NFACombineResult<T> nfaCombineResult = this.combineWith(nfa);
-        NFA<T> newNfa = nfaCombineResult.getNewNfa();
+        NfaCombineResult<T> nfaCombineResult = this.combineWith(nfa);
+        Nfa<T> newNfa = nfaCombineResult.getNewNfa();
 
         // add epsilon transitions from start to oldStart
-        newNfa.transitions.add(new Transition<T>(newNfa.startState,
+        newNfa.transitions.add(new NfaTransition<T>(newNfa.startState,
                 nfaCombineResult.getStartStateMapping1(this), null));
-        newNfa.transitions.add(new Transition<T>(newNfa.startState,
+        newNfa.transitions.add(new NfaTransition<T>(newNfa.startState,
                 nfaCombineResult.getStartStateMapping2(nfa), null));
 
         // add epsilon transitions from oldAccept to accept
-        newNfa.transitions.add(new Transition<T>(nfaCombineResult
+        newNfa.transitions.add(new NfaTransition<T>(nfaCombineResult
                 .getAcceptStateMapping1(this), newNfa.acceptState, null));
-        newNfa.transitions.add(new Transition<T>(nfaCombineResult
+        newNfa.transitions.add(new NfaTransition<T>(nfaCombineResult
                 .getAcceptStateMapping2(nfa), newNfa.acceptState, null));
 
         newNfa.stabilize();
         return newNfa;
     }
 
-    public NFA<T> concatenateWith(
-            NFA<T> nfa) {
+    public Nfa<T> concatenateWith(
+            Nfa<T> nfa) {
 
         if (nfa == null) {
             throw new InternalException("nfa may not be null");
@@ -292,148 +290,150 @@ public final class NFA<T extends Comparable<? super T>> {
             throw new InternalException("nfa is not stable yet");
         }
 
-        NFACombineResult<T> nfaCombineResult = this.combineWith(nfa);
-        NFA<T> newNfa = nfaCombineResult.getNewNfa();
+        NfaCombineResult<T> nfaCombineResult = this.combineWith(nfa);
+        Nfa<T> newNfa = nfaCombineResult.getNewNfa();
 
         // add epsilon transition from start to start(this)
-        newNfa.transitions.add(new Transition<T>(newNfa.startState,
+        newNfa.transitions.add(new NfaTransition<T>(newNfa.startState,
                 nfaCombineResult.getStartStateMapping1(this), null));
 
         // add epsilon transition from this accept(this) to start(nfa)
-        newNfa.transitions.add(new Transition<T>(nfaCombineResult
+        newNfa.transitions.add(new NfaTransition<T>(nfaCombineResult
                 .getAcceptStateMapping1(this), nfaCombineResult
                 .getStartStateMapping2(nfa), null));
 
         // add epsilon transition from accept(nfa) to accept
-        newNfa.transitions.add(new Transition<T>(nfaCombineResult
+        newNfa.transitions.add(new NfaTransition<T>(nfaCombineResult
                 .getAcceptStateMapping2(nfa), newNfa.acceptState, null));
 
         newNfa.stabilize();
         return newNfa;
     }
 
-    public NFA<T> zeroOrMore() {
+    public Nfa<T> zeroOrMore() {
 
         if (!this.isStable) {
             throw new InternalException("this NFA is not stable yet");
         }
 
-        NFA<T> newNfa = new NFA<T>(this.alphabet);
+        Nfa<T> newNfa = new Nfa<T>(this.alphabet);
 
         // add old states and transitions to new NFA
-        Map<State<T>, State<T>> oldNfaStateMap = new HashMap<State<T>, State<T>>();
+        Map<NfaState<T>, NfaState<T>> oldNfaStateMap = new HashMap<NfaState<T>, NfaState<T>>();
         this.addStatesAndTransitionsTo(newNfa, oldNfaStateMap);
 
-        State<T> startThis = oldNfaStateMap.get(this.startState);
-        State<T> acceptThis = oldNfaStateMap.get(this.acceptState);
+        NfaState<T> startThis = oldNfaStateMap.get(this.startState);
+        NfaState<T> acceptThis = oldNfaStateMap.get(this.acceptState);
 
         // add epsilon transition from start to accept
-        newNfa.transitions.add(new Transition<T>(newNfa.startState,
+        newNfa.transitions.add(new NfaTransition<T>(newNfa.startState,
                 newNfa.acceptState, null));
 
         // add epsilon transition from start to start(this)
-        newNfa.transitions.add(new Transition<T>(newNfa.startState, startThis,
-                null));
+        newNfa.transitions.add(new NfaTransition<T>(newNfa.startState,
+                startThis, null));
 
         // add epsilon transition from accept(this) to accept
-        newNfa.transitions.add(new Transition<T>(acceptThis,
+        newNfa.transitions.add(new NfaTransition<T>(acceptThis,
                 newNfa.acceptState, null));
 
         // add epsilon transition from accept(this) to start(this)
-        newNfa.transitions.add(new Transition<T>(acceptThis, startThis, null));
+        newNfa.transitions
+                .add(new NfaTransition<T>(acceptThis, startThis, null));
 
         newNfa.stabilize();
         return newNfa;
     }
 
-    public NFA<T> zeroOrOne() {
+    public Nfa<T> zeroOrOne() {
 
         if (!this.isStable) {
             throw new InternalException("this NFA is not stable yet");
         }
 
-        NFA<T> newNfa = new NFA<T>(this.alphabet);
+        Nfa<T> newNfa = new Nfa<T>(this.alphabet);
 
         // add old states and transitions to new NFA
-        Map<State<T>, State<T>> oldNfaStateMap = new HashMap<State<T>, State<T>>();
+        Map<NfaState<T>, NfaState<T>> oldNfaStateMap = new HashMap<NfaState<T>, NfaState<T>>();
         this.addStatesAndTransitionsTo(newNfa, oldNfaStateMap);
 
-        State<T> startThis = oldNfaStateMap.get(this.startState);
-        State<T> acceptThis = oldNfaStateMap.get(this.acceptState);
+        NfaState<T> startThis = oldNfaStateMap.get(this.startState);
+        NfaState<T> acceptThis = oldNfaStateMap.get(this.acceptState);
 
         // add epsilon transition from start to accept
-        newNfa.transitions.add(new Transition<T>(newNfa.startState,
+        newNfa.transitions.add(new NfaTransition<T>(newNfa.startState,
                 newNfa.acceptState, null));
 
         // add epsilon transition from start to start(this)
-        newNfa.transitions.add(new Transition<T>(newNfa.startState, startThis,
-                null));
+        newNfa.transitions.add(new NfaTransition<T>(newNfa.startState,
+                startThis, null));
 
         // add epsilon transition from accept(this) to accept
-        newNfa.transitions.add(new Transition<T>(acceptThis,
+        newNfa.transitions.add(new NfaTransition<T>(acceptThis,
                 newNfa.acceptState, null));
 
         newNfa.stabilize();
         return newNfa;
     }
 
-    public NFA<T> oneOrMore() {
+    public Nfa<T> oneOrMore() {
 
         if (!this.isStable) {
             throw new InternalException("this NFA is not stable yet");
         }
 
-        NFA<T> newNfa = new NFA<T>(this.alphabet);
+        Nfa<T> newNfa = new Nfa<T>(this.alphabet);
 
         // add old states and transitions to new NFA
-        Map<State<T>, State<T>> oldNfaStateMap = new HashMap<State<T>, State<T>>();
+        Map<NfaState<T>, NfaState<T>> oldNfaStateMap = new HashMap<NfaState<T>, NfaState<T>>();
         this.addStatesAndTransitionsTo(newNfa, oldNfaStateMap);
 
-        State<T> startThis = oldNfaStateMap.get(this.startState);
-        State<T> acceptThis = oldNfaStateMap.get(this.acceptState);
+        NfaState<T> startThis = oldNfaStateMap.get(this.startState);
+        NfaState<T> acceptThis = oldNfaStateMap.get(this.acceptState);
 
         // add epsilon transition from start to start(this)
-        newNfa.transitions.add(new Transition<T>(newNfa.startState, startThis,
-                null));
+        newNfa.transitions.add(new NfaTransition<T>(newNfa.startState,
+                startThis, null));
 
         // add epsilon transition from accept(this) to accept
-        newNfa.transitions.add(new Transition<T>(acceptThis,
+        newNfa.transitions.add(new NfaTransition<T>(acceptThis,
                 newNfa.acceptState, null));
 
         // add epsilon transition from accept(this) to start(this)
-        newNfa.transitions.add(new Transition<T>(acceptThis, startThis, null));
+        newNfa.transitions
+                .add(new NfaTransition<T>(acceptThis, startThis, null));
 
         newNfa.stabilize();
         return newNfa;
     }
 
-    public DFA<T> shortest() {
+    public Dfa<T> shortest() {
 
-        return DFA.shortest(this);
+        return Dfa.shortest(this);
     }
 
-    public DFA<T> subtract(
-            NFA<T> nfa) {
+    public Dfa<T> subtract(
+            Nfa<T> nfa) {
 
         if (nfa == null) {
             throw new InternalException("nfa may not be null");
         }
 
-        return DFA.difference(this, nfa);
+        return Dfa.difference(this, nfa);
     }
 
-    public DFA<T> intersect(
-            NFA<T> nfa) {
+    public Dfa<T> intersect(
+            Nfa<T> nfa) {
 
         if (nfa == null) {
             throw new InternalException("nfa may not be null");
         }
 
-        return DFA.intersection(this, nfa);
+        return Dfa.intersection(this, nfa);
     }
 
-    NFACombineResult<T> combineWith(
-            NFA<T> nfa) {
+    NfaCombineResult<T> combineWith(
+            Nfa<T> nfa) {
 
         if (nfa == null) {
             throw new InternalException("nfa may not be null");
@@ -450,30 +450,30 @@ public final class NFA<T extends Comparable<? super T>> {
         // Create a new NFA
         AlphabetMergeResult<T> alphabetMergeResult = this.alphabet
                 .mergeWith(nfa.getAlphabet());
-        NFA<T> newNfa = new NFA<T>(alphabetMergeResult.getNewAlphabet());
+        Nfa<T> newNfa = new Nfa<T>(alphabetMergeResult.getNewAlphabet());
 
         // add old states and transitions to new NFA
-        Map<State<T>, State<T>> oldNfa1StateMap = new HashMap<State<T>, State<T>>();
+        Map<NfaState<T>, NfaState<T>> oldNfa1StateMap = new HashMap<NfaState<T>, NfaState<T>>();
         this.addStatesAndTransitionsTo(newNfa, oldNfa1StateMap,
                 alphabetMergeResult);
 
-        Map<State<T>, State<T>> oldNfa2StateMap = new HashMap<State<T>, State<T>>();
+        Map<NfaState<T>, NfaState<T>> oldNfa2StateMap = new HashMap<NfaState<T>, NfaState<T>>();
         nfa.addStatesAndTransitionsTo(newNfa, oldNfa2StateMap,
                 alphabetMergeResult);
 
-        return new NFACombineResult<T>(newNfa, this, oldNfa1StateMap, nfa,
+        return new NfaCombineResult<T>(newNfa, this, oldNfa1StateMap, nfa,
                 oldNfa2StateMap);
     }
 
     private void addStatesAndTransitionsTo(
-            NFA<T> newNfa,
-            Map<State<T>, State<T>> nfaStateMap,
+            Nfa<T> newNfa,
+            Map<NfaState<T>, NfaState<T>> nfaStateMap,
             AlphabetMergeResult<T> alphabetMergeResult) {
 
         // add states
-        for (State<T> oldState : this.states) {
+        for (NfaState<T> oldState : this.states) {
 
-            State<T> newState = new State<T>("state"
+            NfaState<T> newState = new NfaState<T>("state"
                     + (newNfa.states.size() - 1));
 
             newNfa.states.add(newState);
@@ -481,39 +481,39 @@ public final class NFA<T extends Comparable<? super T>> {
         }
 
         // add transitions
-        for (Transition<T> oldTransition : this.transitions) {
+        for (NfaTransition<T> oldTransition : this.transitions) {
 
-            State<T> newSource = nfaStateMap.get(oldTransition.getSource());
-            State<T> newDestination = nfaStateMap.get(oldTransition
+            NfaState<T> newSource = nfaStateMap.get(oldTransition.getSource());
+            NfaState<T> newDestination = nfaStateMap.get(oldTransition
                     .getDestination());
 
             if (oldTransition.getSymbol() != null) {
                 for (Symbol<T> newSymbol : alphabetMergeResult.getNewSymbols(
                         oldTransition.getSymbol(), this.alphabet)) {
 
-                    newNfa.transitions.add(new Transition<T>(newSource,
+                    newNfa.transitions.add(new NfaTransition<T>(newSource,
                             newDestination, newSymbol));
                 }
             }
             else {
-                newNfa.transitions.add(new Transition<T>(newSource,
+                newNfa.transitions.add(new NfaTransition<T>(newSource,
                         newDestination, null));
             }
         }
     }
 
     private void addStatesAndTransitionsTo(
-            NFA<T> newNfa,
-            Map<State<T>, State<T>> nfaStateMap) {
+            Nfa<T> newNfa,
+            Map<NfaState<T>, NfaState<T>> nfaStateMap) {
 
         if (!this.alphabet.equals(newNfa.alphabet)) {
             throw new InternalException("different alphabets are not allowed");
         }
 
         // add states
-        for (State<T> oldState : this.states) {
+        for (NfaState<T> oldState : this.states) {
 
-            State<T> newState = new State<T>("state"
+            NfaState<T> newState = new NfaState<T>("state"
                     + (newNfa.states.size() - 1));
 
             newNfa.states.add(newState);
@@ -521,14 +521,14 @@ public final class NFA<T extends Comparable<? super T>> {
         }
 
         // add transitions
-        for (Transition<T> oldTransition : this.transitions) {
+        for (NfaTransition<T> oldTransition : this.transitions) {
 
-            State<T> newSource = nfaStateMap.get(oldTransition.getSource());
-            State<T> newDestination = nfaStateMap.get(oldTransition
+            NfaState<T> newSource = nfaStateMap.get(oldTransition.getSource());
+            NfaState<T> newDestination = nfaStateMap.get(oldTransition
                     .getDestination());
 
-            newNfa.transitions.add(new Transition<T>(newSource, newDestination,
-                    oldTransition.getSymbol()));
+            newNfa.transitions.add(new NfaTransition<T>(newSource,
+                    newDestination, oldTransition.getSymbol()));
         }
     }
 }

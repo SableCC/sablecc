@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.automaton.graph;
+package org.sablecc.sablecc.automaton;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -23,17 +23,17 @@ import java.util.Set;
 
 import org.sablecc.sablecc.exception.InternalException;
 
-public final class State<T extends Comparable<? super T>> {
+public final class NfaState<T extends Comparable<? super T>> {
 
     private final String name;
 
-    private Set<Transition<T>> forwardTransitions;
+    private Set<NfaTransition<T>> forwardTransitions;
 
-    private Set<Transition<T>> backwardTransitions;
+    private Set<NfaTransition<T>> backwardTransitions;
 
     private boolean isStable;
 
-    public State(
+    public NfaState(
             String name) {
 
         if (name == null) {
@@ -41,8 +41,8 @@ public final class State<T extends Comparable<? super T>> {
         }
 
         this.name = name;
-        this.forwardTransitions = new LinkedHashSet<Transition<T>>();
-        this.backwardTransitions = new LinkedHashSet<Transition<T>>();
+        this.forwardTransitions = new LinkedHashSet<NfaTransition<T>>();
+        this.backwardTransitions = new LinkedHashSet<NfaTransition<T>>();
         this.isStable = false;
     }
 
@@ -51,7 +51,7 @@ public final class State<T extends Comparable<? super T>> {
         return this.name;
     }
 
-    public Set<Transition<T>> getForwardTransitions() {
+    public Set<NfaTransition<T>> getForwardTransitions() {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
@@ -60,7 +60,7 @@ public final class State<T extends Comparable<? super T>> {
         return this.forwardTransitions;
     }
 
-    public Set<Transition<T>> getBackwardTransitions() {
+    public Set<NfaTransition<T>> getBackwardTransitions() {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
@@ -76,7 +76,7 @@ public final class State<T extends Comparable<? super T>> {
     }
 
     void addForwardTransition(
-            Transition<T> transition) {
+            NfaTransition<T> transition) {
 
         if (transition == null) {
             throw new InternalException("transition may not be null");
@@ -95,7 +95,7 @@ public final class State<T extends Comparable<? super T>> {
     }
 
     void addBackwardTransition(
-            Transition<T> transition) {
+            NfaTransition<T> transition) {
 
         if (transition == null) {
             throw new InternalException("transition may not be null");
@@ -114,7 +114,7 @@ public final class State<T extends Comparable<? super T>> {
     }
 
     void removeForwardTransition(
-            Transition<T> transition) {
+            NfaTransition<T> transition) {
 
         if (transition == null) {
             throw new InternalException("transition may not be null");
@@ -136,7 +136,7 @@ public final class State<T extends Comparable<? super T>> {
     }
 
     void removeBackwardTransition(
-            Transition<T> transition) {
+            NfaTransition<T> transition) {
 
         if (transition == null) {
             throw new InternalException("transition may not be null");
