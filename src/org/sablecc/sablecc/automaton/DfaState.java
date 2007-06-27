@@ -165,7 +165,7 @@ public final class DfaState<T extends Comparable<? super T>>
             throw new InternalException("invalid dfaState");
         }
 
-        if (dfaState == this.dfa.getDeadEndState()) {
+        if (dfaState == this.dfa.getUnstableDeadEndState()) {
             // Don't add transition to dead-end state
             if (this.transitions.get(symbol) != null) {
                 throw new InternalException("target was already set");

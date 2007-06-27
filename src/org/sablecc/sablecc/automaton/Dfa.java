@@ -179,6 +179,15 @@ public class Dfa<T extends Comparable<? super T>> {
 
     public DfaState<T> getDeadEndState() {
 
+        if (!this.isStable) {
+            throw new InternalException("this DFA is not stable yet");
+        }
+
+        return this.deadEndState;
+    }
+
+    DfaState<T> getUnstableDeadEndState() {
+
         return this.deadEndState;
     }
 
