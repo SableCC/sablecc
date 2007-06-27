@@ -20,7 +20,7 @@ package org.sablecc.sablecc.automaton;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
 
 import org.sablecc.sablecc.exception.InternalException;
 
@@ -30,9 +30,9 @@ class StateMatcher<T extends Comparable<? super T>> {
 
     private final Nfa<T> nfa;
 
-    private final Map<NfaState<T>, Set<NfaState<T>>> dfaToNfaSetMap = new HashMap<NfaState<T>, Set<NfaState<T>>>();
+    private final Map<DfaState<T>, SortedSet<NfaState<T>>> dfaToNfaSetMap = new HashMap<DfaState<T>, SortedSet<NfaState<T>>>();
 
-    private final Map<Set<NfaState<T>>, NfaState<T>> nfaSetToDfaMap = new HashMap<Set<NfaState<T>>, NfaState<T>>();
+    private final Map<SortedSet<NfaState<T>>, DfaState<T>> nfaSetToDfaMap = new HashMap<SortedSet<NfaState<T>>, DfaState<T>>();
 
     StateMatcher(
             final Dfa<T> dfa,
@@ -50,14 +50,14 @@ class StateMatcher<T extends Comparable<? super T>> {
         this.nfa = nfa;
     }
 
-    NfaState<T> getDfaState(
-            Set<NfaState<T>> nfaStates) {
+    DfaState<T> getDfaState(
+            SortedSet<NfaState<T>> nfaStates) {
 
         if (nfaStates == null) {
             throw new InternalException("nfaStates may not be null");
         }
 
-        NfaState<T> dfaState = this.nfaSetToDfaMap.get(nfaStates);
+        DfaState<T> dfaState = this.nfaSetToDfaMap.get(nfaStates);
 
         if (dfaState == null) {
 
@@ -68,13 +68,10 @@ class StateMatcher<T extends Comparable<? super T>> {
                 }
             }
 
-            dfaState = new NfaState<T>("state"
-                    + this.dfa.getUnstableStates().size());
+            dfaState = new DfaState<T>(this.dfa);
 
-            this.dfa.getUnstableStates().add(dfaState);
-
-            Set<NfaState<T>> unmodifiableNfaStates = Collections
-                    .unmodifiableSet(nfaStates);
+            SortedSet<NfaState<T>> unmodifiableNfaStates = Collections
+                    .unmodifiableSortedSet(nfaStates);
             this.nfaSetToDfaMap.put(unmodifiableNfaStates, dfaState);
             this.dfaToNfaSetMap.put(dfaState, unmodifiableNfaStates);
         }
@@ -82,8 +79,8 @@ class StateMatcher<T extends Comparable<? super T>> {
         return dfaState;
     }
 
-    Set<NfaState<T>> getNfaStates(
-            NfaState<T> dfaState) {
+    SortedSet<NfaState<T>> getNfaStates(
+            DfaState<T> dfaState) {
 
         if (dfaState == null) {
             throw new InternalException("dfaState may not be null");
@@ -93,7 +90,7 @@ class StateMatcher<T extends Comparable<? super T>> {
             throw new InternalException("invalid dfaState");
         }
 
-        Set<NfaState<T>> nfaStates = this.dfaToNfaSetMap.get(dfaState);
+        SortedSet<NfaState<T>> nfaStates = this.dfaToNfaSetMap.get(dfaState);
         if (nfaStates == null) {
             throw new InternalException(
                     "corrupted internal data structures detected");
@@ -103,7 +100,7 @@ class StateMatcher<T extends Comparable<? super T>> {
     }
 
     boolean match(
-            NfaState<T> dfaState,
+            DfaState<T> dfaState,
             NfaState<T> nfaState) {
 
         if (dfaState == null) {
@@ -122,7 +119,7 @@ class StateMatcher<T extends Comparable<? super T>> {
             throw new InternalException("invalid nfaState");
         }
 
-        Set<NfaState<T>> nfaStates = this.dfaToNfaSetMap.get(dfaState);
+        SortedSet<NfaState<T>> nfaStates = this.dfaToNfaSetMap.get(dfaState);
         if (nfaStates == null) {
             throw new InternalException(
                     "corrupted internal data structures detected");
