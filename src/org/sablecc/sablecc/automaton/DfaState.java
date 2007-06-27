@@ -73,6 +73,11 @@ public final class DfaState<T extends Comparable<? super T>>
         return this.transitions;
     }
 
+    public SortedMap<Symbol<T>, DfaState<T>> getUnstableTransitions() {
+
+        return this.transitions;
+    }
+
     public DfaState<T> getTarget(
             Symbol<T> symbol) {
 
