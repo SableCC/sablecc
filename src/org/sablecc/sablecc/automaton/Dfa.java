@@ -259,6 +259,8 @@ public class Dfa<T extends Comparable<? super T>> {
             throw new InternalException("this DFA is already stable");
         }
 
+        removeUnreachableStates();
+
         for (DfaState<T> state : this.states) {
             state.stabilize();
         }
@@ -268,6 +270,27 @@ public class Dfa<T extends Comparable<? super T>> {
                 .unmodifiableSortedSet(this.acceptStates);
 
         this.isStable = true;
+    }
+
+    private void removeUnreachableStates() {
+
+        SortedSet<DfaState<T>> reachableStates = new TreeSet<DfaState<T>>();
+
+        WorkSet<DfaState<T>> workSet = new WorkSet<DfaState<T>>();
+        workSet.add(this.startState);
+
+        while (workSet.hasNext()) {
+            DfaState<T> state = workSet.next();
+            reachableStates.add(state);
+
+            for (DfaState<T> target : state.getUnstableTransitions().values()) {
+                workSet.add(target);
+            }
+        }
+
+        reachableStates.add(this.deadEndState);
+
+        this.states = reachableStates;
     }
 
     static <T extends Comparable<? super T>> Dfa<T> shortest(
