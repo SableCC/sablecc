@@ -18,155 +18,223 @@
 package org.sablecc.sablecc.automaton;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
+import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 
-public final class NfaState<T extends Comparable<? super T>> {
+public final class NfaState<T extends Comparable<? super T>>
+        implements Comparable<NfaState<T>> {
 
-    private final String name;
+    private final Nfa<T> nfa;
 
-    private Set<NfaTransition<T>> forwardTransitions;
+    private final int id;
 
-    private Set<NfaTransition<T>> backwardTransitions;
+    private SortedMap<Symbol<T>, SortedSet<NfaState<T>>> transitions;
 
     private boolean isStable;
 
-    public NfaState(
-            String name) {
+    private String toString;
 
-        if (name == null) {
-            throw new InternalException("name may not be null");
+    private SortedSet<NfaState<T>> epsilonReach;
+
+    private final SortedSet<NfaState<T>> emptyNfaStateSet = new TreeSet<NfaState<T>>();
+
+    NfaState(
+            Nfa<T> nfa) {
+
+        if (nfa == null) {
+            throw new InternalException("nfa may not be null");
         }
 
-        this.name = name;
-        this.forwardTransitions = new LinkedHashSet<NfaTransition<T>>();
-        this.backwardTransitions = new LinkedHashSet<NfaTransition<T>>();
+        this.nfa = nfa;
+
+        this.id = nfa.getNextStateId();
+        nfa.addState(this);
+
+        this.transitions = new TreeMap<Symbol<T>, SortedSet<NfaState<T>>>(nfa
+                .getSymbolComparator());
+
         this.isStable = false;
     }
 
-    public String getName() {
+    public Nfa<T> getNfa() {
 
-        return this.name;
+        return this.nfa;
     }
 
-    public Set<NfaTransition<T>> getForwardTransitions() {
+    public int getId() {
+
+        return this.id;
+    }
+
+    public SortedMap<Symbol<T>, SortedSet<NfaState<T>>> getTransitions() {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
         }
 
-        return this.forwardTransitions;
+        return this.transitions;
     }
 
-    public Set<NfaTransition<T>> getBackwardTransitions() {
+    public SortedSet<NfaState<T>> getTargets(
+            Symbol<T> symbol) {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
         }
 
-        return this.backwardTransitions;
+        if (symbol != null
+                && !this.nfa.getAlphabet().getSymbols().contains(symbol)) {
+            throw new InternalException("invalid symbol");
+        }
+
+        SortedSet<NfaState<T>> targets = this.transitions.get(symbol);
+
+        if (targets == null) {
+            targets = this.emptyNfaStateSet;
+        }
+
+        return targets;
+    }
+
+    @Override
+    public boolean equals(
+            Object obj) {
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof NfaState)) {
+            return false;
+        }
+
+        NfaState nfaState = (NfaState) obj;
+
+        return this.id == nfaState.id;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return this.id;
     }
 
     @Override
     public String toString() {
 
-        return this.name;
+        if (this.toString == null) {
+            this.toString = "nfaState" + this.id;
+        }
+
+        return this.toString;
     }
 
-    void addForwardTransition(
-            NfaTransition<T> transition) {
+    public int compareTo(
+            NfaState<T> nfaState) {
 
-        if (transition == null) {
-            throw new InternalException("transition may not be null");
-        }
-
-        if (transition.getSource() != this) {
+        if (this.nfa != nfaState.nfa) {
             throw new InternalException(
-                    "transition source must be this instance");
+                    "cannot compare states from distinct NFAs");
         }
+
+        return this.id - nfaState.id;
+    }
+
+    void addTransition(
+            Symbol<T> symbol,
+            NfaState<T> nfaState) {
 
         if (this.isStable) {
             throw new InternalException("a stable state may not be modified");
         }
 
-        this.forwardTransitions.add(transition);
+        if (nfaState == null) {
+            throw new InternalException("nfaState may not be null");
+        }
+
+        if (symbol != null
+                && !this.nfa.getAlphabet().getSymbols().contains(symbol)) {
+            throw new InternalException("invalid symbol");
+        }
+
+        if (this.nfa != nfaState.nfa) {
+            throw new InternalException("invalid nfaState");
+        }
+
+        SortedSet<NfaState<T>> targets = this.transitions.get(symbol);
+
+        if (targets == null) {
+            targets = new TreeSet<NfaState<T>>();
+            this.transitions.put(symbol, targets);
+        }
+
+        targets.add(nfaState);
     }
 
-    void addBackwardTransition(
-            NfaTransition<T> transition) {
-
-        if (transition == null) {
-            throw new InternalException("transition may not be null");
-        }
-
-        if (transition.getDestination() != this) {
-            throw new InternalException(
-                    "transition destination must be this instance");
-        }
-
-        if (this.isStable) {
-            throw new InternalException("a stable state may not be modified");
-        }
-
-        this.backwardTransitions.add(transition);
-    }
-
-    void removeForwardTransition(
-            NfaTransition<T> transition) {
-
-        if (transition == null) {
-            throw new InternalException("transition may not be null");
-        }
-
-        if (transition.getSource() != this) {
-            throw new InternalException(
-                    "transition source must be this instance");
-        }
-
-        if (this.isStable) {
-            throw new InternalException("a stable state may not be modified");
-        }
-
-        if (!this.forwardTransitions.remove(transition)) {
-            throw new InternalException("corrupted data structure");
-        }
-
-    }
-
-    void removeBackwardTransition(
-            NfaTransition<T> transition) {
-
-        if (transition == null) {
-            throw new InternalException("transition may not be null");
-        }
-
-        if (transition.getDestination() != this) {
-            throw new InternalException(
-                    "transition destination must be this instance");
-        }
-
-        if (this.isStable) {
-            throw new InternalException("a stable state may not be modified");
-        }
-
-        if (!this.backwardTransitions.remove(transition)) {
-            throw new InternalException("corrupted data structure");
-        }
-    }
-
-    public void stabilize() {
+    void stabilize() {
 
         if (this.isStable) {
             throw new InternalException("state is already stable");
         }
 
-        this.forwardTransitions = Collections
-                .unmodifiableSet(this.forwardTransitions);
-        this.backwardTransitions = Collections
-                .unmodifiableSet(this.backwardTransitions);
+        for (Map.Entry<Symbol<T>, SortedSet<NfaState<T>>> entry : this.transitions
+                .entrySet()) {
+            entry.setValue(Collections.unmodifiableSortedSet(entry.getValue()));
+        }
+
+        this.transitions = Collections.unmodifiableSortedMap(this.transitions);
+
         this.isStable = true;
     }
 
+    public SortedSet<NfaState<T>> getEpsilonReach() {
+
+        if (!this.isStable) {
+            throw new InternalException("the state is not stable yet");
+        }
+
+        if (this.epsilonReach == null) {
+
+            SortedSet<NfaState<T>> epsilonReach = new TreeSet<NfaState<T>>();
+            computeEpsilonReach(epsilonReach);
+            this.epsilonReach = Collections.unmodifiableSortedSet(epsilonReach);
+        }
+
+        return this.epsilonReach;
+
+    }
+
+    private void computeEpsilonReach(
+            SortedSet<NfaState<T>> epsilonReach) {
+
+        if (!this.isStable) {
+            throw new InternalException("the state is not stable yet");
+        }
+
+        // did we already include this state?
+        if (!epsilonReach.contains(this)) {
+
+            // no, so add it
+            epsilonReach.add(this);
+
+            // do we know its reach?
+            if (this.epsilonReach != null) {
+                // yes, use it!
+                epsilonReach.addAll(this.epsilonReach);
+            }
+            else {
+                // no, we must continue the recursive computation
+                for (NfaState<T> nfaState : getTargets(null)) {
+                    nfaState.computeEpsilonReach(epsilonReach);
+                }
+            }
+        }
+
+    }
 }

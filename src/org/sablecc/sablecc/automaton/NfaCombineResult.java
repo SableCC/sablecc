@@ -17,8 +17,8 @@
 
 package org.sablecc.sablecc.automaton;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.sablecc.sablecc.exception.InternalException;
 
@@ -28,18 +28,18 @@ class NfaCombineResult<T extends Comparable<? super T>> {
 
     private Nfa<T> oldNfa1;
 
-    private Map<NfaState<T>, NfaState<T>> oldNfa1StateMap = new HashMap<NfaState<T>, NfaState<T>>();
+    private SortedMap<NfaState<T>, NfaState<T>> oldNfa1StateMap = new TreeMap<NfaState<T>, NfaState<T>>();
 
     private Nfa<T> oldNfa2;
 
-    private Map<NfaState<T>, NfaState<T>> oldNfa2StateMap = new HashMap<NfaState<T>, NfaState<T>>();
+    private SortedMap<NfaState<T>, NfaState<T>> oldNfa2StateMap = new TreeMap<NfaState<T>, NfaState<T>>();
 
     NfaCombineResult(
             Nfa<T> newNfa,
             Nfa<T> oldNfa1,
-            Map<NfaState<T>, NfaState<T>> oldNfa1StateMap,
+            SortedMap<NfaState<T>, NfaState<T>> oldNfa1StateMap,
             Nfa<T> oldNfa2,
-            Map<NfaState<T>, NfaState<T>> oldNfa2StateMap) {
+            SortedMap<NfaState<T>, NfaState<T>> oldNfa2StateMap) {
 
         if (newNfa == null) {
             throw new InternalException("newNfa may not be null");
@@ -85,105 +85,51 @@ class NfaCombineResult<T extends Comparable<? super T>> {
         return this.newNfa;
     }
 
-    NfaState<T> getNewState1(
-            NfaState<T> oldState,
-            Nfa<T> oldNfa) {
+    NfaState<T> getNewNfa1State(
+            NfaState<T> oldState) {
 
         if (oldState == null) {
             throw new InternalException("oldState may not be null");
         }
 
-        if (oldNfa == null) {
-            throw new InternalException("oldNfa may not be null");
+        if (oldState.getNfa() != this.oldNfa1) {
+            throw new InternalException("invalid oldState");
         }
 
-        if (!oldNfa.getStates().contains(oldState)) {
-            throw new InternalException("oldState is not a state of oldNfa");
-        }
-
-        if (oldNfa == this.oldNfa1) {
-            return this.oldNfa1StateMap.get(oldState);
-        }
-
-        throw new InternalException("invalid oldNfa");
+        return this.oldNfa1StateMap.get(oldState);
     }
 
-    NfaState<T> getNewState2(
-            NfaState<T> oldState,
-            Nfa<T> oldNfa) {
+    NfaState<T> getNewNfa2State(
+            NfaState<T> oldState) {
 
         if (oldState == null) {
             throw new InternalException("oldState may not be null");
         }
 
-        if (oldNfa == null) {
-            throw new InternalException("oldNfa may not be null");
+        if (oldState.getNfa() != this.oldNfa2) {
+            throw new InternalException("invalid oldState");
         }
 
-        if (!oldNfa.getStates().contains(oldState)) {
-            throw new InternalException("oldState is not a state of oldNfa");
-        }
-
-        if (oldNfa == this.oldNfa2) {
-            return this.oldNfa2StateMap.get(oldState);
-        }
-
-        throw new InternalException("invalid oldNfa");
+        return this.oldNfa2StateMap.get(oldState);
     }
 
-    NfaState<T> getStartStateMapping1(
-            Nfa<T> oldNfa) {
+    NfaState<T> getNewNfa1StartState() {
 
-        if (oldNfa == null) {
-            throw new InternalException("oldNfa may not be null");
-        }
-
-        if (oldNfa == this.oldNfa1) {
-            return this.oldNfa1StateMap.get(oldNfa.getStartState());
-        }
-
-        throw new InternalException("invalid oldNfa");
+        return this.oldNfa1StateMap.get(this.oldNfa1.getStartState());
     }
 
-    NfaState<T> getStartStateMapping2(
-            Nfa<T> oldNfa) {
+    NfaState<T> getNewNfa2StartState() {
 
-        if (oldNfa == null) {
-            throw new InternalException("oldNfa may not be null");
-        }
-
-        if (oldNfa == this.oldNfa2) {
-            return this.oldNfa2StateMap.get(oldNfa.getStartState());
-        }
-
-        throw new InternalException("invalid oldNfa");
+        return this.oldNfa2StateMap.get(this.oldNfa2.getStartState());
     }
 
-    NfaState<T> getAcceptStateMapping1(
-            Nfa<T> oldNfa) {
+    NfaState<T> getNewNfa1AcceptState() {
 
-        if (oldNfa == null) {
-            throw new InternalException("oldNfa may not be null");
-        }
-
-        if (oldNfa == this.oldNfa1) {
-            return this.oldNfa1StateMap.get(oldNfa.getAcceptState());
-        }
-
-        throw new InternalException("invalid oldNfa");
+        return this.oldNfa1StateMap.get(this.oldNfa1.getAcceptState());
     }
 
-    NfaState<T> getAcceptStateMapping2(
-            Nfa<T> oldNfa) {
+    NfaState<T> getNewNfa2AcceptState() {
 
-        if (oldNfa == null) {
-            throw new InternalException("oldNfa may not be null");
-        }
-
-        if (oldNfa == this.oldNfa2) {
-            return this.oldNfa2StateMap.get(oldNfa.getAcceptState());
-        }
-
-        throw new InternalException("invalid oldNfa");
+        return this.oldNfa2StateMap.get(this.oldNfa2.getAcceptState());
     }
 }
