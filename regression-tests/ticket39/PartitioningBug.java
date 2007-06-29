@@ -26,11 +26,6 @@ import org.sablecc.sablecc.automaton.Nfa;
 public class PartitioningBug {
 
     @Test
-    public void dummy() {
-
-        // until the bug is fixed
-    }
-
     public void bug() {
 
         AdjacencyRealm<Character> charRealm = new AdjacencyRealm<Character>() {
