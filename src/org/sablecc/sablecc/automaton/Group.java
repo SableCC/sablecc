@@ -147,13 +147,19 @@ class Group<T extends Comparable<? super T>> {
             // for each new target, remember the first source (or
             // representative) element that targeted to it
             Map<Group<T>, Element<T>> targetToRepresentative = new LinkedHashMap<Group<T>, Element<T>>();
+            Map<Element<T>, Element<T>> elementToRepresentative = new LinkedHashMap<Element<T>, Element<T>>();
 
             for (Element<T> element : this.elements) {
                 Group<T> target = element.getTarget(symbol);
 
-                if (!targetToRepresentative.containsKey(target)) {
-                    targetToRepresentative.put(target, element);
+                Element<T> representative = targetToRepresentative.get(target);
+
+                if (representative == null) {
+                    representative = element;
+                    targetToRepresentative.put(target, representative);
                 }
+
+                elementToRepresentative.put(element, representative);
             }
 
             if (targetToRepresentative.isEmpty()) {
@@ -182,10 +188,8 @@ class Group<T extends Comparable<? super T>> {
                 // disturb the iterator
                 for (Element<T> element : new LinkedHashSet<Element<T>>(
                         this.elements)) {
-                    Group<T> target = element.getTarget(symbol);
-
                     // set the group to the represetative's group
-                    element.setGroup(targetToRepresentative.get(target)
+                    element.setGroup(elementToRepresentative.get(element)
                             .getGroup());
                 }
 
