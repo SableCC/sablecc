@@ -23,6 +23,10 @@ import java.util.Set;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A work set is a set of element to work on. This class provides various
+ * methods to maniplutate work sets.
+ */
 public class WorkSet<T> {
 
     /** The list of the elements already treated. */
@@ -34,8 +38,8 @@ public class WorkSet<T> {
     /**
      * Indicates if an element has a next one.
      * 
-     * @return boolean a boolean value indicating whether the element has a next
-     *         one or not.
+     * @return a <code>boolean</code> value indicating whether the element has
+     *         a next one or not.
      */
     public boolean hasNext() {
 
@@ -45,7 +49,7 @@ public class WorkSet<T> {
     /**
      * Treats a new element, adding it to the done list.
      * 
-     * @return T the treated element.
+     * @return the treated element.
      */
     public T next() {
 
