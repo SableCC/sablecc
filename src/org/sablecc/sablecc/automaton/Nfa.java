@@ -31,23 +31,39 @@ import org.sablecc.sablecc.alphabet.Interval;
 import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A non-deterministic finite automaton (or Nfa) is a state machine which as a
+ * starting state and an accept state. It also have an alphabet of its available
+ * symbols.
+ */
 public final class Nfa<T extends Comparable<? super T>> {
 
+    /** Only useed for line separation in method toString. */
     private static final String lineSeparator = System
             .getProperty("line.separator");
 
+    /** The alphabet for this <code>Nfa</code>. */
     private Alphabet<T> alphabet;
 
+    /** The states of this <code>Nfa</code>. */
     private SortedSet<NfaState<T>> states;
 
+    /** The starting state of this <code>Nfa</code>. */
     private NfaState<T> startState;
 
+    /** The acceptation state of this <code>Nfa</code>. */
     private NfaState<T> acceptState;
 
+    /** A stability status for this <code>Nfa</code>. */
     private boolean isStable;
 
+    /**
+     * Cached string representation. Is <code>null</code> when not yet
+     * computed.
+     */
     private String toString;
 
+    /** A comparator for symbols. */
     private final Comparator<Symbol<T>> symbolComparator = new Comparator<Symbol<T>>() {
 
         // allows comparison of null symbols
@@ -68,8 +84,8 @@ public final class Nfa<T extends Comparable<? super T>> {
     };
 
     /**
-     * Constructs a NFA for the language <code>{""}</code>, containing the
-     * empty string.
+     * Constructs a <code>Nfa</code> for the language <code>{""}</code>,
+     * containing the empty string.
      */
     public Nfa() {
 
@@ -85,8 +101,13 @@ public final class Nfa<T extends Comparable<? super T>> {
     }
 
     /**
-     * Constructs a NFA for the language <code>{"s"}</code> where
-     * <code>s</code> is a symbol representing a single interval.
+     * Constructs a <code>Nfa</code> for the language <code>{"s"}</code>
+     * where <code>s</code> is a symbol representing a single interval.
+     * 
+     * @param interval
+     *            the interval.
+     * @throws InternalException
+     *             if the interval is <code>null</code>.
      */
     public Nfa(
             Interval<T> interval) {
@@ -107,9 +128,13 @@ public final class Nfa<T extends Comparable<? super T>> {
     }
 
     /**
-     * Constructs an incomplete NFA. This private constructor returns a NFA to
-     * which new states can be added. The <code>stabilize()</code> method
-     * should be called on this instance before exposing it publicly.
+     * Constructs an incomplete <code>Nfa</code>. This private constructor
+     * returns a <code>Nfa</code> to which new states can be added. The
+     * <code>stabilize()</code> method should be called on this instance
+     * before exposing it publicly.
+     * 
+     * @param alphabet
+     *            the alphabet.
      */
     private Nfa(
             Alphabet<T> alphabet) {
@@ -119,6 +144,10 @@ public final class Nfa<T extends Comparable<? super T>> {
         this.alphabet = alphabet;
     }
 
+    /**
+     * Initializes this <code>Nfa</code>. This method must be called by all
+     * constructors.
+     */
     private void init() {
 
         this.states = new TreeSet<NfaState<T>>();
@@ -129,60 +158,103 @@ public final class Nfa<T extends Comparable<? super T>> {
         this.isStable = false;
     }
 
+    /**
+     * Returns the alphabet of this <code>Nfa</code>.
+     * 
+     * @return the alphabet.
+     */
     public Alphabet<T> getAlphabet() {
 
         return this.alphabet;
     }
 
+    /**
+     * Returns the states of this <code>Nfa</code>.
+     * 
+     * @return the set of states.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<NfaState<T>> getStates() {
 
         if (!this.isStable) {
-            throw new InternalException("this NFA is not stable yet");
+            throw new InternalException("this Nfa is not stable yet");
         }
 
         return this.states;
     }
 
+    /**
+     * Returns the starting state of this <code>Nfa</code>.
+     * 
+     * @return the starting state.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public NfaState<T> getStartState() {
 
         if (!this.isStable) {
-            throw new InternalException("this NFA is not stable yet");
+            throw new InternalException("this Nfa is not stable yet");
         }
 
         return this.startState;
     }
 
+    /**
+     * Returns the starting state of this <code>Nfa</code> if it is unstable.
+     * 
+     * @return the starting state.
+     */
     NfaState<T> getUnstableStartState() {
 
         return this.startState;
     }
 
+    /**
+     * Returns the acceptation state of this <code>Nfa</code>.
+     * 
+     * @return the acceptation state.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public NfaState<T> getAcceptState() {
 
         if (!this.isStable) {
-            throw new InternalException("this NFA is not stable yet");
+            throw new InternalException("this Nfa is not stable yet");
         }
 
         return this.acceptState;
     }
 
+    /**
+     * Returns the symbols comparator for <code>Nfa</code> instances.
+     * 
+     * @return the symbol comparator.
+     */
     Comparator<Symbol<T>> getSymbolComparator() {
 
         return this.symbolComparator;
     }
 
+    /**
+     * Returns the string representation of this interval.
+     * 
+     * @return the string representation.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     @Override
     public String toString() {
 
         if (this.toString == null) {
 
             if (!this.isStable) {
-                throw new InternalException("this NFA is not stable yet");
+                throw new InternalException("this Nfa is not stable yet");
             }
 
             StringBuilder sb = new StringBuilder();
 
-            sb.append("NFA:{");
+            sb.append("Nfa:{");
 
             for (NfaState<T> state : this.states) {
                 sb.append(lineSeparator);
@@ -222,10 +294,13 @@ public final class Nfa<T extends Comparable<? super T>> {
         return this.toString;
     }
 
+    /**
+     * Stabilizes this <code>Nfa</code> by stabilizing each of its states.
+     */
     void stabilize() {
 
         if (this.isStable) {
-            throw new InternalException("this NFA is already stable");
+            throw new InternalException("this Nfa is already stable");
         }
 
         for (NfaState<T> state : this.states) {
@@ -237,6 +312,18 @@ public final class Nfa<T extends Comparable<? super T>> {
         this.isStable = true;
     }
 
+    /**
+     * Returns a new <code>Nfa</code> instance which represents the union of
+     * this <code>Nfa</code> instance with the provided <code>Nfa</code>
+     * instance.
+     * 
+     * @param nfa
+     *            the nfa.
+     * @return the new <code>Nfa</code> after union.
+     * @throws InternalException
+     *             if one of the two <code>Nfa</code> instances is not stable
+     *             or if the provided one is <code>null</code>.
+     */
     public Nfa<T> unionWith(
             Nfa<T> nfa) {
 
@@ -245,7 +332,7 @@ public final class Nfa<T extends Comparable<? super T>> {
         }
 
         if (!this.isStable) {
-            throw new InternalException("this NFA is not stable yet");
+            throw new InternalException("this Nfa is not stable yet");
         }
 
         if (!nfa.isStable) {
@@ -271,6 +358,18 @@ public final class Nfa<T extends Comparable<? super T>> {
         return newNfa;
     }
 
+    /**
+     * Returns a new <code>Nfa</code> instance which represents the
+     * concatenation of this <code>Nfa</code> instance with the provided
+     * <code>Nfa</code> instance.
+     * 
+     * @param nfa
+     *            the nfa.
+     * @return the new <code>Nfa</code> after concatenation.
+     * @throws InternalException
+     *             if one of the two <code>Nfa</code> instances is not stable
+     *             or if the provided one is <code>null</code>.
+     */
     public Nfa<T> concatenateWith(
             Nfa<T> nfa) {
 
@@ -279,7 +378,7 @@ public final class Nfa<T extends Comparable<? super T>> {
         }
 
         if (!this.isStable) {
-            throw new InternalException("this NFA is not stable yet");
+            throw new InternalException("this Nfa is not stable yet");
         }
 
         if (!nfa.isStable) {
@@ -305,15 +404,23 @@ public final class Nfa<T extends Comparable<? super T>> {
         return newNfa;
     }
 
+    /**
+     * Returns a new <code>Nfa</code> instance which represents the repetition
+     * of zero or more of this <code>Nfa</code> instance.
+     * 
+     * @return the new <code>Nfa</code>.
+     * @throws InternalException
+     *             if this <code>Nfa</code> is not stable.
+     */
     public Nfa<T> zeroOrMore() {
 
         if (!this.isStable) {
-            throw new InternalException("this NFA is not stable yet");
+            throw new InternalException("this Nfa is not stable yet");
         }
 
         Nfa<T> newNfa = new Nfa<T>(this.alphabet);
 
-        // add old states and transitions to new NFA
+        // add old states and transitions to new Nfa
         SortedMap<NfaState<T>, NfaState<T>> oldNfaStateMap = new TreeMap<NfaState<T>, NfaState<T>>();
         this.addStatesAndTransitionsTo(newNfa, oldNfaStateMap);
 
@@ -336,15 +443,23 @@ public final class Nfa<T extends Comparable<? super T>> {
         return newNfa;
     }
 
+    /**
+     * Returns a new <code>Nfa</code> instance which represents the presence
+     * of zero or one of this <code>Nfa</code> instance.
+     * 
+     * @return the new <code>Nfa</code>.
+     * @throws InternalException
+     *             if this <code>Nfa</code> is not stable.
+     */
     public Nfa<T> zeroOrOne() {
 
         if (!this.isStable) {
-            throw new InternalException("this NFA is not stable yet");
+            throw new InternalException("this Nfa is not stable yet");
         }
 
         Nfa<T> newNfa = new Nfa<T>(this.alphabet);
 
-        // add old states and transitions to new NFA
+        // add old states and transitions to new Nfa
         SortedMap<NfaState<T>, NfaState<T>> oldNfaStateMap = new TreeMap<NfaState<T>, NfaState<T>>();
         this.addStatesAndTransitionsTo(newNfa, oldNfaStateMap);
 
@@ -364,15 +479,23 @@ public final class Nfa<T extends Comparable<? super T>> {
         return newNfa;
     }
 
+    /**
+     * Returns a new <code>Nfa</code> instance which represents the repetition
+     * of at least one or more of this <code>Nfa</code> instance.
+     * 
+     * @return the new <code>Nfa</code>.
+     * @throws InternalException
+     *             if this <code>Nfa</code> is not stable.
+     */
     public Nfa<T> oneOrMore() {
 
         if (!this.isStable) {
-            throw new InternalException("this NFA is not stable yet");
+            throw new InternalException("this Nfa is not stable yet");
         }
 
         Nfa<T> newNfa = new Nfa<T>(this.alphabet);
 
-        // add old states and transitions to new NFA
+        // add old states and transitions to new Nfa
         SortedMap<NfaState<T>, NfaState<T>> oldNfaStateMap = new TreeMap<NfaState<T>, NfaState<T>>();
         this.addStatesAndTransitionsTo(newNfa, oldNfaStateMap);
 
@@ -392,11 +515,27 @@ public final class Nfa<T extends Comparable<? super T>> {
         return newNfa;
     }
 
+    /**
+     * Returns a <code>Dfa</code> instance which represents the shortest
+     * possible <code>Dfa</code> for this <code>Nfa</code> instance.
+     * 
+     * @return the new <code>Dfa</code>.
+     */
     public Dfa<T> shortest() {
 
         return Dfa.shortest(this);
     }
 
+    /**
+     * Returns a <code>Dfa</code> instance which represents the substraction
+     * of this <code>Nfa</code> with the provided one.
+     * 
+     * @param nfa
+     *            the nfa to substract.
+     * @return the new <code>Dfa</code>.
+     * @throws InternalException
+     *             if the provided <code>Nfa</code> is <code>null</code>.
+     */
     public Dfa<T> subtract(
             Nfa<T> nfa) {
 
@@ -407,6 +546,16 @@ public final class Nfa<T extends Comparable<? super T>> {
         return Dfa.difference(this, nfa);
     }
 
+    /**
+     * Returns a <code>Dfa</code> instance which represents the intersection
+     * of this <code>Nfa</code> with the provided one.
+     * 
+     * @param nfa
+     *            the nfa to substract.
+     * @return the new <code>Dfa</code>.
+     * @throws InternalException
+     *             if the provided <code>Nfa</code> is <code>null</code>.
+     */
     public Dfa<T> intersect(
             Nfa<T> nfa) {
 
@@ -417,6 +566,17 @@ public final class Nfa<T extends Comparable<? super T>> {
         return Dfa.intersection(this, nfa);
     }
 
+    /**
+     * Returns a new <code>NfaCombineResult</code>, the result of the
+     * combination of this <code>Nfa</code> with the provided one.
+     * 
+     * @param nfa
+     *            the nfa to combine with.
+     * @return the new <code>NfaCombineResult</code>.
+     * @throws InternalException
+     *             if one of the two <code>Nfa</code> instances is not stable
+     *             or if the provided one is <code>null</code>.
+     */
     NfaCombineResult<T> combineWith(
             Nfa<T> nfa) {
 
@@ -425,19 +585,19 @@ public final class Nfa<T extends Comparable<? super T>> {
         }
 
         if (!this.isStable) {
-            throw new InternalException("this NFA is not stable yet");
+            throw new InternalException("this Nfa is not stable yet");
         }
 
         if (!nfa.isStable) {
             throw new InternalException("nfa is not stable yet");
         }
 
-        // Create a new NFA
+        // Create a new Nfa
         AlphabetMergeResult<T> alphabetMergeResult = this.alphabet
                 .mergeWith(nfa.getAlphabet());
         Nfa<T> newNfa = new Nfa<T>(alphabetMergeResult.getNewAlphabet());
 
-        // add old states and transitions to new NFA
+        // add old states and transitions to new Nfa
         SortedMap<NfaState<T>, NfaState<T>> oldNfa1StateMap = new TreeMap<NfaState<T>, NfaState<T>>();
         this.addStatesAndTransitionsTo(newNfa, oldNfa1StateMap,
                 alphabetMergeResult);
@@ -450,13 +610,25 @@ public final class Nfa<T extends Comparable<? super T>> {
                 oldNfa2StateMap);
     }
 
+    /**
+     * Adds the states and transitions of this <code>Nfa</code> instance to
+     * the new one provided.
+     * 
+     * @param newNfa
+     *            the new nfa to add states and transitions.
+     * @param nfaStateMap
+     *            a map of states.
+     * @throws InternalException
+     *             if the two <code>Nfa</code> instances does not have the
+     *             same alphabet.
+     */
     private void addStatesAndTransitionsTo(
             Nfa<T> newNfa,
             SortedMap<NfaState<T>, NfaState<T>> nfaStateMap) {
 
         if (newNfa.alphabet != this.alphabet) {
             throw new InternalException(
-                    "this NFA and newNfa must share the same alphabet");
+                    "this Nfa and newNfa must share the same alphabet");
         }
 
         for (NfaState<T> oldState : this.states) {
@@ -481,6 +653,18 @@ public final class Nfa<T extends Comparable<? super T>> {
         }
     }
 
+    /**
+     * Adds the states and transitions of this <code>Nfa</code> instance to
+     * the new one provided.
+     * 
+     * @param newNfa
+     *            the new nfa to add states and transitions.
+     * @param nfaStateMap
+     *            a map of states.
+     * @param alphabetMergeResult
+     *            the merge result of the alphabets of the two <code>Nfa</code>
+     *            instances.
+     */
     private void addStatesAndTransitionsTo(
             Nfa<T> newNfa,
             SortedMap<NfaState<T>, NfaState<T>> nfaStateMap,
@@ -518,20 +702,36 @@ public final class Nfa<T extends Comparable<? super T>> {
         }
     }
 
+    /**
+     * Returns the ID for the following state.
+     * 
+     * @return the ID of the next state.
+     * @throws InternalException
+     *             if this <code>Nfa</code> instance is stable.
+     */
     int getNextStateId() {
 
         if (this.isStable) {
-            throw new InternalException("a stable NFA may not be modified");
+            throw new InternalException("a stable Nfa may not be modified");
         }
 
         return this.states.size();
     }
 
+    /**
+     * Adds a state to this <code>Nfa</code>.
+     * 
+     * @param state
+     *            the state to add.
+     * @throws InternalException
+     *             if this <code>Nfa</code> is stable or or if the state is
+     *             already in the state set.
+     */
     void addState(
             NfaState<T> state) {
 
         if (this.isStable) {
-            throw new InternalException("a stable NFA may not be modified");
+            throw new InternalException("a stable Nfa may not be modified");
         }
 
         if (!this.states.add(state)) {
