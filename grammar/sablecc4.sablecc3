@@ -240,7 +240,7 @@ Productions
     {simple} term;
 
   term =
-    {intersection}  intersection_keyword left_parenthesis regular_expression right_parenthesis |
+    {intersection}  intersection_keyword left_parenthesis [left_expression]:regular_expression comma [right_expression]:regular_expression right_parenthesis |
     {shortest}      shortest_keyword left_parenthesis regular_expression right_parenthesis |
     {parenthesized} left_parenthesis regular_expression right_parenthesis |
     {interval}      left_bracket [lower_bound]:character dot_dot [upper_bound]:character right_bracket |
