@@ -1,0 +1,261 @@
+/* This file is part of SableCC ( http://sablecc.org ).
+ *
+ * See the NOTICE file distributed with this work for copyright information.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+Package org.sablecc.sablecc.syntax3;
+
+Helpers
+
+  all = [0 .. 0xffff];
+
+  carriage_return = 13;
+  line_feed       = 10;
+  tab             = 9;
+  white_space     = ' ';
+
+  end_of_line     =
+    carriage_return |
+    line_feed |
+    carriage_return line_feed;
+
+  decimal_digit     = ['0' .. '9'];
+  hexadecimal_digit = [[decimal_digit + ['A' .. 'F']] + ['a' .. 'f']];
+  lower_case_letter = ['a' .. 'z'];
+  upper_case_letter = ['A' .. 'Z'];
+
+  string_character  = [all - [[carriage_return + line_feed] + ''']];
+
+  identifier_part = lower_case_letter (lower_case_letter | decimal_digit)*;
+
+  not_star_slash = [all - ['/' + '*']];
+
+Tokens
+
+  // keywords
+
+  all_keyword           = 'All';
+  back_keyword          = 'Back';
+  except_keyword        = 'Except';
+  group_keyword         = 'Group';
+  helpers_keyword       = 'Helpers';
+  ignored_keyword       = 'Ignored';
+  infinite_keyword      = 'Infinite';
+  internal_keyword      = 'Internal';
+  intersection_keyword  = 'Intersection';
+  investigators_keyword = 'Investigators';
+  language_keyword      = 'Language';
+  lookahead_keyword     = 'Lookahead';
+  lexer_keyword         = 'Lexer';
+  no_keyword            = 'No';
+  over_keyword          = 'Over';
+  priorities_keyword    = 'Priorities';
+  shortest_keyword      = 'Shortest';
+  states_keyword        = 'States';
+  syntax_keyword        = 'Syntax';
+  tokens_keyword        = 'Tokens';
+  transitions_keyword   = 'Transitions';
+
+  // separators
+
+  colon     = ':';
+  comma     = ',';
+  semicolon = ';';
+  dot_dot   = '..';
+
+  arrow_tail = '->(';
+  arrow_head = ')->';
+
+  left_bracket  = '[';
+  right_bracket = ']';
+
+  left_parenthesis  = '(';
+  right_parenthesis = ')';
+
+  // operators
+
+  assign        = '=';
+  bar           = '|';
+  minus         = '-';
+  plus          = '+';
+  question_mark = '?';
+  star          = '*';
+
+  // identifier, numbers, strings and character
+
+  identifier = identifier_part ('_' identifier_part)*;
+
+  erroneous_identifier =
+    (lower_case_letter | upper_case_letter | '_') (lower_case_letter | upper_case_letter | '_' | decimal_digit)*;
+
+  decimal_number     = decimal_digit+;
+  hexadecimal_number = '0' ('x' | 'X') hexadecimal_digit+;
+
+  empty_string    = ''' ''';
+  character_token = ''' (string_character | ''') ''';
+  string          = ''' string_character string_character+ ''';
+
+  // comments
+
+  comment = '/*' not_star_slash* ('*'+ not_star_slash+ | '/'+ not_star_slash+)* '*'* '*/';
+
+  // blanks
+
+  blank = (white_space | tab | end_of_line)+;
+
+Ignored Tokens
+
+  blank;
+
+Productions
+
+  // specification
+
+  specification =
+    comment? header lexer;
+
+  // header
+
+  header =
+    language syntax;
+
+  language =
+    language_keyword [name]:identifier semicolon;
+
+  syntax =
+    syntax_keyword [version]:decimal_number semicolon;
+
+  // lexer
+
+  lexer =
+    lexer_keyword helpers? tokens priorities? investigators? states?;
+
+  // helpers
+
+  helpers =
+    helpers_keyword helper+;
+
+  helper =
+    comment? [name]:identifier assign regular_expression semicolon;
+
+  // tokens
+
+  tokens =
+    {normal} tokens_keyword token+ |
+    {groups} tokens_keyword group+;
+
+  group =
+    group_keyword [name]:identifier colon token+;
+
+  token =
+    {simple}    comment? [name]:identifier assign regular_expression semicolon |
+    {selection} comment? selection colon selector assign regular_expression semicolon;
+
+  selection =
+    [name]:identifier [additional_names]:additional_identifier+;
+
+  selector =
+    [name]:identifier left_parenthesis right_parenthesis;
+
+  // priorities
+
+  priorities =
+    priorities_keyword priority+;
+
+  priority =
+    comment? [high_tokens]:token_collection over_keyword [low_tokens]:token_collection semicolon;
+
+  // investigators
+
+  investigators =
+    investigators_keyword investigator+;
+
+  investigator =
+    comment? token_collection colon [name]:identifier left_parenthesis right_parenthesis semicolon;
+
+  // states
+
+  states =
+    states_keyword normal_state+ internal_states?;
+
+  normal_state =
+    comment? [name]:identifier lookahead? assign token_collection semicolon ignored?;
+
+  lookahead =
+    {no}       colon no_keyword lookahead_keyword |
+    {infinite} colon infinite_keyword lookahead_keyword;
+
+  ignored =
+    ignored_keyword colon identifier [additional_identifiers]:additional_identifier* semicolon;
+
+  internal_states =
+    internal_keyword internal_state+ transitions?;
+
+  internal_state =
+    comment? [name]:identifier lookahead? assign token_collection semicolon;
+
+  transitions =
+    transitions_keyword transition+;
+
+  transition =
+    {normal} comment? [source]:identifier arrow_tail token_collection arrow_head [destination]:identifier semicolon |
+    {back}   comment? [source]:identifier arrow_tail token_collection arrow_head back_keyword semicolon;
+
+  // regular expression
+
+  regular_expression =
+    {union}  regular_expression bar sub_expression |
+    {simple} sub_expression;
+
+  sub_expression =
+    {subtration} sub_expression minus factor |
+    {simple}     factor;
+
+  factor =
+    {concatenation} factor unary_expression |
+    {simple}        unary_expression;
+
+  unary_expression =
+    {zero_or_one} term question_mark |
+    {zero_or_more} term star |
+    {one_or_more} term plus |
+    {simple} term;
+
+  term =
+    {intersection}  intersection_keyword left_parenthesis regular_expression right_parenthesis |
+    {shortest}      shortest_keyword left_parenthesis regular_expression right_parenthesis |
+    {parenthesized} left_parenthesis regular_expression right_parenthesis |
+    {interval}      left_bracket [lower_bound]:character dot_dot [upper_bound]:character right_bracket |
+    {string}        string |
+    {character}     character |
+    {empty_string}  empty_string |
+    {helper}        identifier;
+
+  character =
+    {character}   character_token |
+    {decimal}     decimal_number |
+    {hexadecimal} hexadecimal_number;
+
+  // token collection
+
+  token_collection =
+    {complete}  all_keyword |
+    {inclusive} identifier [additional_identifiers]:additional_identifier* |
+    {exclusive} all_keyword except_keyword identifier [additional_identifiers]:additional_identifier*;
+
+  // additional identifier
+
+  additional_identifier =
+    comma identifier;
