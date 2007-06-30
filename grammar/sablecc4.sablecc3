@@ -140,7 +140,7 @@ Productions
   // lexer
 
   lexer =
-    {no_states} lexer_keyword helpers? tokens priorities? investigators? ignored? |
+    {no_states} lexer_keyword helpers? tokens priorities? investigators? ignored_tokens? |
     {states}    lexer_keyword helpers? tokens priorities? investigators? states;
 
   // helpers
@@ -213,6 +213,11 @@ Productions
   transition =
     {normal} comment? [source]:identifier arrow_tail token_collection arrow_head [destination]:identifier semicolon |
     {back}   comment? [source]:identifier arrow_tail token_collection arrow_head back_keyword semicolon;
+
+  // ignored tokens
+
+  ignored_tokens =
+    ignored_keyword tokens_keyword identifier [additional_identifiers]:additional_identifier* semicolon;
 
   // regular expression
 
