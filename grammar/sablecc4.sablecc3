@@ -140,7 +140,8 @@ Productions
   // lexer
 
   lexer =
-    lexer_keyword helpers? tokens priorities? investigators? states?;
+    {no_states} lexer_keyword helpers? tokens priorities? investigators? ignored? |
+    {states}    lexer_keyword helpers? tokens priorities? investigators? states;
 
   // helpers
 
