@@ -1,5 +1,5 @@
 /* This file is part of SableCC ( http://sablecc.org ).
- * 
+ *
  * See the NOTICE file distributed with this work for copyright information.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
