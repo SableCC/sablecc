@@ -22,18 +22,52 @@ import java.util.TreeMap;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * An instance of this class encapsulates the result of combining two
+ * <code>Nfa</code>. It allows for retrieving the new <code>Nfa</code> and
+ * for mapping old states to sets of new states.
+ */
 class NfaCombineResult<T extends Comparable<? super T>> {
 
+    /** The new <code>Nfa</code>. */
     private Nfa<T> newNfa;
 
+    /** The first combined <code>Nfa</code>. */
     private Nfa<T> oldNfa1;
 
+    /**
+     * A <code>SortedMap</code> that maps each state contained in the first
+     * old <code>Nfa</code> to its state in this <code>NfaCombineResult</code>.
+     */
     private SortedMap<NfaState<T>, NfaState<T>> oldNfa1StateMap = new TreeMap<NfaState<T>, NfaState<T>>();
 
+    /** The second combined <code>Nfa</code>. */
     private Nfa<T> oldNfa2;
 
+    /**
+     * A <code>SortedMap</code> that maps each state contained in the second
+     * old <code>Nfa</code> to its state in this <code>NfaCombineResult</code>.
+     */
     private SortedMap<NfaState<T>, NfaState<T>> oldNfa2StateMap = new TreeMap<NfaState<T>, NfaState<T>>();
 
+    /**
+     * Constructs a new instance for the result of combining two
+     * <code>Nfa</code> instances.
+     * 
+     * @param newNfa
+     *            the new <code>Nfa</code>.
+     * @param oldNfa1
+     *            the first combined <code>Nfa</code>.
+     * @param oldNfa1StateMap
+     *            the states of first <code>Nfa</code>.
+     * @param oldNfa2
+     *            the second combined <code>Nfa</code>.
+     * @param oldNfa2StateMap
+     *            the states of second <code>Nfa</code>.
+     * @throws InternalException
+     *             if one of the <code>Nfa</code> instances, state map or
+     *             states is <code>null</code>.
+     */
     NfaCombineResult(
             Nfa<T> newNfa,
             Nfa<T> oldNfa1,
@@ -80,11 +114,28 @@ class NfaCombineResult<T extends Comparable<? super T>> {
         this.oldNfa2StateMap = oldNfa2StateMap;
     }
 
+    /**
+     * Returns the new <code>Nfa</code> instance.
+     * 
+     * @return the new <code>Nfa</code>.
+     */
     Nfa<T> getNewNfa() {
 
         return this.newNfa;
     }
 
+    /**
+     * Returns the state of this instance corresponding to a provided old state.
+     * The provided old state must have the same <code>Nfa</code> as the first
+     * old state of this instance.
+     * 
+     * @param oldState
+     *            the old state.
+     * @return the corresponding state.
+     * @throws InternalException
+     *             if the <code>oldState</code> is <code>null</code> or
+     *             invalid.
+     */
     NfaState<T> getNewNfa1State(
             NfaState<T> oldState) {
 
@@ -99,6 +150,18 @@ class NfaCombineResult<T extends Comparable<? super T>> {
         return this.oldNfa1StateMap.get(oldState);
     }
 
+    /**
+     * Returns the state of this instance corresponding to a provided old state.
+     * The provided old state must have the same <code>Nfa</code> as the
+     * second old state of this instance.
+     * 
+     * @param oldState
+     *            the old state.
+     * @return the corresponding state.
+     * @throws InternalException
+     *             if the <code>oldState</code> is <code>null</code> or
+     *             invalid.
+     */
     NfaState<T> getNewNfa2State(
             NfaState<T> oldState) {
 
@@ -113,21 +176,45 @@ class NfaCombineResult<T extends Comparable<? super T>> {
         return this.oldNfa2StateMap.get(oldState);
     }
 
+    /**
+     * Returns the start state of the first old state for the new
+     * <code>Nfa</code>.
+     * 
+     * @return the first start state.
+     */
     NfaState<T> getNewNfa1StartState() {
 
         return this.oldNfa1StateMap.get(this.oldNfa1.getStartState());
     }
 
+    /**
+     * Returns the start state of the second old state for the new
+     * <code>Nfa</code>.
+     * 
+     * @return the second start state.
+     */
     NfaState<T> getNewNfa2StartState() {
 
         return this.oldNfa2StateMap.get(this.oldNfa2.getStartState());
     }
 
+    /**
+     * Returns the acceptation state of the first old state for the new
+     * <code>Nfa</code>.
+     * 
+     * @return the first acceptation state.
+     */
     NfaState<T> getNewNfa1AcceptState() {
 
         return this.oldNfa1StateMap.get(this.oldNfa1.getAcceptState());
     }
 
+    /**
+     * Returns the acceptation state of the second old state for the new
+     * <code>Nfa</code>.
+     * 
+     * @return the second acceptation state.
+     */
     NfaState<T> getNewNfa2AcceptState() {
 
         return this.oldNfa2StateMap.get(this.oldNfa2.getAcceptState());
