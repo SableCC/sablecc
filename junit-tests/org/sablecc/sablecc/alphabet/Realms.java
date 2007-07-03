@@ -72,6 +72,32 @@ public class Realms {
 
     };
 
+    private static final AdjacencyRealm<Character> character = new AdjacencyRealm<Character>() {
+
+        @Override
+        public boolean isAdjacent(
+                Character bound1,
+                Character bound2) {
+
+            return bound1 + 1 == bound2;
+        }
+
+        @Override
+        public Character next(
+                Character bound) {
+
+            return (char) (bound + 1);
+        }
+
+        @Override
+        public Character previous(
+                Character bound) {
+
+            return (char) (bound - 1);
+        }
+
+    };
+
     public static AdjacencyRealm<BigInteger> getBigInteger() {
 
         return bigInteger;
@@ -80,6 +106,11 @@ public class Realms {
     public static AdjacencyRealm<Integer> getInteger() {
 
         return integer;
+    }
+
+    public static AdjacencyRealm<Character> getCharacter() {
+
+        return character;
     }
 
 }
