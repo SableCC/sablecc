@@ -19,6 +19,7 @@ package ticket39;
 
 import org.junit.Test;
 import org.sablecc.sablecc.alphabet.AdjacencyRealm;
+import org.sablecc.sablecc.alphabet.Realms;
 import org.sablecc.sablecc.automaton.Dfa;
 import org.sablecc.sablecc.automaton.MinimalDfa;
 import org.sablecc.sablecc.automaton.Nfa;
@@ -28,31 +29,7 @@ public class PartitioningBug {
     @Test
     public void bug() {
 
-        AdjacencyRealm<Character> charRealm = new AdjacencyRealm<Character>() {
-
-            @Override
-            public boolean isAdjacent(
-                    Character bound1,
-                    Character bound2) {
-
-                return bound1 + 1 == bound2;
-            }
-
-            @Override
-            public Character next(
-                    Character bound) {
-
-                return (char) (bound + 1);
-            }
-
-            @Override
-            public Character previous(
-                    Character bound) {
-
-                return (char) (bound - 1);
-            }
-
-        };
+        AdjacencyRealm<Character> charRealm = Realms.getCharacter();
 
         Nfa<Character> any = new Nfa<Character>(charRealm.createInterval('A',
                 'Z'));
