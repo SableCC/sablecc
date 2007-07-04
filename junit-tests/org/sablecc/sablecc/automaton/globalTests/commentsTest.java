@@ -67,7 +67,5 @@ public class commentsTest {
         // Testing for equality between the 2 minimalDfa for equivalent Dfa
         assertEquals("The two minimal Dfa insstances should be equals.",
                 shortestComment.toString(), constructionComment.toString());
-
-        System.out.println(shortestComment);
     }
 }
