@@ -70,10 +70,11 @@ Tokens
 
   // separators
 
-  colon     = ':';
-  comma     = ',';
-  semicolon = ';';
-  dot_dot   = '..';
+  colon      = ':';
+  comma      = ',';
+  semicolon  = ';';
+  dot_dot    = '..';
+  three_dots = '...';
 
   arrow_tail = '->(';
   arrow_head = ')->';
@@ -161,8 +162,8 @@ Productions
     group_keyword [name]:identifier colon token+;
 
   token =
-    {simple}    comment? [name]:identifier assign regular_expression semicolon |
-    {selection} comment? selection colon selector assign regular_expression semicolon;
+    {simple}    comment? [name]:identifier assign regular_expression three_dots? semicolon |
+    {selection} comment? selection colon selector assign regular_expression three_dots? semicolon;
 
   selection =
     [name]:identifier [additional_names]:additional_identifier+;
