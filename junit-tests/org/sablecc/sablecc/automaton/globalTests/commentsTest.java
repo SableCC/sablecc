@@ -48,28 +48,26 @@ public class commentsTest {
                         new Nfa<Character>(charRealm.createInterval('0', '}')));
 
         // Building minimal dfa comment using method shortest
-        Nfa<Character> comment = new Nfa<Character>();
-        comment = slash.concatenateWith(star).concatenateWith(any.oneOrMore())
-                .concatenateWith(star).concatenateWith(slash);
-        Dfa<Character> shortestComment = comment.shortest();
-        MinimalDfa<Character> minimalDfaShortestComment = new MinimalDfa<Character>(
-                shortestComment);
+        MinimalDfa<Character> shortestComment = new MinimalDfa<Character>(slash
+                .concatenateWith(star).concatenateWith(any.zeroOrMore())
+                .concatenateWith(star).concatenateWith(slash).shortest());
 
         // Building minimal dfa comment by construction
-        Nfa<Character> constructionComment = new Nfa<Character>();
-        constructionComment = slash.concatenateWith(star).concatenateWith(
-                noStar.oneOrMore()).concatenateWith(
-                star.concatenateWith(
-                        noStarOrSlash.concatenateWith(noStar.oneOrMore()))
-                        .zeroOrOne()).oneOrMore().concatenateWith(star)
+        Nfa<Character> part1 = noStarOrSlash.concatenateWith(noStar
+                .zeroOrMore());
+        Nfa<Character> part2 = star.concatenateWith(part1.zeroOrOne());
+
+        Nfa<Character> constructionCommentNfa = slash.concatenateWith(star)
+                .concatenateWith(noStar.zeroOrMore()).concatenateWith(
+                        part2.zeroOrMore()).concatenateWith(star)
                 .concatenateWith(slash);
-        Dfa<Character> constructedDfaComment = new Dfa<Character>(
-                constructionComment);
-        MinimalDfa<Character> minimalDfaConstructionComment = new MinimalDfa<Character>(
-                constructedDfaComment);
+        MinimalDfa<Character> constructionComment = new MinimalDfa<Character>(
+                new Dfa<Character>(constructionCommentNfa));
 
         // Testing for equality between the 2 minimalDfa for equivalent Dfa
         assertEquals("The two minimal Dfa insstances should be equals.",
-                minimalDfaConstructionComment, minimalDfaShortestComment);
+                shortestComment.toString(), constructionComment.toString());
+
+        System.out.println(shortestComment);
     }
 }
