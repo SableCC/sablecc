@@ -227,8 +227,8 @@ Productions
     {simple} sub_expression;
 
   sub_expression =
-    {subtration} sub_expression minus factor |
-    {simple}     factor;
+    {subtraction} sub_expression minus factor |
+    {simple}      factor;
 
   factor =
     {concatenation} factor unary_expression |
