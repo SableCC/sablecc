@@ -59,13 +59,7 @@ SableCC 4 is a complete rewrite of SableCC to bring many new features:
 * Improved syntax for CST->AST transformations.
 * And more.
 
-What's New in SableCC 4-alpha.2
+What's New in SableCC [version]
 ===============================
 
-This alpha version brings the following new features:
-
-* The automaton package, to transform regular expressions into minimal
-  DFAs using minimal alphabets.
-* The new SableCC 4 syntax specification for lexers.
-* The complete javadoc documentation of the alphabet package.
-* The complete JUnit testing of the alphabet package.
+[Milestone text]
