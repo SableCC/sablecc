@@ -28,7 +28,7 @@
   <property name="regression-tests.dir" value="regression-tests" />
   <property name="doc.dir" value="doc" />
   <property name="devel-doc.dir" value="devel-doc" />
-  <property name="sablecc.version" value="4-alpha.2" />
+  <property name="sablecc.version" value="repository" />
   <property name="dist.dir" value="sablecc-${sablecc.version}" />
   <property name="dist.file" value="sablecc-${sablecc.version}.zip" />
 
