@@ -128,6 +128,134 @@ public final class Nfa<T extends Comparable<? super T>> {
     }
 
     /**
+     * Constructs a NFA which is similar to the provided DFA.
+     * 
+     * @param dfa
+     *            the DFA.
+     * @throws InternalException
+     *             if the DFA is <code>null</code>.
+     */
+    public Nfa(
+            Dfa<T> dfa) {
+
+        if (dfa == null) {
+            throw new InternalException("dfa may not be null");
+        }
+
+        init();
+
+        this.alphabet = dfa.getAlphabet();
+
+        SortedMap<DfaState<T>, NfaState<T>> dfaToNfaStateMap = new TreeMap<DfaState<T>, NfaState<T>>();
+
+        // Map dfa start to this start.
+        dfaToNfaStateMap.put(dfa.getStartState(), this.startState);
+
+        // Create a state for every dfa state, except start and dead-end.
+        for (DfaState<T> dfaState : dfa.getStates()) {
+
+            if (dfaState == dfa.getDeadEndState()
+                    || dfaState == dfa.getStartState()) {
+                continue;
+            }
+
+            // add mapping to new state
+            dfaToNfaStateMap.put(dfaState, new NfaState<T>(this));
+        }
+
+        // Create transitions
+        for (Map.Entry<DfaState<T>, NfaState<T>> stateEntry : dfaToNfaStateMap
+                .entrySet()) {
+            DfaState<T> startDfaState = stateEntry.getKey();
+            NfaState<T> startNfaState = stateEntry.getValue();
+
+            for (Map.Entry<Symbol<T>, DfaState<T>> transitionEntry : startDfaState
+                    .getTransitions().entrySet()) {
+                Symbol<T> symbol = transitionEntry.getKey();
+                DfaState<T> destinationDfaState = transitionEntry.getValue();
+                NfaState<T> destinationNfaState = dfaToNfaStateMap
+                        .get(destinationDfaState);
+
+                startNfaState.addTransition(symbol, destinationNfaState);
+            }
+        }
+
+        // Add transitions to accept state
+        for (DfaState<T> dfaState : dfa.getAcceptStates()) {
+            NfaState<T> nfaState = dfaToNfaStateMap.get(dfaState);
+
+            nfaState.addTransition(null, this.acceptState);
+        }
+
+        stabilize();
+    }
+
+    /**
+     * Constructs a NFA which is similar to the provided minimal DFA.
+     * 
+     * @param minimalDfa
+     *            the minimal DFA.
+     * @throws InternalException
+     *             if the minimal DFA is <code>null</code>.
+     */
+    public Nfa(
+            MinimalDfa<T> minimalDfa) {
+
+        if (minimalDfa == null) {
+            throw new InternalException("minimalDfa may not be null");
+        }
+
+        init();
+
+        this.alphabet = minimalDfa.getAlphabet();
+
+        SortedMap<MinimalDfaState<T>, NfaState<T>> minimalDfaToNfaStateMap = new TreeMap<MinimalDfaState<T>, NfaState<T>>();
+
+        // Map minimalDfa start to this start.
+        minimalDfaToNfaStateMap
+                .put(minimalDfa.getStartState(), this.startState);
+
+        // Create a state for every minimalDfa state, except start and dead-end.
+        for (MinimalDfaState<T> minimalDfaState : minimalDfa.getStates()) {
+
+            if (minimalDfaState == minimalDfa.getDeadEndState()
+                    || minimalDfaState == minimalDfa.getStartState()) {
+                continue;
+            }
+
+            // add mapping to new state
+            minimalDfaToNfaStateMap.put(minimalDfaState, new NfaState<T>(this));
+        }
+
+        // Create transitions
+        for (Map.Entry<MinimalDfaState<T>, NfaState<T>> stateEntry : minimalDfaToNfaStateMap
+                .entrySet()) {
+            MinimalDfaState<T> startMinimalDfaState = stateEntry.getKey();
+            NfaState<T> startNfaState = stateEntry.getValue();
+
+            for (Map.Entry<Symbol<T>, MinimalDfaState<T>> transitionEntry : startMinimalDfaState
+                    .getTransitions().entrySet()) {
+                Symbol<T> symbol = transitionEntry.getKey();
+                MinimalDfaState<T> destinationMinimalDfaState = transitionEntry
+                        .getValue();
+                NfaState<T> destinationNfaState = minimalDfaToNfaStateMap
+                        .get(destinationMinimalDfaState);
+
+                startNfaState.addTransition(symbol, destinationNfaState);
+            }
+        }
+
+        // Add transitions to accept state
+        for (MinimalDfaState<T> minimalDfaState : minimalDfa.getAcceptStates()) {
+            NfaState<T> nfaState = minimalDfaToNfaStateMap.get(minimalDfaState);
+
+            nfaState.addTransition(null, this.acceptState);
+        }
+
+        stabilize();
+    }
+
+    /**
      * Constructs an incomplete <code>Nfa</code>. This private constructor
      * returns a <code>Nfa</code> to which new states can be added. The
      * <code>stabilize()</code> method should be called on this instance
