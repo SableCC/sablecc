@@ -45,18 +45,13 @@ public class CommentTest {
         AdjacencyRealm<Character> charRealm = Realms.getCharacter();
 
         // Building Nfa instances for various intervals
-        Nfa<Character> any = new Nfa<Character>(charRealm.createInterval('#',
-                '}'));
+        Nfa<Character> any = new Nfa<Character>(charRealm.createInterval(
+                (char) 0, (char) 255));
         Nfa<Character> slash = new Nfa<Character>(charRealm.createInterval('/'));
         Nfa<Character> star = new Nfa<Character>(charRealm.createInterval('*'));
-        Nfa<Character> notStar = new Nfa<Character>(charRealm.createInterval(
-                '#', ')')).unionWith(new Nfa<Character>(charRealm
-                .createInterval('+', '}')));
-        Nfa<Character> notStarSlash = new Nfa<Character>(charRealm
-                .createInterval('#', ')')).unionWith(
-                new Nfa<Character>(charRealm.createInterval('+', '.')))
-                .unionWith(
-                        new Nfa<Character>(charRealm.createInterval('0', '}')));
+        Nfa<Character> notStar = new Nfa<Character>(any.subtract(star));
+        Nfa<Character> notStarSlash = new Nfa<Character>(notStar
+                .subtract(slash));
 
         // Building minimal dfa for shortest_comment
         MinimalDfa<Character> shortestComment = new MinimalDfa<Character>(slash
