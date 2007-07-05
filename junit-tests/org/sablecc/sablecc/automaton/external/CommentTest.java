@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.automaton.globalTests;
+package org.sablecc.sablecc.automaton.external;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,46 +26,62 @@ import org.sablecc.sablecc.automaton.Dfa;
 import org.sablecc.sablecc.automaton.MinimalDfa;
 import org.sablecc.sablecc.automaton.Nfa;
 
-public class commentsTest {
+// Test the org.sablecc.sablecc.automaton package "externally", using its public
+// interface
+public class CommentTest {
 
+    // This test creates minimal DFAs for two regular expressions:
+    //
+    // shortest_comment = Shortest('/*' any* '*/')
+    // 
+    // construction_comment =
+    // '/*' not_star* ('*' (not_star_slash not_star*)?)* '*/'
+    //
+    // It then asserts that the minimal DFAs are identical (comparing their
+    // toString() output for lack of better way)
     @Test
     public void commentTest() {
 
         AdjacencyRealm<Character> charRealm = Realms.getCharacter();
 
-        // Building Nfa instances for differents useful intervals
+        // Building Nfa instances for various intervals
         Nfa<Character> any = new Nfa<Character>(charRealm.createInterval('#',
                 '}'));
         Nfa<Character> slash = new Nfa<Character>(charRealm.createInterval('/'));
         Nfa<Character> star = new Nfa<Character>(charRealm.createInterval('*'));
-        Nfa<Character> noStar = new Nfa<Character>(charRealm.createInterval(
+        Nfa<Character> notStar = new Nfa<Character>(charRealm.createInterval(
                 '#', ')')).unionWith(new Nfa<Character>(charRealm
                 .createInterval('+', '}')));
-        Nfa<Character> noStarOrSlash = new Nfa<Character>(charRealm
+        Nfa<Character> notStarSlash = new Nfa<Character>(charRealm
                 .createInterval('#', ')')).unionWith(
                 new Nfa<Character>(charRealm.createInterval('+', '.')))
                 .unionWith(
                         new Nfa<Character>(charRealm.createInterval('0', '}')));
 
-        // Building minimal dfa comment using method shortest
+        // Building minimal dfa for shortest_comment
         MinimalDfa<Character> shortestComment = new MinimalDfa<Character>(slash
                 .concatenateWith(star).concatenateWith(any.zeroOrMore())
                 .concatenateWith(star).concatenateWith(slash).shortest());
 
-        // Building minimal dfa comment by construction
-        Nfa<Character> part1 = noStarOrSlash.concatenateWith(noStar
+        // Building minimal dfa for construction_comment
+
+        // part1 = not_star_slash not_star*
+        Nfa<Character> part1 = notStarSlash.concatenateWith(notStar
                 .zeroOrMore());
+
+        // part2 = '*' (part1)?
         Nfa<Character> part2 = star.concatenateWith(part1.zeroOrOne());
 
+        // construction_comment = '/*' not_star* part2* '*/'
         Nfa<Character> constructionCommentNfa = slash.concatenateWith(star)
-                .concatenateWith(noStar.zeroOrMore()).concatenateWith(
+                .concatenateWith(notStar.zeroOrMore()).concatenateWith(
                         part2.zeroOrMore()).concatenateWith(star)
                 .concatenateWith(slash);
         MinimalDfa<Character> constructionComment = new MinimalDfa<Character>(
                 new Dfa<Character>(constructionCommentNfa));
 
-        // Testing for equality between the 2 minimalDfa for equivalent Dfa
-        assertEquals("The two minimal Dfa insstances should be equals.",
+        // Testing for equality of toString() representation
+        assertEquals("The two minimal Dfa instances must be equal.",
                 shortestComment.toString(), constructionComment.toString());
     }
 }
