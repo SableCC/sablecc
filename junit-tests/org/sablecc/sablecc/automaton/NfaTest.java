@@ -358,7 +358,13 @@ public class NfaTest {
             // Expected
         }
 
-        // TODO Typical case
+        Dfa<Integer> dfa = new Nfa<Integer>(Realms.getInteger().createInterval(
+                10)).oneOrMore().shortest();
+
+        // Check that accept states have no outgoing transitions
+        for (DfaState<Integer> state : dfa.getAcceptStates()) {
+            assertTrue(state.getTransitions().entrySet().size() == 0);
+        }
     }
 
     @Test
