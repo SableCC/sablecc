@@ -125,130 +125,130 @@ Productions
   // specification
 
   specification =
-    comment? header lexer;
+    comment? header lexer  {-> New specification(header, lexer) };
 
   // header
 
   header =
-    language syntax;
+    language syntax  {-> New header(language, syntax) };
 
   language =
-    language_keyword [name]:identifier semicolon;
+    language_keyword [name]:identifier semicolon  {-> New language(name) };
 
   syntax =
-    syntax_keyword [version]:decimal_number semicolon;
+    syntax_keyword [version]:decimal_number semicolon {-> New syntax(version) };
 
   // lexer
 
   lexer =
-    {no_states} lexer_keyword helpers? tokens priorities? investigators? ignored_tokens? |
-    {states}    lexer_keyword helpers? tokens priorities? investigators? states;
+    {no_states} lexer_keyword helpers? tokens priorities? investigators? ignored_tokens?  {-> New lexer.no_states(helpers, tokens, priorities, investigators, ignored_tokens.ignored) } |
+    {states}    lexer_keyword helpers? tokens priorities? investigators? states  {-> New lexer.states(helpers, tokens, priorities, investigators, states) };
 
   // helpers
 
   helpers =
-    helpers_keyword helper+;
+    helpers_keyword [helpers]:helper+  {-> New helpers([helpers]) };
 
   helper =
-    comment? [name]:identifier assign regular_expression semicolon;
+    comment? [name]:identifier assign regular_expression semicolon  {-> New helper(name, regular_expression) };
 
   // tokens
 
   tokens =
-    {normal} tokens_keyword token+ |
-    {groups} tokens_keyword group+;
+    {normal} tokens_keyword [tokens]:token+  {-> New tokens.normal([tokens]) } |
+    {groups} tokens_keyword [groups]:group+  {-> New tokens.groups([groups]) };
 
   group =
-    group_keyword [name]:identifier colon token+;
+    group_keyword [name]:identifier colon [tokens]:token+  {-> New group(name, [tokens]) };
 
   token =
-    {simple}    comment? [name]:identifier assign regular_expression three_dots? semicolon |
-    {selection} comment? selection colon selector assign regular_expression three_dots? semicolon;
+    {simple}    comment? [name]:identifier assign regular_expression three_dots? semicolon  {-> New token.simple(name, regular_expression, three_dots) } |
+    {selection} comment? selection colon selector assign regular_expression three_dots? semicolon  {-> New token.selection(selection, selector, regular_expression, three_dots) };
 
   selection =
-    [name]:identifier [additional_names]:additional_identifier+;
+    [name]:identifier [additional_names]:additional_identifier+  {-> New selection([name, additional_names.identifier]) };
 
   selector =
-    [name]:identifier left_parenthesis right_parenthesis;
+    [name]:identifier left_parenthesis right_parenthesis  {-> New selector(name) };
 
   // priorities
 
   priorities =
-    priorities_keyword priority+;
+    priorities_keyword [priorities]:priority+  {-> New priorities([priorities]) };
 
   priority =
-    comment? [high_tokens]:token_collection over_keyword [low_tokens]:token_collection semicolon;
+    comment? [high_tokens]:token_collection over_keyword [low_tokens]:token_collection semicolon  {-> New priority(high_tokens, low_tokens) };
 
   // investigators
 
   investigators =
-    investigators_keyword investigator+;
+    investigators_keyword [investigators]:investigator+  {-> New investigators([investigators]) };
 
   investigator =
-    comment? token_collection colon [name]:identifier left_parenthesis right_parenthesis semicolon;
+    comment? token_collection colon [name]:identifier left_parenthesis right_parenthesis semicolon  {-> New investigator(token_collection, name) };
 
   // states
 
   states =
-    states_keyword normal_state+ internal_states?;
+    states_keyword [normal_states]:normal_state+ internal_states?  {-> New states([normal_states], internal_states) };
 
   normal_state =
-    comment? [name]:identifier lookahead? assign token_collection semicolon ignored?;
+    comment? [name]:identifier lookahead? assign token_collection semicolon ignored?  {-> New normal_state(name, lookahead, token_collection, ignored) };
 
   lookahead =
-    {no}       colon no_keyword lookahead_keyword |
-    {infinite} colon infinite_keyword lookahead_keyword;
+    {no}       colon no_keyword lookahead_keyword  {-> New lookahead.no() } |
+    {infinite} colon infinite_keyword lookahead_keyword  {-> New lookahead.infinite() };
 
   ignored =
-    ignored_keyword colon identifier [additional_identifiers]:additional_identifier* semicolon;
+    ignored_keyword colon identifier [additional_identifiers]:additional_identifier* semicolon  {-> New ignored([identifier, additional_identifiers.identifier]) };
 
   internal_states =
-    internal_keyword internal_state+ transitions?;
+    internal_keyword [internal_states]:internal_state+ transitions?  {-> New internal_states([internal_states], transitions) };
 
   internal_state =
-    comment? [name]:identifier lookahead? assign token_collection semicolon;
+    comment? [name]:identifier lookahead? assign token_collection semicolon  {-> New internal_state(name, lookahead, token_collection) };
 
   transitions =
-    transitions_keyword transition+;
+    transitions_keyword [transitions]:transition+  {-> New transitions([transitions]) };
 
   transition =
-    {normal} comment? [source]:identifier arrow_tail token_collection arrow_head [destination]:identifier semicolon |
-    {back}   comment? [source]:identifier arrow_tail token_collection arrow_head back_keyword semicolon;
+    {normal} comment? [source]:identifier arrow_tail token_collection arrow_head [destination]:identifier semicolon  {-> New transition.normal(source, token_collection, destination) } |
+    {back}   comment? [source]:identifier arrow_tail token_collection arrow_head back_keyword semicolon  {-> New transition.back(source, token_collection) };
 
   // ignored tokens
 
-  ignored_tokens =
-    ignored_keyword tokens_keyword identifier [additional_identifiers]:additional_identifier* semicolon;
+  ignored_tokens  {-> ignored } =
+    ignored_keyword tokens_keyword identifier [additional_identifiers]:additional_identifier* semicolon  {-> New ignored([identifier, additional_identifiers.identifier]) };
 
   // regular expression
 
   regular_expression =
-    {union}  regular_expression bar sub_expression |
-    {simple} sub_expression;
+    {union}  regular_expression bar sub_expression  {-> New regular_expression.union(regular_expression, sub_expression.regular_expression) } |
+    {simple} sub_expression  {-> sub_expression.regular_expression };
 
-  sub_expression =
-    {subtraction} sub_expression minus factor |
-    {simple}      factor;
+  sub_expression  {-> regular_expression } =
+    {subtraction} sub_expression minus factor  {-> New regular_expression.subtraction(sub_expression.regular_expression, factor.regular_expression) } |
+    {simple}      factor  {-> factor.regular_expression };
 
-  factor =
-    {concatenation} factor unary_expression |
-    {simple}        unary_expression;
+  factor  {-> regular_expression } =
+    {concatenation} factor unary_expression  {-> New regular_expression.concatenation(factor.regular_expression, unary_expression.regular_expression) } |
+    {simple}        unary_expression  {-> unary_expression.regular_expression };
 
-  unary_expression =
-    {zero_or_one} term question_mark |
-    {zero_or_more} term star |
-    {one_or_more} term plus |
-    {simple} term;
+  unary_expression  {-> regular_expression } =
+    {zero_or_one} term question_mark  {-> New regular_expression.zero_or_one(term.regular_expression) } |
+    {zero_or_more} term star  {-> New regular_expression.zero_or_more(term.regular_expression) } |
+    {one_or_more} term plus  {-> New regular_expression.one_or_more(term.regular_expression) } |
+    {simple} term  {-> term.regular_expression };
 
-  term =
-    {intersection}  intersection_keyword left_parenthesis [left_expression]:regular_expression comma [right_expression]:regular_expression right_parenthesis |
-    {shortest}      shortest_keyword left_parenthesis regular_expression right_parenthesis |
-    {parenthesized} left_parenthesis regular_expression right_parenthesis |
-    {interval}      left_bracket [lower_bound]:character dot_dot [upper_bound]:character right_bracket |
-    {string}        string |
-    {character}     character |
-    {empty_string}  empty_string |
-    {helper}        identifier;
+  term  {-> regular_expression } =
+    {intersection}  intersection_keyword left_parenthesis [left_regular_expression]:regular_expression comma [right_regular_expression]:regular_expression right_parenthesis  {-> New regular_expression.intersection(left_regular_expression, right_regular_expression) } |
+    {shortest}      shortest_keyword left_parenthesis regular_expression right_parenthesis  {-> New regular_expression.shortest(regular_expression) } |
+    {parenthesized} left_parenthesis regular_expression right_parenthesis  {-> regular_expression } |
+    {interval}      left_bracket [lower_bound]:character dot_dot [upper_bound]:character right_bracket  {-> New regular_expression.interval(lower_bound, upper_bound) } |
+    {string}        string  {-> New regular_expression.string(string) } |
+    {character}     character  {-> New regular_expression.character(character) } |
+    {empty_string}  empty_string  {-> New regular_expression.empty_string() } |
+    {helper}        identifier  {-> New regular_expression.helper(identifier) };
 
   character =
     {character}   character_token |
@@ -258,11 +258,115 @@ Productions
   // token collection
 
   token_collection =
-    {complete}  all_keyword |
-    {inclusive} identifier [additional_identifiers]:additional_identifier* |
-    {exclusive} all_keyword except_keyword identifier [additional_identifiers]:additional_identifier*;
+    {complete}  all_keyword  {-> New token_collection.complete() } |
+    {inclusive} identifier [additional_identifiers]:additional_identifier*  {-> New token_collection.inclusive([identifier, additional_identifiers.identifier]) } |
+    {exclusive} all_keyword except_keyword identifier [additional_identifiers]:additional_identifier*  {-> New token_collection.exclusive([identifier, additional_identifiers.identifier]) };
 
   // additional identifier
 
-  additional_identifier =
-    comma identifier;
+  additional_identifier  {-> identifier } =
+    comma identifier  {-> identifier};
+
+Abstract Syntax Tree
+
+  specification =
+    header lexer;
+
+  header =
+    language syntax;
+
+  language =
+    [name]:identifier;
+
+  syntax =
+    [version]:decimal_number;
+
+  lexer =
+    {no_states} helpers? tokens priorities? investigators? ignored? |
+    {states}    helpers? tokens priorities? investigators? states;
+
+  helpers =
+    [helpers]:helper+;
+
+  helper =
+    [name]:identifier regular_expression;
+
+  tokens =
+    {normal} [tokens]:token+ |
+    {groups} [groups]:group+;
+
+  group =
+    [name]:identifier [tokens]:token+;
+
+  token =
+    {simple}    [name]:identifier regular_expression three_dots? |
+    {selection} selection selector regular_expression three_dots?;
+
+  selection =
+    [names]:identifier+;
+
+  selector =
+    [name]:identifier;
+
+  priorities =
+    [priorities]:priority+;
+
+  priority =
+    [high_tokens]:token_collection [low_tokens]:token_collection;
+
+  investigators =
+    [investigators]:investigator+;
+
+  investigator =
+    token_collection [name]:identifier;
+
+  states =
+    [normal_states]:normal_state+ internal_states?;
+
+  normal_state =
+    [name]:identifier lookahead? token_collection ignored?;
+
+  lookahead =
+    {no}       |
+    {infinite} ;
+
+  ignored =
+    [identifiers]:identifier+;
+
+  internal_states =
+    [internal_states]:internal_state+ transitions?;
+
+  internal_state =
+    [name]:identifier lookahead? token_collection;
+
+  transitions =
+    [transitions]:transition+;
+
+  transition =
+    {normal} [source]:identifier token_collection [destination]:identifier|
+    {back}   [source]:identifier token_collection;
+
+  regular_expression =
+    {union}         [left_regular_expression]:regular_expression [right_regular_expression]:regular_expression |
+    {subtraction}   [left_regular_expression]:regular_expression [right_regular_expression]:regular_expression |
+    {concatenation} [left_regular_expression]:regular_expression [right_regular_expression]:regular_expression |
+    {zero_or_one}   regular_expression |
+    {zero_or_more}  regular_expression |
+    {one_or_more}   regular_expression |
+    {intersection}  [left_regular_expression]:regular_expression [right_regular_expression]:regular_expression |
+    {shortest}      regular_expression |
+    {interval}      [lower_bound]:character [upper_bound]:character |
+    {string}        string |
+    {character}     character |
+    {empty_string}  |
+    {helper}        identifier;
+
+  character =
+    {character}   character_token |
+    {decimal}     decimal_number |
+    {hexadecimal} hexadecimal_number;
+
+  token_collection =
+    {complete}  |
+    {inclusive} [identifiers]:identifier+ |
+    {exclusive} [identifiers]:identifier+;
