@@ -59,10 +59,11 @@ Tokens
   language_keyword      = 'Language';
   lookahead_keyword     = 'Lookahead';
   lexer_keyword         = 'Lexer';
-  no_keyword            = 'No';
+  none_keyword          = 'None';
   over_keyword          = 'Over';
   priorities_keyword    = 'Priorities';
   shortest_keyword      = 'Shortest';
+  state_keyword         = 'State';
   states_keyword        = 'States';
   syntax_keyword        = 'Syntax';
   tokens_keyword        = 'Tokens';
@@ -141,8 +142,8 @@ Productions
   // lexer
 
   lexer =
-    {no_states} lexer_keyword helpers? tokens priorities? investigators? ignored_tokens?  {-> New lexer.no_states(helpers, tokens, priorities, investigators, ignored_tokens.ignored) } |
-    {states}    lexer_keyword helpers? tokens priorities? investigators? states  {-> New lexer.states(helpers, tokens, priorities, investigators, states) };
+    {no_states} lexer_keyword helpers? tokens investigators? priorities? ignored? lookahead?  {-> New lexer.no_states(helpers, tokens, investigators, priorities, ignored, lookahead) } |
+    {states}    lexer_keyword helpers? tokens investigators? states  {-> New lexer.states(helpers, tokens, investigators, states) };
 
   // helpers
 
@@ -193,20 +194,20 @@ Productions
     states_keyword [normal_states]:normal_state+ internal_states?  {-> New states([normal_states], internal_states) };
 
   normal_state =
-    comment? [name]:identifier lookahead? assign token_collection semicolon ignored?  {-> New normal_state(name, lookahead, token_collection, ignored) };
+    state_keyword [name]:identifier colon token_collection semicolon priorities? ignored? lookahead?  {-> New normal_state(name, token_collection, priorities, ignored, lookahead) };
 
   lookahead =
-    {no}       colon no_keyword lookahead_keyword  {-> New lookahead.no() } |
-    {infinite} colon infinite_keyword lookahead_keyword  {-> New lookahead.infinite() };
+    {none}     lookahead_keyword none_keyword semicolon  {-> New lookahead.none() } |
+    {infinite} lookahead_keyword infinite_keyword semicolon  {-> New lookahead.infinite() };
 
   ignored =
-    ignored_keyword colon identifier [additional_identifiers]:additional_identifier* semicolon  {-> New ignored([identifier, additional_identifiers.identifier]) };
+    ignored_keyword identifier [additional_identifiers]:additional_identifier* semicolon  {-> New ignored([identifier, additional_identifiers.identifier]) };
 
   internal_states =
     internal_keyword [internal_states]:internal_state+ transitions?  {-> New internal_states([internal_states], transitions) };
 
   internal_state =
-    comment? [name]:identifier lookahead? assign token_collection semicolon  {-> New internal_state(name, lookahead, token_collection) };
+    state_keyword [name]:identifier colon token_collection semicolon priorities? lookahead?  {-> New internal_state(name, token_collection, priorities, lookahead) };
 
   transitions =
     transitions_keyword [transitions]:transition+  {-> New transitions([transitions]) };
@@ -214,11 +215,6 @@ Productions
   transition =
     {normal} comment? [source]:identifier arrow_tail token_collection arrow_head [destination]:identifier semicolon  {-> New transition.normal(source, token_collection, destination) } |
     {back}   comment? [source]:identifier arrow_tail token_collection arrow_head back_keyword semicolon  {-> New transition.back(source, token_collection) };
-
-  // ignored tokens
-
-  ignored_tokens  {-> ignored } =
-    ignored_keyword tokens_keyword identifier [additional_identifiers]:additional_identifier* semicolon  {-> New ignored([identifier, additional_identifiers.identifier]) };
 
   // regular expression
 
@@ -235,10 +231,10 @@ Productions
     {simple}        unary_expression  {-> unary_expression.regular_expression };
 
   unary_expression  {-> regular_expression } =
-    {zero_or_one} term question_mark  {-> New regular_expression.zero_or_one(term.regular_expression) } |
+    {zero_or_one}  term question_mark  {-> New regular_expression.zero_or_one(term.regular_expression) } |
     {zero_or_more} term star  {-> New regular_expression.zero_or_more(term.regular_expression) } |
-    {one_or_more} term plus  {-> New regular_expression.one_or_more(term.regular_expression) } |
-    {simple} term  {-> term.regular_expression };
+    {one_or_more}  term plus  {-> New regular_expression.one_or_more(term.regular_expression) } |
+    {simple}       term  {-> term.regular_expression };
 
   term  {-> regular_expression } =
     {intersection}  intersection_keyword left_parenthesis [left_regular_expression]:regular_expression comma [right_regular_expression]:regular_expression right_parenthesis  {-> New regular_expression.intersection(left_regular_expression, right_regular_expression) } |
@@ -282,8 +278,8 @@ Abstract Syntax Tree
     [version]:decimal_number;
 
   lexer =
-    {no_states} helpers? tokens priorities? investigators? ignored? |
-    {states}    helpers? tokens priorities? investigators? states;
+    {no_states} helpers? tokens investigators? priorities? ignored? lookahead? |
+    {states}    helpers? tokens investigators? states;
 
   helpers =
     [helpers]:helper+;
@@ -324,10 +320,10 @@ Abstract Syntax Tree
     [normal_states]:normal_state+ internal_states?;
 
   normal_state =
-    [name]:identifier lookahead? token_collection ignored?;
+    [name]:identifier token_collection priorities? ignored? lookahead?;
 
   lookahead =
-    {no}       |
+    {none}     |
     {infinite} ;
 
   ignored =
@@ -337,7 +333,7 @@ Abstract Syntax Tree
     [internal_states]:internal_state+ transitions?;
 
   internal_state =
-    [name]:identifier lookahead? token_collection;
+    [name]:identifier token_collection priorities? lookahead?;
 
   transitions =
     [transitions]:transition+;
