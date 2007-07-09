@@ -38,7 +38,7 @@ import org.sablecc.sablecc.exception.InternalException;
  */
 public final class Nfa<T extends Comparable<? super T>> {
 
-    /** Only useed for line separation in method toString. */
+    /** Only used for line separation in method toString. */
     private static final String lineSeparator = System
             .getProperty("line.separator");
 
@@ -128,12 +128,13 @@ public final class Nfa<T extends Comparable<? super T>> {
     }
 
     /**
-     * Constructs a NFA which is similar to the provided DFA.
+     * Constructs a <code>Nfa</code> which is similar to the provided
+     * <code>Dfa</code>.
      * 
      * @param dfa
-     *            the DFA.
+     *            the <code>Dfa</code>.
      * @throws InternalException
-     *             if the DFA is <code>null</code>.
+     *             if the <code>Dfa</code> is <code>null</code>.
      */
     public Nfa(
             Dfa<T> dfa) {
@@ -365,7 +366,7 @@ public final class Nfa<T extends Comparable<? super T>> {
     }
 
     /**
-     * Returns the string representation of this interval.
+     * Returns the string representation of this <code>Nfa</code>.
      * 
      * @return the string representation.
      * @throws InternalException
