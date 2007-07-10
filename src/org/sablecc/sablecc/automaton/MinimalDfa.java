@@ -32,25 +32,49 @@ import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.util.WorkSet;
 
+/**
+ * A minimal deterministic finite automaton (or MinimalDfa) is a state machine
+ * which is minimalist and equivalent to a corresponding <code>Dfa</code>.
+ */
 public class MinimalDfa<T extends Comparable<? super T>> {
 
+    /** Only used for line separation in method toString. */
     private static final String lineSeparator = System
             .getProperty("line.separator");
 
+    /** The alphabet for this <code>MinimalDfa</code>. */
     private Alphabet<T> alphabet;
 
+    /** The states of this <code>MinimalDfa</code>. */
     private SortedSet<MinimalDfaState<T>> states;
 
+    /** The starting state of this <code>MinimalDfa</code>. */
     private MinimalDfaState<T> startState;
 
+    /** The dead end state of this <code>MinimalDfa</code>. */
     private MinimalDfaState<T> deadEndState;
 
+    /** The acceptation states of this <code>MinimalDfa</code>. */
     private SortedSet<MinimalDfaState<T>> acceptStates;
 
+    /** A stability status for this <code>MinimalDfa</code>. */
     private boolean isStable;
 
+    /**
+     * Cached string representation. Is <code>null</code> when not yet
+     * computed.
+     */
     private String toString;
 
+    /**
+     * Constructs a <code>MinimalDfa</code> equivalent to the provided
+     * <code>Dfa</code>.
+     * 
+     * @param dfa
+     *            the <code>Dfa</code>.
+     * @throws InternalException
+     *             if the <code>Dfa</code> is <code>null</code>.
+     */
     public MinimalDfa(
             Dfa<T> dfa) {
 
@@ -202,6 +226,10 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         stabilize();
     }
 
+    /**
+     * Stabilizes this <code>MinimalDfa</code> by stabilizing each of its
+     * states.
+     */
     private void stabilize() {
 
         for (MinimalDfaState<T> state : this.states) {
@@ -214,11 +242,23 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         this.isStable = true;
     }
 
+    /**
+     * Returns the alphabet of this <code>MinimalDfa</code>.
+     * 
+     * @return the alphabet.
+     */
     public Alphabet<T> getAlphabet() {
 
         return this.alphabet;
     }
 
+    /**
+     * Returns the states of this <code>MinimalDfa</code>.
+     * 
+     * @return the set of states.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<MinimalDfaState<T>> getStates() {
 
         if (!this.isStable) {
@@ -228,6 +268,13 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         return this.states;
     }
 
+    /**
+     * Returns the starting state of this <code>MinimalDfa</code>.
+     * 
+     * @return the starting state.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public MinimalDfaState<T> getStartState() {
 
         if (!this.isStable) {
@@ -237,6 +284,13 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         return this.startState;
     }
 
+    /**
+     * Returns the dead end state of this <code>MinimalDfa</code>.
+     * 
+     * @return the dead end state.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public MinimalDfaState<T> getDeadEndState() {
 
         if (!this.isStable) {
@@ -246,11 +300,24 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         return this.deadEndState;
     }
 
+    /**
+     * Returns the dead end state of this <code>MinimalDfa</code>if it is
+     * unstable.
+     * 
+     * @return the dead end state.
+     */
     MinimalDfaState<T> getUnstableDeadEndState() {
 
         return this.deadEndState;
     }
 
+    /**
+     * Returns the acceptation state of this <code>MinimalDfa</code>.
+     * 
+     * @return the acceptation state.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<MinimalDfaState<T>> getAcceptStates() {
 
         if (!this.isStable) {
@@ -260,6 +327,13 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         return this.acceptStates;
     }
 
+    /**
+     * Returns the string representation of this <code>MinimalDfa</code>.
+     * 
+     * @return the string representation.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     @Override
     public String toString() {
 
@@ -313,6 +387,13 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         return this.toString;
     }
 
+    /**
+     * Returns the ID for the following state.
+     * 
+     * @return the ID of the next state.
+     * @throws InternalException
+     *             if this <code>MinimalDfa</code> instance is stable.
+     */
     int getNextStateId() {
 
         if (this.isStable) {
@@ -323,6 +404,15 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         return this.states.size();
     }
 
+    /**
+     * Adds a state to this <code>MinimalDfa</code>.
+     * 
+     * @param state
+     *            the state to add.
+     * @throws InternalException
+     *             if this <code>MinimalDfa</code> is stable or or if the
+     *             state is already in the state set.
+     */
     void addState(
             MinimalDfaState<T> state) {
 
