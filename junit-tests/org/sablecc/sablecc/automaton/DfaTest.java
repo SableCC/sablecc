@@ -123,11 +123,4 @@ public class DfaTest {
         }
 
     }
-
-    @Test
-    public void testAddState() {
-
-        // TODO
-    }
-
 }
