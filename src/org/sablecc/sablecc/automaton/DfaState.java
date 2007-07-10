@@ -24,19 +24,40 @@ import java.util.TreeMap;
 import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A deterministic finite automaton (DFA) is a state machine which permit one
+ * and only one transition from one state to another with an input symbol. A
+ * DfaState is a state for this kind of automaton.
+ */
 public final class DfaState<T extends Comparable<? super T>>
         implements Comparable<DfaState<T>> {
 
+    /** The <code>Dfa</code> related to this <code>DfaState</code>. */
     private final Dfa<T> dfa;
 
+    /** The identification number of this <code>DfaState</code>. */
     private final int id;
 
+    /** The sorted map of transitions for this <code>DfaState</code>. */
     private SortedMap<Symbol<T>, DfaState<T>> transitions;
 
+    /** A stability status for this <code>DfaState</code>. */
     private boolean isStable;
 
+    /**
+     * Cached string representation. Is <code>null</code> when not yet
+     * computed.
+     */
     private String toString;
 
+    /**
+     * Construct a new <code>DfaState</code> into a provided <code>Dfa</code>.
+     * 
+     * @param dfa
+     *            the <code>Dfa</code>.
+     * @throws InternalException
+     *             if the provided <code>Dfa</code> is <code>null</code>.
+     */
     DfaState(
             Dfa<T> dfa) {
 
@@ -54,16 +75,33 @@ public final class DfaState<T extends Comparable<? super T>>
         this.isStable = false;
     }
 
+    /**
+     * Returns the <code>Dfa</code> of this <code>DfaState</code>.
+     * 
+     * @return the <code>Dfa</code>.
+     */
     public Dfa<T> getDfa() {
 
         return this.dfa;
     }
 
+    /**
+     * Returns the identification number of this <code>DfaState</code>.
+     * 
+     * @return the identification number.
+     */
     public int getId() {
 
         return this.id;
     }
 
+    /**
+     * Returns the transitions of this <code>DfaState</code>.
+     * 
+     * @return the map of transitions.
+     * @throws InternalException
+     *             if this <code>DfaState</code> is not stable.
+     */
     public SortedMap<Symbol<T>, DfaState<T>> getTransitions() {
 
         if (!this.isStable) {
@@ -73,11 +111,30 @@ public final class DfaState<T extends Comparable<? super T>>
         return this.transitions;
     }
 
+    /**
+     * Returns the unstable transitions of this <code>DfaState</code>.
+     * 
+     * @return the map of unstable transitions.
+     */
     SortedMap<Symbol<T>, DfaState<T>> getUnstableTransitions() {
 
         return this.transitions;
     }
 
+    /**
+     * Returns the target of this <code>DfaState</code> with a provided
+     * symbol.
+     * 
+     * @param symbol
+     *            the provided symbol.
+     * 
+     * @return the target.
+     * 
+     * @throws InternalException
+     *             if this <code>DfaState</code> is not stable, if the
+     *             provided symbol is <code>null</code> or if the symbol is
+     *             not contained in the alphabet of the <code>Dfa</code>.
+     */
     public DfaState<T> getTarget(
             Symbol<T> symbol) {
 
@@ -102,6 +159,15 @@ public final class DfaState<T extends Comparable<? super T>>
         return target;
     }
 
+    /**
+     * Returns whether this instance is equal to the provided object. They are
+     * equal if they have an identical identification number.
+     * 
+     * @param obj
+     *            the object to compare with.
+     * @return <code>true</code> if this <code>DfaState</code> and the
+     *         object are equal; <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(
             Object obj) {
@@ -119,12 +185,23 @@ public final class DfaState<T extends Comparable<? super T>>
         return this.id == nfaState.id;
     }
 
+    /**
+     * Return the hashCode of this <code>DfaState</code>, based on its
+     * identification number.
+     * 
+     * @return the hashCode.
+     */
     @Override
     public int hashCode() {
 
         return this.id;
     }
 
+    /**
+     * Returns the string representation of this <code>DfaState</code>.
+     * 
+     * @return the string representation.
+     */
     @Override
     public String toString() {
 
@@ -135,6 +212,16 @@ public final class DfaState<T extends Comparable<? super T>>
         return this.toString;
     }
 
+    /**
+     * Compares this <code>DfaState</code> to the provided one. It compares
+     * the identification number.
+     * 
+     * @param dfaState
+     *            the <code>DfaState</code> to compare with.
+     * @return an <code>int</code> value: 0 if the two <code>DfaState</code>
+     *         are equals, a negative value if this <code>DfaState</code> is
+     *         smaller, and a positive value if it is bigger.
+     */
     public int compareTo(
             DfaState<T> dfaState) {
 
@@ -146,6 +233,21 @@ public final class DfaState<T extends Comparable<? super T>>
         return this.id - dfaState.id;
     }
 
+    /**
+     * Adds a new transition to this <code>DfaState</code>.
+     * 
+     * @param symbol
+     *            the symbol for the new transition.
+     * 
+     * @param dfaState
+     *            the destination of the new transition.
+     * 
+     * @throws InternalException
+     *             if this <code>DfaState</code> is already stable, if the
+     *             provided symbol is <code>null</code> or invalid, if the
+     *             provided <code>DfaState</code> is <code>null</code> or
+     *             invalid, or if the transition already exists.
+     */
     void addTransition(
             Symbol<T> symbol,
             DfaState<T> dfaState) {
@@ -181,6 +283,12 @@ public final class DfaState<T extends Comparable<? super T>>
         }
     }
 
+    /**
+     * Removes all the transitions of this <code>DfaState</code>.
+     * 
+     * @throws InternalException
+     *             if this <code>DfaState</code> is already stable.
+     */
     void removeTransitions() {
 
         if (this.isStable) {
@@ -190,6 +298,12 @@ public final class DfaState<T extends Comparable<? super T>>
         this.transitions.clear();
     }
 
+    /**
+     * Stabilize this <code>DfaState</code>.
+     * 
+     * @throws InternalException
+     *             if this <code>DfaState</code> is already stable.
+     */
     void stabilize() {
 
         if (this.isStable) {
