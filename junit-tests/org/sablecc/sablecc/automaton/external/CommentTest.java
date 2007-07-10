@@ -33,7 +33,7 @@ public class CommentTest {
     // This test creates minimal DFAs for two regular expressions:
     //
     // shortest_comment = Shortest('/*' any* '*/')
-    // 
+    //
     // construction_comment =
     // '/*' not_star* ('*' (not_star_slash not_star*)?)* '*/'
     //
