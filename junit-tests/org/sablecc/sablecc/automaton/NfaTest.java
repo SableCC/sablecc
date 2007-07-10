@@ -350,8 +350,9 @@ public class NfaTest {
     public void testShortest() {
 
         // Case with null nfa
+        Nfa<Integer> nullNfa = null;
         try {
-            Dfa.shortest(null);
+            Dfa.shortest(nullNfa);
             fail("the nfa cannot be null");
         }
         catch (InternalException e) {
