@@ -29,29 +29,58 @@ import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.util.WorkSet;
 
+/**
+ * A deterministic finite automaton (or MinimalDfa) is a finite state machine
+ * which permit one and only one transition from one state to another with an
+ * input symbol.
+ */
 public class Dfa<T extends Comparable<? super T>> {
 
+    /** Only used for line separation in method toString. */
     private static final String lineSeparator = System
             .getProperty("line.separator");
 
+    /** The alphabet for this <code>Dfa</code>. */
     private Alphabet<T> alphabet;
 
+    /** The states of this <code>Dfa</code>. */
     private SortedSet<DfaState<T>> states;
 
+    /** The starting state of this <code>Dfa</code>. */
     private DfaState<T> startState;
 
+    /** The dead end state of this <code>Dfa</code>. */
     private DfaState<T> deadEndState;
 
+    /** The acceptation states of this <code>Dfa</code>. */
     private SortedSet<DfaState<T>> acceptStates;
 
+    /** A stability status for this <code>Dfa</code>. */
     private boolean isStable;
 
+    /**
+     * Cached string representation. Is <code>null</code> when not yet
+     * computed.
+     */
     private String toString;
 
+    /**
+     * Constructs a simple <code>Dfa</code>. Used by static class methods to
+     * generate a non-stabilized <code>Dfa</code> to work with.
+     */
     private Dfa() {
 
     }
 
+    /**
+     * Constructs a <code>Dfa</code> which is similar to the provided
+     * <code>Nfa</code>.
+     * 
+     * @param nfa
+     *            the <code>Nfa</code>.
+     * @throws InternalException
+     *             if the <code>Nfa</code> is <code>null</code>.
+     */
     public Dfa(
             Nfa<T> nfa) {
 
@@ -73,6 +102,10 @@ public class Dfa<T extends Comparable<? super T>> {
         stabilize();
     }
 
+    /**
+     * Initializes this <code>Dfa</code>. This method is called by the main
+     * constructor.
+     */
     private void init(
             Nfa<T> nfa) {
 
@@ -82,6 +115,14 @@ public class Dfa<T extends Comparable<? super T>> {
         this.isStable = false;
     }
 
+    /**
+     * Matches the states of this <code>Dfa</code> with those of the provided
+     * <code>Nfa</code>.
+     * 
+     * @param nfa
+     *            the <code>Nfa</code>.
+     * @return a state matcher instance.
+     */
     private StateMatcher<T> computeDfaStates(
             Nfa<T> nfa) {
 
@@ -149,11 +190,23 @@ public class Dfa<T extends Comparable<? super T>> {
         return matcher;
     }
 
+    /**
+     * Returns the alphabet of this <code>Dfa</code>.
+     * 
+     * @return the alphabet.
+     */
     public Alphabet<T> getAlphabet() {
 
         return this.alphabet;
     }
 
+    /**
+     * Returns the states of this <code>Dfa</code>.
+     * 
+     * @return the set of states.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<DfaState<T>> getStates() {
 
         if (!this.isStable) {
@@ -163,11 +216,23 @@ public class Dfa<T extends Comparable<? super T>> {
         return this.states;
     }
 
+    /**
+     * Returns the states of this <code>Dfa</code> if it is unstable.
+     * 
+     * @return the set of states.
+     */
     SortedSet<DfaState<T>> getUnstableStates() {
 
         return this.states;
     }
 
+    /**
+     * Returns the starting state of this <code>Dfa</code>.
+     * 
+     * @return the starting state.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public DfaState<T> getStartState() {
 
         if (!this.isStable) {
@@ -177,6 +242,13 @@ public class Dfa<T extends Comparable<? super T>> {
         return this.startState;
     }
 
+    /**
+     * Returns the dead end state of this <code>Dfa</code>.
+     * 
+     * @return the dead end state.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public DfaState<T> getDeadEndState() {
 
         if (!this.isStable) {
@@ -186,11 +258,23 @@ public class Dfa<T extends Comparable<? super T>> {
         return this.deadEndState;
     }
 
+    /**
+     * Returns the dead end state of this <code>Dfa</code>if it is unstable.
+     * 
+     * @return the dead end state.
+     */
     DfaState<T> getUnstableDeadEndState() {
 
         return this.deadEndState;
     }
 
+    /**
+     * Returns the acceptation state of this <code>Dfa</code>.
+     * 
+     * @return the acceptation state.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<DfaState<T>> getAcceptStates() {
 
         if (!this.isStable) {
@@ -200,6 +284,13 @@ public class Dfa<T extends Comparable<? super T>> {
         return this.acceptStates;
     }
 
+    /**
+     * Returns the string representation of this <code>Dfa</code>.
+     * 
+     * @return the string representation.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     @Override
     public String toString() {
 
@@ -253,6 +344,12 @@ public class Dfa<T extends Comparable<? super T>> {
         return this.toString;
     }
 
+    /**
+     * Stabilizes this <code>Dfa</code> by stabilizing each of its states.
+     * 
+     * @throws InternalException
+     *             if this <code>Dfa</code> instance is already stable.
+     */
     private void stabilize() {
 
         if (this.isStable) {
@@ -272,6 +369,9 @@ public class Dfa<T extends Comparable<? super T>> {
         this.isStable = true;
     }
 
+    /**
+     * Removes unreachable states from this <code>Dfa</code> instance.
+     */
     private void removeUnreachableStates() {
 
         SortedSet<DfaState<T>> reachableStates = new TreeSet<DfaState<T>>();
@@ -293,6 +393,16 @@ public class Dfa<T extends Comparable<? super T>> {
         this.states = reachableStates;
     }
 
+    /**
+     * Calculates and returns the shortest <code>Dfa</code> corresponding to
+     * the provided <code>Nfa</code>.
+     * 
+     * @param nfa
+     *            the <code>Nfa</code>.
+     * @return the calculated <code>Dfa</code>.
+     * @throws InternalException
+     *             if the provided <code>Nfa</code> is <code>null</code>.
+     */
     static <T extends Comparable<? super T>> Dfa<T> shortest(
             Nfa<T> nfa) {
 
@@ -322,6 +432,19 @@ public class Dfa<T extends Comparable<? super T>> {
         return dfa;
     }
 
+    /**
+     * Calculates the difference between the two provided <code>Nfa</code> and
+     * returns the corresponding <code>Dfa</code>.
+     * 
+     * @param nfa1
+     *            the first <code>Nfa</code>.
+     * @param nfa2
+     *            the second <code>Nfa</code>.
+     * @return the calculated <code>Dfa</code>.
+     * @throws InternalException
+     *             if one of the provided <code>Nfa</code> is
+     *             <code>null</code>.
+     */
     static <T extends Comparable<? super T>> Dfa<T> difference(
             Nfa<T> nfa1,
             Nfa<T> nfa2) {
@@ -364,6 +487,19 @@ public class Dfa<T extends Comparable<? super T>> {
         return dfa;
     }
 
+    /**
+     * Calculates the intersection between the two provided <code>Nfa</code>
+     * and returns the corresponding <code>Dfa</code>.
+     * 
+     * @param nfa1
+     *            the first <code>Nfa</code>.
+     * @param nfa2
+     *            the second <code>Nfa</code>.
+     * @return the calculated <code>Dfa</code>.
+     * @throws InternalException
+     *             if one of the provided <code>Nfa</code> is
+     *             <code>null</code>.
+     */
     static <T extends Comparable<? super T>> Dfa<T> intersection(
             Nfa<T> nfa1,
             Nfa<T> nfa2) {
@@ -406,6 +542,13 @@ public class Dfa<T extends Comparable<? super T>> {
         return dfa;
     }
 
+    /**
+     * Returns the ID for the following state.
+     * 
+     * @return the ID of the next state.
+     * @throws InternalException
+     *             if this <code>Dfa</code> instance is stable.
+     */
     int getNextStateId() {
 
         if (this.isStable) {
@@ -415,6 +558,15 @@ public class Dfa<T extends Comparable<? super T>> {
         return this.states.size();
     }
 
+    /**
+     * Adds a state to this <code>Dfa</code>.
+     * 
+     * @param state
+     *            the state to add.
+     * @throws InternalException
+     *             if this <code>Dfa</code> is stable or or if the state is
+     *             already in the state set.
+     */
     void addState(
             DfaState<T> state) {
 
