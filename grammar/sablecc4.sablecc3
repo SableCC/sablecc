@@ -32,7 +32,7 @@ Helpers
     carriage_return line_feed;
 
   decimal_digit     = ['0' .. '9'];
-  hexadecimal_digit = [[decimal_digit + ['A' .. 'F']] + ['a' .. 'f']];
+  hexadecimal_digit = [decimal_digit + ['a' .. 'f']];
   lower_case_letter = ['a' .. 'z'];
   upper_case_letter = ['A' .. 'Z'];
 
@@ -104,10 +104,10 @@ Tokens
     (lower_case_letter | upper_case_letter | '_') (lower_case_letter | upper_case_letter | '_' | decimal_digit)*;
 
   decimal_number     = decimal_digit+;
-  hexadecimal_number = '0' ('x' | 'X') hexadecimal_digit+;
+  hexadecimal_number = '0' 'x' hexadecimal_digit+;
 
   decimal_character     = '#' decimal_digit+;
-  hexadecimal_character = '#' '0' ('x' | 'X') hexadecimal_digit+;
+  hexadecimal_character = '#' '0' 'x' hexadecimal_digit+;
 
   empty_string    = ''' ''';
   character_token = ''' (string_character | ''') ''';
@@ -230,7 +230,7 @@ Productions
     {interval_union} regular_expression bar interval  {-> New regular_expression.union(regular_expression, interval.regular_expression) };
 
   interval  {-> regular_expression } =
-     [lower_bound]:character two_dots [upper_bound]:character  {-> New regular_expression.interval(lower_bound, upper_bound) };
+    [lower_bound]:character two_dots [upper_bound]:character  {-> New regular_expression.interval(lower_bound, upper_bound) };
 
   sub_expression  {-> regular_expression } =
     {simple}      factor  {-> factor.regular_expression } |
