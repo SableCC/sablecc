@@ -17,142 +17,201 @@
   limitations under the License.
 -->
 
-<project name="SableCC" default="all" basedir="..">
+<project name="sablecc" default="development" basedir="..">
+
+  <!-- Tasks -->
+
+  <taskdef name="sablecc3" classname="org.sablecc.ant.taskdef.Sablecc" />
 
   <!-- Global Properties -->
-  <property name="package" value="SableCC" />
+
+  <property name="package.name" value="sablecc" />
+  <property name="package.version" value="repository" />
+
   <property name="src.dir" value="src" />
-  <property name="classes.dir" value="classes" />
-  <property name="lib.dir" value="lib" />
+  <property name="grammar.dir" value="grammar" />
   <property name="junit-tests.dir" value="junit-tests" />
   <property name="regression-tests.dir" value="regression-tests" />
+
+  <property name="classes.dir" value="classes" />
+  <property name="test-classes.dir" value="test-classes" />
   <property name="doc.dir" value="doc" />
   <property name="devel-doc.dir" value="devel-doc" />
-  <property name="sablecc.version" value="repository" />
-  <property name="dist.dir" value="sablecc-${sablecc.version}" />
-  <property name="dist.file" value="sablecc-${sablecc.version}.zip" />
+  <property name="lib.dir" value="lib" />
 
-  <!-- Paths -->
-  <path id="classpath.base" />
+  <property name="dist.dir" value="${package.name}-${package.version}" />
+  <property name="dist.file" value="${package.name}-${package.version}.zip" />
 
-  <path id="classpath.test">
-    <pathelement location="${classes.dir}" />
-    <path refid="classpath.base" />
-  </path>
+  <!-- Version Check -->
 
-  <!-- Default Target -->
-  <target name="all"
-          depends="init, compile, jar, tests, doc"
-          description="Default target. Executing all build targets" />
-
-  <!-- Initiation Stage -->
-  <target name="init" description="Initiating build.">
-    <condition property="ant-good-version">
-      <antversion atleast="1.7.0" />
-    </condition>
+  <target name="check-version" description="Check the Ant version.">
+    <fail message="Ant version 1.7.0 or later is required.">
+      <condition>
+        <not>
+          <antversion atleast="1.7.0" />
+        </not>
+      </condition>
+    </fail>
   </target>
 
-  <!-- Compiling Stage -->
-  <target name="compile"
-          depends="compile-src, compile-tests"
-          description="Compiling project files." />
+  <!-- Grammar Compilation -->
 
-  <target name="compile-src"
-          depends="init"
-          description="Compiling source files.">
+  <target name="compile-grammar"
+          depends="check-version"
+          description="Compile the grammar.">
+
+    <delete dir="${dist.dir}/org/sablecc/sablecc/syntax3" />
+
+    <sablecc3 src="${grammar.dir}"
+              includes="sablecc4.sablecc3"
+              outputdirectory="${src.dir}" />
+
+  </target>
+
+  <!-- Source Compilation -->
+
+  <target name="compile-sources"
+          depends="compile-grammar"
+          description="Compile the source code.">
+
+    <delete dir="${classes.dir}" />
 
     <mkdir dir="${classes.dir}" />
 
-    <javac srcdir="${src.dir}"
-           destdir="${classes.dir}"
-           includes="**/*.java"
-           listfiles="yes" />
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true" />
+
+    <copy todir="${classes.dir}">
+      <fileset dir="${src.dir}">
+        <include name="**/*.dat" />
+      </fileset>
+      <fileset file="${basedir}/LICENSE" />
+      <fileset file="${basedir}/NOTICE" />
+    </copy>
 
   </target>
+
+  <!-- Test Compilation -->
 
   <target name="compile-tests"
-          depends="jar"
-          description="Compiling JUnit and regression tests.">
+          depends="compile-sources"
+          description="Compile JUnit and regression tests.">
 
-    <javac srcdir="${junit-tests.dir}" destdir="${classes.dir}" />
+    <delete dir="${test-classes.dir}" />
 
-    <javac srcdir="${regression-tests.dir}" destdir="${classes.dir}" />
+    <mkdir dir="${test-classes.dir}" />
+
+    <javac srcdir="${junit-tests.dir}"
+           classpath="${classes.dir}"
+           destdir="${test-classes.dir}"
+           debug="true" />
+
+    <javac srcdir="${regression-tests.dir}"
+           classpath="${classes.dir}"
+           destdir="${test-classes.dir}"
+           debug="true" />
 
   </target>
 
-  <!-- Packaging Stage -->
-  <target name="jar" depends="compile-src" description="Creating jar file.">
+  <!-- Test Execution -->
 
-    <mkdir dir="${lib.dir}" />
-
-    <jar destfile="${lib.dir}/sablecc-${sablecc.version}.jar"
-         basedir="${classes.dir}" />
-
-  </target>
-
-  <!-- Testing Stage -->
-  <target name="tests" depends="tests-failed" if="ant-good-version" />
-
-  <target name="tests-execute"
+  <target name="run-tests"
           depends="compile-tests"
-          description="Running JUnit and regression tests.">
+          description="Run JUnit and regression tests.">
 
-    <junit failureProperty="test.failure">
-      <classpath refid="classpath.test" />
+    <junit haltonfailure="yes">
       <formatter type="brief" usefile="false" />
+
+      <classpath>
+        <pathelement location="${classes.dir}" />
+        <pathelement location="${test-classes.dir}" />
+      </classpath>
+
       <batchtest>
-        <fileset dir="${classes.dir}" includes="**/*Test.class" />
-        <fileset dir="${classes.dir}" includes="**/*Bug.class" />
+        <fileset dir="${test-classes.dir}" includes="**/*Test.class" />
+        <fileset dir="${test-classes.dir}" includes="**/*Bug.class" />
       </batchtest>
+
     </junit>
 
   </target>
 
-  <target name="tests-failed" depends="tests-execute" if="test.failure">
-    <echo message="perform test cleanup" />
-    <!-- still to implement-->
-    <fail message="test failed" />
-  </target>
+  <!-- User Documentation Generation -->
 
-  <!-- JavaDoc Stage -->
-  <target name="doc" description="Generate JavaDoc">
+  <target name="generate-documentation"
+          depends="compile-grammar"
+          description="Generate user documentation.">
+
+    <delete dir="${doc.dir}" />
 
     <mkdir dir="${doc.dir}" />
 
-    <javadoc destdir="${doc.dir}"
-             author="true"
-             use="true"
-             windowtitle="SableCC-4"
-             source="1.6">
-      <packageset dir="${src.dir}" />
+    <javadoc destdir="${doc.dir}" splitindex="true" access="protected">
+
+      <packageset dir="${src.dir}">
+        <exclude name="org/sablecc/sablecc/syntax3/**" />
+      </packageset>
+
       <link href="http://java.sun.com/javase/6/docs/api/" />
+
     </javadoc>
+
+  </target>
+
+  <!-- Developer Documentation Generation -->
+
+  <target name="generate-developer-documentation"
+          depends="compile-grammar"
+          description="Generate developer documentation.">
+
+    <delete dir="${devel-doc.dir}" />
+
+    <mkdir dir="${devel-doc.dir}" />
 
     <javadoc destdir="${devel-doc.dir}"
-             access="private"
-             author="true"
              use="true"
-             windowtitle="SableCC-4"
-             source="1.6">
+             linksource="true"
+             splitindex="true"
+             access="private">
+
       <packageset dir="${src.dir}" />
+
       <link href="http://java.sun.com/javase/6/docs/api/" />
+
     </javadoc>
 
   </target>
 
-  <!-- Cleaning Stage -->
-  <target name="clean-all" description="Deleting doc,bin and lib directories">
-    <delete dir="${classes.dir}" />
+  <!-- Jar Library Creation -->
+
+  <target name="create-jar"
+          depends="compile-sources"
+          description="Create the jar library file.">
+
     <delete dir="${lib.dir}" />
-    <delete dir="${doc.dir}" />
-    <delete dir="${devel-doc.dir}" />
-    <delete file="${dist.file}" />
+
+    <mkdir dir="${lib.dir}" />
+
+    <jar destfile="${lib.dir}/${package.name}-${package.version}.jar">
+
+      <fileset dir="${classes.dir}" />
+
+      <fileset dir="${basedir}">
+        <include name="${src.dir}/**" />
+        <include name="${grammar.dir}/**" />
+        <exclude name="${src.dir}/org/sablecc/sablecc/syntax3/**" />
+      </fileset>
+
+    </jar>
+
   </target>
 
-  <!-- Distribution Stage -->
-  <target name="dist"
-          depends="all"
-          description="Creating distribution zip file.">
+  <!-- Distribution Zip File Creation -->
+  <target name="create-zip"
+          depends="run-tests, create-jar, generate-documentation"
+          description="Create distribution zip file.">
+
+    <delete dir="${dist.dir}" />
+    <delete file="${dist.file}" />
 
     <mkdir dir="${dist.dir}" />
 
@@ -161,18 +220,44 @@
     <copy file="NOTICE" todir="${dist.dir}" />
 
     <copy todir="${dist.dir}">
-      <fileset dir="." includes="${lib.dir}/**" />
-      <fileset dir="." includes="${doc.dir}/**" />
-      <fileset dir="." includes="${src.dir}/**" />
+
       <fileset dir="." includes="ant-files/**" />
+
+      <fileset dir="." includes="${src.dir}/**" />
+      <fileset dir="." includes="${grammar.dir}/**" />
       <fileset dir="." includes="${junit-tests.dir}/**" />
       <fileset dir="." includes="${regression-tests.dir}/**" />
+
+      <fileset dir="." includes="${lib.dir}/**" />
+      <fileset dir="." includes="${doc.dir}/**" />
+
     </copy>
 
     <zip destfile="${dist.file}" basedir="." includes="${dist.dir}/**" />
 
+  </target>
+
+  <!-- Clean Up -->
+
+  <target name="clean-up" depends="check-version" description="Delete all generated files">
+
+    <delete dir="${dist.file}" />
     <delete dir="${dist.dir}" />
+    <delete dir="${lib.dir}" />
+
+    <delete dir="${devel-doc.dir}" />
+    <delete dir="${doc.dir}" />
+
+    <delete dir="${test-classes.dir}" />
+    <delete dir="${classes.dir}" />
+    <delete dir="${src.dir}/org/sablecc/sablecc/syntax3" />
 
   </target>
+
+  <!-- Development -->
+
+  <target name="development"
+          depends="run-tests, generate-developer-documentation"
+          description="Run tests and generate developer documentation." />
 
 </project>

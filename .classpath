@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="src" path="src"/>
-    <classpathentry kind="src" path="regression-tests"/>
-    <classpathentry kind="src" path="junit-tests"/>
+    <classpathentry kind="src" output="test-classes" path="regression-tests"/>
+    <classpathentry kind="src" output="test-classes" path="junit-tests"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
     <classpathentry kind="var" path="JUNIT4_HOME"/>
     <classpathentry kind="output" path="classes"/>
