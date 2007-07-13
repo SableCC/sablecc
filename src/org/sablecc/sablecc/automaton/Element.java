@@ -20,14 +20,33 @@ package org.sablecc.sablecc.automaton;
 import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * An element represents a state. It is especially used in methods related to
+ * transitions since they return groups.
+ */
 class Element<T extends Comparable<? super T>> {
 
+    /** The partition of this element. */
     private final Partition<T> partition;
 
+    /** The state of this element. */
     private final DfaState<T> state;
 
+    /** The group of this element. */
     private Group<T> group;
 
+    /**
+     * Constructs an element with the provided partition and state.
+     * 
+     * @param partition
+     *            the partition.
+     * @param state
+     *            the state.
+     * @throws InternalException
+     *             if the provided partition or state is <code>null</code> or
+     *             if the state is not from same <code>Dfa</code> as the
+     *             partition.
+     */
     Element(
             final Partition<T> partition,
             final DfaState<T> state) {
@@ -51,21 +70,45 @@ class Element<T extends Comparable<? super T>> {
         partition.addElement(this);
     }
 
+    /**
+     * Returns the partition of this element.
+     * 
+     * @return the partition.
+     */
     Partition<T> getPartition() {
 
         return this.partition;
     }
 
+    /**
+     * Returns the state of this element.
+     * 
+     * @return the state.
+     */
     DfaState<T> getState() {
 
         return this.state;
     }
 
+    /**
+     * Returns the group of this element.
+     * 
+     * @return the group.
+     */
     Group<T> getGroup() {
 
         return this.group;
     }
 
+    /**
+     * Sets the group to wich this instance belongs.
+     * 
+     * @param group
+     *            the group.
+     * @throws InternalException
+     *             if the provided group is <code>null</code> or if it has a
+     *             different partition as the one of this instance.
+     */
     void setGroup(
             Group<T> group) {
 
@@ -86,6 +129,16 @@ class Element<T extends Comparable<? super T>> {
         group.addElement(this);
     }
 
+    /**
+     * Returns the target group of the provided symbol.
+     * 
+     * @param symbol
+     *            the symbol.
+     * @return the target group.
+     * @throws InternalException
+     *             if the provided symbol is <code>null</code> or if it not
+     *             part of this instance's partition.
+     */
     Group<T> getTarget(
             Symbol<T> symbol) {
 
