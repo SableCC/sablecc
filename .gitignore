@@ -16,7 +16,10 @@
 #
 
 /classes/
-/doc/
 /devel-doc/
+/doc/
 /lib/
+/sablecc-*/
 /sablecc-*.zip
+/src/org/sablecc/sablecc/syntax3/
+/test-classes/
