@@ -251,7 +251,7 @@
 
   <!-- Clean Up -->
 
-  <target name="clean-up" description="Delete all generated files">
+  <target name="clean-up" description="Delete all generated files.">
 
     <delete file="${dist.file}" />
     <delete dir="${dist.dir}" />
