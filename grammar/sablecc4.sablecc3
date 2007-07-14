@@ -103,11 +103,10 @@ Tokens
   erroneous_identifier =
     (lower_case_letter | upper_case_letter | '_') (lower_case_letter | upper_case_letter | '_' | decimal_digit)*;
 
-  decimal_number     = decimal_digit+;
-  hexadecimal_number = '0' 'x' hexadecimal_digit+;
+  number = decimal_digit+;
 
   decimal_character     = '#' decimal_digit+;
-  hexadecimal_character = '#' '0' 'x' hexadecimal_digit+;
+  hexadecimal_character = '#' 'x' hexadecimal_digit+;
 
   empty_string    = ''' ''';
   character_token = ''' (string_character | ''') ''';
@@ -142,7 +141,7 @@ Productions
     language_keyword [name]:identifier semicolon  {-> New language(name) };
 
   syntax =
-    syntax_keyword [version]:decimal_number semicolon  {-> New syntax(version) };
+    syntax_keyword [version]:number semicolon  {-> New syntax(version) };
 
   // lexer
 
@@ -245,9 +244,9 @@ Productions
     {zero_or_one}  term question_mark  {-> New regular_expression.zero_or_one(term.regular_expression) } |
     {zero_or_more} term star  {-> New regular_expression.zero_or_more(term.regular_expression) } |
     {one_or_more}  term plus  {-> New regular_expression.one_or_more(term.regular_expression) } |
-    {exponent}     term caret [times]:decimal_number  {-> New regular_expression.exponent(term.regular_expression, times) } |
-    {range}        term caret left_parenthesis [from]:decimal_number two_dots [to]:decimal_number right_parenthesis  {-> New regular_expression.range(term.regular_expression, from, to) } |
-    {at_least}     term caret left_parenthesis [times]:decimal_number three_dots right_parenthesis  {-> New regular_expression.at_least(term.regular_expression, times) } ;
+    {exponent}     term caret [times]:number  {-> New regular_expression.exponent(term.regular_expression, times) } |
+    {range}        term caret left_parenthesis [from]:number two_dots [to]:number right_parenthesis  {-> New regular_expression.range(term.regular_expression, from, to) } |
+    {at_least}     term caret left_parenthesis [times]:number three_dots right_parenthesis  {-> New regular_expression.at_least(term.regular_expression, times) } ;
 
   term  {-> regular_expression } =
     {intersection}  intersection_keyword left_parenthesis [left_regular_expression]:regular_expression comma [right_regular_expression]:regular_expression right_parenthesis  {-> New regular_expression.intersection(left_regular_expression, right_regular_expression) } |
@@ -291,7 +290,7 @@ Abstract Syntax Tree
     [name]:identifier;
 
   syntax =
-    [version]:decimal_number;
+    [version]:number;
 
   lexer =
     {no_states} helpers? tokens investigators? priorities? ignored? lookahead? |
@@ -365,9 +364,9 @@ Abstract Syntax Tree
     {zero_or_one}   regular_expression |
     {zero_or_more}  regular_expression |
     {one_or_more}   regular_expression |
-    {exponent}      regular_expression [times]:decimal_number |
-    {range}         regular_expression [from]:decimal_number [to]:decimal_number|
-    {at_least}      regular_expression [times]:decimal_number|
+    {exponent}      regular_expression [times]:number |
+    {range}         regular_expression [from]:number [to]:number|
+    {at_least}      regular_expression [times]:number|
     {intersection}  [left_regular_expression]:regular_expression [right_regular_expression]:regular_expression |
     {shortest}      regular_expression |
     {interval}      [lower_bound]:character [upper_bound]:character |
