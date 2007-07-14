@@ -37,7 +37,7 @@
     </condition>
   </fail>
 
-  <fail message="You must add the JUnit 4 jar library in the $ANT_HOME/lib directory..">
+  <fail message="You must add the JUnit 4 jar library in the $ANT_HOME/lib directory.">
     <condition>
       <not>
         <available classname="org.junit.Test" />
