@@ -334,7 +334,6 @@ public final class Interval<T extends Comparable<? super T>>
      *             if the interval is <code>null</code> or not adjacent to
      *             this one, or if both intervals do not share the same
      *             adjacency realms.
-     * 
      */
     public Interval<T> mergeWith(
             Interval<T> interval) {
