@@ -38,8 +38,6 @@ public class GroupTest {
 
     private Dfa<Integer> dfa;
 
-    private DfaState<Integer> dfaStartState;
-
     private Partition<Integer> partition;
 
     @Before
@@ -55,8 +53,6 @@ public class GroupTest {
         this.partition = new Partition<Integer>(this.dfa);
 
         this.group = new Group<Integer>(this.partition);
-
-        this.dfaStartState = this.dfa.getStartState();
     }
 
     @Test
