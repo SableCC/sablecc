@@ -19,6 +19,32 @@
 
 <project name="sablecc" default="development" basedir="..">
 
+  <!-- Check dependencies -->
+
+  <fail message="Ant version 1.7.0 or later is required.">
+    <condition>
+      <not>
+        <antversion atleast="1.7.0" />
+      </not>
+    </condition>
+  </fail>
+
+  <fail message="You must add the SableCC 3 jar library in the $ANT_HOME/lib directory.">
+    <condition>
+      <not>
+        <available classname="org.sablecc.ant.taskdef.Sablecc" />
+      </not>
+    </condition>
+  </fail>
+
+  <fail message="You must add the JUnit 4 jar library in the $ANT_HOME/lib directory..">
+    <condition>
+      <not>
+        <available classname="org.junit.Test" />
+      </not>
+    </condition>
+  </fail>
+
   <!-- Tasks -->
 
   <taskdef name="sablecc3" classname="org.sablecc.ant.taskdef.Sablecc" />
@@ -42,23 +68,9 @@
   <property name="dist.dir" value="${package.name}-${package.version}" />
   <property name="dist.file" value="${package.name}-${package.version}.zip" />
 
-  <!-- Version Check -->
-
-  <target name="check-version" description="Check the Ant version.">
-    <fail message="Ant version 1.7.0 or later is required.">
-      <condition>
-        <not>
-          <antversion atleast="1.7.0" />
-        </not>
-      </condition>
-    </fail>
-  </target>
-
   <!-- Grammar Compilation -->
 
-  <target name="compile-grammar"
-          depends="check-version"
-          description="Compile the grammar.">
+  <target name="compile-grammar" description="Compile the grammar.">
 
     <delete dir="${dist.dir}/org/sablecc/sablecc/syntax3" />
 
@@ -239,7 +251,7 @@
 
   <!-- Clean Up -->
 
-  <target name="clean-up" depends="check-version" description="Delete all generated files">
+  <target name="clean-up" description="Delete all generated files">
 
     <delete dir="${dist.file}" />
     <delete dir="${dist.dir}" />
