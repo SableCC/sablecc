@@ -50,6 +50,7 @@ Tokens
   // keywords
 
   all_keyword           = 'All';
+  any_keyword           = 'Any';
   back_keyword          = 'Back';
   except_keyword        = 'Except';
   group_keyword         = 'Group';
@@ -254,6 +255,7 @@ Productions
     {parenthesized} left_parenthesis regular_expression right_parenthesis  {-> regular_expression } |
     {string}        string  {-> New regular_expression.string(string) } |
     {character}     character  {-> New regular_expression.character(character) } |
+    {any}           any_keyword  {-> New regular_expression.any() } |
     {empty_string}  empty_string  {-> New regular_expression.empty_string() } |
     {helper}        identifier  {-> New regular_expression.helper(identifier) };
 
@@ -372,6 +374,7 @@ Abstract Syntax Tree
     {interval}      [lower_bound]:character [upper_bound]:character |
     {string}        string |
     {character}     character |
+    {any}           |
     {empty_string}  |
     {helper}        identifier;
 
