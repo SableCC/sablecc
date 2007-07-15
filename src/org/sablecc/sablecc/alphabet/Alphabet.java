@@ -37,12 +37,23 @@ import org.sablecc.sablecc.exception.InternalException;
 
 public final class Alphabet<T extends Comparable<? super T>> {
 
-    /** The sorted set of symbols of this alphabet. */
+    /**
+     * The sorted set of symbols of this alphabet. Includes the complement
+     * symbol, if present.
+     */
     private SortedSet<Symbol<T>> symbols;
+
+    /**
+     * The complement symbol of this alphabet. Is <code>null</code> when the
+     * alphabet does not contain a complement symbol.
+     */
+    private Symbol<T> complementSymbol;
 
     /**
      * A <code>SortedMap</code> that maps each interval contained in a symbol
      * of this alphabet to its symbol.
+     * <p>
+     * Does not contain mappings for the complement symbol, if present.
      */
     private SortedMap<Interval<T>, Symbol<T>> intervalMap;
 
@@ -129,8 +140,9 @@ public final class Alphabet<T extends Comparable<? super T>> {
      * @param symbols
      *            the collection of symbols.
      * @throws InternalException
-     *             if two distinct symbols have overlapping intervals or if a
-     *             symbol is <code>null</code>.
+     *             if two distinct symbols have overlapping intervals, if a
+     *             symbol is <code>null</code>, or if there are multiple
+     *             complement symbols.
      */
     private void init(
             Collection<Symbol<T>> symbols) {
@@ -144,6 +156,17 @@ public final class Alphabet<T extends Comparable<? super T>> {
         for (Symbol<T> symbol : symbols) {
             if (symbol == null) {
                 throw new InternalException("symbol may not be null");
+            }
+
+            if (symbol.isComplement()) {
+
+                if (this.complementSymbol != null) {
+                    throw new InternalException(
+                            "alphabet may not contain multiple complement symbols");
+                }
+
+                this.complementSymbol = symbol;
+                continue;
             }
 
             for (Interval<T> interval : symbol.getIntervals()) {
@@ -179,8 +202,28 @@ public final class Alphabet<T extends Comparable<? super T>> {
     }
 
     /**
+     * Returns the complement symbol of this alphabet.
+     * 
+     * @return the complement symbol.
+     * @throws InternalException
+     *             if this alphabet does not contain a complement symbol.
+     */
+    public Symbol<T> getComplementSymbol() {
+
+        if (this.complementSymbol == null) {
+            throw new InternalException(
+                    "this alphabet does not contain a complement symbol");
+        }
+
+        return this.complementSymbol;
+    }
+
+    /**
      * Returns the interval map of this alphabet. The <code>SortedMap</code>
      * maps each interval contained in a symbol of this alphabet to its symbol.
+     * <p>
+     * The interval map does not contain mappings to the complement symbol, if
+     * present in this alphabet.
      * 
      * @return the interval map.
      */
@@ -223,8 +266,19 @@ public final class Alphabet<T extends Comparable<? super T>> {
     }
 
     /**
-     * Merges this alphabet with the provided one.
+     * Returns whether this alphabet contains a complement symbol.
      * 
+     * @return <code>true</code> if this alphabet contains a complement
+     *         symbol.
+     */
+    public boolean containsComplementSymbol() {
+
+        return this.complementSymbol != null;
+    }
+
+    /**
+     * Merges this alphabet with the provided one.
+     * <p>
      * Merging two alphabets <code>A</code> and <code>B</code> consists of
      * creating a new alphabet <code>C</code> containing a minimal number of
      * symbols, with the following property: For every symbol <code>x</code>
@@ -280,19 +334,47 @@ public final class Alphabet<T extends Comparable<? super T>> {
         SortedMap<Symbol<T>, SortedSet<Symbol<T>>> alphabet1SymbolMap = new TreeMap<Symbol<T>, SortedSet<Symbol<T>>>();
         SortedMap<Symbol<T>, SortedSet<Symbol<T>>> alphabet2SymbolMap = new TreeMap<Symbol<T>, SortedSet<Symbol<T>>>();
 
+        // if either alphabets contains a complement symbol, the new alphabet
+        // will contain one.
+        Symbol<T> complementSymbol;
+
+        if (this.containsComplementSymbol()
+                || alphabet.containsComplementSymbol()) {
+            complementSymbol = new Symbol<T>();
+
+            newSymbols.add(complementSymbol);
+
+            if (this.containsComplementSymbol()) {
+
+                SortedSet<Symbol<T>> collection = new TreeSet<Symbol<T>>();
+                collection.add(complementSymbol);
+                alphabet1SymbolMap.put(this.complementSymbol, collection);
+            }
+
+            if (alphabet.containsComplementSymbol()) {
+
+                SortedSet<Symbol<T>> collection = new TreeSet<Symbol<T>>();
+                collection.add(complementSymbol);
+                alphabet2SymbolMap.put(alphabet.complementSymbol, collection);
+            }
+        }
+        else {
+            complementSymbol = null;
+        }
+
         for (Map.Entry<SymbolPair<T>, SortedSet<Interval<T>>> entry : symbolPairIntervalSetMap
                 .entrySet()) {
-
-            // we can make a new symbol that relates to the pair
-            Symbol<T> newSymbol = new Symbol<T>(entry.getValue());
 
             Symbol<T> oldSymbol1 = entry.getKey().getSymbol1();
             Symbol<T> oldSymbol2 = entry.getKey().getSymbol2();
 
-            // if no old symbol matches, don't create a symbol
+            // if no old (non-complement) symbol matches, don't create a symbol
             if (oldSymbol1 == null && oldSymbol2 == null) {
                 continue;
             }
+
+            // we can make a new symbol that relates to the pair
+            Symbol<T> newSymbol = new Symbol<T>(entry.getValue());
 
             newSymbols.add(newSymbol);
 
@@ -310,6 +392,11 @@ public final class Alphabet<T extends Comparable<? super T>> {
 
                 collection.add(newSymbol);
             }
+            else if (this.containsComplementSymbol()) {
+                SortedSet<Symbol<T>> collection = alphabet1SymbolMap
+                        .get(this.complementSymbol);
+                collection.add(newSymbol);
+            }
 
             if (oldSymbol2 != null) {
                 SortedSet<Symbol<T>> collection = alphabet2SymbolMap
@@ -320,6 +407,11 @@ public final class Alphabet<T extends Comparable<? super T>> {
                     alphabet2SymbolMap.put(oldSymbol2, collection);
                 }
 
+                collection.add(newSymbol);
+            }
+            else if (alphabet.containsComplementSymbol()) {
+                SortedSet<Symbol<T>> collection = alphabet2SymbolMap
+                        .get(alphabet.complementSymbol);
                 collection.add(newSymbol);
             }
         }
@@ -333,9 +425,11 @@ public final class Alphabet<T extends Comparable<? super T>> {
      * <code>(x,y)</code> to a set of shared intervals, where <code>x</code>
      * is a symbol of <code>alphabet1</code> or <code>null</code>, and
      * <code>y</code> is a symbol of <code>alphabet2</code> or
-     * <code>null</code>. A <code>null</code> symbol represents a
-     * hypothetical symbol which includes all the intervals that are not covered
-     * by symbols of its related alphabet.
+     * <code>null</code>.
+     * <p>
+     * This methods does not explicitly take into account complement symbols,
+     * but a <code>null</code> symbol, in a symbol pair, represents complement
+     * symbol.
      * <p>
      * The particular property of this implementation is that it does so in
      * linear time by only mapping pairs that have a non-empty shared interval

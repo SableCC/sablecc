@@ -128,6 +128,32 @@ public final class Nfa<T extends Comparable<? super T>> {
     }
 
     /**
+     * Constructs a <code>Nfa</code> for the language <code>{"s"}</code>
+     * where <code>s</code> is the provided symbol.
+     * 
+     * @param symbol
+     *            the symbol.
+     * @throws InternalException
+     *             if the symbol is <code>null</code>.
+     */
+    public Nfa(
+            Symbol<T> symbol) {
+
+        if (symbol == null) {
+            throw new InternalException("symbol may not be null");
+        }
+
+        init();
+
+        this.alphabet = new Alphabet<T>(symbol);
+
+        // transition: start->(symbol)->accept
+        this.startState.addTransition(symbol, this.acceptState);
+
+        stabilize();
+    }
+
+    /**
      * Constructs a <code>Nfa</code> which is similar to the provided
      * <code>Dfa</code>.
      * 
