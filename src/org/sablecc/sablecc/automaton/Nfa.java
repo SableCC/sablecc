@@ -671,6 +671,200 @@ public final class Nfa<T extends Comparable<? super T>> {
     }
 
     /**
+     * Returns a new <code>Nfa</code> instance which represents <code>n</code>
+     * repetitions of this <code>Nfa</code> instance.
+     * 
+     * @param n
+     *            the number of repetitions.
+     * @return the new <code>Nfa</code>.
+     * @throws InternalException
+     *             if this <code>Nfa</code> is not stable, or if
+     *             <code>n</code> is negative.
+     */
+    public Nfa<T> simpleExponent(
+            int n) {
+
+        if (!this.isStable) {
+            throw new InternalException("this Nfa is not stable yet");
+        }
+
+        if (n < 0) {
+            throw new InternalException("n must be greater or equal to zero");
+        }
+
+        Nfa<T> newNfa = new Nfa<T>(this.alphabet);
+
+        // initialize "last state"
+        NfaState<T> lastState = newNfa.startState;
+
+        for (int i = 0; i < n; i++) {
+
+            // add old states and transitions
+            SortedMap<NfaState<T>, NfaState<T>> oldNfaStateMap = new TreeMap<NfaState<T>, NfaState<T>>();
+            this.addStatesAndTransitionsTo(newNfa, oldNfaStateMap);
+
+            // link from "last state" to newly added "old start"
+            lastState.addTransition(null, oldNfaStateMap.get(this.startState));
+
+            // update "last state"
+            lastState = oldNfaStateMap.get(this.acceptState);
+        }
+
+        // link from "last state" to accept state.
+        lastState.addTransition(null, newNfa.acceptState);
+
+        newNfa.stabilize();
+        return newNfa;
+    }
+
+    /**
+     * Returns a new <code>Nfa</code> instance which represents at least
+     * <code>lowerBound</code> and at most <code>upperBound</code>
+     * repetitions of this <code>Nfa</code> instance.
+     * 
+     * @param lowerBound
+     *            the minimal number of repetitions.
+     * @param upperBound
+     *            the maximal number of repetitions.
+     * @return the new <code>Nfa</code>.
+     * @throws InternalException
+     *             if this <code>Nfa</code> is not stable, if any bound is
+     *             negative, or if <code>lowerBound</code> is greater than
+     *             <code>upperBound</code>.
+     */
+    public Nfa<T> rangeExponent(
+            int lowerBound,
+            int upperBound) {
+
+        if (!this.isStable) {
+            throw new InternalException("this Nfa is not stable yet");
+        }
+
+        if (lowerBound < 0) {
+            throw new InternalException(
+                    "lowerBound must be greater or equal to zero");
+        }
+
+        if (upperBound < 0) {
+            throw new InternalException(
+                    "upperBound must be greater or equal to zero");
+        }
+
+        if (upperBound < lowerBound) {
+            throw new InternalException(
+                    "upperBound must be greater or equal to lowerBound");
+        }
+
+        Nfa<T> newNfa = new Nfa<T>(this.alphabet);
+
+        // initialize "last state"
+        NfaState<T> lastState = newNfa.startState;
+
+        for (int i = 0; i < lowerBound; i++) {
+
+            // add old states and transitions
+            SortedMap<NfaState<T>, NfaState<T>> oldNfaStateMap = new TreeMap<NfaState<T>, NfaState<T>>();
+            this.addStatesAndTransitionsTo(newNfa, oldNfaStateMap);
+
+            // link from "last state" to newly added "old start"
+            lastState.addTransition(null, oldNfaStateMap.get(this.startState));
+
+            // update "last state"
+            lastState = oldNfaStateMap.get(this.acceptState);
+        }
+
+        for (int i = lowerBound; i < upperBound; i++) {
+
+            // link from "last state" to accept state.
+            lastState.addTransition(null, newNfa.acceptState);
+
+            // add old states and transitions
+            SortedMap<NfaState<T>, NfaState<T>> oldNfaStateMap = new TreeMap<NfaState<T>, NfaState<T>>();
+            this.addStatesAndTransitionsTo(newNfa, oldNfaStateMap);
+
+            // link from "last state" to newly added "old start"
+            lastState.addTransition(null, oldNfaStateMap.get(this.startState));
+
+            // update "last state"
+            lastState = oldNfaStateMap.get(this.acceptState);
+        }
+
+        // link from "last state" to accept state.
+        lastState.addTransition(null, newNfa.acceptState);
+
+        newNfa.stabilize();
+        return newNfa;
+    }
+
+    /**
+     * Returns a new <code>Nfa</code> instance which represents at least
+     * <code>n</code> repetitions of this <code>Nfa</code> instance.
+     * 
+     * @param n
+     *            the minimal number of repetitions.
+     * @return the new <code>Nfa</code>.
+     * @throws InternalException
+     *             if this <code>Nfa</code> is not stable, if any bound is
+     *             negative, or if <code>lowerBound</code> is greater than
+     *             <code>upperBound</code>.
+     */
+    public Nfa<T> atLeastExponent(
+            int n) {
+
+        if (!this.isStable) {
+            throw new InternalException("this Nfa is not stable yet");
+        }
+
+        if (n < 0) {
+            throw new InternalException(
+                    "lowerBound must be greater or equal to zero");
+        }
+
+        Nfa<T> newNfa = new Nfa<T>(this.alphabet);
+
+        // initialize "last state"
+        NfaState<T> lastState = newNfa.startState;
+
+        for (int i = 0; i < n; i++) {
+
+            // add old states and transitions
+            SortedMap<NfaState<T>, NfaState<T>> oldNfaStateMap = new TreeMap<NfaState<T>, NfaState<T>>();
+            this.addStatesAndTransitionsTo(newNfa, oldNfaStateMap);
+
+            // link from "last state" to newly added "old start"
+            lastState.addTransition(null, oldNfaStateMap.get(this.startState));
+
+            // update "last state"
+            lastState = oldNfaStateMap.get(this.acceptState);
+        }
+
+        {
+            // link from "last state" to accept state.
+            lastState.addTransition(null, newNfa.acceptState);
+
+            // add old states and transitions
+            SortedMap<NfaState<T>, NfaState<T>> oldNfaStateMap = new TreeMap<NfaState<T>, NfaState<T>>();
+            this.addStatesAndTransitionsTo(newNfa, oldNfaStateMap);
+
+            // link from "last state" to newly added "old start"
+            lastState.addTransition(null, oldNfaStateMap.get(this.startState));
+
+            // link from "old accept" to "old start"
+            oldNfaStateMap.get(this.acceptState).addTransition(null,
+                    oldNfaStateMap.get(this.startState));
+
+            // update "last state"
+            lastState = oldNfaStateMap.get(this.acceptState);
+        }
+
+        // link from "last state" to accept state.
+        lastState.addTransition(null, newNfa.acceptState);
+
+        newNfa.stabilize();
+        return newNfa;
+    }
+
+    /**
      * Returns a <code>Dfa</code> instance which represents the shortest
      * possible <code>Dfa</code> for this <code>Nfa</code> instance.
      * 
