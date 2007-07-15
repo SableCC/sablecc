@@ -33,7 +33,10 @@ import org.sablecc.sablecc.exception.InternalException;
 public final class Symbol<T extends Comparable<? super T>>
         implements Comparable<Symbol<T>> {
 
-    /** The sorted set of non-overlapping, non-adjacent intervals. */
+    /**
+     * The sorted set of non-overlapping, non-adjacent intervals. Is
+     * <code>null</code> if the symbol is a complement symbol.
+     */
     private final SortedSet<Interval<T>> intervals;
 
     /** Cached hashcode. Is <code>null</code> when not yet computed. */
@@ -127,11 +130,24 @@ public final class Symbol<T extends Comparable<? super T>>
     }
 
     /**
+     * Constructs a special symbol representing the complement symbol of a
+     * grammar.
+     */
+    public Symbol() {
+
+        this.intervals = null;
+    }
+
+    /**
      * Returns the set of intervals of this symbol.
      * 
      * @return the set of intervals.
      */
     public SortedSet<Interval<T>> getIntervals() {
+
+        if (this.intervals == null) {
+            throw new InternalException("complement symbols have no intervals");
+        }
 
         return this.intervals;
     }
@@ -159,6 +175,10 @@ public final class Symbol<T extends Comparable<? super T>>
 
         Symbol symbol = (Symbol) obj;
 
+        if (this.intervals == null || symbol.intervals == null) {
+            return this.intervals == symbol.intervals;
+        }
+
         if (this.intervals.size() != symbol.intervals.size()) {
             return false;
         }
@@ -184,9 +204,11 @@ public final class Symbol<T extends Comparable<? super T>>
         if (this.hashCode == null) {
             int hashCode = 0;
 
-            for (Interval<T> interval : this.intervals) {
-                hashCode *= 7;
-                hashCode += interval.hashCode();
+            if (this.intervals != null) {
+                for (Interval<T> interval : this.intervals) {
+                    hashCode *= 7;
+                    hashCode += interval.hashCode();
+                }
             }
 
             this.hashCode = hashCode;
@@ -208,16 +230,21 @@ public final class Symbol<T extends Comparable<? super T>>
 
             sb.append("{");
 
-            boolean first = true;
-            for (Interval<T> interval : this.intervals) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    sb.append(",");
-                }
+            if (this.intervals != null) {
+                boolean first = true;
+                for (Interval<T> interval : this.intervals) {
+                    if (first) {
+                        first = false;
+                    }
+                    else {
+                        sb.append(",");
+                    }
 
-                sb.append(interval);
+                    sb.append(interval);
+                }
+            }
+            else {
+                sb.append("Complement");
             }
 
             sb.append("}");
@@ -242,7 +269,21 @@ public final class Symbol<T extends Comparable<? super T>>
     public int compareTo(
             Symbol<T> symbol) {
 
+        if (this.intervals == null || symbol.intervals == null) {
+
+            if (this.intervals == symbol.intervals) {
+                return 0;
+            }
+
+            if (this.intervals == null) {
+                return -1;
+            }
+
+            return 1;
+        }
+
         int result = 0;
+
         Iterator<Interval<T>> i1 = this.intervals.iterator();
         Iterator<Interval<T>> i2 = symbol.intervals.iterator();
 
@@ -260,19 +301,34 @@ public final class Symbol<T extends Comparable<? super T>>
         if (result == 0 && (i1.hasNext() || i2.hasNext())) {
             result = this.intervals.size() - symbol.intervals.size();
         }
+
         return result;
+    }
+
+    /**
+     * Returns whether this symbol is a complement symbol or not.
+     * 
+     * @return <code>true</code> if this symbol is a complement symbol.
+     */
+    public boolean isComplement() {
+
+        return this.intervals == null;
     }
 
     /**
      * Creates a new symbol by merging together the symbols in the provided
      * collection. The new symbol includes all the intervals of merged symbols.
      * Adjacent intervals are merged. Fails if two intervals intersect.
+     * <p>
+     * If one of the symbols is a complement symbol, the result is a complement
+     * symbol.
      * 
      * @param symbols
      *            a collection of symbols to merge.
      * @return the new symbol.
      * @throws InternalException
-     *             if the collection is <code>null</code> or if it is empty.
+     *             if the collection is <code>null</code>, if it is empty, or
+     *             if it contains more than one complement symbol.
      */
     public static <T extends Comparable<? super T>> Symbol<T> merge(
             Collection<Symbol<T>> symbols) {
@@ -285,6 +341,28 @@ public final class Symbol<T extends Comparable<? super T>>
             throw new InternalException(
                     "symbols must contain at least one element");
         }
+
+        // look for complement symbols
+
+        boolean containsComplementSymbol = false;
+
+        for (Symbol<T> symbol : symbols) {
+            if (symbol.isComplement()) {
+
+                if (containsComplementSymbol) {
+                    throw new InternalException(
+                            "multiple complement symbols may not be merged.");
+                }
+
+                containsComplementSymbol = true;
+            }
+        }
+
+        if (containsComplementSymbol) {
+            return new Symbol<T>();
+        }
+
+        // merge non-complement symbols.
 
         Collection<Interval<T>> intervals = new LinkedList<Interval<T>>();
 
