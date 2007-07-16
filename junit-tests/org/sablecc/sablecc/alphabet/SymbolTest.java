@@ -68,6 +68,20 @@ public class SymbolTest {
     }
 
     @Test
+    public void testGetIntervals() {
+
+        // Case with complement symbol
+        this.symbolInt = new Symbol<Integer>();
+        try {
+            this.symbolInt.getIntervals();
+            fail("complement symbols have no intervals");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
+    }
+
+    @Test
     public void testHashCode() {
 
         // For Integer.
@@ -356,6 +370,18 @@ public class SymbolTest {
                 this.intervalsBig);
         assertTrue("The two symbols should be equals.", sameSymbolBig
                 .compareTo(this.symbolBig) == 0);
+
+        // Case with complement symbol
+        Symbol<Integer> complementSymbol = new Symbol<Integer>();
+        assertEquals("the two complement Symbols should be equals", 0,
+                complementSymbol.compareTo(new Symbol<Integer>()));
+
+        assertTrue("this symbol should be greater than a complement symbol",
+                this.symbolInt.compareTo(complementSymbol) > 0);
+
+        assertTrue("this symbol should be greater than a complement symbol",
+                complementSymbol.compareTo(this.symbolInt) < 0);
+
     }
 
     @SuppressWarnings("unused")
@@ -407,6 +433,18 @@ public class SymbolTest {
         assertTrue(
                 "mergeSymbolBig should contain more elements than symbolBig",
                 mergeSymbolBig.compareTo(this.symbolBig) > 0);
+
+        // Case with complement symbols
+        symbolCollectionInt.clear();
+        symbolCollectionInt.add(new Symbol<Integer>());
+        symbolCollectionInt.add(new Symbol<Integer>());
+        try {
+            Symbol.merge(symbolCollectionInt);
+            fail("multiple complement symbols may not be merged");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
     }
 
     @Test
