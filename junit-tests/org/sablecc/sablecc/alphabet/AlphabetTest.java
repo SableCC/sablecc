@@ -18,6 +18,7 @@
 package org.sablecc.sablecc.alphabet;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -182,6 +183,23 @@ public class AlphabetTest {
                 .getSymbols().contains(this.firstSymbolBig));
         assertTrue("alphaBig should contains secondSymbolBig. ", this.alphaBig
                 .getSymbols().contains(this.secondSymbolBig));
+
+        // Case with multiple complement symbol
+        this.symbolsInt.clear();
+        this.symbolsInt.add(new Symbol<Integer>());
+        this.symbolsInt.add(new Symbol<Integer>());
+
+        try {
+            this.alphaInt = new Alphabet<Integer>(this.symbolsInt);
+            fail("an alphabet may not contain multiple complements symbols");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
+
+        assertFalse("this alphabet does not contain a complement symbol",
+                this.alphaInt.containsComplementSymbol());
+
     }
 
     @Test
@@ -233,6 +251,20 @@ public class AlphabetTest {
     }
 
     @Test
+    public void testGetComplementSymbol() {
+
+        // Case with no complement Symbol
+        try {
+            this.alphaInt.getComplementSymbol();
+            fail("this alphabet does not contain a complement symbol");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
+
+    }
+
+    @Test
     public void testMerge() {
 
         // With Integer
@@ -260,6 +292,17 @@ public class AlphabetTest {
         assertEquals("The merge result should equals the complete alphabet.",
                 this.alphaBig.toString(), mergeResultBig.getNewAlphabet()
                         .toString());
+
+        // Case with complement symbol
+        this.symbolsInt.clear();
+        this.symbolsInt.add(new Symbol<Integer>());
+        firstPartAlphabetInt = new Alphabet<Integer>(this.symbolsInt);
+
+        mergeResultInt = firstPartAlphabetInt.mergeWith(secondPartAlphabetInt);
+
+        Alphabet<Integer> alphabet = mergeResultInt.getNewAlphabet();
+        assertTrue("the merged result should have a complement Symbol",
+                alphabet.containsComplementSymbol());
     }
 
 }
