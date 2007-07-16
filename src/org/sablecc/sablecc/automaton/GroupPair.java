@@ -19,16 +19,37 @@ package org.sablecc.sablecc.automaton;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A group pair is a pair <code>(x,y)</code> where each of <code>x</code>
+ * and <code>y</code> is a group.
+ */
 class GroupPair<T extends Comparable<? super T>> {
 
+    /** The first group of this pair. */
     private final Group<T> group1;
 
+    /** The second group of this pair. */
     private final Group<T> group2;
 
+    /** Cached hashcode. Is <code>null</code> when not yet computed. */
     private Integer hashcode;
 
+    /**
+     * Cached string representation. Is <code>null</code> when not yet
+     * computed.
+     */
     private String toString;
 
+    /**
+     * Constructs a group pair with the two provided groups.
+     * 
+     * @param group1
+     *            the first group.
+     * @param group2
+     *            the second group.
+     * @throws InternalException
+     *             if one of the provided groups is <code>null</code>.
+     */
     GroupPair(
             final Group<T> group1,
             final Group<T> group2) {
@@ -45,16 +66,35 @@ class GroupPair<T extends Comparable<? super T>> {
         this.group2 = group2;
     }
 
+    /**
+     * Returns the first group of this group pair.
+     * 
+     * @return the first group.
+     */
     Group<T> getGroup1() {
 
         return this.group1;
     }
 
+    /**
+     * Returns the second group of this group pair.
+     * 
+     * @return the second group.
+     */
     Group<T> getGroup2() {
 
         return this.group2;
     }
 
+    /**
+     * Returns whether this instance is equal to the provided object. They are
+     * equal if they both have equal groups.
+     * 
+     * @param obj
+     *            the object to compare with.
+     * @return <code>true</code> if this group pair and the object are equal;
+     *         <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(
             Object obj) {
@@ -73,6 +113,11 @@ class GroupPair<T extends Comparable<? super T>> {
                 && this.group2.equals(groupPair.group2);
     }
 
+    /**
+     * Returns the hash code of this group pair.
+     * 
+     * @return the hash code.
+     */
     @Override
     public int hashCode() {
 
@@ -84,6 +129,11 @@ class GroupPair<T extends Comparable<? super T>> {
         return this.hashcode;
     }
 
+    /**
+     * Returns the string representation of this group pair.
+     * 
+     * @return the string representation.
+     */
     @Override
     public String toString() {
 
