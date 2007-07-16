@@ -75,14 +75,12 @@ Tokens
 
   // separators
 
+  arrow      = '->';
   colon      = ':';
   comma      = ',';
   semicolon  = ';';
   three_dots = '...';
   two_dots   = '..';
-
-  arrow_tail = '->(';
-  arrow_head = ')->';
 
   left_parenthesis  = '(';
   right_parenthesis = ')';
@@ -218,8 +216,8 @@ Productions
     transitions_keyword [transitions]:transition+  {-> New transitions([transitions]) };
 
   transition =
-    {normal} [source]:identifier arrow_tail token_collection arrow_head [destination]:identifier semicolon  {-> New transition.normal(source, token_collection, destination) } |
-    {back}   [source]:identifier arrow_tail token_collection arrow_head back_keyword semicolon  {-> New transition.back(source, token_collection) };
+    {normal} [source]:identifier [tail_arrow]:arrow left_parenthesis token_collection right_parenthesis [head_arrow]:arrow [destination]:identifier semicolon  {-> New transition.normal(source, token_collection, destination) } |
+    {back}   [source]:identifier [tail_arrow]:arrow left_parenthesis token_collection right_parenthesis [head_arrow]:arrow back_keyword semicolon  {-> New transition.back(source, token_collection) };
 
   // regular expression
 
