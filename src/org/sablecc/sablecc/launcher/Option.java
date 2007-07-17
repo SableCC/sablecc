@@ -34,8 +34,8 @@ import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
 public enum Option {
 
     DESTINATION("d", "destination", "directory", "set destination directory"),
-    VERSION(null, "version", "display version information and exit"),
-    HELP("h", "help", "display help information and exit");
+    VERSION(null, "version", null, "display version information and exit"),
+    HELP("h", "help", null, "display help information and exit");
 
     private String shortName;
 
@@ -77,40 +77,6 @@ public enum Option {
     private Option(
             String shortName,
             String longName,
-            String helpMessage) {
-
-        if (shortName == null && longName == null) {
-            throw new InternalException(
-                    "at least one of shortName and longName must not be null");
-        }
-
-        if (shortName != null) {
-            validateShortName(shortName);
-        }
-
-        if (longName != null) {
-
-            if (longName.length() < 2) {
-                throw new InternalException(
-                        "longName must be at least two characters long");
-            }
-
-            validateLongName(longName);
-        }
-
-        if (helpMessage == null) {
-            throw new InternalException("helpMessage may not be null");
-        }
-
-        this.shortName = shortName;
-        this.longName = longName;
-        this.operandName = null;
-        this.helpMessage = helpMessage;
-    }
-
-    private Option(
-            String shortName,
-            String longName,
             String operandName,
             String helpMessage) {
 
@@ -131,10 +97,6 @@ public enum Option {
             }
 
             validateLongName(longName);
-        }
-
-        if (operandName == null) {
-            throw new InternalException("operandName may not be null");
         }
 
         if (helpMessage == null) {
@@ -216,16 +178,7 @@ public enum Option {
         return this.longName;
     }
 
-    public boolean hasOperand() {
-
-        return this.operandName != null;
-    }
-
     public String getOperandName() {
-
-        if (this.operandName == null) {
-            throw new InternalException("there is no operand name");
-        }
 
         return this.operandName;
     }
@@ -233,6 +186,11 @@ public enum Option {
     public String getHelpMessage() {
 
         return this.helpMessage;
+    }
+
+    public boolean hasOperand() {
+
+        return this.operandName != null;
     }
 
     public static Option getShortOption(
