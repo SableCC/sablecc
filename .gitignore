@@ -21,5 +21,6 @@
 /lib/
 /sablecc-*/
 /sablecc-*.zip
+/src/org/sablecc/sablecc/launcher/syntax3/
 /src/org/sablecc/sablecc/syntax3/
 /test-classes/

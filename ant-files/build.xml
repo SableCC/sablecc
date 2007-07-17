@@ -55,9 +55,10 @@
   <property name="package.version" value="repository" />
 
   <property name="src.dir" value="src" />
-  <property name="grammar.dir" value="grammar" />
+  <property name="grammars.dir" value="grammars" />
   <property name="junit-tests.dir" value="junit-tests" />
   <property name="regression-tests.dir" value="regression-tests" />
+  <property name="manifest.dir" value="manifest" />
 
   <property name="classes.dir" value="classes" />
   <property name="test-classes.dir" value="test-classes" />
@@ -70,12 +71,13 @@
 
   <!-- Grammar Compilation -->
 
-  <target name="compile-grammar" description="Compile the grammar.">
+  <target name="compile-grammars" description="Compile grammars.">
 
     <delete dir="${dist.dir}/org/sablecc/sablecc/syntax3" />
+    <delete dir="${dist.dir}/org/sablecc/sablecc/launcher/syntax3" />
 
-    <sablecc3 src="${grammar.dir}"
-              includes="sablecc4.sablecc3"
+    <sablecc3 src="${grammars.dir}"
+              includes="*.sablecc3"
               outputdirectory="${src.dir}" />
 
   </target>
@@ -83,7 +85,7 @@
   <!-- Source Compilation -->
 
   <target name="compile-sources"
-          depends="compile-grammar"
+          depends="compile-grammars"
           description="Compile the source code.">
 
     <delete dir="${classes.dir}" />
@@ -96,6 +98,9 @@
       <fileset dir="${src.dir}">
         <include name="**/*.dat" />
       </fileset>
+    </copy>
+
+    <copy todir="${classes.dir}/org/sablecc/sablecc">
       <fileset file="${basedir}/LICENSE" />
       <fileset file="${basedir}/NOTICE" />
     </copy>
@@ -150,7 +155,7 @@
   <!-- User Documentation Generation -->
 
   <target name="generate-documentation"
-          depends="compile-grammar"
+          depends="compile-sources"
           description="Generate user documentation.">
 
     <delete dir="${doc.dir}" />
@@ -161,6 +166,7 @@
 
       <packageset dir="${src.dir}">
         <exclude name="org/sablecc/sablecc/syntax3/**" />
+        <exclude name="org/sablecc/sablecc/launcher/syntax3/**" />
       </packageset>
 
       <link href="http://java.sun.com/javase/6/docs/api/" />
@@ -172,7 +178,7 @@
   <!-- Developer Documentation Generation -->
 
   <target name="generate-developer-documentation"
-          depends="compile-grammar"
+          depends="compile-sources"
           description="Generate developer documentation.">
 
     <delete dir="${devel-doc.dir}" />
@@ -203,15 +209,12 @@
 
     <mkdir dir="${lib.dir}" />
 
-    <jar destfile="${lib.dir}/${package.name}-${package.version}.jar">
+    <jar destfile="${lib.dir}/${package.name}-${package.version}.jar"
+         manifest="${manifest.dir}/MANIFEST.MF"
+         index="true"
+         compress="false">
 
       <fileset dir="${classes.dir}" />
-
-      <fileset dir="${basedir}">
-        <include name="${src.dir}/**" />
-        <include name="${grammar.dir}/**" />
-        <exclude name="${src.dir}/org/sablecc/sablecc/syntax3/**" />
-      </fileset>
 
     </jar>
 
@@ -236,12 +239,13 @@
       <fileset dir="." includes="ant-files/**" />
 
       <fileset dir="." includes="${src.dir}/**" />
-      <fileset dir="." includes="${grammar.dir}/**" />
+      <fileset dir="." includes="${grammars.dir}/**" />
       <fileset dir="." includes="${junit-tests.dir}/**" />
       <fileset dir="." includes="${regression-tests.dir}/**" />
+      <fileset dir="." includes="${manifest.dir}/**" />
 
-      <fileset dir="." includes="${lib.dir}/**" />
       <fileset dir="." includes="${doc.dir}/**" />
+      <fileset dir="." includes="${lib.dir}/**" />
 
     </copy>
 
@@ -263,6 +267,7 @@
     <delete dir="${test-classes.dir}" />
     <delete dir="${classes.dir}" />
     <delete dir="${src.dir}/org/sablecc/sablecc/syntax3" />
+    <delete dir="${src.dir}/org/sablecc/sablecc/launcher/syntax3" />
 
   </target>
 
