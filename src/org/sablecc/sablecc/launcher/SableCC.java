@@ -32,24 +32,23 @@ public class SableCC {
             for (OptionArgument optionArgument : arguments.getOptionArguments()) {
 
                 switch (optionArgument.getOption()) {
+
                 case DESTINATION:
                     System.err.println("ERROR: unimplemented option "
                             + optionArgument.getOption());
                     System.exit(1);
                     break;
 
-                case LICENSE:
-                    System.err.println("ERROR: unimplemented option "
-                            + optionArgument.getOption());
-                    System.exit(1);
+                case VERSION:
+                    System.out.println("SableCC version " + Version.VERSION);
+                    System.exit(0);
                     break;
 
                 case HELP:
                     System.out.println("usage: sablecc "
                             + Option.getShortHelpMessage()
                             + " specification.sablecc ...");
-                    System.out.println();
-                    System.out.println("Option summary:");
+                    System.out.println("options:");
                     System.out.println(Option.getLongHelpMessage());
                     System.exit(0);
                     break;
@@ -64,6 +63,7 @@ public class SableCC {
                 System.err.println("usage: sablecc "
                         + Option.getShortHelpMessage()
                         + " specification.sablecc ...");
+                System.err.println("type 'sablecc -h' for more information.");
                 System.exit(1);
             }
 
