@@ -34,8 +34,8 @@ import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
 public enum Option {
 
     DESTINATION("d", "destination", "directory", "set destination directory"),
-    LICENSE("l", "license", "display copyright and license information"),
-    HELP("h", "help", "print this help message");
+    VERSION(null, "version", "display version information and exit"),
+    HELP("h", "help", "display help information and exit");
 
     private String shortName;
 
@@ -345,6 +345,7 @@ public enum Option {
         String lineSeparator = System.getProperty("line.separator");
 
         StringBuilder sb = new StringBuilder();
+        boolean first = true;
 
         for (Option option : Option.values()) {
 
@@ -384,8 +385,14 @@ public enum Option {
             line.append(" : ");
             line.append(option.helpMessage);
 
+            if (first) {
+                first = false;
+            }
+            else {
+                sb.append(lineSeparator);
+            }
+
             sb.append(line);
-            sb.append(lineSeparator);
         }
 
         return sb.toString();
