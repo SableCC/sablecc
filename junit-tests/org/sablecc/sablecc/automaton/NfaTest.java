@@ -347,6 +347,90 @@ public class NfaTest {
     }
 
     @Test
+    public void testSimpleExponent() {
+
+        // Case with unstable Nfa
+        try {
+            this.unstableNfa.simpleExponent(2);
+            fail("this Nfa is not stable yet");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
+
+        // Case with wrong exponent
+        try {
+            this.nfa.simpleExponent(-5);
+            fail("exponent my be greater or equal to zero");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
+    }
+
+    @Test
+    public void testRangeExponent() {
+
+        // Case with unstable Nfa
+        try {
+            this.unstableNfa.rangeExponent(2, 5);
+            fail("this Nfa is not stable yet");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
+
+        // Case with wrong exponents
+        try {
+            this.nfa.rangeExponent(-5, 10);
+            fail("exponent my be greater or equal to zero");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
+
+        try {
+            this.nfa.rangeExponent(10, -6);
+            fail("exponent my be greater or equal to zero");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
+
+        try {
+            this.nfa.rangeExponent(10, 2);
+            fail("upperBound must be greater or equal to lowerBound");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
+
+    }
+
+    @Test
+    public void testAtLeastExponent() {
+
+        // Case with unstable Nfa
+        try {
+            this.unstableNfa.atLeastExponent(2);
+            fail("this Nfa is not stable yet");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
+
+        // Case with wrong exponent
+        try {
+            this.nfa.atLeastExponent(-5);
+            fail("exponent my be greater or equal to zero");
+        }
+        catch (InternalException e) {
+            // Expected
+        }
+
+    }
+
+    @Test
     public void testShortest() {
 
         // Case with null nfa
