@@ -52,7 +52,7 @@
   <!-- Global Properties -->
 
   <property name="package.name" value="sablecc" />
-  <property name="package.version" value="repository" />
+  <property name="package.version" value="repository-snapshot" />
 
   <property name="src.dir" value="src" />
   <property name="grammars.dir" value="grammars" />
@@ -216,7 +216,7 @@ public class Version {
 
     <mkdir dir="${lib.dir}" />
 
-    <jar destfile="${lib.dir}/${package.name}-${package.version}.jar"
+    <jar destfile="${lib.dir}/${package.name}.jar"
          manifest="${manifest.dir}/MANIFEST.MF"
          index="true"
          compress="true"

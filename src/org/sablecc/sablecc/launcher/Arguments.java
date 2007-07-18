@@ -52,8 +52,8 @@ public class Arguments {
                         new StringReader(args[currentArgIndex]), 1024)))
                         .parse();
 
-                Option incompleteOption = ArgumentExtractor.process(ast,
-                        optionArguments, textArguments);
+                Option incompleteOption = ArgumentExtractor.extractArguments(
+                        ast, optionArguments, textArguments);
 
                 if (incompleteOption != null) {
 

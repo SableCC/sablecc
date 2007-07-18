@@ -167,7 +167,7 @@ class ArgumentExtractor
 
     }
 
-    public static Option process(
+    public static Option extractArguments(
             Start ast,
             List<OptionArgument> optionArguments,
             List<TextArgument> textArguments)
