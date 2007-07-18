@@ -27,23 +27,46 @@ import java.util.TreeSet;
 import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A non-deterministic finite automaton (or Nfa) is a state machine which as a
+ * starting state and an accept state. A NfaState is a state for this kind of
+ * automaton.
+ */
 public final class NfaState<T extends Comparable<? super T>>
         implements Comparable<NfaState<T>> {
 
+    /** The <code>Nfa</code> related to this <code>NfaState</code>. */
     private final Nfa<T> nfa;
 
+    /** The identification number of this <code>NfaState</code>. */
     private final int id;
 
+    /** The sorted map of transitions for this <code>NfaState</code>. */
     private SortedMap<Symbol<T>, SortedSet<NfaState<T>>> transitions;
 
+    /** A stability status for this <code>NfaState</code>. */
     private boolean isStable;
 
+    /**
+     * Cached string representation. Is <code>null</code> when not yet
+     * computed.
+     */
     private String toString;
 
+    /** The epsilon reach of this <code>NfaState</code>. */
     private SortedSet<NfaState<T>> epsilonReach;
 
+    /** An empty set of <code>NfaState</code>. */
     private final SortedSet<NfaState<T>> emptyNfaStateSet = new TreeSet<NfaState<T>>();
 
+    /**
+     * Construct a new <code>NfaState</code> into a provided <code>Nfa</code>.
+     * 
+     * @param nfa
+     *            the <code>Nfa</code>.
+     * @throws InternalException
+     *             if the provided <code>Nfa</code> is <code>null</code>.
+     */
     NfaState(
             Nfa<T> nfa) {
 
@@ -62,16 +85,33 @@ public final class NfaState<T extends Comparable<? super T>>
         this.isStable = false;
     }
 
+    /**
+     * Returns the <code>Nfa</code> of this <code>NfaState</code>.
+     * 
+     * @return the <code>Nfa</code>.
+     */
     public Nfa<T> getNfa() {
 
         return this.nfa;
     }
 
+    /**
+     * Returns the identification number of this <code>NfaState</code>.
+     * 
+     * @return the identification number.
+     */
     public int getId() {
 
         return this.id;
     }
 
+    /**
+     * Returns the transitions of this <code>NfaState</code>.
+     * 
+     * @return the map of transitions.
+     * @throws InternalException
+     *             if this <code>NfaState</code> is not stable.
+     */
     public SortedMap<Symbol<T>, SortedSet<NfaState<T>>> getTransitions() {
 
         if (!this.isStable) {
@@ -81,6 +121,20 @@ public final class NfaState<T extends Comparable<? super T>>
         return this.transitions;
     }
 
+    /**
+     * Returns the targets of this <code>NfaState</code> with a provided
+     * symbol.
+     * 
+     * @param symbol
+     *            the provided symbol.
+     * 
+     * @return the set of targets.
+     * 
+     * @throws InternalException
+     *             if this <code>DfaState</code> is not stable or if the
+     *             provided symbol is invalid. A symbol is invalid if it is not
+     *             contained in the alphabet of the <code>Dfa</code>.
+     */
     public SortedSet<NfaState<T>> getTargets(
             Symbol<T> symbol) {
 
@@ -102,6 +156,15 @@ public final class NfaState<T extends Comparable<? super T>>
         return targets;
     }
 
+    /**
+     * Returns whether this <code>NfaState</code> is equal to the provided
+     * object. They are equal if they have the same identification number.
+     * 
+     * @param obj
+     *            the object to compare with.
+     * @return <code>true</code> if this <code>NfaState</code> and the
+     *         object are equal; <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(
             Object obj) {
@@ -119,12 +182,22 @@ public final class NfaState<T extends Comparable<? super T>>
         return this.id == nfaState.id;
     }
 
+    /**
+     * Return the hashCode of this <code>NfaState</code>.
+     * 
+     * @return the hashCode.
+     */
     @Override
     public int hashCode() {
 
         return this.id;
     }
 
+    /**
+     * Returns the string representation of this <code>NfaState</code>.
+     * 
+     * @return the string representation.
+     */
     @Override
     public String toString() {
 
@@ -135,6 +208,15 @@ public final class NfaState<T extends Comparable<? super T>>
         return this.toString;
     }
 
+    /**
+     * Compares this <code>NfaState</code> to the provided one.
+     * 
+     * @param nfaState
+     *            the <code>NfaState</code> to compare with.
+     * @return an <code>int</code> value: 0 if the two <code>NfaState</code>
+     *         are equals, a negative value if this <code>NfaState</code> is
+     *         smaller, and a positive value if it is bigger.
+     */
     public int compareTo(
             NfaState<T> nfaState) {
 
@@ -146,6 +228,20 @@ public final class NfaState<T extends Comparable<? super T>>
         return this.id - nfaState.id;
     }
 
+    /**
+     * Adds a new transition to this <code>NfaState</code>.
+     * 
+     * @param symbol
+     *            the symbol for the new transition.
+     * 
+     * @param nfaState
+     *            the destination of the new transition.
+     * 
+     * @throws InternalException
+     *             if this <code>NfaState</code> is already stable, if the
+     *             provided <code>NfaState</code> is <code>null</code> or
+     *             invalid, or if the symbol is invalid.
+     */
     void addTransition(
             Symbol<T> symbol,
             NfaState<T> nfaState) {
@@ -177,6 +273,12 @@ public final class NfaState<T extends Comparable<? super T>>
         targets.add(nfaState);
     }
 
+    /**
+     * Stabilize this <code>NfaState</code>.
+     * 
+     * @throws InternalException
+     *             if this <code>NfaState</code> is already stable.
+     */
     void stabilize() {
 
         if (this.isStable) {
@@ -193,6 +295,14 @@ public final class NfaState<T extends Comparable<? super T>>
         this.isStable = true;
     }
 
+    /**
+     * Returns the epsilon Reach of this <code>NfaState</code>.
+     * 
+     * @return a set of NfaStates.
+     * 
+     * @throws InternalException
+     *             if this <code>NfaState</code> is not stable.
+     */
     public SortedSet<NfaState<T>> getEpsilonReach() {
 
         if (!this.isStable) {
@@ -210,6 +320,12 @@ public final class NfaState<T extends Comparable<? super T>>
 
     }
 
+    /**
+     * Compute recursivly the epsilon reach of this <code>NfaState</code>.
+     * 
+     * @param epsilonReach
+     *            a set of NfaState.
+     */
     private void computeEpsilonReach(
             SortedSet<NfaState<T>> epsilonReach) {
 
