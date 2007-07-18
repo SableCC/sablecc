@@ -17,8 +17,20 @@
 
 package org.sablecc.sablecc.launcher;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PushbackReader;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.InvalidArgumentException;
+import org.sablecc.sablecc.syntax3.lexer.Lexer;
+import org.sablecc.sablecc.syntax3.lexer.LexerException;
+import org.sablecc.sablecc.syntax3.parser.Parser;
+import org.sablecc.sablecc.syntax3.parser.ParserException;
 
 public class SableCC {
 
@@ -26,23 +38,40 @@ public class SableCC {
             String[] args) {
 
         try {
+            // default destination directory is current working directory
+            File destinationDirectory = new File(System.getProperty("user.dir"))
+                    .getAbsoluteFile();
+
+            // parse command line arguments
             Arguments arguments = new Arguments(args);
 
-            // handle options
+            // handle option arguments
             for (OptionArgument optionArgument : arguments.getOptionArguments()) {
 
                 switch (optionArgument.getOption()) {
 
                 case DESTINATION:
-                    System.err.println("ERROR: unimplemented option "
-                            + optionArgument.getOption());
-                    System.exit(1);
+                    destinationDirectory = new File(optionArgument.getOperand())
+                            .getAbsoluteFile();
+
+                    if (!destinationDirectory.isDirectory()) {
+
+                        if (!destinationDirectory.exists()) {
+                            System.err.println("ERROR: " + destinationDirectory
+                                    + " does not exist");
+                            System.exit(1);
+                        }
+
+                        System.err.println("ERROR: " + destinationDirectory
+                                + " is not a directory");
+                        System.exit(1);
+                    }
+
                     break;
 
                 case VERSION:
                     System.out.println("SableCC version " + Version.VERSION);
                     System.exit(0);
-                    break;
 
                 case HELP:
                     System.out.println("usage: sablecc "
@@ -51,7 +80,6 @@ public class SableCC {
                     System.out.println("options:");
                     System.out.println(Option.getLongHelpMessage());
                     System.exit(0);
-                    break;
 
                 default:
                     throw new InternalException("unhandled option "
@@ -59,6 +87,7 @@ public class SableCC {
                 }
             }
 
+            // handle text arguments
             if (arguments.getTextArguments().size() == 0) {
                 System.err.println("usage: sablecc "
                         + Option.getShortHelpMessage()
@@ -67,20 +96,100 @@ public class SableCC {
                 System.exit(1);
             }
 
+            List<File> specificationFiles = new LinkedList<File>();
+
+            // remember absolute paths, just in case the current working
+            // directory gets changed during specification compilation.
             for (TextArgument textArgument : arguments.getTextArguments()) {
+
                 if (!textArgument.getText().endsWith(".sablecc")) {
                     System.err
                             .println("ERROR: specification file name does not end with .sablecc: "
                                     + textArgument.getText());
                     System.exit(1);
                 }
+
+                File specificationFile = new File(textArgument.getText())
+                        .getAbsoluteFile();
+
+                if (!specificationFile.isFile()) {
+
+                    if (!specificationFile.exists()) {
+                        System.err.println("ERROR: " + specificationFile
+                                + " does not exist");
+                        System.exit(1);
+                    }
+
+                    System.err.println("ERROR: " + specificationFile
+                            + " is not a file");
+                    System.exit(1);
+                }
+
+                specificationFiles.add(specificationFile);
             }
 
-            System.err.println("ERROR: unimplemented");
-            System.exit(1);
+            // compile specifications
+            for (File specificationFile : specificationFiles) {
+
+                compile(specificationFile, destinationDirectory);
+            }
+
+            // finish gracefully
+            System.exit(0);
         }
         catch (InvalidArgumentException e) {
             System.err.println("ERROR: " + e.getMessage());
+            System.exit(1);
         }
+        catch (ParserException e) {
+            System.err.println("ERROR: syntax error on '"
+                    + e.getToken().getText() + "' at " + e.getMessage());
+            System.exit(1);
+        }
+        catch (LexerException e) {
+            System.err.println("ERROR: lexical error at " + e.getMessage());
+            System.exit(1);
+        }
+        catch (RuntimeException e) {
+            e.printStackTrace(System.err);
+            System.err.println("INTERNAL ERROR: " + e.getMessage());
+            System.err
+                    .println("Please submit a defect ticket with the full error trace above on:");
+            System.err.println("    http://sablecc.org/");
+            System.exit(1);
+        }
+        catch (Error e) {
+            e.printStackTrace(System.err);
+            System.err.println("INTERNAL ERROR: " + e.getMessage());
+            System.err
+                    .println("Please submit a defect ticket with the full error trace above on:");
+            System.err.println("    http://sablecc.org/");
+            System.exit(1);
+        }
+    }
+
+    private static void compile(
+            File specificationFile,
+            File destinationDirectory)
+            throws InvalidArgumentException, ParserException, LexerException {
+
+        try {
+            FileReader fr = new FileReader(specificationFile);
+            BufferedReader br = new BufferedReader(fr);
+            PushbackReader pbr = new PushbackReader(br);
+
+            new Parser(new Lexer(pbr)).parse();
+
+            pbr.close();
+            br.close();
+            fr.close();
+        }
+        catch (IOException e) {
+            throw new InvalidArgumentException("cannot read "
+                    + specificationFile, e);
+        }
+
+        System.err.println("ERROR: unimplemented");
+        System.exit(1);
     }
 }
