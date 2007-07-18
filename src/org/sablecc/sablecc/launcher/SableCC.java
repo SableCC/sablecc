@@ -25,10 +25,13 @@ import java.io.PushbackReader;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.sablecc.sablecc.Semantics;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.InvalidArgumentException;
+import org.sablecc.sablecc.exception.SemanticException;
 import org.sablecc.sablecc.syntax3.lexer.Lexer;
 import org.sablecc.sablecc.syntax3.lexer.LexerException;
+import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.parser.Parser;
 import org.sablecc.sablecc.syntax3.parser.ParserException;
 
@@ -133,13 +136,14 @@ public class SableCC {
 
                 compile(specificationFile, destinationDirectory);
             }
-
-            // finish gracefully
-            System.exit(0);
         }
         catch (InvalidArgumentException e) {
             System.err.println("ERROR: " + e.getMessage());
             System.exit(1);
+        }
+        catch (SemanticException e) {
+            System.err.println("ERROR: semantic error on '"
+                    + e.getToken().getText() + "' at " + e.getMessage());
         }
         catch (ParserException e) {
             System.err.println("ERROR: syntax error on '"
@@ -166,19 +170,25 @@ public class SableCC {
             System.err.println("    http://sablecc.org/");
             System.exit(1);
         }
+
+        // finish gracefully
+        System.exit(0);
     }
 
     private static void compile(
             File specificationFile,
             File destinationDirectory)
-            throws InvalidArgumentException, ParserException, LexerException {
+            throws InvalidArgumentException, ParserException, LexerException,
+            SemanticException {
+
+        Start ast;
 
         try {
             FileReader fr = new FileReader(specificationFile);
             BufferedReader br = new BufferedReader(fr);
             PushbackReader pbr = new PushbackReader(br);
 
-            new Parser(new Lexer(pbr)).parse();
+            ast = new Parser(new Lexer(pbr)).parse();
 
             pbr.close();
             br.close();
@@ -188,6 +198,8 @@ public class SableCC {
             throw new InvalidArgumentException("cannot read "
                     + specificationFile, e);
         }
+
+        new Semantics(ast);
 
         System.err.println("ERROR: unimplemented");
         System.exit(1);
