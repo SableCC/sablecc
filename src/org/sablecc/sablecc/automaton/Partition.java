@@ -25,16 +25,35 @@ import java.util.Set;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A partition is the division of states of a <code>Dfa</code> into groups.
+ * The minimisation of a <code>Dfa</code> tries to generate the partition
+ * which contains the less number of groups possible.
+ */
 class Partition<T extends Comparable<? super T>> {
 
+    /** The <code>Dfa</code> of this partition. */
     private final Dfa<T> dfa;
 
+    /** The set of groups of this partition. */
     private final Set<Group<T>> groups = new LinkedHashSet<Group<T>>();
 
+    /** The elements of this partition. */
     private Set<Element<T>> elements = new LinkedHashSet<Element<T>>();
 
+    /**
+     * A <code>Map</code> that maps each states of this partition's
+     * <code>Dfa</code> to it's corresponding element.
+     */
     private final Map<DfaState<T>, Element<T>> stateToElementMap = new HashMap<DfaState<T>, Element<T>>();
 
+    /**
+     * Constructs a partition for the provided <code>Dfa<code>.
+     *
+     * @param dfa the <code>Dfa</code>.
+     * @throws InternalException
+     *             if the provided <code>Dfa</code> is <code>null</code>.
+     */
     Partition(
             Dfa<T> dfa) {
 
@@ -84,6 +103,9 @@ class Partition<T extends Comparable<? super T>> {
         while (this.groups.size() != groupSize);
     }
 
+    /**
+     * Refines this partition by refining all of it's groups.
+     */
     private void refine() {
 
         // we get a copy so that modifications to this.groups won't disturb the
@@ -93,16 +115,31 @@ class Partition<T extends Comparable<? super T>> {
         }
     }
 
+    /**
+     * Returns the <code>Dfa</code> of this partition.
+     * 
+     * @return the <code>Dfa</code>.
+     */
     Dfa<T> getDfa() {
 
         return this.dfa;
     }
 
+    /**
+     * Returns the a set of the groups of this partition.
+     * 
+     * @return the set of groups.
+     */
     Set<Group<T>> getGroups() {
 
         return Collections.unmodifiableSet(this.groups);
     }
 
+    /**
+     * Returns the string representation of this partition.
+     * 
+     * @return the string representation.
+     */
     @Override
     public String toString() {
 
@@ -118,6 +155,16 @@ class Partition<T extends Comparable<? super T>> {
         return sb.toString();
     }
 
+    /**
+     * Adds the provided group to this partition.
+     * 
+     * @param group
+     *            the group to add.
+     * @throws InternalException
+     *             if the provided group is <code>null</code>, if it's
+     *             partition is not this instance or if it is already in this
+     *             partition.
+     */
     void addGroup(
             Group<T> group) {
 
@@ -134,6 +181,18 @@ class Partition<T extends Comparable<? super T>> {
         }
     }
 
+    /**
+     * Returns an element of this partition corresponding to the provided
+     * <code>DfaState</code>.
+     * 
+     * @param state
+     *            the <code>DfaState</code>.
+     * @return the element.
+     * @throws InternalException
+     *             if the provided <code>DfaState</code> is <code>null</code>,
+     *             if it's not in this partition's <code>Dfa</code> or if
+     *             corruption is detected.
+     */
     Element<T> getElement(
             DfaState<T> state) {
 
@@ -154,6 +213,18 @@ class Partition<T extends Comparable<? super T>> {
         return element;
     }
 
+    /**
+     * Adds the provided element to this partition.
+     * 
+     * @param element
+     *            the element to add.
+     * @throws InternalException
+     *             if the provided element is <code>null</code>, if it's
+     *             partition is not this one, if it's <code>Dfa</code> is not
+     *             the same as the one of this partition or if this element is
+     *             already in this partition.
+     * 
+     */
     void addElement(
             Element<T> element) {
 
