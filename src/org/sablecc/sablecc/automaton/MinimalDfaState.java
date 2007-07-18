@@ -24,19 +24,42 @@ import java.util.TreeMap;
 import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A <code>MinimalDfaState<code> is a minimalist state.
+ */
 public final class MinimalDfaState<T extends Comparable<? super T>>
         implements Comparable<MinimalDfaState<T>> {
 
+    /** The <code>MinimalDfa<code> of this <code>MinimalDfaState<code>. */
     private final MinimalDfa<T> minimalDfa;
 
+    /** The identification number of this <code>MinimalDfaState<code>. */
     private final int id;
 
+    /**
+     * A <code>SortedMap</code> that maps each symbol to its corresponding
+     * <code>MinimalDfaState<code>. Represents the transitions.
+     */
     private SortedMap<Symbol<T>, MinimalDfaState<T>> transitions;
 
+    /** A stability status for this <code>MinimalDfaState<code>. */
     private boolean isStable;
 
+    /**
+     * Cached string representation. Is <code>null</code> when not yet
+     * computed.
+     */
     private String toString;
 
+    /**
+     * Constructs a <code>MinimalDfaState<code> with the provided
+     * <code>MinimalDfa</code>.
+     *
+     * @param minimalDfa
+     *             the <code>MinimalDfa<code>.
+     * @throws InternalException
+     *             if the provided <code>MinimalDfa<code> is <code>null</code>.
+     */
     MinimalDfaState(
             MinimalDfa<T> minimalDfa) {
 
@@ -54,16 +77,33 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
         this.isStable = false;
     }
 
+    /**
+     * Returns the <code>MinimalDfa<code> of this <code>MinimalDfaState<code>.
+     *
+     * @return the <code>MinimalDfa<code>.
+     */
     public MinimalDfa<T> getMinimalDfa() {
 
         return this.minimalDfa;
     }
 
+    /**
+     * Returns the identification number of this <code>MinimalDfaState<code>.
+     *
+     * @return the identification number.
+     */
     public int getId() {
 
         return this.id;
     }
 
+    /**
+     * Returns a set of the transitions of this <code>MinimalDfaState<code>.
+     *
+     * @return the <code>SortedMap</code> of the transitions.
+     * @throws InternalException
+     *             if this <code>MinimalDfaState<code> is not stable.
+     */
     public SortedMap<Symbol<T>, MinimalDfaState<T>> getTransitions() {
 
         if (!this.isStable) {
@@ -73,6 +113,17 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
         return this.transitions;
     }
 
+    /**
+     * Returns a <code>MinimalDfaState<code> representing
+     * the target of the provided symbol.
+     *
+     * @param symbol the symbol.
+     * @return the target <code>MinimalDfaState<code>.
+     * @throws InternalException
+     *             if this instance is stable,
+     *             if the provided symbol is <code>null</code> or
+     *             if this instance's <code>MinimalDfa</code> contains the symbol.
+     */
     public MinimalDfaState<T> getTarget(
             Symbol<T> symbol) {
 
@@ -97,6 +148,16 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
         return target;
     }
 
+    /**
+     * Returns whether this instance is equal to the provided object. They are
+     * equal if they have equal IDs
+     * 
+     * @param obj
+     *            the object to compare with.
+     * @return <code>true</code> if this
+     *         <code>MinimalDfaState<code> and the object are equal;
+     *         <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(
             Object obj) {
@@ -114,12 +175,22 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
         return this.id == nfaState.id;
     }
 
+    /**
+     * Returns the hash code of this <code>MinimalDfaState<code>.
+     *
+     * @return the hash code.
+     */
     @Override
     public int hashCode() {
 
         return this.id;
     }
 
+    /**
+     * Returns the string representation of this <code>MinimalDfaState<code>.
+     *
+     * @return the string representation.
+     */
     @Override
     public String toString() {
 
@@ -130,6 +201,19 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
         return this.toString;
     }
 
+    /**
+     * Compares this <code>MinimalDfaState</code> to the provided one. It
+     * compares the identification number.
+     * 
+     * @param dfaState
+     *            the <code>DfaState</code> to compare with.
+     * @return an <code>int</code> value: 0 if the two instances are equals, a
+     *         negative value if this <code>MinimalDfaState<code> is
+     *         smaller, and a positive value if it is bigger.
+     * @throws InternalException
+     *             if the provided <code>MinimalDfaState<code> is not in
+     *             the same <code>MinimalDfa</code> as this one.
+     */
     public int compareTo(
             MinimalDfaState<T> minimalDfaState) {
 
@@ -141,6 +225,20 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
         return this.id - minimalDfaState.id;
     }
 
+    /**
+     * Adds a transition to this <code>MinimalDfaState<code>
+     * with the provided symbol and <code>MinimalDfaState<code>.
+     *
+     * @param symbol the symbol.
+     * @param minimalDfaState the <code>MinimalDfaState<code>.
+     * @throws InternalException
+     *             if this <code>MinimalDfaState<code> is stable,
+     *             if the provided symbol or <code>MinimalDfaState<code>
+     *             is <code>null</code>, if this instance's <code>MinimalDfa</code>
+     *             already contains the provided symbol or
+     *             if it is not equal to the provided <code>MinimalDfaState</code>'s
+     *             <code>MinimalDfa</code> or if the target is already set.
+     */
     void addTransition(
             Symbol<T> symbol,
             MinimalDfaState<T> minimalDfaState) {
@@ -176,6 +274,12 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
         }
     }
 
+    /**
+     * Stabilizes this <code>MinimalDfaState<code>.
+     *
+     * @throws InternalException
+     *             if this <code>MinimalDfaState<code> is already stable.
+     */
     void stabilize() {
 
         if (this.isStable) {
