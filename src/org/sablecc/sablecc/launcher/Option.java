@@ -33,6 +33,7 @@ import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
 
 public enum Option {
 
+    CHECK_ONLY("c", "check-only", null, "do not generate files"),
     DESTINATION("d", "destination", "directory", "set destination directory"),
     VERSION(null, "version", null, "display version information and exit"),
     HELP("h", "help", null, "display help information and exit");
