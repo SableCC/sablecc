@@ -17,12 +17,16 @@
 
 package org.sablecc.sablecc;
 
+import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.SemanticException;
 import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.node.TNumber;
+import org.sablecc.sablecc.walkers.LanguageNameExtractor;
 import org.sablecc.sablecc.walkers.SyntaxVersionExtractor;
 
 public class Semantics {
+
+    private String languageName;
 
     private int syntaxVersion;
 
@@ -30,12 +34,29 @@ public class Semantics {
             Start ast)
             throws SemanticException {
 
+        if (ast == null) {
+            throw new InternalException("ast may not be null");
+        }
+
+        extractLanguageName(ast);
         extractSyntaxVersion(ast);
+    }
+
+    public String getLanguageName() {
+
+        return this.languageName;
     }
 
     public int getSyntaxVersion() {
 
         return this.syntaxVersion;
+    }
+
+    private void extractLanguageName(
+            Start ast) {
+
+        this.languageName = LanguageNameExtractor.getLanguageName(ast)
+                .getText();
     }
 
     private void extractSyntaxVersion(
