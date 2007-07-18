@@ -19,17 +19,17 @@ package org.sablecc.sablecc.walkers;
 
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.sablecc.syntax3.node.ALanguage;
 import org.sablecc.sablecc.syntax3.node.ASpecification;
-import org.sablecc.sablecc.syntax3.node.ASyntax;
 import org.sablecc.sablecc.syntax3.node.Start;
-import org.sablecc.sablecc.syntax3.node.TNumber;
+import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
-public class SyntaxVersionExtractor
+public class LanguageNameExtractor
         extends DepthFirstAdapter {
 
-    private TNumber syntaxVersion;
+    private TIdentifier languageName;
 
-    private SyntaxVersionExtractor() {
+    private LanguageNameExtractor() {
 
         // do nothing
     }
@@ -43,26 +43,26 @@ public class SyntaxVersionExtractor
     }
 
     @Override
-    public void caseASyntax(
-            ASyntax node) {
+    public void caseALanguage(
+            ALanguage node) {
 
-        this.syntaxVersion = node.getVersion();
+        this.languageName = node.getName();
     }
 
-    public static TNumber getSyntaxVersion(
+    public static TIdentifier getLanguageName(
             Start ast) {
 
         if (ast == null) {
             throw new InternalException("ast may not be null");
         }
 
-        SyntaxVersionExtractor syntaxVersionExtractor = new SyntaxVersionExtractor();
-        ast.apply(syntaxVersionExtractor);
+        LanguageNameExtractor languageNameExtractor = new LanguageNameExtractor();
+        ast.apply(languageNameExtractor);
 
-        if (syntaxVersionExtractor.syntaxVersion == null) {
-            throw new InternalException("there must be a syntax version");
+        if (languageNameExtractor.languageName == null) {
+            throw new InternalException("there must be a language name");
         }
 
-        return syntaxVersionExtractor.syntaxVersion;
+        return languageNameExtractor.languageName;
     }
 }
