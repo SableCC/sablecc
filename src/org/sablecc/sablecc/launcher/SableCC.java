@@ -41,6 +41,8 @@ public class SableCC {
             String[] args) {
 
         try {
+            boolean check_only = false;
+
             // default destination directory is current working directory
             File destinationDirectory = new File(System.getProperty("user.dir"))
                     .getAbsoluteFile();
@@ -52,6 +54,10 @@ public class SableCC {
             for (OptionArgument optionArgument : arguments.getOptionArguments()) {
 
                 switch (optionArgument.getOption()) {
+
+                case CHECK_ONLY:
+                    check_only = true;
+                    break;
 
                 case DESTINATION:
                     destinationDirectory = new File(optionArgument.getOperand())
@@ -134,7 +140,7 @@ public class SableCC {
             // compile specifications
             for (File specificationFile : specificationFiles) {
 
-                compile(specificationFile, destinationDirectory);
+                compile(specificationFile, destinationDirectory, check_only);
             }
         }
         catch (InvalidArgumentException e) {
@@ -177,7 +183,8 @@ public class SableCC {
 
     private static void compile(
             File specificationFile,
-            File destinationDirectory)
+            File destinationDirectory,
+            boolean check_only)
             throws InvalidArgumentException, ParserException, LexerException,
             SemanticException {
 
