@@ -34,12 +34,16 @@ public class InvalidArgumentRuntimeException
 
     public InvalidArgumentRuntimeException(
             String message,
-            Throwable throwable) {
+            Throwable cause) {
 
-        super(message, throwable);
+        super(message, cause);
 
         if (message == null) {
             throw new InternalException("message may not be null");
+        }
+
+        if (cause == null) {
+            throw new InternalException("cause may not be null");
         }
     }
 

@@ -17,34 +17,57 @@
 
 package org.sablecc.sablecc.exception;
 
-public class InvalidArgumentException
+import org.sablecc.sablecc.syntax3.node.Token;
+
+public class SemanticException
         extends Exception {
 
-    private static final long serialVersionUID = 2728824423324590713L;
+    private static final long serialVersionUID = 155544165804671040L;
 
-    public InvalidArgumentException(
-            String message) {
+    private Token token;
 
-        super(message);
+    public SemanticException(
+            String message,
+            Token token) {
+
+        super("[" + token.getLine() + "," + token.getPos() + "] " + message);
 
         if (message == null) {
             throw new InternalException("message may not be null");
         }
+
+        if (token == null) {
+            throw new InternalException("token may not be null");
+        }
+
+        this.token = token;
     }
 
-    public InvalidArgumentException(
+    public SemanticException(
             String message,
+            Token token,
             Throwable cause) {
 
-        super(message, cause);
+        super("[" + token.getLine() + "," + token.getPos() + "] " + message,
+                cause);
 
         if (message == null) {
             throw new InternalException("message may not be null");
+        }
+
+        if (token == null) {
+            throw new InternalException("token may not be null");
         }
 
         if (cause == null) {
             throw new InternalException("cause may not be null");
         }
+
+        this.token = token;
     }
 
+    public Token getToken() {
+
+        return this.token;
+    }
 }
