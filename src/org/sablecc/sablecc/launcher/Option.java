@@ -35,8 +35,10 @@ public enum Option {
 
     CHECK_ONLY("c", "check-only", null, "do not generate files"),
     DESTINATION("d", "destination", "directory", "set destination directory"),
-    QUIET("q", "quiet", null, "display as little information as possible"),
+    QUIET("q", "quiet", null, "be as quiet as possible"),
     VERBOSE("v", "verbose", null, "display as much information as possible"),
+    CONTRIBUTORS(null, "contributors", null,
+            "display the names of contributors and exit"),
     VERSION(null, "version", null, "display version information and exit"),
     HELP("h", "help", null, "display help information and exit");
 
