@@ -19,10 +19,23 @@ package org.sablecc.sablecc.launcher;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A text argument puts in appendix a String at the end of another.
+ */
 public class TextArgument {
 
+    /** the text to append. */
     private String text;
 
+    /**
+     * Constructs a new textArgument.
+     * 
+     * @param text
+     *            the provided text to append.
+     * 
+     * @throws InternalException
+     *             if the text is <code>null</code>.
+     */
     public TextArgument(
             String text) {
 
@@ -33,6 +46,11 @@ public class TextArgument {
         this.text = text;
     }
 
+    /**
+     * Returns the text of this textArgument.
+     * 
+     * @return the text.
+     */
     public String getText() {
 
         return this.text;
