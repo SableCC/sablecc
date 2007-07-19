@@ -37,6 +37,8 @@ public class Semantics {
             throw new InternalException("globalInformation may not be null");
         }
 
+        globalInformation.setSemantics(this);
+
         extractLanguageName(globalInformation);
 
         switch (globalInformation.getVerbosity()) {

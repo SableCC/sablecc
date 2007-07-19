@@ -89,6 +89,10 @@ public class SableCC {
                     verbosity = Verbosity.VERBOSE;
                     break;
 
+                case CONTRIBUTORS:
+                    printContributors();
+                    System.exit(0);
+
                 case VERSION:
                     System.out.println("SableCC version " + Version.VERSION);
                     System.exit(0);
@@ -122,7 +126,7 @@ public class SableCC {
                 System.out.println();
                 System.out.println("SableCC version " + Version.VERSION);
                 System.out
-                        .println("by Etienne M. Gagnon <egagnon@j-meg.com> and contributors");
+                        .println("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
                 System.out.println();
             }
 
@@ -201,6 +205,24 @@ public class SableCC {
 
         // finish gracefully
         System.exit(0);
+    }
+
+    private static void printContributors() {
+
+        // authors are extracted using:
+        // hg log -f --template '{author}\n' | sort | uniq
+        //
+        // they are listed in order of first contribution
+        //
+        // the date of the first contribution can be retrieved using:
+        // hg log -f --template '{date} {author}\n' | sort -r | \
+        // grep email@address | tail -1
+
+        System.out.println("Contributors:");
+        System.out.println("Etienne M. Gagnon <egagnon@j-meg.com>");
+        System.out.println("Patrick Pelletier <pp.pelletier@gmail.com>");
+        System.out.println("Raymond Audet <raymond.audet@gmail.com>");
+        System.out.println("Jon Shapcott <eden@xibalba.demon.co.uk>");
     }
 
     private static void compile(
