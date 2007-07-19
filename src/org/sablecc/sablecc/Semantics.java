@@ -19,7 +19,6 @@ package org.sablecc.sablecc;
 
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.SemanticException;
-import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.node.TNumber;
 import org.sablecc.sablecc.walkers.LanguageNameExtractor;
 import org.sablecc.sablecc.walkers.SyntaxVersionExtractor;
@@ -31,15 +30,23 @@ public class Semantics {
     private int syntaxVersion;
 
     public Semantics(
-            Start ast)
+            GlobalInformation globalInformation)
             throws SemanticException {
 
-        if (ast == null) {
-            throw new InternalException("ast may not be null");
+        if (globalInformation == null) {
+            throw new InternalException("globalInformation may not be null");
         }
 
-        extractLanguageName(ast);
-        extractSyntaxVersion(ast);
+        extractLanguageName(globalInformation);
+
+        switch (globalInformation.getVerbosity()) {
+        case NORMAL:
+        case VERBOSE:
+            System.out.println(" Analyzing language '" + this.languageName
+                    + "'");
+        }
+
+        extractSyntaxVersion(globalInformation);
     }
 
     public String getLanguageName() {
@@ -53,17 +60,18 @@ public class Semantics {
     }
 
     private void extractLanguageName(
-            Start ast) {
+            GlobalInformation globalInformation) {
 
-        this.languageName = LanguageNameExtractor.getLanguageName(ast)
-                .getText();
+        this.languageName = LanguageNameExtractor.getLanguageName(
+                globalInformation).getText();
     }
 
     private void extractSyntaxVersion(
-            Start ast)
+            GlobalInformation globalInformation)
             throws SemanticException {
 
-        TNumber versionToken = SyntaxVersionExtractor.getSyntaxVersion(ast);
+        TNumber versionToken = SyntaxVersionExtractor
+                .getSyntaxVersion(globalInformation);
 
         try {
             int syntaxVersion = Integer.parseInt(versionToken.getText());
