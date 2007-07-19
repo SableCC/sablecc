@@ -17,11 +17,11 @@
 
 package org.sablecc.sablecc.walkers;
 
+import org.sablecc.sablecc.GlobalInformation;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.sablecc.syntax3.node.ALanguage;
 import org.sablecc.sablecc.syntax3.node.ASpecification;
-import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
 public class LanguageNameExtractor
@@ -50,14 +50,14 @@ public class LanguageNameExtractor
     }
 
     public static TIdentifier getLanguageName(
-            Start ast) {
+            GlobalInformation globalInformation) {
 
-        if (ast == null) {
+        if (globalInformation == null) {
             throw new InternalException("ast may not be null");
         }
 
         LanguageNameExtractor languageNameExtractor = new LanguageNameExtractor();
-        ast.apply(languageNameExtractor);
+        globalInformation.getAst().apply(languageNameExtractor);
 
         if (languageNameExtractor.languageName == null) {
             throw new InternalException("there must be a language name");

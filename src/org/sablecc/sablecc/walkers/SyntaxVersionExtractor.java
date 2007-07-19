@@ -17,11 +17,11 @@
 
 package org.sablecc.sablecc.walkers;
 
+import org.sablecc.sablecc.GlobalInformation;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.sablecc.syntax3.node.ASpecification;
 import org.sablecc.sablecc.syntax3.node.ASyntax;
-import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.node.TNumber;
 
 public class SyntaxVersionExtractor
@@ -50,14 +50,14 @@ public class SyntaxVersionExtractor
     }
 
     public static TNumber getSyntaxVersion(
-            Start ast) {
+            GlobalInformation globalInformation) {
 
-        if (ast == null) {
+        if (globalInformation == null) {
             throw new InternalException("ast may not be null");
         }
 
         SyntaxVersionExtractor syntaxVersionExtractor = new SyntaxVersionExtractor();
-        ast.apply(syntaxVersionExtractor);
+        globalInformation.getAst().apply(syntaxVersionExtractor);
 
         if (syntaxVersionExtractor.syntaxVersion == null) {
             throw new InternalException("there must be a syntax version");

@@ -25,7 +25,9 @@ import java.io.PushbackReader;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.sablecc.sablecc.GlobalInformation;
 import org.sablecc.sablecc.Semantics;
+import org.sablecc.sablecc.Verbosity;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.InvalidArgumentException;
 import org.sablecc.sablecc.exception.SemanticException;
@@ -42,6 +44,7 @@ public class SableCC {
 
         try {
             boolean check_only = false;
+            Verbosity verbosity = Verbosity.NORMAL;
 
             // default destination directory is current working directory
             File destinationDirectory = new File(System.getProperty("user.dir"))
@@ -78,6 +81,14 @@ public class SableCC {
 
                     break;
 
+                case QUIET:
+                    verbosity = Verbosity.QUIET;
+                    break;
+
+                case VERBOSE:
+                    verbosity = Verbosity.VERBOSE;
+                    break;
+
                 case VERSION:
                     System.out.println("SableCC version " + Version.VERSION);
                     System.exit(0);
@@ -103,6 +114,16 @@ public class SableCC {
                         + " specification.sablecc ...");
                 System.err.println("type 'sablecc -h' for more information.");
                 System.exit(1);
+            }
+
+            switch (verbosity) {
+            case NORMAL:
+            case VERBOSE:
+                System.out.println();
+                System.out.println("SableCC version " + Version.VERSION);
+                System.out
+                        .println("by Etienne M. Gagnon <egagnon@j-meg.com> and contributors");
+                System.out.println();
             }
 
             List<File> specificationFiles = new LinkedList<File>();
@@ -140,7 +161,8 @@ public class SableCC {
             // compile specifications
             for (File specificationFile : specificationFiles) {
 
-                compile(specificationFile, destinationDirectory, check_only);
+                compile(specificationFile, destinationDirectory, check_only,
+                        verbosity);
             }
         }
         catch (InvalidArgumentException e) {
@@ -184,9 +206,16 @@ public class SableCC {
     private static void compile(
             File specificationFile,
             File destinationDirectory,
-            boolean check_only)
+            boolean check_only,
+            Verbosity verbosity)
             throws InvalidArgumentException, ParserException, LexerException,
             SemanticException {
+
+        switch (verbosity) {
+        case NORMAL:
+        case VERBOSE:
+            System.out.println("Compiling " + specificationFile);
+        }
 
         Start ast;
 
@@ -194,6 +223,11 @@ public class SableCC {
             FileReader fr = new FileReader(specificationFile);
             BufferedReader br = new BufferedReader(fr);
             PushbackReader pbr = new PushbackReader(br);
+
+            switch (verbosity) {
+            case VERBOSE:
+                System.out.println(" Parsing");
+            }
 
             ast = new Parser(new Lexer(pbr)).parse();
 
@@ -206,7 +240,9 @@ public class SableCC {
                     + specificationFile, e);
         }
 
-        new Semantics(ast);
+        GlobalInformation globalInformation = new GlobalInformation(verbosity,
+                ast);
+        new Semantics(globalInformation);
 
         System.err.println("ERROR: unimplemented");
         System.exit(1);
