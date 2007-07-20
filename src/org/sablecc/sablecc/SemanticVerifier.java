@@ -19,17 +19,16 @@ package org.sablecc.sablecc;
 
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.SemanticException;
+import org.sablecc.sablecc.structure.Language;
+import org.sablecc.sablecc.syntax3.node.TIdentifier;
 import org.sablecc.sablecc.syntax3.node.TNumber;
+import org.sablecc.sablecc.walkers.DeclarationExtractor;
 import org.sablecc.sablecc.walkers.LanguageNameExtractor;
 import org.sablecc.sablecc.walkers.SyntaxVersionExtractor;
 
-public class Semantics {
+public class SemanticVerifier {
 
-    private String languageName;
-
-    private int syntaxVersion;
-
-    public Semantics(
+    public SemanticVerifier(
             GlobalInformation globalInformation)
             throws SemanticException {
 
@@ -37,38 +36,46 @@ public class Semantics {
             throw new InternalException("globalInformation may not be null");
         }
 
-        globalInformation.setSemantics(this);
+        Language language = new Language(extractLanguageName(globalInformation)
+                .getText());
 
-        extractLanguageName(globalInformation);
+        globalInformation.setLanguage(language);
 
         switch (globalInformation.getVerbosity()) {
         case NORMAL:
         case VERBOSE:
-            System.out.println(" Analyzing language '" + this.languageName
+            System.out.println(" Analyzing language '" + language.getName()
                     + "'");
         }
 
-        extractSyntaxVersion(globalInformation);
+        switch (globalInformation.getVerbosity()) {
+        case NORMAL:
+        case VERBOSE:
+            System.out.println("  Verifying semantics");
+        }
+
+        switch (globalInformation.getVerbosity()) {
+        case VERBOSE:
+            System.out.println("   Checking syntax version");
+        }
+
+        checkSyntaxVersion(globalInformation);
+
+        switch (globalInformation.getVerbosity()) {
+        case VERBOSE:
+            System.out.println("   Extracting declarations");
+        }
+
+        extractDeclarations(globalInformation);
     }
 
-    public String getLanguageName() {
-
-        return this.languageName;
-    }
-
-    public int getSyntaxVersion() {
-
-        return this.syntaxVersion;
-    }
-
-    private void extractLanguageName(
+    private TIdentifier extractLanguageName(
             GlobalInformation globalInformation) {
 
-        this.languageName = LanguageNameExtractor.getLanguageName(
-                globalInformation).getText();
+        return LanguageNameExtractor.getLanguageName(globalInformation);
     }
 
-    private void extractSyntaxVersion(
+    private void checkSyntaxVersion(
             GlobalInformation globalInformation)
             throws SemanticException {
 
@@ -78,12 +85,11 @@ public class Semantics {
         try {
             int syntaxVersion = Integer.parseInt(versionToken.getText());
 
+            // we only support version 4
             if (syntaxVersion != 4) {
                 throw new SemanticException("unsupported syntax version",
                         versionToken);
             }
-
-            this.syntaxVersion = syntaxVersion;
         }
         catch (NumberFormatException e) {
             throw new SemanticException("unsupported syntax version",
@@ -91,4 +97,10 @@ public class Semantics {
         }
     }
 
+    private void extractDeclarations(
+            GlobalInformation globalInformation)
+            throws SemanticException {
+
+        DeclarationExtractor.extractDeclarations(globalInformation);
+    }
 }
