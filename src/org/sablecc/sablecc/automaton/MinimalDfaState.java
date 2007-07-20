@@ -205,8 +205,8 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
      * Compares this <code>MinimalDfaState</code> to the provided one. It
      * compares the identification number.
      * 
-     * @param dfaState
-     *            the <code>DfaState</code> to compare with.
+     * @param minimalDfaState
+     *            the <code>minimalDfaState</code> to compare with.
      * @return an <code>int</code> value: 0 if the two instances are equals, a
      *         negative value if this <code>MinimalDfaState<code> is
      *         smaller, and a positive value if it is bigger.
