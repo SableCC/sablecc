@@ -19,12 +19,27 @@ package org.sablecc.sablecc.launcher;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * An option argument is composed of the option and its operand.
+ */
 public class OptionArgument {
 
+    /** The option for this option argument. */
     private Option option;
 
+    /** The operand for this option argument. */
     private String operand;
 
+    /**
+     * Constructs an option argument with the provided option and operand.
+     * 
+     * @param option
+     *            the option.
+     * @param operand
+     *            the operand.
+     * @throws InternalException
+     *             if the provided option is <code>null</code>.
+     */
     public OptionArgument(
             Option option,
             String operand) {
@@ -37,11 +52,21 @@ public class OptionArgument {
         this.operand = operand;
     }
 
+    /**
+     * Returns the option of this option argument.
+     * 
+     * @return the option.
+     */
     public Option getOption() {
 
         return this.option;
     }
 
+    /**
+     * Returns the operand of this option argument.
+     * 
+     * @return the argument.
+     */
     public String getOperand() {
 
         return this.operand;
