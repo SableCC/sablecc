@@ -149,11 +149,15 @@ public final class Interval<T extends Comparable<? super T>>
     public boolean equals(
             Object obj) {
 
+        if (this == obj) {
+            return true;
+        }
+
         if (obj == null) {
             return false;
         }
 
-        if (!(obj instanceof Interval)) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
 

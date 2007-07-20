@@ -169,11 +169,15 @@ public final class NfaState<T extends Comparable<? super T>>
     public boolean equals(
             Object obj) {
 
+        if (this == obj) {
+            return true;
+        }
+
         if (obj == null) {
             return false;
         }
 
-        if (!(obj instanceof NfaState)) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
 
