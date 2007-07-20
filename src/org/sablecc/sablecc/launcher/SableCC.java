@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.sablecc.sablecc.GlobalInformation;
-import org.sablecc.sablecc.Semantics;
+import org.sablecc.sablecc.SemanticVerifier;
 import org.sablecc.sablecc.Verbosity;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.InvalidArgumentException;
@@ -242,7 +242,7 @@ public class SableCC {
 
         GlobalInformation globalInformation = new GlobalInformation(verbosity,
                 ast);
-        new Semantics(globalInformation);
+        new SemanticVerifier(globalInformation);
 
         System.err.println("ERROR: unimplemented");
         System.exit(1);
