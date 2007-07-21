@@ -47,11 +47,10 @@ public class Language {
 
     private SortedMap<String, Investigator> investigatorMap = new TreeMap<String, Investigator>();
 
-    /*
-     * private SortedSet<Investigator> investigators;
-     * 
-     * private SortedSet<State> states;
-     */
+    private SortedSet<State> states = new TreeSet<State>();
+
+    private SortedMap<String, State> stateMap = new TreeMap<String, State>(
+            stringComparator);
 
     private boolean isStable = false;
 
@@ -135,9 +134,39 @@ public class Language {
         return this.selectors;
     }
 
+    public Investigator getInvestigator(
+            String name) {
+
+        return this.investigatorMap.get(name);
+    }
+
+    public SortedSet<Investigator> getInvestigators() {
+
+        if (!this.isStable) {
+            throw new InternalException("this language is not stable yet");
+        }
+
+        return this.investigators;
+    }
+
     public boolean isStable() {
 
         return this.isStable;
+    }
+
+    public State getState(
+            String name) {
+
+        return this.stateMap.get(name);
+    }
+
+    public SortedSet<State> getStates() {
+
+        if (!this.isStable) {
+            throw new InternalException("this language is not stable yet");
+        }
+
+        return this.states;
     }
 
     public void stabilize() {
@@ -156,6 +185,12 @@ public class Language {
         this.groupMap = Collections.unmodifiableSortedMap(this.groupMap);
         this.selectors = Collections.unmodifiableSortedSet(this.selectors);
         this.selectorMap = Collections.unmodifiableSortedMap(this.selectorMap);
+        this.investigators = Collections
+                .unmodifiableSortedSet(this.investigators);
+        this.investigatorMap = Collections
+                .unmodifiableSortedMap(this.investigatorMap);
+        this.states = Collections.unmodifiableSortedSet(this.states);
+        this.stateMap = Collections.unmodifiableSortedMap(this.stateMap);
 
         this.isStable = true;
     }
@@ -231,5 +266,23 @@ public class Language {
 
         this.investigators.add(investigator);
         this.investigatorMap.put(name, investigator);
+    }
+
+    public void addState(
+            String name) {
+
+        if (this.isStable) {
+            throw new InternalException("a stable language may not be modified");
+        }
+
+        if (this.stateMap.containsKey(name)) {
+            throw new InternalException(
+                    "this language already includes the state");
+        }
+
+        State state = new State(name);
+
+        this.states.add(state);
+        this.stateMap.put(name, state);
     }
 }

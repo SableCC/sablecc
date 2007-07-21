@@ -60,6 +60,8 @@ public class GlobalInformation {
 
     private SortedSet<String> methodNames = new TreeSet<String>();
 
+    private SortedSet<String> stateNames = new TreeSet<String>();
+
     public GlobalInformation(
             Verbosity verbosity,
             Start ast) {
@@ -254,5 +256,23 @@ public class GlobalInformation {
         this.methodNames.add(aInvestigator.getName().getText());
 
         this.language.addInvestigator(aInvestigator.getName().getText());
+    }
+
+    public void addState(
+            TIdentifier stateName)
+            throws SemanticException {
+
+        if (stateName == null) {
+            throw new InternalException("stateName may not be null");
+        }
+
+        if (this.stateNames.contains(stateName.getText())) {
+            throw new SemanticException("redeclaration of '"
+                    + stateName.getText() + "'", stateName);
+        }
+
+        this.stateNames.add(stateName.getText());
+
+        this.language.addState(stateName.getText());
     }
 }
