@@ -35,6 +35,7 @@ public enum Option {
 
     CHECK_ONLY("c", "check-only", null, "do not generate files"),
     DESTINATION("d", "destination", "directory", "set destination directory"),
+    LENIENT("l", "lenient", null, "do not report non-fatal errors (implies -c)"),
     QUIET("q", "quiet", null, "be as quiet as possible"),
     VERBOSE("v", "verbose", null, "display as much information as possible"),
     VERSION(null, "version", null, "display version information and exit"),
