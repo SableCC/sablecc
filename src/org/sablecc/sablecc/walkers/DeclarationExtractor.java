@@ -24,8 +24,13 @@ import org.sablecc.sablecc.exception.SemanticException;
 import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.sablecc.syntax3.node.AGroup;
 import org.sablecc.sablecc.syntax3.node.AHelper;
+import org.sablecc.sablecc.syntax3.node.AInternalState;
+import org.sablecc.sablecc.syntax3.node.AInvestigator;
+import org.sablecc.sablecc.syntax3.node.ANoStatesLexer;
+import org.sablecc.sablecc.syntax3.node.ANormalState;
 import org.sablecc.sablecc.syntax3.node.ASelectionToken;
 import org.sablecc.sablecc.syntax3.node.ASimpleToken;
+import org.sablecc.sablecc.syntax3.node.ASimpleTokens;
 
 public class DeclarationExtractor
         extends DepthFirstAdapter {
@@ -41,6 +46,13 @@ public class DeclarationExtractor
     }
 
     @Override
+    public void inANoStatesLexer(
+            ANoStatesLexer node) {
+
+        this.globalInformation.getLanguage().addState(null);
+    }
+
+    @Override
     public void caseAHelper(
             AHelper node) {
 
@@ -50,6 +62,13 @@ public class DeclarationExtractor
         catch (SemanticException e) {
             throw new BypassSemanticException(e);
         }
+    }
+
+    @Override
+    public void inASimpleTokens(
+            ASimpleTokens node) {
+
+        this.globalInformation.getLanguage().addGroup(null);
     }
 
     @Override
@@ -91,6 +110,42 @@ public class DeclarationExtractor
 
         try {
             this.globalInformation.addSelectionToken(node, this.enclosingGroup);
+        }
+        catch (SemanticException e) {
+            throw new BypassSemanticException(e);
+        }
+    }
+
+    @Override
+    public void caseAInvestigator(
+            AInvestigator node) {
+
+        try {
+            this.globalInformation.addInvestigator(node);
+        }
+        catch (SemanticException e) {
+            throw new BypassSemanticException(e);
+        }
+    }
+
+    @Override
+    public void caseANormalState(
+            ANormalState node) {
+
+        try {
+            this.globalInformation.addState(node.getName());
+        }
+        catch (SemanticException e) {
+            throw new BypassSemanticException(e);
+        }
+    }
+
+    @Override
+    public void caseAInternalState(
+            AInternalState node) {
+
+        try {
+            this.globalInformation.addState(node.getName());
         }
         catch (SemanticException e) {
             throw new BypassSemanticException(e);
