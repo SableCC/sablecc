@@ -17,11 +17,27 @@
 
 package org.sablecc.sablecc.exception;
 
+/**
+ * An invalid argument runtime exception is thrown during the execution of the
+ * software when the user provided a bogus option or argument when starting the
+ * program.
+ */
+
 public class InvalidArgumentRuntimeException
         extends RuntimeException {
 
+    /** Serial version identifier for serialization */
     private static final long serialVersionUID = -1526259558916228310L;
 
+    /**
+     * Constructs a new invalid argument runtime exception with the provided
+     * error message.
+     * 
+     * @param message
+     *            the error message.
+     * @throws InternalException
+     *             if the message is <code>null</code>.
+     */
     public InvalidArgumentRuntimeException(
             String message) {
 
@@ -32,6 +48,17 @@ public class InvalidArgumentRuntimeException
         }
     }
 
+    /**
+     * Constructs a new invalid argument runtime exception with the provided
+     * error message and cause.
+     * 
+     * @param message
+     *            the error message.
+     * @param cause
+     *            the cause.
+     * @throws InternalException
+     *             if the message or the cause is <code>null</code>.
+     */
     public InvalidArgumentRuntimeException(
             String message,
             Throwable cause) {
