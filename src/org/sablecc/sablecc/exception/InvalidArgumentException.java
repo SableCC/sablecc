@@ -17,11 +17,30 @@
 
 package org.sablecc.sablecc.exception;
 
+/**
+ * An invalid argument exception is thrown when the user execute the software
+ * providing an unappropriate argument.
+ * <p>
+ * In the source code of the software, this exception should be thrown whenever
+ * we execute the program and check for its options/arguments. For example, an
+ * InvalidArgumentException should be thrown when we execute the program
+ * providing a bogus option or invalid argument.
+ */
 public class InvalidArgumentException
         extends Exception {
 
+    /** Serial version identifier for serialization */
     private static final long serialVersionUID = 2728824423324590713L;
 
+    /**
+     * Constructs a new invalid argument exception with the provided error
+     * message.
+     * 
+     * @param message
+     *            the error message.
+     * @throws InternalException
+     *             if the message is <code>null</code>.
+     */
     public InvalidArgumentException(
             String message) {
 
@@ -32,6 +51,17 @@ public class InvalidArgumentException
         }
     }
 
+    /**
+     * Constructs a new invalid argument exception with the provided error
+     * message and cause.
+     * 
+     * @param message
+     *            the error message.
+     * @param cause
+     *            the cause.
+     * @throws InternalException
+     *             if the message or the cause is <code>null</code>.
+     */
     public InvalidArgumentException(
             String message,
             Throwable cause) {
