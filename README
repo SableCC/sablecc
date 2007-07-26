@@ -16,8 +16,9 @@ participate in various ways: write new code, test existing code,
 suggest improvements, etc.
 
 SableCC 4 does not yet generate any code. However, you can use
-currently available code as a library for your own programs.  You will
-find the library jar file in the lib/ directory, and its API
+currently available code to parse lexer specifications. You can also
+use it as a library for your own programs.  You will find the
+executable jar library file in the lib/ directory, and its API
 documentation in the doc/ directory.
 
 Package Content
@@ -28,13 +29,17 @@ Here is a description of the content of this package:
 * README: This file.
 * LICENSE and NOTICE: License terms.
 
-* lib/: Compiled library jar files.
-* doc/: Contains the API documentation.
+* lib/: Executable jar file.
+* doc/: API documentation.
 
 * src/: Source code.
-* ant-files/: Build files.
+* grammars/: Source grammars.
+* manifest/: Jar manifest file.
+
 * junit-tests/: JUnit tests.
 * regression-tests/: Regression tests.
+
+* ant-files/: Build file.
 
 About SableCC 4
 ===============
@@ -59,7 +64,17 @@ SableCC 4 is a complete rewrite of SableCC to bring many new features:
 * Improved syntax for CST->AST transformations.
 * And more.
 
-What's New in SableCC [version]
+What's New in SableCC 4-alpha.3
 ===============================
 
-[Milestone text]
+This alpha version brings the following new features:
+
+* Improved syntax for SableCC lexers.
+* The exponent operator and code to implement its functionality.
+* The Any keyword and code to implements its functionality.
+* Robust and intuitive SableCC-based command line parsing.
+* Parsing of lexer specifications.
+* Partial semantic verification of lexer specifications.
+* Improved build script.
+* Additional unit tests.
+* Additional documentation.
