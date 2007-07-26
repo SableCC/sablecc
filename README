@@ -64,17 +64,7 @@ SableCC 4 is a complete rewrite of SableCC to bring many new features:
 * Improved syntax for CST->AST transformations.
 * And more.
 
-What's New in SableCC 4-alpha.3
+What's New in SableCC [version]
 ===============================
 
-This alpha version brings the following new features:
-
-* Improved syntax for SableCC lexers.
-* The exponent operator and code to implement its functionality.
-* The Any keyword and code to implements its functionality.
-* Robust and intuitive SableCC-based command line parsing.
-* Parsing of lexer specifications.
-* Partial semantic verification of lexer specifications.
-* Improved build script.
-* Additional unit tests.
-* Additional documentation.
+[Milestone text]
