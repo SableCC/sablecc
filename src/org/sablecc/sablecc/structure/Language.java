@@ -92,11 +92,19 @@ public class Language {
     public boolean hasToken(
             String name) {
 
+        if (name == null) {
+            throw new InternalException("name may not be null");
+        }
+
         return this.tokenMap.containsKey(name);
     }
 
     public Token getToken(
             String name) {
+
+        if (name == null) {
+            throw new InternalException("name may not be null");
+        }
 
         Token token = this.tokenMap.get(name);
 
@@ -148,11 +156,19 @@ public class Language {
     public boolean hasSelector(
             String name) {
 
+        if (name == null) {
+            throw new InternalException("name may not be null");
+        }
+
         return this.selectorMap.containsKey(name);
     }
 
     public Selector getSelector(
             String name) {
+
+        if (name == null) {
+            throw new InternalException("name may not be null");
+        }
 
         Selector selector = this.selectorMap.get(name);
 
@@ -176,11 +192,19 @@ public class Language {
     public boolean hasInvestigator(
             String name) {
 
+        if (name == null) {
+            throw new InternalException("name may not be null");
+        }
+
         return this.investigatorMap.containsKey(name);
     }
 
     public Investigator getInvestigator(
             String name) {
+
+        if (name == null) {
+            throw new InternalException("name may not be null");
+        }
 
         Investigator investigator = this.investigatorMap.get(name);
 
@@ -265,6 +289,14 @@ public class Language {
             String name,
             Group group) {
 
+        if (name == null) {
+            throw new InternalException("name may not be null");
+        }
+
+        if (group == null) {
+            throw new InternalException("group may not be null");
+        }
+
         if (this.isStable) {
             throw new InternalException("a stable language may not be modified");
         }
@@ -301,6 +333,10 @@ public class Language {
     public void addSelector(
             String name) {
 
+        if (name == null) {
+            throw new InternalException("name may not be null");
+        }
+
         if (this.isStable) {
             throw new InternalException("a stable language may not be modified");
         }
@@ -318,6 +354,10 @@ public class Language {
 
     public void addInvestigator(
             String name) {
+
+        if (name == null) {
+            throw new InternalException("name may not be null");
+        }
 
         if (this.isStable) {
             throw new InternalException("a stable language may not be modified");
