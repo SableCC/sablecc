@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc;
 
-public enum DeclarationType {
+enum DeclarationType {
     HELPER,
     GROUP,
     SIMPLE_TOKEN,

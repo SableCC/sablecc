@@ -20,12 +20,12 @@ package org.sablecc.sablecc;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.syntax3.node.AGroup;
 
-public class GroupDeclaration
+class GroupDeclaration
         extends Declaration {
 
     private final AGroup group;
 
-    public GroupDeclaration(
+    GroupDeclaration(
             AGroup group) {
 
         if (group == null) {
@@ -35,13 +35,13 @@ public class GroupDeclaration
         this.group = group;
     }
 
-    public AGroup getGroup() {
+    AGroup getGroup() {
 
         return this.group;
     }
 
     @Override
-    public DeclarationType getType() {
+    DeclarationType getType() {
 
         return DeclarationType.GROUP;
     }
