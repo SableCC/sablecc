@@ -89,10 +89,23 @@ public class Language {
         return this.name;
     }
 
+    public boolean hasToken(
+            String name) {
+
+        return this.tokenMap.containsKey(name);
+    }
+
     public Token getToken(
             String name) {
 
-        return this.tokenMap.get(name);
+        Token token = this.tokenMap.get(name);
+
+        if (token == null) {
+            throw new InternalException(
+                    "this language does not contain token '" + name + "'");
+        }
+
+        return token;
     }
 
     public SortedSet<Token> getTokens() {
@@ -104,10 +117,23 @@ public class Language {
         return this.tokens;
     }
 
+    public boolean hasGroup(
+            String name) {
+
+        return this.groupMap.containsKey(name);
+    }
+
     public Group getGroup(
             String name) {
 
-        return this.groupMap.get(name);
+        Group group = this.groupMap.get(name);
+
+        if (group == null) {
+            throw new InternalException(
+                    "this language does not contain group '" + name + "'");
+        }
+
+        return group;
     }
 
     public SortedSet<Group> getGroups() {
@@ -119,10 +145,23 @@ public class Language {
         return this.groups;
     }
 
+    public boolean hasSelector(
+            String name) {
+
+        return this.selectorMap.containsKey(name);
+    }
+
     public Selector getSelector(
             String name) {
 
-        return this.selectorMap.get(name);
+        Selector selector = this.selectorMap.get(name);
+
+        if (selector == null) {
+            throw new InternalException(
+                    "this language does not contain selector '" + name + "'");
+        }
+
+        return selector;
     }
 
     public SortedSet<Selector> getSelectors() {
@@ -134,10 +173,24 @@ public class Language {
         return this.selectors;
     }
 
+    public boolean hasInvestigator(
+            String name) {
+
+        return this.investigatorMap.containsKey(name);
+    }
+
     public Investigator getInvestigator(
             String name) {
 
-        return this.investigatorMap.get(name);
+        Investigator investigator = this.investigatorMap.get(name);
+
+        if (investigator == null) {
+            throw new InternalException(
+                    "this language does not contain investigator '" + name
+                            + "'");
+        }
+
+        return investigator;
     }
 
     public SortedSet<Investigator> getInvestigators() {
@@ -149,15 +202,23 @@ public class Language {
         return this.investigators;
     }
 
-    public boolean isStable() {
+    public boolean hasState(
+            String name) {
 
-        return this.isStable;
+        return this.stateMap.containsKey(name);
     }
 
     public State getState(
             String name) {
 
-        return this.stateMap.get(name);
+        State state = this.stateMap.get(name);
+
+        if (state == null) {
+            throw new InternalException(
+                    "this language does not contain state '" + name + "'");
+        }
+
+        return state;
     }
 
     public SortedSet<State> getStates() {
@@ -167,6 +228,11 @@ public class Language {
         }
 
         return this.states;
+    }
+
+    public boolean isStable() {
+
+        return this.isStable;
     }
 
     public void stabilize() {
@@ -195,24 +261,6 @@ public class Language {
         this.isStable = true;
     }
 
-    public void addGroup(
-            String name) {
-
-        if (this.isStable) {
-            throw new InternalException("a stable language may not be modified");
-        }
-
-        if (this.groupMap.containsKey(name)) {
-            throw new InternalException(
-                    "this language already includes the group");
-        }
-
-        Group group = new Group(name);
-
-        this.groups.add(group);
-        this.groupMap.put(name, group);
-    }
-
     public void addToken(
             String name,
             Group group) {
@@ -230,6 +278,24 @@ public class Language {
 
         this.tokens.add(token);
         this.tokenMap.put(name, token);
+    }
+
+    public void addGroup(
+            String name) {
+
+        if (this.isStable) {
+            throw new InternalException("a stable language may not be modified");
+        }
+
+        if (this.groupMap.containsKey(name)) {
+            throw new InternalException(
+                    "this language already includes the group");
+        }
+
+        Group group = new Group(name);
+
+        this.groups.add(group);
+        this.groupMap.put(name, group);
     }
 
     public void addSelector(

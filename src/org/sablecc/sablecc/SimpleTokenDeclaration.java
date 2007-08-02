@@ -25,7 +25,7 @@ public class SimpleTokenDeclaration
 
     private final ASimpleToken simpleToken;
 
-    public SimpleTokenDeclaration(
+    SimpleTokenDeclaration(
             ASimpleToken simpleToken) {
 
         if (simpleToken == null) {
@@ -35,13 +35,13 @@ public class SimpleTokenDeclaration
         this.simpleToken = simpleToken;
     }
 
-    public ASimpleToken getSimpleToken() {
+    ASimpleToken getSimpleToken() {
 
         return this.simpleToken;
     }
 
     @Override
-    public DeclarationType getType() {
+    DeclarationType getType() {
 
         return DeclarationType.SIMPLE_TOKEN;
     }

@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc;
 
-public abstract class Declaration {
+abstract class Declaration {
 
-    public abstract DeclarationType getType();
+    abstract DeclarationType getType();
 }

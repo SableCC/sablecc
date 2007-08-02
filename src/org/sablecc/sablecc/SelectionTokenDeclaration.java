@@ -25,7 +25,7 @@ public class SelectionTokenDeclaration
 
     private final ASelectionToken selectionToken;
 
-    public SelectionTokenDeclaration(
+    SelectionTokenDeclaration(
             ASelectionToken selectionToken) {
 
         if (selectionToken == null) {
@@ -35,13 +35,13 @@ public class SelectionTokenDeclaration
         this.selectionToken = selectionToken;
     }
 
-    public ASelectionToken getSelectionToken() {
+    ASelectionToken getSelectionToken() {
 
         return this.selectionToken;
     }
 
     @Override
-    public DeclarationType getType() {
+    DeclarationType getType() {
 
         return DeclarationType.SELECTION_TOKEN;
     }

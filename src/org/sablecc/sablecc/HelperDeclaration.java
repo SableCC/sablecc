@@ -25,7 +25,7 @@ public class HelperDeclaration
 
     private final AHelper helper;
 
-    public HelperDeclaration(
+    HelperDeclaration(
             AHelper helper) {
 
         if (helper == null) {
@@ -35,13 +35,13 @@ public class HelperDeclaration
         this.helper = helper;
     }
 
-    public AHelper getHelper() {
+    AHelper getHelper() {
 
         return this.helper;
     }
 
     @Override
-    public DeclarationType getType() {
+    DeclarationType getType() {
 
         return DeclarationType.HELPER;
     }
