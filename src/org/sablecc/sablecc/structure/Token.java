@@ -86,5 +86,4 @@ public class Token
 
         return this.name.compareTo(token.name);
     }
-
 }

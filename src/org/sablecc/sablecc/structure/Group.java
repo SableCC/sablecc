@@ -131,6 +131,10 @@ public class Group
     void addToken(
             Token token) {
 
+        if (token == null) {
+            throw new InternalException("token may not be null");
+        }
+
         if (this.isStable) {
             throw new InternalException("a stable group may not be modified");
         }

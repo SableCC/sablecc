@@ -122,5 +122,4 @@ public class Investigator
 
         this.tokens.add(token);
     }
-
 }

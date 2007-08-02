@@ -95,5 +95,4 @@ public class State
 
         return this.name.compareTo(state.name);
     }
-
 }
