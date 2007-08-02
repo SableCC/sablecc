@@ -31,28 +31,51 @@ import org.sablecc.sablecc.launcher.syntax3.node.AShortOptionsArgument;
 import org.sablecc.sablecc.launcher.syntax3.node.Start;
 import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
 
+/**
+ * TODO
+ * 
+ */
 public enum Option {
 
+    /** Does not generate files. */
     CHECK_ONLY("c", "check-only", null, "do not generate files"),
+    /** Change the destination directory. */
     DESTINATION("d", "destination", "directory", "set destination directory"),
+    /** Does not report errors unless they are critical. */
     LENIENT("l", "lenient", null, "do not report non-fatal errors (implies -c)"),
+    /** Display less information. */
     QUIET("q", "quiet", null, "be as quiet as possible"),
+    /** Display more information. */
     VERBOSE("v", "verbose", null, "display as much information as possible"),
+    /** Display the version and exit. */
     VERSION(null, "version", null, "display version information and exit"),
+    /** Display an information message and exit. */
     HELP("h", "help", null, "display help information and exit");
 
+    /** The short name of this option. */
     private String shortName;
 
+    /** The long name of this option. */
     private String longName;
 
+    /** The operand name of this option. */
     private String operandName;
 
+    /** The help message of this option. */
     private String helpMessage;
 
+    /** The short name map of the options. */
     private static final SortedMap<String, Option> shortNameMap = new TreeMap<String, Option>();
 
+    /** The long name map of the options. */
     private static final SortedMap<String, Option> longNameMap = new TreeMap<String, Option>();
 
+    /**
+     * Compiles the list of options.
+     * 
+     * @throws InternalException
+     *             if two options have the same long or short name.
+     */
     static {
         for (Option option : Option.values()) {
 
@@ -78,6 +101,23 @@ public enum Option {
         }
     }
 
+    /**
+     * Construct a new option.
+     * 
+     * @param shortName
+     *            the short name of the option.
+     * @param longName
+     *            the long name of the option.
+     * @param operandName
+     *            the operand name of the option.
+     * @param helpMessage
+     *            the help message of the option.
+     * 
+     * @throws InternalException
+     *             if the short name and the long name are <code>null</code>,
+     *             if the help message is <code>null</code> or if the long
+     *             name too short.
+     */
     private Option(
             String shortName,
             String longName,
@@ -113,6 +153,15 @@ public enum Option {
         this.helpMessage = helpMessage;
     }
 
+    /**
+     * Validates the short name.
+     * 
+     * @param shortName
+     *            the short name.
+     * 
+     * @throws InternalException
+     *             if the short name is invalid.
+     */
     private void validateShortName(
             String shortName) {
 
@@ -145,6 +194,15 @@ public enum Option {
         }
     }
 
+    /**
+     * Validates the long name.
+     * 
+     * @param longName
+     *            the long name.
+     * 
+     * @throws InternalException
+     *             if the long name is invalid.
+     */
     private void validateLongName(
             String longName) {
 
@@ -172,43 +230,84 @@ public enum Option {
         }
     }
 
+    /**
+     * Returns the short name of this option.
+     * 
+     * @return the short name.
+     */
     public String getShortName() {
 
         return this.shortName;
     }
 
+    /**
+     * Returns the short name of this option.
+     * 
+     * @return the short name.
+     */
     public String getLongName() {
 
         return this.longName;
     }
 
+    /**
+     * Returns the operand name of this option.
+     * 
+     * @return the operand name.
+     */
     public String getOperandName() {
 
         return this.operandName;
     }
 
+    /**
+     * Returns the help message of this option.
+     * 
+     * @return the help message.
+     */
     public String getHelpMessage() {
 
         return this.helpMessage;
     }
 
+    /**
+     * Returns whether this option has an operand or not.
+     * 
+     * @return <code>true</code> if this option has an operand;
+     *         <code>false</code> otherwise.
+     */
     public boolean hasOperand() {
 
         return this.operandName != null;
     }
 
+    /**
+     * Returns the option having the provided short name.
+     * 
+     * @return the short name.
+     */
     public static Option getShortOption(
             String shortName) {
 
         return shortNameMap.get(shortName);
     }
 
+    /**
+     * Returns the option having the provided long name.
+     * 
+     * @return the long name.
+     */
     public static Option getLongOption(
             String longName) {
 
         return longNameMap.get(longName);
     }
 
+    /**
+     * Prints a short help message.
+     * 
+     * @return the help message.
+     */
     public static String getShortHelpMessage() {
 
         StringBuilder sb = new StringBuilder();
@@ -267,6 +366,11 @@ public enum Option {
         return sb.toString();
     }
 
+    /**
+     * Prints a long help message.
+     * 
+     * @return the help message.
+     */
     public static String getLongHelpMessage() {
 
         int longestPrefixLength = 0;
