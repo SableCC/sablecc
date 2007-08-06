@@ -138,7 +138,7 @@ public class SableCC {
                 break;
 
             case VERSION:
-                System.out.println("SableCC version " + Version.VERSION);
+                System.out.println("SableCC " + Version.VERSION);
                 return;
 
             case HELP:
@@ -173,7 +173,7 @@ public class SableCC {
         case NORMAL:
         case VERBOSE:
             System.out.println();
-            System.out.println("SableCC version " + Version.VERSION);
+            System.out.println("SableCC " + Version.VERSION);
             System.out
                     .println("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
             System.out.println();
