@@ -22,7 +22,7 @@ import org.sablecc.sablecc.exception.InternalException;
 /**
  * An option argument is composed of the option and its operand.
  */
-public class OptionArgument {
+class OptionArgument {
 
     /** The option for this option argument. */
     private Option option;
@@ -40,7 +40,7 @@ public class OptionArgument {
      * @throws InternalException
      *             if the provided option is <code>null</code>.
      */
-    public OptionArgument(
+    OptionArgument(
             Option option,
             String operand) {
 
@@ -57,7 +57,7 @@ public class OptionArgument {
      * 
      * @return the option.
      */
-    public Option getOption() {
+    Option getOption() {
 
         return this.option;
     }
@@ -67,7 +67,7 @@ public class OptionArgument {
      * 
      * @return the argument.
      */
-    public String getOperand() {
+    String getOperand() {
 
         return this.operand;
     }

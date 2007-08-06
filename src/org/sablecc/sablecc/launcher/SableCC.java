@@ -39,131 +39,16 @@ import org.sablecc.sablecc.syntax3.parser.ParserException;
 
 public class SableCC {
 
+    private SableCC() {
+
+        throw new InternalException("this class may not have instances");
+    }
+
     public static void main(
             String[] args) {
 
         try {
-            boolean check_only = false;
-            Verbosity verbosity = Verbosity.NORMAL;
-
-            // default destination directory is current working directory
-            File destinationDirectory = new File(System.getProperty("user.dir"))
-                    .getAbsoluteFile();
-
-            // parse command line arguments
-            Arguments arguments = new Arguments(args);
-
-            // handle option arguments
-            for (OptionArgument optionArgument : arguments.getOptionArguments()) {
-
-                switch (optionArgument.getOption()) {
-
-                case CHECK_ONLY:
-                    check_only = true;
-                    break;
-
-                case DESTINATION:
-                    destinationDirectory = new File(optionArgument.getOperand())
-                            .getAbsoluteFile();
-
-                    if (!destinationDirectory.isDirectory()) {
-
-                        if (!destinationDirectory.exists()) {
-                            System.err.println("ERROR: " + destinationDirectory
-                                    + " does not exist");
-                            System.exit(1);
-                        }
-
-                        System.err.println("ERROR: " + destinationDirectory
-                                + " is not a directory");
-                        System.exit(1);
-                    }
-
-                    break;
-
-                case QUIET:
-                    verbosity = Verbosity.QUIET;
-                    break;
-
-                case VERBOSE:
-                    verbosity = Verbosity.VERBOSE;
-                    break;
-
-                case VERSION:
-                    System.out.println("SableCC version " + Version.VERSION);
-                    System.exit(0);
-
-                case HELP:
-                    System.out.println("usage: sablecc "
-                            + Option.getShortHelpMessage()
-                            + " specification.sablecc ...");
-                    System.out.println("options:");
-                    System.out.println(Option.getLongHelpMessage());
-                    System.exit(0);
-
-                default:
-                    throw new InternalException("unhandled option "
-                            + optionArgument.getOption());
-                }
-            }
-
-            // handle text arguments
-            if (arguments.getTextArguments().size() == 0) {
-                System.err.println("usage: sablecc "
-                        + Option.getShortHelpMessage()
-                        + " specification.sablecc ...");
-                System.err.println("type 'sablecc -h' for more information.");
-                System.exit(1);
-            }
-
-            switch (verbosity) {
-            case NORMAL:
-            case VERBOSE:
-                System.out.println();
-                System.out.println("SableCC version " + Version.VERSION);
-                System.out
-                        .println("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
-                System.out.println();
-            }
-
-            List<File> specificationFiles = new LinkedList<File>();
-
-            // remember absolute paths, just in case the current working
-            // directory gets changed during specification compilation.
-            for (TextArgument textArgument : arguments.getTextArguments()) {
-
-                if (!textArgument.getText().endsWith(".sablecc")) {
-                    System.err
-                            .println("ERROR: specification file name does not end with .sablecc: "
-                                    + textArgument.getText());
-                    System.exit(1);
-                }
-
-                File specificationFile = new File(textArgument.getText())
-                        .getAbsoluteFile();
-
-                if (!specificationFile.isFile()) {
-
-                    if (!specificationFile.exists()) {
-                        System.err.println("ERROR: " + specificationFile
-                                + " does not exist");
-                        System.exit(1);
-                    }
-
-                    System.err.println("ERROR: " + specificationFile
-                            + " is not a file");
-                    System.exit(1);
-                }
-
-                specificationFiles.add(specificationFile);
-            }
-
-            // compile specifications
-            for (File specificationFile : specificationFiles) {
-
-                compile(specificationFile, destinationDirectory, check_only,
-                        verbosity);
-            }
+            compile(args);
         }
         catch (InvalidArgumentException e) {
             System.err.println("ERROR: " + e.getMessage());
@@ -201,6 +86,134 @@ public class SableCC {
 
         // finish gracefully
         System.exit(0);
+    }
+
+    public static void compile(
+            String[] args)
+            throws InvalidArgumentException, ParserException, LexerException,
+            SemanticException {
+
+        boolean check_only = false;
+        Verbosity verbosity = Verbosity.NORMAL;
+
+        // default destination directory is current working directory
+        File destinationDirectory = new File(System.getProperty("user.dir"))
+                .getAbsoluteFile();
+
+        // parse command line arguments
+        Arguments arguments = new Arguments(args);
+
+        // handle option arguments
+        for (OptionArgument optionArgument : arguments.getOptionArguments()) {
+
+            switch (optionArgument.getOption()) {
+
+            case CHECK_ONLY:
+                check_only = true;
+                break;
+
+            case DESTINATION:
+                destinationDirectory = new File(optionArgument.getOperand())
+                        .getAbsoluteFile();
+
+                if (!destinationDirectory.isDirectory()) {
+
+                    if (!destinationDirectory.exists()) {
+                        throw new InvalidArgumentException(destinationDirectory
+                                + " does not exist");
+                    }
+
+                    throw new InvalidArgumentException(destinationDirectory
+                            + " is not a directory");
+                }
+
+                break;
+
+            case QUIET:
+                verbosity = Verbosity.QUIET;
+                break;
+
+            case VERBOSE:
+                verbosity = Verbosity.VERBOSE;
+                break;
+
+            case VERSION:
+                System.out.println("SableCC version " + Version.VERSION);
+                return;
+
+            case HELP:
+                System.out.println("usage: sablecc "
+                        + Option.getShortHelpMessage()
+                        + " specification.sablecc ...");
+                System.out.println("options:");
+                System.out.println(Option.getLongHelpMessage());
+                return;
+
+            default:
+                throw new InternalException("unhandled option "
+                        + optionArgument.getOption());
+            }
+        }
+
+        // handle text arguments
+        if (arguments.getTextArguments().size() == 0) {
+            switch (verbosity) {
+            case NORMAL:
+            case VERBOSE:
+                System.err.println("usage: sablecc "
+                        + Option.getShortHelpMessage()
+                        + " specification.sablecc ...");
+                System.err.println("type 'sablecc -h' for more information.");
+            }
+
+            return;
+        }
+
+        switch (verbosity) {
+        case NORMAL:
+        case VERBOSE:
+            System.out.println();
+            System.out.println("SableCC version " + Version.VERSION);
+            System.out
+                    .println("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
+            System.out.println();
+        }
+
+        List<File> specificationFiles = new LinkedList<File>();
+
+        // remember absolute paths, just in case the current working
+        // directory gets changed during specification compilation.
+        for (TextArgument textArgument : arguments.getTextArguments()) {
+
+            if (!textArgument.getText().endsWith(".sablecc")) {
+                throw new InvalidArgumentException(
+                        "specification file name does not end with .sablecc: "
+                                + textArgument.getText());
+            }
+
+            File specificationFile = new File(textArgument.getText())
+                    .getAbsoluteFile();
+
+            if (!specificationFile.isFile()) {
+
+                if (!specificationFile.exists()) {
+                    throw new InvalidArgumentException(specificationFile
+                            + " does not exist");
+                }
+
+                throw new InvalidArgumentException(specificationFile
+                        + " is not a file");
+            }
+
+            specificationFiles.add(specificationFile);
+        }
+
+        // compile specifications
+        for (File specificationFile : specificationFiles) {
+
+            compile(specificationFile, destinationDirectory, check_only,
+                    verbosity);
+        }
     }
 
     private static void compile(
