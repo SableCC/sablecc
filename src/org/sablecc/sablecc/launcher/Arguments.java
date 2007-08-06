@@ -28,12 +28,27 @@ import org.sablecc.sablecc.launcher.syntax3.lexer.Lexer;
 import org.sablecc.sablecc.launcher.syntax3.node.Start;
 import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
 
+/**
+ * <code>Arguments</code> include option and text arguments.
+ * 
+ */
 class Arguments {
 
+    /** The list of option arguments. */
     private final List<OptionArgument> optionArguments;
 
+    /** The list of text arguments. */
     private final List<TextArgument> textArguments;
 
+    /**
+     * Constructs a new instance of Arguments. It does so by sorting the given
+     * string array between option and text arguments.
+     * 
+     * @param args
+     *            The string array that will be compute.
+     * @throws InvalidArgumentException
+     *             if one of the option or text arguments is invalid.
+     */
     Arguments(
             String[] args)
             throws InvalidArgumentException {
@@ -103,11 +118,21 @@ class Arguments {
         this.textArguments = Collections.unmodifiableList(textArguments);
     }
 
+    /**
+     * Returns the list of option arguments of this <code>Arguments</code>.
+     * 
+     * @return the list of option arguments.
+     */
     List<OptionArgument> getOptionArguments() {
 
         return this.optionArguments;
     }
 
+    /**
+     * Returns the list of text arguments of this <code>Arguments</code>.
+     * 
+     * @return the list of text arguments.
+     */
     List<TextArgument> getTextArguments() {
 
         return this.textArguments;
