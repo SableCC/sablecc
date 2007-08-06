@@ -22,7 +22,7 @@ import org.sablecc.sablecc.exception.InternalException;
 /**
  * A text argument puts in appendix a String at the end of another.
  */
-public class TextArgument {
+class TextArgument {
 
     /** the text to append. */
     private String text;
@@ -36,7 +36,7 @@ public class TextArgument {
      * @throws InternalException
      *             if the text is <code>null</code>.
      */
-    public TextArgument(
+    TextArgument(
             String text) {
 
         if (text == null) {
@@ -51,7 +51,7 @@ public class TextArgument {
      * 
      * @return the text.
      */
-    public String getText() {
+    String getText() {
 
         return this.text;
     }

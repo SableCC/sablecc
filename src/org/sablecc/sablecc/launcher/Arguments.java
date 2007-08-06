@@ -28,13 +28,13 @@ import org.sablecc.sablecc.launcher.syntax3.lexer.Lexer;
 import org.sablecc.sablecc.launcher.syntax3.node.Start;
 import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
 
-public class Arguments {
+class Arguments {
 
     private final List<OptionArgument> optionArguments;
 
     private final List<TextArgument> textArguments;
 
-    public Arguments(
+    Arguments(
             String[] args)
             throws InvalidArgumentException {
 
@@ -103,12 +103,12 @@ public class Arguments {
         this.textArguments = Collections.unmodifiableList(textArguments);
     }
 
-    public List<OptionArgument> getOptionArguments() {
+    List<OptionArgument> getOptionArguments() {
 
         return this.optionArguments;
     }
 
-    public List<TextArgument> getTextArguments() {
+    List<TextArgument> getTextArguments() {
 
         return this.textArguments;
     }

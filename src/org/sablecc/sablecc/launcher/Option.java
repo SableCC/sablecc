@@ -35,7 +35,7 @@ import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
  * TODO
  * 
  */
-public enum Option {
+enum Option {
 
     /** Does not generate files. */
     CHECK_ONLY("c", "check-only", null, "do not generate files"),
@@ -235,7 +235,7 @@ public enum Option {
      * 
      * @return the short name.
      */
-    public String getShortName() {
+    String getShortName() {
 
         return this.shortName;
     }
@@ -245,7 +245,7 @@ public enum Option {
      * 
      * @return the short name.
      */
-    public String getLongName() {
+    String getLongName() {
 
         return this.longName;
     }
@@ -255,7 +255,7 @@ public enum Option {
      * 
      * @return the operand name.
      */
-    public String getOperandName() {
+    String getOperandName() {
 
         return this.operandName;
     }
@@ -265,7 +265,7 @@ public enum Option {
      * 
      * @return the help message.
      */
-    public String getHelpMessage() {
+    String getHelpMessage() {
 
         return this.helpMessage;
     }
@@ -276,7 +276,7 @@ public enum Option {
      * @return <code>true</code> if this option has an operand;
      *         <code>false</code> otherwise.
      */
-    public boolean hasOperand() {
+    boolean hasOperand() {
 
         return this.operandName != null;
     }
@@ -286,7 +286,7 @@ public enum Option {
      * 
      * @return the short name.
      */
-    public static Option getShortOption(
+    static Option getShortOption(
             String shortName) {
 
         return shortNameMap.get(shortName);
@@ -297,7 +297,7 @@ public enum Option {
      * 
      * @return the long name.
      */
-    public static Option getLongOption(
+    static Option getLongOption(
             String longName) {
 
         return longNameMap.get(longName);
@@ -308,7 +308,7 @@ public enum Option {
      * 
      * @return the help message.
      */
-    public static String getShortHelpMessage() {
+    static String getShortHelpMessage() {
 
         StringBuilder sb = new StringBuilder();
 
@@ -371,7 +371,7 @@ public enum Option {
      * 
      * @return the help message.
      */
-    public static String getLongHelpMessage() {
+    static String getLongHelpMessage() {
 
         int longestPrefixLength = 0;
 
