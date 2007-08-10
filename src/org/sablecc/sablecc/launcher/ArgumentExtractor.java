@@ -29,15 +29,34 @@ import org.sablecc.sablecc.launcher.syntax3.node.APlainArgument;
 import org.sablecc.sablecc.launcher.syntax3.node.AShortOption;
 import org.sablecc.sablecc.launcher.syntax3.node.Start;
 
+/**
+ * 
+ * TODO
+ * 
+ */
 class ArgumentExtractor
         extends DepthFirstAdapter {
 
+    /** The list of option arguments of this argument extractor. */
     private final List<OptionArgument> optionArguments;
 
+    /** The list of text arguments of this argument extractor. */
     private final List<TextArgument> textArguments;
 
+    /** An incomplete option. */
     private Option incompleteOption;
 
+    /**
+     * Constructs a new argument extractor.
+     * 
+     * @param optionArguments
+     *            the list of option arguments
+     * @param textArguments
+     *            the list of text arguments
+     * @throws InternalException
+     *             if the list of option arguments or the list of text arguments
+     *             is <code>null</code>.
+     */
     private ArgumentExtractor(
             final List<OptionArgument> optionArguments,
             final List<TextArgument> textArguments) {
@@ -54,6 +73,12 @@ class ArgumentExtractor
         this.textArguments = textArguments;
     }
 
+    /**
+     * Adds a plain argument to the list of text arguments
+     * 
+     * @param node
+     *            the node containing the plain argument.
+     */
     @Override
     public void caseAPlainArgument(
             APlainArgument node) {
@@ -61,6 +86,14 @@ class ArgumentExtractor
         this.textArguments.add(new TextArgument(node.getText().getText()));
     }
 
+    /**
+     * Treats and adds a long option to the list of option arguments.
+     * 
+     * @param node
+     *            the node containing the long option.
+     * @throws InvalidArgumentRuntimeException
+     *             if the long option is invalid or has an unexpected operand.
+     */
     @Override
     public void caseALongOption(
             ALongOption node)
@@ -111,6 +144,15 @@ class ArgumentExtractor
         }
     }
 
+    /**
+     * Treats and adds a short option to the list of option arguments.
+     * 
+     * @param node
+     *            the node containing the short option.
+     * @throws InvalidArgumentRuntimeException
+     *             if the previous option needed an operand, if the short option
+     *             is invalid or has an unexpected operand.
+     */
     @Override
     public void caseAShortOption(
             AShortOption node) {
@@ -167,6 +209,21 @@ class ArgumentExtractor
 
     }
 
+    /**
+     * Extracts all the arguments from an ast.
+     * 
+     * @param ast
+     *            the abstract syntax tree.
+     * 
+     * @param optionArguments
+     *            the list of option arguments already extracted.
+     * @param textArguments
+     *            the list of text arguments already extracted.
+     * @return an incomplete option.
+     * 
+     * @throws InvalidArgumentRuntimeException
+     *             if the lists are corrupted.
+     */
     static Option extractArguments(
             Start ast,
             List<OptionArgument> optionArguments,
