@@ -19,22 +19,46 @@ package org.sablecc.sablecc.structure;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A state is defined by its name. Each state correspond to a state defined in
+ * the grammar specification.
+ */
 public class State
         implements Comparable<State> {
 
+    /** The name of this state. */
     private final String name;
 
+    /**
+     * Constructs a state with the provided name.
+     * 
+     * @param name
+     *            the name.
+     */
     State(
             String name) {
 
         this.name = name;
     }
 
+    /**
+     * Returns whether this state has a name or not.
+     * 
+     * @return <code>true</code> if this state has a name, <code>false</code>
+     *         otherwise.
+     */
     public boolean hasName() {
 
         return this.name != null;
     }
 
+    /**
+     * Returns the name of this state.
+     * 
+     * @return the name.
+     * @throws InternalException
+     *             if this state has no name.
+     */
     public String getName() {
 
         if (this.name == null) {
@@ -44,6 +68,15 @@ public class State
         return this.name;
     }
 
+    /**
+     * Returns whether this instance is equal to the provided object. They are
+     * equal if they are the same object or if they have equal names.
+     * 
+     * @param obj
+     *            the object to compare with.
+     * @return <code>true</code> if this state and the object are equal;
+     *         <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(
             Object obj) {
@@ -69,6 +102,11 @@ public class State
         return this.name.equals(state.name);
     }
 
+    /**
+     * Returns the hash code of this state.
+     * 
+     * @return the hash code.
+     */
     @Override
     public int hashCode() {
 
@@ -79,6 +117,16 @@ public class State
         return this.name.hashCode();
     }
 
+    /**
+     * Compares this state to the provided one. The comparison is made by
+     * comparing their names.
+     * 
+     * @param state
+     *            the state to compare with.
+     * @return an <code>int</code> value: <code>0</code> if the two states
+     *         are the equals, a negative value if this state is smaller, and a
+     *         positive value if it is bigger.
+     */
     public int compareTo(
             State state) {
 
