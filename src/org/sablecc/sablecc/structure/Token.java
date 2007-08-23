@@ -18,14 +18,31 @@
 package org.sablecc.sablecc.structure;
 
 import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.sablecc.exception.InternalExceptionTest;
 
+/**
+ * A token is defined by its name and the group it belongs to. Each token
+ * correspond to a token defined in the grammar specification.
+ */
 public class Token
         implements Comparable<Token> {
 
+    /** The name of this token. */
     private final String name;
 
+    /** The group of this token. */
     private final Group group;
 
+    /**
+     * Constructs a new token with the provided name and group.
+     * 
+     * @param name
+     *            the name.
+     * @param group
+     *            the group.
+     * @throws InternalExceptionTest
+     *             if the provided name or group is <code>null</code>.
+     */
     Token(
             String name,
             Group group) {
@@ -44,16 +61,35 @@ public class Token
         group.addToken(this);
     }
 
+    /**
+     * Returns the name of this token.
+     * 
+     * @return the name.
+     */
     public String getName() {
 
         return this.name;
     }
 
+    /**
+     * Returns the group of this token.
+     * 
+     * @return the group.
+     */
     public Group getGroup() {
 
         return this.group;
     }
 
+    /**
+     * Returns whether this instance is equal to the provided object. They are
+     * equal if they are the same object or if they have equal names.
+     * 
+     * @param obj
+     *            the object to compare with.
+     * @return <code>true</code> if this token and the object are equal;
+     *         <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(
             Object obj) {
@@ -75,12 +111,27 @@ public class Token
         return this.name.equals(token.name);
     }
 
+    /**
+     * Returns the hash code of this token.
+     * 
+     * @return the hash code.
+     */
     @Override
     public int hashCode() {
 
         return this.name.hashCode();
     }
 
+    /**
+     * Compares this token to the provided one. The comparison is made by
+     * comparing their names.
+     * 
+     * @param token
+     *            the token to compare with.
+     * @return an <code>int</code> value: <code>0</code> if the two tokens
+     *         are the equals, a negative value if this token is smaller, and a
+     *         positive value if it is bigger.
+     */
     public int compareTo(
             Token token) {
 
