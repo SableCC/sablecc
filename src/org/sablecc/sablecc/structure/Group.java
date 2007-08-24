@@ -23,26 +23,52 @@ import java.util.TreeSet;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A group is defined by a name and a set of tokens. Each group corresponds to a
+ * group defined in the grammar specification.
+ */
 public class Group
         implements Comparable<Group> {
 
+    /** The name of this group. */
     private final String name;
 
+    /** The tokens of this group. */
     private SortedSet<Token> tokens = new TreeSet<Token>();
 
+    /** A stability status for this group. */
     private boolean isStable = false;
 
+    /**
+     * Constructs a group with the provided name.
+     * 
+     * @param name
+     *            the name.
+     */
     Group(
             String name) {
 
         this.name = name;
     }
 
+    /**
+     * Returns whether this group has a name or not.
+     * 
+     * @return <code>true</code> if this group has a name, <code>false</code>
+     *         otherwise.
+     */
     public boolean hasName() {
 
         return this.name != null;
     }
 
+    /**
+     * Returns the name of this group.
+     * 
+     * @return the name.
+     * @throws InternalException
+     *             if this group has no name.
+     */
     public String getName() {
 
         if (this.name == null) {
@@ -52,6 +78,13 @@ public class Group
         return this.name;
     }
 
+    /**
+     * Returns the tokens of this group.
+     * 
+     * @return the set of tokens.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<Token> getTokens() {
 
         if (!this.isStable) {
@@ -61,11 +94,26 @@ public class Group
         return this.tokens;
     }
 
+    /**
+     * Returns whether this group is stable or not.
+     * 
+     * @return <code>true</code> if this group is stable, <code>false</code>
+     *         otherwise.
+     */
     boolean isStable() {
 
         return this.isStable;
     }
 
+    /**
+     * Returns whether this instance is equal to the provided object. They are
+     * equal if they are the same object or if they have equal names.
+     * 
+     * @param obj
+     *            the object to compare with.
+     * @return <code>true</code> if this group and the object are equal;
+     *         <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(
             Object obj) {
@@ -91,6 +139,11 @@ public class Group
         return this.name.equals(group.name);
     }
 
+    /**
+     * Returns the hash code of this group.
+     * 
+     * @return the hash code.
+     */
     @Override
     public int hashCode() {
 
@@ -101,6 +154,16 @@ public class Group
         return this.name.hashCode();
     }
 
+    /**
+     * Compares this group to the provided one. The comparison is made by
+     * comparing their names.
+     * 
+     * @param group
+     *            the group to compare with.
+     * @return an <code>int</code> value: <code>0</code> if the two groups
+     *         are the equals, a negative value if this group is smaller, and a
+     *         positive value if it is bigger.
+     */
     public int compareTo(
             Group group) {
 
@@ -118,6 +181,12 @@ public class Group
         return this.name.compareTo(group.name);
     }
 
+    /**
+     * Stabilizes this group.
+     * 
+     * @throws InternalException
+     *             if this instance is already stable.
+     */
     void stabilize() {
 
         if (this.isStable) {
@@ -128,6 +197,16 @@ public class Group
         this.isStable = true;
     }
 
+    /**
+     * Adds the provided token to this group.
+     * 
+     * @param token
+     *            the token.
+     * @throws InternalException
+     *             if this instance is stable or if the provided token is
+     *             <code>null</code>, is already in this group or does not
+     *             belong to it.
+     */
     void addToken(
             Token token) {
 
