@@ -451,6 +451,9 @@ public final class Nfa<T extends Comparable<? super T>> {
 
     /**
      * Stabilizes this <code>Nfa</code> by stabilizing each of its states.
+     * 
+     * @throws InternalException
+     *             if this <code>Nfa</code> is already stable.
      */
     void stabilize() {
 
