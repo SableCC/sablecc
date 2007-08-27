@@ -23,15 +23,30 @@ import java.util.TreeSet;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A investigator is defined by a name and a set of tokens. Each investigator
+ * corresponds to a investigator defined in the grammar specification.
+ */
 public class Investigator
         implements Comparable<Investigator> {
 
+    /** The name of this investigator. */
     private final String name;
 
+    /** The tokens of this investigator. */
     private SortedSet<Token> tokens = new TreeSet<Token>();
 
+    /** A stability status for this investigator. */
     private boolean isStable = false;
 
+    /**
+     * Constructs a investigator with the provided name.
+     * 
+     * @param name
+     *            the name.
+     * @throws InternalException
+     *             if the provided name is <code>null</code>.
+     */
     public Investigator(
             String name) {
 
@@ -42,11 +57,23 @@ public class Investigator
         this.name = name;
     }
 
+    /**
+     * Returns the name of this investigator.
+     * 
+     * @return the name.
+     */
     public String getName() {
 
         return this.name;
     }
 
+    /**
+     * Returns the set of tokens of this investigator.
+     * 
+     * @return the set of tokens.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<Token> getTokens() {
 
         if (!this.isStable) {
@@ -56,11 +83,26 @@ public class Investigator
         return this.tokens;
     }
 
+    /**
+     * Returns whether this investigator is stable or not.
+     * 
+     * @return <code>true</code> if this investigator is stable,
+     *         <code>false</code> otherwise.
+     */
     boolean isStable() {
 
         return this.isStable;
     }
 
+    /**
+     * Returns whether this instance is equal to the provided object. They are
+     * equal if they are the same object or if they have equal names.
+     * 
+     * @param obj
+     *            the object to compare with.
+     * @return <code>true</code> if this investigator and the object are
+     *         equal; <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(
             Object obj) {
@@ -82,18 +124,40 @@ public class Investigator
         return this.name.equals(investigator.name);
     }
 
+    /**
+     * Returns the hash code of this investigator.
+     * 
+     * @return the hash code.
+     */
     @Override
     public int hashCode() {
 
         return this.name.hashCode();
     }
 
+    /**
+     * Compares this investigator to the provided one. The comparison is made by
+     * comparing their names.
+     * 
+     * @param investigator
+     *            the investigator to compare with.
+     * @return an <code>int</code> value: <code>0</code> if the two
+     *         investigators are the equals, a negative value if this
+     *         investigator is smaller, and a positive value if it is bigger.
+     */
     public int compareTo(
             Investigator investigator) {
 
         return this.name.compareTo(investigator.name);
     }
 
+    /**
+     * Stabilizes this investigator.
+     * 
+     * @throws InternalException
+     *             if this instance is already stable or if this instance does
+     *             not have at least 1 token.
+     */
     void stabilize() {
 
         if (this.isStable) {
@@ -108,6 +172,15 @@ public class Investigator
         this.isStable = true;
     }
 
+    /**
+     * Adds the provided token to this investigator.
+     * 
+     * @param token
+     *            the token.
+     * @throws InternalException
+     *             if the provided token is <code>null</code> or if it is
+     *             already in this investigator.
+     */
     public void addToken(
             Token token) {
 
