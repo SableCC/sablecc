@@ -26,32 +26,49 @@ import java.util.TreeSet;
 
 import org.sablecc.sablecc.exception.InternalException;
 
+/**
+ * A language is defined by a name.It can also contain tokens, groups,
+ * selectors, investigators and staes. There is only one language declaration in
+ * each grammar specification.
+ */
 public class Language {
 
+    /** The name of this language. */
     private final String name;
 
+    /** The tokens of this language. */
     private SortedSet<Token> tokens = new TreeSet<Token>();
 
+    /** A sorted map that maps each token with its name. */
     private SortedMap<String, Token> tokenMap = new TreeMap<String, Token>();
 
+    /** The groups of this language. */
     private SortedSet<Group> groups = new TreeSet<Group>();
 
+    /** A sorted map that maps each group with its name. */
     private SortedMap<String, Group> groupMap = new TreeMap<String, Group>(
             stringComparator);
 
+    /** The selectors of this language. */
     private SortedSet<Selector> selectors = new TreeSet<Selector>();
 
+    /** A sorted map that maps each selector with its name. */
     private SortedMap<String, Selector> selectorMap = new TreeMap<String, Selector>();
 
+    /** The investigators of this language. */
     private SortedSet<Investigator> investigators = new TreeSet<Investigator>();
 
+    /** A sorted map that maps each investigator with its name. */
     private SortedMap<String, Investigator> investigatorMap = new TreeMap<String, Investigator>();
 
+    /** The states of this language. */
     private SortedSet<State> states = new TreeSet<State>();
 
+    /** A sorted map that maps each state with its name. */
     private SortedMap<String, State> stateMap = new TreeMap<String, State>(
             stringComparator);
 
+    /** A stability status for this language. */
     private boolean isStable = false;
 
     /** A comparator for strings. */
@@ -74,6 +91,14 @@ public class Language {
         }
     };
 
+    /**
+     * Constructs a new language with the provided name.
+     * 
+     * @param name
+     *            the name.
+     * @throws InternalException
+     *             if the provided name is <code>null</code>.
+     */
     public Language(
             String name) {
 
@@ -84,11 +109,27 @@ public class Language {
         this.name = name;
     }
 
+    /**
+     * Returns the name of this language.
+     * 
+     * @return the name.
+     */
     public String getName() {
 
         return this.name;
     }
 
+    /**
+     * Returns whether this language has a token corresponding to the provided
+     * name.
+     * 
+     * @param name
+     *            the name.
+     * @return <code>true</code> if this instance has a token with the same
+     *         name, <code>false</code> otherwise.
+     * @throws InternalException
+     *             if the provided name is <code>null</code>.
+     */
     public boolean hasToken(
             String name) {
 
@@ -99,6 +140,16 @@ public class Language {
         return this.tokenMap.containsKey(name);
     }
 
+    /**
+     * Returns the token corresponding to the provided name.
+     * 
+     * @param name
+     *            the name.
+     * @return the corresponding token.
+     * @throws InternalException
+     *             if the provided name is <code>null</code> or if there's no
+     *             corresponding token.
+     */
     public Token getToken(
             String name) {
 
@@ -116,6 +167,13 @@ public class Language {
         return token;
     }
 
+    /**
+     * Returns the tokens of this language.
+     * 
+     * @return the tokens.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<Token> getTokens() {
 
         if (!this.isStable) {
@@ -125,12 +183,30 @@ public class Language {
         return this.tokens;
     }
 
+    /**
+     * Returns whether this language has a group corresponding to the provided
+     * name.
+     * 
+     * @param name
+     *            the name.
+     * @return <code>true</code> if this instance has a group with the same
+     *         name, <code>false</code> otherwise.
+     */
     public boolean hasGroup(
             String name) {
 
         return this.groupMap.containsKey(name);
     }
 
+    /**
+     * Returns the group corresponding to the provided name.
+     * 
+     * @param name
+     *            the name.
+     * @return the corresponding group.
+     * @throws InternalException
+     *             if there's no corresponding group.
+     */
     public Group getGroup(
             String name) {
 
@@ -144,6 +220,13 @@ public class Language {
         return group;
     }
 
+    /**
+     * Returns the groups of this language.
+     * 
+     * @return the groups.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<Group> getGroups() {
 
         if (!this.isStable) {
@@ -153,6 +236,17 @@ public class Language {
         return this.groups;
     }
 
+    /**
+     * Returns whether this language has a selector corresponding to the
+     * provided name.
+     * 
+     * @param name
+     *            the name.
+     * @return <code>true</code> if this instance has a selector with the same
+     *         name, <code>false</code> otherwise.
+     * @throws InternalException
+     *             if the provided name is <code>null</code>.
+     */
     public boolean hasSelector(
             String name) {
 
@@ -163,6 +257,16 @@ public class Language {
         return this.selectorMap.containsKey(name);
     }
 
+    /**
+     * Returns the selector corresponding to the provided name.
+     * 
+     * @param name
+     *            the name.
+     * @return the corresponding selector.
+     * @throws InternalException
+     *             if the provided name is <code>null</code> or if there's no
+     *             corresponding selector.
+     */
     public Selector getSelector(
             String name) {
 
@@ -180,6 +284,13 @@ public class Language {
         return selector;
     }
 
+    /**
+     * Returns the selectors of this language.
+     * 
+     * @return the selectors.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<Selector> getSelectors() {
 
         if (!this.isStable) {
@@ -189,6 +300,17 @@ public class Language {
         return this.selectors;
     }
 
+    /**
+     * Returns whether this language has an investigator corresponding to the
+     * provided name.
+     * 
+     * @param name
+     *            the name.
+     * @return <code>true</code> if this instance has an investigator with the
+     *         same name, <code>false</code> otherwise.
+     * @throws InternalException
+     *             if the provided name is <code>null</code>.
+     */
     public boolean hasInvestigator(
             String name) {
 
@@ -199,6 +321,16 @@ public class Language {
         return this.investigatorMap.containsKey(name);
     }
 
+    /**
+     * Returns the investigator corresponding to the provided name.
+     * 
+     * @param name
+     *            the name.
+     * @return the corresponding investigator.
+     * @throws InternalException
+     *             if the provided name is <code>null</code> or if there's no
+     *             corresponding investigator.
+     */
     public Investigator getInvestigator(
             String name) {
 
@@ -217,6 +349,13 @@ public class Language {
         return investigator;
     }
 
+    /**
+     * Returns the investigators of this language.
+     * 
+     * @return the investigators.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<Investigator> getInvestigators() {
 
         if (!this.isStable) {
@@ -226,12 +365,30 @@ public class Language {
         return this.investigators;
     }
 
+    /**
+     * Returns whether this language has a state corresponding to the provided
+     * name.
+     * 
+     * @param name
+     *            the name.
+     * @return <code>true</code> if this instance has a state with the same
+     *         name, <code>false</code> otherwise.
+     */
     public boolean hasState(
             String name) {
 
         return this.stateMap.containsKey(name);
     }
 
+    /**
+     * Returns the state corresponding to the provided name.
+     * 
+     * @param name
+     *            the name.
+     * @return the corresponding state.
+     * @throws InternalException
+     *             if there's no corresponding state.
+     */
     public State getState(
             String name) {
 
@@ -245,6 +402,13 @@ public class Language {
         return state;
     }
 
+    /**
+     * Returns the states of this language.
+     * 
+     * @return the states.
+     * @throws InternalException
+     *             if this instance is not stable.
+     */
     public SortedSet<State> getStates() {
 
         if (!this.isStable) {
@@ -254,11 +418,23 @@ public class Language {
         return this.states;
     }
 
+    /**
+     * Returns whether this language is stable or not.
+     * 
+     * @return <code>true</code> if this language is stable,
+     *         <code>false</code> otherwise.
+     */
     public boolean isStable() {
 
         return this.isStable;
     }
 
+    /**
+     * Stabilizes this language
+     * 
+     * @throws InternalException
+     *             if this instance is already stable.
+     */
     public void stabilize() {
 
         if (this.isStable) {
@@ -285,6 +461,18 @@ public class Language {
         this.isStable = true;
     }
 
+    /**
+     * Adds a token to this language.
+     * 
+     * @param name
+     *            the name of the token.
+     * @param group
+     *            the group of the token.
+     * @throws InternalException
+     *             if the provided name or group is <code>null</code>, if
+     *             this language is stable or if it already contains a token
+     *             with the same name.
+     */
     public void addToken(
             String name,
             Group group) {
@@ -312,6 +500,15 @@ public class Language {
         this.tokenMap.put(name, token);
     }
 
+    /**
+     * Adds a group to this language.
+     * 
+     * @param name
+     *            the name of the group.
+     * @throws InternalException
+     *             if this language is stable or if it already contains a group
+     *             with the same name.
+     */
     public void addGroup(
             String name) {
 
@@ -330,6 +527,16 @@ public class Language {
         this.groupMap.put(name, group);
     }
 
+    /**
+     * Adds a selector to this language.
+     * 
+     * @param name
+     *            the name of the selector.
+     * @throws InternalException
+     *             if the provided name <code>null</code>, if this language
+     *             is stable or if it already contains a selector with the same
+     *             name.
+     */
     public void addSelector(
             String name) {
 
@@ -352,6 +559,16 @@ public class Language {
         this.selectorMap.put(name, selector);
     }
 
+    /**
+     * Adds a investigator to this language.
+     * 
+     * @param name
+     *            the name of the investigator.
+     * @throws InternalException
+     *             if the provided name <code>null</code>, if this language
+     *             is stable or if it already contains a investigator with the
+     *             same name.
+     */
     public void addInvestigator(
             String name) {
 
@@ -374,6 +591,15 @@ public class Language {
         this.investigatorMap.put(name, investigator);
     }
 
+    /**
+     * Adds a state to this language.
+     * 
+     * @param name
+     *            the name of the state.
+     * @throws InternalException
+     *             if this language is stable or if it already contains a state
+     *             with the same name.
+     */
     public void addState(
             String name) {
 
