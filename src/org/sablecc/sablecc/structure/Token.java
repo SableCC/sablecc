@@ -18,7 +18,6 @@
 package org.sablecc.sablecc.structure;
 
 import org.sablecc.sablecc.exception.InternalException;
-import org.sablecc.sablecc.exception.InternalExceptionTest;
 
 /**
  * A token is defined by its name and the group it belongs to. Each token
@@ -40,7 +39,7 @@ public class Token
      *            the name.
      * @param group
      *            the group.
-     * @throws InternalExceptionTest
+     * @throws InternalException
      *             if the provided name or group is <code>null</code>.
      */
     Token(
