@@ -25,8 +25,6 @@ import java.io.PushbackReader;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.sablecc.sablecc.GlobalInformation;
-import org.sablecc.sablecc.SemanticVerifier;
 import org.sablecc.sablecc.Verbosity;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.InvalidArgumentException;
@@ -191,8 +189,7 @@ public class SableCC {
                                 + textArgument.getText());
             }
 
-            File specificationFile = new File(textArgument.getText())
-                    .getAbsoluteFile();
+            File specificationFile = new File(textArgument.getText());
 
             if (!specificationFile.isFile()) {
 
@@ -230,6 +227,7 @@ public class SableCC {
             System.out.println("Compiling " + specificationFile);
         }
 
+        @SuppressWarnings("unused")
         Start ast;
 
         try {
@@ -252,10 +250,6 @@ public class SableCC {
             throw new InvalidArgumentException("cannot read "
                     + specificationFile, e);
         }
-
-        GlobalInformation globalInformation = new GlobalInformation(verbosity,
-                ast);
-        new SemanticVerifier(globalInformation);
 
         System.err.println("ERROR: unimplemented");
         System.exit(1);

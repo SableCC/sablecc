@@ -26,17 +26,10 @@ import java.util.TreeSet;
 
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.SemanticException;
-import org.sablecc.sablecc.structure.Group;
 import org.sablecc.sablecc.structure.Language;
-import org.sablecc.sablecc.structure.Selector;
-import org.sablecc.sablecc.structure.Token;
 import org.sablecc.sablecc.syntax3.node.AGroup;
 import org.sablecc.sablecc.syntax3.node.AHelper;
 import org.sablecc.sablecc.syntax3.node.AInvestigator;
-import org.sablecc.sablecc.syntax3.node.ASelection;
-import org.sablecc.sablecc.syntax3.node.ASelectionToken;
-import org.sablecc.sablecc.syntax3.node.ASelector;
-import org.sablecc.sablecc.syntax3.node.ASimpleToken;
 import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
@@ -51,10 +44,6 @@ public class GlobalInformation {
     private SortedMap<String, Declaration> declarationMap = new TreeMap<String, Declaration>();
 
     private List<HelperDeclaration> helpers = new LinkedList<HelperDeclaration>();
-
-    private List<SimpleTokenDeclaration> simpleTokens = new LinkedList<SimpleTokenDeclaration>();
-
-    private List<SelectionTokenDeclaration> selectionTokens = new LinkedList<SelectionTokenDeclaration>();
 
     private List<GroupDeclaration> groups = new LinkedList<GroupDeclaration>();
 
@@ -149,94 +138,6 @@ public class GlobalInformation {
         this.groups.add(groupDeclaration);
 
         this.language.addGroup(aGroup.getName().getText());
-    }
-
-    public void addSimpleToken(
-            ASimpleToken aSimpleToken,
-            AGroup aGroup)
-            throws SemanticException {
-
-        if (aSimpleToken == null) {
-            throw new InternalException("aSimpleToken may not be null");
-        }
-
-        if (this.declarationMap.containsKey(aSimpleToken.getName().getText())) {
-            throw new SemanticException("redeclaration of '"
-                    + aSimpleToken.getName().getText() + "'", aSimpleToken
-                    .getName());
-        }
-
-        SimpleTokenDeclaration simpleTokenDeclaration = new SimpleTokenDeclaration(
-                aSimpleToken);
-
-        this.declarationMap.put(aSimpleToken.getName().getText(),
-                simpleTokenDeclaration);
-        this.simpleTokens.add(simpleTokenDeclaration);
-
-        Group group;
-
-        if (aGroup == null) {
-            group = this.language.getGroup(null);
-        }
-        else {
-            group = this.language.getGroup(aGroup.getName().getText());
-        }
-
-        this.language.addToken(aSimpleToken.getName().getText(), group);
-    }
-
-    public void addSelectionToken(
-            ASelectionToken aSelectionToken,
-            AGroup aGroup)
-            throws SemanticException {
-
-        if (aSelectionToken == null) {
-            throw new InternalException("aSelectionToken may not be null");
-        }
-
-        ASelection aSelection = (ASelection) aSelectionToken.getSelection();
-        ASelector aSelector = (ASelector) aSelectionToken.getSelector();
-
-        SelectionTokenDeclaration selectionTokenDeclaration = new SelectionTokenDeclaration(
-                aSelectionToken);
-
-        this.selectionTokens.add(selectionTokenDeclaration);
-
-        if (this.methodNames.contains(aSelector.getName().getText())) {
-            throw new SemanticException("redeclaration of '"
-                    + aSelector.getName().getText() + "'", aSelector.getName());
-        }
-
-        this.methodNames.add(aSelector.getName().getText());
-
-        this.language.addSelector(aSelector.getName().getText());
-        Selector selector = this.language.getSelector(aSelector.getName()
-                .getText());
-
-        Group group;
-
-        if (aGroup == null) {
-            group = this.language.getGroup(null);
-        }
-        else {
-            group = this.language.getGroup(aGroup.getName().getText());
-        }
-
-        for (TIdentifier tokenName : aSelection.getNames()) {
-
-            if (this.declarationMap.containsKey(tokenName.getText())) {
-                throw new SemanticException("redeclaration of '"
-                        + tokenName.getText() + "'", tokenName);
-            }
-
-            this.declarationMap.put(tokenName.getText(),
-                    selectionTokenDeclaration);
-
-            this.language.addToken(tokenName.getText(), group);
-            Token token = this.language.getToken(tokenName.getText());
-
-            selector.addToken(token);
-        }
     }
 
     public void addInvestigator(
