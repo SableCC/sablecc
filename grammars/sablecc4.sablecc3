@@ -56,6 +56,7 @@ Tokens
 
   any_keyword           = 'Any';
   context_keyword       = 'Context';
+  dangling_keyword      = 'Dangling';
   group_keyword         = 'Group';
   ignored_keyword       = 'Ignored';
   infinite_keyword      = 'Infinite';
@@ -65,8 +66,11 @@ Tokens
   lexer_keyword         = 'Lexer';
   no_keyword            = 'No';
   over_keyword          = 'Over';
+  parser_keyword        = 'Parser';
   priorities_keyword    = 'Priorities';
   shortest_keyword      = 'Shortest';
+  start_keyword         = 'Start';
+  token_keyword         = 'Token';
   tokens_keyword        = 'Tokens';
 
   // separators
@@ -79,6 +83,12 @@ Tokens
 
   left_parenthesis  = '(';
   right_parenthesis = ')';
+
+  left_brace  = '{';
+  right_brace = '}';
+
+  left_bracket  = '[';
+  right_bracket = ']';
 
   // operators
 
@@ -124,7 +134,7 @@ Productions
   // language
 
   language =
-    language_header? lexer?;
+    language_header? lexer? parser?;
 
   language_header =
     language_keyword [name]:identifier;
@@ -233,3 +243,59 @@ Productions
 
   additional_identifier =
     comma identifier;
+
+  // parser
+  parser =
+    parser_keyword start? start_no_lookahead? [productions]:production*;
+
+  start =
+    start_keyword identifier_list semicolon;
+
+  start_no_lookahead =
+    start_keyword no_keyword lookahead_keyword identifier_list semicolon;
+
+  production =
+    {normal}    identifier assign alternatives semicolon |
+    {dangling}  dangling_keyword identifier assign alternatives semicolon |
+    {selection} identifier [additional_identifiers]:additional_identifier+ assign unnamed_alternative semicolon |
+    {token}     token_keyword identifier assign unnamed_alternative semicolon;
+
+  alternatives =
+    alternative [additional_alternatives]:additional_alternative*;
+
+  alternative =
+    alternative_name? [elements]:element*;
+
+  additional_alternative =
+    bar alternative;
+
+  unnamed_alternatives =
+    unnamed_alternative [additional_unnamed_alternatives]:additional_unnamed_alternative*;
+
+  unnamed_alternative =
+    [elements]:element*;
+
+  additional_unnamed_alternative =
+    bar unnamed_alternative;
+
+  alternative_name =
+    left_brace identifier right_brace;
+
+  element =
+    element_name? element_body unary_op?;
+
+  element_name =
+    left_bracket identifier right_bracket colon;
+
+  unary_op =
+    {zero_or_one}  question_mark |
+    {zero_or_more} star |
+    {one_or_more}  plus |
+    {exponent}     caret [times]:number |
+    {range}        caret left_parenthesis [from]:number two_dots [to]:number right_parenthesis |
+    {at_least}     caret left_parenthesis [times]:number three_dots right_parenthesis;
+
+  element_body =
+    {simple}  identifier |
+    {complex} left_parenthesis unnamed_alternatives right_parenthesis;
+
