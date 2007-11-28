@@ -26,13 +26,11 @@ Helpers
   tab             = 9;
   white_space     = ' ';
 
-  end_of_line     =
-    carriage_return |
-    line_feed |
-    carriage_return line_feed;
+  end_of_line = carriage_return | line_feed | carriage_return line_feed;
 
   decimal_digit     = ['0' .. '9'];
   hexadecimal_digit = [decimal_digit + [['a' .. 'f'] + ['A' .. 'F']]];
+
   lower_case_letter = ['a' .. 'z'];
   upper_case_letter = ['A' .. 'Z'];
 
@@ -61,21 +59,22 @@ Tokens
   group_keyword        = 'Group';
   ignored_keyword      = 'Ignored';
   infinite_keyword     = 'Infinite';
-  inline_keyword       = 'Inline';
+  inlined_keyword      = 'Inlined';
   investigator_keyword = 'Investigator';
   language_keyword     = 'Language';
   left_keyword         = 'Left';
-  lookahead_keyword    = 'Lookahead';
   lexer_keyword        = 'Lexer';
+  lookahead_keyword    = 'Lookahead';
   no_keyword           = 'No';
   over_keyword         = 'Over';
   parser_keyword       = 'Parser';
-  priorities_keyword   = 'Priorities';
+  priority_keyword     = 'Priority';
+  rejected_keyword     = 'Rejected';
   right_keyword        = 'Right';
+  separator_keyword    = 'Separator';
   shortest_keyword     = 'Shortest';
   start_keyword        = 'Start';
   token_keyword        = 'Token';
-  tokens_keyword       = 'Tokens';
   unary_keyword        = 'Unary';
 
   // separators
@@ -86,14 +85,14 @@ Tokens
   three_dots = '...';
   two_dots   = '..';
 
-  left_parenthesis  = '(';
-  right_parenthesis = ')';
-
   left_brace  = '{';
   right_brace = '}';
 
   left_bracket  = '[';
   right_bracket = ']';
+
+  left_parenthesis  = '(';
+  right_parenthesis = ')';
 
   // operators
 
@@ -111,12 +110,12 @@ Tokens
 
   number = decimal_digit+;
 
+  string          = ''' string_character string_character+ ''';
+  character_token = ''' (string_character | ''') ''';
+  empty_string    = ''' ''';
+
   decimal_character     = '#' decimal_digit+;
   hexadecimal_character = '#' ('x' | 'X') hexadecimal_digit+;
-
-  empty_string    = ''' ''';
-  character_token = ''' (string_character | ''') ''';
-  string          = ''' string_character string_character+ ''';
 
   // blanks
 
@@ -136,146 +135,152 @@ Ignored Tokens
 
 Productions
 
-  // language
-
   language =
-    language_header? lexer? parser?;
+    header? lexer? parser?;
 
-  language_header =
-    language_keyword [name]:identifier;
-
-  // lexer
+  header =
+    language_keyword [name]:identifier semicolon;
 
   lexer =
-    lexer_keyword helpers tokens? ignored? priorities? lookahead? investigators? context*;
+    lexer_keyword groups contexts;
 
-  // helpers
+  groups =
+    default_group [named_groups]:named_group*;
 
-  helpers =
-    [helpers]:helper* [groups]:group*;
+  default_group =
+    [regular_expressions]:regular_expression*;
 
-  group =
-    group_keyword [name]:identifier group_body;
-
-  group_body =
-    {helpers} [helpers]:helper+ |
-    {list}    identifier_list semicolon;
-
-  helper =
-    [name]:identifier assign regular_expression semicolon;
-
-  // tokens
-
-  tokens =
-    tokens_keyword identifier_list semicolon;
-
-  // ignored
-
-  ignored =
-    ignored_keyword identifier_list semicolon;
-
-  // priorities
-
-  priorities =
-    priorities_keyword [priorities]:priority+;
-
-  priority =
-    [high_priority]:identifier over_keyword [low_priority]:identifier semicolon;
-
-  // lookahead
-
-  lookahead =
-    {no}       no_keyword lookahead_keyword |
-    {infinite} infinite_keyword lookahead_keyword;
-
-  // investigators
-
-  investigators =
-    [investigators]:investigator+;
-
-  investigator =
-    investigator_keyword [name]:identifier left_parenthesis right_parenthesis identifier_list semicolon;
-
-  // context
-
-  context =
-    context_keyword [name]:identifier tokens? ignored? priorities? lookahead? investigators?;
-
-  // regular expression
+  named_group =
+    group_keyword [name]:identifier colon group_collection? [regular_expressions]:regular_expression*;
 
   regular_expression =
-    expression [additional_expressions]:additional_expression*;
-
-  additional_expression =
-    bar expression;
+    [name]:identifier assign expression semicolon;
 
   expression =
-    {concat}           concat_expression |
-    {interval}         [lower_bound]:character two_dots [upper_bound]:character |
-    {shortest}         shortest_keyword concat_expression |
-    {subtract}         [left]:concat_expression minus [right]:concat_expression;
+    top_level_expression [additional_top_level_expressions]:additional_top_level_expression*;
 
-  concat_expression =
-    {simple} unary_expression |
-    {normal} concat_expression unary_expression;
+  additional_top_level_expression =
+    bar top_level_expression;
+
+  top_level_expression =
+    {simple}      concatenation_expression |
+    {subtraction} [left_expression]:concatenation_expression minus [right_expression]:concatenation_expression |
+    {shortest}    shortest_keyword concatenation_expression |
+    {interval}    [lower_bound_character]:character two_dots [upper_bound_character]:character;
+
+  concatenation_expression =
+    [unary_expressions]:unary_expression+;
 
   unary_expression =
-    term unary_op?;
-
-  unary_op =
-    {zero_or_one}  question_mark |
-    {zero_or_more} star |
-    {one_or_more}  plus |
-    {exponent}     caret [times]:number |
-    {range}        caret left_parenthesis [from]:number two_dots [to]:number right_parenthesis |
-    {at_least}     caret left_parenthesis [times]:number three_dots right_parenthesis;
+    term unary_operator?;
 
   term =
-    {parenthesized} left_parenthesis regular_expression right_parenthesis |
-    {string}        string |
-    {empty_string}  empty_string |
-    {character}     character |
-    {any}           any_keyword |
-    {helper}        identifier;
+    {name}         identifier |
+    {string}       string |
+    {character}    character_token |
+    {empty_string} empty_string |
+    {any}          any_keyword |
+    {decimal}      decimal_character |
+    {hexadecimal}  hexadecimal_character |
+    {parenthesis}  left_parenthesis expression right_parenthesis;
+
+  unary_operator =
+    {zero_or_more} star |
+    {zero_or_one}  question_mark |
+    {one_or_more}  plus |
+    {exponent}     caret [exponent]:number |
+    {interval}     caret left_parenthesis [lower_bound_exponent]:number two_dots [upper_bound_exponent]:number right_parenthesis |
+    {at_least}     caret left_parenthesis [lower_bound_exponent]:number three_dots right_parenthesis;
 
   character =
     {character}   character_token |
     {decimal}     decimal_character |
     {hexadecimal} hexadecimal_character;
 
-  // identifier list
+  contexts =
+    default_context [named_contexts]:named_context*;
 
-  identifier_list =
-    identifier [additional_identifiers]:additional_identifier*;
+  default_context =
+    context_body;
 
-  additional_identifier =
-    comma identifier;
+  named_context =
+    context_keyword [name]:identifier colon context_body;
 
-  // parser
+  context_body =
+    tokens? ignored? rejected? priorities? lookahead? investigators?;
+
+  tokens =
+    token_keyword group_collection;
+
+  ignored =
+    ignored_keyword group_collection;
+
+  rejected =
+    rejected_keyword group_collection;
+
+  group_collection =
+    group_list semicolon;
+
+  group_list =
+    group [additional_groups]:additional_group*;
+
+  additional_group =
+    comma group;
+
+  priorities =
+    priority_keyword [priorities]:priority+;
+
+  priority =
+    [high_priority_group]:group over_keyword [low_priority_group]:group semicolon;
+
+  group =
+    {name}         identifier |
+    {string}       string |
+    {character}    character_token |
+    {empty_string} empty_string |
+    {any}          any_keyword;
+
+  lookahead =
+    {no}       no_keyword lookahead_keyword semicolon |
+    {infinite} infinite_keyword lookahead_keyword semicolon;
+
+  investigators =
+    [investigators]:investigator+;
+
+  investigator =
+    investigator_keyword [name]:identifier left_parenthesis identifier right_parenthesis semicolon;
 
   parser =
-    parser_keyword start? start_no_lookahead? [productions]:production* inline?;
-
-  // start
+    parser_keyword start parser_contexts inlined?;
 
   start =
-    start_keyword identifier_list semicolon;
+    start_lookahead? start_no_lookahead?;
 
-  // start no lookahead
+  start_lookahead =
+    start_keyword identifier_list semicolon;
 
   start_no_lookahead =
     start_keyword no_keyword lookahead_keyword identifier_list semicolon;
 
-  // production
+  parser_contexts =
+    default_parser_context [named_parser_contexts]:named_parser_context*;
+
+  default_parser_context =
+    [productions]:production*;
+
+  named_parser_context =
+    context_keyword [name]:identifier colon [productions]:production*;
 
   production =
-    production_body parser_priorities? parser_investigators?;
+    {normal}    qualifier? production_body parser_priorities? parser_investigators? |
+    {selection} semantic_selection;
+
+  qualifier =
+    {dangling} dangling_keyword |
+    {token}    token_keyword;
 
   production_body =
-    {normal}    identifier assign alternatives semicolon |
-    {dangling}  dangling_keyword identifier assign alternatives semicolon |
-    {selection} identifier [additional_identifiers]:additional_identifier+ colon [name]:identifier left_parenthesis right_parenthesis assign unnamed_alternative semicolon |
-    {token}     token_keyword identifier assign unnamed_alternative semicolon;
+    identifier assign alternatives semicolon;
 
   alternatives =
     alternative [additional_alternatives]:additional_alternative*;
@@ -283,42 +288,49 @@ Productions
   additional_alternative =
     bar alternative;
 
-  unnamed_alternatives =
-    unnamed_alternative [additional_unnamed_alternatives]:additional_unnamed_alternative*;
-
-  additional_unnamed_alternative =
-    bar unnamed_alternative;
-
-  // alternative
-
   alternative =
-    alternative_name? [elements]:element* dangling_element?;
-
-  unnamed_alternative =
-    [elements]:element* dangling_element?;
+    {normal}    alternative_name? [elements]:element* dangling_element? |
+    {separated} alternative_name? element_name? element_body exponent_operator separator_keyword [elements]:element*;
 
   alternative_name =
     left_brace identifier right_brace;
 
-  // element
-
   element =
-    element_name? element_body unary_op?;
+    element_name? element_body unary_operator?;
 
   dangling_element =
     dangling_keyword element_name? identifier question_mark;
 
   element_name =
-    left_bracket identifier right_bracket colon;
+    left_bracket identifier colon right_bracket;
 
   element_body =
-    {simple}  identifier |
-    {complex} left_parenthesis unnamed_alternatives right_parenthesis;
+    {name}         identifier |
+    {string}       string |
+    {character}    character_token |
+    {empty_string} empty_string |
+    {any}          any_keyword |
+    {parenthesis}  left_parenthesis element_alternatives right_parenthesis;
 
-  // parser priorities
+  element_alternatives =
+    element_alternative [additional_element_alternatives]:additional_element_alternative*;
+
+  additional_element_alternative =
+    bar element_alternative;
+
+  element_alternative =
+    {normal}    [elements]:element* |
+    {separated} element_name? element_body exponent_operator separator_keyword [elements]:element*;
+
+  exponent_operator =
+    {zero_or_more} star |
+    {one_or_more}  plus |
+    {exponent}     caret [exponent]:number |
+    {interval}     caret left_parenthesis [lower_bound_exponent]:number two_dots [upper_bound_exponent]:number right_parenthesis |
+    {at_least}     caret left_parenthesis [lower_bound_exponent]:number three_dots right_parenthesis;
 
   parser_priorities =
-    priorities_keyword [parser_priorities]:parser_priority+;
+    priority_keyword [parser_priorities]:parser_priority+;
 
   parser_priority =
     {left_associative}  left_keyword associative_keyword colon identifier_list semicolon |
@@ -326,15 +338,23 @@ Productions
     {left_unary}        left_keyword unary_keyword colon identifier_list semicolon |
     {right_unary}       right_keyword unary_keyword colon identifier_list semicolon;
 
-  // parser investigators
-
   parser_investigators =
     [parser_investigators]:parser_investigator+;
 
   parser_investigator =
-    investigator_keyword [name]:identifier left_parenthesis [args]:identifier_list? right_parenthesis identifier_list semicolon;
+    investigator_keyword [name]:identifier left_parenthesis identifier_list? right_parenthesis semicolon;
 
-  // inline
+  semantic_selection =
+    long_identifier_list assign [name]:identifier left_parenthesis identifier right_parenthesis semicolon;
 
-  inline =
-    inline_keyword identifier_list semicolon;
+  long_identifier_list =
+    identifier [additional_identifiers]:additional_identifier+;
+
+  inlined =
+    inlined_keyword identifier_list semicolon;
+
+  identifier_list =
+    identifier [additional_identifiers]:additional_identifier*;
+
+  additional_identifier =
+    comma identifier;
