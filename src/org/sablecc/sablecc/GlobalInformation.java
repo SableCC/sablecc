@@ -17,18 +17,12 @@
 
 package org.sablecc.sablecc;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.SemanticException;
 import org.sablecc.sablecc.structure.Language;
-import org.sablecc.sablecc.syntax3.node.AGroup;
-import org.sablecc.sablecc.syntax3.node.AHelper;
 import org.sablecc.sablecc.syntax3.node.AInvestigator;
 import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
@@ -40,12 +34,6 @@ public class GlobalInformation {
     private final Start ast;
 
     private Language language;
-
-    private SortedMap<String, Declaration> declarationMap = new TreeMap<String, Declaration>();
-
-    private List<HelperDeclaration> helpers = new LinkedList<HelperDeclaration>();
-
-    private List<GroupDeclaration> groups = new LinkedList<GroupDeclaration>();
 
     private SortedSet<String> methodNames = new TreeSet<String>();
 
@@ -98,46 +86,6 @@ public class GlobalInformation {
         }
 
         this.language = language;
-    }
-
-    public void addHelper(
-            AHelper aHelper)
-            throws SemanticException {
-
-        if (aHelper == null) {
-            throw new InternalException("aHelper may not be null");
-        }
-
-        if (this.declarationMap.containsKey(aHelper.getName().getText())) {
-            throw new SemanticException("redeclaration of '"
-                    + aHelper.getName().getText() + "'", aHelper.getName());
-        }
-
-        HelperDeclaration helperDeclaration = new HelperDeclaration(aHelper);
-
-        this.declarationMap.put(aHelper.getName().getText(), helperDeclaration);
-        this.helpers.add(helperDeclaration);
-    }
-
-    public void addGroup(
-            AGroup aGroup)
-            throws SemanticException {
-
-        if (aGroup == null) {
-            throw new InternalException("aGroup may not be null");
-        }
-
-        if (this.declarationMap.containsKey(aGroup.getName().getText())) {
-            throw new SemanticException("redeclaration of '"
-                    + aGroup.getName().getText() + "'", aGroup.getName());
-        }
-
-        GroupDeclaration groupDeclaration = new GroupDeclaration(aGroup);
-
-        this.declarationMap.put(aGroup.getName().getText(), groupDeclaration);
-        this.groups.add(groupDeclaration);
-
-        this.language.addGroup(aGroup.getName().getText());
     }
 
     public void addInvestigator(
