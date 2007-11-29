@@ -290,7 +290,7 @@ Productions
 
   alternative =
     {normal}    alternative_name? [elements]:element* dangling_element? |
-    {separated} alternative_name? element_name? element_body exponent_operator separator_keyword [elements]:element*;
+    {separated} alternative_name? element_name? element_body exponent_operator separator_keyword [separator]:element;
 
   alternative_name =
     left_brace identifier right_brace;
