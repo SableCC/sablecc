@@ -320,7 +320,7 @@ Productions
 
   element_alternative =
     {normal}    [elements]:element* |
-    {separated} element_name? element_body exponent_operator separator_keyword [elements]:element*;
+    {separated} element_name? element_body exponent_operator separator_keyword [separator]:element;
 
   exponent_operator =
     {zero_or_more} star |
