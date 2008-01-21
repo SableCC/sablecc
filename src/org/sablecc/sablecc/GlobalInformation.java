@@ -23,7 +23,6 @@ import java.util.TreeSet;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.SemanticException;
 import org.sablecc.sablecc.structure.Language;
-import org.sablecc.sablecc.syntax3.node.AInvestigator;
 import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
@@ -34,8 +33,6 @@ public class GlobalInformation {
     private final Start ast;
 
     private Language language;
-
-    private SortedSet<String> methodNames = new TreeSet<String>();
 
     private SortedSet<String> stateNames = new TreeSet<String>();
 
@@ -86,25 +83,6 @@ public class GlobalInformation {
         }
 
         this.language = language;
-    }
-
-    public void addInvestigator(
-            AInvestigator aInvestigator)
-            throws SemanticException {
-
-        if (aInvestigator == null) {
-            throw new InternalException("aInvestigator may not be null");
-        }
-
-        if (this.methodNames.contains(aInvestigator.getName().getText())) {
-            throw new SemanticException("redeclaration of '"
-                    + aInvestigator.getName().getText() + "'", aInvestigator
-                    .getName());
-        }
-
-        this.methodNames.add(aInvestigator.getName().getText());
-
-        this.language.addInvestigator(aInvestigator.getName().getText());
     }
 
     public void addState(
