@@ -22,23 +22,26 @@ Helpers
   any = [0 .. 0xffff];
 
   carriage_return = 13;
-  line_feed       = 10;
-  tab             = 9;
-  white_space     = ' ';
+  line_feed = 10;
+  tab = 9;
+  white_space = ' ';
 
-  end_of_line = carriage_return | line_feed | carriage_return line_feed;
+  end_of_line =
+    carriage_return |
+    line_feed |
+    carriage_return line_feed;
 
-  decimal_digit     = ['0' .. '9'];
+  decimal_digit = ['0' .. '9'];
   hexadecimal_digit = [decimal_digit + [['a' .. 'f'] + ['A' .. 'F']]];
 
   lower_case_letter = ['a' .. 'z'];
   upper_case_letter = ['A' .. 'Z'];
 
-  string_character  = [[32..126] - '''];
+  string_character = [[32..126] - '''];
 
   identifier_part = lower_case_letter (lower_case_letter | decimal_digit)*;
 
-  not_star       = [any - '*'];
+  not_star = [any - '*'];
   not_star_slash = [any - ['/' + '*']];
 
   not_end_of_line = [any - [carriage_return + line_feed]];
@@ -46,63 +49,67 @@ Helpers
   long_comment = '/*' not_star* ('*' (not_star_slash not_star*)?)* '*/';
   line_comment = '//' not_end_of_line* end_of_line?;
 
-  invalid_construct_char = lower_case_letter | upper_case_letter | '_' | decimal_digit;
+  invalid_construct_char =
+    lower_case_letter |
+    upper_case_letter |
+    '_' |
+    decimal_digit;
 
 Tokens
 
   // keywords
 
-  any_keyword          = 'Any';
-  associative_keyword  = 'Associative';
-  context_keyword      = 'Context';
-  dangling_keyword     = 'Dangling';
-  group_keyword        = 'Group';
-  ignored_keyword      = 'Ignored';
-  infinite_keyword     = 'Infinite';
-  inlined_keyword      = 'Inlined';
+  any_keyword = 'Any';
+  associative_keyword = 'Associative';
+  context_keyword = 'Context';
+  dangling_keyword = 'Dangling';
+  group_keyword = 'Group';
+  ignored_keyword = 'Ignored';
+  infinite_keyword = 'Infinite';
+  inlined_keyword = 'Inlined';
   investigator_keyword = 'Investigator';
-  language_keyword     = 'Language';
-  left_keyword         = 'Left';
-  lexer_keyword        = 'Lexer';
-  lookahead_keyword    = 'Lookahead';
-  no_keyword           = 'No';
-  over_keyword         = 'Over';
-  parser_keyword       = 'Parser';
-  priority_keyword     = 'Priority';
-  rejected_keyword     = 'Rejected';
-  right_keyword        = 'Right';
-  separator_keyword    = 'Separator';
-  shortest_keyword     = 'Shortest';
-  start_keyword        = 'Start';
-  token_keyword        = 'Token';
-  unary_keyword        = 'Unary';
+  language_keyword = 'Language';
+  left_keyword = 'Left';
+  lexer_keyword = 'Lexer';
+  lookahead_keyword = 'Lookahead';
+  no_keyword = 'No';
+  over_keyword = 'Over';
+  parser_keyword = 'Parser';
+  priority_keyword = 'Priority';
+  rejected_keyword = 'Rejected';
+  right_keyword = 'Right';
+  separator_keyword = 'Separator';
+  shortest_keyword = 'Shortest';
+  start_keyword = 'Start';
+  token_keyword = 'Token';
+  unary_keyword = 'Unary';
 
   // separators
 
-  colon      = ':';
-  comma      = ',';
-  semicolon  = ';';
+  colon = ':';
+  comma = ',';
+  semicolon = ';';
   three_dots = '...';
-  two_dots   = '..';
+  two_dots = '..';
 
   left_brace  = '{';
   right_brace = '}';
 
-  left_bracket  = '[';
+  left_bracket = '[';
   right_bracket = ']';
 
-  left_parenthesis  = '(';
+  left_parenthesis = '(';
   right_parenthesis = ')';
 
   // operators
 
-  assign        = '=';
-  bar           = '|';
-  caret         = '^';
-  minus         = '-';
-  plus          = '+';
+  assign = '=';
+  bar = '|';
+  caret = '^';
+  minus = '-';
+  plus = '+';
   question_mark = '?';
-  star          = '*';
+  star = '*';
 
   // identifier, numbers, strings and character
 
@@ -110,11 +117,11 @@ Tokens
 
   number = decimal_digit+;
 
-  string          = ''' string_character string_character+ ''';
+  string = ''' string_character string_character+ ''';
   character_token = ''' (string_character | ''') ''';
-  empty_string    = ''' ''';
+  empty_string = ''' ''';
 
-  decimal_character     = '#' decimal_digit+;
+  decimal_character = '#' decimal_digit+;
   hexadecimal_character = '#' ('x' | 'X') hexadecimal_digit+;
 
   // blanks
@@ -151,22 +158,26 @@ Productions
     [regular_expressions]:regular_expression*;
 
   named_group =
-    group_keyword [name]:identifier colon group_collection? [regular_expressions]:regular_expression*;
+    group_keyword [name]:identifier colon
+    group_collection? [regular_expressions]:regular_expression*;
 
   regular_expression =
     [name]:identifier assign expression semicolon;
 
   expression =
-    top_level_expression [additional_top_level_expressions]:additional_top_level_expression*;
+    top_level_expression
+    [additional_top_level_expressions]:additional_top_level_expression*;
 
   additional_top_level_expression =
     bar top_level_expression;
 
   top_level_expression =
     {simple}      concatenation_expression |
-    {subtraction} [left_expression]:concatenation_expression minus [right_expression]:concatenation_expression |
+    {subtraction} [left_expression]:concatenation_expression minus
+                  [right_expression]:concatenation_expression |
     {shortest}    shortest_keyword concatenation_expression |
-    {interval}    [lower_bound_character]:character two_dots [upper_bound_character]:character;
+    {interval}    [lower_bound_character]:character two_dots
+                  [upper_bound_character]:character;
 
   concatenation_expression =
     [unary_expressions]:unary_expression+;
@@ -189,8 +200,10 @@ Productions
     {zero_or_one}  question_mark |
     {one_or_more}  plus |
     {exponent}     caret [exponent]:number |
-    {interval}     caret left_parenthesis [lower_bound_exponent]:number two_dots [upper_bound_exponent]:number right_parenthesis |
-    {at_least}     caret left_parenthesis [lower_bound_exponent]:number three_dots right_parenthesis;
+    {interval}     caret left_parenthesis [lower_bound_exponent]:number
+                   two_dots [upper_bound_exponent]:number right_parenthesis |
+    {at_least}     caret left_parenthesis [lower_bound_exponent]:number
+                   three_dots right_parenthesis;
 
   character =
     {character}   character_token |
@@ -231,7 +244,8 @@ Productions
     priority_keyword [priorities]:priority+;
 
   priority =
-    [high_priority_group]:group over_keyword [low_priority_group]:group semicolon;
+    [high_priority_group]:group over_keyword
+    [low_priority_group]:group semicolon;
 
   group =
     {name}         identifier |
@@ -248,7 +262,8 @@ Productions
     [investigators]:investigator+;
 
   investigator =
-    investigator_keyword [name]:identifier left_parenthesis identifier right_parenthesis semicolon;
+    investigator_keyword [name]:identifier
+    left_parenthesis identifier right_parenthesis semicolon;
 
   parser =
     parser_keyword start parser_contexts inlined?;
@@ -272,7 +287,8 @@ Productions
     context_keyword [name]:identifier colon [productions]:production*;
 
   production =
-    {normal}    qualifier? production_body parser_priorities? parser_investigators? |
+    {normal}    qualifier? production_body
+                parser_priorities? parser_investigators? |
     {selection} semantic_selection;
 
   qualifier =
@@ -290,7 +306,8 @@ Productions
 
   alternative =
     {normal}    alternative_name? [elements]:element* dangling_element? |
-    {separated} alternative_name? element_name? element_body exponent_operator separator_keyword [separator]:element;
+    {separated} alternative_name? element_name? element_body
+                exponent_operator separator_keyword [separator]:element;
 
   alternative_name =
     left_brace identifier right_brace;
@@ -313,39 +330,49 @@ Productions
     {parenthesis}  left_parenthesis element_alternatives right_parenthesis;
 
   element_alternatives =
-    element_alternative [additional_element_alternatives]:additional_element_alternative*;
+    element_alternative
+    [additional_element_alternatives]:additional_element_alternative*;
 
   additional_element_alternative =
     bar element_alternative;
 
   element_alternative =
     {normal}    [elements]:element* |
-    {separated} element_name? element_body exponent_operator separator_keyword [separator]:element;
+    {separated} element_name? element_body
+                exponent_operator separator_keyword [separator]:element;
 
   exponent_operator =
     {zero_or_more} star |
     {one_or_more}  plus |
     {exponent}     caret [exponent]:number |
-    {interval}     caret left_parenthesis [lower_bound_exponent]:number two_dots [upper_bound_exponent]:number right_parenthesis |
-    {at_least}     caret left_parenthesis [lower_bound_exponent]:number three_dots right_parenthesis;
+    {interval}     caret left_parenthesis [lower_bound_exponent]:number
+                   two_dots [upper_bound_exponent]:number right_parenthesis |
+    {at_least}     caret left_parenthesis [lower_bound_exponent]:number
+                   three_dots right_parenthesis;
 
   parser_priorities =
     priority_keyword [parser_priorities]:parser_priority+;
 
   parser_priority =
-    {left_associative}  left_keyword associative_keyword colon identifier_list semicolon |
-    {right_associative} right_keyword associative_keyword colon identifier_list semicolon |
-    {left_unary}        left_keyword unary_keyword colon identifier_list semicolon |
-    {right_unary}       right_keyword unary_keyword colon identifier_list semicolon;
+    {left_associative}  left_keyword associative_keyword
+                        colon identifier_list semicolon |
+    {right_associative} right_keyword associative_keyword
+                        colon identifier_list semicolon |
+    {left_unary}        left_keyword unary_keyword
+                        colon identifier_list semicolon |
+    {right_unary}       right_keyword unary_keyword
+                        colon identifier_list semicolon;
 
   parser_investigators =
     [parser_investigators]:parser_investigator+;
 
   parser_investigator =
-    investigator_keyword [name]:identifier left_parenthesis identifier_list? right_parenthesis semicolon;
+    investigator_keyword [name]:identifier
+    left_parenthesis identifier_list? right_parenthesis semicolon;
 
   semantic_selection =
-    long_identifier_list assign [name]:identifier left_parenthesis identifier right_parenthesis semicolon;
+    long_identifier_list assign [name]:identifier
+    left_parenthesis identifier right_parenthesis semicolon;
 
   long_identifier_list =
     identifier [additional_identifiers]:additional_identifier+;
