@@ -82,6 +82,7 @@ Tokens
   shortest_keyword = 'Shortest';
   start_keyword = 'Start';
   token_keyword = 'Token';
+  tree_keyword = 'Tree';
   unary_keyword = 'Unary';
 
   // separators
@@ -143,7 +144,7 @@ Ignored Tokens
 Productions
 
   language =
-    header? lexer? parser?;
+    header? lexer? parser? tree?;
 
   header =
     language_keyword [name]:identifier semicolon;
@@ -316,7 +317,7 @@ Productions
     {separated} parser_element_name? left_parenthesis
                 [left_parser_element]:parser_element separator_keyword
                 [right_parser_element]:parser_element
-                right_parenthesis many_operator?;
+                right_parenthesis many_operator;
 
   parser_dangling_element =
     dangling_keyword parser_element_name? identifier question_mark;
@@ -374,3 +375,47 @@ Productions
 
   additional_identifier =
     comma identifier;
+
+  tree =
+    tree_keyword [tree_productions]:tree_production*;
+
+  tree_production =
+    [name]:identifier assign tree_alternatives semicolon;
+
+  tree_alternatives =
+    tree_alternative
+    [additional_tree_alternatives]:additional_tree_alternative*;
+
+  additional_tree_alternative =
+    bar tree_alternative;
+
+  tree_alternative =
+    tree_alternative_name? [tree_elements]:tree_element*;
+
+  tree_alternative_name =
+    left_brace identifier colon right_brace;
+
+  tree_element =
+    {normal}    tree_element_name? tree_element_body unary_operator? |
+    {separated} tree_element_name? left_parenthesis
+                [left_tree_element]:tree_element separator_keyword
+                [right_tree_element]:tree_element
+                right_parenthesis many_operator;
+
+  tree_element_name =
+    left_bracket identifier colon right_bracket;
+
+  tree_element_body =
+    {group_literal} group_literal |
+    {parenthesis}   left_parenthesis tree_subalternatives
+                    right_parenthesis;
+
+  tree_subalternatives =
+    tree_subalternative
+    [additional_tree_subalternatives]:additional_tree_subalternative*;
+
+  additional_tree_subalternative =
+    bar tree_subalternative;
+
+  tree_subalternative =
+    [tree_elements]:tree_element*;
