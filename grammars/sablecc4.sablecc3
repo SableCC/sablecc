@@ -59,6 +59,7 @@ Tokens
 
   // keywords
 
+  alternative_keyword = 'Alternative';
   any_keyword = 'Any';
   associative_keyword = 'Associative';
   context_keyword = 'Context';
@@ -73,15 +74,18 @@ Tokens
   lexer_keyword = 'Lexer';
   lookahead_keyword = 'Lookahead';
   no_keyword = 'No';
+  null_keyword = 'Null';
   over_keyword = 'Over';
   parser_keyword = 'Parser';
   priority_keyword = 'Priority';
+  production_keyword = 'Production';
   rejected_keyword = 'Rejected';
   right_keyword = 'Right';
   separator_keyword = 'Separator';
   shortest_keyword = 'Shortest';
   start_keyword = 'Start';
   token_keyword = 'Token';
+  transformation_keyword = 'Transformation';
   tree_keyword = 'Tree';
   unary_keyword = 'Unary';
 
@@ -89,6 +93,7 @@ Tokens
 
   colon = ':';
   comma = ',';
+  dot = '.';
   semicolon = ';';
   three_dots = '...';
   two_dots = '..';
@@ -104,6 +109,7 @@ Tokens
 
   // operators
 
+  arrow = '->';
   assign = '=';
   bar = '|';
   caret = '^';
@@ -144,7 +150,7 @@ Ignored Tokens
 Productions
 
   language =
-    header? lexer? parser? tree?;
+    header? lexer? parser? transformation? tree?;
 
   header =
     language_keyword [name]:identifier semicolon;
@@ -306,39 +312,35 @@ Productions
     bar parser_alternative;
 
   parser_alternative =
-    parser_alternative_name? [parser_elements]:parser_element*
-    parser_dangling_element?;
+    alternative_name? [elements]:element* parser_dangling_element?;
 
-  parser_alternative_name =
+  alternative_name =
     left_brace identifier colon right_brace;
 
-  parser_element =
-    {normal}    parser_element_name? parser_element_body unary_operator? |
-    {separated} parser_element_name? left_parenthesis
-                [left_parser_element]:parser_element separator_keyword
-                [right_parser_element]:parser_element
-                right_parenthesis many_operator;
-
   parser_dangling_element =
-    dangling_keyword parser_element_name? identifier question_mark;
+    dangling_keyword element_name? identifier question_mark;
 
-  parser_element_name =
+  element =
+    {normal}    element_name? element_body unary_operator? |
+    {separated} element_name? left_parenthesis [left_element]:element
+                separator_keyword [right_element]:element right_parenthesis
+                many_operator;
+
+  element_name =
     left_bracket identifier colon right_bracket;
 
-  parser_element_body =
+  element_body =
     {group_literal} group_literal |
-    {parenthesis}   left_parenthesis parser_subalternatives
-                    right_parenthesis;
+    {parenthesis}   left_parenthesis subalternatives right_parenthesis;
 
-  parser_subalternatives =
-    parser_subalternative
-    [additional_parser_subalternatives]:additional_parser_subalternative*;
+  subalternatives =
+    subalternative [additional_subalternatives]:additional_subalternative*;
 
-  additional_parser_subalternative =
-    bar parser_subalternative;
+  additional_subalternative =
+    bar subalternative;
 
-  parser_subalternative =
-    [parser_elements]:parser_element*;
+  subalternative =
+    [elements]:element*;
 
   parser_priorities =
     priority_keyword [parser_priorities]:parser_priority+;
@@ -376,6 +378,53 @@ Productions
   additional_identifier =
     comma identifier;
 
+  transformation =
+    transformation_keyword
+    production_transformations? alternative_transformations?;
+
+  production_transformations =
+    production_keyword [production_transformations]:production_transformation*;
+
+  production_transformation =
+    [production_name]:identifier arrow element_list? semicolon;
+
+  element_list =
+    element [additional_elements]:additional_element*;
+
+  additional_element =
+    comma element;
+
+  alternative_transformations =
+    alternative_keyword
+    [alternative_transformations]:alternative_transformation*;
+
+  alternative_transformation =
+    alternative_reference arrow transformation_element_list? semicolon;
+
+  alternative_reference =
+    {unnamed} [production_name]:identifier |
+    {named}   [production_name]:identifier dot [alternative_name]:identifier;
+
+  transformation_element_list =
+    transformation_element
+    [additional_transformation_elements]:additional_transformation_element*;
+
+  additional_transformation_element =
+    comma transformation_element;
+
+  transformation_element =
+    {null}      null_keyword |
+    {reference} element_reference |
+    {new}       alternative_reference left_parenthesis
+                transformation_element_list? right_parenthesis |
+    {list}      left_bracket transformation_element_list? right_bracket |
+    {tuple}     left_parenthesis transformation_element_list?
+                right_parenthesis;
+
+  element_reference =
+    {direct} [name]:identifier |
+    {nested} [name]:identifier dot [nested_name]:identifier;
+
   tree =
     tree_keyword [tree_productions]:tree_production*;
 
@@ -390,32 +439,4 @@ Productions
     bar tree_alternative;
 
   tree_alternative =
-    tree_alternative_name? [tree_elements]:tree_element*;
-
-  tree_alternative_name =
-    left_brace identifier colon right_brace;
-
-  tree_element =
-    {normal}    tree_element_name? tree_element_body unary_operator? |
-    {separated} tree_element_name? left_parenthesis
-                [left_tree_element]:tree_element separator_keyword
-                [right_tree_element]:tree_element
-                right_parenthesis many_operator;
-
-  tree_element_name =
-    left_bracket identifier colon right_bracket;
-
-  tree_element_body =
-    {group_literal} group_literal |
-    {parenthesis}   left_parenthesis tree_subalternatives
-                    right_parenthesis;
-
-  tree_subalternatives =
-    tree_subalternative
-    [additional_tree_subalternatives]:additional_tree_subalternative*;
-
-  additional_tree_subalternative =
-    bar tree_subalternative;
-
-  tree_subalternative =
-    [tree_elements]:tree_element*;
+    alternative_name? [elements]:element*;
