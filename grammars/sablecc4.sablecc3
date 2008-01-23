@@ -64,10 +64,12 @@ Tokens
   associative_keyword = 'Associative';
   context_keyword = 'Context';
   dangling_keyword = 'Dangling';
+  exclusion_keyword = 'Exclusion';
   group_keyword = 'Group';
   ignored_keyword = 'Ignored';
   infinite_keyword = 'Infinite';
   inlined_keyword = 'Inlined';
+  intersection_keyword = 'Intersection';
   investigator_keyword = 'Investigator';
   language_keyword = 'Language';
   left_keyword = 'Left';
@@ -179,12 +181,18 @@ Productions
     bar top_level_expression;
 
   top_level_expression =
-    {simple}      concatenation_expression |
-    {subtraction} [left_expression]:concatenation_expression minus
-                  [right_expression]:concatenation_expression |
-    {shortest}    shortest_keyword concatenation_expression |
-    {interval}    [lower_bound_character]:character two_dots
-                  [upper_bound_character]:character;
+    {simple}       concatenation_expression |
+    {subtraction}  [left_expression]:concatenation_expression minus
+                   [right_expression]:concatenation_expression |
+    {shortest}     shortest_keyword concatenation_expression |
+    {interval}     [lower_bound_character]:character two_dots
+                   [upper_bound_character]:character |
+    {intersection} [left_expression]:concatenation_expression
+                   intersection_keyword
+                   [right_expression]:concatenation_expression |
+    {exclusion}    [left_expression]:concatenation_expression
+                   exclusion_keyword
+                   [right_expression]:concatenation_expression;
 
   concatenation_expression =
     [unary_expressions]:unary_expression+;
