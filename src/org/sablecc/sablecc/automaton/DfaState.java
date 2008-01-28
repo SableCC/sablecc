@@ -29,17 +29,17 @@ import org.sablecc.sablecc.exception.InternalException;
  * and only one transition from one state to another with an input symbol. A
  * DfaState is a state for this kind of automaton.
  */
-public final class DfaState<T extends Comparable<? super T>>
-        implements Comparable<DfaState<T>> {
+public final class DfaState
+        implements Comparable<DfaState> {
 
     /** The <code>Dfa</code> related to this <code>DfaState</code>. */
-    private final Dfa<T> dfa;
+    private final Dfa dfa;
 
     /** The identification number of this <code>DfaState</code>. */
     private final int id;
 
     /** The sorted map of transitions for this <code>DfaState</code>. */
-    private SortedMap<Symbol<T>, DfaState<T>> transitions;
+    private SortedMap<Symbol, DfaState> transitions;
 
     /** A stability status for this <code>DfaState</code>. */
     private boolean isStable;
@@ -59,7 +59,7 @@ public final class DfaState<T extends Comparable<? super T>>
      *             if the provided <code>Dfa</code> is <code>null</code>.
      */
     DfaState(
-            Dfa<T> dfa) {
+            Dfa dfa) {
 
         if (dfa == null) {
             throw new InternalException("dfa may not be null");
@@ -70,7 +70,7 @@ public final class DfaState<T extends Comparable<? super T>>
         this.id = dfa.getNextStateId();
         dfa.addState(this);
 
-        this.transitions = new TreeMap<Symbol<T>, DfaState<T>>();
+        this.transitions = new TreeMap<Symbol, DfaState>();
 
         this.isStable = false;
     }
@@ -80,7 +80,7 @@ public final class DfaState<T extends Comparable<? super T>>
      * 
      * @return the <code>Dfa</code>.
      */
-    public Dfa<T> getDfa() {
+    public Dfa getDfa() {
 
         return this.dfa;
     }
@@ -102,7 +102,7 @@ public final class DfaState<T extends Comparable<? super T>>
      * @throws InternalException
      *             if this <code>DfaState</code> is not stable.
      */
-    public SortedMap<Symbol<T>, DfaState<T>> getTransitions() {
+    public SortedMap<Symbol, DfaState> getTransitions() {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
@@ -116,7 +116,7 @@ public final class DfaState<T extends Comparable<? super T>>
      * 
      * @return the map of unstable transitions.
      */
-    SortedMap<Symbol<T>, DfaState<T>> getUnstableTransitions() {
+    SortedMap<Symbol, DfaState> getUnstableTransitions() {
 
         return this.transitions;
     }
@@ -135,8 +135,8 @@ public final class DfaState<T extends Comparable<? super T>>
      *             provided symbol is <code>null</code> or if the symbol is
      *             not contained in the alphabet of the <code>Dfa</code>.
      */
-    public DfaState<T> getTarget(
-            Symbol<T> symbol) {
+    public DfaState getTarget(
+            Symbol symbol) {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
@@ -150,7 +150,7 @@ public final class DfaState<T extends Comparable<? super T>>
             throw new InternalException("invalid symbol");
         }
 
-        DfaState<T> target = this.transitions.get(symbol);
+        DfaState target = this.transitions.get(symbol);
 
         if (target == null) {
             target = this.dfa.getDeadEndState();
@@ -227,7 +227,7 @@ public final class DfaState<T extends Comparable<? super T>>
      *         smaller, and a positive value if it is bigger.
      */
     public int compareTo(
-            DfaState<T> dfaState) {
+            DfaState dfaState) {
 
         if (this.dfa != dfaState.dfa) {
             throw new InternalException(
@@ -253,8 +253,8 @@ public final class DfaState<T extends Comparable<? super T>>
      *             invalid, or if the transition already exists.
      */
     void addTransition(
-            Symbol<T> symbol,
-            DfaState<T> dfaState) {
+            Symbol symbol,
+            DfaState dfaState) {
 
         if (this.isStable) {
             throw new InternalException("a stable state may not be modified");

@@ -23,13 +23,13 @@ import org.sablecc.sablecc.exception.InternalException;
  * A group pair is a pair <code>(x,y)</code> where each of <code>x</code>
  * and <code>y</code> is a group.
  */
-class GroupPair<T extends Comparable<? super T>> {
+class GroupPair {
 
     /** The first group of this pair. */
-    private final Group<T> group1;
+    private final Group group1;
 
     /** The second group of this pair. */
-    private final Group<T> group2;
+    private final Group group2;
 
     /** Cached hashcode. Is <code>null</code> when not yet computed. */
     private Integer hashcode;
@@ -51,8 +51,8 @@ class GroupPair<T extends Comparable<? super T>> {
      *             if one of the provided groups is <code>null</code>.
      */
     GroupPair(
-            final Group<T> group1,
-            final Group<T> group2) {
+            final Group group1,
+            final Group group2) {
 
         if (group1 == null) {
             throw new InternalException("group1 may not be null");
@@ -71,7 +71,7 @@ class GroupPair<T extends Comparable<? super T>> {
      * 
      * @return the first group.
      */
-    Group<T> getGroup1() {
+    Group getGroup1() {
 
         return this.group1;
     }
@@ -81,7 +81,7 @@ class GroupPair<T extends Comparable<? super T>> {
      * 
      * @return the second group.
      */
-    Group<T> getGroup2() {
+    Group getGroup2() {
 
         return this.group2;
     }

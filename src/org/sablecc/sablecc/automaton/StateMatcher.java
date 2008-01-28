@@ -29,25 +29,25 @@ import org.sablecc.sablecc.exception.InternalException;
  * to determine whether a <code>DfaState</code> and a <code>NfaState</code>
  * match.
  */
-class StateMatcher<T extends Comparable<? super T>> {
+class StateMatcher {
 
     /** The <code>Dfa</code> of this state matcher. */
-    private final Dfa<T> dfa;
+    private final Dfa dfa;
 
     /** The <code>Nfa</code> of this state matcher. */
-    private final Nfa<T> nfa;
+    private final Nfa nfa;
 
     /**
      * A <code>Map</code> that maps a state contained in the <code>Dfa</code>
      * to a corresponding set of its states in the <code>Nfa</code>.
      */
-    private final Map<DfaState<T>, SortedSet<NfaState<T>>> dfaToNfaSetMap = new HashMap<DfaState<T>, SortedSet<NfaState<T>>>();
+    private final Map<DfaState, SortedSet<NfaState>> dfaToNfaSetMap = new HashMap<DfaState, SortedSet<NfaState>>();
 
     /**
      * A <code>Map</code> that maps a set of states of the <code>Nfa</code>
      * to a corresponding state in the <code>Dfa</code>.
      */
-    private final Map<SortedSet<NfaState<T>>, DfaState<T>> nfaSetToDfaMap = new HashMap<SortedSet<NfaState<T>>, DfaState<T>>();
+    private final Map<SortedSet<NfaState>, DfaState> nfaSetToDfaMap = new HashMap<SortedSet<NfaState>, DfaState>();
 
     /**
      * Constructs a state matcher with the provided <code>Nfa</code> and
@@ -62,8 +62,8 @@ class StateMatcher<T extends Comparable<? super T>> {
      *             <code>null</code>.
      */
     StateMatcher(
-            final Dfa<T> dfa,
-            final Nfa<T> nfa) {
+            final Dfa dfa,
+            final Nfa nfa) {
 
         if (dfa == null) {
             throw new InternalException("dfa may not be null");
@@ -89,27 +89,27 @@ class StateMatcher<T extends Comparable<? super T>> {
      *             <code>null</code> or if a state from it is not part of this
      *             instance's <code>Nfa</code>.
      */
-    DfaState<T> getDfaState(
-            SortedSet<NfaState<T>> nfaStates) {
+    DfaState getDfaState(
+            SortedSet<NfaState> nfaStates) {
 
         if (nfaStates == null) {
             throw new InternalException("nfaStates may not be null");
         }
 
-        DfaState<T> dfaState = this.nfaSetToDfaMap.get(nfaStates);
+        DfaState dfaState = this.nfaSetToDfaMap.get(nfaStates);
 
         if (dfaState == null) {
 
-            for (NfaState<T> state : nfaStates) {
+            for (NfaState state : nfaStates) {
                 if (!this.nfa.getStates().contains(state)) {
                     throw new InternalException(
                             "invalid nfa state in nfaStates");
                 }
             }
 
-            dfaState = new DfaState<T>(this.dfa);
+            dfaState = new DfaState(this.dfa);
 
-            SortedSet<NfaState<T>> unmodifiableNfaStates = Collections
+            SortedSet<NfaState> unmodifiableNfaStates = Collections
                     .unmodifiableSortedSet(nfaStates);
             this.nfaSetToDfaMap.put(unmodifiableNfaStates, dfaState);
             this.dfaToNfaSetMap.put(dfaState, unmodifiableNfaStates);
@@ -131,8 +131,8 @@ class StateMatcher<T extends Comparable<? super T>> {
      *             or if the constructed set of <code>NfaState</code> is
      *             <code>null</code>.
      */
-    SortedSet<NfaState<T>> getNfaStates(
-            DfaState<T> dfaState) {
+    SortedSet<NfaState> getNfaStates(
+            DfaState dfaState) {
 
         if (dfaState == null) {
             throw new InternalException("dfaState may not be null");
@@ -142,7 +142,7 @@ class StateMatcher<T extends Comparable<? super T>> {
             throw new InternalException("invalid dfaState");
         }
 
-        SortedSet<NfaState<T>> nfaStates = this.dfaToNfaSetMap.get(dfaState);
+        SortedSet<NfaState> nfaStates = this.dfaToNfaSetMap.get(dfaState);
         if (nfaStates == null) {
             throw new InternalException(
                     "corrupted internal data structures detected");
@@ -172,8 +172,8 @@ class StateMatcher<T extends Comparable<? super T>> {
      *             <code>null</code>.
      */
     boolean match(
-            DfaState<T> dfaState,
-            NfaState<T> nfaState) {
+            DfaState dfaState,
+            NfaState nfaState) {
 
         if (dfaState == null) {
             throw new InternalException("dfaState may not be null");
@@ -191,7 +191,7 @@ class StateMatcher<T extends Comparable<? super T>> {
             throw new InternalException("invalid nfaState");
         }
 
-        SortedSet<NfaState<T>> nfaStates = this.dfaToNfaSetMap.get(dfaState);
+        SortedSet<NfaState> nfaStates = this.dfaToNfaSetMap.get(dfaState);
         if (nfaStates == null) {
             throw new InternalException(
                     "corrupted internal data structures detected");

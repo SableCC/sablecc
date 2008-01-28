@@ -32,19 +32,19 @@ import org.sablecc.sablecc.exception.InternalException;
  * A group is a collection of state or element which have the same transitions,
  * so we can merge them.
  */
-class Group<T extends Comparable<? super T>> {
+class Group {
 
     /** The partition related to this group. */
-    private final Partition<T> partition;
+    private final Partition partition;
 
     /** The set of elements in this group. */
-    private final Set<Element<T>> elements = new LinkedHashSet<Element<T>>();
+    private final Set<Element> elements = new LinkedHashSet<Element>();
 
     /** The minimal state of this group. */
-    private MinimalDfaState<T> state;
+    private MinimalDfaState state;
 
     /** The map of transitions of this group. */
-    private final SortedMap<Symbol<T>, Group<T>> transitions = new TreeMap<Symbol<T>, Group<T>>();
+    private final SortedMap<Symbol, Group> transitions = new TreeMap<Symbol, Group>();
 
     /**
      * Constructs a new group with a provided partition.
@@ -56,7 +56,7 @@ class Group<T extends Comparable<? super T>> {
      *             if the partition is <code>null</code>
      */
     Group(
-            final Partition<T> partition) {
+            final Partition partition) {
 
         if (partition == null) {
             throw new InternalException("partition may not be null");
@@ -72,7 +72,7 @@ class Group<T extends Comparable<? super T>> {
      * 
      * @return the partition.
      */
-    Partition<T> getPartition() {
+    Partition getPartition() {
 
         return this.partition;
     }
@@ -82,7 +82,7 @@ class Group<T extends Comparable<? super T>> {
      * 
      * @return the set of elements.
      */
-    Set<Element<T>> getElements() {
+    Set<Element> getElements() {
 
         return Collections.unmodifiableSet(this.elements);
     }
@@ -92,7 +92,7 @@ class Group<T extends Comparable<? super T>> {
      * 
      * @return the state.
      */
-    MinimalDfaState<T> getState() {
+    MinimalDfaState getState() {
 
         return this.state;
     }
@@ -102,7 +102,7 @@ class Group<T extends Comparable<? super T>> {
      * 
      * @return the map of transitions.
      */
-    SortedMap<Symbol<T>, Group<T>> getTransitions() {
+    SortedMap<Symbol, Group> getTransitions() {
 
         return Collections.unmodifiableSortedMap(this.transitions);
     }
@@ -117,7 +117,7 @@ class Group<T extends Comparable<? super T>> {
 
         StringBuilder sb = new StringBuilder();
         sb.append("Group: {");
-        for (Element<T> element : this.elements) {
+        for (Element element : this.elements) {
             sb.append(element.getState());
             sb.append(",");
         }
@@ -133,7 +133,7 @@ class Group<T extends Comparable<? super T>> {
      *            the provided state.
      */
     void setState(
-            MinimalDfaState<T> state) {
+            MinimalDfaState state) {
 
         this.state = state;
     }
@@ -149,7 +149,7 @@ class Group<T extends Comparable<? super T>> {
      *             added in this group.
      */
     void addElement(
-            Element<T> element) {
+            Element element) {
 
         if (element == null) {
             throw new InternalException("element may not be null");
@@ -175,7 +175,7 @@ class Group<T extends Comparable<? super T>> {
      *             group.
      */
     void removeElement(
-            Element<T> element) {
+            Element element) {
 
         if (element == null) {
             throw new InternalException("element may not be null");
@@ -200,8 +200,8 @@ class Group<T extends Comparable<? super T>> {
      *             transition is invalid.
      */
     void addTransition(
-            Symbol<T> symbol,
-            Group<T> group) {
+            Symbol symbol,
+            Group group) {
 
         if (symbol == null) {
             throw new InternalException("symbol may not be null");
@@ -228,18 +228,17 @@ class Group<T extends Comparable<? super T>> {
      */
     void refine() {
 
-        for (Symbol<T> symbol : this.partition.getDfa().getAlphabet()
-                .getSymbols()) {
+        for (Symbol symbol : this.partition.getDfa().getAlphabet().getSymbols()) {
 
             // for each new target, remember the first source (or
             // representative) element that targeted to it
-            Map<Group<T>, Element<T>> targetToRepresentative = new LinkedHashMap<Group<T>, Element<T>>();
-            Map<Element<T>, Element<T>> elementToRepresentative = new LinkedHashMap<Element<T>, Element<T>>();
+            Map<Group, Element> targetToRepresentative = new LinkedHashMap<Group, Element>();
+            Map<Element, Element> elementToRepresentative = new LinkedHashMap<Element, Element>();
 
-            for (Element<T> element : this.elements) {
-                Group<T> target = element.getTarget(symbol);
+            for (Element element : this.elements) {
+                Group target = element.getTarget(symbol);
 
-                Element<T> representative = targetToRepresentative.get(target);
+                Element representative = targetToRepresentative.get(target);
 
                 if (representative == null) {
                     representative = element;
@@ -258,14 +257,14 @@ class Group<T extends Comparable<? super T>> {
 
                 // create the new groups
                 boolean first = true;
-                for (Map.Entry<Group<T>, Element<T>> entry : targetToRepresentative
+                for (Map.Entry<Group, Element> entry : targetToRepresentative
                         .entrySet()) {
                     if (first) {
                         // skip
                         first = false;
                     }
                     else {
-                        entry.getValue().setGroup(new Group<T>(this.partition));
+                        entry.getValue().setGroup(new Group(this.partition));
                     }
                 }
 
@@ -273,8 +272,7 @@ class Group<T extends Comparable<? super T>> {
 
                 // we get a copy so that modifications to this.elements won't
                 // disturb the iterator
-                for (Element<T> element : new LinkedHashSet<Element<T>>(
-                        this.elements)) {
+                for (Element element : new LinkedHashSet<Element>(this.elements)) {
                     // set the group to the represetative's group
                     element.setGroup(elementToRepresentative.get(element)
                             .getGroup());
