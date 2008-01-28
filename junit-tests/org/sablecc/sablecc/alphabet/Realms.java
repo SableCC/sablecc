@@ -32,14 +32,14 @@ public class Realms {
         }
 
         @Override
-        public Integer next(
+        public Integer successor(
                 Integer bound) {
 
             return bound + 1;
         }
 
         @Override
-        public Integer previous(
+        public Integer predecessor(
                 Integer bound) {
 
             return bound - 1;
@@ -57,14 +57,14 @@ public class Realms {
         }
 
         @Override
-        public BigInteger next(
+        public BigInteger successor(
                 BigInteger bound) {
 
             return bound.add(BigInteger.ONE);
         }
 
         @Override
-        public BigInteger previous(
+        public BigInteger predecessor(
                 BigInteger bound) {
 
             return bound.subtract(BigInteger.ONE);
@@ -83,14 +83,14 @@ public class Realms {
         }
 
         @Override
-        public Character next(
+        public Character successor(
                 Character bound) {
 
             return (char) (bound + 1);
         }
 
         @Override
-        public Character previous(
+        public Character predecessor(
                 Character bound) {
 
             return (char) (bound - 1);
