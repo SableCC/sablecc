@@ -32,17 +32,17 @@ import org.sablecc.sablecc.exception.InternalException;
  * starting state and an accept state. A NfaState is a state for this kind of
  * automaton.
  */
-public final class NfaState<T extends Comparable<? super T>>
-        implements Comparable<NfaState<T>> {
+public final class NfaState
+        implements Comparable<NfaState> {
 
     /** The <code>Nfa</code> related to this <code>NfaState</code>. */
-    private final Nfa<T> nfa;
+    private final Nfa nfa;
 
     /** The identification number of this <code>NfaState</code>. */
     private final int id;
 
     /** The sorted map of transitions for this <code>NfaState</code>. */
-    private SortedMap<Symbol<T>, SortedSet<NfaState<T>>> transitions;
+    private SortedMap<Symbol, SortedSet<NfaState>> transitions;
 
     /** A stability status for this <code>NfaState</code>. */
     private boolean isStable;
@@ -54,10 +54,10 @@ public final class NfaState<T extends Comparable<? super T>>
     private String toString;
 
     /** The epsilon reach of this <code>NfaState</code>. */
-    private SortedSet<NfaState<T>> epsilonReach;
+    private SortedSet<NfaState> epsilonReach;
 
     /** An empty set of <code>NfaState</code>. */
-    private final SortedSet<NfaState<T>> emptyNfaStateSet = new TreeSet<NfaState<T>>();
+    private final SortedSet<NfaState> emptyNfaStateSet = new TreeSet<NfaState>();
 
     /**
      * Construct a new <code>NfaState</code> into a provided <code>Nfa</code>.
@@ -68,7 +68,7 @@ public final class NfaState<T extends Comparable<? super T>>
      *             if the provided <code>Nfa</code> is <code>null</code>.
      */
     NfaState(
-            Nfa<T> nfa) {
+            Nfa nfa) {
 
         if (nfa == null) {
             throw new InternalException("nfa may not be null");
@@ -79,7 +79,7 @@ public final class NfaState<T extends Comparable<? super T>>
         this.id = nfa.getNextStateId();
         nfa.addState(this);
 
-        this.transitions = new TreeMap<Symbol<T>, SortedSet<NfaState<T>>>(nfa
+        this.transitions = new TreeMap<Symbol, SortedSet<NfaState>>(nfa
                 .getSymbolComparator());
 
         this.isStable = false;
@@ -90,7 +90,7 @@ public final class NfaState<T extends Comparable<? super T>>
      * 
      * @return the <code>Nfa</code>.
      */
-    public Nfa<T> getNfa() {
+    public Nfa getNfa() {
 
         return this.nfa;
     }
@@ -112,7 +112,7 @@ public final class NfaState<T extends Comparable<? super T>>
      * @throws InternalException
      *             if this <code>NfaState</code> is not stable.
      */
-    public SortedMap<Symbol<T>, SortedSet<NfaState<T>>> getTransitions() {
+    public SortedMap<Symbol, SortedSet<NfaState>> getTransitions() {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
@@ -135,8 +135,8 @@ public final class NfaState<T extends Comparable<? super T>>
      *             provided symbol is invalid. A symbol is invalid if it is not
      *             contained in the alphabet of the <code>Dfa</code>.
      */
-    public SortedSet<NfaState<T>> getTargets(
-            Symbol<T> symbol) {
+    public SortedSet<NfaState> getTargets(
+            Symbol symbol) {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
@@ -147,7 +147,7 @@ public final class NfaState<T extends Comparable<? super T>>
             throw new InternalException("invalid symbol");
         }
 
-        SortedSet<NfaState<T>> targets = this.transitions.get(symbol);
+        SortedSet<NfaState> targets = this.transitions.get(symbol);
 
         if (targets == null) {
             targets = this.emptyNfaStateSet;
@@ -222,7 +222,7 @@ public final class NfaState<T extends Comparable<? super T>>
      *         smaller, and a positive value if it is bigger.
      */
     public int compareTo(
-            NfaState<T> nfaState) {
+            NfaState nfaState) {
 
         if (this.nfa != nfaState.nfa) {
             throw new InternalException(
@@ -247,8 +247,8 @@ public final class NfaState<T extends Comparable<? super T>>
      *             invalid, or if the symbol is invalid.
      */
     void addTransition(
-            Symbol<T> symbol,
-            NfaState<T> nfaState) {
+            Symbol symbol,
+            NfaState nfaState) {
 
         if (this.isStable) {
             throw new InternalException("a stable state may not be modified");
@@ -267,10 +267,10 @@ public final class NfaState<T extends Comparable<? super T>>
             throw new InternalException("invalid nfaState");
         }
 
-        SortedSet<NfaState<T>> targets = this.transitions.get(symbol);
+        SortedSet<NfaState> targets = this.transitions.get(symbol);
 
         if (targets == null) {
-            targets = new TreeSet<NfaState<T>>();
+            targets = new TreeSet<NfaState>();
             this.transitions.put(symbol, targets);
         }
 
@@ -289,7 +289,7 @@ public final class NfaState<T extends Comparable<? super T>>
             throw new InternalException("state is already stable");
         }
 
-        for (Map.Entry<Symbol<T>, SortedSet<NfaState<T>>> entry : this.transitions
+        for (Map.Entry<Symbol, SortedSet<NfaState>> entry : this.transitions
                 .entrySet()) {
             entry.setValue(Collections.unmodifiableSortedSet(entry.getValue()));
         }
@@ -307,7 +307,7 @@ public final class NfaState<T extends Comparable<? super T>>
      * @throws InternalException
      *             if this <code>NfaState</code> is not stable.
      */
-    public SortedSet<NfaState<T>> getEpsilonReach() {
+    public SortedSet<NfaState> getEpsilonReach() {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
@@ -315,7 +315,7 @@ public final class NfaState<T extends Comparable<? super T>>
 
         if (this.epsilonReach == null) {
 
-            SortedSet<NfaState<T>> epsilonReach = new TreeSet<NfaState<T>>();
+            SortedSet<NfaState> epsilonReach = new TreeSet<NfaState>();
             computeEpsilonReach(epsilonReach);
             this.epsilonReach = Collections.unmodifiableSortedSet(epsilonReach);
         }
@@ -331,7 +331,7 @@ public final class NfaState<T extends Comparable<? super T>>
      *            a set of NfaState.
      */
     private void computeEpsilonReach(
-            SortedSet<NfaState<T>> epsilonReach) {
+            SortedSet<NfaState> epsilonReach) {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
@@ -350,7 +350,7 @@ public final class NfaState<T extends Comparable<? super T>>
             }
             else {
                 // no, we must continue the recursive computation
-                for (NfaState<T> nfaState : getTargets(null)) {
+                for (NfaState nfaState : getTargets(null)) {
                     nfaState.computeEpsilonReach(epsilonReach);
                 }
             }

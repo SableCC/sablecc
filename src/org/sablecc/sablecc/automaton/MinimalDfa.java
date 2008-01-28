@@ -36,26 +36,26 @@ import org.sablecc.sablecc.util.WorkSet;
  * A minimal deterministic finite automaton (or MinimalDfa) is a state machine
  * which is minimalist and equivalent to a corresponding <code>Dfa</code>.
  */
-public class MinimalDfa<T extends Comparable<? super T>> {
+public class MinimalDfa {
 
     /** Only used for line separation in method toString. */
     private static final String lineSeparator = System
             .getProperty("line.separator");
 
     /** The alphabet for this <code>MinimalDfa</code>. */
-    private Alphabet<T> alphabet;
+    private Alphabet alphabet;
 
     /** The states of this <code>MinimalDfa</code>. */
-    private SortedSet<MinimalDfaState<T>> states;
+    private SortedSet<MinimalDfaState> states;
 
     /** The starting state of this <code>MinimalDfa</code>. */
-    private MinimalDfaState<T> startState;
+    private MinimalDfaState startState;
 
     /** The dead end state of this <code>MinimalDfa</code>. */
-    private MinimalDfaState<T> deadEndState;
+    private MinimalDfaState deadEndState;
 
     /** The acceptation states of this <code>MinimalDfa</code>. */
-    private SortedSet<MinimalDfaState<T>> acceptStates;
+    private SortedSet<MinimalDfaState> acceptStates;
 
     /** A stability status for this <code>MinimalDfa</code>. */
     private boolean isStable;
@@ -76,20 +76,19 @@ public class MinimalDfa<T extends Comparable<? super T>> {
      *             if the <code>Dfa</code> is <code>null</code>.
      */
     public MinimalDfa(
-            Dfa<T> dfa) {
+            Dfa dfa) {
 
         if (dfa == null) {
             throw new InternalException("dfa may not be null");
         }
 
         // partition states groups
-        Partition<T> partition = new Partition<T>(dfa);
+        Partition partition = new Partition(dfa);
 
         // find dead-end and start groups
-        Group<T> deadEndGroup = partition.getElement(dfa.getDeadEndState())
+        Group deadEndGroup = partition.getElement(dfa.getDeadEndState())
                 .getGroup();
-        Group<T> startGroup = partition.getElement(dfa.getStartState())
-                .getGroup();
+        Group startGroup = partition.getElement(dfa.getStartState()).getGroup();
 
         // create minimal alphabet
 
@@ -97,36 +96,35 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         // transition on this symbol (ignoring transitions from or to the
         // dead-end group)
 
-        SortedMap<Symbol<T>, Set<GroupPair<T>>> symbolToPairSetMap = new TreeMap<Symbol<T>, Set<GroupPair<T>>>();
+        SortedMap<Symbol, Set<GroupPair>> symbolToPairSetMap = new TreeMap<Symbol, Set<GroupPair>>();
 
-        for (Group<T> sourceGroup : partition.getGroups()) {
+        for (Group sourceGroup : partition.getGroups()) {
 
             if (sourceGroup == deadEndGroup) {
                 continue;
             }
 
-            for (Element<T> element : sourceGroup.getElements()) {
+            for (Element element : sourceGroup.getElements()) {
 
-                for (Map.Entry<Symbol<T>, DfaState<T>> entry : element
-                        .getState().getTransitions().entrySet()) {
+                for (Map.Entry<Symbol, DfaState> entry : element.getState()
+                        .getTransitions().entrySet()) {
 
-                    Symbol<T> symbol = entry.getKey();
-                    DfaState<T> dfaTarget = entry.getValue();
+                    Symbol symbol = entry.getKey();
+                    DfaState dfaTarget = entry.getValue();
 
-                    Group<T> targetGroup = partition.getElement(dfaTarget)
+                    Group targetGroup = partition.getElement(dfaTarget)
                             .getGroup();
 
                     if (targetGroup == deadEndGroup) {
                         continue;
                     }
 
-                    GroupPair<T> pair = new GroupPair<T>(sourceGroup,
-                            targetGroup);
+                    GroupPair pair = new GroupPair(sourceGroup, targetGroup);
 
-                    Set<GroupPair<T>> pairSet = symbolToPairSetMap.get(symbol);
+                    Set<GroupPair> pairSet = symbolToPairSetMap.get(symbol);
 
                     if (pairSet == null) {
-                        pairSet = new LinkedHashSet<GroupPair<T>>();
+                        pairSet = new LinkedHashSet<GroupPair>();
                         symbolToPairSetMap.put(symbol, pairSet);
                     }
 
@@ -136,22 +134,22 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         }
 
         // for each pair set, identify symbols that map to it
-        Map<Set<GroupPair<T>>, SortedSet<Symbol<T>>> pairSetToSymbolSetMap = new HashMap<Set<GroupPair<T>>, SortedSet<Symbol<T>>>();
+        Map<Set<GroupPair>, SortedSet<Symbol>> pairSetToSymbolSetMap = new HashMap<Set<GroupPair>, SortedSet<Symbol>>();
         // build the set of "pair set" (i.e. the key set of
         // pairSetToSymbolSetMap)
-        Set<Set<GroupPair<T>>> setOfPairSet = new LinkedHashSet<Set<GroupPair<T>>>();
+        Set<Set<GroupPair>> setOfPairSet = new LinkedHashSet<Set<GroupPair>>();
 
-        for (Map.Entry<Symbol<T>, Set<GroupPair<T>>> entry : symbolToPairSetMap
+        for (Map.Entry<Symbol, Set<GroupPair>> entry : symbolToPairSetMap
                 .entrySet()) {
 
-            Symbol<T> symbol = entry.getKey();
-            Set<GroupPair<T>> pairSet = entry.getValue();
+            Symbol symbol = entry.getKey();
+            Set<GroupPair> pairSet = entry.getValue();
 
-            SortedSet<Symbol<T>> symbolSet = pairSetToSymbolSetMap.get(pairSet);
+            SortedSet<Symbol> symbolSet = pairSetToSymbolSetMap.get(pairSet);
 
             if (symbolSet == null) {
 
-                symbolSet = new TreeSet<Symbol<T>>();
+                symbolSet = new TreeSet<Symbol>();
                 pairSetToSymbolSetMap.put(pairSet, symbolSet);
             }
 
@@ -160,52 +158,52 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         }
 
         // merge symbols and create the new alphabet
-        SortedSet<Symbol<T>> newSymbols = new TreeSet<Symbol<T>>();
+        SortedSet<Symbol> newSymbols = new TreeSet<Symbol>();
 
-        for (Set<GroupPair<T>> pairSet : setOfPairSet) {
+        for (Set<GroupPair> pairSet : setOfPairSet) {
 
-            SortedSet<Symbol<T>> symbolSet = pairSetToSymbolSetMap.get(pairSet);
+            SortedSet<Symbol> symbolSet = pairSetToSymbolSetMap.get(pairSet);
 
-            Symbol<T> newSymbol = Symbol.merge(symbolSet);
+            Symbol newSymbol = Symbol.merge(symbolSet);
 
             newSymbols.add(newSymbol);
 
-            for (GroupPair<T> pair : pairSet) {
+            for (GroupPair pair : pairSet) {
                 pair.getGroup1().addTransition(newSymbol, pair.getGroup2());
             }
         }
 
-        this.alphabet = new Alphabet<T>(newSymbols);
+        this.alphabet = new Alphabet(newSymbols);
 
         // initialize fields
-        this.states = new TreeSet<MinimalDfaState<T>>();
-        this.acceptStates = new TreeSet<MinimalDfaState<T>>();
+        this.states = new TreeSet<MinimalDfaState>();
+        this.acceptStates = new TreeSet<MinimalDfaState>();
         this.isStable = false;
 
         // create states and transitions in canonical order
 
-        deadEndGroup.setState(new MinimalDfaState<T>(this));
+        deadEndGroup.setState(new MinimalDfaState(this));
 
         // sometimes, the start and dead-end groups are the same group
         if (startGroup.getState() == null) {
-            startGroup.setState(new MinimalDfaState<T>(this));
+            startGroup.setState(new MinimalDfaState(this));
         }
 
-        WorkSet<Group<T>> workSet = new WorkSet<Group<T>>();
+        WorkSet<Group> workSet = new WorkSet<Group>();
         workSet.add(startGroup);
 
         while (workSet.hasNext()) {
 
-            Group<T> sourceGroup = workSet.next();
+            Group sourceGroup = workSet.next();
 
-            for (Map.Entry<Symbol<T>, Group<T>> entry : sourceGroup
-                    .getTransitions().entrySet()) {
+            for (Map.Entry<Symbol, Group> entry : sourceGroup.getTransitions()
+                    .entrySet()) {
 
-                Symbol<T> symbol = entry.getKey();
-                Group<T> destinationGroup = entry.getValue();
+                Symbol symbol = entry.getKey();
+                Group destinationGroup = entry.getValue();
 
                 if (destinationGroup.getState() == null) {
-                    destinationGroup.setState(new MinimalDfaState<T>(this));
+                    destinationGroup.setState(new MinimalDfaState(this));
                 }
 
                 sourceGroup.getState().addTransition(symbol,
@@ -218,7 +216,7 @@ public class MinimalDfa<T extends Comparable<? super T>> {
         this.startState = startGroup.getState();
         this.deadEndState = deadEndGroup.getState();
 
-        for (DfaState<T> dfaState : dfa.getAcceptStates()) {
+        for (DfaState dfaState : dfa.getAcceptStates()) {
             this.acceptStates.add(partition.getElement(dfaState).getGroup()
                     .getState());
         }
@@ -232,7 +230,7 @@ public class MinimalDfa<T extends Comparable<? super T>> {
      */
     private void stabilize() {
 
-        for (MinimalDfaState<T> state : this.states) {
+        for (MinimalDfaState state : this.states) {
             state.stabilize();
         }
 
@@ -247,7 +245,7 @@ public class MinimalDfa<T extends Comparable<? super T>> {
      * 
      * @return the alphabet.
      */
-    public Alphabet<T> getAlphabet() {
+    public Alphabet getAlphabet() {
 
         return this.alphabet;
     }
@@ -259,7 +257,7 @@ public class MinimalDfa<T extends Comparable<? super T>> {
      * @throws InternalException
      *             if this instance is not stable.
      */
-    public SortedSet<MinimalDfaState<T>> getStates() {
+    public SortedSet<MinimalDfaState> getStates() {
 
         if (!this.isStable) {
             throw new InternalException("this MinimalDFA is not stable yet");
@@ -275,7 +273,7 @@ public class MinimalDfa<T extends Comparable<? super T>> {
      * @throws InternalException
      *             if this instance is not stable.
      */
-    public MinimalDfaState<T> getStartState() {
+    public MinimalDfaState getStartState() {
 
         if (!this.isStable) {
             throw new InternalException("this MinimalDFA is not stable yet");
@@ -291,7 +289,7 @@ public class MinimalDfa<T extends Comparable<? super T>> {
      * @throws InternalException
      *             if this instance is not stable.
      */
-    public MinimalDfaState<T> getDeadEndState() {
+    public MinimalDfaState getDeadEndState() {
 
         if (!this.isStable) {
             throw new InternalException("this MinimalDFA is not stable yet");
@@ -306,7 +304,7 @@ public class MinimalDfa<T extends Comparable<? super T>> {
      * 
      * @return the dead end state.
      */
-    MinimalDfaState<T> getUnstableDeadEndState() {
+    MinimalDfaState getUnstableDeadEndState() {
 
         return this.deadEndState;
     }
@@ -318,7 +316,7 @@ public class MinimalDfa<T extends Comparable<? super T>> {
      * @throws InternalException
      *             if this instance is not stable.
      */
-    public SortedSet<MinimalDfaState<T>> getAcceptStates() {
+    public SortedSet<MinimalDfaState> getAcceptStates() {
 
         if (!this.isStable) {
             throw new InternalException("this MinimalDFA is not stable yet");
@@ -347,7 +345,7 @@ public class MinimalDfa<T extends Comparable<? super T>> {
 
             sb.append("MinimalDFA:{");
 
-            for (MinimalDfaState<T> state : this.states) {
+            for (MinimalDfaState state : this.states) {
                 sb.append(lineSeparator);
                 sb.append("    ");
                 sb.append(state);
@@ -365,10 +363,10 @@ public class MinimalDfa<T extends Comparable<? super T>> {
                 }
 
                 sb.append(":");
-                for (Map.Entry<Symbol<T>, MinimalDfaState<T>> entry : state
+                for (Map.Entry<Symbol, MinimalDfaState> entry : state
                         .getTransitions().entrySet()) {
-                    Symbol<T> symbol = entry.getKey();
-                    MinimalDfaState<T> target = entry.getValue();
+                    Symbol symbol = entry.getKey();
+                    MinimalDfaState target = entry.getValue();
 
                     sb.append(lineSeparator);
                     sb.append("        ");
@@ -414,7 +412,7 @@ public class MinimalDfa<T extends Comparable<? super T>> {
      *             state is already in the state set.
      */
     void addState(
-            MinimalDfaState<T> state) {
+            MinimalDfaState state) {
 
         if (this.isStable) {
             throw new InternalException(

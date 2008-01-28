@@ -30,22 +30,22 @@ import org.sablecc.sablecc.exception.InternalException;
  * The minimisation of a <code>Dfa</code> tries to generate the partition
  * which contains the less number of groups possible.
  */
-class Partition<T extends Comparable<? super T>> {
+class Partition {
 
     /** The <code>Dfa</code> of this partition. */
-    private final Dfa<T> dfa;
+    private final Dfa dfa;
 
     /** The set of groups of this partition. */
-    private final Set<Group<T>> groups = new LinkedHashSet<Group<T>>();
+    private final Set<Group> groups = new LinkedHashSet<Group>();
 
     /** The elements of this partition. */
-    private Set<Element<T>> elements = new LinkedHashSet<Element<T>>();
+    private Set<Element> elements = new LinkedHashSet<Element>();
 
     /**
      * A <code>Map</code> that maps each states of this partition's
      * <code>Dfa</code> to it's corresponding element.
      */
-    private final Map<DfaState<T>, Element<T>> stateToElementMap = new HashMap<DfaState<T>, Element<T>>();
+    private final Map<DfaState, Element> stateToElementMap = new HashMap<DfaState, Element>();
 
     /**
      * Constructs a partition for the provided <code>Dfa<code>.
@@ -55,7 +55,7 @@ class Partition<T extends Comparable<? super T>> {
      *             if the provided <code>Dfa</code> is <code>null</code>.
      */
     Partition(
-            Dfa<T> dfa) {
+            Dfa dfa) {
 
         if (dfa == null) {
             throw new InternalException("dfa may not be null");
@@ -64,8 +64,8 @@ class Partition<T extends Comparable<? super T>> {
         this.dfa = dfa;
 
         // create elements
-        for (DfaState<T> state : dfa.getStates()) {
-            new Element<T>(this, state);
+        for (DfaState state : dfa.getStates()) {
+            new Element(this, state);
         }
 
         // prevent against accidental creation of other elements
@@ -74,16 +74,16 @@ class Partition<T extends Comparable<? super T>> {
         // create initial partition
 
         // non-accept group has at least one element, the dead-end state
-        Group<T> nonAcceptGroup = new Group<T>(this);
+        Group nonAcceptGroup = new Group(this);
 
         // we don't want empty groups; beware of empty accept group
-        Group<T> acceptGroup = null;
+        Group acceptGroup = null;
 
         if (!dfa.getAcceptStates().isEmpty()) {
-            acceptGroup = new Group<T>(this);
+            acceptGroup = new Group(this);
         }
 
-        for (Element<T> element : this.elements) {
+        for (Element element : this.elements) {
             if (dfa.getAcceptStates().contains(element.getState())) {
                 element.setGroup(acceptGroup);
             }
@@ -110,7 +110,7 @@ class Partition<T extends Comparable<? super T>> {
 
         // we get a copy so that modifications to this.groups won't disturb the
         // iterator
-        for (Group<T> group : new LinkedHashSet<Group<T>>(this.groups)) {
+        for (Group group : new LinkedHashSet<Group>(this.groups)) {
             group.refine();
         }
     }
@@ -120,7 +120,7 @@ class Partition<T extends Comparable<? super T>> {
      * 
      * @return the <code>Dfa</code>.
      */
-    Dfa<T> getDfa() {
+    Dfa getDfa() {
 
         return this.dfa;
     }
@@ -130,7 +130,7 @@ class Partition<T extends Comparable<? super T>> {
      * 
      * @return the set of groups.
      */
-    Set<Group<T>> getGroups() {
+    Set<Group> getGroups() {
 
         return Collections.unmodifiableSet(this.groups);
     }
@@ -146,7 +146,7 @@ class Partition<T extends Comparable<? super T>> {
         StringBuilder sb = new StringBuilder();
         sb.append("Partition:");
         sb.append(System.getProperty("line.separator"));
-        for (Group<T> group : this.groups) {
+        for (Group group : this.groups) {
             sb.append("    ");
             sb.append(group);
             sb.append(System.getProperty("line.separator"));
@@ -166,7 +166,7 @@ class Partition<T extends Comparable<? super T>> {
      *             partition.
      */
     void addGroup(
-            Group<T> group) {
+            Group group) {
 
         if (group == null) {
             throw new InternalException("group may not be null");
@@ -193,8 +193,8 @@ class Partition<T extends Comparable<? super T>> {
      *             if it's not in this partition's <code>Dfa</code> or if
      *             corruption is detected.
      */
-    Element<T> getElement(
-            DfaState<T> state) {
+    Element getElement(
+            DfaState state) {
 
         if (state == null) {
             throw new InternalException("state may not be null");
@@ -204,7 +204,7 @@ class Partition<T extends Comparable<? super T>> {
             throw new InternalException("invalid state");
         }
 
-        Element<T> element = this.stateToElementMap.get(state);
+        Element element = this.stateToElementMap.get(state);
 
         if (element == null) {
             throw new InternalException("corruption detected");
@@ -226,7 +226,7 @@ class Partition<T extends Comparable<? super T>> {
      * 
      */
     void addElement(
-            Element<T> element) {
+            Element element) {
 
         if (element == null) {
             throw new InternalException("element may not be null");

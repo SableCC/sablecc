@@ -27,11 +27,11 @@ import org.sablecc.sablecc.exception.InternalException;
 /**
  * A <code>MinimalDfaState<code> is a minimalist state.
  */
-public final class MinimalDfaState<T extends Comparable<? super T>>
-        implements Comparable<MinimalDfaState<T>> {
+public final class MinimalDfaState
+        implements Comparable<MinimalDfaState> {
 
     /** The <code>MinimalDfa<code> of this <code>MinimalDfaState<code>. */
-    private final MinimalDfa<T> minimalDfa;
+    private final MinimalDfa minimalDfa;
 
     /** The identification number of this <code>MinimalDfaState<code>. */
     private final int id;
@@ -40,7 +40,7 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
      * A <code>SortedMap</code> that maps each symbol to its corresponding
      * <code>MinimalDfaState<code>. Represents the transitions.
      */
-    private SortedMap<Symbol<T>, MinimalDfaState<T>> transitions;
+    private SortedMap<Symbol, MinimalDfaState> transitions;
 
     /** A stability status for this <code>MinimalDfaState<code>. */
     private boolean isStable;
@@ -61,7 +61,7 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
      *             if the provided <code>MinimalDfa<code> is <code>null</code>.
      */
     MinimalDfaState(
-            MinimalDfa<T> minimalDfa) {
+            MinimalDfa minimalDfa) {
 
         if (minimalDfa == null) {
             throw new InternalException("minimalDfa may not be null");
@@ -72,7 +72,7 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
         this.id = minimalDfa.getNextStateId();
         minimalDfa.addState(this);
 
-        this.transitions = new TreeMap<Symbol<T>, MinimalDfaState<T>>();
+        this.transitions = new TreeMap<Symbol, MinimalDfaState>();
 
         this.isStable = false;
     }
@@ -82,7 +82,7 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
      *
      * @return the <code>MinimalDfa<code>.
      */
-    public MinimalDfa<T> getMinimalDfa() {
+    public MinimalDfa getMinimalDfa() {
 
         return this.minimalDfa;
     }
@@ -104,7 +104,7 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
      * @throws InternalException
      *             if this <code>MinimalDfaState<code> is not stable.
      */
-    public SortedMap<Symbol<T>, MinimalDfaState<T>> getTransitions() {
+    public SortedMap<Symbol, MinimalDfaState> getTransitions() {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
@@ -124,8 +124,8 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
      *             if the provided symbol is <code>null</code> or
      *             if this instance's <code>MinimalDfa</code> contains the symbol.
      */
-    public MinimalDfaState<T> getTarget(
-            Symbol<T> symbol) {
+    public MinimalDfaState getTarget(
+            Symbol symbol) {
 
         if (!this.isStable) {
             throw new InternalException("the state is not stable yet");
@@ -139,7 +139,7 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
             throw new InternalException("invalid symbol");
         }
 
-        MinimalDfaState<T> target = this.transitions.get(symbol);
+        MinimalDfaState target = this.transitions.get(symbol);
 
         if (target == null) {
             target = this.minimalDfa.getDeadEndState();
@@ -219,7 +219,7 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
      *             the same <code>MinimalDfa</code> as this one.
      */
     public int compareTo(
-            MinimalDfaState<T> minimalDfaState) {
+            MinimalDfaState minimalDfaState) {
 
         if (this.minimalDfa != minimalDfaState.minimalDfa) {
             throw new InternalException(
@@ -244,8 +244,8 @@ public final class MinimalDfaState<T extends Comparable<? super T>>
      *             <code>MinimalDfa</code> or if the target is already set.
      */
     void addTransition(
-            Symbol<T> symbol,
-            MinimalDfaState<T> minimalDfaState) {
+            Symbol symbol,
+            MinimalDfaState minimalDfaState) {
 
         if (this.isStable) {
             throw new InternalException("a stable state may not be modified");

@@ -27,28 +27,28 @@ import org.sablecc.sablecc.exception.InternalException;
  * <code>Nfa</code>. It allows for retrieving the new <code>Nfa</code> and
  * for mapping old states to sets of new states.
  */
-class NfaCombineResult<T extends Comparable<? super T>> {
+class NfaCombineResult {
 
     /** The new <code>Nfa</code>. */
-    private Nfa<T> newNfa;
+    private Nfa newNfa;
 
     /** The first combined <code>Nfa</code>. */
-    private Nfa<T> oldNfa1;
+    private Nfa oldNfa1;
 
     /**
      * A <code>SortedMap</code> that maps each state contained in the first
      * old <code>Nfa</code> to its state in this <code>NfaCombineResult</code>.
      */
-    private SortedMap<NfaState<T>, NfaState<T>> oldNfa1StateMap = new TreeMap<NfaState<T>, NfaState<T>>();
+    private SortedMap<NfaState, NfaState> oldNfa1StateMap = new TreeMap<NfaState, NfaState>();
 
     /** The second combined <code>Nfa</code>. */
-    private Nfa<T> oldNfa2;
+    private Nfa oldNfa2;
 
     /**
      * A <code>SortedMap</code> that maps each state contained in the second
      * old <code>Nfa</code> to its state in this <code>NfaCombineResult</code>.
      */
-    private SortedMap<NfaState<T>, NfaState<T>> oldNfa2StateMap = new TreeMap<NfaState<T>, NfaState<T>>();
+    private SortedMap<NfaState, NfaState> oldNfa2StateMap = new TreeMap<NfaState, NfaState>();
 
     /**
      * Constructs a new instance for the result of combining two
@@ -69,11 +69,11 @@ class NfaCombineResult<T extends Comparable<? super T>> {
      *             states is <code>null</code>.
      */
     NfaCombineResult(
-            Nfa<T> newNfa,
-            Nfa<T> oldNfa1,
-            SortedMap<NfaState<T>, NfaState<T>> oldNfa1StateMap,
-            Nfa<T> oldNfa2,
-            SortedMap<NfaState<T>, NfaState<T>> oldNfa2StateMap) {
+            Nfa newNfa,
+            Nfa oldNfa1,
+            SortedMap<NfaState, NfaState> oldNfa1StateMap,
+            Nfa oldNfa2,
+            SortedMap<NfaState, NfaState> oldNfa2StateMap) {
 
         if (newNfa == null) {
             throw new InternalException("newNfa may not be null");
@@ -95,13 +95,13 @@ class NfaCombineResult<T extends Comparable<? super T>> {
             throw new InternalException("oldNfa2StateMap may not be null");
         }
 
-        for (NfaState<T> oldState : oldNfa1.getStates()) {
+        for (NfaState oldState : oldNfa1.getStates()) {
             if (oldNfa1StateMap.get(oldState) == null) {
                 throw new InternalException("invalid oldNfa1StateMap");
             }
         }
 
-        for (NfaState<T> oldState : oldNfa2.getStates()) {
+        for (NfaState oldState : oldNfa2.getStates()) {
             if (oldNfa2StateMap.get(oldState) == null) {
                 throw new InternalException("invalid oldNfa2StateMap");
             }
@@ -119,7 +119,7 @@ class NfaCombineResult<T extends Comparable<? super T>> {
      * 
      * @return the new <code>Nfa</code>.
      */
-    Nfa<T> getNewNfa() {
+    Nfa getNewNfa() {
 
         return this.newNfa;
     }
@@ -136,8 +136,8 @@ class NfaCombineResult<T extends Comparable<? super T>> {
      *             if the <code>oldState</code> is <code>null</code> or
      *             invalid.
      */
-    NfaState<T> getNewNfa1State(
-            NfaState<T> oldState) {
+    NfaState getNewNfa1State(
+            NfaState oldState) {
 
         if (oldState == null) {
             throw new InternalException("oldState may not be null");
@@ -162,8 +162,8 @@ class NfaCombineResult<T extends Comparable<? super T>> {
      *             if the <code>oldState</code> is <code>null</code> or
      *             invalid.
      */
-    NfaState<T> getNewNfa2State(
-            NfaState<T> oldState) {
+    NfaState getNewNfa2State(
+            NfaState oldState) {
 
         if (oldState == null) {
             throw new InternalException("oldState may not be null");
@@ -182,7 +182,7 @@ class NfaCombineResult<T extends Comparable<? super T>> {
      * 
      * @return the first start state.
      */
-    NfaState<T> getNewNfa1StartState() {
+    NfaState getNewNfa1StartState() {
 
         return this.oldNfa1StateMap.get(this.oldNfa1.getStartState());
     }
@@ -193,7 +193,7 @@ class NfaCombineResult<T extends Comparable<? super T>> {
      * 
      * @return the second start state.
      */
-    NfaState<T> getNewNfa2StartState() {
+    NfaState getNewNfa2StartState() {
 
         return this.oldNfa2StateMap.get(this.oldNfa2.getStartState());
     }
@@ -204,7 +204,7 @@ class NfaCombineResult<T extends Comparable<? super T>> {
      * 
      * @return the first acceptation state.
      */
-    NfaState<T> getNewNfa1AcceptState() {
+    NfaState getNewNfa1AcceptState() {
 
         return this.oldNfa1StateMap.get(this.oldNfa1.getAcceptState());
     }
@@ -215,7 +215,7 @@ class NfaCombineResult<T extends Comparable<? super T>> {
      * 
      * @return the second acceptation state.
      */
-    NfaState<T> getNewNfa2AcceptState() {
+    NfaState getNewNfa2AcceptState() {
 
         return this.oldNfa2StateMap.get(this.oldNfa2.getAcceptState());
     }

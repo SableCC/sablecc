@@ -24,16 +24,16 @@ import org.sablecc.sablecc.exception.InternalException;
  * An element represents a state. It is especially used in methods related to
  * transitions since they return groups.
  */
-class Element<T extends Comparable<? super T>> {
+class Element {
 
     /** The partition of this element. */
-    private final Partition<T> partition;
+    private final Partition partition;
 
     /** The state of this element. */
-    private final DfaState<T> state;
+    private final DfaState state;
 
     /** The group of this element. */
-    private Group<T> group;
+    private Group group;
 
     /**
      * Constructs an element with the provided partition and state.
@@ -48,8 +48,8 @@ class Element<T extends Comparable<? super T>> {
      *             partition.
      */
     Element(
-            final Partition<T> partition,
-            final DfaState<T> state) {
+            final Partition partition,
+            final DfaState state) {
 
         if (partition == null) {
             throw new InternalException("partition may not be null");
@@ -75,7 +75,7 @@ class Element<T extends Comparable<? super T>> {
      * 
      * @return the partition.
      */
-    Partition<T> getPartition() {
+    Partition getPartition() {
 
         return this.partition;
     }
@@ -85,7 +85,7 @@ class Element<T extends Comparable<? super T>> {
      * 
      * @return the state.
      */
-    DfaState<T> getState() {
+    DfaState getState() {
 
         return this.state;
     }
@@ -95,7 +95,7 @@ class Element<T extends Comparable<? super T>> {
      * 
      * @return the group.
      */
-    Group<T> getGroup() {
+    Group getGroup() {
 
         return this.group;
     }
@@ -110,7 +110,7 @@ class Element<T extends Comparable<? super T>> {
      *             different partition as the one of this instance.
      */
     void setGroup(
-            Group<T> group) {
+            Group group) {
 
         if (group == null) {
             throw new InternalException("group may not be null");
@@ -139,8 +139,8 @@ class Element<T extends Comparable<? super T>> {
      *             if the provided symbol is <code>null</code> or if it not
      *             part of this instance's partition.
      */
-    Group<T> getTarget(
-            Symbol<T> symbol) {
+    Group getTarget(
+            Symbol symbol) {
 
         if (symbol == null) {
             throw new InternalException("symbol may not be null");
