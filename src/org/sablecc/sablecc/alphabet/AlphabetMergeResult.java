@@ -24,44 +24,39 @@ import java.util.TreeSet;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * An instance of this class encapsulates the result of merging two alphabets.
- * It allows for retrieving the new alphabet and for mapping old symbols to sets
- * of new symbols.
+ * An instance of this class stores the result of merging two alphabets. It
+ * allows for retrieving the new alphabet and for mapping old symbols to sets of
+ * new symbols.
  */
-public final class AlphabetMergeResult<T extends Comparable<? super T>> {
+public final class AlphabetMergeResult {
 
     /** The new alphabet. */
-    private final Alphabet<T> newAlphabet;
+    private final Alphabet newAlphabet;
 
     /** The first merged alphabet. */
-    private final Alphabet<T> mergedAlphabet1;
+    private final Alphabet mergedAlphabet1;
 
     /**
      * The symbol map of the first alphabet. It maps each old symbol to a set of
      * new symbols that cover the same intervals.
      */
-    private final SortedMap<Symbol<T>, SortedSet<Symbol<T>>> mergedAlphabet1SymbolMap;
+    private final SortedMap<Symbol, SortedSet<Symbol>> mergedAlphabet1SymbolMap;
 
     /** The second merged alphabet. */
-    private final Alphabet<T> mergedAlphabet2;
+    private final Alphabet mergedAlphabet2;
 
     /**
      * The symbol map of the second alphabet. It maps each old symbol to a set
      * of new symbols that cover the same intervals.
      */
-    private final SortedMap<Symbol<T>, SortedSet<Symbol<T>>> mergedAlphabet2SymbolMap;
+    private final SortedMap<Symbol, SortedSet<Symbol>> mergedAlphabet2SymbolMap;
 
     /**
-     * Constructs a new instance for the result of merging an alphabet with
+     * Constructs an instance to store the result of merging an alphabet with
      * itself.
-     * 
-     * @param alphabet
-     *            the alphabet.
-     * @throws InternalException
-     *             if the alphabet is <code>null</code>.
      */
     AlphabetMergeResult(
-            Alphabet<T> alphabet) {
+            Alphabet alphabet) {
 
         if (alphabet == null) {
             throw new InternalException("alphabet may not be null");
@@ -77,29 +72,15 @@ public final class AlphabetMergeResult<T extends Comparable<? super T>> {
     }
 
     /**
-     * Constructs a new instance for the result of merging two distinct
+     * Constructs an instance to store the result of merging two distinct
      * alphabets.
-     * 
-     * @param newAlphabet
-     *            the new alphabet.
-     * @param mergedAlphabet1
-     *            the first merged alphabet.
-     * @param mergedAlphabet1SymbolMap
-     *            the symbol map of the first alphabet.
-     * @param mergedAlphabet2
-     *            the second merged alphabet.
-     * @param mergedAlphabet2SymbolMap
-     *            the symbol map of the second alphabet.
-     * @throws InternalException
-     *             if any parameter is <code>null</code>, or if the merged
-     *             alphabets are not distinct.
      */
     AlphabetMergeResult(
-            Alphabet<T> newAlphabet,
-            Alphabet<T> mergedAlphabet1,
-            SortedMap<Symbol<T>, SortedSet<Symbol<T>>> mergedAlphabet1SymbolMap,
-            Alphabet<T> mergedAlphabet2,
-            SortedMap<Symbol<T>, SortedSet<Symbol<T>>> mergedAlphabet2SymbolMap) {
+            Alphabet newAlphabet,
+            Alphabet mergedAlphabet1,
+            SortedMap<Symbol, SortedSet<Symbol>> mergedAlphabet1SymbolMap,
+            Alphabet mergedAlphabet2,
+            SortedMap<Symbol, SortedSet<Symbol>> mergedAlphabet2SymbolMap) {
 
         if (newAlphabet == null) {
             throw new InternalException("newAlphabet may not be null");
@@ -114,7 +95,7 @@ public final class AlphabetMergeResult<T extends Comparable<? super T>> {
                     "mergedAlphabet1SymbolMap may not be null");
         }
 
-        for (Symbol<T> oldSymbol : mergedAlphabet1.getSymbols()) {
+        for (Symbol oldSymbol : mergedAlphabet1.getSymbols()) {
             if (mergedAlphabet1SymbolMap.get(oldSymbol) == null) {
                 throw new InternalException(
                         "mergedAlphabet1SymbolMap is invalid");
@@ -134,7 +115,7 @@ public final class AlphabetMergeResult<T extends Comparable<? super T>> {
             throw new InternalException("wrong constructor");
         }
 
-        for (Symbol<T> oldSymbol : mergedAlphabet2.getSymbols()) {
+        for (Symbol oldSymbol : mergedAlphabet2.getSymbols()) {
             if (mergedAlphabet2SymbolMap.get(oldSymbol) == null) {
                 throw new InternalException(
                         "mergedAlphabet2SymbolMap is invalid");
@@ -152,10 +133,8 @@ public final class AlphabetMergeResult<T extends Comparable<? super T>> {
 
     /**
      * Returns the new alphabet resulting from the merge.
-     * 
-     * @return the new alphabet.
      */
-    public Alphabet<T> getNewAlphabet() {
+    public Alphabet getNewAlphabet() {
 
         return this.newAlphabet;
     }
@@ -163,18 +142,10 @@ public final class AlphabetMergeResult<T extends Comparable<? super T>> {
     /**
      * Returns the set of new symbols covering the same intervals as the
      * provided old symbol from the provided merged alphabet.
-     * 
-     * @param oldSymbol
-     *            the symbol.
-     * @param mergedAlphabet
-     *            the alphabet.
-     * @return the set of new symbols.
-     * @throws InternalException
-     *             if the old symbol or the old alphabet is <code>null</code>.
      */
-    public SortedSet<Symbol<T>> getNewSymbols(
-            Symbol<T> oldSymbol,
-            Alphabet<T> mergedAlphabet) {
+    public SortedSet<Symbol> getNewSymbols(
+            Symbol oldSymbol,
+            Alphabet mergedAlphabet) {
 
         if (oldSymbol == null) {
             throw new InternalException("oldSymbol may not be null");
@@ -195,7 +166,7 @@ public final class AlphabetMergeResult<T extends Comparable<? super T>> {
                 throw new InternalException("mergedAlphabet is invalid");
             }
 
-            TreeSet<Symbol<T>> set = new TreeSet<Symbol<T>>();
+            TreeSet<Symbol> set = new TreeSet<Symbol>();
             set.add(oldSymbol);
             return set;
         }

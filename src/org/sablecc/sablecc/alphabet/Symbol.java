@@ -27,40 +27,46 @@ import java.util.TreeSet;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * A symbol is a non-empty set of non-overlapped, non-adjacent intervals. This
- * class provides various methods to maniplutate symbols.
+ * A symbol is a non-empty set of non-intersecting, non-adjacent intervals. As a
+ * special case, a complement symbol is implemented as a symbol with no
+ * intervals. The complement symbol of an alphabet represents all the intervals
+ * not covered by other symbols of the alphabet.
  */
-public final class Symbol<T extends Comparable<? super T>>
-        implements Comparable<Symbol<T>> {
+public class Symbol
+        implements Comparable<Symbol> {
 
     /**
-     * The sorted set of non-overlapping, non-adjacent intervals. Is
-     * <code>null</code> if the symbol is a complement symbol.
+     * The sorted set of non-intersecting, non-adjacent intervals of this
+     * symbol. It is <code>null</code> when the symbol is a complement symbol.
      */
-    private final SortedSet<Interval<T>> intervals;
+    private final SortedSet<Interval> intervals;
 
-    /** Cached hashcode. Is <code>null</code> when not yet computed. */
+    /**
+     * The cached hashcode of this symbol. It is <code>null</code> when not
+     * yet computed.
+     */
     private Integer hashCode;
 
     /**
-     * Cached string representation. Is <code>null</code> when not yet
-     * computed.
+     * The cached string representation of this symbol. It is <code>null</code>
+     * when not yet computed.
      */
     private String toString;
 
     /**
+     * Constructs a complement symbol.
+     */
+    public Symbol() {
+
+        this.intervals = null;
+    }
+
+    /**
      * Constructs a symbol with the provided collection of intervals. Adjacent
-     * intervals are merged. Fails if two intervals intersect.
-     * 
-     * @param intervals
-     *            the collection of intervals.
-     * @throws InternalException
-     *             if the collection is <code>null</code>, if the interval is
-     *             empty, if an interval within the collection is
-     *             <code>null</code>, or if two intervals intersect.
+     * intervals are merged. Fails when two intervals intersect.
      */
     public Symbol(
-            Collection<Interval<T>> intervals) {
+            Collection<Interval> intervals) {
 
         if (intervals == null) {
             throw new InternalException("intervals may not be null");
@@ -72,19 +78,19 @@ public final class Symbol<T extends Comparable<? super T>>
         }
 
         // sort intervals
-        SortedSet<Interval<T>> originalSet = new TreeSet<Interval<T>>(intervals);
+        SortedSet<Interval> originalSet = new TreeSet<Interval>(intervals);
 
         // compute minimal set
-        SortedSet<Interval<T>> minimalSet = new TreeSet<Interval<T>>();
+        SortedSet<Interval> minimalSet = new TreeSet<Interval>();
 
-        Interval<T> previous = null;
-        Interval<T> combinedInterval = null;
-        for (Interval<T> current : originalSet) {
+        Interval combinedInterval = null;
+        for (Interval current : originalSet) {
             if (current == null) {
                 throw new InternalException("null is not a valid interval");
             }
 
-            if (previous != null && previous.intersects(current)) {
+            if (combinedInterval != null
+                    && combinedInterval.intersects(current)) {
                 throw new InternalException("intervals may not intersect");
             }
 
@@ -100,10 +106,9 @@ public final class Symbol<T extends Comparable<? super T>>
             else {
                 combinedInterval = current;
             }
-
-            previous = current;
         }
 
+        assert combinedInterval != null;
         minimalSet.add(combinedInterval);
 
         this.intervals = Collections.unmodifiableSortedSet(minimalSet);
@@ -111,55 +116,49 @@ public final class Symbol<T extends Comparable<? super T>>
 
     /**
      * Constructs a symbol with the provided interval.
-     * 
-     * @param interval
-     *            the interval.
-     * @throws InternalException
-     *             if the interval is <code>null</code>.
      */
     public Symbol(
-            Interval<T> interval) {
+            Interval interval) {
 
         if (interval == null) {
             throw new InternalException("interval must be provided");
         }
 
-        SortedSet<Interval<T>> set = new TreeSet<Interval<T>>();
+        SortedSet<Interval> set = new TreeSet<Interval>();
         set.add(interval);
         this.intervals = Collections.unmodifiableSortedSet(set);
     }
 
     /**
-     * Constructs a special symbol representing the complement symbol of a
-     * grammar.
+     * Constructs a symbol with the provided bound.
      */
-    public Symbol() {
+    public Symbol(
+            Bound bound) {
 
-        this.intervals = null;
+        if (bound == null) {
+            throw new InternalException("bound must be provided");
+        }
+
+        SortedSet<Interval> set = new TreeSet<Interval>();
+        set.add(new Interval(bound));
+        this.intervals = Collections.unmodifiableSortedSet(set);
     }
 
     /**
      * Returns the set of intervals of this symbol.
-     * 
-     * @return the set of intervals.
      */
-    public SortedSet<Interval<T>> getIntervals() {
+    public SortedSet<Interval> getIntervals() {
 
         if (this.intervals == null) {
-            throw new InternalException("complement symbols have no intervals");
+            throw new InternalException(
+                    "complement symbols have no explicit intervals");
         }
 
         return this.intervals;
     }
 
     /**
-     * Returns whether this instance is equal to the provided object. They are
-     * equal if they have an identical set of intervals.
-     * 
-     * @param obj
-     *            the object to compare with.
-     * @return <code>true</code> if this symbol and the object are equal;
-     *         <code>false</code> otherwise.
+     * Returns true if the provided object is equal to this symbol.
      */
     @Override
     public boolean equals(
@@ -188,7 +187,7 @@ public final class Symbol<T extends Comparable<? super T>>
         }
 
         Iterator i = symbol.intervals.iterator();
-        for (Interval<T> interval : this.intervals) {
+        for (Interval interval : this.intervals) {
             if (!interval.equals(i.next())) {
                 return false;
             }
@@ -199,8 +198,6 @@ public final class Symbol<T extends Comparable<? super T>>
 
     /**
      * Returns the hash code of this symbol.
-     * 
-     * @return the hash code.
      */
     @Override
     public int hashCode() {
@@ -209,8 +206,8 @@ public final class Symbol<T extends Comparable<? super T>>
             int hashCode = 0;
 
             if (this.intervals != null) {
-                for (Interval<T> interval : this.intervals) {
-                    hashCode *= 7;
+                for (Interval interval : this.intervals) {
+                    hashCode *= 107;
                     hashCode += interval.hashCode();
                 }
             }
@@ -223,8 +220,6 @@ public final class Symbol<T extends Comparable<? super T>>
 
     /**
      * Returns the string representation of this symbol.
-     * 
-     * @return the string representation.
      */
     @Override
     public String toString() {
@@ -236,7 +231,7 @@ public final class Symbol<T extends Comparable<? super T>>
 
             if (this.intervals != null) {
                 boolean first = true;
-                for (Interval<T> interval : this.intervals) {
+                for (Interval interval : this.intervals) {
                     if (first) {
                         first = false;
                     }
@@ -260,18 +255,10 @@ public final class Symbol<T extends Comparable<? super T>>
     }
 
     /**
-     * Compares this symbol to the provided one. The comparison proceeds by
-     * iteratively comparing the intervals of both symbols until a difference is
-     * found. If no difference is found, the size of interval sets is compared.
-     * 
-     * @param symbol
-     *            the symbol to compare with.
-     * @return an <code>int</code> value: 0 if the two symbols are equals, a
-     *         negative value if this symbol is smaller, and a positive value if
-     *         it is bigger.
+     * Compares this symbol to the provided one.
      */
     public int compareTo(
-            Symbol<T> symbol) {
+            Symbol symbol) {
 
         if (this.intervals == null || symbol.intervals == null) {
 
@@ -288,12 +275,12 @@ public final class Symbol<T extends Comparable<? super T>>
 
         int result = 0;
 
-        Iterator<Interval<T>> i1 = this.intervals.iterator();
-        Iterator<Interval<T>> i2 = symbol.intervals.iterator();
+        Iterator<Interval> i1 = this.intervals.iterator();
+        Iterator<Interval> i2 = symbol.intervals.iterator();
 
         while (result == 0 && i1.hasNext() && i2.hasNext()) {
-            Interval<T> interval1 = i1.next();
-            Interval<T> interval2 = i2.next();
+            Interval interval1 = i1.next();
+            Interval interval2 = i2.next();
 
             result = interval1.compareTo(interval2);
 
@@ -310,9 +297,7 @@ public final class Symbol<T extends Comparable<? super T>>
     }
 
     /**
-     * Returns whether this symbol is a complement symbol or not.
-     * 
-     * @return <code>true</code> if this symbol is a complement symbol.
+     * Returns true when this symbol is a complement symbol.
      */
     public boolean isComplement() {
 
@@ -322,20 +307,11 @@ public final class Symbol<T extends Comparable<? super T>>
     /**
      * Creates a new symbol by merging together the symbols in the provided
      * collection. The new symbol includes all the intervals of merged symbols.
-     * Adjacent intervals are merged. Fails if two intervals intersect.
-     * <p>
-     * If one of the symbols is a complement symbol, the result is a complement
-     * symbol.
-     * 
-     * @param symbols
-     *            a collection of symbols to merge.
-     * @return the new symbol.
-     * @throws InternalException
-     *             if the collection is <code>null</code>, if it is empty, or
-     *             if it contains more than one complement symbol.
+     * Adjacent intervals are merged. Fails if two intervals intersect. If one
+     * of the symbols is a complement symbol, the result is a complement symbol.
      */
-    public static <T extends Comparable<? super T>> Symbol<T> merge(
-            Collection<Symbol<T>> symbols) {
+    public static Symbol merge(
+            Collection<Symbol> symbols) {
 
         if (symbols == null) {
             throw new InternalException("symbols may not be null");
@@ -350,7 +326,7 @@ public final class Symbol<T extends Comparable<? super T>>
 
         boolean containsComplementSymbol = false;
 
-        for (Symbol<T> symbol : symbols) {
+        for (Symbol symbol : symbols) {
             if (symbol.isComplement()) {
 
                 if (containsComplementSymbol) {
@@ -363,35 +339,26 @@ public final class Symbol<T extends Comparable<? super T>>
         }
 
         if (containsComplementSymbol) {
-            return new Symbol<T>();
+            return new Symbol();
         }
 
         // merge non-complement symbols.
 
-        Collection<Interval<T>> intervals = new LinkedList<Interval<T>>();
+        Collection<Interval> intervals = new LinkedList<Interval>();
 
-        for (Symbol<T> symbol : symbols) {
+        for (Symbol symbol : symbols) {
             intervals.addAll(symbol.getIntervals());
         }
 
-        return new Symbol<T>(intervals);
+        return new Symbol(intervals);
     }
 
     /**
      * Returns the minimum of two symbols.
-     * 
-     * @param symbol1
-     *            the first symbol.
-     * @param symbol2
-     *            the second symbol.
-     * @return the smallest of the two symbols, or <code>symbol1</code> in
-     *         case of equality.
-     * @throws InternalException
-     *             if one of the two symbols is <code>null</code>.
      */
-    public static <T extends Comparable<? super T>> Symbol<T> min(
-            Symbol<T> symbol1,
-            Symbol<T> symbol2) {
+    public static Symbol min(
+            Symbol symbol1,
+            Symbol symbol2) {
 
         if (symbol1 == null) {
             throw new InternalException("symbol1 may not be null");
@@ -410,19 +377,10 @@ public final class Symbol<T extends Comparable<? super T>>
 
     /**
      * Returns the maximum of two symbols.
-     * 
-     * @param symbol1
-     *            the first symbol.
-     * @param symbol2
-     *            the second symbol.
-     * @return the biggest of the two symbols, or <code>symbol1</code> in case
-     *         of equality.
-     * @throws InternalException
-     *             if one of the two symbols is <code>null</code>.
      */
-    public static <T extends Comparable<? super T>> Symbol<T> max(
-            Symbol<T> symbol1,
-            Symbol<T> symbol2) {
+    public static Symbol max(
+            Symbol symbol1,
+            Symbol symbol2) {
 
         if (symbol1 == null) {
             throw new InternalException("symbol1 may not be null");

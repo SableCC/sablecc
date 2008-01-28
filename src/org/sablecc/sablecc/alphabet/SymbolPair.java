@@ -21,34 +21,32 @@ package org.sablecc.sablecc.alphabet;
  * A symbol pair is a pair <code>(x,y)</code> where each of <code>x</code>
  * and <code>y</code> is a symbol or <code>null</code>.
  */
-final class SymbolPair<T extends Comparable<? super T>> {
+class SymbolPair {
 
     /** The first symbol of the pair, possibly <code>null</code>. */
-    private final Symbol<T> symbol1;
+    private final Symbol symbol1;
 
     /** The second symbol of the pair, possibly <code>null</code>. */
-    private final Symbol<T> symbol2;
+    private final Symbol symbol2;
 
-    /** Cached hashcode. Is <code>null</code> when not yet computed. */
+    /**
+     * The cached hashcode of this symbol pair. It is <code>null</code> when
+     * not yet computed.
+     */
     private Integer hashCode;
 
     /**
-     * Cached string representation. Is <code>null</code> when not yet
-     * computed.
+     * The cached string representation of this symbol pair. It is
+     * <code>null</code> when not yet computed.
      */
     private String toString;
 
     /**
-     * Constructs a symbol pair with two provided symbols.
-     * 
-     * @param symbol1
-     *            the first symbol of the pair.
-     * @param symbol2
-     *            the second symbol of the pair.
+     * Constructs a symbol pair with the provided symbols.
      */
     SymbolPair(
-            Symbol<T> symbol1,
-            Symbol<T> symbol2) {
+            Symbol symbol1,
+            Symbol symbol2) {
 
         this.symbol1 = symbol1;
         this.symbol2 = symbol2;
@@ -56,32 +54,22 @@ final class SymbolPair<T extends Comparable<? super T>> {
 
     /**
      * Returns the first symbol of the pair.
-     * 
-     * @return the first symbol of the pair.
      */
-    Symbol<T> getSymbol1() {
+    Symbol getSymbol1() {
 
         return this.symbol1;
     }
 
     /**
      * Returns the second symbol of the pair.
-     * 
-     * @return the second symbol of the pair.
      */
-    Symbol<T> getSymbol2() {
+    Symbol getSymbol2() {
 
         return this.symbol2;
     }
 
     /**
-     * Returns whether this instance is equal to the provided object. They are
-     * equal if they contain identical symbols.
-     * 
-     * @param obj
-     *            the object to compare with.
-     * @return <code>true</code> if this symbol pair and the object are equal;
-     *         <code>false</code> otherwise.
+     * Returns true if the provided object is equal to this symbol pair.
      */
     @Override
     public boolean equals(
@@ -116,8 +104,6 @@ final class SymbolPair<T extends Comparable<? super T>> {
 
     /**
      * Returns the hash code of this symbol pair.
-     * 
-     * @return the hash code.
      */
     @Override
     public int hashCode() {
@@ -127,11 +113,11 @@ final class SymbolPair<T extends Comparable<? super T>> {
             int hashCode = 0;
 
             if (this.symbol1 != null) {
-                hashCode += this.symbol1.hashCode();
+                hashCode += 109 * this.symbol1.hashCode();
             }
 
             if (this.symbol2 != null) {
-                hashCode += 17 * this.symbol2.hashCode();
+                hashCode += 113 * this.symbol2.hashCode();
             }
 
             this.hashCode = hashCode;

@@ -20,52 +20,35 @@ package org.sablecc.sablecc.alphabet;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * An interval is defined by two bounds (lower and upper). This class provides
- * various methods to maniplutate intervals.
- * <p>
- * Intervals are primarily created using
- * <code>AdjacencyRealm.createInterval()</code>.
+ * An interval is defined by a lower bound and an upper bound.
  */
-public final class Interval<T extends Comparable<? super T>>
-        implements Comparable<Interval<T>> {
+public class Interval
+        implements Comparable<Interval> {
 
-    /** The lower bound. */
-    private final T lowerBound;
+    /** The lower bound of this interval. */
+    private final Bound lowerBound;
 
-    /** The upper bound. */
-    private final T upperBound;
+    /** The upper bound of this interval. */
+    private final Bound upperBound;
 
-    /** The adjacency realm of this interval. */
-    private final AdjacencyRealm<T> adjacencyRealm;
-
-    /** Cached hashcode. Is <code>null</code> when not yet computed. */
+    /**
+     * The cached hashcode of this interval. It is <code>null</code> when not
+     * yet computed.
+     */
     private Integer hashCode;
 
     /**
-     * Cached string representation. Is <code>null</code> when not yet
-     * computed.
+     * The cached string representation of this interval. It is
+     * <code>null</code> when not yet computed.
      */
     private String toString;
 
     /**
-     * Constructs an interval with the provided lower and upper bounds within
-     * the provided adjacency realm.
-     * 
-     * @param lowerBound
-     *            the lower bound.
-     * @param upperBound
-     *            the upper bound.
-     * @param adjacencyRealm
-     *            the adjacency realm.
-     * @throws InternalException
-     *             if any bound is <code>null</code>, if the adjacency realm
-     *             is <code>null</code>, or if <code>(lowerBound &gt;
-     *             upperBound)</code>.
+     * Constructs an interval with the provided lower and upper bounds.
      */
-    Interval(
-            T lowerBound,
-            T upperBound,
-            AdjacencyRealm<T> adjacencyRealm) {
+    public Interval(
+            Bound lowerBound,
+            Bound upperBound) {
 
         if (lowerBound == null) {
             throw new InternalException("lower bound may not be null");
@@ -75,10 +58,6 @@ public final class Interval<T extends Comparable<? super T>>
             throw new InternalException("upper bound may not be null");
         }
 
-        if (adjacencyRealm == null) {
-            throw new InternalException("adjacency realm may not be null");
-        }
-
         if (lowerBound.compareTo(upperBound) > 0) {
             throw new InternalException(
                     "lower bound must be smaller or equal to upper bound");
@@ -86,64 +65,36 @@ public final class Interval<T extends Comparable<? super T>>
 
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
-        this.adjacencyRealm = adjacencyRealm;
     }
 
     /**
-     * Constructs an interval with a single bound used as both lower and upper
-     * bounds within the provided adjacency realm.
-     * 
-     * @param bound
-     *            the bound. Used as both upper and lower bound.
-     * @param adjacencyRealm
-     *            the adjacency realm.
+     * Constructs an interval with the provided bound used as both lower bound
+     * and upper bound.
      */
-    Interval(
-            T bound,
-            AdjacencyRealm<T> adjacencyRealm) {
+    public Interval(
+            Bound bound) {
 
-        this(bound, bound, adjacencyRealm);
+        this(bound, bound);
     }
 
     /**
      * Returns the lower bound of this interval.
-     * 
-     * @return the lower bound.
      */
-    public T getLowerBound() {
+    public Bound getLowerBound() {
 
         return this.lowerBound;
     }
 
     /**
      * Returns the upper bound of this interval.
-     * 
-     * @return the upper bound.
      */
-    public T getUpperBound() {
+    public Bound getUpperBound() {
 
         return this.upperBound;
     }
 
     /**
-     * Return the adjacency realm of this interval.
-     * 
-     * @return the adjacency realm.
-     */
-    public AdjacencyRealm<T> getAdjacencyRealm() {
-
-        return this.adjacencyRealm;
-    }
-
-    /**
-     * Returns whether this instance is equal to the provided object. They are
-     * equal if they have equal lower and upper bounds and they belong to the
-     * same adjacency realm.
-     * 
-     * @param obj
-     *            the object to compare with.
-     * @return <code>true</code> if this interval and the object are equal;
-     *         <code>false</code> otherwise.
+     * Returns true if the provided object is equal to this interval.
      */
     @Override
     public boolean equals(
@@ -164,22 +115,18 @@ public final class Interval<T extends Comparable<? super T>>
         Interval interval = (Interval) obj;
 
         return this.lowerBound.equals(interval.lowerBound)
-                && this.upperBound.equals(interval.upperBound)
-                && this.adjacencyRealm == interval.adjacencyRealm;
+                && this.upperBound.equals(interval.upperBound);
     }
 
     /**
      * Returns the hash code of this interval.
-     * 
-     * @return the hash code.
      */
     @Override
     public int hashCode() {
 
         if (this.hashCode == null) {
-            this.hashCode = this.lowerBound.hashCode() * 121
-                    + this.upperBound.hashCode() * 11
-                    + this.adjacencyRealm.hashCode();
+            this.hashCode = this.lowerBound.hashCode() * 101
+                    + this.upperBound.hashCode() * 103;
         }
 
         return this.hashCode;
@@ -187,8 +134,6 @@ public final class Interval<T extends Comparable<? super T>>
 
     /**
      * Returns the string representation of this interval.
-     * 
-     * @return the string representation.
      */
     @Override
     public String toString() {
@@ -202,25 +147,16 @@ public final class Interval<T extends Comparable<? super T>>
     }
 
     /**
-     * Compares this interval to the provided one. This interval is smaller if
-     * its <code>lowerBound</code> is smaller, or if its
+     * Compares this interval to the provided interval. This interval is smaller
+     * if its <code>lowerBound</code> is smaller, or if its
      * <code>lowerBound</code> is equal and its <code>upperBound</code> is
      * smaller.
-     * 
-     * @param interval
-     *            the interval to compare with.
-     * @return an <code>int</code> value: <code>0</code> if the two
-     *         intervals are the equals, a negative value if this interval is
-     *         smaller, and a positive value if it is bigger.
-     * @throws InternalException
-     *             if both intervals do not share the same adjacency realms.
      */
     public int compareTo(
-            Interval<T> interval) {
+            Interval interval) {
 
-        if (this.adjacencyRealm != interval.adjacencyRealm) {
-            throw new InternalException(
-                    "cannot compare intervals from distinct realms");
+        if (interval == null) {
+            throw new InternalException("interval may not be null");
         }
 
         int result = this.lowerBound.compareTo(interval.lowerBound);
@@ -234,55 +170,27 @@ public final class Interval<T extends Comparable<? super T>>
 
     /**
      * Tests whether this interval is adjacent to the provided interval. It is
-     * adjacent if this interval's <code>uppeBound</code> is adjacent to the
-     * <code>lowerBound</code> of the provided interval.
-     * 
-     * @param interval
-     *            the interval to test for adjacency.
-     * @return <code>true</code> if the two intervals are adjacent;
-     *         <code>false</code> otherwise.
-     * @throws InternalException
-     *             if the interval is <code>null</code> or if both intervals
-     *             do not share the same adjacency realms.
+     * adjacent if the <code>upperBound</code> of this interval is adjacent to
+     * the <code>lowerBound</code> of the provided interval.
      */
     public boolean isAdjacentTo(
-            Interval<T> interval) {
+            Interval interval) {
 
         if (interval == null) {
             throw new InternalException("interval may not be null");
         }
 
-        if (this.adjacencyRealm != interval.adjacencyRealm) {
-            throw new InternalException(
-                    "cannot test adjacency of intervals from distinct realms");
-        }
-
-        return this.adjacencyRealm.isAdjacent(this.upperBound,
-                interval.lowerBound);
+        return this.upperBound.getSuccessor().equals(interval.lowerBound);
     }
 
     /**
-     * Tests whether this interval intersects with the provided one. The two
-     * intervals intersect if they share a commun subinterval.
-     * 
-     * @param interval
-     *            the interval to compare with.
-     * @return <code>true</code> if the two intervals intersect;
-     *         <code>false</code> otherwise.
-     * @throws InternalException
-     *             if the interval is <code>null</code> or if both intervals
-     *             do not share the same adjacency realms.
+     * Tests whether this interval intersects with the provided one.
      */
     public boolean intersects(
-            Interval<T> interval) {
+            Interval interval) {
 
         if (interval == null) {
             throw new InternalException("interval may not be null");
-        }
-
-        if (this.adjacencyRealm != interval.adjacencyRealm) {
-            throw new InternalException(
-                    "cannot intersect intervals from distinct realms");
         }
 
         return this.lowerBound.compareTo(interval.upperBound) <= 0
@@ -292,88 +200,51 @@ public final class Interval<T extends Comparable<? super T>>
     /**
      * Creates a new interval representing the intersection between this
      * interval and the provided one. The result is <code>null</code> when
-     * both intervals do not intersect.
-     * 
-     * @param interval
-     *            the interval to intersect with.
-     * @return the intersection of the two intervals; <code>null</code> if the
-     *         intersection is empty.
-     * @throws InternalException
-     *             if the interval is <code>null</code> or if both intervals
-     *             do not share the same adjacency realms.
+     * they do not intersect.
      */
-    public Interval<T> intersection(
-            Interval<T> interval) {
+    public Interval intersectWith(
+            Interval interval) {
 
         if (interval == null) {
             throw new InternalException("interval may not be null");
         }
 
-        if (this.adjacencyRealm != interval.adjacencyRealm) {
-            throw new InternalException(
-                    "cannot intersect intervals from distinct realms");
-        }
+        Bound lowerBound = Bound.max(this.lowerBound, interval.lowerBound);
 
-        T lowerBound = AdjacencyRealm.max(this.lowerBound, interval.lowerBound);
-
-        T upperBound = AdjacencyRealm.min(this.upperBound, interval.upperBound);
+        Bound upperBound = Bound.min(this.upperBound, interval.upperBound);
 
         if (lowerBound.compareTo(upperBound) <= 0) {
-            return new Interval<T>(lowerBound, upperBound, this.adjacencyRealm);
+            return new Interval(lowerBound, upperBound);
         }
 
         return null;
     }
 
     /**
-     * Creates a new interval that spans from this interval's
-     * <code>lowerBound</code> to the provided interval's
-     * <code>upperBound</code>. Merging fails if this interval is not
-     * adjacent to the provided one.
-     * 
-     * @param interval
-     *            the interval to merge this one with.
-     * @return the new interval.
-     * @throws InternalException
-     *             if the interval is <code>null</code> or not adjacent to
-     *             this one, or if both intervals do not share the same
-     *             adjacency realms.
+     * Creates a new interval that spans from the <code>lowerBound</code> of
+     * this interval to the <code>upperBound</code> of the provided interval.
+     * Merging fails if this interval is not adjacent to the provided interval.
      */
-    public Interval<T> mergeWith(
-            Interval<T> interval) {
+    public Interval mergeWith(
+            Interval interval) {
 
         if (interval == null) {
             throw new InternalException("interval may not be null");
-        }
-
-        if (this.adjacencyRealm != interval.adjacencyRealm) {
-            throw new InternalException(
-                    "cannot merge intervals from distinct realms");
         }
 
         if (!isAdjacentTo(interval)) {
             throw new InternalException("cannot merge non-adjacent intervals");
         }
 
-        return new Interval<T>(this.lowerBound, interval.upperBound,
-                this.adjacencyRealm);
+        return new Interval(this.lowerBound, interval.upperBound);
     }
 
     /**
      * Returns the minimum of two intervals.
-     * 
-     * @param interval1
-     *            the first interval.
-     * @param interval2
-     *            the second interval.
-     * @return the smallest of the two intervals, or <code>interval1</code> in
-     *         case of equality.
-     * @throws InternalException
-     *             if one of the two intervals is <code>null</code>.
      */
-    public static <T extends Comparable<? super T>> Interval<T> min(
-            Interval<T> interval1,
-            Interval<T> interval2) {
+    public static Interval min(
+            Interval interval1,
+            Interval interval2) {
 
         if (interval1 == null) {
             throw new InternalException("interval1 may not be null");
@@ -392,19 +263,10 @@ public final class Interval<T extends Comparable<? super T>>
 
     /**
      * Returns the maximum of two intervals.
-     * 
-     * @param interval1
-     *            the first interval.
-     * @param interval2
-     *            the second interval.
-     * @return the biggest of the two intervals, or <code>interval1</code> in
-     *         case of equality.
-     * @throws InternalException
-     *             if one of the two intervals is <code>null</code>.
      */
-    public static <T extends Comparable<? super T>> Interval<T> max(
-            Interval<T> interval1,
-            Interval<T> interval2) {
+    public static Interval max(
+            Interval interval1,
+            Interval interval2) {
 
         if (interval1 == null) {
             throw new InternalException("interval1 may not be null");

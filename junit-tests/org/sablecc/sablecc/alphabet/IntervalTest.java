@@ -235,7 +235,7 @@ public class IntervalTest {
         Interval<Integer> intersectingInterval = Realms.getInteger()
                 .createInterval(15, 50);
         Interval<Integer> resultInterval = this.intervalInt
-                .intersection(intersectingInterval);
+                .intersectWith(intersectingInterval);
 
         assertEquals("The lowerBound of the intersection should be 15.", 15,
                 resultInterval.getLowerBound());
@@ -243,13 +243,13 @@ public class IntervalTest {
                 resultInterval.getUpperBound());
 
         assertNull("No intersection expected.", this.intervalInt
-                .intersection(Realms.getInteger().createInterval(40, 60)));
+                .intersectWith(Realms.getInteger().createInterval(40, 60)));
 
         // With BigInteger
         Interval<BigInteger> intersectingIntervalBig = Realms.getBigInteger()
                 .createInterval(new BigInteger("150"), new BigInteger("9999"));
         Interval<BigInteger> resultIntervalBig = this.intervalBig
-                .intersection(intersectingIntervalBig);
+                .intersectWith(intersectingIntervalBig);
 
         assertEquals("The lowerBound of the intersection should be 150.",
                 "150", resultIntervalBig.getLowerBound().toString());
@@ -257,7 +257,7 @@ public class IntervalTest {
                 "200", resultIntervalBig.getUpperBound().toString());
 
         assertNull("No intersection expected.", this.intervalBig
-                .intersection(Realms.getBigInteger().createInterval(
+                .intersectWith(Realms.getBigInteger().createInterval(
                         new BigInteger(1000, new Random()))));
     }
 
