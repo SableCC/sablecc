@@ -18,7 +18,6 @@
 package ticket39;
 
 import org.junit.Test;
-import org.sablecc.sablecc.alphabet.AdjacencyRealm;
 import org.sablecc.sablecc.alphabet.Realms;
 import org.sablecc.sablecc.automaton.Dfa;
 import org.sablecc.sablecc.automaton.MinimalDfa;

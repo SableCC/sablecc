@@ -20,7 +20,6 @@ package org.sablecc.sablecc.automaton.external;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sablecc.sablecc.alphabet.AdjacencyRealm;
 import org.sablecc.sablecc.alphabet.Realms;
 import org.sablecc.sablecc.automaton.Dfa;
 import org.sablecc.sablecc.automaton.MinimalDfa;
