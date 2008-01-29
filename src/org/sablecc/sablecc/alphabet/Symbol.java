@@ -260,6 +260,10 @@ public class Symbol
     public int compareTo(
             Symbol symbol) {
 
+        if (symbol == null) {
+            throw new InternalException("symbol may not be null");
+        }
+
         if (this.intervals == null || symbol.intervals == null) {
 
             if (this.intervals == symbol.intervals) {
