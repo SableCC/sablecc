@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.automaton;
 
-import static org.sablecc.sablecc.util.UsefulStaticImports.lineSeparator;
+import static org.sablecc.sablecc.util.UsefulStaticImports.LINE_SEPARATOR;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -344,7 +344,7 @@ public class MinimalDfa {
             sb.append("MinimalDFA:{");
 
             for (MinimalDfaState state : this.states) {
-                sb.append(lineSeparator);
+                sb.append(LINE_SEPARATOR);
                 sb.append("    ");
                 sb.append(state);
 
@@ -366,7 +366,7 @@ public class MinimalDfa {
                     Symbol symbol = entry.getKey();
                     MinimalDfaState target = entry.getValue();
 
-                    sb.append(lineSeparator);
+                    sb.append(LINE_SEPARATOR);
                     sb.append("        ");
                     sb.append(symbol);
                     sb.append(" -> ");
@@ -374,7 +374,7 @@ public class MinimalDfa {
                 }
             }
 
-            sb.append(lineSeparator);
+            sb.append(LINE_SEPARATOR);
             sb.append("}");
 
             this.toString = sb.toString();

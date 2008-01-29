@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.automaton;
 
-import static org.sablecc.sablecc.util.UsefulStaticImports.lineSeparator;
+import static org.sablecc.sablecc.util.UsefulStaticImports.LINE_SEPARATOR;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -410,7 +410,7 @@ public final class Nfa {
             sb.append("Nfa:{");
 
             for (NfaState state : this.states) {
-                sb.append(lineSeparator);
+                sb.append(LINE_SEPARATOR);
                 sb.append("    ");
                 sb.append(state);
 
@@ -429,7 +429,7 @@ public final class Nfa {
                     SortedSet<NfaState> targets = entry.getValue();
 
                     for (NfaState target : targets) {
-                        sb.append(lineSeparator);
+                        sb.append(LINE_SEPARATOR);
                         sb.append("        ");
                         sb.append(symbol);
                         sb.append(" -> ");
@@ -438,7 +438,7 @@ public final class Nfa {
                 }
             }
 
-            sb.append(lineSeparator);
+            sb.append(LINE_SEPARATOR);
             sb.append("}");
 
             this.toString = sb.toString();

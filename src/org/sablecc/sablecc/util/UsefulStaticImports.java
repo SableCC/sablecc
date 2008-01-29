@@ -26,7 +26,7 @@ import org.sablecc.sablecc.exception.InternalException;
 public class UsefulStaticImports {
 
     /** The system-specific line separator. */
-    public static final String lineSeparator = System
+    public static final String LINE_SEPARATOR = System
             .getProperty("line.separator");
 
     /** Prevents instanciation of this class. */
