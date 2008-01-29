@@ -397,20 +397,20 @@ public class Alphabet {
      * <code>(x,y)</code> to a set of shared intervals, where <code>x</code>
      * is a symbol of <code>alphabet1</code> or <code>null</code>, and
      * <code>y</code> is a symbol of <code>alphabet2</code> or
-     * <code>null</code>.
-     * <p>
-     * This methods does not explicitly take into account complement symbols,
-     * but a <code>null</code> symbol, in a symbol pair, represents complement
-     * symbol.
-     * <p>
-     * The particular property of this implementation is that it does so in
-     * linear time by only mapping pairs that have a non-empty shared interval
-     * set. The intuitive algorithm would have analyzed all possible pairs,
-     * leading to quadratic running time.
+     * <code>null</code>. Note that this methods does not explicitly take
+     * into account complement symbols, but a <code>null</code> symbol, in a
+     * symbol pair, represents complement symbol.
      */
     private static Map<SymbolPair, SortedSet<Interval>> computeSymbolPairToIntervalSetMap(
             Alphabet alphabet1,
             Alphabet alphabet2) {
+
+        /*
+         * The particular property of this implementation is that it does so in
+         * linear time by only mapping pairs that have a non-empty shared
+         * interval set. The intuitive algorithm would have analyzed all
+         * possible pairs, leading to quadratic running time.
+         */
 
         Map<SymbolPair, SortedSet<Interval>> symbolPairToIntervalSetMap = new LinkedHashMap<SymbolPair, SortedSet<Interval>>();
 
