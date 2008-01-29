@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.automaton;
 
+import static org.sablecc.sablecc.util.UsefulStaticImports.lineSeparator;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.SortedMap;
@@ -35,10 +37,6 @@ import org.sablecc.sablecc.util.WorkSet;
  * input symbol.
  */
 public class Dfa {
-
-    /** Only used for line separation in method toString. */
-    private static final String lineSeparator = System
-            .getProperty("line.separator");
 
     /** The alphabet for this <code>Dfa</code>. */
     private Alphabet alphabet;

@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.automaton;
 
+import static org.sablecc.sablecc.util.UsefulStaticImports.lineSeparator;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -37,10 +39,6 @@ import org.sablecc.sablecc.util.WorkSet;
  * which is minimalist and equivalent to a corresponding <code>Dfa</code>.
  */
 public class MinimalDfa {
-
-    /** Only used for line separation in method toString. */
-    private static final String lineSeparator = System
-            .getProperty("line.separator");
 
     /** The alphabet for this <code>MinimalDfa</code>. */
     private Alphabet alphabet;
