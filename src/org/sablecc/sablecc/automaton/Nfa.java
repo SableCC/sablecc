@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.automaton;
 
+import static org.sablecc.sablecc.util.UsefulStaticImports.lineSeparator;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
@@ -37,10 +39,6 @@ import org.sablecc.sablecc.exception.InternalException;
  * symbols.
  */
 public final class Nfa {
-
-    /** Only used for line separation in method toString. */
-    private static final String lineSeparator = System
-            .getProperty("line.separator");
 
     /** The alphabet for this <code>Nfa</code>. */
     private Alphabet alphabet;
