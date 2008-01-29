@@ -497,7 +497,7 @@ public final class Nfa {
             throw new InternalException("nfa is not stable yet");
         }
 
-        NfaCombineResult nfaCombineResult = this.combineWith(nfa);
+        NfaCombineResult nfaCombineResult = combineWith(nfa);
         Nfa newNfa = nfaCombineResult.getNewNfa();
 
         // add epsilon transitions from start to oldStart
@@ -543,7 +543,7 @@ public final class Nfa {
             throw new InternalException("nfa is not stable yet");
         }
 
-        NfaCombineResult nfaCombineResult = this.combineWith(nfa);
+        NfaCombineResult nfaCombineResult = combineWith(nfa);
         Nfa newNfa = nfaCombineResult.getNewNfa();
 
         // add epsilon transition from start to start(this)
@@ -1039,7 +1039,7 @@ public final class Nfa {
 
                     if (oldSymbol != null) {
                         for (Symbol newSymbol : alphabetMergeResult
-                                .getNewSymbols(oldSymbol, this.alphabet)) {
+                                .getNewSymbols(oldSymbol)) {
 
                             nfaStateMap.get(oldState).addTransition(newSymbol,
                                     nfaStateMap.get(oldTarget));
