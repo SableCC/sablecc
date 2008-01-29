@@ -141,29 +141,21 @@ public final class AlphabetMergeResult {
 
     /**
      * Returns the set of new symbols covering the same intervals as the
-     * provided old symbol from the provided merged alphabet.
+     * provided old symbol.
      */
     public SortedSet<Symbol> getNewSymbols(
-            Symbol oldSymbol,
-            Alphabet mergedAlphabet) {
+            Symbol oldSymbol) {
 
         if (oldSymbol == null) {
             throw new InternalException("oldSymbol may not be null");
         }
 
-        if (mergedAlphabet == null) {
-            throw new InternalException("mergedAlphabet may not be null");
-        }
-
-        if (!mergedAlphabet.getSymbols().contains(oldSymbol)) {
-            throw new InternalException(
-                    "oldSymbol is not an element of mergedAlphabet");
-        }
-
         // special case for an alphabet merged with itslef
         if (this.mergedAlphabet1 == null) {
-            if (mergedAlphabet != this.newAlphabet) {
-                throw new InternalException("mergedAlphabet is invalid");
+
+            if (!this.newAlphabet.getSymbols().contains(oldSymbol)) {
+                throw new InternalException(
+                        "oldSymbol is not an element of a merged alphabet");
             }
 
             TreeSet<Symbol> set = new TreeSet<Symbol>();
@@ -171,14 +163,24 @@ public final class AlphabetMergeResult {
             return set;
         }
 
-        if (mergedAlphabet == this.mergedAlphabet1) {
-            return this.mergedAlphabet1SymbolMap.get(oldSymbol);
+        // check that one of the merged alphabet contains oldSymbol
+
+        // Note that if both merged alphabets contain oldSymbol, it necessarily
+        // maps to the same new symbol set.
+
+        SortedMap<Symbol, SortedSet<Symbol>> mergedAlphabetSymbolMap;
+
+        if (this.mergedAlphabet1.getSymbols().contains(oldSymbol)) {
+            mergedAlphabetSymbolMap = this.mergedAlphabet1SymbolMap;
+        }
+        else if (this.mergedAlphabet2.getSymbols().contains(oldSymbol)) {
+            mergedAlphabetSymbolMap = this.mergedAlphabet2SymbolMap;
+        }
+        else {
+            throw new InternalException(
+                    "oldSymbol is not an element of a merged alphabet");
         }
 
-        if (mergedAlphabet == this.mergedAlphabet2) {
-            return this.mergedAlphabet2SymbolMap.get(oldSymbol);
-        }
-
-        throw new InternalException("mergedAlphabet is invalid");
+        return mergedAlphabetSymbolMap.get(oldSymbol);
     }
 }
