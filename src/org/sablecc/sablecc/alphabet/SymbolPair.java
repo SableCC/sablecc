@@ -128,8 +128,6 @@ class SymbolPair {
 
     /**
      * Returns the string representation of this symbol pair.
-     * 
-     * @return the string representation.
      */
     @Override
     public String toString() {

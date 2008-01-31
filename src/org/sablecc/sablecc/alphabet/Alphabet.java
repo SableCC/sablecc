@@ -278,23 +278,20 @@ public class Alphabet {
             return new AlphabetMergeResult(this);
         }
 
-        /*
-         * In theoretical terms, an alphabet is a set of symbols.
-         * 
-         * Merging two alphabets A and B consists of creating a new alphabet C
-         * containing a minimal number of symbols, with the following property:
-         * 
-         * For every symbol x element of (A union B), there exists a
-         * corresponding subset S of C, such that: merge(S) == x.
-         * 
-         * As a direct consequence, every new symbol w element of C is related
-         * to a pair (x,y) where x is element of (A union {null}) and y is
-         * element of (B union {null}).
-         * 
-         * Our algorithm proceeds by finding these pairs to identify the symbols
-         * of the new alphabet.
-         * 
-         */
+        // In theoretical terms, an alphabet is a set of symbols.
+        //
+        // Merging two alphabets A and B consists of creating a new alphabet C
+        // containing a minimal number of symbols, with the following property:
+        //
+        // For every symbol x element of (A union B), there exists a
+        // corresponding subset S of C, such that: merge(S) == x.
+        //
+        // As a direct consequence, every new symbol w element of C is related
+        // to a pair (x,y) where x is element of (A union {null}) and y is
+        // element of (B union {null}).
+        //
+        // Our algorithm proceeds by finding these pairs to identify the symbols
+        // of the new alphabet.
 
         // First, we compute a map of (symbol pair,interval set)
         Map<SymbolPair, SortedSet<Interval>> symbolPairToIntervalSetMap = computeSymbolPairToIntervalSetMap(
