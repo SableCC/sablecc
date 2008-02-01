@@ -64,6 +64,7 @@ Tokens
   associative_keyword = 'Associative';
   context_keyword = 'Context';
   dangling_keyword = 'Dangling';
+  end_token = 'End';
   exclusion_keyword = 'Exclusion';
   group_keyword = 'Group';
   ignored_keyword = 'Ignored';
@@ -171,7 +172,10 @@ Productions
     [named_regular_expressions]:named_regular_expression*;
 
   named_regular_expression =
-    [name]:identifier assign expression semicolon;
+    [name]:identifier assign expression lookahead_expression? semicolon;
+
+  lookahead_expression =
+    lookahead_keyword expression? end_token?;
 
   expression =
     top_level_expression
