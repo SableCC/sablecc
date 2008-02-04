@@ -77,6 +77,7 @@ Tokens
   lexer_keyword = 'Lexer';
   lookahead_keyword = 'Lookahead';
   no_keyword = 'No';
+  not_keyword = 'Not';
   null_keyword = 'Null';
   over_keyword = 'Over';
   parser_keyword = 'Parser';
@@ -172,10 +173,7 @@ Productions
     [named_regular_expressions]:named_regular_expression*;
 
   named_regular_expression =
-    [name]:identifier assign expression lookahead_expression? semicolon;
-
-  lookahead_expression =
-    lookahead_keyword expression? end_token?;
+    [name]:identifier assign expression semicolon;
 
   expression =
     top_level_expression
@@ -186,16 +184,18 @@ Productions
 
   top_level_expression =
     {simple}       concatenation_expression |
+    {interval}     [lower_bound_character]:character two_dots
+                   [upper_bound_character]:character |
     {subtraction}  [left_expression]:concatenation_expression minus
                    [right_expression]:concatenation_expression |
     {shortest}     shortest_keyword concatenation_expression |
-    {interval}     [lower_bound_character]:character two_dots
-                   [upper_bound_character]:character |
+    {lookahead}    [left_expression]:concatenation_expression lookahead_keyword
+                   not_keyword? [right_expression]:concatenation_expression?
+                   end_token? |
+    {exclusion}    [left_expression]:concatenation_expression exclusion_keyword
+                   [right_expression]:concatenation_expression |
     {intersection} [left_expression]:concatenation_expression
                    intersection_keyword
-                   [right_expression]:concatenation_expression |
-    {exclusion}    [left_expression]:concatenation_expression
-                   exclusion_keyword
                    [right_expression]:concatenation_expression;
 
   concatenation_expression =
@@ -206,7 +206,7 @@ Productions
 
   term =
     {group_literal} group_literal |
-    {parenthesis}  left_parenthesis expression right_parenthesis;
+    {parenthesis}   left_parenthesis expression right_parenthesis;
 
   unary_operator =
     {zero_or_one} question_mark |
@@ -231,7 +231,7 @@ Productions
     context_keyword [name]:identifier colon lexer_context_body;
 
   lexer_context_body =
-    tokens? ignored? rejected? lexer_priorities? lookahead?
+    lookahead? tokens? ignored? rejected? lexer_priorities?
     lexer_investigators?;
 
   tokens =
@@ -358,14 +358,12 @@ Productions
     priority_keyword [parser_priorities]:parser_priority+;
 
   parser_priority =
-    {left_associative}  left_keyword associative_keyword
-                        colon identifier_list semicolon |
-    {right_associative} right_keyword associative_keyword
-                        colon identifier_list semicolon |
-    {left_unary}        left_keyword unary_keyword
-                        colon identifier_list semicolon |
-    {right_unary}       right_keyword unary_keyword
-                        colon identifier_list semicolon;
+    {left_associative}  left_keyword associative_keyword identifier_list
+                        semicolon |
+    {right_associative} right_keyword associative_keyword identifier_list
+                        semicolon |
+    {left_unary}        left_keyword unary_keyword identifier_list semicolon |
+    {right_unary}       right_keyword unary_keyword identifier_list semicolon;
 
   parser_investigators =
     [parser_investigators]:parser_investigator+;
