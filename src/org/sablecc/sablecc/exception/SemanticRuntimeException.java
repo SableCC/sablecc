@@ -17,14 +17,14 @@
 
 package org.sablecc.sablecc.exception;
 
-public class BypassSemanticException
+public class SemanticRuntimeException
         extends RuntimeException {
 
     private static final long serialVersionUID = -2922188997584289114L;
 
     SemanticException semanticException;
 
-    public BypassSemanticException(
+    public SemanticRuntimeException(
             SemanticException semanticException) {
 
         super(semanticException);
