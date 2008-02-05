@@ -18,7 +18,7 @@
 package ticket39;
 
 import org.junit.Test;
-import org.sablecc.sablecc.alphabet.Realms;
+import org.sablecc.sablecc.alphabet.Interval;
 import org.sablecc.sablecc.automaton.Dfa;
 import org.sablecc.sablecc.automaton.MinimalDfa;
 import org.sablecc.sablecc.automaton.Nfa;
@@ -28,21 +28,18 @@ public class PartitioningBug {
     @Test
     public void bug() {
 
-        AdjacencyRealm<Character> charRealm = Realms.getCharacter();
+        Nfa any = new Nfa(new Interval('A', 'Z'));
+        Nfa e = new Nfa('E');
+        Nfa t = new Nfa('T');
+        Nfa i = new Nfa('I');
+        Nfa n = new Nfa('N');
 
-        Nfa<Character> any = new Nfa<Character>(charRealm.createInterval('A',
-                'Z'));
-        Nfa<Character> e = new Nfa<Character>(charRealm.createInterval('E'));
-        Nfa<Character> t = new Nfa<Character>(charRealm.createInterval('T'));
-        Nfa<Character> i = new Nfa<Character>(charRealm.createInterval('I'));
-        Nfa<Character> n = new Nfa<Character>(charRealm.createInterval('N'));
-
-        Dfa<Character> allButEtienne = any.zeroOrMore().subtract(
+        Dfa allButEtienne = any.zeroOrMore().subtract(
                 e.concatenateWith(t).concatenateWith(i).concatenateWith(e)
                         .concatenateWith(n).concatenateWith(n).concatenateWith(
                                 e));
 
         // Line that causes the bug
-        new MinimalDfa<Character>(allButEtienne);
+        new MinimalDfa(allButEtienne);
     }
 }
