@@ -19,6 +19,7 @@ package org.sablecc.sablecc.automaton;
 
 import static org.sablecc.sablecc.util.UsefulStaticImports.LINE_SEPARATOR;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.TreeSet;
 
 import org.sablecc.sablecc.alphabet.Alphabet;
 import org.sablecc.sablecc.alphabet.AlphabetMergeResult;
+import org.sablecc.sablecc.alphabet.Bound;
 import org.sablecc.sablecc.alphabet.Interval;
 import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
@@ -100,6 +102,32 @@ public final class Nfa {
 
     /**
      * Constructs a <code>Nfa</code> for the language <code>{"s"}</code>
+     * where <code>s</code> is the provided symbol.
+     * 
+     * @param symbol
+     *            the symbol.
+     * @throws InternalException
+     *             if the symbol is <code>null</code>.
+     */
+    public Nfa(
+            Symbol symbol) {
+
+        if (symbol == null) {
+            throw new InternalException("symbol may not be null");
+        }
+
+        init();
+
+        this.alphabet = new Alphabet(symbol);
+
+        // transition: start->(symbol)->accept
+        this.startState.addTransition(symbol, this.acceptState);
+
+        stabilize();
+    }
+
+    /**
+     * Constructs a <code>Nfa</code> for the language <code>{"s"}</code>
      * where <code>s</code> is a symbol representing a single interval.
      * 
      * @param interval
@@ -125,30 +153,46 @@ public final class Nfa {
         stabilize();
     }
 
-    /**
-     * Constructs a <code>Nfa</code> for the language <code>{"s"}</code>
-     * where <code>s</code> is the provided symbol.
-     * 
-     * @param symbol
-     *            the symbol.
-     * @throws InternalException
-     *             if the symbol is <code>null</code>.
-     */
     public Nfa(
-            Symbol symbol) {
+            Bound bound) {
 
-        if (symbol == null) {
-            throw new InternalException("symbol may not be null");
+        if (bound == null) {
+            throw new InternalException("bound may not be null");
         }
 
         init();
 
+        Symbol symbol = new Symbol(bound);
         this.alphabet = new Alphabet(symbol);
 
         // transition: start->(symbol)->accept
         this.startState.addTransition(symbol, this.acceptState);
 
         stabilize();
+    }
+
+    public Nfa(
+            char bound) {
+
+        this(new Interval(bound));
+    }
+
+    public Nfa(
+            int bound) {
+
+        this(new Interval(bound));
+    }
+
+    public Nfa(
+            BigInteger bound) {
+
+        this(new Interval(bound));
+    }
+
+    public Nfa(
+            String bound) {
+
+        this(new Interval(bound));
     }
 
     /**
