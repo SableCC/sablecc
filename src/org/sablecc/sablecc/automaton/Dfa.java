@@ -32,52 +32,43 @@ import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.util.WorkSet;
 
 /**
- * A deterministic finite automaton (or MinimalDfa) is a finite state machine
- * which permit one and only one transition from one state to another with an
- * input symbol.
+ * This class encapsulates a deterministic finite automaton (DFA).
  */
 public class Dfa {
 
-    /** The alphabet for this <code>Dfa</code>. */
+    /** The alphabet of this DFA. */
     private Alphabet alphabet;
 
-    /** The states of this <code>Dfa</code>. */
+    /** The states of this DFA. */
     private SortedSet<DfaState> states;
 
-    /** The starting state of this <code>Dfa</code>. */
+    /** The start state of this DFA. */
     private DfaState startState;
 
-    /** The dead end state of this <code>Dfa</code>. */
+    /** The dead end state of this DFA. */
     private DfaState deadEndState;
 
-    /** The acceptation states of this <code>Dfa</code>. */
+    /** The accept states of this DFA. */
     private SortedSet<DfaState> acceptStates;
 
-    /** A stability status for this <code>Dfa</code>. */
+    /** The stability status of this DFA. */
     private boolean isStable;
 
     /**
-     * Cached string representation. Is <code>null</code> when not yet
-     * computed.
+     * The cached string representation of this DFA. It is <code>null</code>
+     * when not yet computed.
      */
     private String toString;
 
     /**
-     * Constructs a simple <code>Dfa</code>. Used by static class methods to
-     * generate a non-stabilized <code>Dfa</code> to work with.
+     * Constructs an empty DFA. The created DFA is not stabilized.
      */
     private Dfa() {
 
     }
 
     /**
-     * Constructs a <code>Dfa</code> which is similar to the provided
-     * <code>Nfa</code>.
-     * 
-     * @param nfa
-     *            the <code>Nfa</code>.
-     * @throws InternalException
-     *             if the <code>Nfa</code> is <code>null</code>.
+     * Constructs a DFA which is equivalent to the provided NFA.
      */
     public Dfa(
             Nfa nfa) {
@@ -86,7 +77,7 @@ public class Dfa {
             throw new InternalException("nfa may not be null");
         }
 
-        init(nfa);
+        init(nfa.getAlphabet());
         StateMatcher stateMapper = computeDfaStates(nfa);
 
         // compute accept states
@@ -101,13 +92,12 @@ public class Dfa {
     }
 
     /**
-     * Initializes this <code>Dfa</code>. This method is called by the main
-     * constructor.
+     * Initializes the fields of this DFA.
      */
     private void init(
-            Nfa nfa) {
+            Alphabet alphabet) {
 
-        this.alphabet = nfa.getAlphabet();
+        this.alphabet = alphabet;
         this.states = new TreeSet<DfaState>();
         this.acceptStates = new TreeSet<DfaState>();
         this.isStable = false;
@@ -124,11 +114,11 @@ public class Dfa {
     private StateMatcher computeDfaStates(
             Nfa nfa) {
 
-        StateMatcher matcher = new StateMatcher(this, nfa);
+        StateMatcher stateMatcher = new StateMatcher(this, nfa);
         WorkSet<DfaState> workSet = new WorkSet<DfaState>();
 
-        this.deadEndState = matcher.getDfaState(new TreeSet<NfaState>());
-        this.startState = matcher.getDfaState(nfa.getStartState()
+        this.deadEndState = stateMatcher.getDfaState(new TreeSet<NfaState>());
+        this.startState = stateMatcher.getDfaState(nfa.getStartState()
                 .getEpsilonReach());
         workSet.add(this.startState);
 
@@ -138,7 +128,8 @@ public class Dfa {
             // find direct destinations
             SortedMap<Symbol, SortedSet<NfaState>> directDestinationMap = new TreeMap<Symbol, SortedSet<NfaState>>();
 
-            for (NfaState sourceNfaState : matcher.getNfaStates(sourceDfaState)) {
+            for (NfaState sourceNfaState : stateMatcher
+                    .getNfaStates(sourceDfaState)) {
 
                 for (Map.Entry<Symbol, SortedSet<NfaState>> entry : sourceNfaState
                         .getTransitions().entrySet()) {
@@ -175,7 +166,7 @@ public class Dfa {
                     epsilonClosure.addAll(nfaState.getEpsilonReach());
                 }
 
-                DfaState destinationDfaState = matcher
+                DfaState destinationDfaState = stateMatcher
                         .getDfaState(epsilonClosure);
 
                 sourceDfaState.addTransition(symbol, destinationDfaState);
@@ -184,7 +175,7 @@ public class Dfa {
             }
         }
 
-        return matcher;
+        return stateMatcher;
     }
 
     /**
@@ -400,7 +391,7 @@ public class Dfa {
      * @throws InternalException
      *             if the provided <code>Nfa</code> is <code>null</code>.
      */
-    static <T extends Comparable<? super T>> Dfa shortest(
+    static Dfa shortest(
             Nfa nfa) {
 
         if (nfa == null) {
@@ -409,7 +400,7 @@ public class Dfa {
 
         Dfa dfa = new Dfa();
 
-        dfa.init(nfa);
+        dfa.init(nfa.getAlphabet());
         StateMatcher stateMapper = dfa.computeDfaStates(nfa);
 
         // compute accept states
@@ -442,7 +433,7 @@ public class Dfa {
      *             if one of the provided <code>Nfa</code> is
      *             <code>null</code>.
      */
-    static <T extends Comparable<? super T>> Dfa difference(
+    static Dfa difference(
             Nfa nfa1,
             Nfa nfa2) {
 
@@ -467,7 +458,7 @@ public class Dfa {
 
         Dfa dfa = new Dfa();
 
-        dfa.init(newNfa);
+        dfa.init(newNfa.getAlphabet());
         StateMatcher stateMapper = dfa.computeDfaStates(newNfa);
 
         // compute accept states
@@ -497,7 +488,7 @@ public class Dfa {
      *             if one of the provided <code>Nfa</code> is
      *             <code>null</code>.
      */
-    static <T extends Comparable<? super T>> Dfa intersection(
+    static Dfa intersection(
             Nfa nfa1,
             Nfa nfa2) {
 
@@ -522,7 +513,7 @@ public class Dfa {
 
         Dfa dfa = new Dfa();
 
-        dfa.init(newNfa);
+        dfa.init(newNfa.getAlphabet());
         StateMatcher stateMapper = dfa.computeDfaStates(newNfa);
 
         // compute accept states
