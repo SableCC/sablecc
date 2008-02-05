@@ -17,6 +17,7 @@
 
 package org.sablecc.sablecc.alphabet;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -121,6 +122,30 @@ public class Alphabet {
         symbols.add(new Symbol(bound));
 
         init(symbols);
+    }
+
+    public Alphabet(
+            char bound) {
+
+        this(new Interval(bound));
+    }
+
+    public Alphabet(
+            int bound) {
+
+        this(new Interval(bound));
+    }
+
+    public Alphabet(
+            BigInteger bound) {
+
+        this(new Interval(bound));
+    }
+
+    public Alphabet(
+            String bound) {
+
+        this(new Interval(bound));
     }
 
     /**
