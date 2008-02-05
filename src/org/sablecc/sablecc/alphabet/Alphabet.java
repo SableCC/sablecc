@@ -124,24 +124,36 @@ public class Alphabet {
         init(symbols);
     }
 
+    /**
+     * Constructs an alphabet with the provided bound.
+     */
     public Alphabet(
             char bound) {
 
         this(new Interval(bound));
     }
 
+    /**
+     * Constructs an alphabet with the provided bound.
+     */
     public Alphabet(
             int bound) {
 
         this(new Interval(bound));
     }
 
+    /**
+     * Constructs an alphabet with the provided bound.
+     */
     public Alphabet(
             BigInteger bound) {
 
         this(new Interval(bound));
     }
 
+    /**
+     * Constructs an alphabet with the provided bound.
+     */
     public Alphabet(
             String bound) {
 
