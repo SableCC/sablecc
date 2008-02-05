@@ -17,6 +17,9 @@
 
 package org.sablecc.sablecc;
 
+/**
+ * This enumaration serves to describe the verbosity level.
+ */
 public enum Verbosity {
     QUIET,
     NORMAL,

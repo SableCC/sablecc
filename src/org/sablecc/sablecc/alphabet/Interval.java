@@ -79,6 +79,9 @@ public class Interval
         this(bound, bound);
     }
 
+    /**
+     * Constructs an interval with the provided lower and upper bounds.
+     */
     public Interval(
             char lowerBound,
             char upperBound) {
@@ -86,12 +89,19 @@ public class Interval
         this(new CharacterBound(lowerBound), new CharacterBound(upperBound));
     }
 
+    /**
+     * Constructs an interval with the provided bound used as both lower bound
+     * and upper bound.
+     */
     public Interval(
             char bound) {
 
         this(new CharacterBound(bound));
     }
 
+    /**
+     * Constructs an interval with the provided lower and upper bounds.
+     */
     public Interval(
             int lowerBound,
             int upperBound) {
@@ -99,12 +109,19 @@ public class Interval
         this(new IntegerBound(lowerBound), new IntegerBound(upperBound));
     }
 
+    /**
+     * Constructs an interval with the provided bound used as both lower bound
+     * and upper bound.
+     */
     public Interval(
             int bound) {
 
         this(new IntegerBound(bound));
     }
 
+    /**
+     * Constructs an interval with the provided lower and upper bounds.
+     */
     public Interval(
             BigInteger lowerBound,
             BigInteger upperBound) {
@@ -112,12 +129,19 @@ public class Interval
         this(new BigIntegerBound(lowerBound), new BigIntegerBound(upperBound));
     }
 
+    /**
+     * Constructs an interval with the provided bound used as both lower bound
+     * and upper bound.
+     */
     public Interval(
             BigInteger bound) {
 
         this(new BigIntegerBound(bound));
     }
 
+    /**
+     * Constructs an interval with the provided lower and upper bounds.
+     */
     public Interval(
             String lowerBound,
             String upperBound) {
@@ -125,6 +149,10 @@ public class Interval
         this(new BigIntegerBound(lowerBound), new BigIntegerBound(upperBound));
     }
 
+    /**
+     * Constructs an interval with the provided bound used as both lower bound
+     * and upper bound.
+     */
     public Interval(
             String bound) {
 

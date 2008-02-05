@@ -145,24 +145,36 @@ public class Symbol
         this.intervals = Collections.unmodifiableSortedSet(set);
     }
 
+    /**
+     * Constructs a symbol with the provided bound.
+     */
     public Symbol(
             char bound) {
 
         this(new Interval(bound));
     }
 
+    /**
+     * Constructs a symbol with the provided bound.
+     */
     public Symbol(
             int bound) {
 
         this(new Interval(bound));
     }
 
+    /**
+     * Constructs a symbol with the provided bound.
+     */
     public Symbol(
             BigInteger bound) {
 
         this(new Interval(bound));
     }
 
+    /**
+     * Constructs a symbol with the provided bound.
+     */
     public Symbol(
             String bound) {
 
