@@ -23,7 +23,6 @@ import java.util.LinkedList;
 import org.junit.Test;
 import org.sablecc.sablecc.alphabet.Alphabet;
 import org.sablecc.sablecc.alphabet.Interval;
-import org.sablecc.sablecc.alphabet.Realms;
 import org.sablecc.sablecc.alphabet.Symbol;
 
 public class MergeBug {
@@ -31,23 +30,21 @@ public class MergeBug {
     @Test
     public void bug() {
 
-        Collection<Interval<Integer>> intervalsInt = new LinkedList<Interval<Integer>>();
+        Collection<Interval> intervals = new LinkedList<Interval>();
 
-        Alphabet<Integer> firstPartAlphabet;
-        Alphabet<Integer> secondPartAlphabet;
+        Alphabet firstPartAlphabet;
+        Alphabet secondPartAlphabet;
 
-        intervalsInt.add(Realms.getInteger().createInterval(0, 5));
-        intervalsInt.add(Realms.getInteger().createInterval(10, 15));
-        intervalsInt.add(Realms.getInteger().createInterval(20, 25));
-        firstPartAlphabet = new Alphabet<Integer>(new Symbol<Integer>(
-                intervalsInt));
+        intervals.add(new Interval(0, 5));
+        intervals.add(new Interval(10, 15));
+        intervals.add(new Interval(20, 25));
+        firstPartAlphabet = new Alphabet(new Symbol(intervals));
 
-        intervalsInt.clear();
-        intervalsInt.add(Realms.getInteger().createInterval(30, 35));
-        intervalsInt.add(Realms.getInteger().createInterval(40, 45));
-        intervalsInt.add(Realms.getInteger().createInterval(50, 55));
-        secondPartAlphabet = new Alphabet<Integer>(new Symbol<Integer>(
-                intervalsInt));
+        intervals.clear();
+        intervals.add(new Interval(30, 35));
+        intervals.add(new Interval(40, 45));
+        intervals.add(new Interval(50, 55));
+        secondPartAlphabet = new Alphabet(new Symbol(intervals));
 
         // Line that cause the bug.
         firstPartAlphabet.mergeWith(secondPartAlphabet);
