@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.alphabet;
 
+import java.math.BigInteger;
+
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
@@ -75,6 +77,58 @@ public class Interval
             Bound bound) {
 
         this(bound, bound);
+    }
+
+    public Interval(
+            char lowerBound,
+            char upperBound) {
+
+        this(new CharacterBound(lowerBound), new CharacterBound(upperBound));
+    }
+
+    public Interval(
+            char bound) {
+
+        this(new CharacterBound(bound));
+    }
+
+    public Interval(
+            int lowerBound,
+            int upperBound) {
+
+        this(new IntegerBound(lowerBound), new IntegerBound(upperBound));
+    }
+
+    public Interval(
+            int bound) {
+
+        this(new IntegerBound(bound));
+    }
+
+    public Interval(
+            BigInteger lowerBound,
+            BigInteger upperBound) {
+
+        this(new BigIntegerBound(lowerBound), new BigIntegerBound(upperBound));
+    }
+
+    public Interval(
+            BigInteger bound) {
+
+        this(new BigIntegerBound(bound));
+    }
+
+    public Interval(
+            String lowerBound,
+            String upperBound) {
+
+        this(new BigIntegerBound(lowerBound), new BigIntegerBound(upperBound));
+    }
+
+    public Interval(
+            String bound) {
+
+        this(new BigIntegerBound(bound));
     }
 
     /**

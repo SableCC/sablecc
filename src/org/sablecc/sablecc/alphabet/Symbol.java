@@ -17,6 +17,7 @@
 
 package org.sablecc.sablecc.alphabet;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -142,6 +143,30 @@ public class Symbol
         SortedSet<Interval> set = new TreeSet<Interval>();
         set.add(new Interval(bound));
         this.intervals = Collections.unmodifiableSortedSet(set);
+    }
+
+    public Symbol(
+            char bound) {
+
+        this(new Interval(bound));
+    }
+
+    public Symbol(
+            int bound) {
+
+        this(new Interval(bound));
+    }
+
+    public Symbol(
+            BigInteger bound) {
+
+        this(new Interval(bound));
+    }
+
+    public Symbol(
+            String bound) {
+
+        this(new Interval(bound));
     }
 
     /**
