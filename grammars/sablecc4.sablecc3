@@ -119,7 +119,6 @@ Tokens
   assign = '=';
   bar = '|';
   caret = '^';
-  minus = '-';
   plus = '+';
   question_mark = '?';
   star = '*';
