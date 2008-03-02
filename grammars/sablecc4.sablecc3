@@ -64,6 +64,7 @@ Tokens
   associative_keyword = 'Associative';
   context_keyword = 'Context';
   dangling_keyword = 'Dangling';
+  difference_keyword = 'Difference';
   end_token = 'End';
   exclusion_keyword = 'Exclusion';
   group_keyword = 'Group';
@@ -75,6 +76,7 @@ Tokens
   language_keyword = 'Language';
   left_keyword = 'Left';
   lexer_keyword = 'Lexer';
+  longest_keyword = 'Longest';
   lookahead_keyword = 'Lookahead';
   no_keyword = 'No';
   not_keyword = 'Not';
@@ -186,13 +188,15 @@ Productions
     {simple}       concatenation_expression |
     {interval}     [lower_bound_character]:character two_dots
                    [upper_bound_character]:character |
-    {subtraction}  [left_expression]:concatenation_expression minus
-                   [right_expression]:concatenation_expression |
-    {shortest}     shortest_keyword concatenation_expression |
     {lookahead}    [left_expression]:concatenation_expression lookahead_keyword
                    not_keyword? [right_expression]:concatenation_expression?
                    end_token? |
+    {shortest}     shortest_keyword concatenation_expression |
+    {longest}      longest_keyword concatenation_expression |
     {exclusion}    [left_expression]:concatenation_expression exclusion_keyword
+                   [right_expression]:concatenation_expression |
+    {difference}   [left_expression]:concatenation_expression
+                   difference_keyword
                    [right_expression]:concatenation_expression |
     {intersection} [left_expression]:concatenation_expression
                    intersection_keyword
