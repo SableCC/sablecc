@@ -106,10 +106,6 @@ public class Dfa {
     /**
      * Matches the states of this <code>Dfa</code> with those of the provided
      * <code>Nfa</code>.
-     * 
-     * @param nfa
-     *            the <code>Nfa</code>.
-     * @return a state matcher instance.
      */
     private StateMatcher computeDfaStates(
             Nfa nfa) {
@@ -180,8 +176,6 @@ public class Dfa {
 
     /**
      * Returns the alphabet of this <code>Dfa</code>.
-     * 
-     * @return the alphabet.
      */
     public Alphabet getAlphabet() {
 
@@ -190,10 +184,6 @@ public class Dfa {
 
     /**
      * Returns the states of this <code>Dfa</code>.
-     * 
-     * @return the set of states.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     public SortedSet<DfaState> getStates() {
 
@@ -206,8 +196,6 @@ public class Dfa {
 
     /**
      * Returns the states of this <code>Dfa</code> if it is unstable.
-     * 
-     * @return the set of states.
      */
     SortedSet<DfaState> getUnstableStates() {
 
@@ -216,10 +204,6 @@ public class Dfa {
 
     /**
      * Returns the starting state of this <code>Dfa</code>.
-     * 
-     * @return the starting state.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     public DfaState getStartState() {
 
@@ -232,10 +216,6 @@ public class Dfa {
 
     /**
      * Returns the dead end state of this <code>Dfa</code>.
-     * 
-     * @return the dead end state.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     public DfaState getDeadEndState() {
 
@@ -248,8 +228,6 @@ public class Dfa {
 
     /**
      * Returns the dead end state of this <code>Dfa</code>if it is unstable.
-     * 
-     * @return the dead end state.
      */
     DfaState getUnstableDeadEndState() {
 
@@ -258,10 +236,6 @@ public class Dfa {
 
     /**
      * Returns the acceptation state of this <code>Dfa</code>.
-     * 
-     * @return the acceptation state.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     public SortedSet<DfaState> getAcceptStates() {
 
@@ -274,10 +248,6 @@ public class Dfa {
 
     /**
      * Returns the string representation of this <code>Dfa</code>.
-     * 
-     * @return the string representation.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     @Override
     public String toString() {
@@ -334,9 +304,6 @@ public class Dfa {
 
     /**
      * Stabilizes this <code>Dfa</code> by stabilizing each of its states.
-     * 
-     * @throws InternalException
-     *             if this <code>Dfa</code> instance is already stable.
      */
     private void stabilize() {
 
@@ -384,12 +351,6 @@ public class Dfa {
     /**
      * Calculates and returns the shortest <code>Dfa</code> corresponding to
      * the provided <code>Nfa</code>.
-     * 
-     * @param nfa
-     *            the <code>Nfa</code>.
-     * @return the calculated <code>Dfa</code>.
-     * @throws InternalException
-     *             if the provided <code>Nfa</code> is <code>null</code>.
      */
     static Dfa shortest(
             Nfa nfa) {
@@ -423,15 +384,6 @@ public class Dfa {
     /**
      * Calculates the difference between the two provided <code>Nfa</code> and
      * returns the corresponding <code>Dfa</code>.
-     * 
-     * @param nfa1
-     *            the first <code>Nfa</code>.
-     * @param nfa2
-     *            the second <code>Nfa</code>.
-     * @return the calculated <code>Dfa</code>.
-     * @throws InternalException
-     *             if one of the provided <code>Nfa</code> is
-     *             <code>null</code>.
      */
     static Dfa difference(
             Nfa nfa1,
@@ -478,15 +430,6 @@ public class Dfa {
     /**
      * Calculates the intersection between the two provided <code>Nfa</code>
      * and returns the corresponding <code>Dfa</code>.
-     * 
-     * @param nfa1
-     *            the first <code>Nfa</code>.
-     * @param nfa2
-     *            the second <code>Nfa</code>.
-     * @return the calculated <code>Dfa</code>.
-     * @throws InternalException
-     *             if one of the provided <code>Nfa</code> is
-     *             <code>null</code>.
      */
     static Dfa intersection(
             Nfa nfa1,
@@ -532,10 +475,6 @@ public class Dfa {
 
     /**
      * Returns the ID for the following state.
-     * 
-     * @return the ID of the next state.
-     * @throws InternalException
-     *             if this <code>Dfa</code> instance is stable.
      */
     int getNextStateId() {
 
@@ -548,12 +487,6 @@ public class Dfa {
 
     /**
      * Adds a state to this <code>Dfa</code>.
-     * 
-     * @param state
-     *            the state to add.
-     * @throws InternalException
-     *             if this <code>Dfa</code> is stable or or if the state is
-     *             already in the state set.
      */
     void addState(
             DfaState state) {

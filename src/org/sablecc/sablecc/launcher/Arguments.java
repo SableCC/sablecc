@@ -43,11 +43,6 @@ class Arguments {
     /**
      * Constructs a new instance of Arguments. It does so by sorting the given
      * string array between option and text arguments.
-     * 
-     * @param args
-     *            The string array that will be compute.
-     * @throws InvalidArgumentException
-     *             if one of the option or text arguments is invalid.
      */
     Arguments(
             String[] args)
@@ -120,8 +115,6 @@ class Arguments {
 
     /**
      * Returns the list of option arguments of this <code>Arguments</code>.
-     * 
-     * @return the list of option arguments.
      */
     List<OptionArgument> getOptionArguments() {
 
@@ -130,8 +123,6 @@ class Arguments {
 
     /**
      * Returns the list of text arguments of this <code>Arguments</code>.
-     * 
-     * @return the list of text arguments.
      */
     List<TextArgument> getTextArguments() {
 

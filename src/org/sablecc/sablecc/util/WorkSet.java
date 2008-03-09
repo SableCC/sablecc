@@ -37,9 +37,6 @@ public class WorkSet<T> {
 
     /**
      * Indicates if an element has a next one.
-     * 
-     * @return a <code>boolean</code> value indicating whether the element has
-     *         a next one or not.
      */
     public boolean hasNext() {
 
@@ -48,8 +45,6 @@ public class WorkSet<T> {
 
     /**
      * Treats a new element, adding it to the done list.
-     * 
-     * @return the treated element.
      */
     public T next() {
 
@@ -63,11 +58,6 @@ public class WorkSet<T> {
 
     /**
      * Adds a new element to be treated.
-     * 
-     * @param element
-     *            the new element to be treated.
-     * @throws InternalException
-     *             if the element is <code>null</code>.
      */
     public void add(
             T element) {

@@ -49,10 +49,6 @@ class Partition {
 
     /**
      * Constructs a partition for the provided <code>Dfa<code>.
-     *
-     * @param dfa the <code>Dfa</code>.
-     * @throws InternalException
-     *             if the provided <code>Dfa</code> is <code>null</code>.
      */
     Partition(
             Dfa dfa) {
@@ -117,8 +113,6 @@ class Partition {
 
     /**
      * Returns the <code>Dfa</code> of this partition.
-     * 
-     * @return the <code>Dfa</code>.
      */
     Dfa getDfa() {
 
@@ -127,8 +121,6 @@ class Partition {
 
     /**
      * Returns the a set of the groups of this partition.
-     * 
-     * @return the set of groups.
      */
     Set<Group> getGroups() {
 
@@ -137,8 +129,6 @@ class Partition {
 
     /**
      * Returns the string representation of this partition.
-     * 
-     * @return the string representation.
      */
     @Override
     public String toString() {
@@ -157,13 +147,6 @@ class Partition {
 
     /**
      * Adds the provided group to this partition.
-     * 
-     * @param group
-     *            the group to add.
-     * @throws InternalException
-     *             if the provided group is <code>null</code>, if it's
-     *             partition is not this instance or if it is already in this
-     *             partition.
      */
     void addGroup(
             Group group) {
@@ -184,14 +167,6 @@ class Partition {
     /**
      * Returns an element of this partition corresponding to the provided
      * <code>DfaState</code>.
-     * 
-     * @param state
-     *            the <code>DfaState</code>.
-     * @return the element.
-     * @throws InternalException
-     *             if the provided <code>DfaState</code> is <code>null</code>,
-     *             if it's not in this partition's <code>Dfa</code> or if
-     *             corruption is detected.
      */
     Element getElement(
             DfaState state) {
@@ -215,15 +190,6 @@ class Partition {
 
     /**
      * Adds the provided element to this partition.
-     * 
-     * @param element
-     *            the element to add.
-     * @throws InternalException
-     *             if the provided element is <code>null</code>, if it's
-     *             partition is not this one, if it's <code>Dfa</code> is not
-     *             the same as the one of this partition or if this element is
-     *             already in this partition.
-     * 
      */
     void addElement(
             Element element) {

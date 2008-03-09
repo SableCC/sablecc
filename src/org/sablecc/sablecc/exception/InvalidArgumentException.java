@@ -35,11 +35,6 @@ public class InvalidArgumentException
     /**
      * Constructs a new invalid argument exception with the provided error
      * message.
-     * 
-     * @param message
-     *            the error message.
-     * @throws InternalException
-     *             if the message is <code>null</code>.
      */
     public InvalidArgumentException(
             String message) {
@@ -54,13 +49,6 @@ public class InvalidArgumentException
     /**
      * Constructs a new invalid argument exception with the provided error
      * message and cause.
-     * 
-     * @param message
-     *            the error message.
-     * @param cause
-     *            the cause.
-     * @throws InternalException
-     *             if the message or the cause is <code>null</code>.
      */
     public InvalidArgumentException(
             String message,

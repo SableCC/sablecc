@@ -36,11 +36,6 @@ public class InternalException
 
     /**
      * Constructs a new internal exception with the provided error message.
-     * 
-     * @param message
-     *            the error message.
-     * @throws InternalException
-     *             if the message is <code>null</code>.
      */
     public InternalException(
             String message) {
@@ -55,13 +50,6 @@ public class InternalException
     /**
      * Constructs a new internal exception with the provided error message and
      * cause.
-     * 
-     * @param message
-     *            the error message.
-     * @param cause
-     *            the cause.
-     * @throws InternalException
-     *             if the message or the cause is <code>null</code>.
      */
     public InternalException(
             String message,

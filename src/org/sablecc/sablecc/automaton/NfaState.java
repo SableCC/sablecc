@@ -61,11 +61,6 @@ public final class NfaState
 
     /**
      * Construct a new <code>NfaState</code> into a provided <code>Nfa</code>.
-     * 
-     * @param nfa
-     *            the <code>Nfa</code>.
-     * @throws InternalException
-     *             if the provided <code>Nfa</code> is <code>null</code>.
      */
     NfaState(
             Nfa nfa) {
@@ -87,8 +82,6 @@ public final class NfaState
 
     /**
      * Returns the <code>Nfa</code> of this <code>NfaState</code>.
-     * 
-     * @return the <code>Nfa</code>.
      */
     public Nfa getNfa() {
 
@@ -97,8 +90,6 @@ public final class NfaState
 
     /**
      * Returns the identification number of this <code>NfaState</code>.
-     * 
-     * @return the identification number.
      */
     public int getId() {
 
@@ -107,10 +98,6 @@ public final class NfaState
 
     /**
      * Returns the transitions of this <code>NfaState</code>.
-     * 
-     * @return the map of transitions.
-     * @throws InternalException
-     *             if this <code>NfaState</code> is not stable.
      */
     public SortedMap<Symbol, SortedSet<NfaState>> getTransitions() {
 
@@ -124,16 +111,6 @@ public final class NfaState
     /**
      * Returns the targets of this <code>NfaState</code> with a provided
      * symbol.
-     * 
-     * @param symbol
-     *            the provided symbol.
-     * 
-     * @return the set of targets.
-     * 
-     * @throws InternalException
-     *             if this <code>DfaState</code> is not stable or if the
-     *             provided symbol is invalid. A symbol is invalid if it is not
-     *             contained in the alphabet of the <code>Dfa</code>.
      */
     public SortedSet<NfaState> getTargets(
             Symbol symbol) {
@@ -159,11 +136,6 @@ public final class NfaState
     /**
      * Returns whether this <code>NfaState</code> is equal to the provided
      * object. They are equal if they have the same identification number.
-     * 
-     * @param obj
-     *            the object to compare with.
-     * @return <code>true</code> if this <code>NfaState</code> and the
-     *         object are equal; <code>false</code> otherwise.
      */
     @Override
     public boolean equals(
@@ -188,8 +160,6 @@ public final class NfaState
 
     /**
      * Return the hashCode of this <code>NfaState</code>.
-     * 
-     * @return the hashCode.
      */
     @Override
     public int hashCode() {
@@ -199,8 +169,6 @@ public final class NfaState
 
     /**
      * Returns the string representation of this <code>NfaState</code>.
-     * 
-     * @return the string representation.
      */
     @Override
     public String toString() {
@@ -214,12 +182,6 @@ public final class NfaState
 
     /**
      * Compares this <code>NfaState</code> to the provided one.
-     * 
-     * @param nfaState
-     *            the <code>NfaState</code> to compare with.
-     * @return an <code>int</code> value: 0 if the two <code>NfaState</code>
-     *         are equals, a negative value if this <code>NfaState</code> is
-     *         smaller, and a positive value if it is bigger.
      */
     public int compareTo(
             NfaState nfaState) {
@@ -234,17 +196,6 @@ public final class NfaState
 
     /**
      * Adds a new transition to this <code>NfaState</code>.
-     * 
-     * @param symbol
-     *            the symbol for the new transition.
-     * 
-     * @param nfaState
-     *            the destination of the new transition.
-     * 
-     * @throws InternalException
-     *             if this <code>NfaState</code> is already stable, if the
-     *             provided <code>NfaState</code> is <code>null</code> or
-     *             invalid, or if the symbol is invalid.
      */
     void addTransition(
             Symbol symbol,
@@ -279,9 +230,6 @@ public final class NfaState
 
     /**
      * Stabilize this <code>NfaState</code>.
-     * 
-     * @throws InternalException
-     *             if this <code>NfaState</code> is already stable.
      */
     void stabilize() {
 
@@ -301,11 +249,6 @@ public final class NfaState
 
     /**
      * Returns the epsilon Reach of this <code>NfaState</code>.
-     * 
-     * @return a set of NfaStates.
-     * 
-     * @throws InternalException
-     *             if this <code>NfaState</code> is not stable.
      */
     public SortedSet<NfaState> getEpsilonReach() {
 
@@ -326,9 +269,6 @@ public final class NfaState
 
     /**
      * Compute recursivly the epsilon reach of this <code>NfaState</code>.
-     * 
-     * @param epsilonReach
-     *            a set of NfaState.
      */
     private void computeEpsilonReach(
             SortedSet<NfaState> epsilonReach) {

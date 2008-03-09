@@ -37,15 +37,6 @@ class Element {
 
     /**
      * Constructs an element with the provided partition and state.
-     * 
-     * @param partition
-     *            the partition.
-     * @param state
-     *            the state.
-     * @throws InternalException
-     *             if the provided partition or state is <code>null</code> or
-     *             if the state is not from same <code>Dfa</code> as the
-     *             partition.
      */
     Element(
             final Partition partition,
@@ -72,8 +63,6 @@ class Element {
 
     /**
      * Returns the partition of this element.
-     * 
-     * @return the partition.
      */
     Partition getPartition() {
 
@@ -82,8 +71,6 @@ class Element {
 
     /**
      * Returns the state of this element.
-     * 
-     * @return the state.
      */
     DfaState getState() {
 
@@ -92,8 +79,6 @@ class Element {
 
     /**
      * Returns the group of this element.
-     * 
-     * @return the group.
      */
     Group getGroup() {
 
@@ -102,12 +87,6 @@ class Element {
 
     /**
      * Sets the group to wich this instance belongs.
-     * 
-     * @param group
-     *            the group.
-     * @throws InternalException
-     *             if the provided group is <code>null</code> or if it has a
-     *             different partition as the one of this instance.
      */
     void setGroup(
             Group group) {
@@ -131,13 +110,6 @@ class Element {
 
     /**
      * Returns the target group of the provided symbol.
-     * 
-     * @param symbol
-     *            the symbol.
-     * @return the target group.
-     * @throws InternalException
-     *             if the provided symbol is <code>null</code> or if it not
-     *             part of this instance's partition.
      */
     Group getTarget(
             Symbol symbol) {
