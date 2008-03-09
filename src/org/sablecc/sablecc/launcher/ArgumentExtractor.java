@@ -29,11 +29,6 @@ import org.sablecc.sablecc.launcher.syntax3.node.APlainArgument;
 import org.sablecc.sablecc.launcher.syntax3.node.AShortOption;
 import org.sablecc.sablecc.launcher.syntax3.node.Start;
 
-/**
- * 
- * TODO
- * 
- */
 class ArgumentExtractor
         extends DepthFirstAdapter {
 

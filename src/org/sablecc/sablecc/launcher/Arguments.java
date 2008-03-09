@@ -30,7 +30,6 @@ import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
 
 /**
  * <code>Arguments</code> include option and text arguments.
- * 
  */
 class Arguments {
 
