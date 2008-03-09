@@ -31,10 +31,6 @@ import org.sablecc.sablecc.launcher.syntax3.node.AShortOptionsArgument;
 import org.sablecc.sablecc.launcher.syntax3.node.Start;
 import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
 
-/**
- * TODO
- * 
- */
 enum Option {
 
     /** Does not generate files. */
