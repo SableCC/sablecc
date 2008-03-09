@@ -63,11 +63,7 @@ features:
   languages).
 * Improved syntax for CST->AST transformations.
 
-What's New in SableCC 4-alpha.4
+What's New in SableCC [version]
 ===============================
 
-This alpha version brings the following new features:
-
-    * Improve and complete the grammar.
-    * Add documentation comments.
-    * Add JUnit tests.
+[Milestone text]
