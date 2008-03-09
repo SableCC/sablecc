@@ -52,19 +52,22 @@ walkers. SableCC also keeps a clean separation between
 machine-generated code and user-written code which leads to a shorter
 development cycle.
 
-SableCC 4 is a complete rewrite of SableCC to bring many new features:
+SableCC 4 is a complete rewrite of SableCC that brings many new
+features:
 
-* Improved lexer engine (additional operators, semantic selectors, and
-  more).
+* Improved lexer engine (additional operators, lookahead, and more).
 * Improved parser engine (linear approximate LR(K) parsing, semantic
   selectors, and more).
 * Improved conflict reporting (enabling LR grammar debugging).
 * Flexible code generation (to enable back-ends for various
   languages).
 * Improved syntax for CST->AST transformations.
-* And more.
 
-What's New in SableCC [version]
+What's New in SableCC 4-alpha.4
 ===============================
 
-[Milestone text]
+This alpha version brings the following new features:
+
+    * Improve and complete the grammar.
+    * Add documentation comments.
+    * Add JUnit tests.
