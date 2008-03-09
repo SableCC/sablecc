@@ -34,13 +34,6 @@ public class SemanticException
     /**
      * Constructs a semantic exception with the provided error message and
      * token.
-     * 
-     * @param message
-     *            the error message.
-     * @param token
-     *            the token.
-     * @throws InternalException
-     *             if the provided message or token is <code>null</code>.
      */
     public SemanticException(
             String message,
@@ -62,15 +55,6 @@ public class SemanticException
     /**
      * Constructs a semantic exception with the provided error message, token
      * and cause.
-     * 
-     * @param message
-     *            the error message.
-     * @param token
-     *            the token.
-     * @param cause
-     *            the cause.
-     * @throws InternalException
-     *             if the provided message, token or cause is <code>null</code>.
      */
     public SemanticException(
             String message,
@@ -97,8 +81,6 @@ public class SemanticException
 
     /**
      * Returns the token of this semantic exception.
-     * 
-     * @return the token.
      */
     public Token getToken() {
 

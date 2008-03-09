@@ -72,9 +72,6 @@ enum Option {
 
     /**
      * Compiles the list of options.
-     * 
-     * @throws InternalException
-     *             if two options have the same long or short name.
      */
     static {
         for (Option option : Option.values()) {
@@ -103,20 +100,6 @@ enum Option {
 
     /**
      * Construct a new option.
-     * 
-     * @param shortName
-     *            the short name of the option.
-     * @param longName
-     *            the long name of the option.
-     * @param operandName
-     *            the operand name of the option.
-     * @param helpMessage
-     *            the help message of the option.
-     * 
-     * @throws InternalException
-     *             if the short name and the long name are <code>null</code>,
-     *             if the help message is <code>null</code> or if the long
-     *             name too short.
      */
     private Option(
             String shortName,
@@ -155,12 +138,6 @@ enum Option {
 
     /**
      * Validates the short name.
-     * 
-     * @param shortName
-     *            the short name.
-     * 
-     * @throws InternalException
-     *             if the short name is invalid.
      */
     private void validateShortName(
             String shortName) {
@@ -196,12 +173,6 @@ enum Option {
 
     /**
      * Validates the long name.
-     * 
-     * @param longName
-     *            the long name.
-     * 
-     * @throws InternalException
-     *             if the long name is invalid.
      */
     private void validateLongName(
             String longName) {
@@ -232,8 +203,6 @@ enum Option {
 
     /**
      * Returns the short name of this option.
-     * 
-     * @return the short name.
      */
     String getShortName() {
 
@@ -242,8 +211,6 @@ enum Option {
 
     /**
      * Returns the short name of this option.
-     * 
-     * @return the short name.
      */
     String getLongName() {
 
@@ -252,8 +219,6 @@ enum Option {
 
     /**
      * Returns the operand name of this option.
-     * 
-     * @return the operand name.
      */
     String getOperandName() {
 
@@ -262,8 +227,6 @@ enum Option {
 
     /**
      * Returns the help message of this option.
-     * 
-     * @return the help message.
      */
     String getHelpMessage() {
 
@@ -272,9 +235,6 @@ enum Option {
 
     /**
      * Returns whether this option has an operand or not.
-     * 
-     * @return <code>true</code> if this option has an operand;
-     *         <code>false</code> otherwise.
      */
     boolean hasOperand() {
 
@@ -283,8 +243,6 @@ enum Option {
 
     /**
      * Returns the option having the provided short name.
-     * 
-     * @return the short name.
      */
     static Option getShortOption(
             String shortName) {
@@ -294,8 +252,6 @@ enum Option {
 
     /**
      * Returns the option having the provided long name.
-     * 
-     * @return the long name.
      */
     static Option getLongOption(
             String longName) {
@@ -305,8 +261,6 @@ enum Option {
 
     /**
      * Prints a short help message.
-     * 
-     * @return the help message.
      */
     static String getShortHelpMessage() {
 
@@ -368,8 +322,6 @@ enum Option {
 
     /**
      * Prints a long help message.
-     * 
-     * @return the help message.
      */
     static String getLongHelpMessage() {
 

@@ -67,11 +67,6 @@ public class MinimalDfa {
     /**
      * Constructs a <code>MinimalDfa</code> equivalent to the provided
      * <code>Dfa</code>.
-     * 
-     * @param dfa
-     *            the <code>Dfa</code>.
-     * @throws InternalException
-     *             if the <code>Dfa</code> is <code>null</code>.
      */
     public MinimalDfa(
             Dfa dfa) {
@@ -240,8 +235,6 @@ public class MinimalDfa {
 
     /**
      * Returns the alphabet of this <code>MinimalDfa</code>.
-     * 
-     * @return the alphabet.
      */
     public Alphabet getAlphabet() {
 
@@ -250,10 +243,6 @@ public class MinimalDfa {
 
     /**
      * Returns the states of this <code>MinimalDfa</code>.
-     * 
-     * @return the set of states.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     public SortedSet<MinimalDfaState> getStates() {
 
@@ -266,10 +255,6 @@ public class MinimalDfa {
 
     /**
      * Returns the starting state of this <code>MinimalDfa</code>.
-     * 
-     * @return the starting state.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     public MinimalDfaState getStartState() {
 
@@ -282,10 +267,6 @@ public class MinimalDfa {
 
     /**
      * Returns the dead end state of this <code>MinimalDfa</code>.
-     * 
-     * @return the dead end state.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     public MinimalDfaState getDeadEndState() {
 
@@ -299,8 +280,6 @@ public class MinimalDfa {
     /**
      * Returns the dead end state of this <code>MinimalDfa</code>if it is
      * unstable.
-     * 
-     * @return the dead end state.
      */
     MinimalDfaState getUnstableDeadEndState() {
 
@@ -309,10 +288,6 @@ public class MinimalDfa {
 
     /**
      * Returns the acceptation state of this <code>MinimalDfa</code>.
-     * 
-     * @return the acceptation state.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     public SortedSet<MinimalDfaState> getAcceptStates() {
 
@@ -325,10 +300,6 @@ public class MinimalDfa {
 
     /**
      * Returns the string representation of this <code>MinimalDfa</code>.
-     * 
-     * @return the string representation.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     @Override
     public String toString() {
@@ -385,10 +356,6 @@ public class MinimalDfa {
 
     /**
      * Returns the ID for the following state.
-     * 
-     * @return the ID of the next state.
-     * @throws InternalException
-     *             if this <code>MinimalDfa</code> instance is stable.
      */
     int getNextStateId() {
 
@@ -402,12 +369,6 @@ public class MinimalDfa {
 
     /**
      * Adds a state to this <code>MinimalDfa</code>.
-     * 
-     * @param state
-     *            the state to add.
-     * @throws InternalException
-     *             if this <code>MinimalDfa</code> is stable or or if the
-     *             state is already in the state set.
      */
     void addState(
             MinimalDfaState state) {

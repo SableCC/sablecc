@@ -48,12 +48,6 @@ class Group {
 
     /**
      * Constructs a new group with a provided partition.
-     * 
-     * @param partition
-     *            the partition.
-     * 
-     * @throws InternalException
-     *             if the partition is <code>null</code>
      */
     Group(
             final Partition partition) {
@@ -69,8 +63,6 @@ class Group {
 
     /**
      * Returns the partition of this group.
-     * 
-     * @return the partition.
      */
     Partition getPartition() {
 
@@ -79,8 +71,6 @@ class Group {
 
     /**
      * Returns the set of elements of this group.
-     * 
-     * @return the set of elements.
      */
     Set<Element> getElements() {
 
@@ -89,8 +79,6 @@ class Group {
 
     /**
      * Returns the state of this group.
-     * 
-     * @return the state.
      */
     MinimalDfaState getState() {
 
@@ -99,8 +87,6 @@ class Group {
 
     /**
      * Returns the transitions of this group.
-     * 
-     * @return the map of transitions.
      */
     SortedMap<Symbol, Group> getTransitions() {
 
@@ -109,8 +95,6 @@ class Group {
 
     /**
      * Returns the string representation of this group.
-     * 
-     * @return the string representation.
      */
     @Override
     public String toString() {
@@ -128,9 +112,6 @@ class Group {
 
     /**
      * Set the state of this group with the provided state.
-     * 
-     * @param state
-     *            the provided state.
      */
     void setState(
             MinimalDfaState state) {
@@ -140,13 +121,6 @@ class Group {
 
     /**
      * Adds a new element to this group.
-     * 
-     * @param element
-     *            the provided element.
-     * 
-     * @throws InternalException
-     *             if the element is <code>null</code>, invalid, or already
-     *             added in this group.
      */
     void addElement(
             Element element) {
@@ -166,13 +140,6 @@ class Group {
 
     /**
      * Removes an element of this group.
-     * 
-     * @param element
-     *            the element we want to remove.
-     * 
-     * @throws InternalException
-     *             if the element is <code>null</code> of if it not in this
-     *             group.
      */
     void removeElement(
             Element element) {
@@ -188,16 +155,6 @@ class Group {
 
     /**
      * Adds a new transition to this group.
-     * 
-     * @param symbol
-     *            the symbol of the transition.
-     * 
-     * @param group
-     *            the destination group of the transition.
-     * 
-     * @throws InternalException
-     *             if the symbol or the group is <code>null</code>, or if the
-     *             transition is invalid.
      */
     void addTransition(
             Symbol symbol,
@@ -222,9 +179,6 @@ class Group {
 
     /**
      * Refine this group by making a copy of it.
-     * 
-     * @throws InternalException
-     *             if corruption has been detected in this group.
      */
     void refine() {
 

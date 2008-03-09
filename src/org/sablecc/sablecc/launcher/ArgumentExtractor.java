@@ -48,14 +48,6 @@ class ArgumentExtractor
 
     /**
      * Constructs a new argument extractor.
-     * 
-     * @param optionArguments
-     *            the list of option arguments
-     * @param textArguments
-     *            the list of text arguments
-     * @throws InternalException
-     *             if the list of option arguments or the list of text arguments
-     *             is <code>null</code>.
      */
     private ArgumentExtractor(
             final List<OptionArgument> optionArguments,
@@ -75,9 +67,6 @@ class ArgumentExtractor
 
     /**
      * Adds a plain argument to the list of text arguments
-     * 
-     * @param node
-     *            the node containing the plain argument.
      */
     @Override
     public void caseAPlainArgument(
@@ -88,11 +77,6 @@ class ArgumentExtractor
 
     /**
      * Treats and adds a long option to the list of option arguments.
-     * 
-     * @param node
-     *            the node containing the long option.
-     * @throws InvalidArgumentRuntimeException
-     *             if the long option is invalid or has an unexpected operand.
      */
     @Override
     public void caseALongOption(
@@ -146,12 +130,6 @@ class ArgumentExtractor
 
     /**
      * Treats and adds a short option to the list of option arguments.
-     * 
-     * @param node
-     *            the node containing the short option.
-     * @throws InvalidArgumentRuntimeException
-     *             if the previous option needed an operand, if the short option
-     *             is invalid or has an unexpected operand.
      */
     @Override
     public void caseAShortOption(
@@ -211,18 +189,6 @@ class ArgumentExtractor
 
     /**
      * Extracts all the arguments from an ast.
-     * 
-     * @param ast
-     *            the abstract syntax tree.
-     * 
-     * @param optionArguments
-     *            the list of option arguments already extracted.
-     * @param textArguments
-     *            the list of text arguments already extracted.
-     * @return an incomplete option.
-     * 
-     * @throws InvalidArgumentRuntimeException
-     *             if the lists are corrupted.
      */
     static Option extractArguments(
             Start ast,

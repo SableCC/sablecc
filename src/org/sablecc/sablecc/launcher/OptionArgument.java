@@ -32,13 +32,6 @@ class OptionArgument {
 
     /**
      * Constructs an option argument with the provided option and operand.
-     * 
-     * @param option
-     *            the option.
-     * @param operand
-     *            the operand.
-     * @throws InternalException
-     *             if the provided option is <code>null</code>.
      */
     OptionArgument(
             Option option,
@@ -54,8 +47,6 @@ class OptionArgument {
 
     /**
      * Returns the option of this option argument.
-     * 
-     * @return the option.
      */
     Option getOption() {
 
@@ -64,8 +55,6 @@ class OptionArgument {
 
     /**
      * Returns the operand of this option argument.
-     * 
-     * @return the argument.
      */
     String getOperand() {
 

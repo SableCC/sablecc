@@ -52,14 +52,6 @@ class StateMatcher {
     /**
      * Constructs a state matcher with the provided <code>Nfa</code> and
      * <code>Dfa</code>.
-     * 
-     * @param dfa
-     *            the <code>Dfa</code>.
-     * @param nfa
-     *            the <code>Nfa</code>.
-     * @throws InternalException
-     *             if the provided <code>Nfa</code> or <code>Dfa</code> is
-     *             <code>null</code>.
      */
     StateMatcher(
             final Dfa dfa,
@@ -80,14 +72,6 @@ class StateMatcher {
     /**
      * Returns the <code>DfaState</code> corresponding to the provided
      * <code>SortedSet</code> of <code>NfaSate</code>.
-     * 
-     * @param nfaStates
-     *            the <code>NfaSate</code>.
-     * @return the corresponding <code>DfaState</code>.
-     * @throws InternalException
-     *             if the provided set of <code>NfaState</code> is
-     *             <code>null</code> or if a state from it is not part of this
-     *             instance's <code>Nfa</code>.
      */
     DfaState getDfaState(
             SortedSet<NfaState> nfaStates) {
@@ -121,15 +105,6 @@ class StateMatcher {
     /**
      * Returns the <code>SortedSet</code> of <code>NfaSate</code>
      * corresponding to the provided <code>DfaSate</code>
-     * 
-     * @param dfaState
-     *            the <code>DfaState</code>.
-     * @return the corresponding set of <code>NfaState</code>.
-     * @throws InternalException
-     *             if the provided <code>DfaState<code> is <code>null</code>,
-     *             if it is not contained in this instance's <code>Dfa</code>
-     *             or if the constructed set of <code>NfaState</code> is
-     *             <code>null</code>.
      */
     SortedSet<NfaState> getNfaStates(
             DfaState dfaState) {
@@ -154,22 +129,6 @@ class StateMatcher {
     /**
      * Returns whether the provided <code>DfaState</code> and
      * <code>NfaState<code> match.
-     *
-     * @param dfaState
-     *            the <code>DfaState</code>.
-     * @param nfaState
-     *            the <code>NfaState</code>.
-     * @return <code>true</code> if the provided <code>NfaState</code> is
-     *         contained in the set of <code>NfaState</code> corresponding to
-     *         the provided <code>DfaState</code>; <code>false</code>
-     *         otherwise.
-     * @throws InternalException
-     *             if the provided <code>DfaState</code> or
-     *             <code>NfaState</code> is <code>null</code>, if this
-     *             instance's <code>Dfa</code>/<code>Nfa</code> does not
-     *             contain the provided <code>DfaState</code>/<code>NfaState</code>
-     *             or if the constructed set of <code>NfaState</code> is
-     *             <code>null</code>.
      */
     boolean match(
             DfaState dfaState,

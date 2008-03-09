@@ -103,11 +103,6 @@ public final class Nfa {
     /**
      * Constructs a <code>Nfa</code> for the language <code>{"s"}</code>
      * where <code>s</code> is the provided symbol.
-     * 
-     * @param symbol
-     *            the symbol.
-     * @throws InternalException
-     *             if the symbol is <code>null</code>.
      */
     public Nfa(
             Symbol symbol) {
@@ -129,11 +124,6 @@ public final class Nfa {
     /**
      * Constructs a <code>Nfa</code> for the language <code>{"s"}</code>
      * where <code>s</code> is a symbol representing a single interval.
-     * 
-     * @param interval
-     *            the interval.
-     * @throws InternalException
-     *             if the interval is <code>null</code>.
      */
     public Nfa(
             Interval interval) {
@@ -198,11 +188,6 @@ public final class Nfa {
     /**
      * Constructs a <code>Nfa</code> which is similar to the provided
      * <code>Dfa</code>.
-     * 
-     * @param dfa
-     *            the <code>Dfa</code>.
-     * @throws InternalException
-     *             if the <code>Dfa</code> is <code>null</code>.
      */
     public Nfa(
             Dfa dfa) {
@@ -261,11 +246,6 @@ public final class Nfa {
 
     /**
      * Constructs a NFA which is similar to the provided minimal DFA.
-     * 
-     * @param minimalDfa
-     *            the minimal DFA.
-     * @throws InternalException
-     *             if the minimal DFA is <code>null</code>.
      */
     public Nfa(
             MinimalDfa minimalDfa) {
@@ -329,9 +309,6 @@ public final class Nfa {
      * returns a <code>Nfa</code> to which new states can be added. The
      * <code>stabilize()</code> method should be called on this instance
      * before exposing it publicly.
-     * 
-     * @param alphabet
-     *            the alphabet.
      */
     private Nfa(
             Alphabet alphabet) {
@@ -357,8 +334,6 @@ public final class Nfa {
 
     /**
      * Returns the alphabet of this <code>Nfa</code>.
-     * 
-     * @return the alphabet.
      */
     public Alphabet getAlphabet() {
 
@@ -367,10 +342,6 @@ public final class Nfa {
 
     /**
      * Returns the states of this <code>Nfa</code>.
-     * 
-     * @return the set of states.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     public SortedSet<NfaState> getStates() {
 
@@ -383,10 +354,6 @@ public final class Nfa {
 
     /**
      * Returns the starting state of this <code>Nfa</code>.
-     * 
-     * @return the starting state.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     public NfaState getStartState() {
 
@@ -399,8 +366,6 @@ public final class Nfa {
 
     /**
      * Returns the starting state of this <code>Nfa</code> if it is unstable.
-     * 
-     * @return the starting state.
      */
     NfaState getUnstableStartState() {
 
@@ -409,10 +374,6 @@ public final class Nfa {
 
     /**
      * Returns the acceptation state of this <code>Nfa</code>.
-     * 
-     * @return the acceptation state.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     public NfaState getAcceptState() {
 
@@ -425,8 +386,6 @@ public final class Nfa {
 
     /**
      * Returns the symbols comparator for <code>Nfa</code> instances.
-     * 
-     * @return the symbol comparator.
      */
     Comparator<Symbol> getSymbolComparator() {
 
@@ -435,10 +394,6 @@ public final class Nfa {
 
     /**
      * Returns the string representation of this <code>Nfa</code>.
-     * 
-     * @return the string representation.
-     * @throws InternalException
-     *             if this instance is not stable.
      */
     @Override
     public String toString() {
@@ -493,9 +448,6 @@ public final class Nfa {
 
     /**
      * Stabilizes this <code>Nfa</code> by stabilizing each of its states.
-     * 
-     * @throws InternalException
-     *             if this <code>Nfa</code> is already stable.
      */
     void stabilize() {
 
@@ -516,13 +468,6 @@ public final class Nfa {
      * Returns a new <code>Nfa</code> instance which represents the union of
      * this <code>Nfa</code> instance with the provided <code>Nfa</code>
      * instance.
-     * 
-     * @param nfa
-     *            the nfa.
-     * @return the new <code>Nfa</code> after union.
-     * @throws InternalException
-     *             if one of the two <code>Nfa</code> instances is not stable
-     *             or if the provided one is <code>null</code>.
      */
     public Nfa unionWith(
             Nfa nfa) {
@@ -562,13 +507,6 @@ public final class Nfa {
      * Returns a new <code>Nfa</code> instance which represents the
      * concatenation of this <code>Nfa</code> instance with the provided
      * <code>Nfa</code> instance.
-     * 
-     * @param nfa
-     *            the nfa.
-     * @return the new <code>Nfa</code> after concatenation.
-     * @throws InternalException
-     *             if one of the two <code>Nfa</code> instances is not stable
-     *             or if the provided one is <code>null</code>.
      */
     public Nfa concatenateWith(
             Nfa nfa) {
@@ -607,10 +545,6 @@ public final class Nfa {
     /**
      * Returns a new <code>Nfa</code> instance which represents the repetition
      * of zero or more of this <code>Nfa</code> instance.
-     * 
-     * @return the new <code>Nfa</code>.
-     * @throws InternalException
-     *             if this <code>Nfa</code> is not stable.
      */
     public Nfa zeroOrMore() {
 
@@ -646,10 +580,6 @@ public final class Nfa {
     /**
      * Returns a new <code>Nfa</code> instance which represents the presence
      * of zero or one of this <code>Nfa</code> instance.
-     * 
-     * @return the new <code>Nfa</code>.
-     * @throws InternalException
-     *             if this <code>Nfa</code> is not stable.
      */
     public Nfa zeroOrOne() {
 
@@ -682,10 +612,6 @@ public final class Nfa {
     /**
      * Returns a new <code>Nfa</code> instance which represents the repetition
      * of at least one or more of this <code>Nfa</code> instance.
-     * 
-     * @return the new <code>Nfa</code>.
-     * @throws InternalException
-     *             if this <code>Nfa</code> is not stable.
      */
     public Nfa oneOrMore() {
 
@@ -718,13 +644,6 @@ public final class Nfa {
     /**
      * Returns a new <code>Nfa</code> instance which represents <code>n</code>
      * repetitions of this <code>Nfa</code> instance.
-     * 
-     * @param n
-     *            the number of repetitions.
-     * @return the new <code>Nfa</code>.
-     * @throws InternalException
-     *             if this <code>Nfa</code> is not stable, or if
-     *             <code>n</code> is negative.
      */
     public Nfa simpleExponent(
             int n) {
@@ -766,16 +685,6 @@ public final class Nfa {
      * Returns a new <code>Nfa</code> instance which represents at least
      * <code>lowerBound</code> and at most <code>upperBound</code>
      * repetitions of this <code>Nfa</code> instance.
-     * 
-     * @param lowerBound
-     *            the minimal number of repetitions.
-     * @param upperBound
-     *            the maximal number of repetitions.
-     * @return the new <code>Nfa</code>.
-     * @throws InternalException
-     *             if this <code>Nfa</code> is not stable, if any bound is
-     *             negative, or if <code>lowerBound</code> is greater than
-     *             <code>upperBound</code>.
      */
     public Nfa rangeExponent(
             int lowerBound,
@@ -844,14 +753,6 @@ public final class Nfa {
     /**
      * Returns a new <code>Nfa</code> instance which represents at least
      * <code>n</code> repetitions of this <code>Nfa</code> instance.
-     * 
-     * @param n
-     *            the minimal number of repetitions.
-     * @return the new <code>Nfa</code>.
-     * @throws InternalException
-     *             if this <code>Nfa</code> is not stable, if any bound is
-     *             negative, or if <code>lowerBound</code> is greater than
-     *             <code>upperBound</code>.
      */
     public Nfa atLeastExponent(
             int n) {
@@ -912,8 +813,6 @@ public final class Nfa {
     /**
      * Returns a <code>Dfa</code> instance which represents the shortest
      * possible <code>Dfa</code> for this <code>Nfa</code> instance.
-     * 
-     * @return the new <code>Dfa</code>.
      */
     public Dfa shortest() {
 
@@ -923,12 +822,6 @@ public final class Nfa {
     /**
      * Returns a <code>Dfa</code> instance which represents the substraction
      * of this <code>Nfa</code> with the provided one.
-     * 
-     * @param nfa
-     *            the nfa to substract.
-     * @return the new <code>Dfa</code>.
-     * @throws InternalException
-     *             if the provided <code>Nfa</code> is <code>null</code>.
      */
     public Dfa subtract(
             Nfa nfa) {
@@ -943,12 +836,6 @@ public final class Nfa {
     /**
      * Returns a <code>Dfa</code> instance which represents the intersection
      * of this <code>Nfa</code> with the provided one.
-     * 
-     * @param nfa
-     *            the nfa to substract.
-     * @return the new <code>Dfa</code>.
-     * @throws InternalException
-     *             if the provided <code>Nfa</code> is <code>null</code>.
      */
     public Dfa intersect(
             Nfa nfa) {
@@ -963,13 +850,6 @@ public final class Nfa {
     /**
      * Returns a new <code>NfaCombineResult</code>, the result of the
      * combination of this <code>Nfa</code> with the provided one.
-     * 
-     * @param nfa
-     *            the nfa to combine with.
-     * @return the new <code>NfaCombineResult</code>.
-     * @throws InternalException
-     *             if one of the two <code>Nfa</code> instances is not stable
-     *             or if the provided one is <code>null</code>.
      */
     NfaCombineResult combineWith(
             Nfa nfa) {
@@ -1007,14 +887,6 @@ public final class Nfa {
     /**
      * Adds the states and transitions of this <code>Nfa</code> instance to
      * the new one provided.
-     * 
-     * @param newNfa
-     *            the new nfa to add states and transitions.
-     * @param nfaStateMap
-     *            a map of states.
-     * @throws InternalException
-     *             if the two <code>Nfa</code> instances does not have the
-     *             same alphabet.
      */
     private void addStatesAndTransitionsTo(
             Nfa newNfa,
@@ -1050,14 +922,6 @@ public final class Nfa {
     /**
      * Adds the states and transitions of this <code>Nfa</code> instance to
      * the new one provided.
-     * 
-     * @param newNfa
-     *            the new nfa to add states and transitions.
-     * @param nfaStateMap
-     *            a map of states.
-     * @param alphabetMergeResult
-     *            the merge result of the alphabets of the two <code>Nfa</code>
-     *            instances.
      */
     private void addStatesAndTransitionsTo(
             Nfa newNfa,
@@ -1098,10 +962,6 @@ public final class Nfa {
 
     /**
      * Returns the ID for the following state.
-     * 
-     * @return the ID of the next state.
-     * @throws InternalException
-     *             if this <code>Nfa</code> instance is stable.
      */
     int getNextStateId() {
 
@@ -1114,12 +974,6 @@ public final class Nfa {
 
     /**
      * Adds a state to this <code>Nfa</code>.
-     * 
-     * @param state
-     *            the state to add.
-     * @throws InternalException
-     *             if this <code>Nfa</code> is stable or or if the state is
-     *             already in the state set.
      */
     void addState(
             NfaState state) {

@@ -42,13 +42,6 @@ class GroupPair {
 
     /**
      * Constructs a group pair with the two provided groups.
-     * 
-     * @param group1
-     *            the first group.
-     * @param group2
-     *            the second group.
-     * @throws InternalException
-     *             if one of the provided groups is <code>null</code>.
      */
     GroupPair(
             final Group group1,
@@ -68,8 +61,6 @@ class GroupPair {
 
     /**
      * Returns the first group of this group pair.
-     * 
-     * @return the first group.
      */
     Group getGroup1() {
 
@@ -78,8 +69,6 @@ class GroupPair {
 
     /**
      * Returns the second group of this group pair.
-     * 
-     * @return the second group.
      */
     Group getGroup2() {
 
@@ -89,11 +78,6 @@ class GroupPair {
     /**
      * Returns whether this instance is equal to the provided object. They are
      * equal if they both have equal groups.
-     * 
-     * @param obj
-     *            the object to compare with.
-     * @return <code>true</code> if this group pair and the object are equal;
-     *         <code>false</code> otherwise.
      */
     @Override
     public boolean equals(
@@ -119,8 +103,6 @@ class GroupPair {
 
     /**
      * Returns the hash code of this group pair.
-     * 
-     * @return the hash code.
      */
     @Override
     public int hashCode() {
@@ -135,8 +117,6 @@ class GroupPair {
 
     /**
      * Returns the string representation of this group pair.
-     * 
-     * @return the string representation.
      */
     @Override
     public String toString() {

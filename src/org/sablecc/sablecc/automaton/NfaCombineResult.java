@@ -53,20 +53,6 @@ class NfaCombineResult {
     /**
      * Constructs a new instance for the result of combining two
      * <code>Nfa</code> instances.
-     * 
-     * @param newNfa
-     *            the new <code>Nfa</code>.
-     * @param oldNfa1
-     *            the first combined <code>Nfa</code>.
-     * @param oldNfa1StateMap
-     *            the states of first <code>Nfa</code>.
-     * @param oldNfa2
-     *            the second combined <code>Nfa</code>.
-     * @param oldNfa2StateMap
-     *            the states of second <code>Nfa</code>.
-     * @throws InternalException
-     *             if one of the <code>Nfa</code> instances, state map or
-     *             states is <code>null</code>.
      */
     NfaCombineResult(
             Nfa newNfa,
@@ -116,8 +102,6 @@ class NfaCombineResult {
 
     /**
      * Returns the new <code>Nfa</code> instance.
-     * 
-     * @return the new <code>Nfa</code>.
      */
     Nfa getNewNfa() {
 
@@ -128,13 +112,6 @@ class NfaCombineResult {
      * Returns the state of this instance corresponding to a provided old state.
      * The provided old state must have the same <code>Nfa</code> as the first
      * old state of this instance.
-     * 
-     * @param oldState
-     *            the old state.
-     * @return the corresponding state.
-     * @throws InternalException
-     *             if the <code>oldState</code> is <code>null</code> or
-     *             invalid.
      */
     NfaState getNewNfa1State(
             NfaState oldState) {
@@ -154,13 +131,6 @@ class NfaCombineResult {
      * Returns the state of this instance corresponding to a provided old state.
      * The provided old state must have the same <code>Nfa</code> as the
      * second old state of this instance.
-     * 
-     * @param oldState
-     *            the old state.
-     * @return the corresponding state.
-     * @throws InternalException
-     *             if the <code>oldState</code> is <code>null</code> or
-     *             invalid.
      */
     NfaState getNewNfa2State(
             NfaState oldState) {
@@ -179,8 +149,6 @@ class NfaCombineResult {
     /**
      * Returns the start state of the first old state for the new
      * <code>Nfa</code>.
-     * 
-     * @return the first start state.
      */
     NfaState getNewNfa1StartState() {
 
@@ -190,8 +158,6 @@ class NfaCombineResult {
     /**
      * Returns the start state of the second old state for the new
      * <code>Nfa</code>.
-     * 
-     * @return the second start state.
      */
     NfaState getNewNfa2StartState() {
 
@@ -201,8 +167,6 @@ class NfaCombineResult {
     /**
      * Returns the acceptation state of the first old state for the new
      * <code>Nfa</code>.
-     * 
-     * @return the first acceptation state.
      */
     NfaState getNewNfa1AcceptState() {
 
@@ -212,8 +176,6 @@ class NfaCombineResult {
     /**
      * Returns the acceptation state of the second old state for the new
      * <code>Nfa</code>.
-     * 
-     * @return the second acceptation state.
      */
     NfaState getNewNfa2AcceptState() {
 

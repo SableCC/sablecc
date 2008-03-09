@@ -52,11 +52,6 @@ public final class DfaState
 
     /**
      * Construct a new <code>DfaState</code> into a provided <code>Dfa</code>.
-     * 
-     * @param dfa
-     *            the <code>Dfa</code>.
-     * @throws InternalException
-     *             if the provided <code>Dfa</code> is <code>null</code>.
      */
     DfaState(
             Dfa dfa) {
@@ -77,8 +72,6 @@ public final class DfaState
 
     /**
      * Returns the <code>Dfa</code> of this <code>DfaState</code>.
-     * 
-     * @return the <code>Dfa</code>.
      */
     public Dfa getDfa() {
 
@@ -87,8 +80,6 @@ public final class DfaState
 
     /**
      * Returns the identification number of this <code>DfaState</code>.
-     * 
-     * @return the identification number.
      */
     public int getId() {
 
@@ -97,10 +88,6 @@ public final class DfaState
 
     /**
      * Returns the transitions of this <code>DfaState</code>.
-     * 
-     * @return the map of transitions.
-     * @throws InternalException
-     *             if this <code>DfaState</code> is not stable.
      */
     public SortedMap<Symbol, DfaState> getTransitions() {
 
@@ -113,8 +100,6 @@ public final class DfaState
 
     /**
      * Returns the unstable transitions of this <code>DfaState</code>.
-     * 
-     * @return the map of unstable transitions.
      */
     SortedMap<Symbol, DfaState> getUnstableTransitions() {
 
@@ -124,16 +109,6 @@ public final class DfaState
     /**
      * Returns the target of this <code>DfaState</code> with a provided
      * symbol.
-     * 
-     * @param symbol
-     *            the provided symbol.
-     * 
-     * @return the target.
-     * 
-     * @throws InternalException
-     *             if this <code>DfaState</code> is not stable, if the
-     *             provided symbol is <code>null</code> or if the symbol is
-     *             not contained in the alphabet of the <code>Dfa</code>.
      */
     public DfaState getTarget(
             Symbol symbol) {
@@ -162,11 +137,6 @@ public final class DfaState
     /**
      * Returns whether this instance is equal to the provided object. They are
      * equal if they have an identical identification number.
-     * 
-     * @param obj
-     *            the object to compare with.
-     * @return <code>true</code> if this <code>DfaState</code> and the
-     *         object are equal; <code>false</code> otherwise.
      */
     @Override
     public boolean equals(
@@ -192,8 +162,6 @@ public final class DfaState
     /**
      * Return the hashCode of this <code>DfaState</code>, based on its
      * identification number.
-     * 
-     * @return the hashCode.
      */
     @Override
     public int hashCode() {
@@ -203,8 +171,6 @@ public final class DfaState
 
     /**
      * Returns the string representation of this <code>DfaState</code>.
-     * 
-     * @return the string representation.
      */
     @Override
     public String toString() {
@@ -219,12 +185,6 @@ public final class DfaState
     /**
      * Compares this <code>DfaState</code> to the provided one. It compares
      * the identification number.
-     * 
-     * @param dfaState
-     *            the <code>DfaState</code> to compare with.
-     * @return an <code>int</code> value: 0 if the two <code>DfaState</code>
-     *         are equals, a negative value if this <code>DfaState</code> is
-     *         smaller, and a positive value if it is bigger.
      */
     public int compareTo(
             DfaState dfaState) {
@@ -239,18 +199,6 @@ public final class DfaState
 
     /**
      * Adds a new transition to this <code>DfaState</code>.
-     * 
-     * @param symbol
-     *            the symbol for the new transition.
-     * 
-     * @param dfaState
-     *            the destination of the new transition.
-     * 
-     * @throws InternalException
-     *             if this <code>DfaState</code> is already stable, if the
-     *             provided symbol is <code>null</code> or invalid, if the
-     *             provided <code>DfaState</code> is <code>null</code> or
-     *             invalid, or if the transition already exists.
      */
     void addTransition(
             Symbol symbol,
@@ -289,9 +237,6 @@ public final class DfaState
 
     /**
      * Removes all the transitions of this <code>DfaState</code>.
-     * 
-     * @throws InternalException
-     *             if this <code>DfaState</code> is already stable.
      */
     void removeTransitions() {
 
@@ -304,9 +249,6 @@ public final class DfaState
 
     /**
      * Stabilize this <code>DfaState</code>.
-     * 
-     * @throws InternalException
-     *             if this <code>DfaState</code> is already stable.
      */
     void stabilize() {
 

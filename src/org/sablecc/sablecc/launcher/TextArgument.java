@@ -29,12 +29,6 @@ class TextArgument {
 
     /**
      * Constructs a new textArgument.
-     * 
-     * @param text
-     *            the provided text to append.
-     * 
-     * @throws InternalException
-     *             if the text is <code>null</code>.
      */
     TextArgument(
             String text) {
@@ -48,8 +42,6 @@ class TextArgument {
 
     /**
      * Returns the text of this textArgument.
-     * 
-     * @return the text.
      */
     String getText() {
 
