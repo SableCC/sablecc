@@ -17,9 +17,11 @@
 
 package org.sablecc.sablecc.alphabet;
 
+import org.sablecc.sablecc.exception.InternalException;
+
 /**
  * A symbol pair is a pair <code>(x,y)</code> where each of <code>x</code>
- * and <code>y</code> is a symbol or <code>null</code>.
+ * and <code>y</code> is a symbol or <code>null</code>, but not both.
  */
 class SymbolPair {
 
@@ -47,6 +49,11 @@ class SymbolPair {
     SymbolPair(
             Symbol symbol1,
             Symbol symbol2) {
+
+        if (symbol1 == null && symbol2 == null) {
+            throw new InternalException(
+                    "symbol1 and symbol2 may not both be null");
+        }
 
         this.symbol1 = symbol1;
         this.symbol2 = symbol2;
@@ -89,11 +96,13 @@ class SymbolPair {
 
         SymbolPair symbolPair = (SymbolPair) obj;
 
-        if (this.symbol1 == null && symbolPair.symbol1 != null) {
+        if ((this.symbol1 == null || symbolPair.symbol1 == null)
+                && this.symbol1 != symbolPair.symbol1) {
             return false;
         }
 
-        if (this.symbol2 == null && symbolPair.symbol2 != null) {
+        if ((this.symbol2 == null || symbolPair.symbol2 == null)
+                && this.symbol2 != symbolPair.symbol2) {
             return false;
         }
 
@@ -133,7 +142,17 @@ class SymbolPair {
     public String toString() {
 
         if (this.toString == null) {
-            this.toString = "(" + this.symbol1 + "," + this.symbol2 + ")";
+            StringBuilder sb = new StringBuilder();
+            sb.append("(");
+            if (this.symbol1 != null) {
+                sb.append(this.symbol1);
+            }
+            sb.append(",");
+            if (this.symbol2 != null) {
+                sb.append(this.symbol2);
+            }
+            sb.append(")");
+            this.toString = sb.toString();
         }
 
         return this.toString;

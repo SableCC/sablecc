@@ -17,18 +17,222 @@
 
 package org.sablecc.sablecc.alphabet;
 
+import static org.sablecc.sablecc.util.UsefulStaticImports.BI_126;
+import static org.sablecc.sablecc.util.UsefulStaticImports.BI_32;
+
+import java.math.BigInteger;
+
+import org.sablecc.sablecc.exception.InternalException;
+
 /**
- * A bound is a value that has a predecessor and a successor. Bounds are used to
- * construct intervals.
+ * A bound is a value that is used to construct intervals.
  */
-public abstract class Bound
+public class Bound
         implements Comparable<Bound> {
 
+    /** The minimal bound */
+    public static final Bound MIN = new Bound();
+
+    /** The maximal bound */
+    public static final Bound MAX = new Bound();
+
+    /** The value of this bound. */
+    private final BigInteger value;
+
+    /**
+     * The cached hashcode of this interval. It is <code>null</code> when not
+     * yet computed.
+     */
+    private Integer hashCode;
+
+    /**
+     * The cached string representation of this interval. It is
+     * <code>null</code> when not yet computed.
+     */
+    private String toString;
+
+    /** Constructs constant bound. Serves to contruct MIN and MAX. */
+    private Bound() {
+
+        this.value = null;
+    }
+
+    /** Constructs a bound with the provided value. */
+    public Bound(
+            BigInteger value) {
+
+        if (value == null) {
+            throw new InternalException("value may not be null");
+        }
+
+        this.value = value;
+    }
+
+    /** Constructs a bound with the provided value. */
+    public Bound(
+            char value) {
+
+        this(new BigInteger(Integer.toString(value)));
+    }
+
+    /** Constructs a bound with the provided value. */
+    public Bound(
+            String value) {
+
+        this(new BigInteger(value));
+    }
+
+    /**
+     * Constructs a bound with the provided value in the specified radix.
+     */
+    public Bound(
+            String value,
+            int radix) {
+
+        this(new BigInteger(value, radix));
+    }
+
     /** Returns the predecessor of this bound. */
-    public abstract Bound getPredecessor();
+    public Bound getPredecessor() {
+
+        if (this.value == null) {
+            if (this == MIN) {
+                throw new InternalException("cannot get predecessor of MIN");
+            }
+            else {
+                assert this == MAX;
+                throw new InternalException("cannot get predecessor of MAX");
+            }
+        }
+
+        return new Bound(this.value.subtract(BigInteger.ONE));
+    }
 
     /** Returns the successor of this bound. */
-    public abstract Bound getSuccessor();
+    public Bound getSuccessor() {
+
+        if (this.value == null) {
+            if (this == MIN) {
+                throw new InternalException("cannot get successor of MIN");
+            }
+            else {
+                assert this == MAX;
+                throw new InternalException("cannot get successor of MAX");
+            }
+        }
+
+        return new Bound(this.value.add(BigInteger.ONE));
+    }
+
+    /**
+     * Returns true if the provided object is equal to this bound.
+     */
+    @Override
+    public boolean equals(
+            Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Bound bound = (Bound) obj;
+
+        if (this.value == null || bound.value == null) {
+            // this != obj, yet this or bound is MIN or MAX.
+            return false;
+        }
+
+        return this.value.equals(bound.value);
+    }
+
+    /**
+     * Returns the hash code of this bound.
+     */
+    @Override
+    public int hashCode() {
+
+        if (this.hashCode == null) {
+            if (this.value == null) {
+                this.hashCode = System.identityHashCode(this);
+            }
+            else {
+                this.hashCode = this.value.hashCode();
+            }
+        }
+
+        return this.hashCode;
+    }
+
+    /**
+     * Returns the string representation of this bound.
+     */
+    @Override
+    public String toString() {
+
+        if (this.toString == null) {
+            if (this.value == null) {
+                if (this == MIN) {
+                    this.toString = "MIN";
+                }
+                else {
+                    this.toString = "MAX";
+                }
+            }
+            else {
+                if (this.value.compareTo(BI_32) < 0
+                        || this.value.compareTo(BI_126) > 0) {
+                    this.toString = "#" + this.value.toString();
+                }
+                else {
+                    char c = (char) Integer.parseInt(this.value.toString());
+                    this.toString = "'" + c + "'";
+                }
+            }
+        }
+
+        return this.toString;
+    }
+
+    /**
+     * Compares this bound to the provided bound.
+     */
+    public int compareTo(
+            Bound bound) {
+
+        if (bound == null) {
+            throw new InternalException("bound may not be null");
+        }
+
+        if (getClass() != bound.getClass()) {
+            throw new InternalException("bound must have the same class");
+        }
+
+        if (this.value == null || bound.value == null) {
+            if (this == MIN) {
+                return bound == MIN ? 0 : -1;
+            }
+
+            if (this == MAX) {
+                return bound == MAX ? 0 : 1;
+            }
+
+            if (bound == MIN) {
+                return 1;
+            }
+
+            return -1;
+        }
+
+        return this.value.compareTo(bound.value);
+    }
 
     /**
      * Returns the minimum of two bounds.

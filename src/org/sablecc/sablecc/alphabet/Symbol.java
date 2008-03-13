@@ -17,7 +17,6 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -28,17 +27,14 @@ import java.util.TreeSet;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * A symbol is a non-empty set of non-intersecting, non-adjacent intervals. As a
- * special case, a complement symbol is implemented as a symbol with no
- * intervals. The complement symbol of an alphabet represents all the intervals
- * not covered by other symbols of the alphabet.
+ * A symbol is a non-empty set of non-intersecting, non-adjacent intervals.
  */
 public class Symbol
         implements Comparable<Symbol> {
 
     /**
      * The sorted set of non-intersecting, non-adjacent intervals of this
-     * symbol. It is <code>null</code> when the symbol is a complement symbol.
+     * symbol.
      */
     private final SortedSet<Interval> intervals;
 
@@ -53,14 +49,6 @@ public class Symbol
      * when not yet computed.
      */
     private String toString;
-
-    /**
-     * Constructs a complement symbol.
-     */
-    public Symbol() {
-
-        this.intervals = null;
-    }
 
     /**
      * Constructs a symbol with the provided collection of intervals. Adjacent
@@ -158,38 +146,25 @@ public class Symbol
      * Constructs a symbol with the provided bound.
      */
     public Symbol(
-            int bound) {
-
-        this(new Interval(bound));
-    }
-
-    /**
-     * Constructs a symbol with the provided bound.
-     */
-    public Symbol(
-            BigInteger bound) {
-
-        this(new Interval(bound));
-    }
-
-    /**
-     * Constructs a symbol with the provided bound.
-     */
-    public Symbol(
             String bound) {
 
         this(new Interval(bound));
     }
 
     /**
+     * Constructs a symbol with the provided bound.
+     */
+    public Symbol(
+            String bound,
+            int radix) {
+
+        this(new Interval(bound, radix));
+    }
+
+    /**
      * Returns the set of intervals of this symbol.
      */
     public SortedSet<Interval> getIntervals() {
-
-        if (this.intervals == null) {
-            throw new InternalException(
-                    "complement symbols have no explicit intervals");
-        }
 
         return this.intervals;
     }
@@ -215,10 +190,6 @@ public class Symbol
 
         Symbol symbol = (Symbol) obj;
 
-        if (this.intervals == null || symbol.intervals == null) {
-            return this.intervals == symbol.intervals;
-        }
-
         if (this.intervals.size() != symbol.intervals.size()) {
             return false;
         }
@@ -242,11 +213,9 @@ public class Symbol
         if (this.hashCode == null) {
             int hashCode = 0;
 
-            if (this.intervals != null) {
-                for (Interval interval : this.intervals) {
-                    hashCode *= 107;
-                    hashCode += interval.hashCode();
-                }
+            for (Interval interval : this.intervals) {
+                hashCode *= 107;
+                hashCode += interval.hashCode();
             }
 
             this.hashCode = hashCode;
@@ -266,21 +235,16 @@ public class Symbol
 
             sb.append("{");
 
-            if (this.intervals != null) {
-                boolean first = true;
-                for (Interval interval : this.intervals) {
-                    if (first) {
-                        first = false;
-                    }
-                    else {
-                        sb.append(",");
-                    }
-
-                    sb.append(interval);
+            boolean first = true;
+            for (Interval interval : this.intervals) {
+                if (first) {
+                    first = false;
                 }
-            }
-            else {
-                sb.append("Complement");
+                else {
+                    sb.append(",");
+                }
+
+                sb.append(interval);
             }
 
             sb.append("}");
@@ -299,19 +263,6 @@ public class Symbol
 
         if (symbol == null) {
             throw new InternalException("symbol may not be null");
-        }
-
-        if (this.intervals == null || symbol.intervals == null) {
-
-            if (this.intervals == symbol.intervals) {
-                return 0;
-            }
-
-            if (this.intervals == null) {
-                return -1;
-            }
-
-            return 1;
         }
 
         int result = 0;
@@ -338,18 +289,9 @@ public class Symbol
     }
 
     /**
-     * Returns true when this symbol is a complement symbol.
-     */
-    public boolean isComplement() {
-
-        return this.intervals == null;
-    }
-
-    /**
      * Creates a new symbol by merging together the symbols in the provided
      * collection. The new symbol includes all the intervals of merged symbols.
-     * Adjacent intervals are merged. Fails if two intervals intersect. If one
-     * of the symbols is a complement symbol, the result is a complement symbol.
+     * Adjacent intervals are merged. Fails if two intervals intersect.
      */
     public static Symbol merge(
             Collection<Symbol> symbols) {
@@ -362,28 +304,6 @@ public class Symbol
             throw new InternalException(
                     "symbols must contain at least one element");
         }
-
-        // look for complement symbols
-
-        boolean containsComplementSymbol = false;
-
-        for (Symbol symbol : symbols) {
-            if (symbol.isComplement()) {
-
-                if (containsComplementSymbol) {
-                    throw new InternalException(
-                            "multiple complement symbols may not be merged.");
-                }
-
-                containsComplementSymbol = true;
-            }
-        }
-
-        if (containsComplementSymbol) {
-            return new Symbol();
-        }
-
-        // merge non-complement symbols.
 
         Collection<Interval> intervals = new LinkedList<Interval>();
 
