@@ -19,7 +19,6 @@ package org.sablecc.sablecc.automaton;
 
 import static org.sablecc.sablecc.util.UsefulStaticImports.LINE_SEPARATOR;
 
-import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
@@ -168,21 +167,16 @@ public final class Nfa {
     }
 
     public Nfa(
-            int bound) {
-
-        this(new Interval(bound));
-    }
-
-    public Nfa(
-            BigInteger bound) {
-
-        this(new Interval(bound));
-    }
-
-    public Nfa(
             String bound) {
 
         this(new Interval(bound));
+    }
+
+    public Nfa(
+            String bound,
+            int radix) {
+
+        this(new Interval(bound, radix));
     }
 
     /**

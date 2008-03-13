@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.util;
 
+import java.math.BigInteger;
+
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
@@ -28,6 +30,12 @@ public class UsefulStaticImports {
     /** The system-specific line separator. */
     public static final String LINE_SEPARATOR = System
             .getProperty("line.separator");
+
+    /** BigInteger constant 32 */
+    public static final BigInteger BI_32 = new BigInteger("32");
+
+    /** BigInteger constant 126 */
+    public static final BigInteger BI_126 = new BigInteger("126");
 
     /** Prevents instanciation of this class. */
     private UsefulStaticImports() {

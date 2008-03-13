@@ -22,6 +22,7 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 import org.sablecc.sablecc.alphabet.Alphabet;
+import org.sablecc.sablecc.alphabet.Bound;
 import org.sablecc.sablecc.alphabet.Interval;
 import org.sablecc.sablecc.alphabet.Symbol;
 
@@ -35,15 +36,15 @@ public class MergeBug {
         Alphabet firstPartAlphabet;
         Alphabet secondPartAlphabet;
 
-        intervals.add(new Interval(0, 5));
-        intervals.add(new Interval(10, 15));
-        intervals.add(new Interval(20, 25));
+        intervals.add(new Interval(new Bound("0"), new Bound("5")));
+        intervals.add(new Interval(new Bound("10"), new Bound("15")));
+        intervals.add(new Interval(new Bound("20"), new Bound("25")));
         firstPartAlphabet = new Alphabet(new Symbol(intervals));
 
         intervals.clear();
-        intervals.add(new Interval(30, 35));
-        intervals.add(new Interval(40, 45));
-        intervals.add(new Interval(50, 55));
+        intervals.add(new Interval(new Bound("30"), new Bound("35")));
+        intervals.add(new Interval(new Bound("40"), new Bound("45")));
+        intervals.add(new Interval(new Bound("50"), new Bound("55")));
         secondPartAlphabet = new Alphabet(new Symbol(intervals));
 
         // Line that cause the bug.

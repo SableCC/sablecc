@@ -17,8 +17,6 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import java.math.BigInteger;
-
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
@@ -65,6 +63,14 @@ public class Interval
                     "lower bound must be smaller or equal to upper bound");
         }
 
+        if (lowerBound == Bound.MAX) {
+            throw new InternalException("lower bound may not be MAX");
+        }
+
+        if (upperBound == Bound.MIN) {
+            throw new InternalException("upper bound may not be MIN");
+        }
+
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
     }
@@ -80,73 +86,13 @@ public class Interval
     }
 
     /**
-     * Constructs an interval with the provided lower and upper bounds.
-     */
-    public Interval(
-            char lowerBound,
-            char upperBound) {
-
-        this(new CharacterBound(lowerBound), new CharacterBound(upperBound));
-    }
-
-    /**
      * Constructs an interval with the provided bound used as both lower bound
      * and upper bound.
      */
     public Interval(
             char bound) {
 
-        this(new CharacterBound(bound));
-    }
-
-    /**
-     * Constructs an interval with the provided lower and upper bounds.
-     */
-    public Interval(
-            int lowerBound,
-            int upperBound) {
-
-        this(new IntegerBound(lowerBound), new IntegerBound(upperBound));
-    }
-
-    /**
-     * Constructs an interval with the provided bound used as both lower bound
-     * and upper bound.
-     */
-    public Interval(
-            int bound) {
-
-        this(new IntegerBound(bound));
-    }
-
-    /**
-     * Constructs an interval with the provided lower and upper bounds.
-     */
-    public Interval(
-            BigInteger lowerBound,
-            BigInteger upperBound) {
-
-        this(new BigIntegerBound(lowerBound), new BigIntegerBound(upperBound));
-    }
-
-    /**
-     * Constructs an interval with the provided bound used as both lower bound
-     * and upper bound.
-     */
-    public Interval(
-            BigInteger bound) {
-
-        this(new BigIntegerBound(bound));
-    }
-
-    /**
-     * Constructs an interval with the provided lower and upper bounds.
-     */
-    public Interval(
-            String lowerBound,
-            String upperBound) {
-
-        this(new BigIntegerBound(lowerBound), new BigIntegerBound(upperBound));
+        this(new Bound(bound));
     }
 
     /**
@@ -156,7 +102,18 @@ public class Interval
     public Interval(
             String bound) {
 
-        this(new BigIntegerBound(bound));
+        this(new Bound(bound));
+    }
+
+    /**
+     * Constructs an interval with the provided bound used as both lower bound
+     * and upper bound.
+     */
+    public Interval(
+            String bound,
+            int radix) {
+
+        this(new Bound(bound, radix));
     }
 
     /**
@@ -260,6 +217,10 @@ public class Interval
 
         if (interval == null) {
             throw new InternalException("interval may not be null");
+        }
+
+        if (this.upperBound.compareTo(interval.lowerBound) >= 0) {
+            return false;
         }
 
         return this.upperBound.getSuccessor().equals(interval.lowerBound);

@@ -17,7 +17,6 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -39,23 +38,21 @@ import org.sablecc.sablecc.exception.InternalException;
 public class Alphabet {
 
     /**
-     * The sorted set of symbols of this alphabet. Includes the complement
-     * symbol, if present.
+     * The sorted set of symbols of this alphabet.
      */
     private SortedSet<Symbol> symbols;
 
     /**
-     * The complement symbol of this alphabet. Is <code>null</code> when the
-     * alphabet does not contain a complement symbol.
-     */
-    private Symbol complementSymbol;
-
-    /**
      * A mapping from each interval contained in a symbol of this alphabet to
-     * its symbol. The implicit intervals of the complement symbol are not
-     * mapped.
+     * its symbol.
      */
     private SortedMap<Interval, Symbol> intervalToSymbolMap;
+
+    /**
+     * The cached hashcode of this alphabet. It is <code>null</code> when not
+     * yet computed.
+     */
+    private Integer hashCode;
 
     /**
      * The cached string representation of this alphabet. It is
@@ -130,25 +127,7 @@ public class Alphabet {
     public Alphabet(
             char bound) {
 
-        this(new Interval(bound));
-    }
-
-    /**
-     * Constructs an alphabet with the provided bound.
-     */
-    public Alphabet(
-            int bound) {
-
-        this(new Interval(bound));
-    }
-
-    /**
-     * Constructs an alphabet with the provided bound.
-     */
-    public Alphabet(
-            BigInteger bound) {
-
-        this(new Interval(bound));
+        this(new Symbol(bound));
     }
 
     /**
@@ -157,7 +136,31 @@ public class Alphabet {
     public Alphabet(
             String bound) {
 
-        this(new Interval(bound));
+        if (bound == null) {
+            throw new InternalException("bound may not be null");
+        }
+
+        Collection<Symbol> symbols = new LinkedList<Symbol>();
+        symbols.add(new Symbol(bound));
+
+        init(symbols);
+    }
+
+    /**
+     * Constructs an alphabet with the provided bound.
+     */
+    public Alphabet(
+            String bound,
+            int radix) {
+
+        if (bound == null) {
+            throw new InternalException("bound may not be null");
+        }
+
+        Collection<Symbol> symbols = new LinkedList<Symbol>();
+        symbols.add(new Symbol(bound, radix));
+
+        init(symbols);
     }
 
     /**
@@ -188,17 +191,6 @@ public class Alphabet {
         for (Symbol symbol : symbols) {
             if (symbol == null) {
                 throw new InternalException("symbol may not be null");
-            }
-
-            if (symbol.isComplement()) {
-
-                if (this.complementSymbol != null) {
-                    throw new InternalException(
-                            "alphabet may not contain multiple complement symbols");
-                }
-
-                this.complementSymbol = symbol;
-                continue;
             }
 
             for (Interval interval : symbol.getIntervals()) {
@@ -233,26 +225,67 @@ public class Alphabet {
     }
 
     /**
-     * Returns the complement symbol of this alphabet.
-     */
-    public Symbol getComplementSymbol() {
-
-        if (this.complementSymbol == null) {
-            throw new InternalException(
-                    "this alphabet does not contain a complement symbol");
-        }
-
-        return this.complementSymbol;
-    }
-
-    /**
      * Returns a mapping from each interval contained in a symbol of this
-     * alphabet to its symbol. The implicit intervals of the complement symbol
-     * are not mapped.the interval to symbol map of this alphabet.
+     * alphabet to its symbol.
      */
     public SortedMap<Interval, Symbol> getIntervalToSymbolMap() {
 
         return this.intervalToSymbolMap;
+    }
+
+    /**
+     * Returns true if the provided object is equal to this alphabet.
+     */
+    @Override
+    public boolean equals(
+            Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Alphabet alphabet = (Alphabet) obj;
+
+        if (this.symbols.size() != alphabet.symbols.size()) {
+            return false;
+        }
+
+        Iterator i = alphabet.symbols.iterator();
+        for (Symbol symbol : this.symbols) {
+            if (!symbol.equals(i.next())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns the hash code of this alphabet.
+     */
+    @Override
+    public int hashCode() {
+
+        if (this.hashCode == null) {
+            int hashCode = 0;
+
+            for (Symbol symbol : this.symbols) {
+                hashCode *= 107;
+                hashCode += symbol.hashCode();
+            }
+
+            this.hashCode = hashCode;
+        }
+
+        return this.hashCode;
     }
 
     /**
@@ -284,14 +317,6 @@ public class Alphabet {
         }
 
         return this.toString;
-    }
-
-    /**
-     * Returns true when this alphabet contains a complement symbol.
-     */
-    public boolean containsComplementSymbol() {
-
-        return this.complementSymbol != null;
     }
 
     /**
@@ -337,36 +362,8 @@ public class Alphabet {
         // list of new symbols
         Collection<Symbol> newSymbols = new LinkedList<Symbol>();
 
-        // SortedMaps to map old symbols to sets of new symbols
-        SortedMap<Symbol, SortedSet<Symbol>> alphabet1SymbolMap = new TreeMap<Symbol, SortedSet<Symbol>>();
-        SortedMap<Symbol, SortedSet<Symbol>> alphabet2SymbolMap = new TreeMap<Symbol, SortedSet<Symbol>>();
-
-        // if either alphabets contains a complement symbol, the new alphabet
-        // will contain one.
-        Symbol complementSymbol;
-
-        if (containsComplementSymbol() || alphabet.containsComplementSymbol()) {
-            complementSymbol = new Symbol();
-
-            newSymbols.add(complementSymbol);
-
-            if (containsComplementSymbol()) {
-
-                SortedSet<Symbol> collection = new TreeSet<Symbol>();
-                collection.add(complementSymbol);
-                alphabet1SymbolMap.put(this.complementSymbol, collection);
-            }
-
-            if (alphabet.containsComplementSymbol()) {
-
-                SortedSet<Symbol> collection = new TreeSet<Symbol>();
-                collection.add(complementSymbol);
-                alphabet2SymbolMap.put(alphabet.complementSymbol, collection);
-            }
-        }
-        else {
-            complementSymbol = null;
-        }
+        // SortedMap to map old symbols to sets of new symbols
+        SortedMap<Symbol, SortedSet<Symbol>> alphabetSymbolMap = new TreeMap<Symbol, SortedSet<Symbol>>();
 
         for (Map.Entry<SymbolPair, SortedSet<Interval>> entry : symbolPairToIntervalSetMap
                 .entrySet()) {
@@ -374,12 +371,7 @@ public class Alphabet {
             Symbol oldSymbol1 = entry.getKey().getSymbol1();
             Symbol oldSymbol2 = entry.getKey().getSymbol2();
 
-            // if no old (non-complement) symbol matches, don't create a symbol
-            if (oldSymbol1 == null && oldSymbol2 == null) {
-                continue;
-            }
-
-            // we can make a new symbol that relates to the pair
+            // we create a new symbol that relates to the pair
             Symbol newSymbol = new Symbol(entry.getValue());
 
             newSymbols.add(newSymbol);
@@ -388,42 +380,32 @@ public class Alphabet {
             // maps
 
             if (oldSymbol1 != null) {
-                SortedSet<Symbol> collection = alphabet1SymbolMap
+                SortedSet<Symbol> collection = alphabetSymbolMap
                         .get(oldSymbol1);
 
                 if (collection == null) {
                     collection = new TreeSet<Symbol>();
-                    alphabet1SymbolMap.put(oldSymbol1, collection);
+                    alphabetSymbolMap.put(oldSymbol1, collection);
                 }
 
-                collection.add(newSymbol);
-            }
-            else if (containsComplementSymbol()) {
-                SortedSet<Symbol> collection = alphabet1SymbolMap
-                        .get(this.complementSymbol);
                 collection.add(newSymbol);
             }
 
             if (oldSymbol2 != null) {
-                SortedSet<Symbol> collection = alphabet2SymbolMap
+                SortedSet<Symbol> collection = alphabetSymbolMap
                         .get(oldSymbol2);
 
                 if (collection == null) {
                     collection = new TreeSet<Symbol>();
-                    alphabet2SymbolMap.put(oldSymbol2, collection);
+                    alphabetSymbolMap.put(oldSymbol2, collection);
                 }
 
                 collection.add(newSymbol);
             }
-            else if (alphabet.containsComplementSymbol()) {
-                SortedSet<Symbol> collection = alphabet2SymbolMap
-                        .get(alphabet.complementSymbol);
-                collection.add(newSymbol);
-            }
         }
 
-        return new AlphabetMergeResult(new Alphabet(newSymbols), this,
-                alphabet1SymbolMap, alphabet, alphabet2SymbolMap);
+        return new AlphabetMergeResult(new Alphabet(newSymbols),
+                alphabetSymbolMap);
     }
 
     /**
@@ -431,9 +413,7 @@ public class Alphabet {
      * <code>(x,y)</code> to a set of shared intervals, where <code>x</code>
      * is a symbol of <code>alphabet1</code> or <code>null</code>, and
      * <code>y</code> is a symbol of <code>alphabet2</code> or
-     * <code>null</code>. Note that this methods does not explicitly take
-     * into account complement symbols, but a <code>null</code> symbol, in a
-     * symbol pair, represents complement symbol.
+     * <code>null</code>, but both x and y are not null.
      */
     private static Map<SymbolPair, SortedSet<Interval>> computeSymbolPairToIntervalSetMap(
             Alphabet alphabet1,
@@ -556,17 +536,19 @@ public class Alphabet {
                 symbol2 = null;
             }
 
-            SymbolPair symbolPair = new SymbolPair(symbol1, symbol2);
+            if (symbol1 != null || symbol2 != null) {
+                SymbolPair symbolPair = new SymbolPair(symbol1, symbol2);
 
-            // add interval in (symbol pair,interval set) map
-            SortedSet<Interval> intervalSet = symbolPairToIntervalSetMap
-                    .get(symbolPair);
-            if (intervalSet == null) {
-                intervalSet = new TreeSet<Interval>();
-                symbolPairToIntervalSetMap.put(symbolPair, intervalSet);
+                // add interval in (symbol pair,interval set) map
+                SortedSet<Interval> intervalSet = symbolPairToIntervalSetMap
+                        .get(symbolPair);
+                if (intervalSet == null) {
+                    intervalSet = new TreeSet<Interval>();
+                    symbolPairToIntervalSetMap.put(symbolPair, intervalSet);
+                }
+
+                intervalSet.add(newInterval);
             }
-
-            intervalSet.add(newInterval);
 
             // save last upper bound
             lastUpperBound = upperBound;

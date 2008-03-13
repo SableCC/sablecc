@@ -18,6 +18,7 @@
 package ticket39;
 
 import org.junit.Test;
+import org.sablecc.sablecc.alphabet.Bound;
 import org.sablecc.sablecc.alphabet.Interval;
 import org.sablecc.sablecc.automaton.Dfa;
 import org.sablecc.sablecc.automaton.MinimalDfa;
@@ -28,7 +29,7 @@ public class PartitioningBug {
     @Test
     public void bug() {
 
-        Nfa any = new Nfa(new Interval('A', 'Z'));
+        Nfa any = new Nfa(new Interval(new Bound('A'), new Bound('Z')));
         Nfa e = new Nfa('E');
         Nfa t = new Nfa('T');
         Nfa i = new Nfa('I');
