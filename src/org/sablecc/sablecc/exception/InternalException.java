@@ -28,11 +28,9 @@ package org.sablecc.sablecc.exception;
  * thrown when some method argument is <code>null</code> and the method
  * requires a non-null argument.
  */
+@SuppressWarnings("serial")
 public class InternalException
         extends RuntimeException {
-
-    /** Serial version identifier for serialization */
-    private static final long serialVersionUID = -4845566874186665747L;
 
     /**
      * Constructs a new internal exception with the provided error message.

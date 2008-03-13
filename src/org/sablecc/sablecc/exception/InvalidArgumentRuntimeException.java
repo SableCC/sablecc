@@ -23,11 +23,9 @@ package org.sablecc.sablecc.exception;
  * program.
  */
 
+@SuppressWarnings("serial")
 public class InvalidArgumentRuntimeException
         extends RuntimeException {
-
-    /** Serial version identifier for serialization */
-    private static final long serialVersionUID = -1526259558916228310L;
 
     /**
      * Constructs a new invalid argument runtime exception with the provided

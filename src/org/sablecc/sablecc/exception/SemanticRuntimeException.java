@@ -17,10 +17,9 @@
 
 package org.sablecc.sablecc.exception;
 
+@SuppressWarnings("serial")
 public class SemanticRuntimeException
         extends RuntimeException {
-
-    private static final long serialVersionUID = -2922188997584289114L;
 
     SemanticException semanticException;
 

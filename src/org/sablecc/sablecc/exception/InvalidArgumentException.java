@@ -26,11 +26,9 @@ package org.sablecc.sablecc.exception;
  * InvalidArgumentException should be thrown when we execute the program
  * providing a bogus option or invalid argument.
  */
+@SuppressWarnings("serial")
 public class InvalidArgumentException
         extends Exception {
-
-    /** Serial version identifier for serialization */
-    private static final long serialVersionUID = 2728824423324590713L;
 
     /**
      * Constructs a new invalid argument exception with the provided error
