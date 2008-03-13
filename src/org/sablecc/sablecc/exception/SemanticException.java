@@ -22,11 +22,9 @@ import org.sablecc.sablecc.syntax3.node.Token;
 /**
  * A semantic exception is thrown when a logic error is found in a grammar.
  */
+@SuppressWarnings("serial")
 public class SemanticException
         extends Exception {
-
-    /** Serial version identifier for serialization */
-    private static final long serialVersionUID = 155544165804671040L;
 
     /** The token of this semantic exception. */
     private Token token;
