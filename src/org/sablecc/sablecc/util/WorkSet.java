@@ -24,19 +24,19 @@ import java.util.Set;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * A work set is a set of element to work on. This class provides various
- * methods to maniplutate work sets.
+ * A work set is a special set that returns each of its elements only once
+ * through the <code>next()</code> method.
  */
 public class WorkSet<T> {
 
-    /** The list of the elements already treated. */
+    /** The set of the already returned element. */
     private final Set<T> done = new HashSet<T>();
 
-    /** The list of the elements left to be treated. */
+    /** The set of elements that have not been returned. */
     private final LinkedHashSet<T> toDo = new LinkedHashSet<T>();
 
     /**
-     * Indicates if an element has a next one.
+     * Returns <code>true</code> if there is a next element.
      */
     public boolean hasNext() {
 
@@ -44,7 +44,7 @@ public class WorkSet<T> {
     }
 
     /**
-     * Treats a new element, adding it to the done list.
+     * Returns the next element.
      */
     public T next() {
 
@@ -57,7 +57,7 @@ public class WorkSet<T> {
     }
 
     /**
-     * Adds a new element to be treated.
+     * Adds a new element to the work list.
      */
     public void add(
             T element) {

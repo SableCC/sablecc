@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc;
+package org.sablecc.sablecc.util;
 
 /**
- * This enumeration serves to describe the verbosity level.
+ * This enumeration enumarates verbosity levels.
  */
 public enum Verbosity {
     /**

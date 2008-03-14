@@ -25,7 +25,6 @@ import java.io.PushbackReader;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.sablecc.sablecc.Verbosity;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.InvalidArgumentException;
 import org.sablecc.sablecc.exception.SemanticException;
@@ -34,6 +33,7 @@ import org.sablecc.sablecc.syntax3.lexer.LexerException;
 import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.parser.Parser;
 import org.sablecc.sablecc.syntax3.parser.ParserException;
+import org.sablecc.sablecc.util.Verbosity;
 
 public class SableCC {
 

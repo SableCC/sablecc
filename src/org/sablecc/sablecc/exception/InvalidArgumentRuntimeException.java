@@ -18,46 +18,35 @@
 package org.sablecc.sablecc.exception;
 
 /**
- * An invalid argument runtime exception is thrown during the execution of the
- * software when the user provided a bogus option or argument when starting the
- * program.
+ * An invalid argument runtime exception wraps an invalid argument exception
+ * into a runtime exception.
  */
-
 @SuppressWarnings("serial")
 public class InvalidArgumentRuntimeException
         extends RuntimeException {
 
-    /**
-     * Constructs a new invalid argument runtime exception with the provided
-     * error message.
-     */
-    public InvalidArgumentRuntimeException(
-            String message) {
-
-        super(message);
-
-        if (message == null) {
-            throw new InternalException("message may not be null");
-        }
-    }
+    /** The wrapped invalid argument exception. */
+    private InvalidArgumentException invalidArgumentException;
 
     /**
-     * Constructs a new invalid argument runtime exception with the provided
-     * error message and cause.
+     * Constructs a new exception wraper.
      */
     public InvalidArgumentRuntimeException(
-            String message,
-            Throwable cause) {
+            InvalidArgumentException invalidArgumentException) {
 
-        super(message, cause);
+        super(invalidArgumentException);
 
-        if (message == null) {
-            throw new InternalException("message may not be null");
+        if (invalidArgumentException == null) {
+            throw new InternalException(
+                    "invalidArgumentException may not be null");
         }
 
-        if (cause == null) {
-            throw new InternalException("cause may not be null");
-        }
+        this.invalidArgumentException = invalidArgumentException;
     }
 
+    /** Returns the wrapped exception. */
+    public InvalidArgumentException getInvalidArgumentException() {
+
+        return this.invalidArgumentException;
+    }
 }

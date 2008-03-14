@@ -20,13 +20,14 @@ package org.sablecc.sablecc.exception;
 import org.sablecc.sablecc.syntax3.node.Token;
 
 /**
- * A semantic exception is thrown when a logic error is found in a grammar.
+ * A semantic exception is thrown when a semantic error is found in a language
+ * specification.
  */
 @SuppressWarnings("serial")
 public class SemanticException
         extends Exception {
 
-    /** The token of this semantic exception. */
+    /** The token where this semantic exception was detected. */
     private Token token;
 
     /**
@@ -51,7 +52,7 @@ public class SemanticException
     }
 
     /**
-     * Constructs a semantic exception with the provided error message, token
+     * Constructs a semantic exception with the provided error message, token,
      * and cause.
      */
     public SemanticException(
@@ -78,7 +79,7 @@ public class SemanticException
     }
 
     /**
-     * Returns the token of this semantic exception.
+     * Returns the token where this semantic exception was detected.
      */
     public Token getToken() {
 

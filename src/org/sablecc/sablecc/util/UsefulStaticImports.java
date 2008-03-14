@@ -22,8 +22,7 @@ import java.math.BigInteger;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * The purpose of this class is to provide commonly used constants for static
- * import.
+ * This class is to provides commonly used constants for static import.
  */
 public class UsefulStaticImports {
 
@@ -31,10 +30,10 @@ public class UsefulStaticImports {
     public static final String LINE_SEPARATOR = System
             .getProperty("line.separator");
 
-    /** BigInteger constant 32 */
+    /** BigInteger constant 32. */
     public static final BigInteger BI_32 = new BigInteger("32");
 
-    /** BigInteger constant 126 */
+    /** BigInteger constant 126. */
     public static final BigInteger BI_126 = new BigInteger("126");
 
     /** Prevents instanciation of this class. */

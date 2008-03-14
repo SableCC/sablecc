@@ -21,10 +21,9 @@ package org.sablecc.sablecc.exception;
  * An invalid argument exception is thrown when the user execute the software
  * providing an unappropriate argument.
  * <p>
- * In the source code of the software, this exception should be thrown whenever
- * we execute the program and check for its options/arguments. For example, an
- * InvalidArgumentException should be thrown when we execute the program
- * providing a bogus option or invalid argument.
+ * In the source code of the software, this exception should be thrown when we
+ * detect that the program was launched with a bogus option or an invalid
+ * argument.
  */
 @SuppressWarnings("serial")
 public class InvalidArgumentException
