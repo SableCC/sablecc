@@ -84,8 +84,9 @@ class ArgumentExtractor
         Option option = Option.getLongOption(longName);
 
         if (option == null) {
-            throw new InvalidArgumentRuntimeException("invalid option: --"
-                    + longName);
+            throw new InvalidArgumentRuntimeException(
+                    new InvalidArgumentException("invalid option: --"
+                            + longName));
         }
 
         // expects an operand?
@@ -115,8 +116,9 @@ class ArgumentExtractor
             // no
 
             if (node.getOperand() != null) {
-                throw new InvalidArgumentRuntimeException("option --"
-                        + longName + " does not expect an operand");
+                throw new InvalidArgumentRuntimeException(
+                        new InvalidArgumentException("option --" + longName
+                                + " does not expect an operand"));
             }
 
             this.optionArguments.add(new OptionArgument(option, null));
@@ -131,9 +133,12 @@ class ArgumentExtractor
             AShortOption node) {
 
         if (this.incompleteOption != null) {
-            throw new InvalidArgumentRuntimeException("option -"
-                    + this.incompleteOption.getShortName() + " is missing a "
-                    + this.incompleteOption.getOperandName() + " operand");
+            throw new InvalidArgumentRuntimeException(
+                    new InvalidArgumentException("option -"
+                            + this.incompleteOption.getShortName()
+                            + " is missing a "
+                            + this.incompleteOption.getOperandName()
+                            + " operand"));
         }
 
         String shortName = node.getShortName().getText();
@@ -142,8 +147,9 @@ class ArgumentExtractor
         Option option = Option.getShortOption(shortName);
 
         if (option == null) {
-            throw new InvalidArgumentRuntimeException("invalid option: -"
-                    + shortName);
+            throw new InvalidArgumentRuntimeException(
+                    new InvalidArgumentException("invalid option: -"
+                            + shortName));
         }
 
         // expects an operand?
@@ -173,8 +179,9 @@ class ArgumentExtractor
             // no
 
             if (node.getOperand() != null) {
-                throw new InvalidArgumentRuntimeException("option -"
-                        + shortName + " does not expect an operand");
+                throw new InvalidArgumentRuntimeException(
+                        new InvalidArgumentException("option -" + shortName
+                                + " does not expect an operand"));
             }
 
             this.optionArguments.add(new OptionArgument(option, null));
@@ -198,7 +205,7 @@ class ArgumentExtractor
             ast.apply(extractor);
         }
         catch (InvalidArgumentRuntimeException e) {
-            throw new InvalidArgumentException(e.getMessage(), e);
+            throw e.getInvalidArgumentException();
         }
 
         return extractor.incompleteOption;

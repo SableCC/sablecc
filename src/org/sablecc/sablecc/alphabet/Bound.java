@@ -36,22 +36,22 @@ public class Bound
     /** The maximal bound */
     public static final Bound MAX = new Bound();
 
-    /** The value of this bound. */
+    /** The value of this bound. It is <code>null</code> for MIN and MAX. */
     private final BigInteger value;
 
     /**
-     * The cached hashcode of this interval. It is <code>null</code> when not
-     * yet computed.
+     * The cached hashcode of this bound. It is <code>null</code> when not yet
+     * computed.
      */
     private Integer hashCode;
 
     /**
-     * The cached string representation of this interval. It is
-     * <code>null</code> when not yet computed.
+     * The cached string representation of this bound. It is <code>null</code>
+     * when not yet computed.
      */
     private String toString;
 
-    /** Constructs constant bound. Serves to contruct MIN and MAX. */
+    /** Constructs a constant bound. Serves to contruct MIN and MAX. */
     private Bound() {
 
         this.value = null;

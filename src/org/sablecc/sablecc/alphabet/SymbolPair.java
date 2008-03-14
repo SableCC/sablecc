@@ -21,7 +21,8 @@ import org.sablecc.sablecc.exception.InternalException;
 
 /**
  * A symbol pair is a pair <code>(x,y)</code> where each of <code>x</code>
- * and <code>y</code> is a symbol or <code>null</code>, but not both.
+ * and <code>y</code> is a symbol or <code>null</code>, but both may not be
+ * <code>null</code>.
  */
 class SymbolPair {
 
