@@ -11,15 +11,14 @@ Welcome to SableCC 4!
 =====================
 
 This version is a work in progress release. We hope that it will
-encourage you to join the team and help develop SableCC 4. You can
+encourage you to join the project and help develop SableCC 4. You can
 participate in various ways: write new code, test existing code,
 suggest improvements, etc.
 
-SableCC 4 does not yet generate any code. However, you can use
-currently available code to parse lexer specifications. You can also
-use it as a library for your own programs.  You will find the
-executable jar library file in the lib/ directory, and its API
-documentation in the doc/ directory.
+SableCC 4 does not yet generate any code. However, you can use it to
+parse grammars using the new syntax. You can also use it as a library
+for your own programs.  You will find the executable jar file in the
+lib/ directory and its API documentation in the doc/ directory.
 
 Package Content
 ===============
