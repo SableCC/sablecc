@@ -20,18 +20,19 @@ package org.sablecc.sablecc.launcher;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * An option argument is composed of the option and its operand.
+ * The option argument class encapsulates a command-line option argument and its
+ * operand.
  */
 class OptionArgument {
 
-    /** The option for this option argument. */
+    /** The option. */
     private Option option;
 
-    /** The operand for this option argument. */
+    /** The operand. */
     private String operand;
 
     /**
-     * Constructs an option argument with the provided option and operand.
+     * Constructs an option argument.
      */
     OptionArgument(
             Option option,
@@ -46,7 +47,7 @@ class OptionArgument {
     }
 
     /**
-     * Returns the option of this option argument.
+     * Returns the option.
      */
     Option getOption() {
 
@@ -54,7 +55,7 @@ class OptionArgument {
     }
 
     /**
-     * Returns the operand of this option argument.
+     * Returns the operand.
      */
     String getOperand() {
 
