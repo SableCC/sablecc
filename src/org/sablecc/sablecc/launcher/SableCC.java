@@ -157,7 +157,7 @@ public class SableCC {
                 break;
 
             case VERSION:
-                System.out.println("SableCC " + VERSION);
+                System.out.println("SableCC version " + VERSION);
                 return;
 
             case HELP:
