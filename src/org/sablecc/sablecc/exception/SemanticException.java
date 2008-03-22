@@ -20,8 +20,7 @@ package org.sablecc.sablecc.exception;
 import org.sablecc.sablecc.syntax3.node.Token;
 
 /**
- * A semantic exception is thrown when a semantic error is found in a language
- * specification.
+ * A semantic exception is thrown when a semantic error is found in a grammar.
  */
 @SuppressWarnings("serial")
 public class SemanticException

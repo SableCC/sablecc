@@ -29,7 +29,7 @@ public class InvalidArgumentRuntimeException
     private InvalidArgumentException invalidArgumentException;
 
     /**
-     * Constructs a new exception wraper.
+     * Constructs an exception wraper.
      */
     public InvalidArgumentRuntimeException(
             InvalidArgumentException invalidArgumentException) {

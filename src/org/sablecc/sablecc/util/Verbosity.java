@@ -22,12 +22,12 @@ package org.sablecc.sablecc.util;
  */
 public enum Verbosity {
     /**
-     * As quiet as possible.
+     * Display less information.
      */
     QUIET,
 
     /**
-     * Normal verbosity.
+     * Display normal information.
      */
     NORMAL,
 

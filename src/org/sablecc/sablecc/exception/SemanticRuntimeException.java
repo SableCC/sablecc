@@ -18,7 +18,7 @@
 package org.sablecc.sablecc.exception;
 
 /**
- * An semantic runtime exception wraps a semantic exception into a runtime
+ * A semantic runtime exception wraps a semantic exception into a runtime
  * exception.
  */
 @SuppressWarnings("serial")
@@ -29,7 +29,7 @@ public class SemanticRuntimeException
     private SemanticException semanticException;
 
     /**
-     * Constructs a new exception wraper.
+     * Constructs an exception wraper.
      */
     public SemanticRuntimeException(
             SemanticException semanticException) {

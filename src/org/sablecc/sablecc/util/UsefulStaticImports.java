@@ -22,7 +22,7 @@ import java.math.BigInteger;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * This class is to provides commonly used constants for static import.
+ * This class provides commonly used constants for static import.
  */
 public class UsefulStaticImports {
 

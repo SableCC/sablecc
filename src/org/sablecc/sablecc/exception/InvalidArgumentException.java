@@ -30,8 +30,7 @@ public class InvalidArgumentException
         extends Exception {
 
     /**
-     * Constructs a new invalid argument exception with the provided error
-     * message.
+     * Constructs an invalid argument exception with the provided error message.
      */
     public InvalidArgumentException(
             String message) {
@@ -44,8 +43,8 @@ public class InvalidArgumentException
     }
 
     /**
-     * Constructs a new invalid argument exception with the provided error
-     * message and cause.
+     * Constructs an invalid argument exception with the provided error message
+     * and cause.
      */
     public InvalidArgumentException(
             String message,

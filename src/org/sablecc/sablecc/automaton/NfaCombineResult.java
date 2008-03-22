@@ -51,8 +51,8 @@ class NfaCombineResult {
     private SortedMap<NfaState, NfaState> oldNfa2StateMap = new TreeMap<NfaState, NfaState>();
 
     /**
-     * Constructs a new instance for the result of combining two
-     * <code>Nfa</code> instances.
+     * Constructs an instance for the result of combining two <code>Nfa</code>
+     * instances.
      */
     NfaCombineResult(
             Nfa newNfa,

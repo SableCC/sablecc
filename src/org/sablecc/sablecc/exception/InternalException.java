@@ -33,7 +33,7 @@ public class InternalException
         extends RuntimeException {
 
     /**
-     * Constructs a new internal exception with the provided error message.
+     * Constructs an internal exception with the provided error message.
      */
     public InternalException(
             String message) {
@@ -46,7 +46,7 @@ public class InternalException
     }
 
     /**
-     * Constructs a new internal exception with the provided error message and
+     * Constructs an internal exception with the provided error message and
      * cause.
      */
     public InternalException(

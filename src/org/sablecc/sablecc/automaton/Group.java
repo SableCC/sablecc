@@ -47,7 +47,7 @@ class Group {
     private final SortedMap<Symbol, Group> transitions = new TreeMap<Symbol, Group>();
 
     /**
-     * Constructs a new group with a provided partition.
+     * Constructs a group with the provided partition.
      */
     Group(
             final Partition partition) {
