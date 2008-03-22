@@ -61,6 +61,10 @@ class ArgumentCollection {
                 throw new InternalException("argument may not be null");
             }
 
+            if (arguments[currentArgIndex].equals("")) {
+                throw new InvalidArgumentException("argument may not be empty");
+            }
+
             if (arguments[currentArgIndex].equals("--")) {
                 currentArgIndex++;
                 break;
@@ -100,6 +104,11 @@ class ArgumentCollection {
                         throw new InternalException("argument may not be null");
                     }
 
+                    if (arguments[currentArgIndex].equals("")) {
+                        throw new InvalidArgumentException(
+                                "argument may not be empty");
+                    }
+
                     optionArguments.add(new OptionArgument(incompleteOption,
                             arguments[currentArgIndex]));
                 }
@@ -122,6 +131,10 @@ class ArgumentCollection {
 
             if (arguments[currentArgIndex] == null) {
                 throw new InternalException("argument may not be null");
+            }
+
+            if (arguments[currentArgIndex].equals("")) {
+                throw new InvalidArgumentException("argument may not be empty");
             }
 
             textArguments.add(new TextArgument(arguments[currentArgIndex]));
