@@ -15,37 +15,21 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.launcher;
-
-import org.sablecc.sablecc.exception.InternalException;
+package org.sablecc.sablecc.exception;
 
 /**
- * The text argument class encapsulates the text of a command-line text
- * argument.
+ * An exit exception is thrown to exit SableCC with an error code without
+ * printing any information to System.err.
  */
-class TextArgument {
-
-    /** The text. */
-    private String text;
-
-    /**
-     * Constructs the text argument.
-     */
-    TextArgument(
-            String text) {
-
-        if (text == null) {
-            throw new InternalException("text may not be null");
-        }
-
-        this.text = text;
-    }
+@SuppressWarnings("serial")
+public class ExitException
+        extends RuntimeException {
 
     /**
-     * Returns the text.
+     * Constructs an exit exception.
      */
-    String getText() {
+    public ExitException() {
 
-        return this.text;
+        super();
     }
 }

@@ -38,7 +38,7 @@ public class ArgumentsTest {
 
     private final Option verbose = Option.VERBOSE;
 
-    private Arguments arguments;
+    private ArgumentCollection argumentCollection;
 
     @Test
     public void testArguments()
@@ -47,13 +47,13 @@ public class ArgumentsTest {
         this.args = new String[0];
 
         // Case with no args
-        this.arguments = new Arguments(this.args);
+        this.argumentCollection = new ArgumentCollection(this.args);
 
         // Case with null args
         this.args = new String[1];
         this.args[0] = null;
         try {
-            this.arguments = new Arguments(this.args);
+            this.argumentCollection = new ArgumentCollection(this.args);
             fail("invalid argument : null");
         }
         catch (InvalidArgumentException e) {
@@ -63,7 +63,7 @@ public class ArgumentsTest {
         // Case with incorrect args
         this.args[0] = this.invalidOption;
         try {
-            this.arguments = new Arguments(this.args);
+            this.argumentCollection = new ArgumentCollection(this.args);
             fail("invalid argument : invalid option");
         }
         catch (InvalidArgumentException e) {
@@ -74,7 +74,7 @@ public class ArgumentsTest {
         Option destination = Option.DESTINATION;
         this.args[0] = "--".concat(destination.getLongName());
         try {
-            this.arguments = new Arguments(this.args);
+            this.argumentCollection = new ArgumentCollection(this.args);
             fail("invalid argument : destination is missing a directory operand");
         }
         catch (InvalidArgumentException e) {
@@ -87,37 +87,39 @@ public class ArgumentsTest {
 
         this.args[1] = "--".concat(this.verbose.getLongName());
 
-        this.arguments = new Arguments(this.args);
+        this.argumentCollection = new ArgumentCollection(this.args);
 
         assertEquals("The first argument is invalid", this.checkOnly,
-                this.arguments.getOptionArguments().get(0).getOption());
+                this.argumentCollection.getOptionArguments().get(0).getOption());
 
         assertEquals("The second argument is invalid", this.verbose,
-                this.arguments.getOptionArguments().get(1).getOption());
+                this.argumentCollection.getOptionArguments().get(1).getOption());
 
-        assertEquals("some of the arguments have not been treated",
-                this.args.length, this.arguments.getOptionArguments().size());
+        assertEquals("some of the argumentCollection have not been treated",
+                this.args.length, this.argumentCollection.getOptionArguments()
+                        .size());
 
-        // Case with text arguments
+        // Case with text argumentCollection
         this.args = new String[1];
         this.args[0] = this.textArgument;
-        this.arguments = new Arguments(this.args);
-        assertEquals("the arguments should not contain optionArguments", 0,
-                this.arguments.getOptionArguments().size());
+        this.argumentCollection = new ArgumentCollection(this.args);
+        assertEquals(
+                "the argumentCollection should not contain optionArguments", 0,
+                this.argumentCollection.getOptionArguments().size());
         assertEquals("the textArgument has not been treated",
-                this.textArgument, this.arguments.getTextArguments().get(0)
-                        .getText());
+                this.textArgument, this.argumentCollection.getTextArguments()
+                        .get(0).getText());
 
         // Case with valid option an a text argument
         this.args = new String[2];
         this.args[0] = "--".concat(this.verbose.getLongName());
         this.args[1] = this.textArgument;
-        this.arguments = new Arguments(this.args);
+        this.argumentCollection = new ArgumentCollection(this.args);
         assertEquals("The first argument is invalid", this.verbose,
-                this.arguments.getOptionArguments().get(0).getOption());
+                this.argumentCollection.getOptionArguments().get(0).getOption());
 
         assertEquals("the textArgument has not been treated",
-                this.textArgument, this.arguments.getTextArguments().get(0)
-                        .getText());
+                this.textArgument, this.argumentCollection.getTextArguments()
+                        .get(0).getText());
     }
 }

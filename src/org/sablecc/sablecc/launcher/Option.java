@@ -31,43 +31,52 @@ import org.sablecc.sablecc.launcher.syntax3.node.AShortOptionsArgument;
 import org.sablecc.sablecc.launcher.syntax3.node.Start;
 import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
 
+/**
+ * The Option enum encapsulates command-line options. This enum provides short
+ * and long command-line help messages, and is used by the ArgumentCollection
+ * class to parse command-line arguments.
+ */
 enum Option {
 
-    /** Does not generate files. */
-    CHECK_ONLY("c", "check-only", null, "do not generate files"),
-    /** Change the destination directory. */
+    /** Set destination directory. */
     DESTINATION("d", "destination", "directory", "set destination directory"),
-    /** Does not report errors unless they are critical. */
-    LENIENT("l", "lenient", null, "do not report non-fatal errors (implies -c)"),
-    /** Display less information. */
-    QUIET("q", "quiet", null, "be as quiet as possible"),
-    /** Display more information. */
-    VERBOSE("v", "verbose", null, "display as much information as possible"),
-    /** Display the version and exit. */
-    VERSION(null, "version", null, "display version information and exit"),
-    /** Display an information message and exit. */
-    HELP("h", "help", null, "display help information and exit");
 
-    /** The short name of this option. */
+    /** Do not generate files. */
+    CHECK_ONLY("c", "check-only", null, "do not generate files"),
+
+    /** Detect non-canonical constructs. */
+    STRICT("s", "strict", null, "detect non-canonical constructs"),
+
+    /** Display less information. */
+    QUIET("q", "quiet", null, "display less information"),
+    /** Display more information. */
+    VERBOSE("v", "verbose", null, "display more information"),
+
+    /** Display version and exit. */
+    VERSION(null, "version", null, "display version and exit"),
+    /** Display help and exit. */
+    HELP("h", "help", null, "display help and exit");
+
+    /** The short name. */
     private String shortName;
 
-    /** The long name of this option. */
+    /** The long name. */
     private String longName;
 
-    /** The operand name of this option. */
+    /** The operand name. */
     private String operandName;
 
-    /** The help message of this option. */
+    /** The help message. */
     private String helpMessage;
 
-    /** The short name map of the options. */
+    /** A mapping from each short name to its option. */
     private static final SortedMap<String, Option> shortNameMap = new TreeMap<String, Option>();
 
-    /** The long name map of the options. */
+    /** A mapping from each long name to its option. */
     private static final SortedMap<String, Option> longNameMap = new TreeMap<String, Option>();
 
     /**
-     * Compiles the list of options.
+     * Checks that there are no duplicate option names.
      */
     static {
         for (Option option : Option.values()) {
@@ -95,7 +104,7 @@ enum Option {
     }
 
     /**
-     * Construct a new option.
+     * Constructs an option.
      */
     private Option(
             String shortName,
@@ -133,7 +142,7 @@ enum Option {
     }
 
     /**
-     * Validates the short name.
+     * Validates the provided short name.
      */
     private void validateShortName(
             String shortName) {
@@ -168,7 +177,7 @@ enum Option {
     }
 
     /**
-     * Validates the long name.
+     * Validates the provided long name.
      */
     private void validateLongName(
             String longName) {
@@ -198,7 +207,7 @@ enum Option {
     }
 
     /**
-     * Returns the short name of this option.
+     * Returns the short name, or <code>null</code>.
      */
     String getShortName() {
 
@@ -206,7 +215,7 @@ enum Option {
     }
 
     /**
-     * Returns the short name of this option.
+     * Returns the long name, or <code>null</code>.
      */
     String getLongName() {
 
@@ -214,7 +223,7 @@ enum Option {
     }
 
     /**
-     * Returns the operand name of this option.
+     * Returns the operand name, or <code>null</code>.
      */
     String getOperandName() {
 
@@ -222,7 +231,7 @@ enum Option {
     }
 
     /**
-     * Returns the help message of this option.
+     * Returns the help message.
      */
     String getHelpMessage() {
 
@@ -230,7 +239,7 @@ enum Option {
     }
 
     /**
-     * Returns whether this option has an operand or not.
+     * Returns <code>true</code> when this option has an operand.
      */
     boolean hasOperand() {
 
@@ -238,7 +247,7 @@ enum Option {
     }
 
     /**
-     * Returns the option having the provided short name.
+     * Returns the option that has the provided short name, or <code>null</code>.
      */
     static Option getShortOption(
             String shortName) {
@@ -247,7 +256,7 @@ enum Option {
     }
 
     /**
-     * Returns the option having the provided long name.
+     * Returns the option that has the provided long name, or <code>null</code>.
      */
     static Option getLongOption(
             String longName) {
@@ -256,7 +265,7 @@ enum Option {
     }
 
     /**
-     * Prints a short help message.
+     * Returns a short help message, listing all options.
      */
     static String getShortHelpMessage() {
 
@@ -317,7 +326,7 @@ enum Option {
     }
 
     /**
-     * Prints a long help message.
+     * Returns a long help message, listing all options.
      */
     static String getLongHelpMessage() {
 

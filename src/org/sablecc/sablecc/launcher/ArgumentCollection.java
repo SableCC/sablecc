@@ -29,9 +29,9 @@ import org.sablecc.sablecc.launcher.syntax3.node.Start;
 import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
 
 /**
- * <code>Arguments</code> include option and text arguments.
+ * Encapsulates a collection of option and text command-line arguments.
  */
-class Arguments {
+class ArgumentCollection {
 
     /** The list of option arguments. */
     private final List<OptionArgument> optionArguments;
@@ -40,10 +40,10 @@ class Arguments {
     private final List<TextArgument> textArguments;
 
     /**
-     * Constructs a new instance of Arguments. It does so by sorting the given
-     * string array between option and text arguments.
+     * Constructs an argument collection instance. It parses the provided array
+     * and extracts options and their operand, as well as text arguments.
      */
-    Arguments(
+    ArgumentCollection(
             String[] args)
             throws InvalidArgumentException {
 
@@ -53,8 +53,13 @@ class Arguments {
 
         int currentArgIndex = 0;
 
-        // process options, until a text argument is found
-        while (currentArgIndex < args.length && textArguments.size() == 0) {
+        // process options and text arguments, until a double hyphen is found
+        while (currentArgIndex < args.length) {
+
+            if (args[currentArgIndex].equals("--")) {
+                currentArgIndex++;
+                break;
+            }
 
             try {
                 Start ast = new Parser(new Lexer(new PushbackReader(
@@ -113,7 +118,7 @@ class Arguments {
     }
 
     /**
-     * Returns the list of option arguments of this <code>Arguments</code>.
+     * Returns the list of option arguments.
      */
     List<OptionArgument> getOptionArguments() {
 
@@ -121,7 +126,7 @@ class Arguments {
     }
 
     /**
-     * Returns the list of text arguments of this <code>Arguments</code>.
+     * Returns the list of text arguments.
      */
     List<TextArgument> getTextArguments() {
 

@@ -29,20 +29,24 @@ import org.sablecc.sablecc.launcher.syntax3.node.APlainArgument;
 import org.sablecc.sablecc.launcher.syntax3.node.AShortOption;
 import org.sablecc.sablecc.launcher.syntax3.node.Start;
 
+/**
+ * An argument extractor is an AST walker that extracts information from a
+ * command-line argument.
+ */
 class ArgumentExtractor
         extends DepthFirstAdapter {
 
-    /** The list of option arguments of this argument extractor. */
+    /** The provided list of option arguments. */
     private final List<OptionArgument> optionArguments;
 
-    /** The list of text arguments of this argument extractor. */
+    /** The provided list of text arguments. */
     private final List<TextArgument> textArguments;
 
-    /** An incomplete option. */
+    /** The found incomplete option, or <code>null</code>. */
     private Option incompleteOption;
 
     /**
-     * Constructs a new argument extractor.
+     * Constructs an argument extractor.
      */
     private ArgumentExtractor(
             final List<OptionArgument> optionArguments,
@@ -61,7 +65,7 @@ class ArgumentExtractor
     }
 
     /**
-     * Adds a plain argument to the list of text arguments
+     * Adds the plain argument to the list of text arguments.
      */
     @Override
     public void caseAPlainArgument(
@@ -71,7 +75,8 @@ class ArgumentExtractor
     }
 
     /**
-     * Treats and adds a long option to the list of option arguments.
+     * Adds the long option to the list of option arguments, or stores it as an
+     * incompete option.
      */
     @Override
     public void caseALongOption(
@@ -126,7 +131,8 @@ class ArgumentExtractor
     }
 
     /**
-     * Treats and adds a short option to the list of option arguments.
+     * Adds the short option to the list of option arguments, or stores it as an
+     * incompete option.
      */
     @Override
     public void caseAShortOption(
@@ -190,7 +196,8 @@ class ArgumentExtractor
     }
 
     /**
-     * Extracts all the arguments from an ast.
+     * Extracts option and arguments from the provided AST and adds them to the
+     * provided lists, and returns an incomplete option, when there is one.
      */
     static Option extractArguments(
             Start ast,
