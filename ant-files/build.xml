@@ -98,9 +98,21 @@
 
 package org.sablecc.sablecc.launcher;
 
+import org.sablecc.sablecc.exception.InternalException;
+
+/**
+ * This class provides the version.
+ */
 public class Version {
 
+    /** The version. */
     public static final String VERSION = "${package.version}";
+
+    /** Prevents instanciation of this class. */
+    private Version() {
+
+        throw new InternalException("no instance allowed");
+    }
 }
 </echo>
 
