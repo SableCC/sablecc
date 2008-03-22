@@ -36,6 +36,7 @@ import org.sablecc.sablecc.syntax3.lexer.LexerException;
 import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.parser.Parser;
 import org.sablecc.sablecc.syntax3.parser.ParserException;
+import org.sablecc.sablecc.util.Strictness;
 import org.sablecc.sablecc.util.Verbosity;
 
 /**
@@ -112,7 +113,7 @@ public class SableCC {
 
         // default option values
         boolean check_only = false;
-        boolean strict = false;
+        Strictness strictness = Strictness.NORMAL;
         Verbosity verbosity = Verbosity.NORMAL;
 
         // parse command line arguments
@@ -144,8 +145,12 @@ public class SableCC {
                 check_only = true;
                 break;
 
+            case LENIENT:
+                strictness = Strictness.LENIENT;
+                break;
+
             case STRICT:
-                strict = true;
+                strictness = Strictness.STRICT;
                 break;
 
             case QUIET:
@@ -222,7 +227,7 @@ public class SableCC {
         // compile grammars
         for (File grammarFile : grammarFiles) {
 
-            compile(grammarFile, destinationDirectory, check_only, strict,
+            compile(grammarFile, destinationDirectory, check_only, strictness,
                     verbosity);
         }
     }
@@ -234,7 +239,7 @@ public class SableCC {
             File grammarFile,
             File destinationDirectory,
             boolean check_only,
-            boolean strict,
+            Strictness strictness,
             Verbosity verbosity)
             throws InvalidArgumentException, ParserException, LexerException,
             SemanticException {

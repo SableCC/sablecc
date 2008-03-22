@@ -44,6 +44,8 @@ enum Option {
     /** Do not generate files. */
     CHECK_ONLY("c", "check-only", null, "do not generate files"),
 
+    /** Ignore unused constructs. */
+    LENIENT("l", "lenient", null, "ignore unused constructs"),
     /** Detect non-canonical constructs. */
     STRICT("s", "strict", null, "detect non-canonical constructs"),
 

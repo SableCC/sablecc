@@ -18,21 +18,21 @@
 package org.sablecc.sablecc.util;
 
 /**
- * This enumeration encapsulates verbosity levels.
+ * This enumeration encapsulates strictness levels.
  */
-public enum Verbosity {
+public enum Strictness {
     /**
-     * Display less information.
+     * Ignore unused constructs.
      */
-    QUIET,
+    LENIENT,
 
     /**
-     * Display normal information.
+     * Detect unused constructs.
      */
     NORMAL,
 
     /**
-     * Display more information.
+     * Detect non-canonical constructs.
      */
-    VERBOSE;
+    STRICT;
 }
