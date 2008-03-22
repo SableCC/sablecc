@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.InvalidArgumentException;
 import org.sablecc.sablecc.launcher.syntax3.lexer.Lexer;
 import org.sablecc.sablecc.launcher.syntax3.node.Start;
@@ -44,7 +45,7 @@ class ArgumentCollection {
      * and extracts options and their operand, as well as text arguments.
      */
     ArgumentCollection(
-            String[] args)
+            String[] arguments)
             throws InvalidArgumentException {
 
         List<OptionArgument> optionArguments = new LinkedList<OptionArgument>();
@@ -54,16 +55,20 @@ class ArgumentCollection {
         int currentArgIndex = 0;
 
         // process options and text arguments, until a double hyphen is found
-        while (currentArgIndex < args.length) {
+        while (currentArgIndex < arguments.length) {
 
-            if (args[currentArgIndex].equals("--")) {
+            if (arguments[currentArgIndex] == null) {
+                throw new InternalException("argument may not be null");
+            }
+
+            if (arguments[currentArgIndex].equals("--")) {
                 currentArgIndex++;
                 break;
             }
 
             try {
                 Start ast = new Parser(new Lexer(new PushbackReader(
-                        new StringReader(args[currentArgIndex]), 1024)))
+                        new StringReader(arguments[currentArgIndex]), 1024)))
                         .parse();
 
                 Option incompleteOption = ArgumentExtractor.extractArguments(
@@ -71,9 +76,9 @@ class ArgumentCollection {
 
                 if (incompleteOption != null) {
 
-                    if (currentArgIndex + 1 >= args.length) {
+                    if (currentArgIndex + 1 >= arguments.length) {
 
-                        if (args[currentArgIndex].startsWith("--")) {
+                        if (arguments[currentArgIndex].startsWith("--")) {
                             throw new InvalidArgumentException("option --"
                                     + incompleteOption.getLongName()
                                     + " is missing a "
@@ -89,26 +94,37 @@ class ArgumentCollection {
                         }
                     }
 
+                    currentArgIndex++;
+
+                    if (arguments[currentArgIndex] == null) {
+                        throw new InternalException("argument may not be null");
+                    }
+
                     optionArguments.add(new OptionArgument(incompleteOption,
-                            args[++currentArgIndex]));
+                            arguments[currentArgIndex]));
                 }
             }
             catch (InvalidArgumentException e) {
                 throw new InvalidArgumentException("invalid argument \""
-                        + args[currentArgIndex] + "\": " + e.getMessage(), e);
+                        + arguments[currentArgIndex] + "\": " + e.getMessage(),
+                        e);
             }
             catch (Exception e) {
                 throw new InvalidArgumentException("invalid argument \""
-                        + args[currentArgIndex] + "\"", e);
+                        + arguments[currentArgIndex] + "\"", e);
             }
 
             currentArgIndex++;
         }
 
         // process remaining text arguments
-        while (currentArgIndex < args.length) {
+        while (currentArgIndex < arguments.length) {
 
-            textArguments.add(new TextArgument(args[currentArgIndex]));
+            if (arguments[currentArgIndex] == null) {
+                throw new InternalException("argument may not be null");
+            }
+
+            textArguments.add(new TextArgument(arguments[currentArgIndex]));
 
             currentArgIndex++;
         }

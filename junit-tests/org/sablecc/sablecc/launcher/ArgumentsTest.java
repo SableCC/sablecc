@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.InvalidArgumentException;
 
 @SuppressWarnings("unused")
@@ -56,7 +57,7 @@ public class ArgumentsTest {
             this.argumentCollection = new ArgumentCollection(this.args);
             fail("invalid argument : null");
         }
-        catch (InvalidArgumentException e) {
+        catch (InternalException e) {
             // Expected
         }
 
