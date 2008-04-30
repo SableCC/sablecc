@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-Package org.sablecc.sablecc.macros.syntax3;
+Package org.sablecc.macroprocessor.syntax3;
 
 Helpers
 
