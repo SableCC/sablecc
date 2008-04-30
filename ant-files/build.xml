@@ -288,6 +288,7 @@ public class Version {
     <delete dir="${classes.dir}" />
     <delete dir="${src.dir}/org/sablecc/sablecc/syntax3" />
     <delete dir="${src.dir}/org/sablecc/sablecc/launcher/syntax3" />
+    <delete dir="${src.dir}/org/sablecc/sablecc/macros/syntax3" />
 
     <delete file="${src.dir}/org/sablecc/sablecc/launcher/Version.java" />
 

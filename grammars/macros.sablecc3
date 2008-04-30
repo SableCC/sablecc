@@ -1,0 +1,185 @@
+/* This file is part of SableCC ( http://sablecc.org ).
+ *
+ * See the NOTICE file distributed with this work for copyright information.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+Package org.sablecc.sablecc.macros.syntax3;
+
+Helpers
+
+  any = [0..127];
+
+  lower = ['a'..'z'];
+  digit = ['0'..'9'];
+  identifier_part = lower (lower | digit)*;
+
+  lf = 10;
+  cr = 13;
+  eol = cr | lf | cr lf;
+
+  not_eol_dollar = [any - ['$' + [cr + lf]]];
+
+States
+
+  bol, command, inline, var, expand;
+
+Tokens
+
+  {bol->command}
+  start_command = (not_eol_dollar | '$$')* '$Start:';
+
+  {bol->command}
+  macro_command = (not_eol_dollar | '$$')* '$Macro:';
+
+  {bol->command}
+  end_command = (not_eol_dollar | '$$')* '$End:';
+
+  {command->bol}
+  command_tail = '$' (not_eol_dollar | '$$')* eol?;
+
+  {command}
+  invalid_command_tail = '$' (not_eol_dollar | '$$')* '$';
+
+  {command, var, expand}
+  identifier = identifier_part ('_' identifier_part)*;
+
+  {command, expand}
+  comma = ',';
+
+  {command}
+  l_par = '(';
+
+  {command}
+  r_par = ')';
+
+  {command, expand}
+  spaces = ' '+;
+
+  {bol->inline, inline}
+  text = not_eol_dollar+;
+
+  {bol->inline, inline}
+  double_dollar = '$$';
+
+  {bol, inline->bol}
+  eol = eol;
+
+  {bol->var, inline->var, var->inline, expand->inline}
+  dollar = '$';
+
+  {bol->expand, inline->expand}
+  expand_command = '$Expand:';
+
+Ignored Tokens
+
+  spaces;
+
+Productions
+
+  file =
+    [first_comment]:comment? start [file_body_parts]:file_body_part* [last_comment]:comment?
+      {-> New file(start, [file_body_parts.macro]) };
+
+  comment {-> } =
+    [comment_parts]:comment_part+ {-> };
+
+  comment_part {-> } =
+    {text} text {-> } |
+    {double_dollar} double_dollar {-> } |
+    {eol} eol {-> };
+
+  start =
+    start_command identifier_list? command_tail
+      {-> New start([identifier_list.identifier]) };
+
+  identifier_list {-> identifier+ } =
+    identifier [additional_identifiers]:additional_identifier*
+      {-> [identifier, additional_identifiers.identifier] };
+
+  additional_identifier {-> identifier } =
+    comma identifier
+      {-> identifier };
+
+  file_body_part {-> macro } =
+    comment? macro
+      {-> macro };
+
+  macro =
+    macro_head macro_body macro_tail;
+
+  macro_head =
+    macro_command identifier argument_list? command_tail
+      {-> New macro_head(identifier, [argument_list.identifier]) };
+
+  argument_list {-> identifier+ } =
+    l_par identifier_list r_par
+      {-> [identifier_list.identifier] };
+
+  macro_body =
+    [macro_body_parts]:macro_body_part*;
+
+  macro_body_part =
+    {text} text |
+    {double_dollar} double_dollar |
+    {eol} eol |
+    {var} var |
+    {expand} expand |
+    {macro} macro;
+
+  var =
+    [left_dollar]:dollar identifier [right_dollar]:dollar
+      {-> New var(identifier) };
+
+  expand =
+    expand_command identifier_list? dollar
+      {-> New expand([identifier_list.identifier]) };
+
+  macro_tail =
+    end_command identifier command_tail
+      {-> New macro_tail(identifier) };
+
+Abstract Syntax Tree
+
+  file =
+    start [macros]:macro*;
+
+  start =
+    [names]:identifier*;
+
+  macro =
+    macro_head macro_body macro_tail;
+
+  macro_head =
+    [name]:identifier [arguments]:identifier*;
+
+  macro_body =
+    [macro_body_parts]:macro_body_part*;
+
+  macro_body_part =
+    {text} text |
+    {double_dollar} double_dollar |
+    {eol} eol |
+    {var} var |
+    {expand} expand |
+    {macro} macro;
+
+  var =
+    [name]:identifier;
+
+  expand =
+    [names]:identifier*;
+
+  macro_tail =
+    [name]:identifier;
