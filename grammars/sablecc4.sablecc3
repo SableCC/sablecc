@@ -161,7 +161,7 @@ Productions
     language_keyword [name]:identifier semicolon;
 
   lexer =
-    lexer_keyword groups lexer_contexts;
+    lexer_keyword lookahead? groups lexer_contexts;
 
   groups =
     default_group [named_groups]:named_group*;
@@ -234,8 +234,7 @@ Productions
     context_keyword [name]:identifier colon lexer_context_body;
 
   lexer_context_body =
-    lookahead? tokens? ignored? rejected? lexer_priorities?
-    lexer_investigators?;
+    tokens? ignored? rejected? lexer_priorities? lexer_investigators?;
 
   tokens =
     token_keyword group_collection;
