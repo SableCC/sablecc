@@ -287,9 +287,9 @@ Productions
     parser_keyword start parser_contexts inlined?;
 
   start =
-    start_end? start_no_end?;
+    normal_start? start_no_end?;
 
-  start_end =
+  normal_start =
     start_keyword identifier_list semicolon;
 
   start_no_end =
