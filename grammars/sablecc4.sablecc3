@@ -65,7 +65,7 @@ Tokens
   context_keyword = 'Context';
   dangling_keyword = 'Dangling';
   difference_keyword = 'Difference';
-  end_token = 'End';
+  end_keyword = 'End';
   exclusion_keyword = 'Exclusion';
   group_keyword = 'Group';
   ignored_keyword = 'Ignored';
@@ -161,7 +161,7 @@ Productions
     language_keyword [name]:identifier semicolon;
 
   lexer =
-    lexer_keyword lookahead? groups lexer_contexts;
+    lexer_keyword infinite_lookahead? groups lexer_contexts;
 
   groups =
     default_group [named_groups]:named_group*;
@@ -189,7 +189,7 @@ Productions
                    [upper_bound_character]:character |
     {lookahead}    [left_expression]:concatenation_expression lookahead_keyword
                    not_keyword? [right_expression]:concatenation_expression?
-                   end_token? |
+                   end_keyword? |
     {shortest}     shortest_keyword concatenation_expression |
     {longest}      longest_keyword concatenation_expression |
     {exclusion}    [left_expression]:concatenation_expression exclusion_keyword
@@ -261,9 +261,8 @@ Productions
     [high_priority_group]:group_literal over_keyword
     [low_priority_group]:group_literal semicolon;
 
-  lookahead =
-    {no}       no_keyword lookahead_keyword semicolon |
-    {infinite} infinite_keyword lookahead_keyword semicolon;
+  infinite_lookahead =
+    infinite_keyword lookahead_keyword semicolon;
 
   lexer_investigators =
     [lexer_investigators]:lexer_investigator+;
@@ -288,13 +287,13 @@ Productions
     parser_keyword start parser_contexts inlined?;
 
   start =
-    start_lookahead? start_no_lookahead?;
+    start_end? start_no_end?;
 
-  start_lookahead =
+  start_end =
     start_keyword identifier_list semicolon;
 
-  start_no_lookahead =
-    start_keyword no_keyword lookahead_keyword identifier_list semicolon;
+  start_no_end =
+    start_keyword no_keyword end_keyword identifier_list semicolon;
 
   parser_contexts =
     parser_default_context [parser_named_contexts]:parser_named_context*;
