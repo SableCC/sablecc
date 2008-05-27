@@ -19,210 +19,221 @@ Package org.sablecc.sablecc.syntax3;
 
 Helpers
 
-  any = [0 .. 0xffff];
+  // Based on Unicode 5.1.0
 
-  carriage_return = 13;
-  line_feed = 10;
-  tab = 9;
-  white_space = ' ';
+  ascii_lu = [0x0041 .. 0x005A];
+  ascii_ll = [0x0061 .. 0x007A];
 
-  end_of_line =
-    carriage_return |
-    line_feed |
-    carriage_return line_feed;
+  ascii_l = [ascii_lu + ascii_ll];
+
+  ascii_nd = [0x0030 .. 0x0039];
+
+  ascii_n = ascii_nd;
+
+  ascii_pc = 0x005F;
+  ascii_pd = 0x002D;
+  ascii_ps = [[0x0028 + 0x005B] + 0x007B];
+  ascii_pe = [[0x0029 + 0x005D] + 0x007D];
+  ascii_po = [[[[0x0021 .. 0x0023] + [0x0025 .. 0x0027]] +
+               [[0x002A + 0x002C] + [0x002E .. 0x002F]]] +
+              [[[0x003A .. 0x003B] + [0x003F .. 0x0040]] + 0x005C]];
+
+  ascii_p = [[[ascii_pc + ascii_pd] + [ascii_ps + ascii_pe]] + ascii_po];
+
+  ascii_sm = [[0x002B + [0x003C .. 0x003E]] + [0x007C + 0x007E]];
+  ascii_sc = 0x0024;
+  ascii_sk = [0x005E + 0x0060];
+
+  ascii_s = [[ascii_sm + ascii_sc] + ascii_sk];
+
+  ascii_zs = 0x0020;
+
+  ascii_z = ascii_zs;
+
+  ascii_cc = [[0x0000 .. 0x001F] + 0x007F];
+
+  ascii_c = ascii_cc;
+
+  ascii = [[[ascii_l + ascii_n] + [ascii_p + ascii_s]] + [ascii_z + ascii_c]];
+
+  ascii_pattern_white_space = [[0x0009 .. 0x000D] + 0x0020];
+  ascii_pattern_syntax = [[[[0x0021 .. 0x002F] + [0x003A .. 0x0040]] +
+                          [[0x005B .. 0x005E] + 0x0060]] + [0x007B .. 0x007E]];
+
+  ascii_id_start = [[0x0041 .. 0x005A] + [0x0061 .. 0x007A]];
+  ascii_id_continue = [[[0x0030 .. 0x0039] + [0x0041 .. 0x005A]] +
+                       [0x005F + [0x0061 .. 0x007A]]];
+
+  ascii_identifier = ascii_id_start ascii_id_continue*;
+
+  ascii_newline = [0x000A .. 0x000D] | 0x000D 0x000A;
+
+  // Other helpers
+
+  string_char = [[ascii - ascii_c] - [''' + '\']];
+  escaped_char = '\' [''' + '\'];
+
+  line_comment_char = [[[ascii - ascii_c] + ascii_pattern_white_space] -
+                       [0x000A .. 0x000D]];
+  long_comment_char = [[[ascii - ascii_c] + ascii_pattern_white_space] -
+                       ['*' + '/']];
 
   decimal_digit = ['0' .. '9'];
-  hexadecimal_digit = [decimal_digit + [['a' .. 'f'] + ['A' .. 'F']]];
-
-  lower_case_letter = ['a' .. 'z'];
-  upper_case_letter = ['A' .. 'Z'];
-
-  string_character = [[32..126] - '''];
-
-  identifier_part = lower_case_letter (lower_case_letter | decimal_digit)*;
-
-  not_star = [any - '*'];
-  not_star_slash = [any - ['/' + '*']];
-
-  not_end_of_line = [any - [carriage_return + line_feed]];
-
-  long_comment = '/*' not_star* ('*' (not_star_slash not_star*)?)* '*/';
-  line_comment = '//' not_end_of_line* end_of_line?;
-
-  invalid_construct_char =
-    lower_case_letter |
-    upper_case_letter |
-    '_' |
-    decimal_digit;
+  hexadecimal_digit = [decimal_digit + ['A' .. 'F']];  // uppercase letters
 
 Tokens
 
-  // keywords
+  alternative_keyword = '$alternative';
+  and_keyword = '$and';
+  any_keyword = '$any';
+  context_keyword = '$context';
+  dangling_keyword = '$dangling';
+  diff_keyword = '$diff';
+  end_keyword = '$end';
+  group_keyword = '$group';
+  ignore_keyword = '$ignore';
+  inline_keyword = '$inline';
+  investigator_keyword = '$investigator';
+  language_keyword = '$language';
+  left_keyword = '$left';
+  lexer_keyword = '$lexer';
+  longest_keyword = '$longest';
+  look_keyword = '$look';
+  not_keyword = '$not';
+  new_keyword = '$new';
+  null_keyword = '$null';
+  parser_keyword = '$parser';
+  priority_keyword = '$priority';
+  production_keyword = '$production';
+  reject_keyword = '$reject';
+  right_keyword = '$right';
+  selector_keyword = '$selector';
+  separator_keyword = '$separator';
+  shortest_keyword = '$shortest';
+  start_keyword = '$start';
+  start_no_end_keyword = '$start_no_end';
+  token_keyword = '$token';
+  transform_keyword = '$transform';
+  tree_keyword = '$tree';
 
-  alternative_keyword = 'Alternative';
-  any_keyword = 'Any';
-  associative_keyword = 'Associative';
-  context_keyword = 'Context';
-  dangling_keyword = 'Dangling';
-  difference_keyword = 'Difference';
-  end_keyword = 'End';
-  exclusion_keyword = 'Exclusion';
-  group_keyword = 'Group';
-  ignored_keyword = 'Ignored';
-  infinite_keyword = 'Infinite';
-  inlined_keyword = 'Inlined';
-  intersection_keyword = 'Intersection';
-  investigator_keyword = 'Investigator';
-  language_keyword = 'Language';
-  left_keyword = 'Left';
-  lexer_keyword = 'Lexer';
-  longest_keyword = 'Longest';
-  lookahead_keyword = 'Lookahead';
-  no_keyword = 'No';
-  not_keyword = 'Not';
-  null_keyword = 'Null';
-  over_keyword = 'Over';
-  parser_keyword = 'Parser';
-  priority_keyword = 'Priority';
-  production_keyword = 'Production';
-  rejected_keyword = 'Rejected';
-  right_keyword = 'Right';
-  separator_keyword = 'Separator';
-  shortest_keyword = 'Shortest';
-  start_keyword = 'Start';
-  token_keyword = 'Token';
-  transformation_keyword = 'Transformation';
-  tree_keyword = 'Tree';
-  unary_keyword = 'Unary';
+  invalid_keyword = '$' ascii_identifier;
 
-  // separators
+  identifier = ascii_identifier;
 
-  colon = ':';
-  comma = ',';
+  alternative_name = '{' ascii_identifier ':}';
+  element_name = '[' ascii_identifier ':]';
+
+  char = ''' (string_char | escaped_char) ''';
+  string = ''' (string_char | escaped_char)* ''';
+  number = decimal_digit+;
+
+  dec_char = '#' decimal_digit+;
+  hex_char = '#x' hexadecimal_digit+;  // lowercase 'x'
+
+  l_brk = '[';
+  r_brk = ']';
+
+  l_par = '(';
+  r_par =')';
+
+  assign = '=';
+  arrow = '->';
+  bar = '|';
+  caret = '^';
   dot = '.';
+  gt = '>';
+  minus = '-';
+  plus = '+';
+  q_mark = '?';
   semicolon = ';';
+  star = '*';
   three_dots = '...';
   two_dots = '..';
 
-  left_brace  = '{';
-  right_brace = '}';
-
-  left_bracket = '[';
-  right_bracket = ']';
-
-  left_parenthesis = '(';
-  right_parenthesis = ')';
-
-  // operators
-
-  arrow = '->';
-  assign = '=';
-  bar = '|';
-  caret = '^';
-  plus = '+';
-  question_mark = '?';
-  star = '*';
-
-  // identifier, numbers, strings and character
-
-  identifier = identifier_part ('_' identifier_part)*;
-
-  number = decimal_digit+;
-
-  string = ''' string_character string_character+ ''';
-  character_token = ''' (string_character | ''') ''';
-  empty_string = ''' ''';
-
-  decimal_character = '#' decimal_digit+;
-  hexadecimal_character = '#' ('x' | 'X') hexadecimal_digit+;
-
-  // blanks
-
-  blanks = (white_space | tab | end_of_line | long_comment | line_comment)+;
-
-  // invalid constructs
-
-  invalid_identifier = (lower_case_letter | '_') invalid_construct_char*;
-
-  invalid_keyword = upper_case_letter invalid_construct_char*;
-
-  invalid_number = decimal_digit invalid_construct_char*;
+  blank = ascii_pattern_white_space+;
+  line_comment = '//' line_comment_char+ ascii_newline?;
+  long_comment = '/*' [long_comment_char + '/']*
+                      ('*' (long_comment_char [long_comment_char + '/']*)?)*
+                 '*/';
 
 Ignored Tokens
 
-  blanks;
+  blank, line_comment, long_comment;
 
 Productions
 
-  language =
-    header? lexer? parser? transformation? tree?;
+  grammar =
+    language_name? lexer? parser transformation? tree?;
 
-  header =
-    language_keyword [name]:identifier semicolon;
+  language_name =
+    language_keyword identifier;
 
   lexer =
-    lexer_keyword infinite_lookahead? groups lexer_contexts;
+    lexer_keyword expressions groups lexer_contexts;
 
-  groups =
-    default_group [named_groups]:named_group*;
+  expressions =
+    [named_expressions]:named_expression*;
 
-  default_group =
-    [named_regular_expressions]:named_regular_expression*;
-
-  named_group =
-    group_keyword [name]:identifier colon group_collection?
-    [named_regular_expressions]:named_regular_expression*;
-
-  named_regular_expression =
-    [name]:identifier assign expression semicolon;
+  named_expression =
+    identifier assign expression semicolon;
 
   expression =
-    top_level_expression
-    [additional_top_level_expressions]:additional_top_level_expression*;
+    top_expression [additional_top_expressions]:additional_top_expression*;
 
-  additional_top_level_expression =
-    bar top_level_expression;
+  top_expression =
+    {simple} concatenation |
+    {interval} [from]:character two_dots [to]:character |
+    {lookahead} concatenation look_keyword not_keyword? look_expression |
+    {shortest} shortest_keyword concatenation |
+    {longest} longest_keyword concatenation |
+    {exclusion} [left]:concatenation minus [right]:concatenation |
+    {difference} [left]:concatenation diff_keyword [right]:concatenation |
+    {intersection} [left]:concatenation and_keyword [right]:concatenation;
 
-  top_level_expression =
-    {simple}       concatenation_expression |
-    {interval}     [lower_bound_character]:character two_dots
-                   [upper_bound_character]:character |
-    {lookahead}    [left_expression]:concatenation_expression lookahead_keyword
-                   not_keyword? [right_expression]:concatenation_expression?
-                   end_keyword? |
-    {shortest}     shortest_keyword concatenation_expression |
-    {longest}      longest_keyword concatenation_expression |
-    {exclusion}    [left_expression]:concatenation_expression exclusion_keyword
-                   [right_expression]:concatenation_expression |
-    {difference}   [left_expression]:concatenation_expression
-                   difference_keyword
-                   [right_expression]:concatenation_expression |
-    {intersection} [left_expression]:concatenation_expression
-                   intersection_keyword
-                   [right_expression]:concatenation_expression;
-
-  concatenation_expression =
+  concatenation =
     [unary_expressions]:unary_expression+;
 
   unary_expression =
     term unary_operator?;
 
   term =
-    {group_literal} group_literal |
-    {parenthesis}   left_parenthesis expression right_parenthesis;
+    {group} group |
+    {par} l_par expression r_par;
+
+  group =
+    {name} identifier |
+    {string} string |
+    {character} character |
+    {any} any_keyword;
+
+  character =
+    {literal} char |
+    {dec} dec_char |
+    {hex} hex_char;
 
   unary_operator =
-    {zero_or_one} question_mark |
-    {many}        many_operator;
+    {zero_or_one} q_mark |
+    {many} many_operator;
 
   many_operator =
     {zero_or_more} star |
-    {one_or_more}  plus |
-    {number}       caret [exponent]:number |
-    {interval}     caret left_parenthesis [lower_bound_exponent]:number
-                   two_dots [upper_bound_exponent]:number right_parenthesis |
-    {at_least}     caret left_parenthesis [lower_bound_exponent]:number
-                   three_dots right_parenthesis;
+    {one_or_more} plus |
+    {number} caret number |
+    {interval} caret l_par [from]:number two_dots [to]:number r_par |
+    {at_least} caret l_par number three_dots r_par;
+
+  look_expression =
+    {middle} concatenation end_keyword? |
+    {end} end_keyword;
+
+  additional_top_expression =
+    bar top_expression;
+
+  groups =
+    [named_groups]:named_group*;
+
+  named_group =
+    group_keyword identifier [groups]:group*;
 
   lexer_contexts =
     lexer_default_context [lexer_named_contexts]:lexer_named_context*;
@@ -230,70 +241,44 @@ Productions
   lexer_default_context =
     lexer_context_body;
 
-  lexer_named_context =
-    context_keyword [name]:identifier colon lexer_context_body;
-
   lexer_context_body =
-    tokens? ignored? rejected? lexer_priorities? lexer_investigators?;
+    tokens? ignored? rejected? lexer_priorities lexer_investigators;
 
   tokens =
-    token_keyword group_collection;
+    token_keyword [groups]:group*;
 
   ignored =
-    ignored_keyword group_collection;
+    ignore_keyword [groups]:group*;
 
   rejected =
-    rejected_keyword group_collection;
-
-  group_collection =
-    group_list semicolon;
-
-  group_list =
-    group_literal [additional_groups]:additional_group*;
-
-  additional_group =
-    comma group_literal;
+    reject_keyword [groups]:group*;
 
   lexer_priorities =
-    priority_keyword [lexer_priorities]:lexer_priority+;
+    [lexer_priorities]:lexer_priority*;
 
   lexer_priority =
-    [high_priority_group]:group_literal over_keyword
-    [low_priority_group]:group_literal semicolon;
-
-  infinite_lookahead =
-    infinite_keyword lookahead_keyword semicolon;
+    priority_keyword [high]:group gt [low]:group;
 
   lexer_investigators =
-    [lexer_investigators]:lexer_investigator+;
+    [lexer_investigators]:lexer_investigator*;
 
   lexer_investigator =
-    investigator_keyword [name]:identifier
-    left_parenthesis group_literal right_parenthesis semicolon;
+    investigator_keyword identifier l_par group r_par;
 
-  group_literal =
-    {name}         identifier |
-    {string}       string |
-    {character}    character |
-    {empty_string} empty_string |
-    {any}          any_keyword;
-
-  character =
-    {character}   character_token |
-    {decimal}     decimal_character |
-    {hexadecimal} hexadecimal_character;
+  lexer_named_context =
+    context_keyword identifier lexer_context_body;
 
   parser =
-    parser_keyword start parser_contexts inlined?;
+    parser_keyword start parser_contexts inline?;
 
   start =
     normal_start? start_no_end?;
 
   normal_start =
-    start_keyword identifier_list semicolon;
+    start_keyword [identifiers]:identifier* semicolon;
 
   start_no_end =
-    start_keyword no_keyword end_keyword identifier_list semicolon;
+    start_no_end_keyword [identifiers]:identifier* semicolon;
 
   parser_contexts =
     parser_default_context [parser_named_contexts]:parser_named_context*;
@@ -301,153 +286,125 @@ Productions
   parser_default_context =
     [parser_productions]:parser_production*;
 
-  parser_named_context =
-    context_keyword [name]:identifier colon
-    [parser_productions]:parser_production*;
-
   parser_production =
-    {normal}    parser_qualifier? parser_production_body
-                parser_priorities? parser_investigators? |
-    {selection} semantic_selection;
+    {normal} qualifier? parser_production_body parser_priorities?
+             parser_investigators |
+    {selector} selector;
 
-  parser_qualifier =
+  qualifier =
     {dangling} dangling_keyword |
-    {token}    token_keyword;
+    {token} token_keyword;
 
   parser_production_body =
-    [name]:identifier assign parser_alternatives semicolon;
+    identifier assign parser_alternatives semicolon;
 
   parser_alternatives =
     parser_alternative
     [additional_parser_alternatives]:additional_parser_alternative*;
 
-  additional_parser_alternative =
-    bar parser_alternative;
-
   parser_alternative =
     alternative_name? [elements]:element* parser_dangling_element?;
 
-  alternative_name =
-    left_brace identifier colon right_brace;
-
-  parser_dangling_element =
-    dangling_keyword element_name? identifier question_mark;
-
   element =
-    {normal}    element_name? element_body unary_operator? |
-    {separated} element_name? left_parenthesis [left_element]:element
-                separator_keyword [right_element]:element right_parenthesis
-                many_operator;
-
-  element_name =
-    left_bracket identifier colon right_bracket;
+    {normal} element_name? element_body unary_operator? |
+    {separated} element_name? l_par [left]:element separator_keyword
+                [right]:element r_par many_operator;
 
   element_body =
-    {group_literal} group_literal |
-    {parenthesis}   left_parenthesis subalternatives right_parenthesis;
+    {group} group |
+    {par} l_par subalternatives r_par;
 
   subalternatives =
     subalternative [additional_subalternatives]:additional_subalternative*;
 
-  additional_subalternative =
-    bar subalternative;
-
   subalternative =
     [elements]:element*;
 
+  additional_subalternative =
+    bar subalternative;
+
+  parser_dangling_element =
+    dangling_keyword element_name? identifier q_mark;
+
+  additional_parser_alternative =
+    bar parser_alternative;
+
   parser_priorities =
-    priority_keyword [parser_priorities]:parser_priority+;
+    priority_keyword [parser_priorities]:parser_priority*;
 
   parser_priority =
-    {left_associative}  left_keyword associative_keyword identifier_list
-                        semicolon |
-    {right_associative} right_keyword associative_keyword identifier_list
-                        semicolon |
-    {left_unary}        left_keyword unary_keyword identifier_list semicolon |
-    {right_unary}       right_keyword unary_keyword identifier_list semicolon;
+    {left} left_keyword [identifiers]:identifier* semicolon |
+    {right} right_keyword [identifiers]:identifier* semicolon;
 
   parser_investigators =
-    [parser_investigators]:parser_investigator+;
+    [parser_investigators]:parser_investigator*;
 
   parser_investigator =
-    investigator_keyword [name]:identifier
-    left_parenthesis identifier_list? right_parenthesis semicolon;
+    investigator_keyword identifier l_par [identifiers]:identifier* r_par;
 
-  semantic_selection =
-    long_identifier_list assign [name]:identifier
-    left_parenthesis identifier right_parenthesis semicolon;
+  selector =
+    selector_keyword selection assign identifier l_par
+    [identifiers]:identifier* r_par;
 
-  long_identifier_list =
+  selection =
     identifier [additional_identifiers]:additional_identifier+;
 
-  inlined =
-    inlined_keyword identifier_list semicolon;
-
-  identifier_list =
-    identifier [additional_identifiers]:additional_identifier*;
-
   additional_identifier =
-    comma identifier;
+    bar identifier;
+
+  parser_named_context =
+    context_keyword identifier [parser_productions]:parser_production*;
+
+  inline =
+    inline_keyword [identifiers]:identifier*;
 
   transformation =
-    transformation_keyword
-    production_transformations? alternative_transformations?;
+    transform_keyword production_transformations? alternative_transformations?;
 
   production_transformations =
     production_keyword [production_transformations]:production_transformation*;
 
   production_transformation =
-    [production_name]:identifier arrow element_list? semicolon;
-
-  element_list =
-    element [additional_elements]:additional_element*;
-
-  additional_element =
-    comma element;
+    identifier arrow [elements]:element* semicolon;
 
   alternative_transformations =
     alternative_keyword
     [alternative_transformations]:alternative_transformation*;
 
   alternative_transformation =
-    alternative_reference arrow transformation_element_list? semicolon;
+    alternative_reference arrow
+    [transformation_elements]:transformation_element* semicolon;
 
   alternative_reference =
-    {unnamed} [production_name]:identifier |
-    {named}   [production_name]:identifier dot [alternative_name]:identifier;
-
-  transformation_element_list =
-    transformation_element
-    [additional_transformation_elements]:additional_transformation_element*;
-
-  additional_transformation_element =
-    comma transformation_element;
+    {unnamed} identifier |
+    {named} [production]:identifier dot [alternative]:identifier;
 
   transformation_element =
-    {null}      null_keyword |
+    {null} null_keyword |
     {reference} element_reference |
-    {new}       alternative_reference left_parenthesis
-                transformation_element_list? right_parenthesis |
-    {list}      left_bracket transformation_element_list? right_bracket |
-    {tuple}     left_parenthesis transformation_element_list?
-                right_parenthesis;
+    {new} new_keyword alternative_reference l_par
+          [transformation_elements]:transformation_element* r_par |
+    {list} l_brk [transformation_elements]:transformation_element* r_brk |
+    {tuple} l_par [transformation_elements]:transformation_element* r_par;
 
   element_reference =
-    {direct} [name]:identifier |
-    {nested} [name]:identifier dot [nested_name]:identifier;
+    {direct} identifier |
+    {nested} identifier dot [nested_name]:identifier;
 
   tree =
     tree_keyword [tree_productions]:tree_production*;
 
   tree_production =
-    [name]:identifier assign tree_alternatives semicolon;
+    identifier assign tree_alternatives semicolon;
 
   tree_alternatives =
     tree_alternative
     [additional_tree_alternatives]:additional_tree_alternative*;
 
+  tree_alternative =
+    alternative_name? [elements]:element*;
+
   additional_tree_alternative =
     bar tree_alternative;
 
-  tree_alternative =
-    alternative_name? [elements]:element*;
+
