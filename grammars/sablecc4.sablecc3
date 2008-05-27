@@ -116,8 +116,6 @@ Tokens
   transform_keyword = '$transform';
   tree_keyword = '$tree';
 
-  invalid_keyword = '$' ascii_identifier;
-
   identifier = ascii_identifier;
 
   alternative_name = '{' ascii_identifier ':}';
@@ -155,6 +153,11 @@ Tokens
   long_comment = '/*' [long_comment_char + '/']*
                       ('*' (long_comment_char [long_comment_char + '/']*)?)*
                  '*/';
+
+  invalid_keyword = '$' ascii_id_continue+;
+  invalid_number = decimal_digit+ ascii_id_continue*;
+  invalid_dec_char = '#' decimal_digit+ ascii_id_continue*;
+  invalid_hex_char = '#x' hexadecimal_digit+ ascii_id_continue*;
 
 Ignored Tokens
 
