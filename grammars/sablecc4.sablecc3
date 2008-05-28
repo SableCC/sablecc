@@ -113,7 +113,7 @@ Tokens
   start_keyword = '$start';
   start_no_end_keyword = '$start_no_end';
   token_keyword = '$token';
-  transform_keyword = '$transform';
+  transformation_keyword = '$transformation';
   tree_keyword = '$tree';
 
   identifier = ascii_identifier;
@@ -127,9 +127,6 @@ Tokens
 
   dec_char = '#' decimal_digit+;
   hex_char = '#x' hexadecimal_digit+;  // lowercase 'x'
-
-  l_brk = '[';
-  r_brk = ']';
 
   l_par = '(';
   r_par =')';
@@ -362,7 +359,8 @@ Productions
     inline_keyword [identifiers]:identifier*;
 
   transformation =
-    transform_keyword production_transformations? alternative_transformations?;
+    transformation_keyword production_transformations?
+    alternative_transformations?;
 
   production_transformations =
     production_keyword [production_transformations]:production_transformation*;
@@ -387,7 +385,6 @@ Productions
     {reference} element_reference |
     {new} new_keyword alternative_reference l_par
           [transformation_elements]:transformation_element* r_par |
-    {list} l_brk [transformation_elements]:transformation_element* r_brk |
     {tuple} l_par [transformation_elements]:transformation_element* r_par;
 
   element_reference =
