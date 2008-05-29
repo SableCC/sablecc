@@ -19,43 +19,85 @@ Package org.sablecc.macroprocessor.syntax3;
 
 Helpers
 
-  any = [0..127];
+  // Based on Unicode 5.1.0
 
-  lower = ['a'..'z'];
-  digit = ['0'..'9'];
-  identifier_part = lower (lower | digit)*;
+  ascii_lu = [0x0041 .. 0x005A];
+  ascii_ll = [0x0061 .. 0x007A];
 
-  lf = 10;
-  cr = 13;
-  eol = cr | lf | cr lf;
+  ascii_l = [ascii_lu + ascii_ll];
 
-  not_eol_dollar = [any - ['$' + [cr + lf]]];
+  ascii_nd = [0x0030 .. 0x0039];
+
+  ascii_n = ascii_nd;
+
+  ascii_pc = 0x005F;
+  ascii_pd = 0x002D;
+  ascii_ps = [[0x0028 + 0x005B] + 0x007B];
+  ascii_pe = [[0x0029 + 0x005D] + 0x007D];
+  ascii_po = [[[[0x0021 .. 0x0023] + [0x0025 .. 0x0027]] +
+               [[0x002A + 0x002C] + [0x002E .. 0x002F]]] +
+              [[[0x003A .. 0x003B] + [0x003F .. 0x0040]] + 0x005C]];
+
+  ascii_p = [[[ascii_pc + ascii_pd] + [ascii_ps + ascii_pe]] + ascii_po];
+
+  ascii_sm = [[0x002B + [0x003C .. 0x003E]] + [0x007C + 0x007E]];
+  ascii_sc = 0x0024;
+  ascii_sk = [0x005E + 0x0060];
+
+  ascii_s = [[ascii_sm + ascii_sc] + ascii_sk];
+
+  ascii_zs = 0x0020;
+
+  ascii_z = ascii_zs;
+
+  ascii_cc = [[0x0000 .. 0x001F] + 0x007F];
+
+  ascii_c = ascii_cc;
+
+  ascii = [[[ascii_l + ascii_n] + [ascii_p + ascii_s]] + [ascii_z + ascii_c]];
+
+  ascii_pattern_white_space = [[0x0009 .. 0x000D] + 0x0020];
+  ascii_pattern_syntax = [[[[0x0021 .. 0x002F] + [0x003A .. 0x0040]] +
+                          [[0x005B .. 0x005E] + 0x0060]] + [0x007B .. 0x007E]];
+
+  ascii_id_start = [[0x0041 .. 0x005A] + [0x0061 .. 0x007A]];
+  ascii_id_continue = [[[0x0030 .. 0x0039] + [0x0041 .. 0x005A]] +
+                       [0x005F + [0x0061 .. 0x007A]]];
+
+  ascii_identifier = ascii_id_start ascii_id_continue*;
+
+  ascii_newline = [0x000A .. 0x000D] | 0x000D 0x000A;
+
+  // Other helpers
+
+  text_char = [[[ascii - ascii_c] + ascii_pattern_white_space] - ['\' + '$']];
+  text_escape = '\' ['\' + '$'];
 
 States
 
-  bol, command, inline, var, expand;
+  text, command;
 
 Tokens
 
-  {bol->command}
-  start_command = (not_eol_dollar | '$$')* '$Start:';
+  {text}
+  var = '$' ascii_identifier | '$(' ascii_identifier ')';
 
-  {bol->command}
-  macro_command = (not_eol_dollar | '$$')* '$Macro:';
+  {text}
+  text = text_char+;
 
-  {bol->command}
-  end_command = (not_eol_dollar | '$$')* '$End:';
+  {text}
+  escape = text_escape;
 
-  {command->bol}
-  command_tail = '$' (not_eol_dollar | '$$')* eol?;
+  {text->command}
+  macro_command = '$macro:';
+
+  {text->command}
+  end_command = '$end:';
 
   {command}
-  invalid_command_tail = '$' (not_eol_dollar | '$$')* '$';
+  identifier = ascii_identifier;
 
-  {command, var, expand}
-  identifier = identifier_part ('_' identifier_part)*;
-
-  {command, expand}
+  {command}
   comma = ',';
 
   {command}
@@ -64,122 +106,65 @@ Tokens
   {command}
   r_par = ')';
 
-  {command, expand}
-  spaces = ' '+;
+  {command}
+  blank = ascii_pattern_white_space+;
 
-  {bol->inline, inline}
-  text = not_eol_dollar+;
+  {command->text}
+  comment_command = 'comment:';
 
-  {bol->inline, inline}
-  double_dollar = '$$';
+  {text, command->text}
+  command_tail = '$';
 
-  {bol, inline->bol}
-  eol = eol;
+  {text}
+  invalid_var = '$(' ascii_identifier?;
 
-  {bol->var, inline->var, var->inline, expand->inline}
-  dollar = '$';
+  {text}
+  invalid_commad = '$' ascii_identifier ':';
 
-  {bol->expand, inline->expand}
-  expand_command = '$Expand:';
+  {command}
+  invalid_nested_commad = ascii_identifier ':';
 
 Ignored Tokens
 
-  spaces;
+  blank;
 
 Productions
 
   file =
-    [first_comment]:comment? start [file_body_parts]:file_body_part* [last_comment]:comment?
-      {-> New file(start, [file_body_parts.macro]) };
+    file_part*;
 
-  comment {-> } =
-    [comment_parts]:comment_part+ {-> };
-
-  comment_part {-> } =
-    {text} text {-> } |
-    {double_dollar} double_dollar {-> } |
-    {eol} eol {-> };
-
-  start =
-    start_command identifier_list? command_tail
-      {-> New start([identifier_list.identifier]) };
-
-  identifier_list {-> identifier+ } =
-    identifier [additional_identifiers]:additional_identifier*
-      {-> [identifier, additional_identifiers.identifier] };
-
-  additional_identifier {-> identifier } =
-    comma identifier
-      {-> identifier };
-
-  file_body_part {-> macro } =
-    comment? macro
-      {-> macro };
+  file_part =
+    {text} text |
+    {escape} escape |
+    {macro} macro;
 
   macro =
     macro_head macro_body macro_tail;
 
   macro_head =
-    macro_command identifier argument_list? command_tail
-      {-> New macro_head(identifier, [argument_list.identifier]) };
+    macro_command identifier l_par identifier_list? r_par comment? command_tail;
 
-  argument_list {-> identifier+ } =
-    l_par identifier_list r_par
-      {-> [identifier_list.identifier] };
+  identifier_list =
+    identifier additional_identifier*;
+
+  additional_identifier =
+    comma identifier;
+
+  comment =
+    comment_command comment_part*;
+
+  comment_part =
+    {text} text |
+    {escape} escape;
 
   macro_body =
-    [macro_body_parts]:macro_body_part*;
+    macro_body_part*;
 
   macro_body_part =
-    {text} text |
-    {double_dollar} double_dollar |
-    {eol} eol |
     {var} var |
-    {expand} expand |
+    {text} text |
+    {escape} escape |
     {macro} macro;
 
-  var =
-    [left_dollar]:dollar identifier [right_dollar]:dollar
-      {-> New var(identifier) };
-
-  expand =
-    expand_command identifier_list? dollar
-      {-> New expand([identifier_list.identifier]) };
-
   macro_tail =
-    end_command identifier command_tail
-      {-> New macro_tail(identifier) };
-
-Abstract Syntax Tree
-
-  file =
-    start [macros]:macro*;
-
-  start =
-    [names]:identifier*;
-
-  macro =
-    macro_head macro_body macro_tail;
-
-  macro_head =
-    [name]:identifier [arguments]:identifier*;
-
-  macro_body =
-    [macro_body_parts]:macro_body_part*;
-
-  macro_body_part =
-    {text} text |
-    {double_dollar} double_dollar |
-    {eol} eol |
-    {var} var |
-    {expand} expand |
-    {macro} macro;
-
-  var =
-    [name]:identifier;
-
-  expand =
-    [names]:identifier*;
-
-  macro_tail =
-    [name]:identifier;
+    end_command identifier comment? command_tail;
