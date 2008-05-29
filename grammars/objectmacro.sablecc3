@@ -70,7 +70,7 @@ Helpers
 
   // Other helpers
 
-  text_char = [[[ascii - ascii_c] + ascii_pattern_white_space] - ['\' + '$']];
+  text_char = [[[ascii - ascii_c] + ascii_pattern_white_space] - [[['\' + '$'] + '"'] + [0x000A .. 0x000D]]];
   text_escape = '\' ['\' + '$'];
 
 States
@@ -84,6 +84,12 @@ Tokens
 
   {text}
   text = text_char+;
+
+  {text}
+  d_quote = '"';
+
+  {text}
+  eol = ascii_newline;
 
   {text}
   escape = text_escape;
@@ -138,6 +144,8 @@ Productions
 
   file_part =
     {text} text |
+    {d_quote} d_quote |
+    {eol} eol |
     {escape} escape |
     {comment} comment |
     {macro} macro;
@@ -147,6 +155,8 @@ Productions
 
   comment_part =
     {text} text |
+    {d_quote} d_quote |
+    {eol} eol |
     {escape} escape;
 
   macro =
@@ -171,6 +181,8 @@ Productions
   macro_body_part =
     {var} var |
     {text} text |
+    {d_quote} d_quote |
+    {eol} eol |
     {escape} escape |
     {comment} comment |
     {macro} macro;
