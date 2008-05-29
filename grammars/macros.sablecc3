@@ -142,7 +142,8 @@ Productions
     macro_head macro_body macro_tail;
 
   macro_head =
-    macro_command identifier l_par identifier_list? r_par comment? command_tail;
+    macro_command identifier l_par identifier_list? r_par comment?
+    command_tail;
 
   identifier_list =
     identifier additional_identifier*;
