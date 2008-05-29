@@ -119,10 +119,10 @@ Tokens
   invalid_var = '$(' ascii_identifier?;
 
   {text}
-  invalid_commad = '$' ascii_identifier ':';
+  invalid_command = '$' ascii_identifier ':';
 
   {command}
-  invalid_nested_commad = ascii_identifier ':';
+  invalid_nested_command = ascii_identifier ':';
 
 Ignored Tokens
 
