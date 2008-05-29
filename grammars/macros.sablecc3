@@ -88,6 +88,9 @@ Tokens
   {text}
   escape = text_escape;
 
+  {text}
+  comment_command = '$comment:';
+
   {text->command}
   macro_command = '$macro:';
 
@@ -110,7 +113,7 @@ Tokens
   blank = ascii_pattern_white_space+;
 
   {command->text}
-  comment_command = 'comment:';
+  comment_nested_command = 'comment:';
 
   {text, command->text}
   command_tail = '$';
@@ -136,13 +139,21 @@ Productions
   file_part =
     {text} text |
     {escape} escape |
+    {comment} comment |
     {macro} macro;
+
+  comment =
+    comment_command comment_part* command_tail;
+
+  comment_part =
+    {text} text |
+    {escape} escape;
 
   macro =
     macro_head macro_body macro_tail;
 
   macro_head =
-    macro_command identifier l_par identifier_list? r_par comment?
+    macro_command identifier l_par identifier_list? r_par nested_comment?
     command_tail;
 
   identifier_list =
@@ -151,12 +162,8 @@ Productions
   additional_identifier =
     comma identifier;
 
-  comment =
-    comment_command comment_part*;
-
-  comment_part =
-    {text} text |
-    {escape} escape;
+  nested_comment =
+    comment_nested_command comment_part*;
 
   macro_body =
     macro_body_part*;
@@ -165,7 +172,8 @@ Productions
     {var} var |
     {text} text |
     {escape} escape |
+    {comment} comment |
     {macro} macro;
 
   macro_tail =
-    end_command identifier comment? command_tail;
+    end_command identifier nested_comment? command_tail;
