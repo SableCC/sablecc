@@ -158,6 +158,8 @@ Tokens
                        ([long_comment_char + '/'] | long_comment_escape)*)?)*
                  '*/';
 
+  ctrl_z = 0x001A;
+
   invalid_keyword = '$' ascii_identifier;
   invalid_number = decimal_digit+ ascii_identifier;
   invalid_dec_char = '#' decimal_digit+ ascii_identifier;
@@ -170,7 +172,7 @@ Ignored Tokens
 Productions
 
   grammar =
-    language_name? lexer? parser transformation? tree?;
+    language_name? lexer? parser transformation? tree? ctrl_z?;
 
   language_name =
     language_keyword identifier;
