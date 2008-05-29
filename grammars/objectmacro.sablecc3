@@ -70,7 +70,8 @@ Helpers
 
   // Other helpers
 
-  text_char = [[[ascii - ascii_c] + ascii_pattern_white_space] - [[['\' + '$'] + '"'] + [0x000A .. 0x000D]]];
+  text_char = [[[ascii - ascii_c] + ascii_pattern_white_space] -
+               [[['\' + '$'] + '"'] + [0x000A .. 0x000D]]];
   text_escape = '\' ['\' + '$'];
 
 States
