@@ -71,12 +71,15 @@ Helpers
   // Other helpers
 
   string_char = [[ascii - ascii_c] - [''' + '\']];
-  escaped_char = '\' [''' + '\'];
+  string_escape = '\' [''' + '\'];
 
   line_comment_char = [[[ascii - ascii_c] + ascii_pattern_white_space] -
-                       [0x000A .. 0x000D]];
+                       [[0x000A .. 0x000D] + '\']];
+  line_comment_escape = '\' '\';
+
   long_comment_char = [[[ascii - ascii_c] + ascii_pattern_white_space] -
-                       ['*' + '/']];
+                       [['*' + '/'] + '\']];
+  long_comment_escape = '\' ['*' + '\'];
 
   decimal_digit = ['0' .. '9'];
   hexadecimal_digit = [decimal_digit + ['A' .. 'F']];  // uppercase letters
@@ -121,8 +124,8 @@ Tokens
   alternative_name = '{' ascii_identifier ':}';
   element_name = '[' ascii_identifier ':]';
 
-  char = ''' (string_char | escaped_char) ''';
-  string = ''' (string_char | escaped_char)* ''';
+  char = ''' (string_char | string_escape) ''';
+  string = ''' (string_char | string_escape)* ''';
   number = decimal_digit+;
 
   dec_char = '#' decimal_digit+;
@@ -146,15 +149,19 @@ Tokens
   two_dots = '..';
 
   blank = ascii_pattern_white_space+;
-  line_comment = '//' line_comment_char+ ascii_newline?;
-  long_comment = '/*' [long_comment_char + '/']*
-                      ('*' (long_comment_char [long_comment_char + '/']*)?)*
+
+  line_comment = '//' (line_comment_char | line_comment_escape)*
+                 ascii_newline?;
+
+  long_comment = '/*' ([long_comment_char + '/'] | long_comment_escape)*
+                 ('*' ((long_comment_char | long_comment_escape)
+                       ([long_comment_char + '/'] | long_comment_escape)*)?)*
                  '*/';
 
-  invalid_keyword = '$' ascii_id_continue+;
-  invalid_number = decimal_digit+ ascii_id_continue*;
-  invalid_dec_char = '#' decimal_digit+ ascii_id_continue*;
-  invalid_hex_char = '#x' hexadecimal_digit+ ascii_id_continue*;
+  invalid_keyword = '$' ascii_identifier;
+  invalid_number = decimal_digit+ ascii_identifier;
+  invalid_dec_char = '#' decimal_digit+ ascii_identifier;
+  invalid_hex_char = '#x' hexadecimal_digit+ ascii_identifier;
 
 Ignored Tokens
 
@@ -406,5 +413,3 @@ Productions
 
   additional_tree_alternative =
     bar tree_alternative;
-
-
