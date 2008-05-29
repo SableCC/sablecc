@@ -70,7 +70,8 @@ Helpers
 
   // Other helpers
 
-  string_char = [[ascii - ascii_c] - [''' + '\']];
+  string_char = [[[ascii - ascii_c] + ascii_pattern_white_space] -
+                 [[0x000A .. 0x000D] + [''' + '\']]];
   string_escape = '\' [''' + '\'];
 
   line_comment_char = [[[ascii - ascii_c] + ascii_pattern_white_space] -
