@@ -123,7 +123,7 @@ Tokens
   comment_nested_command = 'comment:';
 
   {text, command->text}
-  command_tail = '$';
+  command_tail = '$' ascii_newline?;
 
   {text}
   ctrl_z = 0x001A;
