@@ -102,6 +102,9 @@ Tokens
   macro_command = '$macro:';
 
   {text->command}
+  name_command = '$name:';
+
+  {text->command}
   end_command = '$end:';
 
   {command}
@@ -144,15 +147,27 @@ Ignored Tokens
 Productions
 
   file =
-    file_part* ctrl_z?;
+    name file_part* ctrl_z?
+      {-> New file(name, [file_part.macro]) };
 
-  file_part =
+  name =
+    not_macro* name_command identifier command_tail
+      {-> New name(identifier) };
+
+  not_macro =
     {text} text |
     {d_quote} d_quote |
     {eol} eol |
     {escape} escape |
-    {comment} comment |
-    {macro} macro;
+    {comment} comment;
+
+  file_part {-> macro? } =
+    {text} text {-> Null } |
+    {d_quote} d_quote {-> Null } |
+    {eol} eol {-> Null } |
+    {escape} escape {-> Null } |
+    {comment} comment {-> Null } |
+    {macro} macro {-> macro };
 
   comment =
     comment_command comment_part* command_tail;
@@ -168,16 +183,59 @@ Productions
 
   macro_head =
     macro_command identifier l_par identifier_list? r_par nested_comment?
-    command_tail;
+    command_tail
+      {-> New macro_head(identifier, [identifier_list.identifier],
+                         nested_comment) };
 
-  identifier_list =
-    identifier additional_identifier*;
+  identifier_list {-> identifier+ } =
+    identifier additional_identifier*
+      {-> [identifier, additional_identifier.identifier] };
 
-  additional_identifier =
-    comma identifier;
+  additional_identifier {-> identifier } =
+    comma identifier {-> identifier };
 
   nested_comment =
-    comment_nested_command comment_part*;
+    comment_nested_command comment_part*
+      {-> New nested_comment([comment_part]) };
+
+  macro_body =
+    macro_body_part*;
+
+  macro_body_part {-> macro_body_part? } =
+    {var} var |
+    {text} text |
+    {d_quote} d_quote |
+    {eol} eol |
+    {escape} escape |
+    {comment} comment {-> Null } |
+    {macro} macro;
+
+  macro_tail =
+    end_command identifier command_tail
+      {-> New macro_tail(identifier) };
+
+Abstract Syntax Tree
+
+  file =
+    name macro*;
+
+  name =
+    identifier;
+
+  macro =
+    macro_head macro_body macro_tail;
+
+  macro_head =
+    [name]:identifier [parameters]:identifier* nested_comment?;
+
+  nested_comment =
+    comment_part*;
+
+  comment_part =
+    {text} text |
+    {d_quote} d_quote |
+    {eol} eol |
+    {escape} escape;
 
   macro_body =
     macro_body_part*;
@@ -188,8 +246,7 @@ Productions
     {d_quote} d_quote |
     {eol} eol |
     {escape} escape |
-    {comment} comment |
     {macro} macro;
 
   macro_tail =
-    end_command identifier nested_comment? command_tail;
+    [name]:identifier;
