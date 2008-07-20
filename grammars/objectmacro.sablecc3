@@ -119,9 +119,6 @@ Tokens
   {command}
   blank = ascii_pattern_white_space+;
 
-  {command->text}
-  comment_nested_command = 'comment:';
-
   {text, command->text}
   command_tail = '$' ascii_newline?;
 
@@ -168,10 +165,8 @@ Productions
     macro_head macro_body macro_tail;
 
   macro_head =
-    macro_command identifier l_par identifier_list? r_par nested_comment?
-    command_tail
-      {-> New macro_head(identifier, [identifier_list.identifier],
-                         nested_comment) };
+    macro_command identifier l_par identifier_list? r_par command_tail
+      {-> New macro_head(identifier, [identifier_list.identifier]) };
 
   identifier_list {-> identifier+ } =
     identifier additional_identifier*
@@ -179,10 +174,6 @@ Productions
 
   additional_identifier {-> identifier } =
     comma identifier {-> identifier };
-
-  nested_comment =
-    comment_nested_command comment_part*
-      {-> New nested_comment([comment_part]) };
 
   macro_body =
     macro_body_part*;
@@ -209,16 +200,7 @@ Abstract Syntax Tree
     macro_head macro_body macro_tail;
 
   macro_head =
-    [name]:identifier [parameters]:identifier* nested_comment?;
-
-  nested_comment =
-    comment_part*;
-
-  comment_part =
-    {text} text |
-    {d_quote} d_quote |
-    {eol} eol |
-    {escape} escape;
+    [name]:identifier [parameters]:identifier*;
 
   macro_body =
     macro_body_part*;
