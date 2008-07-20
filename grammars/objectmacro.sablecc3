@@ -162,11 +162,13 @@ Productions
     {escape} escape;
 
   macro =
-    macro_head macro_body macro_tail;
+    macro_head macro_body macro_tail
+      {-> New macro(macro_head.identifier, [macro_head.identifiers],
+                    [macro_body.macro_body_parts], macro_tail.identifier) };
 
-  macro_head =
+  macro_head {-> identifier [identifiers]:identifier* } =
     macro_command identifier l_par identifier_list? r_par command_tail
-      {-> New macro_head(identifier, [identifier_list.identifier]) };
+      {-> identifier [identifier_list.identifier] };
 
   identifier_list {-> identifier+ } =
     identifier additional_identifier*
@@ -175,8 +177,8 @@ Productions
   additional_identifier {-> identifier } =
     comma identifier {-> identifier };
 
-  macro_body =
-    macro_body_part*;
+  macro_body {-> [macro_body_parts]:macro_body_part* }=
+    macro_body_part* {-> [macro_body_part] };
 
   macro_body_part {-> macro_body_part? } =
     {var} var |
@@ -187,9 +189,8 @@ Productions
     {comment} comment {-> Null } |
     {macro} macro;
 
-  macro_tail =
-    end_command identifier command_tail
-      {-> New macro_tail(identifier) };
+  macro_tail {-> identifier } =
+    end_command identifier command_tail {-> identifier };
 
 Abstract Syntax Tree
 
@@ -197,13 +198,8 @@ Abstract Syntax Tree
     macro*;
 
   macro =
-    macro_head macro_body macro_tail;
-
-  macro_head =
-    [name]:identifier [parameters]:identifier*;
-
-  macro_body =
-    macro_body_part*;
+    [name]:identifier [parameters]:identifier* [parts]:macro_body_part*
+    [repeat_name]:identifier;
 
   macro_body_part =
     {var} var |
@@ -212,6 +208,3 @@ Abstract Syntax Tree
     {eol} eol |
     {escape} escape |
     {macro} macro;
-
-  macro_tail =
-    [name]:identifier;
