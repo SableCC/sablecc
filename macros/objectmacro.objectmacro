@@ -43,7 +43,7 @@ $macro: parameter_initialisation(param_name) $
     this.$param_name = $param_name;
 $end: parameter_initialisation $
   }
-  
+
   // toString
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -71,7 +71,7 @@ $end: macro $
 $end: instruction$
     return sb.toString();
   }
-	
+
   // nested macros
 $macro: nested_macro(nested_macro_name, nested_macro_class_name) $
 $macro: comment() $
