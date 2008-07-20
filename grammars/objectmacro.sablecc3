@@ -102,9 +102,6 @@ Tokens
   macro_command = '$macro:';
 
   {text->command}
-  name_command = '$name:';
-
-  {text->command}
   end_command = '$end:';
 
   {command}
@@ -147,19 +144,8 @@ Ignored Tokens
 Productions
 
   file =
-    name file_part* ctrl_z?
-      {-> New file(name, [file_part.macro]) };
-
-  name =
-    not_macro* name_command identifier command_tail
-      {-> New name(identifier) };
-
-  not_macro =
-    {text} text |
-    {d_quote} d_quote |
-    {eol} eol |
-    {escape} escape |
-    {comment} comment;
+    file_part* ctrl_z?
+      {-> New file([file_part.macro]) };
 
   file_part {-> macro? } =
     {text} text {-> Null } |
@@ -217,10 +203,7 @@ Productions
 Abstract Syntax Tree
 
   file =
-    name macro*;
-
-  name =
-    identifier;
+    macro*;
 
   macro =
     macro_head macro_body macro_tail;
