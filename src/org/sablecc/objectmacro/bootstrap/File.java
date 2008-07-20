@@ -21,13 +21,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AMacroHead;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
 public class File
         implements MacroParent {
 
+    private final static File instance = new File();
+
     private final Map<String, AMacro> macros = new HashMap<String, AMacro>();
+
+    private File() {
+
+    }
+
+    public static File getFile() {
+
+        return instance;
+    }
 
     public void addMacro(
             AMacro macro) {
@@ -35,12 +45,11 @@ public class File
         if (macro == null) {
             throw new InternalException();
         }
-        TIdentifier identifier = ((AMacroHead) macro.getMacroHead()).getName();
+        TIdentifier identifier = macro.getName();
         String name = identifier.getText();
         AMacro otherMacro = this.macros.get(name);
         if (otherMacro != null) {
-            TIdentifier otherIdentifier = ((AMacroHead) macro.getMacroHead())
-                    .getName();
+            TIdentifier otherIdentifier = otherMacro.getName();
             throw new SemanticException("macro name \"" + name
                     + "\" is already used at (line:"
                     + otherIdentifier.getLine() + ",pos:"
