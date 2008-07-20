@@ -22,8 +22,6 @@ import java.util.LinkedList;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.syntax3.node.AFile;
 import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AMacroHead;
-import org.sablecc.objectmacro.syntax3.node.AMacroTail;
 import org.sablecc.objectmacro.syntax3.node.AVarMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
@@ -32,13 +30,13 @@ public class SemanticVerifications
 
     private final LinkedList<MacroParent> parentStack = new LinkedList<MacroParent>();
 
-    private final LinkedList<Macro> currentMacroStack = new LinkedList<Macro>();
+    private Macro currentMacro;
 
     @Override
     public void inAFile(
             AFile node) {
 
-        this.parentStack.addFirst(new File());
+        this.parentStack.addFirst(File.getFile());
     }
 
     @Override
@@ -55,10 +53,24 @@ public class SemanticVerifications
         MacroParent parent = this.parentStack.getFirst();
         parent.addMacro(node);
 
-        Macro macro = new Macro(node, this.currentMacroStack.size() == 0 ? null
-                : this.currentMacroStack.get(0));
-        this.currentMacroStack.addFirst(macro);
+        Macro parentMacro = parent instanceof Macro ? (Macro) parent : null;
+
+        Macro macro = new Macro(node, parentMacro);
+
+        for (TIdentifier parameter : node.getParameters()) {
+            macro.addParameter(parameter);
+        }
+
+        if (!node.getRepeatName().getText().equals(node.getName().getText())) {
+            throw new SemanticException("macro name \""
+                    + node.getRepeatName().getText()
+                    + "\" does not match declaration at (line:"
+                    + node.getName().getLine() + ",pos:"
+                    + node.getName().getPos() + ")", node.getRepeatName());
+        }
+
         this.parentStack.addFirst(macro);
+        this.currentMacro = macro;
     }
 
     @Override
@@ -66,39 +78,17 @@ public class SemanticVerifications
             AMacro node) {
 
         this.parentStack.removeFirst();
-        this.currentMacroStack.removeFirst();
-    }
 
-    @Override
-    public void inAMacroHead(
-            AMacroHead node) {
-
-        Macro macro = this.currentMacroStack.get(0);
-        macro.setName(node.getName());
-        for (TIdentifier parameter : node.getParameters()) {
-            macro.addParameter(parameter);
-        }
-    }
-
-    @Override
-    public void inAMacroTail(
-            AMacroTail node) {
-
-        Macro macro = this.currentMacroStack.get(0);
-        if (!node.getName().getText().equals(macro.getName().getText())) {
-            throw new SemanticException("macro name \""
-                    + node.getName().getText()
-                    + "\" doed not match declaration at (line:"
-                    + macro.getName().getLine() + ",pos:"
-                    + macro.getName().getPos() + ")", node.getName());
-        }
+        MacroParent parent = this.parentStack.getFirst();
+        Macro parentMacro = parent instanceof Macro ? (Macro) parent : null;
+        this.currentMacro = parentMacro;
     }
 
     @Override
     public void inAVarMacroBodyPart(
             AVarMacroBodyPart node) {
 
-        Macro macro = this.currentMacroStack.get(0);
+        Macro macro = this.currentMacro;
         macro.checkVar(node.getVar());
     }
 }

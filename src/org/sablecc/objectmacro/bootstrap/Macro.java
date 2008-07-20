@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AMacroHead;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 import org.sablecc.objectmacro.syntax3.node.TVar;
 
@@ -32,9 +31,7 @@ public class Macro
 
     private final AMacro declaration;
 
-    private final Macro parent;
-
-    private TIdentifier name;
+    private final Macro parentMacro;
 
     private final Map<String, TIdentifier> parameters = new HashMap<String, TIdentifier>();
 
@@ -42,7 +39,7 @@ public class Macro
 
     public Macro(
             final AMacro declaration,
-            Macro parent) {
+            Macro parentMacro) {
 
         if (declaration == null) {
             throw new InternalException();
@@ -53,7 +50,7 @@ public class Macro
         }
         macroMap.put(declaration, this);
 
-        this.parent = parent;
+        this.parentMacro = parentMacro;
     }
 
     public static Macro getMacro(
@@ -85,7 +82,7 @@ public class Macro
         this.parameters.put(name, parameter);
     }
 
-    private String getName(
+    private String getVarName(
             TVar var) {
 
         String text = var.getText();
@@ -102,14 +99,14 @@ public class Macro
         if (var == null) {
             throw new InternalException();
         }
-        TIdentifier result = this.parameters.get(getName(var));
+        TIdentifier result = this.parameters.get(getVarName(var));
         if (result == null) {
-            if (this.parent != null) {
-                this.parent.checkVar(var);
+            if (this.parentMacro != null) {
+                this.parentMacro.checkVar(var);
             }
             else {
                 throw new SemanticException("unknown parameter \""
-                        + getName(var) + "\"", var);
+                        + getVarName(var) + "\"", var);
             }
         }
     }
@@ -120,12 +117,11 @@ public class Macro
         if (macro == null) {
             throw new InternalException();
         }
-        TIdentifier identifier = ((AMacroHead) macro.getMacroHead()).getName();
+        TIdentifier identifier = macro.getName();
         String name = identifier.getText();
         AMacro otherMacro = this.macros.get(name);
         if (otherMacro != null) {
-            TIdentifier otherIdentifier = ((AMacroHead) macro.getMacroHead())
-                    .getName();
+            TIdentifier otherIdentifier = otherMacro.getName();
             throw new SemanticException("macro name \"" + name
                     + "\" is already used at (line:"
                     + otherIdentifier.getLine() + ",pos:"
@@ -137,25 +133,5 @@ public class Macro
     public AMacro getDeclaration() {
 
         return this.declaration;
-    }
-
-    public void setName(
-            TIdentifier name) {
-
-        if (name == null) {
-            throw new InternalException();
-        }
-        if (this.name != null) {
-            throw new InternalException();
-        }
-        this.name = name;
-    }
-
-    public TIdentifier getName() {
-
-        if (this.name == null) {
-            throw new InternalException();
-        }
-        return this.name;
     }
 }
