@@ -1,0 +1,113 @@
+This file is part of SableCC ( http://sablecc.org ).
+
+See the NOTICE file distributed with this work for copyright information.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+$macro: macro_class(class_name,protection) $
+public class $class_name {
+
+  // parameter declarations
+$macro: parameter_declaration(param_name) $
+  private final String $param_name;
+$end: parameter_declaration $
+
+  // nested macro declarations
+$macro: nested_macro_declaration(nested_macro_name, nested_macro_class_name) $
+  private final List<$nested_macro_class_name> $nested_macro_name =
+    new LinkedList<$nested_macro_class_name>();
+$end: nested_macro_declaration $
+
+  // constructor
+  $protection $class_name($comment: no eol $
+$macro: constructor_first_parameter(param_name) $
+
+           String $param_name$comment: no eol $
+$end: constructor_first_parameter $
+$macro: constructor_additional_parameter(param_name) $
+,
+           String $param_name$comment: no eol $
+$end: constructor_additional_parameter $
+) {
+$macro: parameter_initialisation(param_name) $
+    this.$param_name = $param_name;
+$end: parameter_initialisation $
+  }
+  
+  // toString
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+$macro: instruction() $
+$macro: var(var_name) $
+    sb.append(this.$var_name);
+$end: var $
+$macro: text(text) $
+    sb.append("$text");
+$end: text $
+$macro: dquote() $
+    sb.append('"');
+$end: dquote $
+$macro: eol() $
+    sb.append(System.getProperty("line.separator"));
+$end: eol $
+$macro: escape(char) $
+    sb.append('$char');
+$end: escape $
+$macro: macro(macro_name, macro_class_name) $
+    for($macro_class_name element : this.$macro_name) {
+      sb.append(element.toString());
+    }
+$end: macro $
+$end: instruction$
+    return sb.toString();
+  }
+	
+  // nested macros
+$macro: nested_macro(nested_macro_name, nested_macro_class_name) $
+$macro: comment() $
+$macro: comment_text(text)$
+$text$end: comment_text $
+$macro: comment_dquote() $
+"$end: comment_dquote $
+$macro: comment_eol() $
+
+$end: comment_eol $
+$macro: comment_escape(char) $
+$char$end: comment_escape $
+
+$end: comment $
+  public $nested_macro_class_name new$nested_macro_name($comment: no eol$
+$macro: nested_macro_first_parameter(param_name) $
+
+           String $param_name$comment: no eol $
+$end: nested_macro_first_parameter $
+$macro: nested_macro_additional_parameter(param_name) $
+,
+           String $param_name$comment: no eol $
+$end: nested_macro_additional_parameter $
+) {
+    return new $nested_macro_class_name(
+$macro: new_first_parameter(param_name) $
+
+                 $param_name$comment: no eol $
+$end: new_first_parameter $
+$macro: new_additional_parameter(param_name) $
+,
+                 $param_name$comment: no eol $
+$end: new_additional_parameter $
+);
+  }
+$end: nested_macro $
+
+}
+$end: macro_class $
