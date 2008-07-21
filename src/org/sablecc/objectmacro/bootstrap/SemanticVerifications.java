@@ -78,10 +78,7 @@ public class SemanticVerifications
             AMacro node) {
 
         this.parentStack.removeFirst();
-
-        MacroParent parent = this.parentStack.getFirst();
-        Macro parentMacro = parent instanceof Macro ? (Macro) parent : null;
-        this.currentMacro = parentMacro;
+        this.currentMacro = this.currentMacro.getParentMacro();
     }
 
     @Override

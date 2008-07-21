@@ -82,31 +82,20 @@ public class Macro
         this.parameters.put(name, parameter);
     }
 
-    private String getVarName(
-            TVar var) {
-
-        String text = var.getText();
-        if (text.charAt(1) != '(') {
-            return text.substring(1);
-        }
-        int length = text.length();
-        return text.substring(2, length);
-    }
-
     public void checkVar(
             TVar var) {
 
         if (var == null) {
             throw new InternalException();
         }
-        TIdentifier result = this.parameters.get(getVarName(var));
+        TIdentifier result = this.parameters.get(Utils.getVarName(var));
         if (result == null) {
             if (this.parentMacro != null) {
                 this.parentMacro.checkVar(var);
             }
             else {
                 throw new SemanticException("unknown parameter \""
-                        + getVarName(var) + "\"", var);
+                        + Utils.getVarName(var) + "\"", var);
             }
         }
     }
@@ -133,5 +122,10 @@ public class Macro
     public AMacro getDeclaration() {
 
         return this.declaration;
+    }
+
+    public Macro getParentMacro() {
+
+        return this.parentMacro;
     }
 }
