@@ -195,7 +195,7 @@ Productions
 Abstract Syntax Tree
 
   file =
-    macro*;
+    [macros]:macro*;
 
   macro =
     [name]:identifier [parameters]:identifier* [parts]:macro_body_part*

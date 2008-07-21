@@ -17,26 +17,19 @@
 
 package org.sablecc.objectmacro.bootstrap;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PushbackReader;
+import org.sablecc.objectmacro.syntax3.node.TVar;
 
-import org.sablecc.objectmacro.syntax3.lexer.Lexer;
-import org.sablecc.objectmacro.syntax3.lexer.LexerException;
-import org.sablecc.objectmacro.syntax3.node.Start;
-import org.sablecc.objectmacro.syntax3.parser.Parser;
-import org.sablecc.objectmacro.syntax3.parser.ParserException;
+public class Utils {
 
-public class Main {
+    public static String getVarName(
+            TVar var) {
 
-    public static void main(
-            String[] args)
-            throws ParserException, LexerException, IOException {
-
-        Start ast = new Parser(new Lexer(new PushbackReader(
-                new InputStreamReader(System.in), 1024))).parse();
-        ast.apply(new SemanticVerifications());
-        ast.apply(new CodeGeneration());
+        String text = var.getText();
+        if (text.charAt(1) != '(') {
+            return text.substring(1);
+        }
+        int length = text.length();
+        return text.substring(2, length - 1);
     }
 
 }

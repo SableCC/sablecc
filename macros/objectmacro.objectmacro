@@ -15,32 +15,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 $macro: macro_class(class_name,protection) $
-public class $class_name {
+public class Macro_$class_name {
 
   // parameter declarations
 $macro: parameter_declaration(param_name) $
-  private final String $param_name;
+  private final String param_$param_name;
 $end: parameter_declaration $
 
   // nested macro declarations
-$macro: nested_macro_declaration(nested_macro_name, nested_macro_class_name) $
-  private final List<$nested_macro_class_name> $nested_macro_name =
-    new LinkedList<$nested_macro_class_name>();
+$macro: nested_macro_declaration(nested_macro_name) $
+  private final List<Macro_$nested_macro_name> macro_$(nested_macro_name)_list =
+    new LinkedList<Macro_$nested_macro_name>();
 $end: nested_macro_declaration $
 
   // constructor
-  $protection $class_name($comment: no eol $
+  $protection Macro_$class_name($comment: no eol $
 $macro: constructor_first_parameter(param_name) $
 
-           String $param_name$comment: no eol $
+           String param_$param_name$comment: no eol $
 $end: constructor_first_parameter $
 $macro: constructor_additional_parameter(param_name) $
 ,
-           String $param_name$comment: no eol $
+           String param_$param_name$comment: no eol $
 $end: constructor_additional_parameter $
 ) {
 $macro: parameter_initialisation(param_name) $
-    this.$param_name = $param_name;
+    this.param_$param_name = param_$param_name;
 $end: parameter_initialisation $
   }
 
@@ -49,7 +49,7 @@ $end: parameter_initialisation $
     StringBuilder sb = new StringBuilder();
 $macro: instruction() $
 $macro: var(var_name) $
-    sb.append(this.$var_name);
+    sb.append(this.param_$var_name);
 $end: var $
 $macro: text(text) $
     sb.append("$text");
@@ -63,9 +63,9 @@ $end: eol $
 $macro: escape(char) $
     sb.append('$char');
 $end: escape $
-$macro: macro(macro_name, macro_class_name) $
-    for($macro_class_name element : this.$macro_name) {
-      sb.append(element.toString());
+$macro: macro(macro_name) $
+    for(Macro_$macro_name macro_$macro_name : this.macro_$(macro_name)_list) {
+      sb.append(macro_$macro_name.toString());
     }
 $end: macro $
 $end: instruction$
@@ -73,37 +73,25 @@ $end: instruction$
   }
 
   // nested macros
-$macro: nested_macro(nested_macro_name, nested_macro_class_name) $
-$macro: comment() $
-$macro: comment_text(text)$
-$text$end: comment_text $
-$macro: comment_dquote() $
-"$end: comment_dquote $
-$macro: comment_eol() $
-
-$end: comment_eol $
-$macro: comment_escape(char) $
-$char$end: comment_escape $
-
-$end: comment $
-  public $nested_macro_class_name new$nested_macro_name($comment: no eol$
+$macro: nested_macro(nested_macro_name) $
+  public Macro_$nested_macro_name newMacro_$nested_macro_name($comment: no eol$
 $macro: nested_macro_first_parameter(param_name) $
 
-           String $param_name$comment: no eol $
+           String param_$param_name$comment: no eol $
 $end: nested_macro_first_parameter $
 $macro: nested_macro_additional_parameter(param_name) $
 ,
-           String $param_name$comment: no eol $
+           String param_$param_name$comment: no eol $
 $end: nested_macro_additional_parameter $
 ) {
-    return new $nested_macro_class_name(
+    return new Macro_$nested_macro_name(
 $macro: new_first_parameter(param_name) $
 
-                 $param_name$comment: no eol $
+                 param_$param_name$comment: no eol $
 $end: new_first_parameter $
 $macro: new_additional_parameter(param_name) $
 ,
-                 $param_name$comment: no eol $
+                 param_$param_name$comment: no eol $
 $end: new_additional_parameter $
 );
   }
