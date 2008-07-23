@@ -17,6 +17,8 @@
 
 package org.sablecc.objectmacro.bootstrap;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
@@ -63,6 +65,9 @@ public class CodeGeneration
 
         StringBuilder sb = new StringBuilder();
 
+        sb.append("import java.util.*;");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
         sb.append("public class Macro_");
         sb.append(node.getName().getText());
         sb.append(" {");
@@ -191,7 +196,11 @@ public class CodeGeneration
 
                 sb.append(") {");
                 sb.append(System.getProperty("line.separator"));
-                sb.append("    return new Macro_");
+                sb.append("    Macro_");
+                sb.append(nestedMacro.getDeclaration().getName().getText());
+                sb.append(" macro_");
+                sb.append(nestedMacro.getDeclaration().getName().getText());
+                sb.append(" = new Macro_");
                 sb.append(nestedMacro.getDeclaration().getName().getText());
                 sb.append("(");
 
@@ -218,6 +227,16 @@ public class CodeGeneration
                 }
 
                 sb.append(");");
+                sb.append(System.getProperty("line.separator"));
+                sb.append("    macro_");
+                sb.append(nestedMacro.getDeclaration().getName().getText());
+                sb.append("_list.add(macro_");
+                sb.append(nestedMacro.getDeclaration().getName().getText());
+                sb.append(");");
+                sb.append(System.getProperty("line.separator"));
+                sb.append("    return macro_");
+                sb.append(nestedMacro.getDeclaration().getName().getText());
+                sb.append(";");
                 sb.append(System.getProperty("line.separator"));
                 sb.append("  }");
                 sb.append(System.getProperty("line.separator"));
@@ -305,8 +324,14 @@ public class CodeGeneration
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
 
-        System.out.print(sb.toString());
-        System.out.flush();
+        try {
+        FileWriter fw = new FileWriter("Macro_" + node.getName().getText() + ".java");
+        fw.write(sb.toString());
+        fw.close();
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
