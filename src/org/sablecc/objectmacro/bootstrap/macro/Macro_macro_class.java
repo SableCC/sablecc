@@ -7,10 +7,12 @@ import java.util.List;
 
 public class Macro_macro_class {
 
+    // parameter declarations
     private final String param_class_name;
 
     private final String param_protection;
 
+    // nested macro declarations
     private final List<Macro_parameter_declaration> macro_parameter_declaration_list = new LinkedList<Macro_parameter_declaration>();
 
     private final List<Macro_nested_macro_declaration> macro_nested_macro_declaration_list = new LinkedList<Macro_nested_macro_declaration>();
@@ -25,6 +27,7 @@ public class Macro_macro_class {
 
     private final List<Macro_nested_macro> macro_nested_macro_list = new LinkedList<Macro_nested_macro>();
 
+    // constructor
     public Macro_macro_class(
             String param_class_name,
             String param_protection) {
@@ -33,74 +36,7 @@ public class Macro_macro_class {
         this.param_protection = param_protection;
     }
 
-    public Macro_parameter_declaration newMacro_parameter_declaration(
-            String param_param_name) {
-
-        Macro_parameter_declaration macro_parameter_declaration = new Macro_parameter_declaration(
-                param_param_name, this.param_class_name, this.param_protection);
-        this.macro_parameter_declaration_list.add(macro_parameter_declaration);
-        return macro_parameter_declaration;
-    }
-
-    public Macro_nested_macro_declaration newMacro_nested_macro_declaration(
-            String param_nested_macro_name) {
-
-        Macro_nested_macro_declaration macro_nested_macro_declaration = new Macro_nested_macro_declaration(
-                param_nested_macro_name, this.param_class_name,
-                this.param_protection);
-        this.macro_nested_macro_declaration_list
-                .add(macro_nested_macro_declaration);
-        return macro_nested_macro_declaration;
-    }
-
-    public Macro_constructor_first_parameter newMacro_constructor_first_parameter(
-            String param_param_name) {
-
-        Macro_constructor_first_parameter macro_constructor_first_parameter = new Macro_constructor_first_parameter(
-                param_param_name, this.param_class_name, this.param_protection);
-        this.macro_constructor_first_parameter_list
-                .add(macro_constructor_first_parameter);
-        return macro_constructor_first_parameter;
-    }
-
-    public Macro_constructor_additional_parameter newMacro_constructor_additional_parameter(
-            String param_param_name) {
-
-        Macro_constructor_additional_parameter macro_constructor_additional_parameter = new Macro_constructor_additional_parameter(
-                param_param_name, this.param_class_name, this.param_protection);
-        this.macro_constructor_additional_parameter_list
-                .add(macro_constructor_additional_parameter);
-        return macro_constructor_additional_parameter;
-    }
-
-    public Macro_parameter_initialisation newMacro_parameter_initialisation(
-            String param_param_name) {
-
-        Macro_parameter_initialisation macro_parameter_initialisation = new Macro_parameter_initialisation(
-                param_param_name, this.param_class_name, this.param_protection);
-        this.macro_parameter_initialisation_list
-                .add(macro_parameter_initialisation);
-        return macro_parameter_initialisation;
-    }
-
-    public Macro_instruction newMacro_instruction() {
-
-        Macro_instruction macro_instruction = new Macro_instruction(
-                this.param_class_name, this.param_protection);
-        this.macro_instruction_list.add(macro_instruction);
-        return macro_instruction;
-    }
-
-    public Macro_nested_macro newMacro_nested_macro(
-            String param_nested_macro_name) {
-
-        Macro_nested_macro macro_nested_macro = new Macro_nested_macro(
-                param_nested_macro_name, this.param_class_name,
-                this.param_protection);
-        this.macro_nested_macro_list.add(macro_nested_macro);
-        return macro_nested_macro;
-    }
-
+    // toString
     @Override
     public String toString() {
 
@@ -175,6 +111,75 @@ public class Macro_macro_class {
         sb.append("}");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
+    }
+
+    // nested macros
+    public Macro_parameter_declaration newMacro_parameter_declaration(
+            String param_param_name) {
+
+        Macro_parameter_declaration macro_parameter_declaration = new Macro_parameter_declaration(
+                param_param_name, this.param_class_name, this.param_protection);
+        this.macro_parameter_declaration_list.add(macro_parameter_declaration);
+        return macro_parameter_declaration;
+    }
+
+    public Macro_nested_macro_declaration newMacro_nested_macro_declaration(
+            String param_nested_macro_name) {
+
+        Macro_nested_macro_declaration macro_nested_macro_declaration = new Macro_nested_macro_declaration(
+                param_nested_macro_name, this.param_class_name,
+                this.param_protection);
+        this.macro_nested_macro_declaration_list
+                .add(macro_nested_macro_declaration);
+        return macro_nested_macro_declaration;
+    }
+
+    public Macro_constructor_first_parameter newMacro_constructor_first_parameter(
+            String param_param_name) {
+
+        Macro_constructor_first_parameter macro_constructor_first_parameter = new Macro_constructor_first_parameter(
+                param_param_name, this.param_class_name, this.param_protection);
+        this.macro_constructor_first_parameter_list
+                .add(macro_constructor_first_parameter);
+        return macro_constructor_first_parameter;
+    }
+
+    public Macro_constructor_additional_parameter newMacro_constructor_additional_parameter(
+            String param_param_name) {
+
+        Macro_constructor_additional_parameter macro_constructor_additional_parameter = new Macro_constructor_additional_parameter(
+                param_param_name, this.param_class_name, this.param_protection);
+        this.macro_constructor_additional_parameter_list
+                .add(macro_constructor_additional_parameter);
+        return macro_constructor_additional_parameter;
+    }
+
+    public Macro_parameter_initialisation newMacro_parameter_initialisation(
+            String param_param_name) {
+
+        Macro_parameter_initialisation macro_parameter_initialisation = new Macro_parameter_initialisation(
+                param_param_name, this.param_class_name, this.param_protection);
+        this.macro_parameter_initialisation_list
+                .add(macro_parameter_initialisation);
+        return macro_parameter_initialisation;
+    }
+
+    public Macro_instruction newMacro_instruction() {
+
+        Macro_instruction macro_instruction = new Macro_instruction(
+                this.param_class_name, this.param_protection);
+        this.macro_instruction_list.add(macro_instruction);
+        return macro_instruction;
+    }
+
+    public Macro_nested_macro newMacro_nested_macro(
+            String param_nested_macro_name) {
+
+        Macro_nested_macro macro_nested_macro = new Macro_nested_macro(
+                param_nested_macro_name, this.param_class_name,
+                this.param_protection);
+        this.macro_nested_macro_list.add(macro_nested_macro);
+        return macro_nested_macro;
     }
 
 }
