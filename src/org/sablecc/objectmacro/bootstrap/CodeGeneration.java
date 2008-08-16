@@ -21,6 +21,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import org.sablecc.objectmacro.bootstrap.macro.Macro_macro_class;
+import org.sablecc.objectmacro.bootstrap.macro.Macro_nested_macro;
 import org.sablecc.objectmacro.bootstrap.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.bootstrap.syntax3.node.ADQuoteMacroBodyPart;
 import org.sablecc.objectmacro.bootstrap.syntax3.node.AEolMacroBodyPart;
@@ -63,62 +65,9 @@ public class CodeGeneration
         this.parentStack.addFirst(macro);
         this.currentMacro = macro;
 
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("import java.util.*;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("public class Macro_");
-        sb.append(node.getName().getText());
-        sb.append(" {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-
-        {
-            Macro current = macro;
-
-            while (current != null) {
-                for (TIdentifier parameter : current.getDeclaration()
-                        .getParameters()) {
-                    sb.append("  private final String param_");
-                    sb.append(parameter.getText());
-                    sb.append(";");
-                    sb.append(System.getProperty("line.separator"));
-                }
-
-                current = current.getParentMacro();
-            }
-        }
-
-        sb.append(System.getProperty("line.separator"));
-
-        for (PMacroBodyPart part : node.getParts()) {
-            if (part instanceof AMacroMacroBodyPart) {
-                Macro nestedMacro = Macro
-                        .getMacro((AMacro) ((AMacroMacroBodyPart) part)
-                                .getMacro());
-                sb.append("  private final List<Macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append("> macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append("_list = new LinkedList<Macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append(">();");
-                sb.append(System.getProperty("line.separator"));
-            }
-        }
-
-        sb.append(System.getProperty("line.separator"));
-
-        if (macro.getParentMacro() == null) {
-            sb.append("  public Macro_");
-        }
-        else {
-            sb.append("  Macro_");
-        }
-
-        sb.append(node.getName().getText());
-        sb.append("(");
+        Macro_macro_class macro_macro_class = new Macro_macro_class(node
+                .getName().getText(), macro.getParentMacro() == null ? "public"
+                : "");
 
         {
             boolean first = true;
@@ -127,56 +76,43 @@ public class CodeGeneration
             while (current != null) {
                 for (TIdentifier parameter : current.getDeclaration()
                         .getParameters()) {
+
+                    macro_macro_class.newMacro_parameter_declaration(parameter
+                            .getText());
+
                     if (first) {
                         first = false;
+                        macro_macro_class
+                                .newMacro_constructor_first_parameter(parameter
+                                        .getText());
                     }
                     else {
-                        sb.append(",");
+                        macro_macro_class
+                                .newMacro_constructor_additional_parameter(parameter
+                                        .getText());
                     }
-                    sb.append(System.getProperty("line.separator"));
-                    sb.append("           String param_");
-                    sb.append(parameter.getText());
+
+                    macro_macro_class
+                            .newMacro_parameter_initialisation(parameter
+                                    .getText());
                 }
 
                 current = current.getParentMacro();
             }
         }
-
-        sb.append(") {");
-        sb.append(System.getProperty("line.separator"));
-
-        {
-            Macro current = macro;
-
-            while (current != null) {
-                for (TIdentifier parameter : current.getDeclaration()
-                        .getParameters()) {
-                    sb.append("    this.param_");
-                    sb.append(parameter.getText());
-                    sb.append(" = param_");
-                    sb.append(parameter.getText());
-                    sb.append(";");
-                    sb.append(System.getProperty("line.separator"));
-                }
-
-                current = current.getParentMacro();
-            }
-        }
-
-        sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
 
         for (PMacroBodyPart part : node.getParts()) {
             if (part instanceof AMacroMacroBodyPart) {
                 Macro nestedMacro = Macro
                         .getMacro((AMacro) ((AMacroMacroBodyPart) part)
                                 .getMacro());
-                sb.append("  public Macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append(" newMacro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append("(");
+
+                macro_macro_class.newMacro_nested_macro_declaration(nestedMacro
+                        .getDeclaration().getName().getText());
+
+                Macro_nested_macro macro_nested_macro = macro_macro_class
+                        .newMacro_nested_macro(nestedMacro.getDeclaration()
+                                .getName().getText());
 
                 {
                     boolean first = true;
@@ -184,25 +120,17 @@ public class CodeGeneration
                             .getParameters()) {
                         if (first) {
                             first = false;
+                            macro_nested_macro
+                                    .newMacro_nested_macro_first_parameter(parameter
+                                            .getText());
                         }
                         else {
-                            sb.append(",");
+                            macro_nested_macro
+                                    .newMacro_nested_macro_additional_parameter(parameter
+                                            .getText());
                         }
-                        sb.append(System.getProperty("line.separator"));
-                        sb.append("           String param_");
-                        sb.append(parameter.getText());
                     }
                 }
-
-                sb.append(") {");
-                sb.append(System.getProperty("line.separator"));
-                sb.append("    Macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append(" macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append(" = new Macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append("(");
 
                 {
                     boolean first = true;
@@ -213,121 +141,71 @@ public class CodeGeneration
                                 .getParameters()) {
                             if (first) {
                                 first = false;
+                                macro_nested_macro
+                                        .newMacro_new_first_parameter(parameter
+                                                .getText());
                             }
                             else {
-                                sb.append(",");
+                                macro_nested_macro
+                                        .newMacro_new_additional_parameter(parameter
+                                                .getText());
                             }
-                            sb.append(System.getProperty("line.separator"));
-                            sb.append("                 param_");
-                            sb.append(parameter.getText());
                         }
 
                         current = current.getParentMacro();
                     }
                 }
-
-                sb.append(");");
-                sb.append(System.getProperty("line.separator"));
-                sb.append("    macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append("_list.add(macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append(");");
-                sb.append(System.getProperty("line.separator"));
-                sb.append("    return macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append(";");
-                sb.append(System.getProperty("line.separator"));
-                sb.append("  }");
-                sb.append(System.getProperty("line.separator"));
-                sb.append(System.getProperty("line.separator"));
             }
         }
 
-        sb.append("  public String toString() {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    StringBuilder sb = new StringBuilder();");
-        sb.append(System.getProperty("line.separator"));
-
         for (PMacroBodyPart part : node.getParts()) {
             if (part instanceof AVarMacroBodyPart) {
-                sb.append("    sb.append(param_");
-                sb
-                        .append(Utils.getVarName(((AVarMacroBodyPart) part)
-                                .getVar()));
-                sb.append(");");
-                sb.append(System.getProperty("line.separator"));
+                macro_macro_class.newMacro_instruction().newMacro_var(
+                        Utils.getVarName(((AVarMacroBodyPart) part).getVar()));
             }
             else if (part instanceof ATextMacroBodyPart) {
-                sb.append("    sb.append(\"");
-                sb.append(((ATextMacroBodyPart) part).getText().getText());
-                sb.append("\");");
-                sb.append(System.getProperty("line.separator"));
+                macro_macro_class.newMacro_instruction().newMacro_text(
+                        ((ATextMacroBodyPart) part).getText().getText());
             }
             else if (part instanceof ADQuoteMacroBodyPart) {
-                sb.append("    sb.append('\"');");
-                sb.append(System.getProperty("line.separator"));
+                macro_macro_class.newMacro_instruction().newMacro_dquote();
             }
             else if (part instanceof AEolMacroBodyPart) {
-                sb
-                        .append("    sb.append(System.getProperty(\"line.separator\"));");
-                sb.append(System.getProperty("line.separator"));
+                macro_macro_class.newMacro_instruction().newMacro_eol();
             }
             else if (part instanceof AEscapeMacroBodyPart) {
                 char c = ((AEscapeMacroBodyPart) part).getEscape().getText()
                         .charAt(1);
-                sb.append("    sb.append('");
                 switch (c) {
                 case '\\':
-                    sb.append("\\\\");
+                    macro_macro_class.newMacro_instruction().newMacro_escape(
+                            "\\\\");
                     break;
                 case '$':
-                    sb.append("$");
+                    macro_macro_class.newMacro_instruction().newMacro_escape(
+                            "$");
                     break;
                 default:
                     throw new InternalException();
                 }
-                sb.append("');");
-                sb.append(System.getProperty("line.separator"));
             }
             else if (part instanceof AMacroMacroBodyPart) {
                 Macro nestedMacro = Macro
                         .getMacro((AMacro) ((AMacroMacroBodyPart) part)
                                 .getMacro());
-                sb.append("    for(Macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append(" macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append(" : macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append("_list) {");
-                sb.append(System.getProperty("line.separator"));
-                sb.append("      sb.append(macro_");
-                sb.append(nestedMacro.getDeclaration().getName().getText());
-                sb.append(".toString());");
-                sb.append(System.getProperty("line.separator"));
-                sb.append("    }");
-                sb.append(System.getProperty("line.separator"));
+
+                macro_macro_class.newMacro_instruction().newMacro_macro(
+                        nestedMacro.getDeclaration().getName().getText());
             }
             else {
                 throw new InternalException();
             }
         }
 
-        sb.append("    return sb.toString();");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-
-        sb.append("}");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-
         try {
             FileWriter fw = new FileWriter("Macro_" + node.getName().getText()
                     + ".java");
-            fw.write(sb.toString());
+            fw.write(macro_macro_class.toString());
             fw.close();
         }
         catch (IOException e) {
