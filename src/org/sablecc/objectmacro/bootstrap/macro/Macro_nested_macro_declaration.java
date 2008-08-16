@@ -4,12 +4,16 @@ package org.sablecc.objectmacro.bootstrap.macro;
 
 public class Macro_nested_macro_declaration {
 
+    // parameter declarations
     private final String param_nested_macro_name;
 
     private final String param_class_name;
 
     private final String param_protection;
 
+    // nested macro declarations
+
+    // constructor
     Macro_nested_macro_declaration(
             String param_nested_macro_name,
             String param_class_name,
@@ -20,6 +24,7 @@ public class Macro_nested_macro_declaration {
         this.param_protection = param_protection;
     }
 
+    // toString
     @Override
     public String toString() {
 
@@ -36,5 +41,7 @@ public class Macro_nested_macro_declaration {
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }
+
+    // nested macros
 
 }

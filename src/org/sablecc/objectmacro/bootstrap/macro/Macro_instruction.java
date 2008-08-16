@@ -7,10 +7,12 @@ import java.util.List;
 
 public class Macro_instruction {
 
+    // parameter declarations
     private final String param_class_name;
 
     private final String param_protection;
 
+    // nested macro declarations
     private final List<Macro_var> macro_var_list = new LinkedList<Macro_var>();
 
     private final List<Macro_text> macro_text_list = new LinkedList<Macro_text>();
@@ -23,6 +25,7 @@ public class Macro_instruction {
 
     private final List<Macro_macro> macro_macro_list = new LinkedList<Macro_macro>();
 
+    // constructor
     Macro_instruction(
             String param_class_name,
             String param_protection) {
@@ -31,6 +34,33 @@ public class Macro_instruction {
         this.param_protection = param_protection;
     }
 
+    // toString
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        for (Macro_var macro_var : this.macro_var_list) {
+            sb.append(macro_var.toString());
+        }
+        for (Macro_text macro_text : this.macro_text_list) {
+            sb.append(macro_text.toString());
+        }
+        for (Macro_dquote macro_dquote : this.macro_dquote_list) {
+            sb.append(macro_dquote.toString());
+        }
+        for (Macro_eol macro_eol : this.macro_eol_list) {
+            sb.append(macro_eol.toString());
+        }
+        for (Macro_escape macro_escape : this.macro_escape_list) {
+            sb.append(macro_escape.toString());
+        }
+        for (Macro_macro macro_macro : this.macro_macro_list) {
+            sb.append(macro_macro.toString());
+        }
+        return sb.toString();
+    }
+
+    // nested macros
     public Macro_var newMacro_var(
             String param_var_name) {
 
@@ -81,31 +111,6 @@ public class Macro_instruction {
                 this.param_class_name, this.param_protection);
         this.macro_macro_list.add(macro_macro);
         return macro_macro;
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        for (Macro_var macro_var : this.macro_var_list) {
-            sb.append(macro_var.toString());
-        }
-        for (Macro_text macro_text : this.macro_text_list) {
-            sb.append(macro_text.toString());
-        }
-        for (Macro_dquote macro_dquote : this.macro_dquote_list) {
-            sb.append(macro_dquote.toString());
-        }
-        for (Macro_eol macro_eol : this.macro_eol_list) {
-            sb.append(macro_eol.toString());
-        }
-        for (Macro_escape macro_escape : this.macro_escape_list) {
-            sb.append(macro_escape.toString());
-        }
-        for (Macro_macro macro_macro : this.macro_macro_list) {
-            sb.append(macro_macro.toString());
-        }
-        return sb.toString();
     }
 
 }
