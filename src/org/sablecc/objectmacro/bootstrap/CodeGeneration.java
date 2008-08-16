@@ -21,17 +21,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.objectmacro.syntax3.node.ADQuoteMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AEolMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AEscapeMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AFile;
-import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AMacroMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.ATextMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AVarMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.PMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
+import org.sablecc.objectmacro.bootstrap.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.ADQuoteMacroBodyPart;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.AEolMacroBodyPart;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.AEscapeMacroBodyPart;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.AFile;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.AMacro;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.AMacroMacroBodyPart;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.ATextMacroBodyPart;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.AVarMacroBodyPart;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.PMacroBodyPart;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.TIdentifier;
 
 public class CodeGeneration
         extends DepthFirstAdapter {

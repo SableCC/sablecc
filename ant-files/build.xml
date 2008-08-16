@@ -73,8 +73,10 @@
 
   <target name="compile-grammars" description="Compile grammars.">
 
-    <delete dir="${dist.dir}/org/sablecc/sablecc/syntax3" />
-    <delete dir="${dist.dir}/org/sablecc/sablecc/launcher/syntax3" />
+    <delete dir="${src.dir}/org/sablecc/sablecc/syntax3" />
+    <delete dir="${src.dir}/org/sablecc/sablecc/launcher/syntax3" />
+    <delete dir="${src.dir}/org/sablecc/objectmacro/syntax3" />
+    <delete dir="${src.dir}/org/sablecc/objectmacro/bootstrap/syntax3" />
 
     <sablecc3 src="${grammars.dir}"
               includes="*.sablecc3"
@@ -289,6 +291,7 @@ public class Version {
     <delete dir="${src.dir}/org/sablecc/sablecc/syntax3" />
     <delete dir="${src.dir}/org/sablecc/sablecc/launcher/syntax3" />
     <delete dir="${src.dir}/org/sablecc/objectmacro/syntax3" />
+    <delete dir="${src.dir}/org/sablecc/objectmacro/bootstrap/syntax3" />
 
     <delete file="${src.dir}/org/sablecc/sablecc/launcher/Version.java" />
 

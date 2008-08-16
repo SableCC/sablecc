@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PushbackReader;
 
-import org.sablecc.objectmacro.syntax3.lexer.Lexer;
-import org.sablecc.objectmacro.syntax3.lexer.LexerException;
-import org.sablecc.objectmacro.syntax3.node.Start;
-import org.sablecc.objectmacro.syntax3.parser.Parser;
-import org.sablecc.objectmacro.syntax3.parser.ParserException;
+import org.sablecc.objectmacro.bootstrap.syntax3.lexer.Lexer;
+import org.sablecc.objectmacro.bootstrap.syntax3.lexer.LexerException;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.Start;
+import org.sablecc.objectmacro.bootstrap.syntax3.parser.Parser;
+import org.sablecc.objectmacro.bootstrap.syntax3.parser.ParserException;
 
 public class Main {
 
