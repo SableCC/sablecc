@@ -144,8 +144,8 @@ Ignored Tokens
 Productions
 
   file =
-    file_part* ctrl_z?
-      {-> New file([file_part.macro]) };
+    [file_parts]:file_part* ctrl_z?
+      {-> New file([file_parts.macro]) };
 
   file_part {-> macro? } =
     {text} text {-> Null } |
@@ -156,7 +156,7 @@ Productions
     {macro} macro {-> macro };
 
   comment =
-    comment_command comment_part* command_tail;
+    comment_command [comment_parts]:comment_part* command_tail;
 
   comment_part =
     {text} text |
@@ -171,17 +171,17 @@ Productions
 
   macro_head {-> identifier [identifiers]:identifier* } =
     macro_command identifier l_par identifier_list? r_par command_tail
-      {-> identifier [identifier_list.identifier] };
+      {-> identifier [identifier_list.identifiers] };
 
-  identifier_list {-> identifier+ } =
-    identifier additional_identifier*
-      {-> [identifier, additional_identifier.identifier] };
+  identifier_list {-> [identifiers]:identifier+ } =
+    identifier [additional_identifiers]:additional_identifier*
+      {-> [identifier, additional_identifiers.identifier] };
 
   additional_identifier {-> identifier } =
     comma identifier {-> identifier };
 
   macro_body {-> [macro_body_parts]:macro_body_part* }=
-    macro_body_part* {-> [macro_body_part] };
+    [macro_body_parts]:macro_body_part* {-> [macro_body_parts] };
 
   macro_body_part {-> macro_body_part? } =
     {var} var |
@@ -198,7 +198,7 @@ Productions
 
   expand =
     expand_command identifier_list command_tail
-      {-> New expand([identifier_list.identifier]) };
+      {-> New expand([identifier_list.identifiers]) };
 
 Abstract Syntax Tree
 
