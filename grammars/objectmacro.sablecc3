@@ -102,6 +102,9 @@ Tokens
   macro_command = '$macro:';
 
   {text->command}
+  expand_command = '$expand:';
+
+  {text->command}
   end_command = '$end:';
 
   {command}
@@ -187,10 +190,15 @@ Productions
     {eol} eol |
     {escape} escape |
     {comment} comment {-> Null } |
-    {macro} macro;
+    {macro} macro |
+    {expand} expand;
 
   macro_tail {-> identifier } =
     end_command identifier command_tail {-> identifier };
+
+  expand =
+    expand_command identifier_list command_tail
+      {-> New expand([identifier_list.identifier]) };
 
 Abstract Syntax Tree
 
@@ -207,4 +215,8 @@ Abstract Syntax Tree
     {d_quote} d_quote |
     {eol} eol |
     {escape} escape |
-    {macro} macro;
+    {macro} macro |
+    {expand} expand;
+
+  expand =
+    [macro_names]:identifier*;
