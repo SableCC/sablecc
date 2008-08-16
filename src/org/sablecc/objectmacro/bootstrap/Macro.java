@@ -20,9 +20,9 @@ package org.sablecc.objectmacro.bootstrap;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
-import org.sablecc.objectmacro.syntax3.node.TVar;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.AMacro;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.TIdentifier;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.TVar;
 
 public class Macro
         implements MacroParent {

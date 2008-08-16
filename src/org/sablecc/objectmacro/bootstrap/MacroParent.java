@@ -17,7 +17,7 @@
 
 package org.sablecc.objectmacro.bootstrap;
 
-import org.sablecc.objectmacro.syntax3.node.AMacro;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.AMacro;
 
 public interface MacroParent {
 

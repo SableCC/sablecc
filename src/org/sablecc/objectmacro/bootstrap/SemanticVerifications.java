@@ -19,11 +19,11 @@ package org.sablecc.objectmacro.bootstrap;
 
 import java.util.LinkedList;
 
-import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.objectmacro.syntax3.node.AFile;
-import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AVarMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
+import org.sablecc.objectmacro.bootstrap.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.AFile;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.AMacro;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.AVarMacroBodyPart;
+import org.sablecc.objectmacro.bootstrap.syntax3.node.TIdentifier;
 
 public class SemanticVerifications
         extends DepthFirstAdapter {
