@@ -27,15 +27,20 @@ import java.io.PushbackReader;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.sablecc.objectmacro.exception.SemanticException;
+import org.sablecc.objectmacro.exception.SemanticRuntimeException;
 import org.sablecc.objectmacro.syntax3.lexer.Lexer;
 import org.sablecc.objectmacro.syntax3.lexer.LexerException;
 import org.sablecc.objectmacro.syntax3.node.Start;
 import org.sablecc.objectmacro.syntax3.parser.Parser;
 import org.sablecc.objectmacro.syntax3.parser.ParserException;
+import org.sablecc.objectmacro.walkers.FindDefinitions;
+import org.sablecc.objectmacro.walkers.FindSubMacros;
+import org.sablecc.objectmacro.walkers.GenerateCode;
+import org.sablecc.objectmacro.walkers.VerifyDefinitions;
 import org.sablecc.sablecc.exception.ExitException;
 import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.InvalidArgumentException;
-import org.sablecc.sablecc.exception.SemanticException;
 import org.sablecc.sablecc.util.Verbosity;
 
 /**
@@ -84,7 +89,7 @@ public class ObjectMacro {
             System.err.println("    http://sablecc.org/");
             System.exit(1);
         }
-        catch (Error e) {
+        catch (Throwable e) {
             e.printStackTrace(System.err);
             System.err.println("INTERNAL ERROR: (" + e.getClass().getName()
                     + ") " + e.getMessage());
@@ -261,6 +266,49 @@ public class ObjectMacro {
             throw new InvalidArgumentException("cannot read " + macroFile, e);
         }
 
-        throw new InternalException("unimplemented");
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println(" Verifying semantics");
+        }
+
+        verifySemantics(ast);
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println(" Generating code");
+        }
+
+        generateCode(ast, destinationDirectory, destinationPackage);
     }
+
+    private static void verifySemantics(
+            Start ast)
+            throws SemanticException {
+
+        try {
+            ast.apply(new FindDefinitions());
+            ast.apply(new VerifyDefinitions());
+            ast.apply(new FindSubMacros());
+        }
+        catch (SemanticRuntimeException e) {
+            throw e.getSemanticException();
+        }
+    }
+
+    private static void generateCode(
+            Start ast,
+            File destinationDirectory,
+            String destinationPackage)
+            throws SemanticException {
+
+        try {
+            ast
+                    .apply(new GenerateCode(destinationDirectory,
+                            destinationPackage));
+        }
+        catch (SemanticRuntimeException e) {
+            throw e.getSemanticException();
+        }
+    }
+
 }

@@ -166,12 +166,19 @@ Productions
 
   macro =
     macro_head macro_body macro_tail
-      {-> New macro(macro_head.identifier, [macro_head.identifiers],
+      {-> New macro(macro_head.identifier, [macro_head.params],
                     [macro_body.macro_body_parts], macro_tail.identifier) };
 
-  macro_head {-> identifier [identifiers]:identifier* } =
-    macro_command identifier l_par identifier_list? r_par command_tail
-      {-> identifier [identifier_list.identifiers] };
+  macro_head {-> identifier [params]:param* } =
+    macro_command identifier l_par param_list? r_par command_tail
+      {-> identifier [param_list.params] };
+
+  param_list {-> [params]:param+ } =
+    identifier [additional_params]:additional_param*
+      {-> [New param(identifier), additional_params.param] };
+
+  additional_param {-> param } =
+    comma identifier {-> New param(identifier) };
 
   identifier_list {-> [identifiers]:identifier+ } =
     identifier [additional_identifiers]:additional_identifier*
@@ -206,8 +213,11 @@ Abstract Syntax Tree
     [macros]:macro*;
 
   macro =
-    [name]:identifier [parameters]:identifier* [parts]:macro_body_part*
+    [name]:identifier [parameters]:param* [parts]:macro_body_part*
     [repeat_name]:identifier;
+
+  param =
+    [name]:identifier;
 
   macro_body_part =
     {var} var |
