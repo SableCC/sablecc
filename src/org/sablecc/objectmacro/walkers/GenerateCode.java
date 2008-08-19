@@ -135,8 +135,10 @@ public class GenerateCode
 
                 Macro subMacro = Macro.getMacro(macroPart.getMacro());
 
-                this.current_macro_macro_parts.newMacro_macro_declaration(
-                        subMacro.getName(), this.current_indent);
+                if (subMacro.isImplicitlyExpanded()) {
+                    this.current_macro_macro_parts.newMacro_macro_declaration(
+                            subMacro.getName(), this.current_indent);
+                }
             }
             else if (part instanceof AExpandMacroBodyPart) {
                 AExpandMacroBodyPart expandPart = (AExpandMacroBodyPart) part;
