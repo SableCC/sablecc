@@ -320,5 +320,8 @@ public class GenerateCode
                 throw new ExitException();
             }
         }
+
+        this.current_macro_macro_parts = this.current_macro_macro
+                .newMacro_macro_parts();
     }
 }
