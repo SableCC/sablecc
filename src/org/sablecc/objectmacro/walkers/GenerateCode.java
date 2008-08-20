@@ -25,12 +25,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.sablecc.objectmacro.macro.Macro_append;
-import org.sablecc.objectmacro.macro.Macro_constructor;
-import org.sablecc.objectmacro.macro.Macro_macro;
-import org.sablecc.objectmacro.macro.Macro_macro_parts;
-import org.sablecc.objectmacro.macro.Macro_nested_macro;
-import org.sablecc.objectmacro.macro.Macro_root_macro;
+import org.sablecc.objectmacro.macro.Mmacro_file;
+import org.sablecc.objectmacro.macro.Mroot_macro;
+import org.sablecc.objectmacro.macro.Mmacro_file.Mmacro;
+import org.sablecc.objectmacro.macro.Mmacro_file.Mmacro.Mnested_macro;
 import org.sablecc.objectmacro.structures.Expand;
 import org.sablecc.objectmacro.structures.Macro;
 import org.sablecc.objectmacro.structures.Param;
@@ -38,13 +36,13 @@ import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.syntax3.node.ADQuoteMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.AEolMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.AEscapeMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AExpandMacroBodyPart;
+import org.sablecc.objectmacro.syntax3.node.AExpand;
 import org.sablecc.objectmacro.syntax3.node.AFile;
 import org.sablecc.objectmacro.syntax3.node.AMacro;
 import org.sablecc.objectmacro.syntax3.node.AMacroMacroBodyPart;
+import org.sablecc.objectmacro.syntax3.node.AParam;
 import org.sablecc.objectmacro.syntax3.node.ATextMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.AVarMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.PMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.PParam;
 import org.sablecc.sablecc.exception.ExitException;
 import org.sablecc.sablecc.exception.InternalException;
@@ -56,11 +54,11 @@ public class GenerateCode
 
     private final String destinationPackage;
 
-    private Macro_macro current_macro_macro;
+    private Mmacro_file current_Mmacro_file;
 
-    private Macro_macro_parts current_macro_macro_parts;
+    private Macro current_macro;
 
-    private String current_indent;
+    private String current_indent = "";
 
     public GenerateCode(
             java.io.File destinationDirectory,
@@ -68,6 +66,16 @@ public class GenerateCode
 
         this.destinationDirectory = destinationDirectory;
         this.destinationPackage = destinationPackage;
+    }
+
+    @Override
+    public void inAFile(
+            AFile node) {
+
+        org.sablecc.objectmacro.structures.File file = org.sablecc.objectmacro.structures.File
+                .getFile(node);
+
+        file.setMmacro(null);
     }
 
     @Override
@@ -80,10 +88,9 @@ public class GenerateCode
             FileWriter fw = new FileWriter(outFile);
             BufferedWriter bw = new BufferedWriter(fw);
 
-            Macro_root_macro macro_root_macro = new Macro_root_macro();
+            Mroot_macro macro_root_macro = new Mroot_macro();
             if (!this.destinationPackage.equals("")) {
-                macro_root_macro
-                        .newMacro_root_macro_package(this.destinationPackage);
+                macro_root_macro.newMpackage(this.destinationPackage);
             }
 
             bw.write(macro_root_macro.toString());
@@ -100,217 +107,84 @@ public class GenerateCode
     }
 
     @Override
-    public void caseAMacro(
+    public void inAMacro(
             AMacro node) {
 
-        Macro macro = Macro.getMacro(node);
+        this.current_macro = Macro.getMacro(node);
 
-        if (macro.isTopLevel()) {
-            this.current_macro_macro = new Macro_macro();
+        if (this.current_macro.isTopLevel()) {
+            this.current_Mmacro_file = new Mmacro_file();
 
             if (!this.destinationPackage.equals("")) {
-                this.current_macro_macro
-                        .newMacro_macro_package(this.destinationPackage);
+                this.current_Mmacro_file.newMpackage(this.destinationPackage);
             }
-
-            this.current_macro_macro_parts = this.current_macro_macro
-                    .newMacro_macro_parts();
 
             this.current_indent = "";
+
+            this.current_macro.setMmacro(this.current_Mmacro_file.newMmacro(
+                    this.current_macro.getName(), this.current_indent));
+            this.current_macro.getMmacro().newMpublic_constructor();
+        }
+        else {
+            this.current_indent += "  ";
+            this.current_macro.setMmacro(this.current_macro.getParentScope()
+                    .getMmacro().newMmacro(this.current_macro.getName(),
+                            this.current_indent));
         }
 
-        this.current_macro_macro_parts.newMacro_macro_class_head(macro
-                .getName(), this.current_indent);
+        Mmacro mmacro = this.current_macro.getMmacro();
 
-        for (PParam pParam : node.getParameters()) {
-            Param param = Param.getParam(pParam);
-
-            this.current_macro_macro_parts.newMacro_parameter_declaration(param
-                    .getName(), this.current_indent);
-        }
-
-        for (PMacroBodyPart part : node.getParts()) {
-            if (part instanceof AMacroMacroBodyPart) {
-                AMacroMacroBodyPart macroPart = (AMacroMacroBodyPart) part;
-
-                Macro subMacro = Macro.getMacro(macroPart.getMacro());
-
-                if (subMacro.isImplicitlyExpanded()) {
-                    this.current_macro_macro_parts.newMacro_macro_declaration(
-                            subMacro.getName(), this.current_indent);
-                }
-            }
-            else if (part instanceof AExpandMacroBodyPart) {
-                AExpandMacroBodyPart expandPart = (AExpandMacroBodyPart) part;
-
-                Expand expand = Expand.getExpand(expandPart.getExpand());
-
-                this.current_macro_macro_parts.newMacro_expand_declaration(
-                        expand.getName(), this.current_indent);
-            }
-        }
-
-        Macro_constructor macro_constructor = this.current_macro_macro_parts
-                .newMacro_constructor(macro.getName(), this.current_indent);
-        if (macro.isTopLevel()) {
-            macro_constructor.newMacro_public();
-        }
-
-        {
-            boolean first = true;
-            for (PParam pParam : node.getParameters()) {
-                Param param = Param.getParam(pParam);
-
-                if (first) {
-                    first = false;
-                    macro_constructor
-                            .newMacro_constructor_first_parameter(param
-                                    .getName());
-                }
-                else {
-                    macro_constructor
-                            .newMacro_constructor_additional_parameter(param
-                                    .getName());
-                }
-                macro_constructor.newMacro_parameter_initialisation(param
-                        .getName());
-            }
-        }
-
-        for (Iterator<Macro> i = macro.getSubMacrosIterator(); i.hasNext();) {
+        for (Iterator<Macro> i = this.current_macro.getSubMacrosIterator(); i
+                .hasNext();) {
             Macro subMacro = i.next();
 
-            Macro_nested_macro macro_nested_macro = this.current_macro_macro_parts
-                    .newMacro_nested_macro(subMacro.getName(),
-                            this.current_indent);
+            Mnested_macro mnested_macro = mmacro.newMnested_macro(subMacro
+                    .getName());
 
-            {
-                boolean first = true;
-                for (PParam pParam : subMacro.getDefinition().getParameters()) {
-                    Param param = Param.getParam(pParam);
+            for (PParam pParam : subMacro.getDefinition().getParameters()) {
+                Param param = Param.getParam(pParam);
 
-                    if (first) {
-                        first = false;
-                        macro_nested_macro
-                                .newMacro_nested_macro_first_parameter(param
-                                        .getName());
-                        macro_nested_macro.newMacro_new_first_parameter(param
-                                .getName());
-                    }
-                    else {
-                        macro_nested_macro
-                                .newMacro_nested_macro_additional_parameter(param
-                                        .getName());
-                        macro_nested_macro
-                                .newMacro_new_additional_parameter(param
-                                        .getName());
-                    }
+                if (param.isFirst()) {
+                    mnested_macro.newMnested_macro_first_parameter(param
+                            .getName());
+                    mnested_macro.newMnew_first_parameter(param.getName());
+                }
+                else {
+                    mnested_macro.newMnested_macro_additional_parameter(param
+                            .getName());
+                    mnested_macro.newMnew_additional_parameter(param.getName());
                 }
             }
 
             if (subMacro.isImplicitlyExpanded()) {
-                macro_nested_macro.newMacro_add_to_macro();
+                mnested_macro.newMadd_to_nested_macro();
             }
             else {
                 for (Iterator<Expand> j = subMacro
                         .getReferringExpandsIterator(); j.hasNext();) {
                     Expand expand = j.next();
 
-                    if (expand.getMacro() == macro) {
-                        macro_nested_macro.newMacro_add_to_expand(expand
-                                .getName());
+                    if (expand.getMacro() == this.current_macro) {
+                        mnested_macro.newMadd_to_expand(expand.getName());
                     }
                 }
             }
         }
+    }
 
-        Macro_append macro_append = this.current_macro_macro_parts
-                .newMacro_append(this.current_indent);
-        for (PMacroBodyPart part : node.getParts()) {
-            if (part instanceof AVarMacroBodyPart) {
-                AVarMacroBodyPart varPart = (AVarMacroBodyPart) part;
+    @Override
+    public void outAMacro(
+            AMacro node) {
 
-                macro_append.newMacro_instruction().newMacro_var_instruction(
-                        getVarName(varPart.getVar()));
-            }
-            else if (part instanceof ATextMacroBodyPart) {
-                ATextMacroBodyPart textPart = (ATextMacroBodyPart) part;
-
-                macro_append.newMacro_instruction().newMacro_text_instruction(
-                        textPart.getText().getText());
-            }
-            else if (part instanceof ADQuoteMacroBodyPart) {
-                macro_append.newMacro_instruction()
-                        .newMacro_dquote_instruction();
-            }
-            else if (part instanceof AEolMacroBodyPart) {
-                macro_append.newMacro_instruction().newMacro_eol_instruction();
-            }
-            else if (part instanceof AEscapeMacroBodyPart) {
-                AEscapeMacroBodyPart escapePart = (AEscapeMacroBodyPart) part;
-
-                char c = escapePart.getEscape().getText().charAt(1);
-                switch (c) {
-                case '\\':
-                    macro_append.newMacro_instruction()
-                            .newMacro_escape_instruction("\\\\");
-                    break;
-                case '$':
-                    macro_append.newMacro_instruction()
-                            .newMacro_escape_instruction("$");
-                    break;
-                default:
-                    throw new InternalException("escape char");
-                }
-            }
-            else if (part instanceof AMacroMacroBodyPart) {
-                AMacroMacroBodyPart macroPart = (AMacroMacroBodyPart) part;
-
-                Macro subMacro = Macro.getMacro(macroPart.getMacro());
-
-                if (subMacro.isImplicitlyExpanded()) {
-                    macro_append.newMacro_instruction()
-                            .newMacro_macro_instruction(subMacro.getName());
-                }
-            }
-            else if (part instanceof AExpandMacroBodyPart) {
-                AExpandMacroBodyPart expandPart = (AExpandMacroBodyPart) part;
-
-                Expand expand = Expand.getExpand(expandPart.getExpand());
-
-                macro_append.newMacro_instruction()
-                        .newMacro_expand_instruction(expand.getName());
-            }
-            else {
-                throw new InternalException("unexpected part type");
-            }
-        }
-
-        String oldIndent = this.current_indent;
-        this.current_indent = this.current_indent + "  ";
-        this.current_macro_macro_parts = this.current_macro_macro
-                .newMacro_macro_parts();
-
-        for (PMacroBodyPart part : node.getParts()) {
-            part.apply(this);
-        }
-
-        this.current_indent = oldIndent;
-        this.current_macro_macro_parts = this.current_macro_macro
-                .newMacro_macro_parts();
-
-        this.current_macro_macro_parts
-                .newMacro_macro_class_tail(this.current_indent);
-
-        if (macro.isTopLevel()) {
-            File outFile = new File(this.destinationDirectory, "M"
-                    + macro.getName() + ".java");
+        if (this.current_macro.isTopLevel()) {
+            File outFile = new File(this.destinationDirectory, "M_"
+                    + this.current_macro.getName() + ".java");
 
             try {
                 FileWriter fw = new FileWriter(outFile);
                 BufferedWriter bw = new BufferedWriter(fw);
 
-                bw.write(this.current_macro_macro.toString());
+                bw.write(this.current_Mmacro_file.toString());
 
                 bw.close();
                 fw.close();
@@ -322,8 +196,111 @@ public class GenerateCode
                 throw new ExitException();
             }
         }
+        else {
+            this.current_indent = this.current_indent.substring(2);
+            this.current_macro = (Macro) this.current_macro.getParentScope();
+        }
 
-        this.current_macro_macro_parts = this.current_macro_macro
-                .newMacro_macro_parts();
     }
+
+    @Override
+    public void outAParam(
+            AParam node) {
+
+        Param param = Param.getParam(node);
+
+        Mmacro mmacro = this.current_macro.getMmacro();
+
+        if (param.isFirst()) {
+            mmacro.newMconstructor_first_parameter(param.getName());
+        }
+        else {
+            mmacro.newMconstructor_additional_parameter(param.getName());
+        }
+
+        mmacro.newMparameter_declaration(param.getName());
+        mmacro.newMconstructor_initialisation(param.getName());
+    }
+
+    @Override
+    public void outAVarMacroBodyPart(
+            AVarMacroBodyPart node) {
+
+        Mmacro mmacro = this.current_macro.getMmacro();
+
+        mmacro.newMvar_append(getVarName(node.getVar()));
+    }
+
+    @Override
+    public void outATextMacroBodyPart(
+            ATextMacroBodyPart node) {
+
+        Mmacro mmacro = this.current_macro.getMmacro();
+
+        mmacro.newMtext_append(node.getText().getText());
+    }
+
+    @Override
+    public void outADQuoteMacroBodyPart(
+            ADQuoteMacroBodyPart node) {
+
+        Mmacro mmacro = this.current_macro.getMmacro();
+
+        mmacro.newMdquote_append();
+    }
+
+    @Override
+    public void outAEolMacroBodyPart(
+            AEolMacroBodyPart node) {
+
+        Mmacro mmacro = this.current_macro.getMmacro();
+
+        mmacro.newMeol_append();
+    }
+
+    @Override
+    public void outAEscapeMacroBodyPart(
+            AEscapeMacroBodyPart node) {
+
+        Mmacro mmacro = this.current_macro.getMmacro();
+
+        char c = node.getEscape().getText().charAt(1);
+        switch (c) {
+        case '\\':
+            mmacro.newMescape_append("\\\\");
+            break;
+        case '$':
+            mmacro.newMescape_append("$");
+            break;
+        default:
+            throw new InternalException("unknown escape char");
+        }
+    }
+
+    @Override
+    public void outAMacroMacroBodyPart(
+            AMacroMacroBodyPart node) {
+
+        Mmacro mmacro = this.current_macro.getMmacro();
+
+        Macro subMacro = Macro.getMacro(node.getMacro());
+
+        if (subMacro.isImplicitlyExpanded()) {
+            mmacro.newMnested_macro_declaration(subMacro.getName());
+            mmacro.newMnested_macro_append(subMacro.getName());
+        }
+    }
+
+    @Override
+    public void outAExpand(
+            AExpand node) {
+
+        Mmacro mmacro = this.current_macro.getMmacro();
+
+        Expand expand = Expand.getExpand(node);
+
+        mmacro.newMexpand_declaration(expand.getName());
+        mmacro.newMexpand_append(expand.getName());
+    }
+
 }
