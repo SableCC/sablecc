@@ -25,10 +25,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.sablecc.objectmacro.macro.Mmacro_file;
-import org.sablecc.objectmacro.macro.Mroot_macro;
-import org.sablecc.objectmacro.macro.Mmacro_file.Mmacro;
-import org.sablecc.objectmacro.macro.Mmacro_file.Mmacro.Mnested_macro;
+import org.sablecc.objectmacro.macro.M_macro_file;
+import org.sablecc.objectmacro.macro.M_root_macro;
+import org.sablecc.objectmacro.macro.M_macro_file.M_macro;
+import org.sablecc.objectmacro.macro.M_macro_file.M_macro.M_nested_macro;
 import org.sablecc.objectmacro.structures.Expand;
 import org.sablecc.objectmacro.structures.Macro;
 import org.sablecc.objectmacro.structures.Param;
@@ -54,7 +54,7 @@ public class GenerateCode
 
     private final String destinationPackage;
 
-    private Mmacro_file current_Mmacro_file;
+    private M_macro_file current_Mmacro_file;
 
     private Macro current_macro;
 
@@ -88,9 +88,9 @@ public class GenerateCode
             FileWriter fw = new FileWriter(outFile);
             BufferedWriter bw = new BufferedWriter(fw);
 
-            Mroot_macro macro_root_macro = new Mroot_macro();
+            M_root_macro macro_root_macro = new M_root_macro();
             if (!this.destinationPackage.equals("")) {
-                macro_root_macro.newMpackage(this.destinationPackage);
+                macro_root_macro.newM_package(this.destinationPackage);
             }
 
             bw.write(macro_root_macro.toString());
@@ -113,51 +113,52 @@ public class GenerateCode
         this.current_macro = Macro.getMacro(node);
 
         if (this.current_macro.isTopLevel()) {
-            this.current_Mmacro_file = new Mmacro_file();
+            this.current_Mmacro_file = new M_macro_file();
 
             if (!this.destinationPackage.equals("")) {
-                this.current_Mmacro_file.newMpackage(this.destinationPackage);
+                this.current_Mmacro_file.newM_package(this.destinationPackage);
             }
 
             this.current_indent = "";
 
-            this.current_macro.setMmacro(this.current_Mmacro_file.newMmacro(
+            this.current_macro.setMmacro(this.current_Mmacro_file.newM_macro(
                     this.current_macro.getName(), this.current_indent));
-            this.current_macro.getMmacro().newMpublic_constructor();
+            this.current_macro.getMmacro().newM_public_constructor();
         }
         else {
             this.current_indent += "  ";
             this.current_macro.setMmacro(this.current_macro.getParentScope()
-                    .getMmacro().newMmacro(this.current_macro.getName(),
+                    .getMmacro().newM_macro(this.current_macro.getName(),
                             this.current_indent));
         }
 
-        Mmacro mmacro = this.current_macro.getMmacro();
+        M_macro mmacro = this.current_macro.getMmacro();
 
         for (Iterator<Macro> i = this.current_macro.getSubMacrosIterator(); i
                 .hasNext();) {
             Macro subMacro = i.next();
 
-            Mnested_macro mnested_macro = mmacro.newMnested_macro(subMacro
+            M_nested_macro mnested_macro = mmacro.newM_nested_macro(subMacro
                     .getName());
 
             for (PParam pParam : subMacro.getDefinition().getParameters()) {
                 Param param = Param.getParam(pParam);
 
                 if (param.isFirst()) {
-                    mnested_macro.newMnested_macro_first_parameter(param
+                    mnested_macro.newM_nested_macro_first_parameter(param
                             .getName());
-                    mnested_macro.newMnew_first_parameter(param.getName());
+                    mnested_macro.newM_new_first_parameter(param.getName());
                 }
                 else {
-                    mnested_macro.newMnested_macro_additional_parameter(param
+                    mnested_macro.newM_nested_macro_additional_parameter(param
                             .getName());
-                    mnested_macro.newMnew_additional_parameter(param.getName());
+                    mnested_macro
+                            .newM_new_additional_parameter(param.getName());
                 }
             }
 
             if (subMacro.isImplicitlyExpanded()) {
-                mnested_macro.newMadd_to_nested_macro();
+                mnested_macro.newM_add_to_nested_macro();
             }
             else {
                 for (Iterator<Expand> j = subMacro
@@ -165,7 +166,7 @@ public class GenerateCode
                     Expand expand = j.next();
 
                     if (expand.getMacro() == this.current_macro) {
-                        mnested_macro.newMadd_to_expand(expand.getName());
+                        mnested_macro.newM_add_to_expand(expand.getName());
                     }
                 }
             }
@@ -209,68 +210,68 @@ public class GenerateCode
 
         Param param = Param.getParam(node);
 
-        Mmacro mmacro = this.current_macro.getMmacro();
+        M_macro mmacro = this.current_macro.getMmacro();
 
         if (param.isFirst()) {
-            mmacro.newMconstructor_first_parameter(param.getName());
+            mmacro.newM_constructor_first_parameter(param.getName());
         }
         else {
-            mmacro.newMconstructor_additional_parameter(param.getName());
+            mmacro.newM_constructor_additional_parameter(param.getName());
         }
 
-        mmacro.newMparameter_declaration(param.getName());
-        mmacro.newMconstructor_initialisation(param.getName());
+        mmacro.newM_parameter_declaration(param.getName());
+        mmacro.newM_constructor_initialisation(param.getName());
     }
 
     @Override
     public void outAVarMacroBodyPart(
             AVarMacroBodyPart node) {
 
-        Mmacro mmacro = this.current_macro.getMmacro();
+        M_macro mmacro = this.current_macro.getMmacro();
 
-        mmacro.newMvar_append(getVarName(node.getVar()));
+        mmacro.newM_var_append(getVarName(node.getVar()));
     }
 
     @Override
     public void outATextMacroBodyPart(
             ATextMacroBodyPart node) {
 
-        Mmacro mmacro = this.current_macro.getMmacro();
+        M_macro mmacro = this.current_macro.getMmacro();
 
-        mmacro.newMtext_append(node.getText().getText());
+        mmacro.newM_text_append(node.getText().getText());
     }
 
     @Override
     public void outADQuoteMacroBodyPart(
             ADQuoteMacroBodyPart node) {
 
-        Mmacro mmacro = this.current_macro.getMmacro();
+        M_macro mmacro = this.current_macro.getMmacro();
 
-        mmacro.newMdquote_append();
+        mmacro.newM_dquote_append();
     }
 
     @Override
     public void outAEolMacroBodyPart(
             AEolMacroBodyPart node) {
 
-        Mmacro mmacro = this.current_macro.getMmacro();
+        M_macro mmacro = this.current_macro.getMmacro();
 
-        mmacro.newMeol_append();
+        mmacro.newM_eol_append();
     }
 
     @Override
     public void outAEscapeMacroBodyPart(
             AEscapeMacroBodyPart node) {
 
-        Mmacro mmacro = this.current_macro.getMmacro();
+        M_macro mmacro = this.current_macro.getMmacro();
 
         char c = node.getEscape().getText().charAt(1);
         switch (c) {
         case '\\':
-            mmacro.newMescape_append("\\\\");
+            mmacro.newM_escape_append("\\\\");
             break;
         case '$':
-            mmacro.newMescape_append("$");
+            mmacro.newM_escape_append("$");
             break;
         default:
             throw new InternalException("unknown escape char");
@@ -281,13 +282,13 @@ public class GenerateCode
     public void outAMacroMacroBodyPart(
             AMacroMacroBodyPart node) {
 
-        Mmacro mmacro = this.current_macro.getMmacro();
+        M_macro mmacro = this.current_macro.getMmacro();
 
         Macro subMacro = Macro.getMacro(node.getMacro());
 
         if (subMacro.isImplicitlyExpanded()) {
-            mmacro.newMnested_macro_declaration(subMacro.getName());
-            mmacro.newMnested_macro_append(subMacro.getName());
+            mmacro.newM_nested_macro_declaration(subMacro.getName());
+            mmacro.newM_nested_macro_append(subMacro.getName());
         }
     }
 
@@ -295,12 +296,12 @@ public class GenerateCode
     public void outAExpand(
             AExpand node) {
 
-        Mmacro mmacro = this.current_macro.getMmacro();
+        M_macro mmacro = this.current_macro.getMmacro();
 
         Expand expand = Expand.getExpand(node);
 
-        mmacro.newMexpand_declaration(expand.getName());
-        mmacro.newMexpand_append(expand.getName());
+        mmacro.newM_expand_declaration(expand.getName());
+        mmacro.newM_expand_append(expand.getName());
     }
 
 }

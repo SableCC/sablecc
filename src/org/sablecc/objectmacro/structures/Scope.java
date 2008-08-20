@@ -21,7 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sablecc.objectmacro.exception.SemanticException;
-import org.sablecc.objectmacro.macro.Mmacro_file;
+import org.sablecc.objectmacro.macro.M_macro_file;
+import org.sablecc.objectmacro.macro.M_macro_file.M_macro;
 import org.sablecc.sablecc.exception.InternalException;
 
 public abstract class Scope {
@@ -32,7 +33,7 @@ public abstract class Scope {
 
     private final Map<String, Param> paramMap = new HashMap<String, Param>();
 
-    private Mmacro_file.Mmacro mmacro;
+    private M_macro mmacro;
 
     protected Scope(
             final Scope parentScope) {
@@ -117,13 +118,13 @@ public abstract class Scope {
         return this.parentScope;
     }
 
-    public Mmacro_file.Mmacro getMmacro() {
+    public M_macro getMmacro() {
 
         return this.mmacro;
     }
 
     public void setMmacro(
-            Mmacro_file.Mmacro mmacro) {
+            M_macro mmacro) {
 
         this.mmacro = mmacro;
     }
