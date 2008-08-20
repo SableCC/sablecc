@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sablecc.objectmacro.exception.SemanticException;
-import org.sablecc.objectmacro.macro.M_macro_file;
 import org.sablecc.objectmacro.macro.M_macro_file.M_macro;
 import org.sablecc.sablecc.exception.InternalException;
 
