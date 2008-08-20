@@ -72,7 +72,7 @@ $(indent)      String p_$param_name$comment: no eol $
 $end: constructor_additional_parameter $
 ) {
 $macro: constructor_initialisation(param_name) $
-$(indent)    this.p$param_name = p$param_name;
+$(indent)    this.p_$param_name = p_$param_name;
 $end: constructor_initialisation $
 $(indent)  }
 
@@ -116,7 +116,7 @@ $expand:
   expand_append
 $
 $macro: var_append(var_name) $
-$(indent)    sb.append(p$var_name);
+$(indent)    sb.append(p_$var_name);
 $end: var_append $
 $macro: text_append(text) $
 $(indent)    sb.append("$text");
