@@ -33,6 +33,8 @@ public class FindDefinitions
 
     private Scope currentScope;
 
+    private boolean first_param;
+
     @Override
     public void inAFile(
             AFile node) {
@@ -45,6 +47,7 @@ public class FindDefinitions
             AMacro node) {
 
         this.currentScope = new Macro(node, this.currentScope);
+        this.first_param = true;
     }
 
     @Override
@@ -58,7 +61,8 @@ public class FindDefinitions
     public void inAParam(
             AParam node) {
 
-        new Param(node);
+        new Param(node, this.first_param);
+        this.first_param = false;
     }
 
     @Override

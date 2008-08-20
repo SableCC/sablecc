@@ -33,14 +33,18 @@ public class Param {
 
     private final Macro macro;
 
+    private final boolean first;
+
     public Param(
-            AParam definition) {
+            AParam definition,
+            boolean first) {
 
         if (definition == null) {
             throw new InternalException("definition may not be null");
         }
 
         this.definition = definition;
+        this.first = first;
 
         this.macro = Macro.getMacro((AMacro) definition.parent());
 
@@ -50,6 +54,11 @@ public class Param {
     public AParam getDefinition() {
 
         return this.definition;
+    }
+
+    public boolean isFirst() {
+
+        return this.first;
     }
 
     public Macro getMacro() {
