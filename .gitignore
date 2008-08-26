@@ -21,6 +21,7 @@
 /lib/
 /sablecc-*/
 /sablecc-*.zip
+/src/org/sablecc/objectmacro/bootstrap/syntax3/
 /src/org/sablecc/objectmacro/syntax3/
 /src/org/sablecc/sablecc/launcher/Version.java
 /src/org/sablecc/sablecc/launcher/syntax3/
