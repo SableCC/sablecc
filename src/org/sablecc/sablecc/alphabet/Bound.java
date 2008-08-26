@@ -58,7 +58,7 @@ public class Bound
     }
 
     /** Constructs a bound with the provided value. */
-    public Bound(
+    private Bound(
             BigInteger value) {
 
         if (value == null) {
