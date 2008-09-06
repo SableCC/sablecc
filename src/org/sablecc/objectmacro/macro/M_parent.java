@@ -25,7 +25,7 @@ public class M_parent
     public void appendTo(
             StringBuilder sb) {
 
-        sb.append("this.parent");
+        sb.append("this.get_parent()");
     }
 
 }

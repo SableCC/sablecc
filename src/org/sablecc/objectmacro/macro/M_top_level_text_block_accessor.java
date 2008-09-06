@@ -73,7 +73,7 @@ public class M_top_level_text_block_accessor
 
         sb.append(EOL);
 
-        sb.append("  T_");
+        sb.append("  private T_");
 
         sb.append(get_p_text_block_name());
 

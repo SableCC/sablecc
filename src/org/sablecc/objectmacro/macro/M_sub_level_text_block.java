@@ -90,6 +90,20 @@ public class M_sub_level_text_block
         sb.append(EOL);
 
         sb.append(EOL);
+
+        sb.append("  Macro get_parent() {");
+
+        sb.append(EOL);
+
+        sb.append("    return this.parent;");
+
+        sb.append(EOL);
+
+        sb.append("  }");
+
+        sb.append(EOL);
+
+        sb.append(EOL);
     }
 
 }
