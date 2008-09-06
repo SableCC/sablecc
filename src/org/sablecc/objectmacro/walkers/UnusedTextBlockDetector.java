@@ -31,14 +31,14 @@ import org.sablecc.objectmacro.syntax3.node.ATextBlockReference;
 import org.sablecc.objectmacro.syntax3.node.ATextInsert;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
-public class UnusedTextBlocksDetector
+public class UnusedTextBlockDetector
         extends DepthFirstAdapter {
 
     private GlobalData globalData;
 
     private Scope currentScope;
 
-    public UnusedTextBlocksDetector(
+    public UnusedTextBlockDetector(
             GlobalData globalData) {
 
         if (globalData == null) {

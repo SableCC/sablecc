@@ -47,7 +47,7 @@ import org.sablecc.objectmacro.walkers.CyclicInsertDetector;
 import org.sablecc.objectmacro.walkers.ExpandSignatureFinder;
 import org.sablecc.objectmacro.walkers.ImplicitReferenceFinder;
 import org.sablecc.objectmacro.walkers.NameVerifier;
-import org.sablecc.objectmacro.walkers.UnusedTextBlocksDetector;
+import org.sablecc.objectmacro.walkers.UnusedTextBlockDetector;
 
 /**
  * The main class of ObjectMacro.
@@ -357,7 +357,7 @@ public class ObjectMacro {
                     break;
                 }
 
-                ast.apply(new UnusedTextBlocksDetector(globalData));
+                ast.apply(new UnusedTextBlockDetector(globalData));
                 break;
             }
 
