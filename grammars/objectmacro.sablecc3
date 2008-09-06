@@ -116,7 +116,7 @@ Tokens
 
   {top_level, command, text, short_comment}
   // custom transition: *->previous state
-  command_tail = '$' white_space_not_newline* ascii_newline?;
+  command_tail = '$' (white_space_not_newline* ascii_newline)?;
 
   {top_level, command, text, short_comment, long_comment}
   // custom transition: *->long_comment
