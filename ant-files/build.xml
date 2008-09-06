@@ -262,7 +262,17 @@ public class Version {
          compress="true"
          level="9">
 
-      <fileset dir="${classes.dir}" />
+      <fileset dir="${classes.dir}" excludes="org/sablecc/objectmacro/**" />
+
+    </jar>
+
+    <jar destfile="${lib.dir}/objectmacro.jar"
+         manifest="${manifest.dir}/OBJECTMACRO.MF"
+         index="true"
+         compress="true"
+         level="9">
+
+      <fileset dir="${classes.dir}" includes="org/sablecc/objectmacro/**" />
 
     </jar>
 
