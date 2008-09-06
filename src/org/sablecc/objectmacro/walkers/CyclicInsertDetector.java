@@ -17,34 +17,28 @@
 
 package org.sablecc.objectmacro.walkers;
 
-import static org.sablecc.objectmacro.util.Utils.getVarName;
-
 import org.sablecc.objectmacro.exception.InternalException;
 import org.sablecc.objectmacro.exception.SemanticException;
 import org.sablecc.objectmacro.exception.SemanticRuntimeException;
 import org.sablecc.objectmacro.structures.GlobalData;
-import org.sablecc.objectmacro.structures.Macro;
-import org.sablecc.objectmacro.structures.Param;
 import org.sablecc.objectmacro.structures.Scope;
 import org.sablecc.objectmacro.structures.TextBlock;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.objectmacro.syntax3.node.AExpand;
 import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AMacroReference;
-import org.sablecc.objectmacro.syntax3.node.AOption;
 import org.sablecc.objectmacro.syntax3.node.ASourceFile;
 import org.sablecc.objectmacro.syntax3.node.ATextBlock;
 import org.sablecc.objectmacro.syntax3.node.ATextBlockReference;
-import org.sablecc.objectmacro.syntax3.node.TVar;
+import org.sablecc.objectmacro.syntax3.node.ATextInsert;
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
-public class VerifyNames
+public class CyclicInsertDetector
         extends DepthFirstAdapter {
 
     private GlobalData globalData;
 
     private Scope currentScope;
 
-    public VerifyNames(
+    public CyclicInsertDetector(
             GlobalData globalData) {
 
         if (globalData == null) {
@@ -97,57 +91,21 @@ public class VerifyNames
     }
 
     @Override
-    public void inAOption(
-            AOption node) {
+    public void caseATextInsert(
+            ATextInsert node) {
 
-        try {
-            this.globalData.addExpandOption((AExpand) node.parent(), node);
+        if (this.currentScope instanceof TextBlock) {
+            TextBlock textBlock = (TextBlock) this.currentScope;
+
+            TIdentifier name = ((ATextBlockReference) node
+                    .getTextBlockReference()).getName();
+            try {
+                textBlock.addTextInsert(textBlock.getTextBlock(name.getText()),
+                        name);
+            }
+            catch (SemanticException e) {
+                throw new SemanticRuntimeException(e);
+            }
         }
-        catch (SemanticException e) {
-            throw new SemanticRuntimeException(e);
-        }
-    }
-
-    @Override
-    public void caseTVar(
-            TVar node) {
-
-        String name = getVarName(node);
-        Param param = this.currentScope.getParam(name);
-        if (param == null) {
-            throw new SemanticRuntimeException(new SemanticException(
-                    "unknown parameter " + name, node));
-        }
-
-        this.currentScope.addReferencedParam(param);
-    }
-
-    @Override
-    public void caseAMacroReference(
-            AMacroReference node) {
-
-        String name = node.getName().getText();
-        Macro macro = this.currentScope.getMacro(name);
-        if (macro == null) {
-            throw new SemanticRuntimeException(new SemanticException(
-                    "unknown macro " + name, node.getName()));
-        }
-
-        macro.unsetAutoexpand();
-    }
-
-    @Override
-    public void caseATextBlockReference(
-            ATextBlockReference node) {
-
-        String name = node.getName().getText();
-        TextBlock textBlock = this.currentScope.getTextBlock(name);
-        if (textBlock == null) {
-            throw new SemanticRuntimeException(new SemanticException(
-                    "unknown text block " + name, node.getName()));
-        }
-
-        textBlock.unsetAutoexpand();
-        this.currentScope.addReferencedTextBlock(textBlock);
     }
 }

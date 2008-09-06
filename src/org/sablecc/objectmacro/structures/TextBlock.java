@@ -36,7 +36,7 @@ public class TextBlock
 
     private final GlobalData globalData;
 
-    private boolean autoexpand = true;
+    private boolean unused = true;
 
     // for code generation
 
@@ -154,14 +154,14 @@ public class TextBlock
         }
     }
 
-    public void unsetAutoexpand() {
+    public void unsetUnused() {
 
-        this.autoexpand = false;
+        this.unused = false;
     }
 
-    public boolean isAutoexpand() {
+    public boolean isUnused() {
 
-        return this.autoexpand;
+        return this.unused;
     }
 
     public M_text_block getM_text_block() {
