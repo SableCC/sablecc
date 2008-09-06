@@ -124,7 +124,7 @@ Tokens
 
   {top_level, command, text, short_comment, long_comment}
   // custom transition: *->previous state
-  long_comment_end = '$end$';
+  long_comment_end = '$end$' (white_space_not_newline* ascii_newline)?;
 
   {top_level, command, text, short_comment}
   invalid_command = '$' ascii_identifier (':' | '$');
