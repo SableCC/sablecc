@@ -22,14 +22,14 @@ import java.io.StringReader;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.sablecc.sablecc.exception.InternalException;
-import org.sablecc.sablecc.launcher.syntax3.lexer.Lexer;
-import org.sablecc.sablecc.launcher.syntax3.node.ALongOption;
-import org.sablecc.sablecc.launcher.syntax3.node.ALongOptionArgument;
-import org.sablecc.sablecc.launcher.syntax3.node.AShortOption;
-import org.sablecc.sablecc.launcher.syntax3.node.AShortOptionsArgument;
-import org.sablecc.sablecc.launcher.syntax3.node.Start;
-import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
+import org.sablecc.objectmacro.exception.InternalException;
+import org.sablecc.objectmacro.launcher.syntax3.lexer.Lexer;
+import org.sablecc.objectmacro.launcher.syntax3.node.ALongOption;
+import org.sablecc.objectmacro.launcher.syntax3.node.ALongOptionArgument;
+import org.sablecc.objectmacro.launcher.syntax3.node.AShortOption;
+import org.sablecc.objectmacro.launcher.syntax3.node.AShortOptionsArgument;
+import org.sablecc.objectmacro.launcher.syntax3.node.Start;
+import org.sablecc.objectmacro.launcher.syntax3.parser.Parser;
 
 /**
  * The Option enum encapsulates command-line options. This enum provides short
@@ -44,10 +44,17 @@ enum Option {
     /** Set destination package. */
     PACKAGE("p", "package", "packagename", "set destination package"),
 
-    /** Display less information. */
-    QUIET("q", "quiet", null, "display less information"),
-    /** Display more information. */
-    VERBOSE("v", "verbose", null, "display more information"),
+    /** Ignore unused constructs. */
+    LENIENT("l", "lenient", null, "ignore unused constructs"),
+    /** Detect unused constructs. */
+    STRICT("s", "strict", null, "detect unused constructs (default)"),
+
+    /** Display errors only. */
+    QUIET("q", "quiet", null, "display errors only"),
+    /** Display progress. */
+    INFORMATIVE("i", "informative", null, "display progress (default)"),
+    /** Display detailed progress. */
+    VERBOSE("v", "verbose", null, "display detailed progress"),
 
     /** Display version and exit. */
     VERSION(null, "version", null, "display version and exit"),

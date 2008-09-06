@@ -23,64 +23,81 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.regex.Matcher;
 
-import org.sablecc.objectmacro.macro.M_macro_file;
+import org.sablecc.objectmacro.exception.ExitException;
+import org.sablecc.objectmacro.exception.InternalException;
+import org.sablecc.objectmacro.macro.M_macro;
+import org.sablecc.objectmacro.macro.M_printable;
 import org.sablecc.objectmacro.macro.M_root_macro;
-import org.sablecc.objectmacro.macro.M_macro_file.M_macro;
-import org.sablecc.objectmacro.macro.M_macro_file.M_macro.M_nested_macro;
-import org.sablecc.objectmacro.structures.Expand;
+import org.sablecc.objectmacro.macro.M_text_block;
+import org.sablecc.objectmacro.macro.M_macro.M_expand_append;
+import org.sablecc.objectmacro.macro.M_macro.M_submacro_creator;
+import org.sablecc.objectmacro.structures.ExpandSignature;
+import org.sablecc.objectmacro.structures.GlobalData;
 import org.sablecc.objectmacro.structures.Macro;
 import org.sablecc.objectmacro.structures.Param;
+import org.sablecc.objectmacro.structures.Scope;
+import org.sablecc.objectmacro.structures.TextBlock;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.objectmacro.syntax3.node.ADQuoteMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.AEolMacroBodyPart;
+import org.sablecc.objectmacro.syntax3.node.AEolTextBlockBodyPart;
 import org.sablecc.objectmacro.syntax3.node.AEscapeMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AExpand;
-import org.sablecc.objectmacro.syntax3.node.AFile;
+import org.sablecc.objectmacro.syntax3.node.AEscapeStringPart;
+import org.sablecc.objectmacro.syntax3.node.AEscapeTextBlockBodyPart;
+import org.sablecc.objectmacro.syntax3.node.AExpandMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AMacroMacroBodyPart;
+import org.sablecc.objectmacro.syntax3.node.AOption;
 import org.sablecc.objectmacro.syntax3.node.AParam;
+import org.sablecc.objectmacro.syntax3.node.ASourceFile;
+import org.sablecc.objectmacro.syntax3.node.ATextBlock;
+import org.sablecc.objectmacro.syntax3.node.ATextBlockReference;
+import org.sablecc.objectmacro.syntax3.node.ATextBlockReferenceStaticValue;
+import org.sablecc.objectmacro.syntax3.node.ATextInsert;
+import org.sablecc.objectmacro.syntax3.node.ATextInsertMacroBodyPart;
+import org.sablecc.objectmacro.syntax3.node.ATextInsertTextBlockBodyPart;
 import org.sablecc.objectmacro.syntax3.node.ATextMacroBodyPart;
+import org.sablecc.objectmacro.syntax3.node.ATextStringPart;
+import org.sablecc.objectmacro.syntax3.node.ATextTextBlockBodyPart;
 import org.sablecc.objectmacro.syntax3.node.AVarMacroBodyPart;
+import org.sablecc.objectmacro.syntax3.node.AVarTextBlockBodyPart;
 import org.sablecc.objectmacro.syntax3.node.PParam;
-import org.sablecc.sablecc.exception.ExitException;
-import org.sablecc.sablecc.exception.InternalException;
 
 public class GenerateCode
         extends DepthFirstAdapter {
+
+    private final GlobalData globalData;
 
     private final File destinationDirectory;
 
     private final String destinationPackage;
 
-    private M_macro_file current_Mmacro_file;
+    private Scope currentScope;
 
-    private Macro current_macro;
+    private M_expand_append current_M_expand_append;
 
-    private String current_indent = "";
+    private String current_option;
 
     public GenerateCode(
+            GlobalData globalData,
             java.io.File destinationDirectory,
             String destinationPackage) {
 
+        this.globalData = globalData;
         this.destinationDirectory = destinationDirectory;
         this.destinationPackage = destinationPackage;
     }
 
     @Override
-    public void inAFile(
-            AFile node) {
+    public void inASourceFile(
+            ASourceFile node) {
 
-        org.sablecc.objectmacro.structures.File file = org.sablecc.objectmacro.structures.File
-                .getFile(node);
-
-        file.setMmacro(null);
+        this.currentScope = this.globalData.getSourceFile();
     }
 
     @Override
-    public void outAFile(
-            AFile node) {
+    public void outASourceFile(
+            ASourceFile node) {
 
         File outFile = new File(this.destinationDirectory, "Macro.java");
 
@@ -89,11 +106,28 @@ public class GenerateCode
             BufferedWriter bw = new BufferedWriter(fw);
 
             M_root_macro macro_root_macro = new M_root_macro();
+
             if (!this.destinationPackage.equals("")) {
                 macro_root_macro.newM_package(this.destinationPackage);
             }
 
             bw.write(macro_root_macro.toString());
+
+            bw.close();
+            fw.close();
+
+            outFile = new File(this.destinationDirectory, "Printable.java");
+
+            fw = new FileWriter(outFile);
+            bw = new BufferedWriter(fw);
+
+            M_printable m_printable = new M_printable();
+
+            if (!this.destinationPackage.equals("")) {
+                m_printable.newM_package(this.destinationPackage);
+            }
+
+            bw.write(m_printable.toString());
 
             bw.close();
             fw.close();
@@ -104,204 +138,502 @@ public class GenerateCode
             System.err.println(e.getMessage());
             throw new ExitException();
         }
+
+        this.currentScope = this.currentScope.getParentScope();
     }
 
     @Override
     public void inAMacro(
             AMacro node) {
 
-        this.current_macro = Macro.getMacro(node);
+        Macro macro = this.globalData.getMacro(node);
 
-        if (this.current_macro.isTopLevel()) {
-            this.current_Mmacro_file = new M_macro_file();
+        if (this.currentScope instanceof Macro) {
+            Macro parentmacro = (Macro) this.currentScope;
 
-            if (!this.destinationPackage.equals("")) {
-                this.current_Mmacro_file.newM_package(this.destinationPackage);
+            if (macro.isAutoexpand()) {
+                parentmacro.getM_macro().newM_expand_append(
+                        this.globalData.getExpandSignature(node).getName());
             }
+        }
 
-            this.current_indent = "";
+        macro.setM_macro(new M_macro(macro.getName()));
 
-            this.current_macro.setMmacro(this.current_Mmacro_file.newM_macro(
-                    this.current_macro.getName(), this.current_indent));
-            this.current_macro.getMmacro().newM_public_constructor();
+        if (!this.destinationPackage.equals("")) {
+            macro.getM_macro().newM_package(this.destinationPackage);
+        }
+
+        if (macro.isAutoexpand() && macro.isTopLevel()) {
+            macro.getM_macro().newM_public_top_level_constructor();
+        }
+        else if (macro.isTopLevel()) {
+            macro.getM_macro().newM_package_top_level_constructor();
         }
         else {
-            this.current_indent += "  ";
-            this.current_macro.setMmacro(this.current_macro.getParentScope()
-                    .getMmacro().newM_macro(this.current_macro.getName(),
-                            this.current_indent));
+            macro.getM_macro().newM_sub_level_constructor();
+            macro.getM_macro()
+                    .newM_sub_level_constructor_parent_initialisation();
         }
 
-        M_macro mmacro = this.current_macro.getMmacro();
+        if (node.getParams().size() > 0) {
+            boolean first = macro.isTopLevel();
+            for (PParam pParam : node.getParams()) {
+                String paramName = ((AParam) pParam).getName().getText();
 
-        for (Iterator<Macro> i = this.current_macro.getSubMacrosIterator(); i
-                .hasNext();) {
-            Macro subMacro = i.next();
+                macro.getM_macro().newM_param_declaration(paramName);
+                macro.getM_macro().newM_constructor_param_initialisation(
+                        paramName);
+                macro.getM_macro().newM_local_param_accessor(paramName);
 
-            M_nested_macro mnested_macro = mmacro.newM_nested_macro(subMacro
-                    .getName());
+                if (first) {
+                    first = false;
 
-            for (PParam pParam : subMacro.getDefinition().getParameters()) {
-                Param param = Param.getParam(pParam);
-
-                if (param.isFirst()) {
-                    mnested_macro.newM_nested_macro_first_parameter(param
-                            .getName());
-                    mnested_macro.newM_new_first_parameter(param.getName());
+                    macro.getM_macro().newM_constructor_first_param(paramName);
                 }
                 else {
-                    mnested_macro.newM_nested_macro_additional_parameter(param
-                            .getName());
-                    mnested_macro
-                            .newM_new_additional_parameter(param.getName());
-                }
-            }
-
-            if (subMacro.isImplicitlyExpanded()) {
-                mnested_macro.newM_add_to_nested_macro();
-            }
-            else {
-                for (Iterator<Expand> j = subMacro
-                        .getReferringExpandsIterator(); j.hasNext();) {
-                    Expand expand = j.next();
-
-                    if (expand.getMacro() == this.current_macro) {
-                        mnested_macro.newM_add_to_expand(expand.getName());
-                    }
+                    macro.getM_macro().newM_constructor_additional_param(
+                            paramName);
                 }
             }
         }
+
+        for (Param referencedParam : macro.getReferencedParams()) {
+            macro.getM_macro().newM_param_accessor(referencedParam.getName(),
+                    referencedParam.getMacro().getName());
+        }
+
+        for (TextBlock referencedTextBlock : macro.getReferencedTextBlocks()) {
+            if (referencedTextBlock.getParentScope() instanceof Macro) {
+                Macro parentMacro = (Macro) referencedTextBlock
+                        .getParentScope();
+                macro.getM_macro().newM_sub_level_text_block_accessor(
+                        referencedTextBlock.getName(), parentMacro.getName());
+            }
+            else {
+                macro.getM_macro().newM_top_level_text_block_accessor(
+                        referencedTextBlock.getName());
+            }
+        }
+
+        for (ExpandSignature expandSignature : macro.getExpandSignatures()) {
+            macro.getM_macro().newM_expand_declaration(
+                    expandSignature.getName());
+        }
+
+        for (Macro referencedMacro : macro.getReferencedMacros()) {
+            M_submacro_creator m_submacro_creator = macro.getM_macro()
+                    .newM_submacro_creator(referencedMacro.getName());
+
+            if (!referencedMacro.isTopLevel()) {
+                m_submacro_creator.newM_submacro_new_this_param();
+            }
+
+            boolean first = true;
+
+            for (PParam pParam : referencedMacro.getDefinition().getParams()) {
+                String paramName = ((AParam) pParam).getName().getText();
+
+                if (first && referencedMacro.isTopLevel()) {
+                    m_submacro_creator.newM_submacro_new_first_param(paramName);
+                }
+                else {
+                    m_submacro_creator
+                            .newM_submacro_new_additional_param(paramName);
+                }
+
+                if (first) {
+                    first = false;
+                    m_submacro_creator.newM_submacro_first_parameter(paramName);
+                }
+                else {
+                    m_submacro_creator
+                            .newM_submacro_additional_parameter(paramName);
+                }
+            }
+
+            for (ExpandSignature expandSignature : macro
+                    .getExpandSignaturesOfReferencedMacro(referencedMacro)) {
+                m_submacro_creator
+                        .newM_add_to_expand(expandSignature.getName());
+            }
+        }
+
+        this.currentScope = macro;
     }
 
     @Override
     public void outAMacro(
             AMacro node) {
 
-        if (this.current_macro.isTopLevel()) {
-            File outFile = new File(this.destinationDirectory, "M_"
-                    + this.current_macro.getName() + ".java");
+        Macro macro = (Macro) this.currentScope;
 
-            try {
-                FileWriter fw = new FileWriter(outFile);
-                BufferedWriter bw = new BufferedWriter(fw);
+        File outFile = new File(this.destinationDirectory, "M_"
+                + macro.getName() + ".java");
 
-                bw.write(this.current_Mmacro_file.toString());
+        try {
+            FileWriter fw = new FileWriter(outFile);
+            BufferedWriter bw = new BufferedWriter(fw);
 
-                bw.close();
-                fw.close();
+            bw.write(macro.getM_macro().toString());
+
+            bw.close();
+            fw.close();
+        }
+        catch (IOException e) {
+            System.err.println("I/O ERROR: failed to write "
+                    + outFile.getAbsolutePath());
+            System.err.println(e.getMessage());
+            throw new ExitException();
+        }
+
+        this.currentScope = this.currentScope.getParentScope();
+    }
+
+    @Override
+    public void inATextBlock(
+            ATextBlock node) {
+
+        TextBlock textBlock = this.globalData.getTextBlock(node);
+
+        if (this.currentScope instanceof Macro) {
+            Macro parentmacro = (Macro) this.currentScope;
+
+            if (textBlock.isAutoexpand()) {
+                parentmacro.getM_macro().newM_text_insert_append(
+                        textBlock.getName());
             }
-            catch (IOException e) {
-                System.err.println("I/O ERROR: failed to write "
-                        + outFile.getAbsolutePath());
-                System.err.println(e.getMessage());
-                throw new ExitException();
-            }
+        }
+
+        if (this.currentScope instanceof Macro) {
+            Macro currentMacro = (Macro) this.currentScope;
+
+            currentMacro.getM_macro().newM_text_block_declaration(
+                    textBlock.getName());
+            currentMacro.getM_macro()
+                    .newM_constructor_text_block_initialisation(
+                            textBlock.getName());
+            currentMacro.getM_macro().newM_local_text_block_accessor(
+                    textBlock.getName());
+        }
+
+        textBlock.setM_text_block(new M_text_block(textBlock.getName()));
+
+        if (!this.destinationPackage.equals("")) {
+            textBlock.getM_text_block().newM_package(this.destinationPackage);
+        }
+
+        if (textBlock.isTopLevel()) {
+            textBlock.getM_text_block().newM_top_level_constructor();
         }
         else {
-            this.current_indent = this.current_indent.substring(2);
-            this.current_macro = (Macro) this.current_macro.getParentScope();
+            textBlock.getM_text_block().newM_sub_level_constructor();
         }
 
+        for (Param referencedParam : textBlock.getReferencedParams()) {
+            textBlock.getM_text_block().newM_param_accessor(
+                    referencedParam.getName(),
+                    referencedParam.getMacro().getName());
+        }
+
+        for (TextBlock referencedTextBlock : textBlock
+                .getReferencedTextBlocks()) {
+            if (referencedTextBlock.getParentScope() instanceof Macro) {
+                Macro parentMacro = (Macro) referencedTextBlock
+                        .getParentScope();
+                textBlock.getM_text_block().newM_sub_level_text_block_accessor(
+                        referencedTextBlock.getName(), parentMacro.getName());
+            }
+            else {
+                textBlock.getM_text_block().newM_top_level_text_block_accessor(
+                        referencedTextBlock.getName());
+            }
+        }
+
+        this.currentScope = textBlock;
     }
 
     @Override
-    public void outAParam(
-            AParam node) {
+    public void outATextBlock(
+            ATextBlock node) {
 
-        Param param = Param.getParam(node);
+        TextBlock textBlock = (TextBlock) this.currentScope;
 
-        M_macro mmacro = this.current_macro.getMmacro();
+        File outFile = new File(this.destinationDirectory, "T_"
+                + textBlock.getName() + ".java");
 
-        if (param.isFirst()) {
-            mmacro.newM_constructor_first_parameter(param.getName());
+        try {
+            FileWriter fw = new FileWriter(outFile);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            bw.write(textBlock.getM_text_block().toString());
+
+            bw.close();
+            fw.close();
         }
-        else {
-            mmacro.newM_constructor_additional_parameter(param.getName());
+        catch (IOException e) {
+            System.err.println("I/O ERROR: failed to write "
+                    + outFile.getAbsolutePath());
+            System.err.println(e.getMessage());
+            throw new ExitException();
         }
 
-        mmacro.newM_parameter_declaration(param.getName());
-        mmacro.newM_constructor_initialisation(param.getName());
+        this.currentScope = this.currentScope.getParentScope();
     }
 
     @Override
-    public void outAVarMacroBodyPart(
-            AVarMacroBodyPart node) {
-
-        M_macro mmacro = this.current_macro.getMmacro();
-
-        mmacro.newM_var_append(getVarName(node.getVar()));
-    }
-
-    @Override
-    public void outATextMacroBodyPart(
+    public void inATextMacroBodyPart(
             ATextMacroBodyPart node) {
 
-        M_macro mmacro = this.current_macro.getMmacro();
+        Macro macro = (Macro) this.currentScope;
 
-        mmacro.newM_text_append(node.getText().getText());
+        String text = node.getText().getText();
+        text = text.replaceAll("\"", Matcher.quoteReplacement("\\\""));
+
+        macro.getM_macro().newM_text_append(text);
     }
 
     @Override
-    public void outADQuoteMacroBodyPart(
-            ADQuoteMacroBodyPart node) {
-
-        M_macro mmacro = this.current_macro.getMmacro();
-
-        mmacro.newM_dquote_append();
-    }
-
-    @Override
-    public void outAEolMacroBodyPart(
+    public void inAEolMacroBodyPart(
             AEolMacroBodyPart node) {
 
-        M_macro mmacro = this.current_macro.getMmacro();
+        Macro macro = (Macro) this.currentScope;
 
-        mmacro.newM_eol_append();
+        macro.getM_macro().newM_eol_append();
     }
 
     @Override
-    public void outAEscapeMacroBodyPart(
+    public void inAEscapeMacroBodyPart(
             AEscapeMacroBodyPart node) {
 
-        M_macro mmacro = this.current_macro.getMmacro();
+        Macro macro = (Macro) this.currentScope;
 
-        char c = node.getEscape().getText().charAt(1);
-        switch (c) {
+        String text;
+
+        switch (node.getEscape().getText().charAt(1)) {
         case '\\':
-            mmacro.newM_escape_append("\\\\");
+            text = "\\\\";
             break;
         case '$':
-            mmacro.newM_escape_append("$");
+            text = "$";
             break;
         default:
-            throw new InternalException("unknown escape char");
+            throw new InternalException("invalid escape");
+        }
+
+        macro.getM_macro().newM_escape_append(text);
+    }
+
+    @Override
+    public void inAVarMacroBodyPart(
+            AVarMacroBodyPart node) {
+
+        Macro macro = (Macro) this.currentScope;
+
+        macro.getM_macro().newM_var_append(getVarName(node.getVar()));
+    }
+
+    @Override
+    public void inAExpandMacroBodyPart(
+            AExpandMacroBodyPart node) {
+
+        Macro macro = (Macro) this.currentScope;
+
+        ExpandSignature expandSignature = this.globalData
+                .getExpandSignature(node.getExpand());
+
+        this.current_M_expand_append = macro.getM_macro().newM_expand_append(
+                expandSignature.getName());
+    }
+
+    @Override
+    public void outAExpandMacroBodyPart(
+            AExpandMacroBodyPart node) {
+
+        this.current_M_expand_append = null;
+    }
+
+    @Override
+    public void inAOption(
+            AOption node) {
+
+        this.current_option = node.getName().getText();
+    }
+
+    @Override
+    public void outAOption(
+            AOption node) {
+
+        this.current_option = null;
+    }
+
+    @Override
+    public void inATextBlockReferenceStaticValue(
+            ATextBlockReferenceStaticValue node) {
+
+        String textBlockName = ((ATextBlockReference) node
+                .getTextBlockReference()).getName().getText();
+
+        if (this.current_option.equals("none")) {
+            this.current_M_expand_append
+                    .newM_expand_append_none_text_block(textBlockName);
+        }
+        else if (this.current_option.equals("separator")) {
+            this.current_M_expand_append
+                    .newM_expand_append_separator_text_block(textBlockName);
+        }
+        else if (this.current_option.equals("before_first")) {
+            this.current_M_expand_append
+                    .newM_expand_append_before_first_text_block(textBlockName);
+        }
+        else if (this.current_option.equals("after_last")) {
+            this.current_M_expand_append
+                    .newM_expand_append_after_last_text_block(textBlockName);
+        }
+        else {
+            throw new InternalException("unknown option");
         }
     }
 
     @Override
-    public void outAMacroMacroBodyPart(
-            AMacroMacroBodyPart node) {
+    public void inATextStringPart(
+            ATextStringPart node) {
 
-        M_macro mmacro = this.current_macro.getMmacro();
+        String text = node.getText().getText();
+        text = text.replaceAll("\"", Matcher.quoteReplacement("\\\""));
 
-        Macro subMacro = Macro.getMacro(node.getMacro());
-
-        if (subMacro.isImplicitlyExpanded()) {
-            mmacro.newM_nested_macro_declaration(subMacro.getName());
-            mmacro.newM_nested_macro_append(subMacro.getName());
+        if (this.current_option.equals("none")) {
+            this.current_M_expand_append
+                    .newM_expand_append_none_string_part(text);
+        }
+        else if (this.current_option.equals("separator")) {
+            this.current_M_expand_append
+                    .newM_expand_append_separator_string_part(text);
+        }
+        else if (this.current_option.equals("before_first")) {
+            this.current_M_expand_append
+                    .newM_expand_append_before_first_string_part(text);
+        }
+        else if (this.current_option.equals("after_last")) {
+            this.current_M_expand_append
+                    .newM_expand_append_after_last_string_part(text);
+        }
+        else {
+            throw new InternalException("unknown option");
         }
     }
 
     @Override
-    public void outAExpand(
-            AExpand node) {
+    public void inAEscapeStringPart(
+            AEscapeStringPart node) {
 
-        M_macro mmacro = this.current_macro.getMmacro();
+        String text;
 
-        Expand expand = Expand.getExpand(node);
+        switch (node.getEscape().getText().charAt(1)) {
+        case '\\':
+            text = "\\\\";
+            break;
+        case '$':
+            text = "$";
+            break;
+        case '"':
+            text = "\\\"";
+            break;
+        default:
+            throw new InternalException("invalid escape");
+        }
 
-        mmacro.newM_expand_declaration(expand.getName());
-        mmacro.newM_expand_append(expand.getName());
+        if (this.current_option.equals("none")) {
+            this.current_M_expand_append
+                    .newM_expand_append_none_string_part(text);
+        }
+        else if (this.current_option.equals("separator")) {
+            this.current_M_expand_append
+                    .newM_expand_append_separator_string_part(text);
+        }
+        else if (this.current_option.equals("before_first")) {
+            this.current_M_expand_append
+                    .newM_expand_append_before_first_string_part(text);
+        }
+        else if (this.current_option.equals("after_last")) {
+            this.current_M_expand_append
+                    .newM_expand_append_after_last_string_part(text);
+        }
+        else {
+            throw new InternalException("unknown option");
+        }
     }
 
+    @Override
+    public void inATextInsertMacroBodyPart(
+            ATextInsertMacroBodyPart node) {
+
+        Macro macro = (Macro) this.currentScope;
+
+        String textInsertName = ((ATextBlockReference) ((ATextInsert) node
+                .getTextInsert()).getTextBlockReference()).getName().getText();
+        macro.getM_macro().newM_text_insert_append(textInsertName);
+    }
+
+    @Override
+    public void inATextTextBlockBodyPart(
+            ATextTextBlockBodyPart node) {
+
+        TextBlock textBlock = (TextBlock) this.currentScope;
+
+        String text = node.getText().getText();
+        text = text.replaceAll("\"", Matcher.quoteReplacement("\\\""));
+
+        textBlock.getM_text_block().newM_text_append(text);
+    }
+
+    @Override
+    public void inAEolTextBlockBodyPart(
+            AEolTextBlockBodyPart node) {
+
+        TextBlock textBlock = (TextBlock) this.currentScope;
+
+        textBlock.getM_text_block().newM_eol_append();
+    }
+
+    @Override
+    public void inAEscapeTextBlockBodyPart(
+            AEscapeTextBlockBodyPart node) {
+
+        TextBlock textBlock = (TextBlock) this.currentScope;
+
+        String text;
+
+        switch (node.getEscape().getText().charAt(1)) {
+        case '\\':
+            text = "\\\\";
+            break;
+        case '$':
+            text = "$";
+            break;
+        default:
+            throw new InternalException("invalid escape");
+        }
+
+        textBlock.getM_text_block().newM_escape_append(text);
+    }
+
+    @Override
+    public void inAVarTextBlockBodyPart(
+            AVarTextBlockBodyPart node) {
+
+        TextBlock textBlock = (TextBlock) this.currentScope;
+
+        textBlock.getM_text_block().newM_var_append(getVarName(node.getVar()));
+    }
+
+    @Override
+    public void inATextInsertTextBlockBodyPart(
+            ATextInsertTextBlockBodyPart node) {
+
+        TextBlock textBlock = (TextBlock) this.currentScope;
+
+        String textInsertName = ((ATextBlockReference) ((ATextInsert) node
+                .getTextInsert()).getTextBlockReference()).getName().getText();
+        textBlock.getM_text_block().newM_text_insert_append(textInsertName);
+    }
 }

@@ -17,7 +17,7 @@
 
 package org.sablecc.objectmacro.launcher;
 
-import static org.sablecc.sablecc.launcher.Version.VERSION;
+import static org.sablecc.objectmacro.launcher.Version.VERSION;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,21 +27,28 @@ import java.io.PushbackReader;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.sablecc.objectmacro.exception.ExitException;
+import org.sablecc.objectmacro.exception.InternalException;
+import org.sablecc.objectmacro.exception.InvalidArgumentException;
 import org.sablecc.objectmacro.exception.SemanticException;
 import org.sablecc.objectmacro.exception.SemanticRuntimeException;
-import org.sablecc.objectmacro.syntax3.lexer.Lexer;
+import org.sablecc.objectmacro.structures.GlobalData;
+import org.sablecc.objectmacro.structures.Macro;
+import org.sablecc.objectmacro.structures.TextBlock;
 import org.sablecc.objectmacro.syntax3.lexer.LexerException;
+import org.sablecc.objectmacro.syntax3.node.AMacroSourceFilePart;
+import org.sablecc.objectmacro.syntax3.node.ATextBlockSourceFilePart;
+import org.sablecc.objectmacro.syntax3.node.PSourceFilePart;
 import org.sablecc.objectmacro.syntax3.node.Start;
 import org.sablecc.objectmacro.syntax3.parser.Parser;
 import org.sablecc.objectmacro.syntax3.parser.ParserException;
-import org.sablecc.objectmacro.walkers.FindDefinitions;
-import org.sablecc.objectmacro.walkers.FindSubMacros;
+import org.sablecc.objectmacro.util.Strictness;
+import org.sablecc.objectmacro.util.Verbosity;
+import org.sablecc.objectmacro.walkers.AddImplicitReferences;
+import org.sablecc.objectmacro.walkers.ComputeExpandSignatures;
+import org.sablecc.objectmacro.walkers.DetectCyclicInserts;
 import org.sablecc.objectmacro.walkers.GenerateCode;
-import org.sablecc.objectmacro.walkers.VerifyDefinitions;
-import org.sablecc.sablecc.exception.ExitException;
-import org.sablecc.sablecc.exception.InternalException;
-import org.sablecc.sablecc.exception.InvalidArgumentException;
-import org.sablecc.sablecc.util.Verbosity;
+import org.sablecc.objectmacro.walkers.VerifyNames;
 
 /**
  * The main class of ObjectMacro.
@@ -122,6 +129,7 @@ public class ObjectMacro {
         ArgumentCollection argumentCollection = new ArgumentCollection(
                 arguments);
 
+        Strictness strictness = Strictness.STRICT;
         Verbosity verbosity = Verbosity.NORMAL;
 
         // handle option arguments
@@ -149,8 +157,20 @@ public class ObjectMacro {
                 destinationPackage = optionArgument.getOperand();
                 break;
 
+            case LENIENT:
+                strictness = Strictness.LENIENT;
+                break;
+
+            case STRICT:
+                strictness = Strictness.STRICT;
+                break;
+
             case QUIET:
                 verbosity = Verbosity.QUIET;
+                break;
+
+            case INFORMATIVE:
+                verbosity = Verbosity.NORMAL;
                 break;
 
             case VERBOSE:
@@ -192,6 +212,7 @@ public class ObjectMacro {
             System.out
                     .println("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
             System.out.println();
+            break;
         }
 
         List<File> macroFiles = new LinkedList<File>();
@@ -222,7 +243,7 @@ public class ObjectMacro {
         for (File macroFile : macroFiles) {
 
             compile(macroFile, destinationDirectory, destinationPackage,
-                    verbosity);
+                    verbosity, strictness);
         }
     }
 
@@ -233,7 +254,8 @@ public class ObjectMacro {
             File macroFile,
             File destinationDirectory,
             String destinationPackage,
-            Verbosity verbosity)
+            Verbosity verbosity,
+            Strictness strictness)
             throws InvalidArgumentException, ParserException, LexerException,
             SemanticException {
 
@@ -241,6 +263,7 @@ public class ObjectMacro {
         case NORMAL:
         case VERBOSE:
             System.out.println("Compiling " + macroFile);
+            break;
         }
 
         @SuppressWarnings("unused")
@@ -254,9 +277,10 @@ public class ObjectMacro {
             switch (verbosity) {
             case VERBOSE:
                 System.out.println(" Parsing");
+                break;
             }
 
-            ast = new Parser(new Lexer(pbr)).parse();
+            ast = new Parser(new CustomLexer(pbr)).parse();
 
             pbr.close();
             br.close();
@@ -269,42 +293,154 @@ public class ObjectMacro {
         switch (verbosity) {
         case VERBOSE:
             System.out.println(" Verifying semantics");
+            break;
         }
 
-        verifySemantics(ast);
+        GlobalData globalData = verifySemantics(ast, verbosity, strictness);
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println(" Processing semantics");
+            break;
+        }
+
+        processSemantics(ast, globalData, verbosity);
 
         switch (verbosity) {
         case VERBOSE:
             System.out.println(" Generating code");
+            break;
         }
 
-        generateCode(ast, destinationDirectory, destinationPackage);
+        generateCode(ast, globalData, destinationDirectory, destinationPackage);
     }
 
-    private static void verifySemantics(
-            Start ast)
+    private static GlobalData verifySemantics(
+            Start ast,
+            Verbosity verbosity,
+            Strictness strictness)
             throws SemanticException {
 
+        GlobalData globalData;
+
         try {
-            ast.apply(new FindDefinitions());
-            ast.apply(new VerifyDefinitions());
-            ast.apply(new FindSubMacros());
+            globalData = new GlobalData(ast.getPSourceFile());
+
+            switch (verbosity) {
+            case VERBOSE:
+                System.out.println("  Checking names");
+                break;
+            }
+
+            ast.apply(new VerifyNames(globalData));
+
+            switch (verbosity) {
+            case VERBOSE:
+                System.out.println("  Detecting cyclic inserts");
+                break;
+            }
+
+            ast.apply(new DetectCyclicInserts(globalData));
+
+            switch (verbosity) {
+            case VERBOSE:
+                System.out.println("  Detecting missing top-level macro");
+                break;
+            }
+
+            detectMissingTopLevelMacro(globalData);
+
+            switch (strictness) {
+            case STRICT:
+                switch (verbosity) {
+                case VERBOSE:
+                    System.out.println("  Detecting unused text blocks");
+                    break;
+                }
+
+                detectUnusedTextBlocks(globalData);
+                break;
+            }
+
         }
         catch (SemanticRuntimeException e) {
             throw e.getSemanticException();
         }
+
+        return globalData;
+    }
+
+    private static void detectMissingTopLevelMacro(
+            GlobalData globalData) {
+
+        for (PSourceFilePart part : globalData.getSourceFile().getDefinition()
+                .getParts()) {
+            if (part instanceof AMacroSourceFilePart) {
+                AMacroSourceFilePart macroPart = (AMacroSourceFilePart) part;
+                Macro macro = globalData.getMacro(macroPart.getMacro());
+                if (macro.isAutoexpand()) {
+                    // there is at least one top level macro
+                    return;
+                }
+            }
+        }
+
+        System.err
+                .println("ERROR: semantic error at [0,0] there is no top-level macro");
+        throw new ExitException();
+    }
+
+    private static void detectUnusedTextBlocks(
+            GlobalData globalData)
+            throws SemanticException {
+
+        for (PSourceFilePart part : globalData.getSourceFile().getDefinition()
+                .getParts()) {
+            if (part instanceof ATextBlockSourceFilePart) {
+                ATextBlockSourceFilePart textBlockPart = (ATextBlockSourceFilePart) part;
+                TextBlock textBlock = globalData.getTextBlock(textBlockPart
+                        .getTextBlock());
+                if (textBlock.isAutoexpand()) {
+                    throw new SemanticException("unused text block "
+                            + textBlock.getName(), textBlock.getDefinition()
+                            .getName());
+                }
+            }
+        }
+    }
+
+    private static void processSemantics(
+            Start ast,
+            GlobalData globalData,
+            Verbosity verbosity) {
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println("  Computing references");
+            break;
+        }
+
+        ast.apply(new AddImplicitReferences(globalData));
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println("  Computing expand signatures");
+            break;
+        }
+
+        ast.apply(new ComputeExpandSignatures(globalData));
     }
 
     private static void generateCode(
             Start ast,
+            GlobalData globalData,
             File destinationDirectory,
             String destinationPackage)
             throws SemanticException {
 
         try {
-            ast
-                    .apply(new GenerateCode(destinationDirectory,
-                            destinationPackage));
+            ast.apply(new GenerateCode(globalData, destinationDirectory,
+                    destinationPackage));
         }
         catch (SemanticRuntimeException e) {
             throw e.getSemanticException();

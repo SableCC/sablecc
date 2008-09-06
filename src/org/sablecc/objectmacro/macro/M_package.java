@@ -5,12 +5,12 @@ package org.sablecc.objectmacro.macro;
 public class M_package
         extends Macro {
 
-    private final String p_name;
+    private final String p_package_name;
 
     public M_package(
-            String p_name) {
+            String p_package_name) {
 
-        this.p_name = p_name;
+        this.p_package_name = p_package_name;
     }
 
     @Override
@@ -19,7 +19,7 @@ public class M_package
 
         sb.append(System.getProperty("line.separator"));
         sb.append("package ");
-        sb.append(this.p_name);
+        sb.append(this.p_package_name);
         sb.append(";");
         sb.append(System.getProperty("line.separator"));
     }

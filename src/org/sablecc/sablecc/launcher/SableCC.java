@@ -157,6 +157,10 @@ public class SableCC {
                 verbosity = Verbosity.QUIET;
                 break;
 
+            case INFORMATIVE:
+                verbosity = Verbosity.NORMAL;
+                break;
+
             case VERBOSE:
                 verbosity = Verbosity.VERBOSE;
                 break;

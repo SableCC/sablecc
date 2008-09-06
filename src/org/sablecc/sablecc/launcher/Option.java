@@ -51,6 +51,9 @@ enum Option {
 
     /** Display less information. */
     QUIET("q", "quiet", null, "display less information"),
+    /** Display normal information. */
+    INFORMATIVE("i", "informative", null,
+            "display normal information (default)"),
     /** Display more information. */
     VERBOSE("v", "verbose", null, "display more information"),
 

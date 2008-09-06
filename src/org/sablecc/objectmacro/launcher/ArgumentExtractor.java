@@ -19,15 +19,15 @@ package org.sablecc.objectmacro.launcher;
 
 import java.util.List;
 
-import org.sablecc.sablecc.exception.InternalException;
-import org.sablecc.sablecc.exception.InvalidArgumentException;
-import org.sablecc.sablecc.exception.InvalidArgumentRuntimeException;
-import org.sablecc.sablecc.launcher.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.sablecc.launcher.syntax3.node.ALongOption;
-import org.sablecc.sablecc.launcher.syntax3.node.AOperand;
-import org.sablecc.sablecc.launcher.syntax3.node.APlainArgument;
-import org.sablecc.sablecc.launcher.syntax3.node.AShortOption;
-import org.sablecc.sablecc.launcher.syntax3.node.Start;
+import org.sablecc.objectmacro.exception.InternalException;
+import org.sablecc.objectmacro.exception.InvalidArgumentException;
+import org.sablecc.objectmacro.exception.InvalidArgumentRuntimeException;
+import org.sablecc.objectmacro.launcher.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.objectmacro.launcher.syntax3.node.ALongOption;
+import org.sablecc.objectmacro.launcher.syntax3.node.AOperand;
+import org.sablecc.objectmacro.launcher.syntax3.node.APlainArgument;
+import org.sablecc.objectmacro.launcher.syntax3.node.AShortOption;
+import org.sablecc.objectmacro.launcher.syntax3.node.Start;
 
 /**
  * An argument extractor is an AST walker that extracts information from a

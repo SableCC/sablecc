@@ -70,24 +70,73 @@ Helpers
 
   // Other helpers
 
-  text_char = [[[ascii - ascii_c] + ascii_pattern_white_space] -
-               [[['\' + '$'] + '"'] + [0x000A .. 0x000D]]];
+  white_space_not_newline = [ascii_pattern_white_space - [0x000A .. 0x000D]];
+
+  short_comment_char = [[[ascii - ascii_c] + white_space_not_newline] - '$'];
+
+  long_comment_char = [[[ascii - ascii_c] + ascii_pattern_white_space] - '$'];
+
+  text_char = [[[ascii - ascii_c] + white_space_not_newline] - ['\' + '$']];
+
   text_escape = '\' ['\' + '$'];
 
-States
+  string_char = [[[ascii - ascii_c] + white_space_not_newline] -
+                 [['\' + '$'] + '"']];
 
-  text, command;
+  string_escape = '\' [['\' + '$'] + '"'];
+
+States
+  top_level, command, text, short_comment, long_comment, string;
 
 Tokens
 
-  {text}
-  var = '$' ascii_identifier | '$(' ascii_identifier ')';
+  {top_level, command, text, short_comment}
+  // custom transition: *->command
+  macro_command = '$macro:';
+
+  {top_level, command, text, short_comment}
+  // custom transition: *->command
+  text_block_command = '$text:';
+
+  {top_level, command, text, short_comment}
+  // custom transition: *->command
+  expand_command = '$expand:';
+
+  {top_level, command, text, short_comment}
+  // custom transition: *->command
+  insert_command = '$insert:';
+
+  {top_level, command, text, short_comment}
+  // custom transition: *->command
+  end_command = '$end:';
+
+  {top_level, command, text, short_comment}
+  // custom transition: *->short_comment
+  short_comment_command = '$comment:';
+
+  {top_level, command, text, short_comment}
+  // custom transition: *->previous state
+  command_tail = '$' white_space_not_newline* ascii_newline?;
+
+  {top_level, command, text, short_comment, long_comment}
+  // custom transition: *->long_comment
+  long_comment_start = '$comment$';
+
+  {top_level, command, text, short_comment, long_comment}
+  // custom transition: *->previous state
+  long_comment_end = '$end$';
+
+  {top_level, command, text, short_comment}
+  invalid_command = '$' ascii_identifier (':' | '$');
+
+  {short_comment}
+  short_comment_text = short_comment_char+;
+
+  {long_comment}
+  long_comment_text = long_comment_char+ | '$';
 
   {text}
   text = text_char+;
-
-  {text}
-  d_quote = '"';
 
   {text}
   eol = ascii_newline;
@@ -95,47 +144,42 @@ Tokens
   {text}
   escape = text_escape;
 
-  {text}
-  comment_command = '$comment:';
+  {top_level, command, text, short_comment}
+  var = '$' ascii_identifier | '$(' ascii_identifier ')';
 
-  {text->command}
-  macro_command = '$macro:';
+  {top_level, command, text, short_comment}
+  invalid_var = '$(' ascii_identifier? ')'?;
 
-  {text->command}
-  expand_command = '$expand:';
-
-  {text->command}
-  end_command = '$end:';
-
-  {command}
+  {top_level, command}
   identifier = ascii_identifier;
 
-  {command}
-  comma = ',';
-
-  {command}
+  {top_level, command}
   l_par = '(';
 
-  {command}
+  {top_level, command}
   r_par = ')';
 
-  {command}
+  {top_level, command}
+  comma = ',';
+
+  {top_level, command}
+  assign = '=';
+
+  {top_level, command}
   blank = ascii_pattern_white_space+;
 
-  {text, command->text}
-  command_tail = '$' ascii_newline?;
+  {command->string, string->command}
+  dquote = '"';
 
-  {text}
+  {string}
+  string_text = string_char+;
+
+  {string}
+  string_escape = string_escape;
+
   ctrl_z = 0x001A;
 
-  {text}
-  invalid_var = '$(' ascii_identifier?;
-
-  {text}
-  invalid_command = '$' ascii_identifier ':';
-
-  {command}
-  invalid_nested_command = ascii_identifier ':';
+  invalid_character = [0..0xffff];
 
 Ignored Tokens
 
@@ -143,90 +187,185 @@ Ignored Tokens
 
 Productions
 
-  file =
-    [file_parts]:file_part* ctrl_z?
-      {-> New file([file_parts.macro]) };
+  source_file =
+    [source_file_parts]:source_file_part* ctrl_z?
+      {-> New source_file([source_file_parts.source_file_part]) };
 
-  file_part {-> macro? } =
-    {text} text {-> Null } |
-    {d_quote} d_quote {-> Null } |
-    {eol} eol {-> Null } |
-    {escape} escape {-> Null } |
-    {comment} comment {-> Null } |
-    {macro} macro {-> macro };
+  source_file_part {-> source_file_part? } =
+    {short_comment} short_comment {-> Null } |
+    {long_comment} long_comment {-> Null } |
+    {macro} macro |
+    {text_block} text_block;
 
-  comment =
-    comment_command [comment_parts]:comment_part* command_tail;
+  short_comment =
+    short_comment_command short_comment_text? command_tail;
 
-  comment_part =
-    {text} text |
-    {d_quote} d_quote |
-    {eol} eol |
-    {escape} escape;
+  long_comment =
+    long_comment_start [parts]:long_comment_part* long_comment_end;
+
+  long_comment_part =
+    {text} long_comment_text |
+    {nested_comment} long_comment;
 
   macro =
     macro_head macro_body macro_tail
       {-> New macro(macro_head.identifier, [macro_head.params],
-                    [macro_body.macro_body_parts], macro_tail.identifier) };
+                   [macro_body.macro_body_parts], macro_tail.identifier) };
 
   macro_head {-> identifier [params]:param* } =
-    macro_command identifier l_par param_list? r_par command_tail
+    macro_command identifier param_list? command_tail
       {-> identifier [param_list.params] };
 
-  param_list {-> [params]:param+ } =
-    identifier [additional_params]:additional_param*
-      {-> [New param(identifier), additional_params.param] };
-
-  additional_param {-> param } =
-    comma identifier {-> New param(identifier) };
-
-  identifier_list {-> [identifiers]:identifier+ } =
-    identifier [additional_identifiers]:additional_identifier*
-      {-> [identifier, additional_identifiers.identifier] };
-
-  additional_identifier {-> identifier } =
-    comma identifier {-> identifier };
-
   macro_body {-> [macro_body_parts]:macro_body_part* }=
-    [macro_body_parts]:macro_body_part* {-> [macro_body_parts] };
+    [macro_body_parts]:macro_body_part*
+      {-> [macro_body_parts.macro_body_part] };
 
   macro_body_part {-> macro_body_part? } =
-    {var} var |
+    {short_comment} short_comment {-> Null } |
+    {long_comment} long_comment {-> Null } |
     {text} text |
-    {d_quote} d_quote |
     {eol} eol |
     {escape} escape |
-    {comment} comment {-> Null } |
+    {var} var |
+    {expand} expand |
     {macro} macro |
-    {expand} expand;
+    {text_insert} text_insert |
+    {text_block} text_block;
 
   macro_tail {-> identifier } =
     end_command identifier command_tail {-> identifier };
 
-  expand =
-    expand_command identifier_list command_tail
-      {-> New expand([identifier_list.identifiers]) };
+  text_block =
+    text_block_head text_block_body text_block_tail
+      {-> New text_block(text_block_head.identifier,
+                         [text_block_body.text_block_body_parts],
+                         text_block_tail.identifier) };
 
-Abstract Syntax Tree
+  text_block_head {-> identifier } =
+    text_block_command identifier command_tail {-> identifier };
 
-  file =
-    [macros]:macro*;
+  text_block_body {-> [text_block_body_parts]:text_block_body_part* }=
+    [text_block_body_parts]:text_block_body_part*
+      {-> [text_block_body_parts.text_block_body_part] };
 
-  macro =
-    [name]:identifier [parameters]:param* [parts]:macro_body_part*
-    [repeat_name]:identifier;
+  text_block_body_part {-> text_block_body_part? } =
+    {short_comment} short_comment {-> Null } |
+    {long_comment} long_comment {-> Null } |
+    {text} text |
+    {eol} eol |
+    {escape} escape |
+    {var} var |
+    {text_insert} text_insert;
+
+  text_block_tail {-> identifier } =
+    end_command identifier command_tail {-> identifier };
+
+  param_list {-> [params]:param+ } =
+    l_par param [additional_params]:additional_param* r_par
+      {-> [param, additional_params.param] };
+
+  additional_param {-> param } =
+    comma param {-> param };
 
   param =
     [name]:identifier;
 
+  expand =
+    expand_command macro_reference_list [options]:option* command_tail
+      {-> New expand([macro_reference_list.macro_references], [options]) };
+
+  macro_reference_list {-> [macro_references]:macro_reference* } =
+    macro_reference [additional_macro_references]:additional_macro_reference*
+      {-> [macro_reference, additional_macro_references.macro_reference] };
+
+  additional_macro_reference {-> macro_reference } =
+    comma macro_reference {-> macro_reference };
+
+  option =
+    comma [name]:identifier assign static_value
+      {-> New option(name, static_value) };
+
+  macro_reference =
+    [name]:identifier {-> New macro_reference(name) };
+
+  text_insert =
+    insert_command text_block_reference command_tail
+      {-> New text_insert(text_block_reference) };
+
+  text_block_reference =
+    [name]:identifier {-> New text_block_reference(name) };
+
+  static_value =
+    {text_block_reference} text_block_reference |
+    {string} string;
+
+  string =
+    [l_dquote]:dquote [parts]:string_part* [r_dquote]:dquote
+      {-> New string([parts]) };
+
+  string_part =
+    {text} [text]:string_text |
+    {escape} [escape]:string_escape;
+
+Abstract Syntax Tree
+
+  source_file =
+    [parts]:source_file_part*;
+
+  source_file_part =
+    {macro} macro |
+    {text_block} text_block;
+
+  macro =
+    [name]:identifier [params]:param* [parts]:macro_body_part*
+    [repeat_name]:identifier;
+
   macro_body_part =
-    {var} var |
     {text} text |
-    {d_quote} d_quote |
     {eol} eol |
     {escape} escape |
+    {var} var |
+    {expand} expand |
     {macro} macro |
-    {expand} expand;
+    {text_insert} text_insert |
+    {text_block} text_block;
+
+  text_block =
+    [name]:identifier [parts]:text_block_body_part* [repeat_name]:identifier;
+
+  text_block_body_part =
+    {text} text |
+    {eol} eol |
+    {escape} escape |
+    {var} var |
+    {text_insert} text_insert;
+
+  param =
+    [name]:identifier;
 
   expand =
-    [macro_names]:identifier*;
+    [macro_references]:macro_reference+ [options]:option*;
+
+  option =
+    [name]:identifier static_value;
+
+  static_value =
+    {text_block_reference} text_block_reference |
+    {string} string;
+
+  string =
+    [parts]:string_part*;
+
+  string_part =
+    {text} [text]:string_text |
+    {escape} [escape]:string_escape;
+
+  macro_reference =
+    [name]:identifier;
+
+  text_insert =
+    text_block_reference;
+
+  text_block_reference =
+    [name]:identifier;
+

@@ -17,71 +17,51 @@
 
 package org.sablecc.objectmacro.exception;
 
-import org.sablecc.objectmacro.syntax3.node.Token;
-
 /**
- * A semantic exception is thrown when a semantic error is found in a grammar.
+ * An internal exception is thrown when an unexpected error happens during the
+ * normal operation of the software. Ideally, this exception would never be
+ * thrown during execution. If it ever gets thrown, it is because a bug has been
+ * detected in the software.
+ * <p>
+ * In the source code of the software, this exception should be thrown whenever
+ * an unexpected situation is detected. For example, the exception should be
+ * thrown when some method argument is <code>null</code> and the method
+ * requires a non-null argument.
  */
 @SuppressWarnings("serial")
-public class SemanticException
-        extends Exception {
-
-    /** The token where this semantic exception was detected. */
-    private Token token;
+public class InternalException
+        extends RuntimeException {
 
     /**
-     * Constructs a semantic exception with the provided error message and
-     * token.
+     * Constructs an internal exception with the provided error message.
      */
-    public SemanticException(
-            String message,
-            Token token) {
+    public InternalException(
+            String message) {
 
-        super("[" + token.getLine() + "," + token.getPos() + "] " + message);
+        super(message);
 
         if (message == null) {
             throw new InternalException("message may not be null");
         }
-
-        if (token == null) {
-            throw new InternalException("token may not be null");
-        }
-
-        this.token = token;
     }
 
     /**
-     * Constructs a semantic exception with the provided error message, token,
-     * and cause.
+     * Constructs an internal exception with the provided error message and
+     * cause.
      */
-    public SemanticException(
+    public InternalException(
             String message,
-            Token token,
             Throwable cause) {
 
-        super("[" + token.getLine() + "," + token.getPos() + "] " + message,
-                cause);
+        super(message, cause);
 
         if (message == null) {
             throw new InternalException("message may not be null");
-        }
-
-        if (token == null) {
-            throw new InternalException("token may not be null");
         }
 
         if (cause == null) {
             throw new InternalException("cause may not be null");
         }
-
-        this.token = token;
     }
 
-    /**
-     * Returns the token where this semantic exception was detected.
-     */
-    public Token getToken() {
-
-        return this.token;
-    }
 }

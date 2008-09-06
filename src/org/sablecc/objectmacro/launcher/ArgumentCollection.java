@@ -23,11 +23,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.sablecc.sablecc.exception.InternalException;
-import org.sablecc.sablecc.exception.InvalidArgumentException;
-import org.sablecc.sablecc.launcher.syntax3.lexer.Lexer;
-import org.sablecc.sablecc.launcher.syntax3.node.Start;
-import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
+import org.sablecc.objectmacro.exception.InternalException;
+import org.sablecc.objectmacro.exception.InvalidArgumentException;
+import org.sablecc.objectmacro.launcher.syntax3.lexer.Lexer;
+import org.sablecc.objectmacro.launcher.syntax3.node.Start;
+import org.sablecc.objectmacro.launcher.syntax3.parser.Parser;
 
 /**
  * Encapsulates a collection of option and text command-line arguments.

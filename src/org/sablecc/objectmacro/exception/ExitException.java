@@ -18,35 +18,18 @@
 package org.sablecc.objectmacro.exception;
 
 /**
- * A semantic runtime exception wraps a semantic exception into a runtime
- * exception.
+ * An exit exception is thrown to exit SableCC with an error code without
+ * printing any information to System.err.
  */
 @SuppressWarnings("serial")
-public class SemanticRuntimeException
+public class ExitException
         extends RuntimeException {
 
-    /** The wrapped semantic exception. */
-    private SemanticException semanticException;
-
     /**
-     * Constructs an exception wraper.
+     * Constructs an exit exception.
      */
-    public SemanticRuntimeException(
-            SemanticException semanticException) {
+    public ExitException() {
 
-        super(semanticException);
-
-        if (semanticException == null) {
-            throw new InternalException("semanticException may not be null");
-        }
-
-        this.semanticException = semanticException;
+        super();
     }
-
-    /** Returns the wrapped exception. */
-    public SemanticException getSemanticException() {
-
-        return this.semanticException;
-    }
-
 }
