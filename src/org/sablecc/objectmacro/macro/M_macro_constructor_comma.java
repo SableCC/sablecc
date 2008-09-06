@@ -8,9 +8,7 @@ public class M_macro_constructor_comma
     // ---- constructor ----
 
     M_macro_constructor_comma(
-            Macro parent
-
-    ) {
+            Macro parent) {
 
         this.parent = parent;
     }

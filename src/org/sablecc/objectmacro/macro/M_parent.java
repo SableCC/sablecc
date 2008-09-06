@@ -7,9 +7,7 @@ public class M_parent
 
     // ---- constructor ----
 
-    M_parent(
-
-    ) {
+    M_parent() {
 
     }
 

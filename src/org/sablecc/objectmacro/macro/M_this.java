@@ -7,9 +7,7 @@ public class M_this
 
     // ---- constructor ----
 
-    M_this(
-
-    ) {
+    M_this() {
 
     }
 

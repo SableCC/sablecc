@@ -8,9 +8,7 @@ public class M_constructor_parent_initialisation
     // ---- constructor ----
 
     M_constructor_parent_initialisation(
-            Macro parent
-
-    ) {
+            Macro parent) {
 
         this.parent = parent;
     }

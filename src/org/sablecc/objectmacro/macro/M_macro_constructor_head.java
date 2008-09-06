@@ -11,9 +11,7 @@ public class M_macro_constructor_head
     // ---- constructor ----
 
     M_macro_constructor_head(
-            Macro parent
-
-    ) {
+            Macro parent) {
 
         this.parent = parent;
     }
