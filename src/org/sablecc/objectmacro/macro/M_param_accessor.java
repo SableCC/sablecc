@@ -8,27 +8,8 @@ import java.util.List;
 public class M_param_accessor
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-    private final String p_param_name;
-
-    private final String p_containing_macro_name;
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-    private final List<Macro> e_expand_1 = new LinkedList<Macro>();
-
-    // ---- parent ----
-    @Override
-    public Macro get_parent() {
-
-        return null;
-    }
-
     // ---- constructor ----
+
     M_param_accessor(
             String p_param_name,
             String p_containing_macro_name) {
@@ -37,19 +18,33 @@ public class M_param_accessor
         this.p_containing_macro_name = p_containing_macro_name;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
+
+    @Override
+    Macro get_parent() {
+
+        return null;
+    }
+
+    // ---- parameters ----
+
+    private final String p_param_name;
 
     String get_local_p_param_name() {
 
         return this.p_param_name;
     }
 
+    private final String p_containing_macro_name;
+
     String get_local_p_containing_macro_name() {
 
         return this.p_containing_macro_name;
     }
 
-    // ---- local text block accessors ----
+    // ---- expands ----
+
+    private final List<Macro> e_expand_1 = new LinkedList<Macro>();
 
     // ---- parameter accessors ----
 
@@ -58,14 +53,18 @@ public class M_param_accessor
     String get_p_param_name() {
 
         String result = this.cached_p_param_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_param_accessor)) {
                 current = current.get_parent();
             }
+
             result = ((M_param_accessor) current).get_local_p_param_name();
             this.cached_p_param_name = result;
         }
+
         return result;
     }
 
@@ -74,21 +73,23 @@ public class M_param_accessor
     String get_p_containing_macro_name() {
 
         String result = this.cached_p_containing_macro_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_param_accessor)) {
                 current = current.get_parent();
             }
+
             result = ((M_param_accessor) current)
                     .get_local_p_containing_macro_name();
             this.cached_p_containing_macro_name = result;
         }
+
         return result;
     }
 
-    // ---- text block accessors ----
-
-    // sub-macro creators
+    // ---- macro creators ----
 
     public M_this new_this() {
 
@@ -104,29 +105,46 @@ public class M_param_accessor
         return result;
     }
 
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("  private String cached_p_");
+
         sb.append(get_p_param_name());
+
         sb.append(";");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  String get_p_");
+
         sb.append(get_p_param_name());
+
         sb.append("() {");
+
         sb.append(EOL);
+
         sb.append("    String result = this.cached_p_");
+
         sb.append(get_p_param_name());
+
         sb.append(";");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("    if(result == null) {");
+
         sb.append(EOL);
+
         sb.append("      Macro current = ");
+
         if (this.e_expand_1.size() == 0) {
         }
         else {
@@ -140,35 +158,66 @@ public class M_param_accessor
                 macro.appendTo(sb);
             }
         }
+
         sb.append(";");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("      while(!(current instanceof M_");
+
         sb.append(get_p_containing_macro_name());
+
         sb.append(")) {");
+
         sb.append(EOL);
+
         sb.append("        current = current.get_parent();");
+
         sb.append(EOL);
+
         sb.append("      }");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("      result = ((M_");
+
         sb.append(get_p_containing_macro_name());
+
         sb.append(") current).get_local_p_");
+
         sb.append(get_p_param_name());
+
         sb.append("();");
+
         sb.append(EOL);
+
         sb.append("      this.cached_p_");
+
         sb.append(get_p_param_name());
+
         sb.append(" = result;");
+
         sb.append(EOL);
+
         sb.append("    }");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("    return result;");
+
         sb.append(EOL);
+
         sb.append("  }");
+
         sb.append(EOL);
+
         sb.append(EOL);
     }
+
 }

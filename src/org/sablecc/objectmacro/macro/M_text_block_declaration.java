@@ -5,26 +5,8 @@ package org.sablecc.objectmacro.macro;
 public class M_text_block_declaration
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-    private final String p_text_block_name;
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-
-    // ---- parent ----
-    private final Macro parent;
-
-    @Override
-    public Macro get_parent() {
-
-        return this.parent;
-    }
-
     // ---- constructor ----
+
     M_text_block_declaration(
             Macro parent,
             String p_text_block_name) {
@@ -33,14 +15,24 @@ public class M_text_block_declaration
         this.p_text_block_name = p_text_block_name;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
+
+    private final Macro parent;
+
+    @Override
+    Macro get_parent() {
+
+        return this.parent;
+    }
+
+    // ---- parameters ----
+
+    private final String p_text_block_name;
 
     String get_local_p_text_block_name() {
 
         return this.p_text_block_name;
     }
-
-    // ---- local text block accessors ----
 
     // ---- parameter accessors ----
 
@@ -49,47 +41,67 @@ public class M_text_block_declaration
     String get_p_text_block_name() {
 
         String result = this.cached_p_text_block_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_text_block_declaration)) {
                 current = current.get_parent();
             }
+
             result = ((M_text_block_declaration) current)
                     .get_local_p_text_block_name();
             this.cached_p_text_block_name = result;
         }
+
         return result;
     }
 
-    // ---- text block accessors ----
-
-    // sub-macro creators
-
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("  private final T_");
+
         sb.append(get_p_text_block_name());
+
         sb.append(" t_");
+
         sb.append(get_p_text_block_name());
+
         sb.append(";");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  T_");
+
         sb.append(get_p_text_block_name());
+
         sb.append(" get_local_t_");
+
         sb.append(get_p_text_block_name());
+
         sb.append("() {");
+
         sb.append(EOL);
+
         sb.append("    return this.t_");
+
         sb.append(get_p_text_block_name());
+
         sb.append(";");
+
         sb.append(EOL);
+
         sb.append("  }");
+
         sb.append(EOL);
+
         sb.append(EOL);
     }
+
 }

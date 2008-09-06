@@ -8,37 +8,31 @@ import java.util.List;
 public class M_macro_constructor_head
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-    private final List<Macro> e_expand_4 = new LinkedList<Macro>();
-
-    private final List<Macro> e_expand_5 = new LinkedList<Macro>();
-
-    // ---- parent ----
-    private final Macro parent;
-
-    @Override
-    public Macro get_parent() {
-
-        return this.parent;
-    }
-
     // ---- constructor ----
+
     M_macro_constructor_head(
-            Macro parent) {
+            Macro parent
+
+    ) {
 
         this.parent = parent;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
 
-    // ---- local text block accessors ----
+    private final Macro parent;
+
+    @Override
+    Macro get_parent() {
+
+        return this.parent;
+    }
+
+    // ---- expands ----
+
+    private final List<Macro> e_expand_4 = new LinkedList<Macro>();
+
+    private final List<Macro> e_expand_5 = new LinkedList<Macro>();
 
     // ---- parameter accessors ----
 
@@ -47,20 +41,22 @@ public class M_macro_constructor_head
     String get_p_macro_name() {
 
         String result = this.cached_p_macro_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_macro)) {
                 current = current.get_parent();
             }
+
             result = ((M_macro) current).get_local_p_macro_name();
             this.cached_p_macro_name = result;
         }
+
         return result;
     }
 
-    // ---- text block accessors ----
-
-    // sub-macro creators
+    // ---- macro creators ----
 
     public M_macro_constructor_public new_macro_constructor_public() {
 
@@ -76,13 +72,14 @@ public class M_macro_constructor_head
         return result;
     }
 
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("  ");
+
         if (this.e_expand_4.size() == 0) {
         }
         else {
@@ -96,9 +93,13 @@ public class M_macro_constructor_head
                 macro.appendTo(sb);
             }
         }
+
         sb.append("M_");
+
         sb.append(get_p_macro_name());
+
         sb.append("(");
+
         if (this.e_expand_5.size() == 0) {
         }
         else {
@@ -113,4 +114,5 @@ public class M_macro_constructor_head
             }
         }
     }
+
 }

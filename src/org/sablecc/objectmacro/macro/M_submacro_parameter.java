@@ -5,26 +5,8 @@ package org.sablecc.objectmacro.macro;
 public class M_submacro_parameter
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-    private final String p_param_name;
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-
-    // ---- parent ----
-    private final Macro parent;
-
-    @Override
-    public Macro get_parent() {
-
-        return this.parent;
-    }
-
     // ---- constructor ----
+
     M_submacro_parameter(
             Macro parent,
             String p_param_name) {
@@ -33,14 +15,24 @@ public class M_submacro_parameter
         this.p_param_name = p_param_name;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
+
+    private final Macro parent;
+
+    @Override
+    Macro get_parent() {
+
+        return this.parent;
+    }
+
+    // ---- parameters ----
+
+    private final String p_param_name;
 
     String get_local_p_param_name() {
 
         return this.p_param_name;
     }
-
-    // ---- local text block accessors ----
 
     // ---- parameter accessors ----
 
@@ -49,28 +41,30 @@ public class M_submacro_parameter
     String get_p_param_name() {
 
         String result = this.cached_p_param_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_submacro_parameter)) {
                 current = current.get_parent();
             }
+
             result = ((M_submacro_parameter) current).get_local_p_param_name();
             this.cached_p_param_name = result;
         }
+
         return result;
     }
 
-    // ---- text block accessors ----
-
-    // sub-macro creators
-
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("String p_");
+
         sb.append(get_p_param_name());
     }
+
 }

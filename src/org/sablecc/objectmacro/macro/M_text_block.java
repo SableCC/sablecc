@@ -8,15 +8,33 @@ import java.util.List;
 public class M_text_block
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
+    // ---- constructor ----
+
+    public M_text_block(
+            String p_block_name) {
+
+        this.p_block_name = p_block_name;
+    }
+
+    // ---- parent ----
+
+    @Override
+    Macro get_parent() {
+
+        return null;
+    }
 
     // ---- parameters ----
+
     private final String p_block_name;
 
-    // ---- text blocks ----
+    String get_local_p_block_name() {
+
+        return this.p_block_name;
+    }
 
     // ---- expands ----
+
     private final List<Macro> e_expand_0 = new LinkedList<Macro>();
 
     private final List<Macro> e_expand_32 = new LinkedList<Macro>();
@@ -29,29 +47,6 @@ public class M_text_block
 
     private final List<Macro> e_expand_34 = new LinkedList<Macro>();
 
-    // ---- parent ----
-    @Override
-    public Macro get_parent() {
-
-        return null;
-    }
-
-    // ---- constructor ----
-    public M_text_block(
-            String p_block_name) {
-
-        this.p_block_name = p_block_name;
-    }
-
-    // ---- local parameter accessors ----
-
-    String get_local_p_block_name() {
-
-        return this.p_block_name;
-    }
-
-    // ---- local text block accessors ----
-
     // ---- parameter accessors ----
 
     private String cached_p_block_name;
@@ -59,14 +54,18 @@ public class M_text_block
     String get_p_block_name() {
 
         String result = this.cached_p_block_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_text_block)) {
                 current = current.get_parent();
             }
+
             result = ((M_text_block) current).get_local_p_block_name();
             this.cached_p_block_name = result;
         }
+
         return result;
     }
 
@@ -77,10 +76,12 @@ public class M_text_block
     T_header get_t_header() {
 
         T_header result = this.cached_t_header;
+
         if (result == null) {
             result = T_header.getInstance();
             this.cached_t_header = result;
         }
+
         return result;
     }
 
@@ -89,10 +90,12 @@ public class M_text_block
     T_param_accessor_head get_t_param_accessor_head() {
 
         T_param_accessor_head result = this.cached_t_param_accessor_head;
+
         if (result == null) {
             result = T_param_accessor_head.getInstance();
             this.cached_t_param_accessor_head = result;
         }
+
         return result;
     }
 
@@ -101,10 +104,12 @@ public class M_text_block
     T_text_block_accessor_head get_t_text_block_accessor_head() {
 
         T_text_block_accessor_head result = this.cached_t_text_block_accessor_head;
+
         if (result == null) {
             result = T_text_block_accessor_head.getInstance();
             this.cached_t_text_block_accessor_head = result;
         }
+
         return result;
     }
 
@@ -113,14 +118,16 @@ public class M_text_block
     T_blank_line get_t_blank_line() {
 
         T_blank_line result = this.cached_t_blank_line;
+
         if (result == null) {
             result = T_blank_line.getInstance();
             this.cached_t_blank_line = result;
         }
+
         return result;
     }
 
-    // sub-macro creators
+    // ---- macro creators ----
 
     public M_package_declaration new_package_declaration(
             String p_package_name) {
@@ -213,13 +220,14 @@ public class M_text_block
         return result;
     }
 
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         get_t_header().appendTo(sb);
+
         if (this.e_expand_0.size() == 0) {
         }
         else {
@@ -233,15 +241,25 @@ public class M_text_block
                 macro.appendTo(sb);
             }
         }
+
         sb.append(EOL);
+
         sb.append("import java.util.*;");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("public class T_");
+
         sb.append(get_p_block_name());
+
         sb.append(" extends Printable {");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         if (this.e_expand_32.size() == 0) {
         }
         else {
@@ -255,6 +273,7 @@ public class M_text_block
                 macro.appendTo(sb);
             }
         }
+
         if (this.e_expand_33.size() == 0) {
         }
         else {
@@ -268,7 +287,7 @@ public class M_text_block
                 macro.appendTo(sb);
             }
         }
-        sb.append(EOL);
+
         if (this.e_expand_15.size() == 0) {
         }
         else {
@@ -283,7 +302,7 @@ public class M_text_block
                 macro.appendTo(sb);
             }
         }
-        sb.append(EOL);
+
         if (this.e_expand_16.size() == 0) {
         }
         else {
@@ -298,15 +317,23 @@ public class M_text_block
                 macro.appendTo(sb);
             }
         }
+
         sb.append(EOL);
-        sb.append(EOL);
+
         sb.append("  // ---- appendTo ----");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  @Override");
+
         sb.append(EOL);
+
         sb.append("  public void appendTo(StringBuilder sb) {");
+
         sb.append(EOL);
+
         if (this.e_expand_34.size() == 0) {
         }
         else {
@@ -321,10 +348,16 @@ public class M_text_block
                 macro.appendTo(sb);
             }
         }
+
         sb.append("  }");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("}");
+
         sb.append(EOL);
     }
+
 }

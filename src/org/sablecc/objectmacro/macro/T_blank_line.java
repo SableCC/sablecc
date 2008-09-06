@@ -5,10 +5,14 @@ package org.sablecc.objectmacro.macro;
 public class T_blank_line
         extends Printable {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
+    // ---- constructor ----
+
+    private T_blank_line() {
+
+    }
 
     // ---- instance ----
+
     private static final T_blank_line instance = new T_blank_line();
 
     static T_blank_line getInstance() {
@@ -16,16 +20,7 @@ public class T_blank_line
         return instance;
     }
 
-    // ---- constructor ----
-    private T_blank_line() {
-
-    }
-
-    // ---- parameter accessors ----
-
-    // ---- text block accessors ----
-
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
@@ -33,4 +28,5 @@ public class T_blank_line
 
         sb.append(EOL);
     }
+
 }

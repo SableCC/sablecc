@@ -5,5 +5,8 @@ package org.sablecc.objectmacro.macro;
 abstract class Macro
         extends Printable {
 
-    public abstract Macro get_parent();
+    // ---- get_parent ----
+
+    abstract Macro get_parent();
+
 }

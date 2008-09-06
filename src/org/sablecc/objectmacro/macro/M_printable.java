@@ -8,33 +8,25 @@ import java.util.List;
 public class M_printable
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
+    // ---- constructor ----
 
-    // ---- parameters ----
+    public M_printable(
 
-    // ---- text blocks ----
+    ) {
 
-    // ---- expands ----
-    private final List<Macro> e_expand_0 = new LinkedList<Macro>();
+    }
 
     // ---- parent ----
+
     @Override
-    public Macro get_parent() {
+    Macro get_parent() {
 
         return null;
     }
 
-    // ---- constructor ----
-    public M_printable() {
+    // ---- expands ----
 
-    }
-
-    // ---- local parameter accessors ----
-
-    // ---- local text block accessors ----
-
-    // ---- parameter accessors ----
+    private final List<Macro> e_expand_0 = new LinkedList<Macro>();
 
     // ---- text block accessors ----
 
@@ -43,14 +35,16 @@ public class M_printable
     T_header get_t_header() {
 
         T_header result = this.cached_t_header;
+
         if (result == null) {
             result = T_header.getInstance();
             this.cached_t_header = result;
         }
+
         return result;
     }
 
-    // sub-macro creators
+    // ---- macro creators ----
 
     public M_package_declaration new_package_declaration(
             String p_package_name) {
@@ -60,13 +54,14 @@ public class M_printable
         return result;
     }
 
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         get_t_header().appendTo(sb);
+
         if (this.e_expand_0.size() == 0) {
         }
         else {
@@ -80,38 +75,71 @@ public class M_printable
                 macro.appendTo(sb);
             }
         }
+
         sb.append(EOL);
+
         sb.append("abstract class Printable {");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  // ---- EOL ----");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb
                 .append("  static final String EOL = System.getProperty(\"line.separator\");");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  // ---- appendTo ----");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  public abstract void appendTo(StringBuilder sb);");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  // ---- toString ----");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  public String toString() {");
+
         sb.append(EOL);
+
         sb.append("    StringBuilder sb = new StringBuilder();");
+
         sb.append(EOL);
+
         sb.append("    appendTo(sb);");
+
         sb.append(EOL);
+
         sb.append("    return sb.toString();");
+
         sb.append(EOL);
+
         sb.append("  }");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("}");
+
         sb.append(EOL);
     }
+
 }
