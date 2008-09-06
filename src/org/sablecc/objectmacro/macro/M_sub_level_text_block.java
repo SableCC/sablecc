@@ -8,9 +8,7 @@ public class M_sub_level_text_block
     // ---- constructor ----
 
     M_sub_level_text_block(
-            Macro parent
-
-    ) {
+            Macro parent) {
 
         this.parent = parent;
     }

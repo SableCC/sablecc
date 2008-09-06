@@ -11,9 +11,7 @@ public class M_submacro_this
     // ---- constructor ----
 
     M_submacro_this(
-            Macro parent
-
-    ) {
+            Macro parent) {
 
         this.parent = parent;
     }

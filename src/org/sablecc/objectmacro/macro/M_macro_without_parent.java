@@ -8,9 +8,7 @@ public class M_macro_without_parent
     // ---- constructor ----
 
     M_macro_without_parent(
-            Macro parent
-
-    ) {
+            Macro parent) {
 
         this.parent = parent;
     }

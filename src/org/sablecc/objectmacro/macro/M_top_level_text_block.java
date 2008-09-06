@@ -8,9 +8,7 @@ public class M_top_level_text_block
     // ---- constructor ----
 
     M_top_level_text_block(
-            Macro parent
-
-    ) {
+            Macro parent) {
 
         this.parent = parent;
     }

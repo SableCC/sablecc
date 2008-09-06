@@ -7,9 +7,7 @@ public class M_eol_append
 
     // ---- constructor ----
 
-    M_eol_append(
-
-    ) {
+    M_eol_append() {
 
     }
 

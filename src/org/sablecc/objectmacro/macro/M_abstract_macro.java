@@ -10,9 +10,7 @@ public class M_abstract_macro
 
     // ---- constructor ----
 
-    public M_abstract_macro(
-
-    ) {
+    public M_abstract_macro() {
 
     }
 

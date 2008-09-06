@@ -10,9 +10,7 @@ public class M_printable
 
     // ---- constructor ----
 
-    public M_printable(
-
-    ) {
+    public M_printable() {
 
     }
 
