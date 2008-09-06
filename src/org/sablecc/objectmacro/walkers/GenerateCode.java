@@ -27,12 +27,17 @@ import java.util.regex.Matcher;
 
 import org.sablecc.objectmacro.exception.ExitException;
 import org.sablecc.objectmacro.exception.InternalException;
+import org.sablecc.objectmacro.macro.M_abstract_macro;
+import org.sablecc.objectmacro.macro.M_expand_append;
 import org.sablecc.objectmacro.macro.M_macro;
+import org.sablecc.objectmacro.macro.M_macro_constructor_head;
+import org.sablecc.objectmacro.macro.M_macro_constructor_parent;
+import org.sablecc.objectmacro.macro.M_param_accessor;
 import org.sablecc.objectmacro.macro.M_printable;
-import org.sablecc.objectmacro.macro.M_root_macro;
+import org.sablecc.objectmacro.macro.M_sub_level_text_block_accessor;
+import org.sablecc.objectmacro.macro.M_submacro_creator;
+import org.sablecc.objectmacro.macro.M_submacro_this;
 import org.sablecc.objectmacro.macro.M_text_block;
-import org.sablecc.objectmacro.macro.M_macro.M_expand_append;
-import org.sablecc.objectmacro.macro.M_macro.M_submacro_creator;
 import org.sablecc.objectmacro.structures.ExpandSignature;
 import org.sablecc.objectmacro.structures.GlobalData;
 import org.sablecc.objectmacro.structures.Macro;
@@ -105,13 +110,14 @@ public class GenerateCode
             FileWriter fw = new FileWriter(outFile);
             BufferedWriter bw = new BufferedWriter(fw);
 
-            M_root_macro macro_root_macro = new M_root_macro();
+            M_abstract_macro m_abstract_macro = new M_abstract_macro();
 
             if (!this.destinationPackage.equals("")) {
-                macro_root_macro.newM_package(this.destinationPackage);
+                m_abstract_macro
+                        .new_package_declaration(this.destinationPackage);
             }
 
-            bw.write(macro_root_macro.toString());
+            bw.write(m_abstract_macro.toString());
 
             bw.close();
             fw.close();
@@ -124,7 +130,7 @@ public class GenerateCode
             M_printable m_printable = new M_printable();
 
             if (!this.destinationPackage.equals("")) {
-                m_printable.newM_package(this.destinationPackage);
+                m_printable.new_package_declaration(this.destinationPackage);
             }
 
             bw.write(m_printable.toString());
@@ -152,7 +158,7 @@ public class GenerateCode
             Macro parentmacro = (Macro) this.currentScope;
 
             if (macro.isAutoexpand()) {
-                parentmacro.getM_macro().newM_expand_append(
+                parentmacro.getM_macro().new_expand_append(
                         this.globalData.getExpandSignature(node).getName());
             }
         }
@@ -160,101 +166,89 @@ public class GenerateCode
         macro.setM_macro(new M_macro(macro.getName()));
 
         if (!this.destinationPackage.equals("")) {
-            macro.getM_macro().newM_package(this.destinationPackage);
+            macro.getM_macro().new_package_declaration(this.destinationPackage);
         }
 
-        if (macro.isAutoexpand() && macro.isTopLevel()) {
-            macro.getM_macro().newM_public_top_level_constructor();
-        }
-        else if (macro.isTopLevel()) {
-            macro.getM_macro().newM_package_top_level_constructor();
-        }
-        else {
-            macro.getM_macro().newM_sub_level_constructor();
-            macro.getM_macro()
-                    .newM_sub_level_constructor_parent_initialisation();
-        }
+        {
+            M_macro_constructor_head m_macro_constructor_head = macro
+                    .getM_macro().new_macro_constructor_head();
 
-        if (node.getParams().size() > 0) {
-            boolean first = macro.isTopLevel();
-            for (PParam pParam : node.getParams()) {
-                String paramName = ((AParam) pParam).getName().getText();
+            if (macro.isTopLevel()) {
+                macro.getM_macro().new_macro_without_parent();
 
-                macro.getM_macro().newM_param_declaration(paramName);
-                macro.getM_macro().newM_constructor_param_initialisation(
-                        paramName);
-                macro.getM_macro().newM_local_param_accessor(paramName);
-
-                if (first) {
-                    first = false;
-
-                    macro.getM_macro().newM_constructor_first_param(paramName);
-                }
-                else {
-                    macro.getM_macro().newM_constructor_additional_param(
-                            paramName);
+                if (macro.isAutoexpand()) {
+                    m_macro_constructor_head.new_macro_constructor_public();
                 }
             }
+            else {
+                macro.getM_macro().new_macro_with_parent();
+                macro.getM_macro().new_constructor_parent_initialisation();
+
+                M_macro_constructor_parent m_macro_constructor_parent = m_macro_constructor_head
+                        .new_macro_constructor_parent();
+                if (node.getParams().size() > 0) {
+                    m_macro_constructor_parent.new_macro_constructor_comma();
+                }
+            }
+        }
+
+        for (PParam pParam : node.getParams()) {
+            String paramName = ((AParam) pParam).getName().getText();
+
+            macro.getM_macro().new_constructor_param(paramName);
+            macro.getM_macro().new_param_declaration(paramName);
         }
 
         for (Param referencedParam : macro.getReferencedParams()) {
-            macro.getM_macro().newM_param_accessor(referencedParam.getName(),
-                    referencedParam.getMacro().getName());
+            M_param_accessor m_param_accessor = macro.getM_macro()
+                    .new_param_accessor(referencedParam.getName(),
+                            referencedParam.getMacro().getName());
+            m_param_accessor.new_this();
         }
 
         for (TextBlock referencedTextBlock : macro.getReferencedTextBlocks()) {
-            if (referencedTextBlock.getParentScope() instanceof Macro) {
-                Macro parentMacro = (Macro) referencedTextBlock
-                        .getParentScope();
-                macro.getM_macro().newM_sub_level_text_block_accessor(
-                        referencedTextBlock.getName(), parentMacro.getName());
+            if (referencedTextBlock.isTopLevel()) {
+                macro.getM_macro().new_top_level_text_block_accessor(
+                        referencedTextBlock.getName());
             }
             else {
-                macro.getM_macro().newM_top_level_text_block_accessor(
-                        referencedTextBlock.getName());
+                Macro parentMacro = (Macro) referencedTextBlock
+                        .getParentScope();
+                M_sub_level_text_block_accessor m_sub_level_text_block_accessor = macro
+                        .getM_macro().new_sub_level_text_block_accessor(
+                                referencedTextBlock.getName(),
+                                parentMacro.getName());
+                m_sub_level_text_block_accessor.new_this();
             }
         }
 
         for (ExpandSignature expandSignature : macro.getExpandSignatures()) {
-            macro.getM_macro().newM_expand_declaration(
-                    expandSignature.getName());
+            macro.getM_macro()
+                    .new_expand_declaration(expandSignature.getName());
         }
 
         for (Macro referencedMacro : macro.getReferencedMacros()) {
             M_submacro_creator m_submacro_creator = macro.getM_macro()
-                    .newM_submacro_creator(referencedMacro.getName());
+                    .new_submacro_creator(referencedMacro.getName());
 
             if (!referencedMacro.isTopLevel()) {
-                m_submacro_creator.newM_submacro_new_this_param();
+                M_submacro_this m_submacro_this = m_submacro_creator
+                        .new_submacro_this();
+                if (referencedMacro.getDefinition().getParams().size() > 0) {
+                    m_submacro_this.new_submacro_comma();
+                }
             }
-
-            boolean first = true;
 
             for (PParam pParam : referencedMacro.getDefinition().getParams()) {
                 String paramName = ((AParam) pParam).getName().getText();
 
-                if (first && referencedMacro.isTopLevel()) {
-                    m_submacro_creator.newM_submacro_new_first_param(paramName);
-                }
-                else {
-                    m_submacro_creator
-                            .newM_submacro_new_additional_param(paramName);
-                }
-
-                if (first) {
-                    first = false;
-                    m_submacro_creator.newM_submacro_first_parameter(paramName);
-                }
-                else {
-                    m_submacro_creator
-                            .newM_submacro_additional_parameter(paramName);
-                }
+                m_submacro_creator.new_submacro_parameter(paramName);
+                m_submacro_creator.new_submacro_parameter(paramName);
             }
 
             for (ExpandSignature expandSignature : macro
                     .getExpandSignaturesOfReferencedMacro(referencedMacro)) {
-                m_submacro_creator
-                        .newM_add_to_expand(expandSignature.getName());
+                m_submacro_creator.new_add_to_expand(expandSignature.getName());
             }
         }
 
@@ -299,53 +293,51 @@ public class GenerateCode
             Macro parentmacro = (Macro) this.currentScope;
 
             if (textBlock.isAutoexpand()) {
-                parentmacro.getM_macro().newM_text_insert_append(
+                parentmacro.getM_macro().new_text_insert_append(
                         textBlock.getName());
             }
-        }
 
-        if (this.currentScope instanceof Macro) {
-            Macro currentMacro = (Macro) this.currentScope;
-
-            currentMacro.getM_macro().newM_text_block_declaration(
+            parentmacro.getM_macro().new_text_block_declaration(
                     textBlock.getName());
-            currentMacro.getM_macro()
-                    .newM_constructor_text_block_initialisation(
-                            textBlock.getName());
-            currentMacro.getM_macro().newM_local_text_block_accessor(
+            parentmacro.getM_macro().new_constructor_text_block_initialisation(
                     textBlock.getName());
         }
 
         textBlock.setM_text_block(new M_text_block(textBlock.getName()));
 
         if (!this.destinationPackage.equals("")) {
-            textBlock.getM_text_block().newM_package(this.destinationPackage);
+            textBlock.getM_text_block().new_package_declaration(
+                    this.destinationPackage);
         }
 
         if (textBlock.isTopLevel()) {
-            textBlock.getM_text_block().newM_top_level_constructor();
+            textBlock.getM_text_block().new_top_level_text_block();
         }
         else {
-            textBlock.getM_text_block().newM_sub_level_constructor();
+            textBlock.getM_text_block().new_sub_level_text_block();
         }
 
         for (Param referencedParam : textBlock.getReferencedParams()) {
-            textBlock.getM_text_block().newM_param_accessor(
-                    referencedParam.getName(),
-                    referencedParam.getMacro().getName());
+            M_param_accessor m_param_accessor = textBlock.getM_text_block()
+                    .new_param_accessor(referencedParam.getName(),
+                            referencedParam.getMacro().getName());
+            m_param_accessor.new_parent();
         }
 
         for (TextBlock referencedTextBlock : textBlock
                 .getReferencedTextBlocks()) {
-            if (referencedTextBlock.getParentScope() instanceof Macro) {
-                Macro parentMacro = (Macro) referencedTextBlock
-                        .getParentScope();
-                textBlock.getM_text_block().newM_sub_level_text_block_accessor(
-                        referencedTextBlock.getName(), parentMacro.getName());
+            if (referencedTextBlock.isTopLevel()) {
+                textBlock.getM_text_block().new_top_level_text_block_accessor(
+                        referencedTextBlock.getName());
             }
             else {
-                textBlock.getM_text_block().newM_top_level_text_block_accessor(
-                        referencedTextBlock.getName());
+                Macro parentMacro = (Macro) referencedTextBlock
+                        .getParentScope();
+                M_sub_level_text_block_accessor m_sub_level_text_block_accessor = textBlock
+                        .getM_text_block().new_sub_level_text_block_accessor(
+                                referencedTextBlock.getName(),
+                                parentMacro.getName());
+                m_sub_level_text_block_accessor.new_parent();
             }
         }
 
@@ -389,7 +381,7 @@ public class GenerateCode
         String text = node.getText().getText();
         text = text.replaceAll("\"", Matcher.quoteReplacement("\\\""));
 
-        macro.getM_macro().newM_text_append(text);
+        macro.getM_macro().new_text_append(text);
     }
 
     @Override
@@ -398,7 +390,7 @@ public class GenerateCode
 
         Macro macro = (Macro) this.currentScope;
 
-        macro.getM_macro().newM_eol_append();
+        macro.getM_macro().new_eol_append();
     }
 
     @Override
@@ -420,7 +412,7 @@ public class GenerateCode
             throw new InternalException("invalid escape");
         }
 
-        macro.getM_macro().newM_escape_append(text);
+        macro.getM_macro().new_escape_append(text);
     }
 
     @Override
@@ -429,7 +421,7 @@ public class GenerateCode
 
         Macro macro = (Macro) this.currentScope;
 
-        macro.getM_macro().newM_var_append(getVarName(node.getVar()));
+        macro.getM_macro().new_var_append(getVarName(node.getVar()));
     }
 
     @Override
@@ -441,7 +433,7 @@ public class GenerateCode
         ExpandSignature expandSignature = this.globalData
                 .getExpandSignature(node.getExpand());
 
-        this.current_M_expand_append = macro.getM_macro().newM_expand_append(
+        this.current_M_expand_append = macro.getM_macro().new_expand_append(
                 expandSignature.getName());
     }
 
@@ -475,19 +467,19 @@ public class GenerateCode
 
         if (this.current_option.equals("none")) {
             this.current_M_expand_append
-                    .newM_expand_append_none_text_block(textBlockName);
+                    .new_expand_append_none_text_block(textBlockName);
         }
         else if (this.current_option.equals("separator")) {
             this.current_M_expand_append
-                    .newM_expand_append_separator_text_block(textBlockName);
+                    .new_expand_append_separator_text_block(textBlockName);
         }
         else if (this.current_option.equals("before_first")) {
             this.current_M_expand_append
-                    .newM_expand_append_before_first_text_block(textBlockName);
+                    .new_expand_append_before_first_text_block(textBlockName);
         }
         else if (this.current_option.equals("after_last")) {
             this.current_M_expand_append
-                    .newM_expand_append_after_last_text_block(textBlockName);
+                    .new_expand_append_after_last_text_block(textBlockName);
         }
         else {
             throw new InternalException("unknown option");
@@ -503,19 +495,19 @@ public class GenerateCode
 
         if (this.current_option.equals("none")) {
             this.current_M_expand_append
-                    .newM_expand_append_none_string_part(text);
+                    .new_expand_append_none_string_part(text);
         }
         else if (this.current_option.equals("separator")) {
             this.current_M_expand_append
-                    .newM_expand_append_separator_string_part(text);
+                    .new_expand_append_separator_string_part(text);
         }
         else if (this.current_option.equals("before_first")) {
             this.current_M_expand_append
-                    .newM_expand_append_before_first_string_part(text);
+                    .new_expand_append_before_first_string_part(text);
         }
         else if (this.current_option.equals("after_last")) {
             this.current_M_expand_append
-                    .newM_expand_append_after_last_string_part(text);
+                    .new_expand_append_after_last_string_part(text);
         }
         else {
             throw new InternalException("unknown option");
@@ -544,19 +536,19 @@ public class GenerateCode
 
         if (this.current_option.equals("none")) {
             this.current_M_expand_append
-                    .newM_expand_append_none_string_part(text);
+                    .new_expand_append_none_string_part(text);
         }
         else if (this.current_option.equals("separator")) {
             this.current_M_expand_append
-                    .newM_expand_append_separator_string_part(text);
+                    .new_expand_append_separator_string_part(text);
         }
         else if (this.current_option.equals("before_first")) {
             this.current_M_expand_append
-                    .newM_expand_append_before_first_string_part(text);
+                    .new_expand_append_before_first_string_part(text);
         }
         else if (this.current_option.equals("after_last")) {
             this.current_M_expand_append
-                    .newM_expand_append_after_last_string_part(text);
+                    .new_expand_append_after_last_string_part(text);
         }
         else {
             throw new InternalException("unknown option");
@@ -571,7 +563,7 @@ public class GenerateCode
 
         String textInsertName = ((ATextBlockReference) ((ATextInsert) node
                 .getTextInsert()).getTextBlockReference()).getName().getText();
-        macro.getM_macro().newM_text_insert_append(textInsertName);
+        macro.getM_macro().new_text_insert_append(textInsertName);
     }
 
     @Override
@@ -583,7 +575,7 @@ public class GenerateCode
         String text = node.getText().getText();
         text = text.replaceAll("\"", Matcher.quoteReplacement("\\\""));
 
-        textBlock.getM_text_block().newM_text_append(text);
+        textBlock.getM_text_block().new_text_append(text);
     }
 
     @Override
@@ -592,7 +584,7 @@ public class GenerateCode
 
         TextBlock textBlock = (TextBlock) this.currentScope;
 
-        textBlock.getM_text_block().newM_eol_append();
+        textBlock.getM_text_block().new_eol_append();
     }
 
     @Override
@@ -614,7 +606,7 @@ public class GenerateCode
             throw new InternalException("invalid escape");
         }
 
-        textBlock.getM_text_block().newM_escape_append(text);
+        textBlock.getM_text_block().new_escape_append(text);
     }
 
     @Override
@@ -623,7 +615,7 @@ public class GenerateCode
 
         TextBlock textBlock = (TextBlock) this.currentScope;
 
-        textBlock.getM_text_block().newM_var_append(getVarName(node.getVar()));
+        textBlock.getM_text_block().new_var_append(getVarName(node.getVar()));
     }
 
     @Override
@@ -634,6 +626,6 @@ public class GenerateCode
 
         String textInsertName = ((ATextBlockReference) ((ATextInsert) node
                 .getTextInsert()).getTextBlockReference()).getName().getText();
-        textBlock.getM_text_block().newM_text_insert_append(textInsertName);
+        textBlock.getM_text_block().new_text_insert_append(textInsertName);
     }
 }
