@@ -164,7 +164,8 @@ $macro: top_level_text_block_accessor(text_block_name) $
   T_$text_block_name get_t_$text_block_name() {
     T_$text_block_name result = this.cached_t_$text_block_name;
     if(result == null) {
-      this.cached_t_$text_block_name = T_$text_block_name.getInstance();
+      result = T_$text_block_name.getInstance();
+      this.cached_t_$text_block_name = result;
     }
     return result;
   }
@@ -348,7 +349,8 @@ $macro: top_level_text_block_accessor(text_block_name) $
   T_$text_block_name get_t_$text_block_name() {
     T_$text_block_name result = this.cached_t_$text_block_name;
     if(result == null) {
-      this.cached_t_$text_block_name = T_$text_block_name.getInstance();
+      result = T_$text_block_name.getInstance();
+      this.cached_t_$text_block_name = result;
     }
     return result;
   }
