@@ -197,6 +197,7 @@ public class GenerateCode
 
             macro.getM_macro().new_constructor_param(paramName);
             macro.getM_macro().new_param_declaration(paramName);
+            macro.getM_macro().new_constructor_param_initialisation(paramName);
         }
 
         for (Param referencedParam : macro.getReferencedParams()) {
@@ -243,7 +244,7 @@ public class GenerateCode
                 String paramName = ((AParam) pParam).getName().getText();
 
                 m_submacro_creator.new_submacro_parameter(paramName);
-                m_submacro_creator.new_submacro_parameter(paramName);
+                m_submacro_creator.new_submacro_call_param(paramName);
             }
 
             for (ExpandSignature expandSignature : macro
