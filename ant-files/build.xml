@@ -76,7 +76,6 @@
     <delete dir="${src.dir}/org/sablecc/sablecc/syntax3" />
     <delete dir="${src.dir}/org/sablecc/sablecc/launcher/syntax3" />
     <delete dir="${src.dir}/org/sablecc/objectmacro/syntax3" />
-    <delete dir="${src.dir}/org/sablecc/objectmacro/bootstrap/syntax3" />
     <delete dir="${src.dir}/org/sablecc/objectmacro/launcher/syntax3" />
 
     <sablecc3 src="${grammars.dir}"
@@ -214,7 +213,6 @@ public class Version {
         <exclude name="org/sablecc/sablecc/syntax3/**" />
         <exclude name="org/sablecc/sablecc/launcher/syntax3/**" />
         <exclude name="${src.dir}/org/sablecc/objectmacro/syntax3/**" />
-        <exclude name="${src.dir}/org/sablecc/objectmacro/bootstrap/syntax3/**" />
         <exclude name="${src.dir}/org/sablecc/objectmacro/launcher/syntax3/**" />
       </packageset>
 
@@ -319,7 +317,6 @@ public class Version {
     <delete dir="${src.dir}/org/sablecc/sablecc/syntax3" />
     <delete dir="${src.dir}/org/sablecc/sablecc/launcher/syntax3" />
     <delete dir="${src.dir}/org/sablecc/objectmacro/syntax3" />
-    <delete dir="${src.dir}/org/sablecc/objectmacro/bootstrap/syntax3" />
     <delete dir="${src.dir}/org/sablecc/objectmacro/launcher/syntax3" />
 
     <delete file="${src.dir}/org/sablecc/sablecc/launcher/Version.java" />
