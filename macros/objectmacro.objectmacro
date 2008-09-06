@@ -86,7 +86,7 @@ $end: comma $
 $comment: ========== parent ========== $
 
 $macro: parent $
-this.parent$comment: no eol $
+this.get_parent()$comment: no eol $
 $end: parent $
 
 $comment: ========== this ========== $
@@ -107,7 +107,7 @@ $comment: ========== param_accessor ========== $
 $macro: param_accessor(param_name, containing_macro_name) $
   private String cached_p_$param_name;
 
-  String get_p_$param_name() {
+  private String get_p_$param_name() {
     String result = this.cached_p_$param_name;
 
     if(result == null) {
@@ -138,7 +138,7 @@ $comment: ========== top_level_text_block_accessor ========== $
 $macro: top_level_text_block_accessor(text_block_name) $
   private T_$text_block_name cached_t_$text_block_name;
 
-  T_$text_block_name get_t_$text_block_name() {
+  private T_$text_block_name get_t_$text_block_name() {
     T_$text_block_name result = this.cached_t_$text_block_name;
 
     if(result == null) {
@@ -481,6 +481,10 @@ $macro: sub_level_text_block $
   // ---- parent ----
 
   private final Macro parent;
+
+  Macro get_parent() {
+    return this.parent;
+  }
 
 $end: sub_level_text_block $
 $comment$
