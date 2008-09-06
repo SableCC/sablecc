@@ -5,31 +5,29 @@ package org.sablecc.objectmacro.macro;
 public class T_submacro_creator_head
         extends Printable {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parent ----
-    private final Macro parent;
-
     // ---- constructor ----
+
     T_submacro_creator_head(
             Macro parent) {
 
         this.parent = parent;
     }
 
-    // ---- parameter accessors ----
+    // ---- parent ----
 
-    // ---- text block accessors ----
+    private final Macro parent;
 
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("  // ---- macro creators ----");
+
         sb.append(EOL);
+
         sb.append(EOL);
     }
+
 }

@@ -5,10 +5,14 @@ package org.sablecc.objectmacro.macro;
 public class T_comma
         extends Printable {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
+    // ---- constructor ----
+
+    private T_comma() {
+
+    }
 
     // ---- instance ----
+
     private static final T_comma instance = new T_comma();
 
     static T_comma getInstance() {
@@ -16,16 +20,7 @@ public class T_comma
         return instance;
     }
 
-    // ---- constructor ----
-    private T_comma() {
-
-    }
-
-    // ---- parameter accessors ----
-
-    // ---- text block accessors ----
-
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
@@ -33,4 +28,5 @@ public class T_comma
 
         sb.append(", ");
     }
+
 }

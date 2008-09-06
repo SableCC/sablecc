@@ -5,38 +5,30 @@ package org.sablecc.objectmacro.macro;
 public class M_package_declaration
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-    private final String p_package_name;
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-
-    // ---- parent ----
-    @Override
-    public Macro get_parent() {
-
-        return null;
-    }
-
     // ---- constructor ----
+
     M_package_declaration(
             String p_package_name) {
 
         this.p_package_name = p_package_name;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
+
+    @Override
+    Macro get_parent() {
+
+        return null;
+    }
+
+    // ---- parameters ----
+
+    private final String p_package_name;
 
     String get_local_p_package_name() {
 
         return this.p_package_name;
     }
-
-    // ---- local text block accessors ----
 
     // ---- parameter accessors ----
 
@@ -45,32 +37,37 @@ public class M_package_declaration
     String get_p_package_name() {
 
         String result = this.cached_p_package_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_package_declaration)) {
                 current = current.get_parent();
             }
+
             result = ((M_package_declaration) current)
                     .get_local_p_package_name();
             this.cached_p_package_name = result;
         }
+
         return result;
     }
 
-    // ---- text block accessors ----
-
-    // sub-macro creators
-
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append(EOL);
+
         sb.append("package ");
+
         sb.append(get_p_package_name());
+
         sb.append(";");
+
         sb.append(EOL);
     }
+
 }

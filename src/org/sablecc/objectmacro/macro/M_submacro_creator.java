@@ -8,33 +8,8 @@ import java.util.List;
 public class M_submacro_creator
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-    private final String p_submacro_name;
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-    private final List<Macro> e_expand_18 = new LinkedList<Macro>();
-
-    private final List<Macro> e_expand_20 = new LinkedList<Macro>();
-
-    private final List<Macro> e_expand_21 = new LinkedList<Macro>();
-
-    private final List<Macro> e_expand_22 = new LinkedList<Macro>();
-
-    // ---- parent ----
-    private final Macro parent;
-
-    @Override
-    public Macro get_parent() {
-
-        return this.parent;
-    }
-
     // ---- constructor ----
+
     M_submacro_creator(
             Macro parent,
             String p_submacro_name) {
@@ -43,14 +18,34 @@ public class M_submacro_creator
         this.p_submacro_name = p_submacro_name;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
+
+    private final Macro parent;
+
+    @Override
+    Macro get_parent() {
+
+        return this.parent;
+    }
+
+    // ---- parameters ----
+
+    private final String p_submacro_name;
 
     String get_local_p_submacro_name() {
 
         return this.p_submacro_name;
     }
 
-    // ---- local text block accessors ----
+    // ---- expands ----
+
+    private final List<Macro> e_expand_18 = new LinkedList<Macro>();
+
+    private final List<Macro> e_expand_20 = new LinkedList<Macro>();
+
+    private final List<Macro> e_expand_21 = new LinkedList<Macro>();
+
+    private final List<Macro> e_expand_22 = new LinkedList<Macro>();
 
     // ---- parameter accessors ----
 
@@ -59,14 +54,18 @@ public class M_submacro_creator
     String get_p_submacro_name() {
 
         String result = this.cached_p_submacro_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_submacro_creator)) {
                 current = current.get_parent();
             }
+
             result = ((M_submacro_creator) current).get_local_p_submacro_name();
             this.cached_p_submacro_name = result;
         }
+
         return result;
     }
 
@@ -77,14 +76,16 @@ public class M_submacro_creator
     T_comma get_t_comma() {
 
         T_comma result = this.cached_t_comma;
+
         if (result == null) {
             result = T_comma.getInstance();
             this.cached_t_comma = result;
         }
+
         return result;
     }
 
-    // sub-macro creators
+    // ---- macro creators ----
 
     public M_submacro_parameter new_submacro_parameter(
             String p_param_name) {
@@ -119,17 +120,22 @@ public class M_submacro_creator
         return result;
     }
 
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("  public M_");
+
         sb.append(get_p_submacro_name());
+
         sb.append(" new_");
+
         sb.append(get_p_submacro_name());
+
         sb.append("(");
+
         if (this.e_expand_18.size() == 0) {
         }
         else {
@@ -144,13 +150,21 @@ public class M_submacro_creator
                 macro.appendTo(sb);
             }
         }
+
         sb.append(") {");
+
         sb.append(EOL);
+
         sb.append("    M_");
+
         sb.append(get_p_submacro_name());
+
         sb.append(" result = new M_");
+
         sb.append(get_p_submacro_name());
+
         sb.append("(");
+
         if (this.e_expand_20.size() == 0) {
         }
         else {
@@ -164,6 +178,7 @@ public class M_submacro_creator
                 macro.appendTo(sb);
             }
         }
+
         if (this.e_expand_21.size() == 0) {
         }
         else {
@@ -178,8 +193,11 @@ public class M_submacro_creator
                 macro.appendTo(sb);
             }
         }
+
         sb.append(");");
+
         sb.append(EOL);
+
         if (this.e_expand_22.size() == 0) {
         }
         else {
@@ -193,10 +211,16 @@ public class M_submacro_creator
                 macro.appendTo(sb);
             }
         }
+
         sb.append("    return result;");
+
         sb.append(EOL);
+
         sb.append("  }");
+
         sb.append(EOL);
+
         sb.append(EOL);
     }
+
 }

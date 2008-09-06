@@ -5,26 +5,8 @@ package org.sablecc.objectmacro.macro;
 public class M_add_to_expand
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-    private final String p_expand_name;
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-
-    // ---- parent ----
-    private final Macro parent;
-
-    @Override
-    public Macro get_parent() {
-
-        return this.parent;
-    }
-
     // ---- constructor ----
+
     M_add_to_expand(
             Macro parent,
             String p_expand_name) {
@@ -33,14 +15,24 @@ public class M_add_to_expand
         this.p_expand_name = p_expand_name;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
+
+    private final Macro parent;
+
+    @Override
+    Macro get_parent() {
+
+        return this.parent;
+    }
+
+    // ---- parameters ----
+
+    private final String p_expand_name;
 
     String get_local_p_expand_name() {
 
         return this.p_expand_name;
     }
-
-    // ---- local text block accessors ----
 
     // ---- parameter accessors ----
 
@@ -49,30 +41,34 @@ public class M_add_to_expand
     String get_p_expand_name() {
 
         String result = this.cached_p_expand_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_add_to_expand)) {
                 current = current.get_parent();
             }
+
             result = ((M_add_to_expand) current).get_local_p_expand_name();
             this.cached_p_expand_name = result;
         }
+
         return result;
     }
 
-    // ---- text block accessors ----
-
-    // sub-macro creators
-
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("    e_");
+
         sb.append(get_p_expand_name());
+
         sb.append(".add(result);");
+
         sb.append(EOL);
     }
+
 }

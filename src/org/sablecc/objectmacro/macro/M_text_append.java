@@ -5,38 +5,30 @@ package org.sablecc.objectmacro.macro;
 public class M_text_append
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-    private final String p_text;
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-
-    // ---- parent ----
-    @Override
-    public Macro get_parent() {
-
-        return null;
-    }
-
     // ---- constructor ----
+
     M_text_append(
             String p_text) {
 
         this.p_text = p_text;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
+
+    @Override
+    Macro get_parent() {
+
+        return null;
+    }
+
+    // ---- parameters ----
+
+    private final String p_text;
 
     String get_local_p_text() {
 
         return this.p_text;
     }
-
-    // ---- local text block accessors ----
 
     // ---- parameter accessors ----
 
@@ -45,30 +37,34 @@ public class M_text_append
     String get_p_text() {
 
         String result = this.cached_p_text;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_text_append)) {
                 current = current.get_parent();
             }
+
             result = ((M_text_append) current).get_local_p_text();
             this.cached_p_text = result;
         }
+
         return result;
     }
 
-    // ---- text block accessors ----
-
-    // sub-macro creators
-
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("    sb.append(\"");
+
         sb.append(get_p_text());
+
         sb.append("\");");
+
         sb.append(EOL);
     }
+
 }

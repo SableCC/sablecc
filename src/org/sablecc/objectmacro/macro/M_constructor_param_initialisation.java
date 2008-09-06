@@ -5,26 +5,8 @@ package org.sablecc.objectmacro.macro;
 public class M_constructor_param_initialisation
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-    private final String p_param_name;
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-
-    // ---- parent ----
-    private final Macro parent;
-
-    @Override
-    public Macro get_parent() {
-
-        return this.parent;
-    }
-
     // ---- constructor ----
+
     M_constructor_param_initialisation(
             Macro parent,
             String p_param_name) {
@@ -33,14 +15,24 @@ public class M_constructor_param_initialisation
         this.p_param_name = p_param_name;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
+
+    private final Macro parent;
+
+    @Override
+    Macro get_parent() {
+
+        return this.parent;
+    }
+
+    // ---- parameters ----
+
+    private final String p_param_name;
 
     String get_local_p_param_name() {
 
         return this.p_param_name;
     }
-
-    // ---- local text block accessors ----
 
     // ---- parameter accessors ----
 
@@ -49,33 +41,39 @@ public class M_constructor_param_initialisation
     String get_p_param_name() {
 
         String result = this.cached_p_param_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_constructor_param_initialisation)) {
                 current = current.get_parent();
             }
+
             result = ((M_constructor_param_initialisation) current)
                     .get_local_p_param_name();
             this.cached_p_param_name = result;
         }
+
         return result;
     }
 
-    // ---- text block accessors ----
-
-    // sub-macro creators
-
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("    this.p_");
+
         sb.append(get_p_param_name());
+
         sb.append(" = p_");
+
         sb.append(get_p_param_name());
+
         sb.append(";");
+
         sb.append(EOL);
     }
+
 }

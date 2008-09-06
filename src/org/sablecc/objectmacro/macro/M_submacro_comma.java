@@ -5,36 +5,25 @@ package org.sablecc.objectmacro.macro;
 public class M_submacro_comma
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-
-    // ---- parent ----
-    private final Macro parent;
-
-    @Override
-    public Macro get_parent() {
-
-        return this.parent;
-    }
-
     // ---- constructor ----
+
     M_submacro_comma(
-            Macro parent) {
+            Macro parent
+
+    ) {
 
         this.parent = parent;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
 
-    // ---- local text block accessors ----
+    private final Macro parent;
 
-    // ---- parameter accessors ----
+    @Override
+    Macro get_parent() {
+
+        return this.parent;
+    }
 
     // ---- text block accessors ----
 
@@ -43,16 +32,16 @@ public class M_submacro_comma
     T_comma get_t_comma() {
 
         T_comma result = this.cached_t_comma;
+
         if (result == null) {
             result = T_comma.getInstance();
             this.cached_t_comma = result;
         }
+
         return result;
     }
 
-    // sub-macro creators
-
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
@@ -60,4 +49,5 @@ public class M_submacro_comma
 
         get_t_comma().appendTo(sb);
     }
+
 }

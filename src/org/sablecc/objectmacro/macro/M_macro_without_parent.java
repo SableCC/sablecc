@@ -5,58 +5,55 @@ package org.sablecc.objectmacro.macro;
 public class M_macro_without_parent
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-
-    // ---- parent ----
-    private final Macro parent;
-
-    @Override
-    public Macro get_parent() {
-
-        return this.parent;
-    }
-
     // ---- constructor ----
+
     M_macro_without_parent(
-            Macro parent) {
+            Macro parent
+
+    ) {
 
         this.parent = parent;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
 
-    // ---- local text block accessors ----
+    private final Macro parent;
 
-    // ---- parameter accessors ----
+    @Override
+    Macro get_parent() {
 
-    // ---- text block accessors ----
+        return this.parent;
+    }
 
-    // sub-macro creators
-
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("  // ---- parent ----");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  @Override");
+
         sb.append(EOL);
+
         sb.append("  Macro get_parent() {");
+
         sb.append(EOL);
+
         sb.append("    return null;");
+
         sb.append(EOL);
+
         sb.append("  }");
+
         sb.append(EOL);
+
         sb.append(EOL);
     }
+
 }

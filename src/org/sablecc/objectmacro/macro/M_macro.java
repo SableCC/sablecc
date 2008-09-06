@@ -8,22 +8,68 @@ import java.util.List;
 public class M_macro
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
+    // ---- constructor ----
+
+    public M_macro(
+            String p_macro_name) {
+
+        this.p_macro_name = p_macro_name;
+        this.t_param_declaration_header = new T_param_declaration_header(this);
+        this.t_text_block_declaration_header = new T_text_block_declaration_header(
+                this);
+        this.t_expand_declaration_header = new T_expand_declaration_header(this);
+        this.t_submacro_creator_head = new T_submacro_creator_head(this);
+    }
+
+    // ---- parent ----
+
+    @Override
+    Macro get_parent() {
+
+        return null;
+    }
 
     // ---- parameters ----
+
     private final String p_macro_name;
 
+    String get_local_p_macro_name() {
+
+        return this.p_macro_name;
+    }
+
     // ---- text blocks ----
+
     private final T_param_declaration_header t_param_declaration_header;
+
+    T_param_declaration_header get_local_t_param_declaration_header() {
+
+        return this.t_param_declaration_header;
+    }
 
     private final T_text_block_declaration_header t_text_block_declaration_header;
 
+    T_text_block_declaration_header get_local_t_text_block_declaration_header() {
+
+        return this.t_text_block_declaration_header;
+    }
+
     private final T_expand_declaration_header t_expand_declaration_header;
+
+    T_expand_declaration_header get_local_t_expand_declaration_header() {
+
+        return this.t_expand_declaration_header;
+    }
 
     private final T_submacro_creator_head t_submacro_creator_head;
 
+    T_submacro_creator_head get_local_t_submacro_creator_head() {
+
+        return this.t_submacro_creator_head;
+    }
+
     // ---- expands ----
+
     private final List<Macro> e_expand_0 = new LinkedList<Macro>();
 
     private final List<Macro> e_expand_2 = new LinkedList<Macro>();
@@ -54,54 +100,6 @@ public class M_macro
 
     private final List<Macro> e_expand_23 = new LinkedList<Macro>();
 
-    // ---- parent ----
-    @Override
-    public Macro get_parent() {
-
-        return null;
-    }
-
-    // ---- constructor ----
-    public M_macro(
-            String p_macro_name) {
-
-        this.p_macro_name = p_macro_name;
-        this.t_param_declaration_header = new T_param_declaration_header(this);
-        this.t_text_block_declaration_header = new T_text_block_declaration_header(
-                this);
-        this.t_expand_declaration_header = new T_expand_declaration_header(this);
-        this.t_submacro_creator_head = new T_submacro_creator_head(this);
-    }
-
-    // ---- local parameter accessors ----
-
-    String get_local_p_macro_name() {
-
-        return this.p_macro_name;
-    }
-
-    // ---- local text block accessors ----
-
-    T_param_declaration_header get_local_t_param_declaration_header() {
-
-        return this.t_param_declaration_header;
-    }
-
-    T_text_block_declaration_header get_local_t_text_block_declaration_header() {
-
-        return this.t_text_block_declaration_header;
-    }
-
-    T_expand_declaration_header get_local_t_expand_declaration_header() {
-
-        return this.t_expand_declaration_header;
-    }
-
-    T_submacro_creator_head get_local_t_submacro_creator_head() {
-
-        return this.t_submacro_creator_head;
-    }
-
     // ---- parameter accessors ----
 
     private String cached_p_macro_name;
@@ -109,14 +107,18 @@ public class M_macro
     String get_p_macro_name() {
 
         String result = this.cached_p_macro_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_macro)) {
                 current = current.get_parent();
             }
+
             result = ((M_macro) current).get_local_p_macro_name();
             this.cached_p_macro_name = result;
         }
+
         return result;
     }
 
@@ -127,10 +129,12 @@ public class M_macro
     T_header get_t_header() {
 
         T_header result = this.cached_t_header;
+
         if (result == null) {
             result = T_header.getInstance();
             this.cached_t_header = result;
         }
+
         return result;
     }
 
@@ -139,46 +143,12 @@ public class M_macro
     T_comma get_t_comma() {
 
         T_comma result = this.cached_t_comma;
+
         if (result == null) {
             result = T_comma.getInstance();
             this.cached_t_comma = result;
         }
-        return result;
-    }
 
-    private T_blank_line cached_t_blank_line;
-
-    T_blank_line get_t_blank_line() {
-
-        T_blank_line result = this.cached_t_blank_line;
-        if (result == null) {
-            result = T_blank_line.getInstance();
-            this.cached_t_blank_line = result;
-        }
-        return result;
-    }
-
-    private T_param_accessor_head cached_t_param_accessor_head;
-
-    T_param_accessor_head get_t_param_accessor_head() {
-
-        T_param_accessor_head result = this.cached_t_param_accessor_head;
-        if (result == null) {
-            result = T_param_accessor_head.getInstance();
-            this.cached_t_param_accessor_head = result;
-        }
-        return result;
-    }
-
-    private T_text_block_accessor_head cached_t_text_block_accessor_head;
-
-    T_text_block_accessor_head get_t_text_block_accessor_head() {
-
-        T_text_block_accessor_head result = this.cached_t_text_block_accessor_head;
-        if (result == null) {
-            result = T_text_block_accessor_head.getInstance();
-            this.cached_t_text_block_accessor_head = result;
-        }
         return result;
     }
 
@@ -187,14 +157,18 @@ public class M_macro
     T_param_declaration_header get_t_param_declaration_header() {
 
         T_param_declaration_header result = this.cached_t_param_declaration_header;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_macro)) {
                 current = current.get_parent();
             }
+
             result = ((M_macro) current).get_local_t_param_declaration_header();
             this.cached_t_param_declaration_header = result;
         }
+
         return result;
     }
 
@@ -203,15 +177,19 @@ public class M_macro
     T_text_block_declaration_header get_t_text_block_declaration_header() {
 
         T_text_block_declaration_header result = this.cached_t_text_block_declaration_header;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_macro)) {
                 current = current.get_parent();
             }
+
             result = ((M_macro) current)
                     .get_local_t_text_block_declaration_header();
             this.cached_t_text_block_declaration_header = result;
         }
+
         return result;
     }
 
@@ -220,15 +198,61 @@ public class M_macro
     T_expand_declaration_header get_t_expand_declaration_header() {
 
         T_expand_declaration_header result = this.cached_t_expand_declaration_header;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_macro)) {
                 current = current.get_parent();
             }
+
             result = ((M_macro) current)
                     .get_local_t_expand_declaration_header();
             this.cached_t_expand_declaration_header = result;
         }
+
+        return result;
+    }
+
+    private T_blank_line cached_t_blank_line;
+
+    T_blank_line get_t_blank_line() {
+
+        T_blank_line result = this.cached_t_blank_line;
+
+        if (result == null) {
+            result = T_blank_line.getInstance();
+            this.cached_t_blank_line = result;
+        }
+
+        return result;
+    }
+
+    private T_param_accessor_head cached_t_param_accessor_head;
+
+    T_param_accessor_head get_t_param_accessor_head() {
+
+        T_param_accessor_head result = this.cached_t_param_accessor_head;
+
+        if (result == null) {
+            result = T_param_accessor_head.getInstance();
+            this.cached_t_param_accessor_head = result;
+        }
+
+        return result;
+    }
+
+    private T_text_block_accessor_head cached_t_text_block_accessor_head;
+
+    T_text_block_accessor_head get_t_text_block_accessor_head() {
+
+        T_text_block_accessor_head result = this.cached_t_text_block_accessor_head;
+
+        if (result == null) {
+            result = T_text_block_accessor_head.getInstance();
+            this.cached_t_text_block_accessor_head = result;
+        }
+
         return result;
     }
 
@@ -237,18 +261,22 @@ public class M_macro
     T_submacro_creator_head get_t_submacro_creator_head() {
 
         T_submacro_creator_head result = this.cached_t_submacro_creator_head;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_macro)) {
                 current = current.get_parent();
             }
+
             result = ((M_macro) current).get_local_t_submacro_creator_head();
             this.cached_t_submacro_creator_head = result;
         }
+
         return result;
     }
 
-    // sub-macro creators
+    // ---- macro creators ----
 
     public M_package_declaration new_package_declaration(
             String p_package_name) {
@@ -425,13 +453,14 @@ public class M_macro
         return result;
     }
 
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         get_t_header().appendTo(sb);
+
         if (this.e_expand_0.size() == 0) {
         }
         else {
@@ -445,20 +474,35 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
+
         sb.append(EOL);
+
         sb.append("import java.util.LinkedList;");
+
         sb.append(EOL);
+
         sb.append("import java.util.List;");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("public class M_");
+
         sb.append(get_p_macro_name());
+
         sb.append(" extends Macro {");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  // ---- constructor ----");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         if (this.e_expand_2.size() == 0) {
         }
         else {
@@ -472,7 +516,7 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-        sb.append(EOL);
+
         if (this.e_expand_6.size() == 0) {
         }
         else {
@@ -487,9 +531,11 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-        sb.append(EOL);
+
         sb.append(") {");
+
         sb.append(EOL);
+
         if (this.e_expand_7.size() == 0) {
         }
         else {
@@ -503,6 +549,7 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
+
         if (this.e_expand_8.size() == 0) {
         }
         else {
@@ -516,6 +563,7 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
+
         if (this.e_expand_9.size() == 0) {
         }
         else {
@@ -529,9 +577,13 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
+
         sb.append("  }");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         if (this.e_expand_10.size() == 0) {
         }
         else {
@@ -545,6 +597,7 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
+
         if (this.e_expand_11.size() == 0) {
         }
         else {
@@ -558,7 +611,7 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-        sb.append(EOL);
+
         if (this.e_expand_12.size() == 0) {
         }
         else {
@@ -573,7 +626,7 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-        sb.append(EOL);
+
         if (this.e_expand_13.size() == 0) {
         }
         else {
@@ -588,7 +641,7 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-        sb.append(EOL);
+
         if (this.e_expand_14.size() == 0) {
         }
         else {
@@ -604,7 +657,7 @@ public class M_macro
             }
             get_t_blank_line().appendTo(sb);
         }
-        sb.append(EOL);
+
         if (this.e_expand_15.size() == 0) {
         }
         else {
@@ -619,7 +672,7 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-        sb.append(EOL);
+
         if (this.e_expand_16.size() == 0) {
         }
         else {
@@ -634,7 +687,7 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-        sb.append(EOL);
+
         if (this.e_expand_17.size() == 0) {
         }
         else {
@@ -649,14 +702,23 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
+
         sb.append(EOL);
+
         sb.append("  // ---- appendTo ----");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  @Override");
+
         sb.append(EOL);
+
         sb.append("  public void appendTo(StringBuilder sb) {");
+
         sb.append(EOL);
+
         if (this.e_expand_23.size() == 0) {
         }
         else {
@@ -671,10 +733,16 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
+
         sb.append("  }");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("}");
+
         sb.append(EOL);
     }
+
 }

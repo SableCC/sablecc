@@ -5,34 +5,25 @@ package org.sablecc.objectmacro.macro;
 public class M_sub_level_text_block
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-
-    // ---- parent ----
-    private final Macro parent;
-
-    @Override
-    public Macro get_parent() {
-
-        return this.parent;
-    }
-
     // ---- constructor ----
+
     M_sub_level_text_block(
-            Macro parent) {
+            Macro parent
+
+    ) {
 
         this.parent = parent;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
 
-    // ---- local text block accessors ----
+    private final Macro parent;
+
+    @Override
+    Macro get_parent() {
+
+        return this.parent;
+    }
 
     // ---- parameter accessors ----
 
@@ -41,46 +32,66 @@ public class M_sub_level_text_block
     String get_p_block_name() {
 
         String result = this.cached_p_block_name;
+
         if (result == null) {
             Macro current = this;
+
             while (!(current instanceof M_text_block)) {
                 current = current.get_parent();
             }
+
             result = ((M_text_block) current).get_local_p_block_name();
             this.cached_p_block_name = result;
         }
+
         return result;
     }
 
-    // ---- text block accessors ----
-
-    // sub-macro creators
-
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("  // ---- constructor ----");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  T_");
+
         sb.append(get_p_block_name());
+
         sb.append("(");
+
         sb.append(EOL);
+
         sb.append("      Macro parent) {");
+
         sb.append(EOL);
+
         sb.append("    this.parent = parent;");
+
         sb.append(EOL);
+
         sb.append("  }");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  // ---- parent ----");
+
         sb.append(EOL);
+
         sb.append(EOL);
+
         sb.append("  private final Macro parent;");
+
         sb.append(EOL);
+
         sb.append(EOL);
     }
+
 }

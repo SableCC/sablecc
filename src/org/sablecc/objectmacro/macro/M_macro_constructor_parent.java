@@ -8,41 +8,31 @@ import java.util.List;
 public class M_macro_constructor_parent
         extends Macro {
 
-    // ---- EOL ----
-    private static final String EOL = System.getProperty("line.separator");
-
-    // ---- parameters ----
-
-    // ---- text blocks ----
-
-    // ---- expands ----
-    private final List<Macro> e_expand_3 = new LinkedList<Macro>();
-
-    // ---- parent ----
-    private final Macro parent;
-
-    @Override
-    public Macro get_parent() {
-
-        return this.parent;
-    }
-
     // ---- constructor ----
+
     M_macro_constructor_parent(
-            Macro parent) {
+            Macro parent
+
+    ) {
 
         this.parent = parent;
     }
 
-    // ---- local parameter accessors ----
+    // ---- parent ----
 
-    // ---- local text block accessors ----
+    private final Macro parent;
 
-    // ---- parameter accessors ----
+    @Override
+    Macro get_parent() {
 
-    // ---- text block accessors ----
+        return this.parent;
+    }
 
-    // sub-macro creators
+    // ---- expands ----
+
+    private final List<Macro> e_expand_3 = new LinkedList<Macro>();
+
+    // ---- macro creators ----
 
     public M_macro_constructor_comma new_macro_constructor_comma() {
 
@@ -51,13 +41,14 @@ public class M_macro_constructor_parent
         return result;
     }
 
-    // ---- append ----
+    // ---- appendTo ----
 
     @Override
     public void appendTo(
             StringBuilder sb) {
 
         sb.append("Macro parent");
+
         if (this.e_expand_3.size() == 0) {
         }
         else {
@@ -72,4 +63,5 @@ public class M_macro_constructor_parent
             }
         }
     }
+
 }
