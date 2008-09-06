@@ -33,7 +33,7 @@ import org.sablecc.objectmacro.syntax3.node.AMacroReference;
 import org.sablecc.objectmacro.syntax3.node.ASourceFile;
 import org.sablecc.objectmacro.syntax3.node.ATextBlock;
 
-public class ComputeExpandSignatures
+public class ExpandSignatureFinder
         extends DepthFirstAdapter {
 
     private GlobalData globalData;
@@ -42,7 +42,7 @@ public class ComputeExpandSignatures
 
     private Set<Macro> macroSet;
 
-    public ComputeExpandSignatures(
+    public ExpandSignatureFinder(
             GlobalData globalData) {
 
         if (globalData == null) {

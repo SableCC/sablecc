@@ -34,21 +34,20 @@ import org.sablecc.objectmacro.exception.SemanticException;
 import org.sablecc.objectmacro.exception.SemanticRuntimeException;
 import org.sablecc.objectmacro.structures.GlobalData;
 import org.sablecc.objectmacro.structures.Macro;
-import org.sablecc.objectmacro.structures.TextBlock;
 import org.sablecc.objectmacro.syntax3.lexer.LexerException;
 import org.sablecc.objectmacro.syntax3.node.AMacroSourceFilePart;
-import org.sablecc.objectmacro.syntax3.node.ATextBlockSourceFilePart;
 import org.sablecc.objectmacro.syntax3.node.PSourceFilePart;
 import org.sablecc.objectmacro.syntax3.node.Start;
 import org.sablecc.objectmacro.syntax3.parser.Parser;
 import org.sablecc.objectmacro.syntax3.parser.ParserException;
 import org.sablecc.objectmacro.util.Strictness;
 import org.sablecc.objectmacro.util.Verbosity;
-import org.sablecc.objectmacro.walkers.AddImplicitReferences;
-import org.sablecc.objectmacro.walkers.ComputeExpandSignatures;
-import org.sablecc.objectmacro.walkers.DetectCyclicInserts;
-import org.sablecc.objectmacro.walkers.GenerateCode;
-import org.sablecc.objectmacro.walkers.VerifyNames;
+import org.sablecc.objectmacro.walkers.CodeGenerator;
+import org.sablecc.objectmacro.walkers.CyclicInsertDetector;
+import org.sablecc.objectmacro.walkers.ExpandSignatureFinder;
+import org.sablecc.objectmacro.walkers.ImplicitReferenceFinder;
+import org.sablecc.objectmacro.walkers.NameVerifier;
+import org.sablecc.objectmacro.walkers.UnusedTextBlocksDetector;
 
 /**
  * The main class of ObjectMacro.
@@ -332,7 +331,7 @@ public class ObjectMacro {
                 break;
             }
 
-            ast.apply(new VerifyNames(globalData));
+            ast.apply(new NameVerifier(globalData));
 
             switch (verbosity) {
             case VERBOSE:
@@ -340,7 +339,7 @@ public class ObjectMacro {
                 break;
             }
 
-            ast.apply(new DetectCyclicInserts(globalData));
+            ast.apply(new CyclicInsertDetector(globalData));
 
             switch (verbosity) {
             case VERBOSE:
@@ -358,7 +357,7 @@ public class ObjectMacro {
                     break;
                 }
 
-                detectUnusedTextBlocks(globalData);
+                ast.apply(new UnusedTextBlocksDetector(globalData));
                 break;
             }
 
@@ -390,25 +389,6 @@ public class ObjectMacro {
         throw new ExitException();
     }
 
-    private static void detectUnusedTextBlocks(
-            GlobalData globalData)
-            throws SemanticException {
-
-        for (PSourceFilePart part : globalData.getSourceFile().getDefinition()
-                .getParts()) {
-            if (part instanceof ATextBlockSourceFilePart) {
-                ATextBlockSourceFilePart textBlockPart = (ATextBlockSourceFilePart) part;
-                TextBlock textBlock = globalData.getTextBlock(textBlockPart
-                        .getTextBlock());
-                if (textBlock.isAutoexpand()) {
-                    throw new SemanticException("unused text block "
-                            + textBlock.getName(), textBlock.getDefinition()
-                            .getName());
-                }
-            }
-        }
-    }
-
     private static void processSemantics(
             Start ast,
             GlobalData globalData,
@@ -420,7 +400,7 @@ public class ObjectMacro {
             break;
         }
 
-        ast.apply(new AddImplicitReferences(globalData));
+        ast.apply(new ImplicitReferenceFinder(globalData));
 
         switch (verbosity) {
         case VERBOSE:
@@ -428,7 +408,7 @@ public class ObjectMacro {
             break;
         }
 
-        ast.apply(new ComputeExpandSignatures(globalData));
+        ast.apply(new ExpandSignatureFinder(globalData));
     }
 
     private static void generateCode(
@@ -439,7 +419,7 @@ public class ObjectMacro {
             throws SemanticException {
 
         try {
-            ast.apply(new GenerateCode(globalData, destinationDirectory,
+            ast.apply(new CodeGenerator(globalData, destinationDirectory,
                     destinationPackage));
         }
         catch (SemanticRuntimeException e) {

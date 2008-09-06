@@ -68,7 +68,7 @@ import org.sablecc.objectmacro.syntax3.node.AVarMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.AVarTextBlockBodyPart;
 import org.sablecc.objectmacro.syntax3.node.PParam;
 
-public class GenerateCode
+public class CodeGenerator
         extends DepthFirstAdapter {
 
     private final GlobalData globalData;
@@ -83,7 +83,7 @@ public class GenerateCode
 
     private String current_option;
 
-    public GenerateCode(
+    public CodeGenerator(
             GlobalData globalData,
             java.io.File destinationDirectory,
             String destinationPackage) {
@@ -292,11 +292,6 @@ public class GenerateCode
 
         if (this.currentScope instanceof Macro) {
             Macro parentmacro = (Macro) this.currentScope;
-
-            if (textBlock.isAutoexpand()) {
-                parentmacro.getM_macro().new_text_insert_append(
-                        textBlock.getName());
-            }
 
             parentmacro.getM_macro().new_text_block_declaration(
                     textBlock.getName());

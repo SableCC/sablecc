@@ -21,21 +21,20 @@ import org.sablecc.objectmacro.exception.InternalException;
 import org.sablecc.objectmacro.structures.GlobalData;
 import org.sablecc.objectmacro.structures.Macro;
 import org.sablecc.objectmacro.structures.Scope;
-import org.sablecc.objectmacro.structures.SourceFile;
 import org.sablecc.objectmacro.structures.TextBlock;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.syntax3.node.AMacro;
 import org.sablecc.objectmacro.syntax3.node.ASourceFile;
 import org.sablecc.objectmacro.syntax3.node.ATextBlock;
 
-public class AddImplicitReferences
+public class ImplicitReferenceFinder
         extends DepthFirstAdapter {
 
     private GlobalData globalData;
 
     private Scope currentScope;
 
-    public AddImplicitReferences(
+    public ImplicitReferenceFinder(
             GlobalData globalData) {
 
         if (globalData == null) {
@@ -79,10 +78,6 @@ public class AddImplicitReferences
             ATextBlock node) {
 
         TextBlock textBlock = this.globalData.getTextBlock(node);
-        if (textBlock.isAutoexpand()
-                && !(this.currentScope instanceof SourceFile)) {
-            this.currentScope.addReferencedTextBlock(textBlock);
-        }
 
         this.currentScope = textBlock;
     }

@@ -31,14 +31,14 @@ import org.sablecc.objectmacro.syntax3.node.ATextBlockReference;
 import org.sablecc.objectmacro.syntax3.node.ATextInsert;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
-public class DetectCyclicInserts
+public class UnusedTextBlocksDetector
         extends DepthFirstAdapter {
 
     private GlobalData globalData;
 
     private Scope currentScope;
 
-    public DetectCyclicInserts(
+    public UnusedTextBlocksDetector(
             GlobalData globalData) {
 
         if (globalData == null) {
@@ -80,7 +80,15 @@ public class DetectCyclicInserts
     public void inATextBlock(
             ATextBlock node) {
 
-        this.currentScope = this.globalData.getTextBlock(node);
+        TextBlock textBlock = this.globalData.getTextBlock(node);
+
+        if (textBlock.isUnused()) {
+            throw new SemanticRuntimeException(new SemanticException(
+                    "unused text block " + textBlock.getName(), textBlock
+                            .getDefinition().getName()));
+        }
+
+        this.currentScope = textBlock;
     }
 
     @Override
