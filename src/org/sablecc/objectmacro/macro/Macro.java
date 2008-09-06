@@ -2,16 +2,8 @@
 
 package org.sablecc.objectmacro.macro;
 
-public abstract class Macro {
+abstract class Macro
+        extends Printable {
 
-    public abstract void appendTo(
-            StringBuilder sb);
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        appendTo(sb);
-        return sb.toString();
-    }
+    public abstract Macro get_parent();
 }

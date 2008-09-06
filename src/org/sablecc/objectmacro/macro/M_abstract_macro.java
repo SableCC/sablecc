@@ -5,7 +5,7 @@ package org.sablecc.objectmacro.macro;
 import java.util.LinkedList;
 import java.util.List;
 
-public class M_printable
+public class M_abstract_macro
         extends Macro {
 
     // ---- EOL ----
@@ -26,7 +26,7 @@ public class M_printable
     }
 
     // ---- constructor ----
-    public M_printable() {
+    public M_abstract_macro() {
 
     }
 
@@ -81,34 +81,13 @@ public class M_printable
             }
         }
         sb.append(EOL);
-        sb.append("abstract class Printable {");
+        sb.append("abstract class Macro extends Printable {");
         sb.append(EOL);
         sb.append(EOL);
-        sb.append("  // ---- EOL ----");
+        sb.append("  // ---- get_parent ----");
         sb.append(EOL);
         sb.append(EOL);
-        sb
-                .append("  static final String EOL = System.getProperty(\"line.separator\");");
-        sb.append(EOL);
-        sb.append(EOL);
-        sb.append("  // ---- appendTo ----");
-        sb.append(EOL);
-        sb.append(EOL);
-        sb.append("  public abstract void appendTo(StringBuilder sb);");
-        sb.append(EOL);
-        sb.append(EOL);
-        sb.append("  // ---- toString ----");
-        sb.append(EOL);
-        sb.append(EOL);
-        sb.append("  public String toString() {");
-        sb.append(EOL);
-        sb.append("    StringBuilder sb = new StringBuilder();");
-        sb.append(EOL);
-        sb.append("    appendTo(sb);");
-        sb.append(EOL);
-        sb.append("    return sb.toString();");
-        sb.append(EOL);
-        sb.append("  }");
+        sb.append("  abstract Macro get_parent();");
         sb.append(EOL);
         sb.append(EOL);
         sb.append("}");

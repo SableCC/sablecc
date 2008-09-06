@@ -8,1589 +8,673 @@ import java.util.List;
 public class M_macro
         extends Macro {
 
+    // ---- EOL ----
+    private static final String EOL = System.getProperty("line.separator");
+
+    // ---- parameters ----
     private final String p_macro_name;
 
-    private final List<M_param_declaration> m_param_declaration = new LinkedList<M_param_declaration>();
+    // ---- text blocks ----
+    private final T_param_declaration_header t_param_declaration_header;
 
-    private final List<M_text_block_declaration> m_text_block_declaration = new LinkedList<M_text_block_declaration>();
+    private final T_text_block_declaration_header t_text_block_declaration_header;
 
-    private final List<M_expand_declaration> m_expand_declaration = new LinkedList<M_expand_declaration>();
+    private final T_expand_declaration_header t_expand_declaration_header;
 
-    private final List<M_public_top_level_constructor> m_public_top_level_constructor = new LinkedList<M_public_top_level_constructor>();
+    private final T_submacro_creator_head t_submacro_creator_head;
 
-    private final List<M_package_top_level_constructor> m_package_top_level_constructor = new LinkedList<M_package_top_level_constructor>();
+    // ---- expands ----
+    private final List<Macro> e_expand_0 = new LinkedList<Macro>();
 
-    private final List<M_sub_level_constructor> m_sub_level_constructor = new LinkedList<M_sub_level_constructor>();
+    private final List<Macro> e_expand_2 = new LinkedList<Macro>();
 
-    private final List<M_constructor_first_param> m_constructor_first_param = new LinkedList<M_constructor_first_param>();
+    private final List<Macro> e_expand_6 = new LinkedList<Macro>();
 
-    private final List<M_constructor_additional_param> m_constructor_additional_param = new LinkedList<M_constructor_additional_param>();
+    private final List<Macro> e_expand_7 = new LinkedList<Macro>();
 
-    private final List<M_sub_level_constructor_parent_initialisation> m_sub_level_constructor_parent_initialisation = new LinkedList<M_sub_level_constructor_parent_initialisation>();
+    private final List<Macro> e_expand_8 = new LinkedList<Macro>();
 
-    private final List<M_constructor_param_initialisation> m_constructor_param_initialisation = new LinkedList<M_constructor_param_initialisation>();
+    private final List<Macro> e_expand_9 = new LinkedList<Macro>();
 
-    private final List<M_constructor_text_block_initialisation> m_constructor_text_block_initialisation = new LinkedList<M_constructor_text_block_initialisation>();
+    private final List<Macro> e_expand_10 = new LinkedList<Macro>();
 
-    private final List<M_local_param_accessor> m_local_param_accessor = new LinkedList<M_local_param_accessor>();
+    private final List<Macro> e_expand_11 = new LinkedList<Macro>();
 
-    private final List<M_local_text_block_accessor> m_local_text_block_accessor = new LinkedList<M_local_text_block_accessor>();
+    private final List<Macro> e_expand_12 = new LinkedList<Macro>();
 
-    private final List<M_param_accessor> m_param_accessor = new LinkedList<M_param_accessor>();
+    private final List<Macro> e_expand_13 = new LinkedList<Macro>();
 
-    private final List<M_top_level_text_block_accessor> m_top_level_text_block_accessor = new LinkedList<M_top_level_text_block_accessor>();
+    private final List<Macro> e_expand_14 = new LinkedList<Macro>();
 
-    private final List<M_sub_level_text_block_accessor> m_sub_level_text_block_accessor = new LinkedList<M_sub_level_text_block_accessor>();
+    private final List<Macro> e_expand_15 = new LinkedList<Macro>();
 
-    private final List<M_submacro_creator> m_submacro_creator = new LinkedList<M_submacro_creator>();
+    private final List<Macro> e_expand_16 = new LinkedList<Macro>();
 
-    private final List<Macro> e_expand2 = new LinkedList<Macro>();
+    private final List<Macro> e_expand_17 = new LinkedList<Macro>();
 
-    private final List<Macro> e_expand3 = new LinkedList<Macro>();
+    private final List<Macro> e_expand_23 = new LinkedList<Macro>();
 
+    // ---- parent ----
+    @Override
+    public Macro get_parent() {
+
+        return null;
+    }
+
+    // ---- constructor ----
     public M_macro(
             String p_macro_name) {
 
         this.p_macro_name = p_macro_name;
+        this.t_param_declaration_header = new T_param_declaration_header(this);
+        this.t_text_block_declaration_header = new T_text_block_declaration_header(
+                this);
+        this.t_expand_declaration_header = new T_expand_declaration_header(this);
+        this.t_submacro_creator_head = new T_submacro_creator_head(this);
     }
 
-    public M_package newM_package(
+    // ---- local parameter accessors ----
+
+    String get_local_p_macro_name() {
+
+        return this.p_macro_name;
+    }
+
+    // ---- local text block accessors ----
+
+    T_param_declaration_header get_local_t_param_declaration_header() {
+
+        return this.t_param_declaration_header;
+    }
+
+    T_text_block_declaration_header get_local_t_text_block_declaration_header() {
+
+        return this.t_text_block_declaration_header;
+    }
+
+    T_expand_declaration_header get_local_t_expand_declaration_header() {
+
+        return this.t_expand_declaration_header;
+    }
+
+    T_submacro_creator_head get_local_t_submacro_creator_head() {
+
+        return this.t_submacro_creator_head;
+    }
+
+    // ---- parameter accessors ----
+
+    private String cached_p_macro_name;
+
+    String get_p_macro_name() {
+
+        String result = this.cached_p_macro_name;
+        if (result == null) {
+            Macro current = this;
+            while (!(current instanceof M_macro)) {
+                current = current.get_parent();
+            }
+            result = ((M_macro) current).get_local_p_macro_name();
+            this.cached_p_macro_name = result;
+        }
+        return result;
+    }
+
+    // ---- text block accessors ----
+
+    private T_header cached_t_header;
+
+    T_header get_t_header() {
+
+        T_header result = this.cached_t_header;
+        if (result == null) {
+            result = T_header.getInstance();
+            this.cached_t_header = result;
+        }
+        return result;
+    }
+
+    private T_comma cached_t_comma;
+
+    T_comma get_t_comma() {
+
+        T_comma result = this.cached_t_comma;
+        if (result == null) {
+            result = T_comma.getInstance();
+            this.cached_t_comma = result;
+        }
+        return result;
+    }
+
+    private T_blank_line cached_t_blank_line;
+
+    T_blank_line get_t_blank_line() {
+
+        T_blank_line result = this.cached_t_blank_line;
+        if (result == null) {
+            result = T_blank_line.getInstance();
+            this.cached_t_blank_line = result;
+        }
+        return result;
+    }
+
+    private T_param_accessor_head cached_t_param_accessor_head;
+
+    T_param_accessor_head get_t_param_accessor_head() {
+
+        T_param_accessor_head result = this.cached_t_param_accessor_head;
+        if (result == null) {
+            result = T_param_accessor_head.getInstance();
+            this.cached_t_param_accessor_head = result;
+        }
+        return result;
+    }
+
+    private T_text_block_accessor_head cached_t_text_block_accessor_head;
+
+    T_text_block_accessor_head get_t_text_block_accessor_head() {
+
+        T_text_block_accessor_head result = this.cached_t_text_block_accessor_head;
+        if (result == null) {
+            result = T_text_block_accessor_head.getInstance();
+            this.cached_t_text_block_accessor_head = result;
+        }
+        return result;
+    }
+
+    private T_param_declaration_header cached_t_param_declaration_header;
+
+    T_param_declaration_header get_t_param_declaration_header() {
+
+        T_param_declaration_header result = this.cached_t_param_declaration_header;
+        if (result == null) {
+            Macro current = this;
+            while (!(current instanceof M_macro)) {
+                current = current.get_parent();
+            }
+            result = ((M_macro) current).get_local_t_param_declaration_header();
+            this.cached_t_param_declaration_header = result;
+        }
+        return result;
+    }
+
+    private T_text_block_declaration_header cached_t_text_block_declaration_header;
+
+    T_text_block_declaration_header get_t_text_block_declaration_header() {
+
+        T_text_block_declaration_header result = this.cached_t_text_block_declaration_header;
+        if (result == null) {
+            Macro current = this;
+            while (!(current instanceof M_macro)) {
+                current = current.get_parent();
+            }
+            result = ((M_macro) current)
+                    .get_local_t_text_block_declaration_header();
+            this.cached_t_text_block_declaration_header = result;
+        }
+        return result;
+    }
+
+    private T_expand_declaration_header cached_t_expand_declaration_header;
+
+    T_expand_declaration_header get_t_expand_declaration_header() {
+
+        T_expand_declaration_header result = this.cached_t_expand_declaration_header;
+        if (result == null) {
+            Macro current = this;
+            while (!(current instanceof M_macro)) {
+                current = current.get_parent();
+            }
+            result = ((M_macro) current)
+                    .get_local_t_expand_declaration_header();
+            this.cached_t_expand_declaration_header = result;
+        }
+        return result;
+    }
+
+    private T_submacro_creator_head cached_t_submacro_creator_head;
+
+    T_submacro_creator_head get_t_submacro_creator_head() {
+
+        T_submacro_creator_head result = this.cached_t_submacro_creator_head;
+        if (result == null) {
+            Macro current = this;
+            while (!(current instanceof M_macro)) {
+                current = current.get_parent();
+            }
+            result = ((M_macro) current).get_local_t_submacro_creator_head();
+            this.cached_t_submacro_creator_head = result;
+        }
+        return result;
+    }
+
+    // sub-macro creators
+
+    public M_package_declaration new_package_declaration(
             String p_package_name) {
 
-        M_package v_package = new M_package(p_package_name);
-        this.e_expand2.add(v_package);
-        return v_package;
+        M_package_declaration result = new M_package_declaration(p_package_name);
+        this.e_expand_0.add(result);
+        return result;
     }
 
-    public M_param_declaration newM_param_declaration(
+    public M_macro_constructor_head new_macro_constructor_head() {
+
+        M_macro_constructor_head result = new M_macro_constructor_head(this);
+        this.e_expand_2.add(result);
+        return result;
+    }
+
+    public M_constructor_param new_constructor_param(
             String p_param_name) {
 
-        M_param_declaration v_param_declaration = new M_param_declaration(
-                p_param_name);
-        this.m_param_declaration.add(v_param_declaration);
-        return v_param_declaration;
+        M_constructor_param result = new M_constructor_param(this, p_param_name);
+        this.e_expand_6.add(result);
+        return result;
     }
 
-    public M_text_block_declaration newM_text_block_declaration(
+    public M_constructor_parent_initialisation new_constructor_parent_initialisation() {
+
+        M_constructor_parent_initialisation result = new M_constructor_parent_initialisation(
+                this);
+        this.e_expand_7.add(result);
+        return result;
+    }
+
+    public M_constructor_param_initialisation new_constructor_param_initialisation(
+            String p_param_name) {
+
+        M_constructor_param_initialisation result = new M_constructor_param_initialisation(
+                this, p_param_name);
+        this.e_expand_8.add(result);
+        return result;
+    }
+
+    public M_constructor_text_block_initialisation new_constructor_text_block_initialisation(
             String p_text_block_name) {
 
-        M_text_block_declaration v_text_block_declaration = new M_text_block_declaration(
-                p_text_block_name);
-        this.m_text_block_declaration.add(v_text_block_declaration);
-        return v_text_block_declaration;
+        M_constructor_text_block_initialisation result = new M_constructor_text_block_initialisation(
+                this, p_text_block_name);
+        this.e_expand_9.add(result);
+        return result;
     }
 
-    public M_expand_declaration newM_expand_declaration(
+    public M_macro_without_parent new_macro_without_parent() {
+
+        M_macro_without_parent result = new M_macro_without_parent(this);
+        this.e_expand_10.add(result);
+        return result;
+    }
+
+    public M_macro_with_parent new_macro_with_parent() {
+
+        M_macro_with_parent result = new M_macro_with_parent(this);
+        this.e_expand_11.add(result);
+        return result;
+    }
+
+    public M_param_declaration new_param_declaration(
+            String p_param_name) {
+
+        M_param_declaration result = new M_param_declaration(this, p_param_name);
+        this.e_expand_12.add(result);
+        return result;
+    }
+
+    public M_text_block_declaration new_text_block_declaration(
+            String p_text_block_name) {
+
+        M_text_block_declaration result = new M_text_block_declaration(this,
+                p_text_block_name);
+        this.e_expand_13.add(result);
+        return result;
+    }
+
+    public M_expand_declaration new_expand_declaration(
             String p_expand_name) {
 
-        M_expand_declaration v_expand_declaration = new M_expand_declaration(
+        M_expand_declaration result = new M_expand_declaration(this,
                 p_expand_name);
-        this.m_expand_declaration.add(v_expand_declaration);
-        return v_expand_declaration;
+        this.e_expand_14.add(result);
+        return result;
     }
 
-    public M_public_top_level_constructor newM_public_top_level_constructor() {
-
-        M_public_top_level_constructor v_public_top_level_constructor = new M_public_top_level_constructor();
-        this.m_public_top_level_constructor.add(v_public_top_level_constructor);
-        return v_public_top_level_constructor;
-    }
-
-    public M_package_top_level_constructor newM_package_top_level_constructor() {
-
-        M_package_top_level_constructor v_package_top_level_constructor = new M_package_top_level_constructor();
-        this.m_package_top_level_constructor
-                .add(v_package_top_level_constructor);
-        return v_package_top_level_constructor;
-    }
-
-    public M_sub_level_constructor newM_sub_level_constructor() {
-
-        M_sub_level_constructor v_sub_level_constructor = new M_sub_level_constructor();
-        this.m_sub_level_constructor.add(v_sub_level_constructor);
-        return v_sub_level_constructor;
-    }
-
-    public M_constructor_first_param newM_constructor_first_param(
-            String p_param_name) {
-
-        M_constructor_first_param v_constructor_first_param = new M_constructor_first_param(
-                p_param_name);
-        this.m_constructor_first_param.add(v_constructor_first_param);
-        return v_constructor_first_param;
-    }
-
-    public M_constructor_additional_param newM_constructor_additional_param(
-            String p_param_name) {
-
-        M_constructor_additional_param v_constructor_additional_param = new M_constructor_additional_param(
-                p_param_name);
-        this.m_constructor_additional_param.add(v_constructor_additional_param);
-        return v_constructor_additional_param;
-    }
-
-    public M_sub_level_constructor_parent_initialisation newM_sub_level_constructor_parent_initialisation() {
-
-        M_sub_level_constructor_parent_initialisation v_sub_level_constructor_parent_initialisation = new M_sub_level_constructor_parent_initialisation();
-        this.m_sub_level_constructor_parent_initialisation
-                .add(v_sub_level_constructor_parent_initialisation);
-        return v_sub_level_constructor_parent_initialisation;
-    }
-
-    public M_constructor_param_initialisation newM_constructor_param_initialisation(
-            String p_param_name) {
-
-        M_constructor_param_initialisation v_constructor_param_initialisation = new M_constructor_param_initialisation(
-                p_param_name);
-        this.m_constructor_param_initialisation
-                .add(v_constructor_param_initialisation);
-        return v_constructor_param_initialisation;
-    }
-
-    public M_constructor_text_block_initialisation newM_constructor_text_block_initialisation(
-            String p_text_block_name) {
-
-        M_constructor_text_block_initialisation v_constructor_text_block_initialisation = new M_constructor_text_block_initialisation(
-                p_text_block_name);
-        this.m_constructor_text_block_initialisation
-                .add(v_constructor_text_block_initialisation);
-        return v_constructor_text_block_initialisation;
-    }
-
-    public M_local_param_accessor newM_local_param_accessor(
-            String p_param_name) {
-
-        M_local_param_accessor v_local_param_accessor = new M_local_param_accessor(
-                p_param_name);
-        this.m_local_param_accessor.add(v_local_param_accessor);
-        return v_local_param_accessor;
-    }
-
-    public M_local_text_block_accessor newM_local_text_block_accessor(
-            String p_text_block_name) {
-
-        M_local_text_block_accessor v_local_text_block_accessor = new M_local_text_block_accessor(
-                p_text_block_name);
-        this.m_local_text_block_accessor.add(v_local_text_block_accessor);
-        return v_local_text_block_accessor;
-    }
-
-    public M_param_accessor newM_param_accessor(
+    public M_param_accessor new_param_accessor(
             String p_param_name,
             String p_containing_macro_name) {
 
-        M_param_accessor v_param_accessor = new M_param_accessor(p_param_name,
+        M_param_accessor result = new M_param_accessor(p_param_name,
                 p_containing_macro_name);
-        this.m_param_accessor.add(v_param_accessor);
-        return v_param_accessor;
+        this.e_expand_15.add(result);
+        return result;
     }
 
-    public M_top_level_text_block_accessor newM_top_level_text_block_accessor(
+    public M_top_level_text_block_accessor new_top_level_text_block_accessor(
             String p_text_block_name) {
 
-        M_top_level_text_block_accessor v_top_level_text_block_accessor = new M_top_level_text_block_accessor(
+        M_top_level_text_block_accessor result = new M_top_level_text_block_accessor(
                 p_text_block_name);
-        this.m_top_level_text_block_accessor
-                .add(v_top_level_text_block_accessor);
-        return v_top_level_text_block_accessor;
+        this.e_expand_16.add(result);
+        return result;
     }
 
-    public M_sub_level_text_block_accessor newM_sub_level_text_block_accessor(
+    public M_sub_level_text_block_accessor new_sub_level_text_block_accessor(
             String p_text_block_name,
             String p_containing_macro_name) {
 
-        M_sub_level_text_block_accessor v_sub_level_text_block_accessor = new M_sub_level_text_block_accessor(
+        M_sub_level_text_block_accessor result = new M_sub_level_text_block_accessor(
                 p_text_block_name, p_containing_macro_name);
-        this.m_sub_level_text_block_accessor
-                .add(v_sub_level_text_block_accessor);
-        return v_sub_level_text_block_accessor;
+        this.e_expand_16.add(result);
+        return result;
     }
 
-    public M_submacro_creator newM_submacro_creator(
+    public M_submacro_creator new_submacro_creator(
             String p_submacro_name) {
 
-        M_submacro_creator v_submacro_creator = new M_submacro_creator(
+        M_submacro_creator result = new M_submacro_creator(this,
                 p_submacro_name);
-        this.m_submacro_creator.add(v_submacro_creator);
-        return v_submacro_creator;
+        this.e_expand_17.add(result);
+        return result;
     }
 
-    public M_text_append newM_text_append(
+    public M_text_append new_text_append(
             String p_text) {
 
-        M_text_append v_text_append = new M_text_append(p_text);
-        this.e_expand3.add(v_text_append);
-        return v_text_append;
+        M_text_append result = new M_text_append(p_text);
+        this.e_expand_23.add(result);
+        return result;
     }
 
-    public M_eol_append newM_eol_append() {
+    public M_eol_append new_eol_append() {
 
-        M_eol_append v_eol_append = new M_eol_append();
-        this.e_expand3.add(v_eol_append);
-        return v_eol_append;
+        M_eol_append result = new M_eol_append();
+        this.e_expand_23.add(result);
+        return result;
     }
 
-    public M_escape_append newM_escape_append(
+    public M_escape_append new_escape_append(
             String p_char) {
 
-        M_escape_append v_escape_append = new M_escape_append(p_char);
-        this.e_expand3.add(v_escape_append);
-        return v_escape_append;
+        M_escape_append result = new M_escape_append(p_char);
+        this.e_expand_23.add(result);
+        return result;
     }
 
-    public M_var_append newM_var_append(
+    public M_var_append new_var_append(
             String p_var_name) {
 
-        M_var_append v_var_append = new M_var_append(p_var_name);
-        this.e_expand3.add(v_var_append);
-        return v_var_append;
+        M_var_append result = new M_var_append(p_var_name);
+        this.e_expand_23.add(result);
+        return result;
     }
 
-    public M_expand_append newM_expand_append(
+    public M_expand_append new_expand_append(
             String p_expand_name) {
 
-        M_expand_append v_expand_append = new M_expand_append(p_expand_name);
-        this.e_expand3.add(v_expand_append);
-        return v_expand_append;
+        M_expand_append result = new M_expand_append(this, p_expand_name);
+        this.e_expand_23.add(result);
+        return result;
     }
 
-    public M_text_insert_append newM_text_insert_append(
+    public M_text_insert_append new_text_insert_append(
             String p_text_insert_name) {
 
-        M_text_insert_append v_text_insert_append = new M_text_insert_append(
+        M_text_insert_append result = new M_text_insert_append(
                 p_text_insert_name);
-        this.e_expand3.add(v_text_insert_append);
-        return v_text_insert_append;
+        this.e_expand_23.add(result);
+        return result;
     }
 
+    // ---- append ----
+
+    @Override
     public void appendTo(
             StringBuilder sb) {
 
-        sb.append("/* This file was generated by SableCC's ObjectMacro. */");
-        sb.append(System.getProperty("line.separator"));
-        for (Macro v_Macro : this.e_expand2) {
-            v_Macro.appendTo(sb);
+        get_t_header().appendTo(sb);
+        if (this.e_expand_0.size() == 0) {
         }
-        sb.append(System.getProperty("line.separator"));
-        sb.append("import java.util.*;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_0) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
+        }
+        sb.append(EOL);
+        sb.append("import java.util.LinkedList;");
+        sb.append(EOL);
+        sb.append("import java.util.List;");
+        sb.append(EOL);
+        sb.append(EOL);
         sb.append("public class M_");
-        sb.append(this.p_macro_name);
+        sb.append(get_p_macro_name());
         sb.append(" extends Macro {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  // ---- EOL ----");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  private static final String EOL = System.getProperty(");
-        sb.append('"');
-        sb.append("line.separator");
-        sb.append('"');
-        sb.append(");");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  // ---- parameters ----");
-        sb.append(System.getProperty("line.separator"));
-        for (M_param_declaration v_param_declaration : this.m_param_declaration) {
-            v_param_declaration.appendTo(sb);
+        sb.append(EOL);
+        sb.append(EOL);
+        sb.append("  // ---- constructor ----");
+        sb.append(EOL);
+        sb.append(EOL);
+        if (this.e_expand_2.size() == 0) {
         }
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  // ---- text blocks ----");
-        sb.append(System.getProperty("line.separator"));
-        for (M_text_block_declaration v_text_block_declaration : this.m_text_block_declaration) {
-            v_text_block_declaration.appendTo(sb);
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_2) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
         }
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  // ---- expands ----");
-        sb.append(System.getProperty("line.separator"));
-        for (M_expand_declaration v_expand_declaration : this.m_expand_declaration) {
-            v_expand_declaration.appendTo(sb);
+        sb.append(EOL);
+        if (this.e_expand_6.size() == 0) {
         }
-        sb.append(System.getProperty("line.separator"));
-        for (M_public_top_level_constructor v_public_top_level_constructor : this.m_public_top_level_constructor) {
-            v_public_top_level_constructor.appendTo(sb);
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_6) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    get_t_comma().appendTo(sb);
+                }
+                macro.appendTo(sb);
+            }
         }
-        for (M_package_top_level_constructor v_package_top_level_constructor : this.m_package_top_level_constructor) {
-            v_package_top_level_constructor.appendTo(sb);
-        }
-        for (M_sub_level_constructor v_sub_level_constructor : this.m_sub_level_constructor) {
-            v_sub_level_constructor.appendTo(sb);
-        }
-        for (M_constructor_first_param v_constructor_first_param : this.m_constructor_first_param) {
-            v_constructor_first_param.appendTo(sb);
-        }
-        for (M_constructor_additional_param v_constructor_additional_param : this.m_constructor_additional_param) {
-            v_constructor_additional_param.appendTo(sb);
-        }
+        sb.append(EOL);
         sb.append(") {");
-        sb.append(System.getProperty("line.separator"));
-        for (M_sub_level_constructor_parent_initialisation v_sub_level_constructor_parent_initialisation : this.m_sub_level_constructor_parent_initialisation) {
-            v_sub_level_constructor_parent_initialisation.appendTo(sb);
+        sb.append(EOL);
+        if (this.e_expand_7.size() == 0) {
         }
-        for (M_constructor_param_initialisation v_constructor_param_initialisation : this.m_constructor_param_initialisation) {
-            v_constructor_param_initialisation.appendTo(sb);
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_7) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
         }
-        for (M_constructor_text_block_initialisation v_constructor_text_block_initialisation : this.m_constructor_text_block_initialisation) {
-            v_constructor_text_block_initialisation.appendTo(sb);
+        if (this.e_expand_8.size() == 0) {
+        }
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_8) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
+        }
+        if (this.e_expand_9.size() == 0) {
+        }
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_9) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
         }
         sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  // ---- local parameter accessors ----");
-        sb.append(System.getProperty("line.separator"));
-        for (M_local_param_accessor v_local_param_accessor : this.m_local_param_accessor) {
-            v_local_param_accessor.appendTo(sb);
+        sb.append(EOL);
+        sb.append(EOL);
+        if (this.e_expand_10.size() == 0) {
         }
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  // ---- local text block accessors ----");
-        sb.append(System.getProperty("line.separator"));
-        for (M_local_text_block_accessor v_local_text_block_accessor : this.m_local_text_block_accessor) {
-            v_local_text_block_accessor.appendTo(sb);
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_10) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
         }
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  // ---- parameter accessors ----");
-        sb.append(System.getProperty("line.separator"));
-        for (M_param_accessor v_param_accessor : this.m_param_accessor) {
-            v_param_accessor.appendTo(sb);
+        if (this.e_expand_11.size() == 0) {
         }
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  // ---- text block accessors ----");
-        sb.append(System.getProperty("line.separator"));
-        for (M_top_level_text_block_accessor v_top_level_text_block_accessor : this.m_top_level_text_block_accessor) {
-            v_top_level_text_block_accessor.appendTo(sb);
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_11) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
         }
-        for (M_sub_level_text_block_accessor v_sub_level_text_block_accessor : this.m_sub_level_text_block_accessor) {
-            v_sub_level_text_block_accessor.appendTo(sb);
+        sb.append(EOL);
+        if (this.e_expand_12.size() == 0) {
         }
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  // sub-macro creators");
-        sb.append(System.getProperty("line.separator"));
-        for (M_submacro_creator v_submacro_creator : this.m_submacro_creator) {
-            v_submacro_creator.appendTo(sb);
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_12) {
+                if (first) {
+                    first = false;
+                    get_t_param_declaration_header().appendTo(sb);
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
         }
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  // ---- append ----");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
+        sb.append(EOL);
+        if (this.e_expand_13.size() == 0) {
+        }
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_13) {
+                if (first) {
+                    first = false;
+                    get_t_text_block_declaration_header().appendTo(sb);
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
+        }
+        sb.append(EOL);
+        if (this.e_expand_14.size() == 0) {
+        }
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_14) {
+                if (first) {
+                    first = false;
+                    get_t_expand_declaration_header().appendTo(sb);
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
+            get_t_blank_line().appendTo(sb);
+        }
+        sb.append(EOL);
+        if (this.e_expand_15.size() == 0) {
+        }
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_15) {
+                if (first) {
+                    first = false;
+                    get_t_param_accessor_head().appendTo(sb);
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
+        }
+        sb.append(EOL);
+        if (this.e_expand_16.size() == 0) {
+        }
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_16) {
+                if (first) {
+                    first = false;
+                    get_t_text_block_accessor_head().appendTo(sb);
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
+        }
+        sb.append(EOL);
+        if (this.e_expand_17.size() == 0) {
+        }
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_17) {
+                if (first) {
+                    first = false;
+                    get_t_submacro_creator_head().appendTo(sb);
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
+        }
+        sb.append(EOL);
+        sb.append("  // ---- appendTo ----");
+        sb.append(EOL);
+        sb.append(EOL);
+        sb.append("  @Override");
+        sb.append(EOL);
         sb.append("  public void appendTo(StringBuilder sb) {");
-        sb.append(System.getProperty("line.separator"));
-        for (Macro v_Macro : this.e_expand3) {
-            v_Macro.appendTo(sb);
+        sb.append(EOL);
+        if (this.e_expand_23.size() == 0) {
+        }
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_23) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    get_t_blank_line().appendTo(sb);
+                }
+                macro.appendTo(sb);
+            }
         }
         sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(EOL);
+        sb.append(EOL);
         sb.append("}");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(EOL);
     }
-
-    public class M_param_declaration
-            extends Macro {
-
-        private final String p_param_name;
-
-        M_param_declaration(
-                String p_param_name) {
-
-            this.p_param_name = p_param_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("  private final String p_");
-            sb.append(this.p_param_name);
-            sb.append(";");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_text_block_declaration
-            extends Macro {
-
-        private final String p_text_block_name;
-
-        M_text_block_declaration(
-                String p_text_block_name) {
-
-            this.p_text_block_name = p_text_block_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("  private final T_");
-            sb.append(this.p_text_block_name);
-            sb.append(" t_");
-            sb.append(this.p_text_block_name);
-            sb.append(";");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_expand_declaration
-            extends Macro {
-
-        private final String p_expand_name;
-
-        M_expand_declaration(
-                String p_expand_name) {
-
-            this.p_expand_name = p_expand_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("  private final List<Macro> e_");
-            sb.append(this.p_expand_name);
-            sb.append(" = new LinkedList<Macro>();");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_public_top_level_constructor
-            extends Macro {
-
-        M_public_top_level_constructor() {
-
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("  // ---- parent ----");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  public Macro get_parent() {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    return null;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  }");
-            sb.append(System.getProperty("line.separator"));
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  // ---- constructor ----");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  public M_");
-            sb.append(M_macro.this.p_macro_name);
-            sb.append("(");
-        }
-
-    }
-
-    public class M_package_top_level_constructor
-            extends Macro {
-
-        M_package_top_level_constructor() {
-
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("  // ---- parent ----");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  public Macro get_parent() {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    return null;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  }");
-            sb.append(System.getProperty("line.separator"));
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  // ---- constructor ----");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  M_");
-            sb.append(M_macro.this.p_macro_name);
-            sb.append("(");
-        }
-
-    }
-
-    public class M_sub_level_constructor
-            extends Macro {
-
-        M_sub_level_constructor() {
-
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("  // ---- parent ----");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  private final Macro parent;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  public Macro get_parent() {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    return this.parent;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  }");
-            sb.append(System.getProperty("line.separator"));
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  // ---- constructor ----");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  M_");
-            sb.append(M_macro.this.p_macro_name);
-            sb.append("(");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      Macro parent");
-        }
-
-    }
-
-    public class M_constructor_first_param
-            extends Macro {
-
-        private final String p_param_name;
-
-        M_constructor_first_param(
-                String p_param_name) {
-
-            this.p_param_name = p_param_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      String p_");
-            sb.append(this.p_param_name);
-        }
-
-    }
-
-    public class M_constructor_additional_param
-            extends Macro {
-
-        private final String p_param_name;
-
-        M_constructor_additional_param(
-                String p_param_name) {
-
-            this.p_param_name = p_param_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append(",");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      String p_");
-            sb.append(this.p_param_name);
-        }
-
-    }
-
-    public class M_sub_level_constructor_parent_initialisation
-            extends Macro {
-
-        M_sub_level_constructor_parent_initialisation() {
-
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("    this.parent = parent;");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_constructor_param_initialisation
-            extends Macro {
-
-        private final String p_param_name;
-
-        M_constructor_param_initialisation(
-                String p_param_name) {
-
-            this.p_param_name = p_param_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("    this.p_");
-            sb.append(this.p_param_name);
-            sb.append(" = p_");
-            sb.append(this.p_param_name);
-            sb.append(";");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_constructor_text_block_initialisation
-            extends Macro {
-
-        private final String p_text_block_name;
-
-        M_constructor_text_block_initialisation(
-                String p_text_block_name) {
-
-            this.p_text_block_name = p_text_block_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("    this.t_");
-            sb.append(this.p_text_block_name);
-            sb.append(" = new T_");
-            sb.append(this.p_text_block_name);
-            sb.append("(this);");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_local_param_accessor
-            extends Macro {
-
-        private final String p_param_name;
-
-        M_local_param_accessor(
-                String p_param_name) {
-
-            this.p_param_name = p_param_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  String get_local_p_");
-            sb.append(this.p_param_name);
-            sb.append("() {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    return this.p_");
-            sb.append(this.p_param_name);
-            sb.append(";");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  }");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_local_text_block_accessor
-            extends Macro {
-
-        private final String p_text_block_name;
-
-        M_local_text_block_accessor(
-                String p_text_block_name) {
-
-            this.p_text_block_name = p_text_block_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  T_");
-            sb.append(this.p_text_block_name);
-            sb.append(" get_local_t_");
-            sb.append(this.p_text_block_name);
-            sb.append("() {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    return this.t_");
-            sb.append(this.p_text_block_name);
-            sb.append(";");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  }");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_param_accessor
-            extends Macro {
-
-        private final String p_param_name;
-
-        private final String p_containing_macro_name;
-
-        M_param_accessor(
-                String p_param_name,
-                String p_containing_macro_name) {
-
-            this.p_param_name = p_param_name;
-            this.p_containing_macro_name = p_containing_macro_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  private String cached_p_");
-            sb.append(this.p_param_name);
-            sb.append(";");
-            sb.append(System.getProperty("line.separator"));
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  String get_p_");
-            sb.append(this.p_param_name);
-            sb.append("() {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    String result = this.cached_p_");
-            sb.append(this.p_param_name);
-            sb.append(";");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    if(result == null) {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      Macro current = this;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      while(!(current instanceof M_");
-            sb.append(this.p_containing_macro_name);
-            sb.append(")) {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("        current = current.get_parent();");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      }");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      result = ((M_");
-            sb.append(this.p_containing_macro_name);
-            sb.append(") current).get_local_p_");
-            sb.append(this.p_param_name);
-            sb.append("();");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      this.cached_p_");
-            sb.append(this.p_param_name);
-            sb.append(" = result;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    }");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    return result;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  }");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_top_level_text_block_accessor
-            extends Macro {
-
-        private final String p_text_block_name;
-
-        M_top_level_text_block_accessor(
-                String p_text_block_name) {
-
-            this.p_text_block_name = p_text_block_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  private T_");
-            sb.append(this.p_text_block_name);
-            sb.append(" cached_t_");
-            sb.append(this.p_text_block_name);
-            sb.append(";");
-            sb.append(System.getProperty("line.separator"));
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  T_");
-            sb.append(this.p_text_block_name);
-            sb.append(" get_t_");
-            sb.append(this.p_text_block_name);
-            sb.append("() {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    T_");
-            sb.append(this.p_text_block_name);
-            sb.append(" result = this.cached_t_");
-            sb.append(this.p_text_block_name);
-            sb.append(";");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    if(result == null) {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      result = T_");
-            sb.append(this.p_text_block_name);
-            sb.append(".getInstance();");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      this.cached_t_");
-            sb.append(this.p_text_block_name);
-            sb.append(" = result;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    }");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    return result;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  }");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_sub_level_text_block_accessor
-            extends Macro {
-
-        private final String p_text_block_name;
-
-        private final String p_containing_macro_name;
-
-        M_sub_level_text_block_accessor(
-                String p_text_block_name,
-                String p_containing_macro_name) {
-
-            this.p_text_block_name = p_text_block_name;
-            this.p_containing_macro_name = p_containing_macro_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  private T_");
-            sb.append(this.p_text_block_name);
-            sb.append(" cached_t_");
-            sb.append(this.p_text_block_name);
-            sb.append(";");
-            sb.append(System.getProperty("line.separator"));
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  T_");
-            sb.append(this.p_text_block_name);
-            sb.append(" get_t_");
-            sb.append(this.p_text_block_name);
-            sb.append("() {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    T_");
-            sb.append(this.p_text_block_name);
-            sb.append(" result = this.cached_t_");
-            sb.append(this.p_text_block_name);
-            sb.append(";");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    if(result == null) {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      Macro current = this;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      while(!(current instanceof M_");
-            sb.append(this.p_containing_macro_name);
-            sb.append(")) {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("        current = current.get_parent();");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      }");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      result = ((M_");
-            sb.append(this.p_containing_macro_name);
-            sb.append(") current).get_local_t_");
-            sb.append(this.p_text_block_name);
-            sb.append("();");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      this.cached_t_");
-            sb.append(this.p_text_block_name);
-            sb.append(" = result;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    }");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    return result;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  }");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_submacro_creator
-            extends Macro {
-
-        private final String p_submacro_name;
-
-        private final List<M_submacro_first_parameter> m_submacro_first_parameter = new LinkedList<M_submacro_first_parameter>();
-
-        private final List<M_submacro_additional_parameter> m_submacro_additional_parameter = new LinkedList<M_submacro_additional_parameter>();
-
-        private final List<M_submacro_new_this_param> m_submacro_new_this_param = new LinkedList<M_submacro_new_this_param>();
-
-        private final List<M_submacro_new_first_param> m_submacro_new_first_param = new LinkedList<M_submacro_new_first_param>();
-
-        private final List<M_submacro_new_additional_param> m_submacro_new_additional_param = new LinkedList<M_submacro_new_additional_param>();
-
-        private final List<M_add_to_expand> m_add_to_expand = new LinkedList<M_add_to_expand>();
-
-        M_submacro_creator(
-                String p_submacro_name) {
-
-            this.p_submacro_name = p_submacro_name;
-        }
-
-        public M_submacro_first_parameter newM_submacro_first_parameter(
-                String p_param_name) {
-
-            M_submacro_first_parameter v_submacro_first_parameter = new M_submacro_first_parameter(
-                    p_param_name);
-            this.m_submacro_first_parameter.add(v_submacro_first_parameter);
-            return v_submacro_first_parameter;
-        }
-
-        public M_submacro_additional_parameter newM_submacro_additional_parameter(
-                String p_param_name) {
-
-            M_submacro_additional_parameter v_submacro_additional_parameter = new M_submacro_additional_parameter(
-                    p_param_name);
-            this.m_submacro_additional_parameter
-                    .add(v_submacro_additional_parameter);
-            return v_submacro_additional_parameter;
-        }
-
-        public M_submacro_new_this_param newM_submacro_new_this_param() {
-
-            M_submacro_new_this_param v_submacro_new_this_param = new M_submacro_new_this_param();
-            this.m_submacro_new_this_param.add(v_submacro_new_this_param);
-            return v_submacro_new_this_param;
-        }
-
-        public M_submacro_new_first_param newM_submacro_new_first_param(
-                String p_param_name) {
-
-            M_submacro_new_first_param v_submacro_new_first_param = new M_submacro_new_first_param(
-                    p_param_name);
-            this.m_submacro_new_first_param.add(v_submacro_new_first_param);
-            return v_submacro_new_first_param;
-        }
-
-        public M_submacro_new_additional_param newM_submacro_new_additional_param(
-                String p_param_name) {
-
-            M_submacro_new_additional_param v_submacro_new_additional_param = new M_submacro_new_additional_param(
-                    p_param_name);
-            this.m_submacro_new_additional_param
-                    .add(v_submacro_new_additional_param);
-            return v_submacro_new_additional_param;
-        }
-
-        public M_add_to_expand newM_add_to_expand(
-                String p_expand_name) {
-
-            M_add_to_expand v_add_to_expand = new M_add_to_expand(p_expand_name);
-            this.m_add_to_expand.add(v_add_to_expand);
-            return v_add_to_expand;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  public M_");
-            sb.append(this.p_submacro_name);
-            sb.append(" new_");
-            sb.append(this.p_submacro_name);
-            sb.append("(");
-            for (M_submacro_first_parameter v_submacro_first_parameter : this.m_submacro_first_parameter) {
-                v_submacro_first_parameter.appendTo(sb);
-            }
-            for (M_submacro_additional_parameter v_submacro_additional_parameter : this.m_submacro_additional_parameter) {
-                v_submacro_additional_parameter.appendTo(sb);
-            }
-            sb.append(") {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    M_");
-            sb.append(this.p_submacro_name);
-            sb.append(" result = new M_");
-            sb.append(this.p_submacro_name);
-            sb.append("(");
-            for (M_submacro_new_this_param v_submacro_new_this_param : this.m_submacro_new_this_param) {
-                v_submacro_new_this_param.appendTo(sb);
-            }
-            for (M_submacro_new_first_param v_submacro_new_first_param : this.m_submacro_new_first_param) {
-                v_submacro_new_first_param.appendTo(sb);
-            }
-            for (M_submacro_new_additional_param v_submacro_new_additional_param : this.m_submacro_new_additional_param) {
-                v_submacro_new_additional_param.appendTo(sb);
-            }
-            sb.append(");");
-            sb.append(System.getProperty("line.separator"));
-            for (M_add_to_expand v_add_to_expand : this.m_add_to_expand) {
-                v_add_to_expand.appendTo(sb);
-            }
-            sb.append("    return result;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("  }");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-        public class M_submacro_first_parameter
-                extends Macro {
-
-            private final String p_param_name;
-
-            M_submacro_first_parameter(
-                    String p_param_name) {
-
-                this.p_param_name = p_param_name;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append(System.getProperty("line.separator"));
-                sb.append("      String p_");
-                sb.append(this.p_param_name);
-            }
-
-        }
-
-        public class M_submacro_additional_parameter
-                extends Macro {
-
-            private final String p_param_name;
-
-            M_submacro_additional_parameter(
-                    String p_param_name) {
-
-                this.p_param_name = p_param_name;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append(",");
-                sb.append(System.getProperty("line.separator"));
-                sb.append("      String p_");
-                sb.append(this.p_param_name);
-            }
-
-        }
-
-        public class M_submacro_new_this_param
-                extends Macro {
-
-            M_submacro_new_this_param() {
-
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append("this");
-            }
-
-        }
-
-        public class M_submacro_new_first_param
-                extends Macro {
-
-            private final String p_param_name;
-
-            M_submacro_new_first_param(
-                    String p_param_name) {
-
-                this.p_param_name = p_param_name;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append("p_");
-                sb.append(this.p_param_name);
-            }
-
-        }
-
-        public class M_submacro_new_additional_param
-                extends Macro {
-
-            private final String p_param_name;
-
-            M_submacro_new_additional_param(
-                    String p_param_name) {
-
-                this.p_param_name = p_param_name;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append(", p_");
-                sb.append(this.p_param_name);
-            }
-
-        }
-
-        public class M_add_to_expand
-                extends Macro {
-
-            private final String p_expand_name;
-
-            M_add_to_expand(
-                    String p_expand_name) {
-
-                this.p_expand_name = p_expand_name;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append("    e_");
-                sb.append(this.p_expand_name);
-                sb.append(".add(result);");
-                sb.append(System.getProperty("line.separator"));
-            }
-
-        }
-
-    }
-
-    public class M_text_append
-            extends Macro {
-
-        private final String p_text;
-
-        M_text_append(
-                String p_text) {
-
-            this.p_text = p_text;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("    sb.append(");
-            sb.append('"');
-            sb.append(this.p_text);
-            sb.append('"');
-            sb.append(");");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_eol_append
-            extends Macro {
-
-        M_eol_append() {
-
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("    sb.append(EOL);");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_escape_append
-            extends Macro {
-
-        private final String p_char;
-
-        M_escape_append(
-                String p_char) {
-
-            this.p_char = p_char;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("    sb.append('");
-            sb.append(this.p_char);
-            sb.append("');");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_var_append
-            extends Macro {
-
-        private final String p_var_name;
-
-        M_var_append(
-                String p_var_name) {
-
-            this.p_var_name = p_var_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("    sb.append(get_p_");
-            sb.append(this.p_var_name);
-            sb.append("());");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
-    public class M_expand_append
-            extends Macro {
-
-        private final String p_expand_name;
-
-        private final List<M_expand_append_none_string_part> m_expand_append_none_string_part = new LinkedList<M_expand_append_none_string_part>();
-
-        private final List<M_expand_append_none_text_block> m_expand_append_none_text_block = new LinkedList<M_expand_append_none_text_block>();
-
-        private final List<M_expand_append_before_first_string_part> m_expand_append_before_first_string_part = new LinkedList<M_expand_append_before_first_string_part>();
-
-        private final List<M_expand_append_before_first_text_block> m_expand_append_before_first_text_block = new LinkedList<M_expand_append_before_first_text_block>();
-
-        private final List<M_expand_append_separator_string_part> m_expand_append_separator_string_part = new LinkedList<M_expand_append_separator_string_part>();
-
-        private final List<M_expand_append_separator_text_block> m_expand_append_separator_text_block = new LinkedList<M_expand_append_separator_text_block>();
-
-        private final List<M_expand_append_after_last_string_part> m_expand_append_after_last_string_part = new LinkedList<M_expand_append_after_last_string_part>();
-
-        private final List<M_expand_append_after_last_text_block> m_expand_append_after_last_text_block = new LinkedList<M_expand_append_after_last_text_block>();
-
-        M_expand_append(
-                String p_expand_name) {
-
-            this.p_expand_name = p_expand_name;
-        }
-
-        public M_expand_append_none_string_part newM_expand_append_none_string_part(
-                String p_none_string_part) {
-
-            M_expand_append_none_string_part v_expand_append_none_string_part = new M_expand_append_none_string_part(
-                    p_none_string_part);
-            this.m_expand_append_none_string_part
-                    .add(v_expand_append_none_string_part);
-            return v_expand_append_none_string_part;
-        }
-
-        public M_expand_append_none_text_block newM_expand_append_none_text_block(
-                String p_text_block_name) {
-
-            M_expand_append_none_text_block v_expand_append_none_text_block = new M_expand_append_none_text_block(
-                    p_text_block_name);
-            this.m_expand_append_none_text_block
-                    .add(v_expand_append_none_text_block);
-            return v_expand_append_none_text_block;
-        }
-
-        public M_expand_append_before_first_string_part newM_expand_append_before_first_string_part(
-                String p_before_first_string_part) {
-
-            M_expand_append_before_first_string_part v_expand_append_before_first_string_part = new M_expand_append_before_first_string_part(
-                    p_before_first_string_part);
-            this.m_expand_append_before_first_string_part
-                    .add(v_expand_append_before_first_string_part);
-            return v_expand_append_before_first_string_part;
-        }
-
-        public M_expand_append_before_first_text_block newM_expand_append_before_first_text_block(
-                String p_text_block_name) {
-
-            M_expand_append_before_first_text_block v_expand_append_before_first_text_block = new M_expand_append_before_first_text_block(
-                    p_text_block_name);
-            this.m_expand_append_before_first_text_block
-                    .add(v_expand_append_before_first_text_block);
-            return v_expand_append_before_first_text_block;
-        }
-
-        public M_expand_append_separator_string_part newM_expand_append_separator_string_part(
-                String p_separator_string_part) {
-
-            M_expand_append_separator_string_part v_expand_append_separator_string_part = new M_expand_append_separator_string_part(
-                    p_separator_string_part);
-            this.m_expand_append_separator_string_part
-                    .add(v_expand_append_separator_string_part);
-            return v_expand_append_separator_string_part;
-        }
-
-        public M_expand_append_separator_text_block newM_expand_append_separator_text_block(
-                String p_text_block_name) {
-
-            M_expand_append_separator_text_block v_expand_append_separator_text_block = new M_expand_append_separator_text_block(
-                    p_text_block_name);
-            this.m_expand_append_separator_text_block
-                    .add(v_expand_append_separator_text_block);
-            return v_expand_append_separator_text_block;
-        }
-
-        public M_expand_append_after_last_string_part newM_expand_append_after_last_string_part(
-                String p_after_last_string_part) {
-
-            M_expand_append_after_last_string_part v_expand_append_after_last_string_part = new M_expand_append_after_last_string_part(
-                    p_after_last_string_part);
-            this.m_expand_append_after_last_string_part
-                    .add(v_expand_append_after_last_string_part);
-            return v_expand_append_after_last_string_part;
-        }
-
-        public M_expand_append_after_last_text_block newM_expand_append_after_last_text_block(
-                String p_text_block_name) {
-
-            M_expand_append_after_last_text_block v_expand_append_after_last_text_block = new M_expand_append_after_last_text_block(
-                    p_text_block_name);
-            this.m_expand_append_after_last_text_block
-                    .add(v_expand_append_after_last_text_block);
-            return v_expand_append_after_last_text_block;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("    if(e_");
-            sb.append(this.p_expand_name);
-            sb.append(".size() == 0) {");
-            sb.append(System.getProperty("line.separator"));
-            for (M_expand_append_none_string_part v_expand_append_none_string_part : this.m_expand_append_none_string_part) {
-                v_expand_append_none_string_part.appendTo(sb);
-            }
-            for (M_expand_append_none_text_block v_expand_append_none_text_block : this.m_expand_append_none_text_block) {
-                v_expand_append_none_text_block.appendTo(sb);
-            }
-            sb.append("    }");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("    else {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      boolean first = true;");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      for(Macro macro : e_");
-            sb.append(this.p_expand_name);
-            sb.append(") {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("        if(first) {");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("          first = false;");
-            sb.append(System.getProperty("line.separator"));
-            for (M_expand_append_before_first_string_part v_expand_append_before_first_string_part : this.m_expand_append_before_first_string_part) {
-                v_expand_append_before_first_string_part.appendTo(sb);
-            }
-            for (M_expand_append_before_first_text_block v_expand_append_before_first_text_block : this.m_expand_append_before_first_text_block) {
-                v_expand_append_before_first_text_block.appendTo(sb);
-            }
-            sb.append("        }");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("        else {");
-            sb.append(System.getProperty("line.separator"));
-            for (M_expand_append_separator_string_part v_expand_append_separator_string_part : this.m_expand_append_separator_string_part) {
-                v_expand_append_separator_string_part.appendTo(sb);
-            }
-            for (M_expand_append_separator_text_block v_expand_append_separator_text_block : this.m_expand_append_separator_text_block) {
-                v_expand_append_separator_text_block.appendTo(sb);
-            }
-            sb.append("        }");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("        macro.appendTo(sb);");
-            sb.append(System.getProperty("line.separator"));
-            sb.append("      }");
-            sb.append(System.getProperty("line.separator"));
-            for (M_expand_append_after_last_string_part v_expand_append_after_last_string_part : this.m_expand_append_after_last_string_part) {
-                v_expand_append_after_last_string_part.appendTo(sb);
-            }
-            for (M_expand_append_after_last_text_block v_expand_append_after_last_text_block : this.m_expand_append_after_last_text_block) {
-                v_expand_append_after_last_text_block.appendTo(sb);
-            }
-            sb.append("    }");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-        public class M_expand_append_none_string_part
-                extends Macro {
-
-            private final String p_none_string_part;
-
-            M_expand_append_none_string_part(
-                    String p_none_string_part) {
-
-                this.p_none_string_part = p_none_string_part;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append("      sb.append(");
-                sb.append('"');
-                sb.append(this.p_none_string_part);
-                sb.append('"');
-                sb.append(");");
-                sb.append(System.getProperty("line.separator"));
-            }
-
-        }
-
-        public class M_expand_append_none_text_block
-                extends Macro {
-
-            private final String p_text_block_name;
-
-            M_expand_append_none_text_block(
-                    String p_text_block_name) {
-
-                this.p_text_block_name = p_text_block_name;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append("      get_t_");
-                sb.append(this.p_text_block_name);
-                sb.append("().appendTo(sb);");
-                sb.append(System.getProperty("line.separator"));
-            }
-
-        }
-
-        public class M_expand_append_before_first_string_part
-                extends Macro {
-
-            private final String p_before_first_string_part;
-
-            M_expand_append_before_first_string_part(
-                    String p_before_first_string_part) {
-
-                this.p_before_first_string_part = p_before_first_string_part;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append("          sb.append(");
-                sb.append('"');
-                sb.append(this.p_before_first_string_part);
-                sb.append('"');
-                sb.append(");");
-                sb.append(System.getProperty("line.separator"));
-            }
-
-        }
-
-        public class M_expand_append_before_first_text_block
-                extends Macro {
-
-            private final String p_text_block_name;
-
-            M_expand_append_before_first_text_block(
-                    String p_text_block_name) {
-
-                this.p_text_block_name = p_text_block_name;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append("          get_t_");
-                sb.append(this.p_text_block_name);
-                sb.append("().appendTo(sb);");
-                sb.append(System.getProperty("line.separator"));
-            }
-
-        }
-
-        public class M_expand_append_separator_string_part
-                extends Macro {
-
-            private final String p_separator_string_part;
-
-            M_expand_append_separator_string_part(
-                    String p_separator_string_part) {
-
-                this.p_separator_string_part = p_separator_string_part;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append("          sb.append(");
-                sb.append('"');
-                sb.append(this.p_separator_string_part);
-                sb.append('"');
-                sb.append(");");
-                sb.append(System.getProperty("line.separator"));
-            }
-
-        }
-
-        public class M_expand_append_separator_text_block
-                extends Macro {
-
-            private final String p_text_block_name;
-
-            M_expand_append_separator_text_block(
-                    String p_text_block_name) {
-
-                this.p_text_block_name = p_text_block_name;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append("          get_t_");
-                sb.append(this.p_text_block_name);
-                sb.append("().appendTo(sb);");
-                sb.append(System.getProperty("line.separator"));
-            }
-
-        }
-
-        public class M_expand_append_after_last_string_part
-                extends Macro {
-
-            private final String p_after_last_string_part;
-
-            M_expand_append_after_last_string_part(
-                    String p_after_last_string_part) {
-
-                this.p_after_last_string_part = p_after_last_string_part;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append("      sb.append(");
-                sb.append('"');
-                sb.append(this.p_after_last_string_part);
-                sb.append('"');
-                sb.append(");");
-                sb.append(System.getProperty("line.separator"));
-            }
-
-        }
-
-        public class M_expand_append_after_last_text_block
-                extends Macro {
-
-            private final String p_text_block_name;
-
-            M_expand_append_after_last_text_block(
-                    String p_text_block_name) {
-
-                this.p_text_block_name = p_text_block_name;
-            }
-
-            public void appendTo(
-                    StringBuilder sb) {
-
-                sb.append("      get_t_");
-                sb.append(this.p_text_block_name);
-                sb.append("().appendTo(sb);");
-                sb.append(System.getProperty("line.separator"));
-            }
-
-        }
-
-    }
-
-    public class M_text_insert_append
-            extends Macro {
-
-        private final String p_text_insert_name;
-
-        M_text_insert_append(
-                String p_text_insert_name) {
-
-            this.p_text_insert_name = p_text_insert_name;
-        }
-
-        public void appendTo(
-                StringBuilder sb) {
-
-            sb.append("    get_t_");
-            sb.append(this.p_text_insert_name);
-            sb.append("().appendTo(sb);");
-            sb.append(System.getProperty("line.separator"));
-        }
-
-    }
-
 }
