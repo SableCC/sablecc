@@ -121,7 +121,7 @@ public class M_param_accessor
 
         sb.append(EOL);
 
-        sb.append("  String get_p_");
+        sb.append("  private String get_p_");
 
         sb.append(get_p_param_name());
 
