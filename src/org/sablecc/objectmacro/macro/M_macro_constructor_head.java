@@ -36,7 +36,7 @@ public class M_macro_constructor_head
 
     private String cached_p_macro_name;
 
-    String get_p_macro_name() {
+    private String get_p_macro_name() {
 
         String result = this.cached_p_macro_name;
 

@@ -34,7 +34,7 @@ public class M_text_append
 
     private String cached_p_text;
 
-    String get_p_text() {
+    private String get_p_text() {
 
         String result = this.cached_p_text;
 

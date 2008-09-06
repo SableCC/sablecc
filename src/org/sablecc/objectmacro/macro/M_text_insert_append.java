@@ -34,7 +34,7 @@ public class M_text_insert_append
 
     private String cached_p_text_insert_name;
 
-    String get_p_text_insert_name() {
+    private String get_p_text_insert_name() {
 
         String result = this.cached_p_text_insert_name;
 

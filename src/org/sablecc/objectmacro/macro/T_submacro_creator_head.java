@@ -17,6 +17,11 @@ public class T_submacro_creator_head
 
     private final Macro parent;
 
+    Macro get_parent() {
+
+        return this.parent;
+    }
+
     // ---- appendTo ----
 
     @Override

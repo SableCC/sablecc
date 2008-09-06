@@ -34,7 +34,7 @@ public class M_top_level_text_block_accessor
 
     private String cached_p_text_block_name;
 
-    String get_p_text_block_name() {
+    private String get_p_text_block_name() {
 
         String result = this.cached_p_text_block_name;
 

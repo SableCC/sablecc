@@ -50,7 +50,7 @@ public class M_param_accessor
 
     private String cached_p_param_name;
 
-    String get_p_param_name() {
+    private String get_p_param_name() {
 
         String result = this.cached_p_param_name;
 
@@ -70,7 +70,7 @@ public class M_param_accessor
 
     private String cached_p_containing_macro_name;
 
-    String get_p_containing_macro_name() {
+    private String get_p_containing_macro_name() {
 
         String result = this.cached_p_containing_macro_name;
 

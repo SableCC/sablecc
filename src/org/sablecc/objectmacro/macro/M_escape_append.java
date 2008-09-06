@@ -34,7 +34,7 @@ public class M_escape_append
 
     private String cached_p_char;
 
-    String get_p_char() {
+    private String get_p_char() {
 
         String result = this.cached_p_char;
 

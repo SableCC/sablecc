@@ -50,7 +50,7 @@ public class M_sub_level_text_block_accessor
 
     private String cached_p_text_block_name;
 
-    String get_p_text_block_name() {
+    private String get_p_text_block_name() {
 
         String result = this.cached_p_text_block_name;
 
@@ -71,7 +71,7 @@ public class M_sub_level_text_block_accessor
 
     private String cached_p_containing_macro_name;
 
-    String get_p_containing_macro_name() {
+    private String get_p_containing_macro_name() {
 
         String result = this.cached_p_containing_macro_name;
 

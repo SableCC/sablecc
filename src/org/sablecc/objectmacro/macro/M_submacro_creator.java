@@ -51,7 +51,7 @@ public class M_submacro_creator
 
     private String cached_p_submacro_name;
 
-    String get_p_submacro_name() {
+    private String get_p_submacro_name() {
 
         String result = this.cached_p_submacro_name;
 
@@ -73,7 +73,7 @@ public class M_submacro_creator
 
     private T_comma cached_t_comma;
 
-    T_comma get_t_comma() {
+    private T_comma get_t_comma() {
 
         T_comma result = this.cached_t_comma;
 

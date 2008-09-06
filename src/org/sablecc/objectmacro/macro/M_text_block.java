@@ -51,7 +51,7 @@ public class M_text_block
 
     private String cached_p_block_name;
 
-    String get_p_block_name() {
+    private String get_p_block_name() {
 
         String result = this.cached_p_block_name;
 
@@ -73,7 +73,7 @@ public class M_text_block
 
     private T_header cached_t_header;
 
-    T_header get_t_header() {
+    private T_header get_t_header() {
 
         T_header result = this.cached_t_header;
 
@@ -87,7 +87,7 @@ public class M_text_block
 
     private T_param_accessor_head cached_t_param_accessor_head;
 
-    T_param_accessor_head get_t_param_accessor_head() {
+    private T_param_accessor_head get_t_param_accessor_head() {
 
         T_param_accessor_head result = this.cached_t_param_accessor_head;
 
@@ -101,7 +101,7 @@ public class M_text_block
 
     private T_text_block_accessor_head cached_t_text_block_accessor_head;
 
-    T_text_block_accessor_head get_t_text_block_accessor_head() {
+    private T_text_block_accessor_head get_t_text_block_accessor_head() {
 
         T_text_block_accessor_head result = this.cached_t_text_block_accessor_head;
 
@@ -115,7 +115,7 @@ public class M_text_block
 
     private T_blank_line cached_t_blank_line;
 
-    T_blank_line get_t_blank_line() {
+    private T_blank_line get_t_blank_line() {
 
         T_blank_line result = this.cached_t_blank_line;
 

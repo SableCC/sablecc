@@ -38,7 +38,7 @@ public class M_expand_append_separator_text_block
 
     private String cached_p_text_block_name;
 
-    String get_p_text_block_name() {
+    private String get_p_text_block_name() {
 
         String result = this.cached_p_text_block_name;
 

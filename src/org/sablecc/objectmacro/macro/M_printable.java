@@ -30,7 +30,7 @@ public class M_printable
 
     private T_header cached_t_header;
 
-    T_header get_t_header() {
+    private T_header get_t_header() {
 
         T_header result = this.cached_t_header;
 

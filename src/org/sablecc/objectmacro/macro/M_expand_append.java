@@ -59,7 +59,7 @@ public class M_expand_append
 
     private String cached_p_expand_name;
 
-    String get_p_expand_name() {
+    private String get_p_expand_name() {
 
         String result = this.cached_p_expand_name;
 

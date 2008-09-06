@@ -38,7 +38,7 @@ public class M_expand_append_after_last_string_part
 
     private String cached_p_after_last_string_part;
 
-    String get_p_after_last_string_part() {
+    private String get_p_after_last_string_part() {
 
         String result = this.cached_p_after_last_string_part;
 
