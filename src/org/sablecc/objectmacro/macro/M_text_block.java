@@ -356,11 +356,13 @@ public class M_text_block
             sb.append(System.getProperty("line.separator"));
             sb.append("    if(result == null) {");
             sb.append(System.getProperty("line.separator"));
-            sb.append("      this.cached_t_");
-            sb.append(this.p_text_block_name);
-            sb.append(" = T_");
+            sb.append("      result = T_");
             sb.append(this.p_text_block_name);
             sb.append(".getInstance();");
+            sb.append(System.getProperty("line.separator"));
+            sb.append("      this.cached_t_");
+            sb.append(this.p_text_block_name);
+            sb.append(" = result;");
             sb.append(System.getProperty("line.separator"));
             sb.append("    }");
             sb.append(System.getProperty("line.separator"));
