@@ -15,50 +15,39 @@
  * limitations under the License.
  */
 
-package org.sablecc.objectmacro.launcher;
+package org.sablecc.objectmacro.structures;
+
+import java.util.Set;
 
 import org.sablecc.objectmacro.exception.InternalException;
 
-/**
- * The option argument class encapsulates a command-line option argument and its
- * operand.
- */
-class OptionArgument {
+public class ExpandSignature {
 
-    /** The option. */
-    private Option option;
+    private final Set<Macro> macroSet;
 
-    /** The operand. */
-    private String operand;
+    // for code generation
 
-    /**
-     * Constructs an option argument.
-     */
-    OptionArgument(
-            Option option,
-            String operand) {
+    private final int id;
 
-        if (option == null) {
-            throw new InternalException("option may not be null");
+    ExpandSignature(
+            Set<Macro> macroSet,
+            GlobalData globalData) {
+
+        if (macroSet == null) {
+            throw new InternalException("macroSet may not be null");
         }
 
-        this.option = option;
-        this.operand = operand;
+        this.macroSet = macroSet;
+        this.id = globalData.getNextSignatureId();
     }
 
-    /**
-     * Returns the option.
-     */
-    Option getOption() {
+    public Set<Macro> getMacroSet() {
 
-        return this.option;
+        return this.macroSet;
     }
 
-    /**
-     * Returns the operand.
-     */
-    String getOperand() {
+    public String getName() {
 
-        return this.operand;
+        return "expand_" + this.id;
     }
 }

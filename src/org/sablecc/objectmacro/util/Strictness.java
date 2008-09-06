@@ -15,37 +15,19 @@
  * limitations under the License.
  */
 
-package org.sablecc.objectmacro.launcher;
-
-import org.sablecc.objectmacro.exception.InternalException;
+package org.sablecc.objectmacro.util;
 
 /**
- * The text argument class encapsulates the text of a command-line text
- * argument.
+ * This enumeration encapsulates strictness levels.
  */
-class TextArgument {
-
-    /** The text. */
-    private String text;
+public enum Strictness {
+    /**
+     * Ignore unused constructs.
+     */
+    LENIENT,
 
     /**
-     * Constructs the text argument.
+     * Detect unused constructs.
      */
-    TextArgument(
-            String text) {
-
-        if (text == null) {
-            throw new InternalException("text may not be null");
-        }
-
-        this.text = text;
-    }
-
-    /**
-     * Returns the text.
-     */
-    String getText() {
-
-        return this.text;
-    }
+    STRICT;
 }

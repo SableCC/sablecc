@@ -18,26 +18,47 @@
 package org.sablecc.objectmacro.structures;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
+import org.sablecc.objectmacro.exception.InternalException;
 import org.sablecc.objectmacro.exception.SemanticException;
-import org.sablecc.objectmacro.macro.M_macro_file.M_macro;
-import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.syntax3.node.AMacro;
+import org.sablecc.objectmacro.syntax3.node.AParam;
+import org.sablecc.objectmacro.syntax3.node.ATextBlock;
 
 public abstract class Scope {
 
     private final Scope parentScope;
 
-    private final Map<String, Macro> macroMap = new HashMap<String, Macro>();
+    private final GlobalData globalData;
 
-    private final Map<String, Param> paramMap = new HashMap<String, Param>();
+    private final Map<String, Macro> localMacroMap = new HashMap<String, Macro>();
 
-    private M_macro mmacro;
+    private final Map<String, TextBlock> localTextBlockMap = new HashMap<String, TextBlock>();
 
-    protected Scope(
-            final Scope parentScope) {
+    private final Map<String, Param> localParamMap = new HashMap<String, Param>();
+
+    private final Set<TextBlock> referencedTextBlocks = new LinkedHashSet<TextBlock>();
+
+    private final Set<Param> referencedParams = new LinkedHashSet<Param>();
+
+    Scope(
+            Scope parentScope,
+            GlobalData globalData) {
+
+        if (parentScope == null && !(this instanceof SourceFile)) {
+
+            throw new InternalException("parentScope may not be null");
+        }
+
+        if (globalData == null) {
+            throw new InternalException("globalData may not be null");
+        }
 
         this.parentScope = parentScope;
+        this.globalData = globalData;
     }
 
     public Macro getMacro(
@@ -47,7 +68,7 @@ public abstract class Scope {
             throw new InternalException("macroName may not be null");
         }
 
-        Macro macro = this.macroMap.get(macroName);
+        Macro macro = this.localMacroMap.get(macroName);
 
         if (macro == null) {
             if (this.parentScope != null) {
@@ -58,22 +79,52 @@ public abstract class Scope {
         return macro;
     }
 
-    public void addMacro(
-            Macro macro)
+    Macro addMacro(
+            AMacro definition)
             throws SemanticException {
 
-        if (macro == null) {
-            throw new InternalException("macro may not be null");
+        if (definition == null) {
+            throw new InternalException("definition may not be null");
         }
 
-        String macroName = macro.getName();
+        this.globalData.addGlobalName(definition.getName());
 
-        if (getMacro(macroName) != null) {
-            throw new SemanticException("duplicate definition of macro "
-                    + macroName, macro.getDefinition().getName());
+        Macro macro = new Macro(definition, this, this.globalData);
+        this.localMacroMap.put(macro.getName(), macro);
+        return macro;
+    }
+
+    public TextBlock getTextBlock(
+            String textBlockName) {
+
+        if (textBlockName == null) {
+            throw new InternalException("textBlockName may not be null");
         }
 
-        this.macroMap.put(macro.getName(), macro);
+        TextBlock textBlock = this.localTextBlockMap.get(textBlockName);
+
+        if (textBlock == null) {
+            if (this.parentScope != null) {
+                return this.parentScope.getTextBlock(textBlockName);
+            }
+        }
+
+        return textBlock;
+    }
+
+    TextBlock addTextBlock(
+            ATextBlock definition)
+            throws SemanticException {
+
+        if (definition == null) {
+            throw new InternalException("definition may not be null");
+        }
+
+        this.globalData.addGlobalName(definition.getName());
+
+        TextBlock textBlock = new TextBlock(definition, this, this.globalData);
+        this.localTextBlockMap.put(textBlock.getName(), textBlock);
+        return textBlock;
     }
 
     public Param getParam(
@@ -83,7 +134,7 @@ public abstract class Scope {
             throw new InternalException("paramName may not be null");
         }
 
-        Param param = this.paramMap.get(paramName);
+        Param param = this.localParamMap.get(paramName);
 
         if (param == null) {
             if (this.parentScope != null) {
@@ -94,22 +145,24 @@ public abstract class Scope {
         return param;
     }
 
-    public void addParam(
-            Param param)
+    Param addParam(
+            AParam definition)
             throws SemanticException {
 
-        if (param == null) {
-            throw new InternalException("param may not be null");
+        if (definition == null) {
+            throw new InternalException("definition may not be null");
         }
 
-        String paramName = param.getName();
+        String paramName = definition.getName().getText();
 
         if (getParam(paramName) != null) {
-            throw new SemanticException("duplicate definition of parameter "
-                    + paramName, param.getDefinition().getName());
+            throw new SemanticException("duplicate definition of " + paramName,
+                    definition.getName());
         }
 
-        this.paramMap.put(param.getName(), param);
+        Param param = new Param(definition, this.globalData);
+        this.localParamMap.put(param.getName(), param);
+        return param;
     }
 
     public Scope getParentScope() {
@@ -117,14 +170,25 @@ public abstract class Scope {
         return this.parentScope;
     }
 
-    public M_macro getMmacro() {
+    public void addReferencedTextBlock(
+            TextBlock textBlock) {
 
-        return this.mmacro;
+        this.referencedTextBlocks.add(textBlock);
     }
 
-    public void setMmacro(
-            M_macro mmacro) {
+    public Set<TextBlock> getReferencedTextBlocks() {
 
-        this.mmacro = mmacro;
+        return this.referencedTextBlocks;
+    }
+
+    public void addReferencedParam(
+            Param param) {
+
+        this.referencedParams.add(param);
+    }
+
+    public Set<Param> getReferencedParams() {
+
+        return this.referencedParams;
     }
 }

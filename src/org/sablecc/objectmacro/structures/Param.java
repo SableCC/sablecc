@@ -17,48 +17,37 @@
 
 package org.sablecc.objectmacro.structures;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.sablecc.objectmacro.exception.InternalException;
+import org.sablecc.objectmacro.exception.SemanticException;
 import org.sablecc.objectmacro.syntax3.node.AMacro;
 import org.sablecc.objectmacro.syntax3.node.AParam;
-import org.sablecc.objectmacro.syntax3.node.PParam;
-import org.sablecc.sablecc.exception.InternalException;
 
 public class Param {
-
-    private final static Map<AParam, Param> definitionMap = new HashMap<AParam, Param>();
 
     private final AParam definition;
 
     private final Macro macro;
 
-    private final boolean first;
-
-    public Param(
+    Param(
             AParam definition,
-            boolean first) {
+            GlobalData globalData)
+            throws SemanticException {
 
         if (definition == null) {
             throw new InternalException("definition may not be null");
         }
 
+        if (globalData == null) {
+            throw new InternalException("globalData may not be null");
+        }
+
         this.definition = definition;
-        this.first = first;
-
-        this.macro = Macro.getMacro((AMacro) definition.parent());
-
-        definitionMap.put(definition, this);
+        this.macro = globalData.getMacro((AMacro) definition.parent());
     }
 
     public AParam getDefinition() {
 
         return this.definition;
-    }
-
-    public boolean isFirst() {
-
-        return this.first;
     }
 
     public Macro getMacro() {
@@ -69,15 +58,5 @@ public class Param {
     public String getName() {
 
         return this.definition.getName().getText();
-    }
-
-    public static Param getParam(
-            PParam definition) {
-
-        if (definition == null) {
-            throw new InternalException("definition may not be null");
-        }
-
-        return definitionMap.get(definition);
     }
 }

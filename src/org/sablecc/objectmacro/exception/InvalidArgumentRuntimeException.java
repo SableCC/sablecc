@@ -18,35 +18,35 @@
 package org.sablecc.objectmacro.exception;
 
 /**
- * A semantic runtime exception wraps a semantic exception into a runtime
- * exception.
+ * An invalid argument runtime exception wraps an invalid argument exception
+ * into a runtime exception.
  */
 @SuppressWarnings("serial")
-public class SemanticRuntimeException
+public class InvalidArgumentRuntimeException
         extends RuntimeException {
 
-    /** The wrapped semantic exception. */
-    private SemanticException semanticException;
+    /** The wrapped invalid argument exception. */
+    private InvalidArgumentException invalidArgumentException;
 
     /**
      * Constructs an exception wraper.
      */
-    public SemanticRuntimeException(
-            SemanticException semanticException) {
+    public InvalidArgumentRuntimeException(
+            InvalidArgumentException invalidArgumentException) {
 
-        super(semanticException);
+        super(invalidArgumentException);
 
-        if (semanticException == null) {
-            throw new InternalException("semanticException may not be null");
+        if (invalidArgumentException == null) {
+            throw new InternalException(
+                    "invalidArgumentException may not be null");
         }
 
-        this.semanticException = semanticException;
+        this.invalidArgumentException = invalidArgumentException;
     }
 
     /** Returns the wrapped exception. */
-    public SemanticException getSemanticException() {
+    public InvalidArgumentException getInvalidArgumentException() {
 
-        return this.semanticException;
+        return this.invalidArgumentException;
     }
-
 }
