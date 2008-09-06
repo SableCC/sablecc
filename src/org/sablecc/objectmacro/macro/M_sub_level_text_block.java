@@ -27,7 +27,7 @@ public class M_sub_level_text_block
 
     private String cached_p_block_name;
 
-    String get_p_block_name() {
+    private String get_p_block_name() {
 
         String result = this.cached_p_block_name;
 

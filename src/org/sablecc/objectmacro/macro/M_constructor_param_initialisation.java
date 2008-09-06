@@ -38,7 +38,7 @@ public class M_constructor_param_initialisation
 
     private String cached_p_param_name;
 
-    String get_p_param_name() {
+    private String get_p_param_name() {
 
         String result = this.cached_p_param_name;
 

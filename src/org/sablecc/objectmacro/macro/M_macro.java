@@ -104,7 +104,7 @@ public class M_macro
 
     private String cached_p_macro_name;
 
-    String get_p_macro_name() {
+    private String get_p_macro_name() {
 
         String result = this.cached_p_macro_name;
 
@@ -126,7 +126,7 @@ public class M_macro
 
     private T_header cached_t_header;
 
-    T_header get_t_header() {
+    private T_header get_t_header() {
 
         T_header result = this.cached_t_header;
 
@@ -140,7 +140,7 @@ public class M_macro
 
     private T_comma cached_t_comma;
 
-    T_comma get_t_comma() {
+    private T_comma get_t_comma() {
 
         T_comma result = this.cached_t_comma;
 
@@ -216,7 +216,7 @@ public class M_macro
 
     private T_blank_line cached_t_blank_line;
 
-    T_blank_line get_t_blank_line() {
+    private T_blank_line get_t_blank_line() {
 
         T_blank_line result = this.cached_t_blank_line;
 
@@ -230,7 +230,7 @@ public class M_macro
 
     private T_param_accessor_head cached_t_param_accessor_head;
 
-    T_param_accessor_head get_t_param_accessor_head() {
+    private T_param_accessor_head get_t_param_accessor_head() {
 
         T_param_accessor_head result = this.cached_t_param_accessor_head;
 
@@ -244,7 +244,7 @@ public class M_macro
 
     private T_text_block_accessor_head cached_t_text_block_accessor_head;
 
-    T_text_block_accessor_head get_t_text_block_accessor_head() {
+    private T_text_block_accessor_head get_t_text_block_accessor_head() {
 
         T_text_block_accessor_head result = this.cached_t_text_block_accessor_head;
 

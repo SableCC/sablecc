@@ -17,6 +17,11 @@ public class T_text_block_declaration_header
 
     private final Macro parent;
 
+    Macro get_parent() {
+
+        return this.parent;
+    }
+
     // ---- appendTo ----
 
     @Override

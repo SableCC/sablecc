@@ -38,7 +38,7 @@ public class M_add_to_expand
 
     private String cached_p_expand_name;
 
-    String get_p_expand_name() {
+    private String get_p_expand_name() {
 
         String result = this.cached_p_expand_name;
 

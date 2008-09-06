@@ -34,7 +34,7 @@ public class M_package_declaration
 
     private String cached_p_package_name;
 
-    String get_p_package_name() {
+    private String get_p_package_name() {
 
         String result = this.cached_p_package_name;
 

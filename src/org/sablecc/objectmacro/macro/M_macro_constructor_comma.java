@@ -27,7 +27,7 @@ public class M_macro_constructor_comma
 
     private T_comma cached_t_comma;
 
-    T_comma get_t_comma() {
+    private T_comma get_t_comma() {
 
         T_comma result = this.cached_t_comma;
 

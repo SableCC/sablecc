@@ -34,7 +34,7 @@ public class M_var_append
 
     private String cached_p_var_name;
 
-    String get_p_var_name() {
+    private String get_p_var_name() {
 
         String result = this.cached_p_var_name;
 

@@ -38,7 +38,7 @@ public class M_expand_append_before_first_string_part
 
     private String cached_p_before_first_string_part;
 
-    String get_p_before_first_string_part() {
+    private String get_p_before_first_string_part() {
 
         String result = this.cached_p_before_first_string_part;
 

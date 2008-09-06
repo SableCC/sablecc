@@ -38,7 +38,7 @@ public class M_text_block_declaration
 
     private String cached_p_text_block_name;
 
-    String get_p_text_block_name() {
+    private String get_p_text_block_name() {
 
         String result = this.cached_p_text_block_name;
 
