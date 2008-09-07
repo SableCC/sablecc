@@ -45,7 +45,6 @@ import org.sablecc.objectmacro.util.Verbosity;
 import org.sablecc.objectmacro.walkers.CodeGenerator;
 import org.sablecc.objectmacro.walkers.CyclicInsertDetector;
 import org.sablecc.objectmacro.walkers.ExpandSignatureFinder;
-import org.sablecc.objectmacro.walkers.ImplicitReferenceFinder;
 import org.sablecc.objectmacro.walkers.NameVerifier;
 import org.sablecc.objectmacro.walkers.UnusedTextBlockDetector;
 
@@ -393,14 +392,6 @@ public class ObjectMacro {
             Start ast,
             GlobalData globalData,
             Verbosity verbosity) {
-
-        switch (verbosity) {
-        case VERBOSE:
-            System.out.println("  Computing references");
-            break;
-        }
-
-        ast.apply(new ImplicitReferenceFinder(globalData));
 
         switch (verbosity) {
         case VERBOSE:
