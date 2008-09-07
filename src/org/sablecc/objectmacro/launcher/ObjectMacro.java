@@ -53,7 +53,7 @@ import org.sablecc.objectmacro.walkers.UnusedTextBlockDetector;
  */
 public class ObjectMacro {
 
-    /** Prevents instanciation of this class. */
+    /** Prevents instantiation of this class. */
     private ObjectMacro() {
 
         throw new InternalException("this class may not have instances");
@@ -264,7 +264,6 @@ public class ObjectMacro {
             break;
         }
 
-        @SuppressWarnings("unused")
         Start ast;
 
         try {
