@@ -46,7 +46,6 @@ public class M_submacro_this
             StringBuilder sb) {
 
         sb.append("this");
-
         if (this.e_expand_3.size() == 0) {
         }
         else {

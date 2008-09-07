@@ -27,9 +27,7 @@ public class T_text_block_accessor_head
             StringBuilder sb) {
 
         sb.append("  // ---- text block accessors ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

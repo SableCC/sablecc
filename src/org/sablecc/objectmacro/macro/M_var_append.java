@@ -59,11 +59,8 @@ public class M_var_append
             StringBuilder sb) {
 
         sb.append("    sb.append(get_p_");
-
         sb.append(get_p_var_name());
-
         sb.append("());");
-
         sb.append(EOL);
     }
 

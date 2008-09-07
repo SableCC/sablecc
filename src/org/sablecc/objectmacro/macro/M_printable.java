@@ -59,7 +59,6 @@ public class M_printable
             StringBuilder sb) {
 
         get_t_header().appendTo(sb);
-
         if (this.e_expand_0.size() == 0) {
         }
         else {
@@ -73,70 +72,38 @@ public class M_printable
                 macro.appendTo(sb);
             }
         }
-
         sb.append(EOL);
-
         sb.append("abstract class Printable {");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  // ---- EOL ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb
                 .append("  static final String EOL = System.getProperty(\"line.separator\");");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  // ---- appendTo ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  public abstract void appendTo(StringBuilder sb);");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  // ---- toString ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  public String toString() {");
-
         sb.append(EOL);
-
         sb.append("    StringBuilder sb = new StringBuilder();");
-
         sb.append(EOL);
-
         sb.append("    appendTo(sb);");
-
         sb.append(EOL);
-
         sb.append("    return sb.toString();");
-
         sb.append(EOL);
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("}");
-
         sb.append(EOL);
     }
 

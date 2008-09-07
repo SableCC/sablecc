@@ -52,57 +52,31 @@ public class M_sub_level_text_block
             StringBuilder sb) {
 
         sb.append("  // ---- constructor ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  T_");
-
         sb.append(get_p_block_name());
-
         sb.append("(");
-
         sb.append(EOL);
-
         sb.append("      Macro parent) {");
-
         sb.append(EOL);
-
         sb.append("    this.parent = parent;");
-
         sb.append(EOL);
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  // ---- parent ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  private final Macro parent;");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  Macro get_parent() {");
-
         sb.append(EOL);
-
         sb.append("    return this.parent;");
-
         sb.append(EOL);
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

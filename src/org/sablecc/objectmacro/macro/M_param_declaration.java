@@ -63,35 +63,20 @@ public class M_param_declaration
             StringBuilder sb) {
 
         sb.append("  private final String p_");
-
         sb.append(get_p_param_name());
-
         sb.append(";");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  String get_local_p_");
-
         sb.append(get_p_param_name());
-
         sb.append("() {");
-
         sb.append(EOL);
-
         sb.append("    return this.p_");
-
         sb.append(get_p_param_name());
-
         sb.append(";");
-
         sb.append(EOL);
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

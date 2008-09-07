@@ -64,15 +64,10 @@ public class M_constructor_text_block_initialisation
             StringBuilder sb) {
 
         sb.append("    this.t_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(" = new T_");
-
         sb.append(get_p_text_block_name());
-
         sb.append("(this);");
-
         sb.append(EOL);
     }
 

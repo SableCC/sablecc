@@ -64,43 +64,24 @@ public class M_text_block_declaration
             StringBuilder sb) {
 
         sb.append("  private final T_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(" t_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(";");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  T_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(" get_local_t_");
-
         sb.append(get_p_text_block_name());
-
         sb.append("() {");
-
         sb.append(EOL);
-
         sb.append("    return this.t_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(";");
-
         sb.append(EOL);
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

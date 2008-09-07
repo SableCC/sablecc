@@ -113,20 +113,6 @@ public class M_text_block
         return result;
     }
 
-    private T_blank_line cached_t_blank_line;
-
-    private T_blank_line get_t_blank_line() {
-
-        T_blank_line result = this.cached_t_blank_line;
-
-        if (result == null) {
-            result = T_blank_line.getInstance();
-            this.cached_t_blank_line = result;
-        }
-
-        return result;
-    }
-
     // ---- macro creators ----
 
     public M_package_declaration new_package_declaration(
@@ -227,7 +213,6 @@ public class M_text_block
             StringBuilder sb) {
 
         get_t_header().appendTo(sb);
-
         if (this.e_expand_0.size() == 0) {
         }
         else {
@@ -241,25 +226,15 @@ public class M_text_block
                 macro.appendTo(sb);
             }
         }
-
         sb.append(EOL);
-
         sb.append("import java.util.*;");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("public class T_");
-
         sb.append(get_p_block_name());
-
         sb.append(" extends Printable {");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         if (this.e_expand_31.size() == 0) {
         }
         else {
@@ -273,7 +248,6 @@ public class M_text_block
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_32.size() == 0) {
         }
         else {
@@ -287,7 +261,6 @@ public class M_text_block
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_15.size() == 0) {
         }
         else {
@@ -302,7 +275,6 @@ public class M_text_block
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_16.size() == 0) {
         }
         else {
@@ -317,23 +289,14 @@ public class M_text_block
                 macro.appendTo(sb);
             }
         }
-
         sb.append(EOL);
-
         sb.append("  // ---- appendTo ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  @Override");
-
         sb.append(EOL);
-
         sb.append("  public void appendTo(StringBuilder sb) {");
-
         sb.append(EOL);
-
         if (this.e_expand_33.size() == 0) {
         }
         else {
@@ -343,20 +306,14 @@ public class M_text_block
                     first = false;
                 }
                 else {
-                    get_t_blank_line().appendTo(sb);
                 }
                 macro.appendTo(sb);
             }
         }
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("}");
-
         sb.append(EOL);
     }
 

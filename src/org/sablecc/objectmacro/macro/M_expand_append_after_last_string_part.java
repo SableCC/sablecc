@@ -64,11 +64,8 @@ public class M_expand_append_after_last_string_part
             StringBuilder sb) {
 
         sb.append("      sb.append(\"");
-
         sb.append(get_p_after_last_string_part());
-
         sb.append("\");");
-
         sb.append(EOL);
     }
 

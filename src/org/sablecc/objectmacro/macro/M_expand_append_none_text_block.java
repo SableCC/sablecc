@@ -64,11 +64,8 @@ public class M_expand_append_none_text_block
             StringBuilder sb) {
 
         sb.append("      get_t_");
-
         sb.append(get_p_text_block_name());
-
         sb.append("().appendTo(sb);");
-
         sb.append(EOL);
     }
 

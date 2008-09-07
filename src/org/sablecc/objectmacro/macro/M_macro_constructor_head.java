@@ -77,7 +77,6 @@ public class M_macro_constructor_head
             StringBuilder sb) {
 
         sb.append("  ");
-
         if (this.e_expand_4.size() == 0) {
         }
         else {
@@ -91,13 +90,9 @@ public class M_macro_constructor_head
                 macro.appendTo(sb);
             }
         }
-
         sb.append("M_");
-
         sb.append(get_p_macro_name());
-
         sb.append("(");
-
         if (this.e_expand_5.size() == 0) {
         }
         else {

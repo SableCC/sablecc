@@ -30,27 +30,16 @@ public class M_macro_without_parent
             StringBuilder sb) {
 
         sb.append("  // ---- parent ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  @Override");
-
         sb.append(EOL);
-
         sb.append("  Macro get_parent() {");
-
         sb.append(EOL);
-
         sb.append("    return null;");
-
         sb.append(EOL);
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

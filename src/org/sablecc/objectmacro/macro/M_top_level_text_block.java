@@ -52,61 +52,33 @@ public class M_top_level_text_block
             StringBuilder sb) {
 
         sb.append("  // ---- constructor ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  private T_");
-
         sb.append(get_p_block_name());
-
         sb.append("() {");
-
         sb.append(EOL);
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  // ---- instance ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  private static final T_");
-
         sb.append(get_p_block_name());
-
         sb.append(" instance = new T_");
-
         sb.append(get_p_block_name());
-
         sb.append("();");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  static T_");
-
         sb.append(get_p_block_name());
-
         sb.append(" getInstance() {");
-
         sb.append(EOL);
-
         sb.append("    return instance;");
-
         sb.append(EOL);
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

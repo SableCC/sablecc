@@ -46,7 +46,6 @@ public class M_macro_constructor_parent
             StringBuilder sb) {
 
         sb.append("Macro parent");
-
         if (this.e_expand_3.size() == 0) {
         }
         else {

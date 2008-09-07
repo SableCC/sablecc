@@ -64,15 +64,10 @@ public class M_constructor_param_initialisation
             StringBuilder sb) {
 
         sb.append("    this.p_");
-
         sb.append(get_p_param_name());
-
         sb.append(" = p_");
-
         sb.append(get_p_param_name());
-
         sb.append(";");
-
         sb.append(EOL);
     }
 

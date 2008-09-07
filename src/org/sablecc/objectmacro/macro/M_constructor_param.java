@@ -63,7 +63,6 @@ public class M_constructor_param
             StringBuilder sb) {
 
         sb.append("String p_");
-
         sb.append(get_p_param_name());
     }
 

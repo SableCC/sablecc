@@ -59,11 +59,8 @@ public class M_text_append
             StringBuilder sb) {
 
         sb.append("    sb.append(\"");
-
         sb.append(get_p_text());
-
         sb.append("\");");
-
         sb.append(EOL);
     }
 
