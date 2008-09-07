@@ -242,8 +242,8 @@ public class Interval
 
     /**
      * Creates a new interval representing the intersection between this
-     * interval and the provided one. The result is <code>null</code> when
-     * they do not intersect.
+     * interval and the provided one. The result is <code>null</code> when they
+     * do not intersect.
      */
     public Interval intersectWith(
             Interval interval) {

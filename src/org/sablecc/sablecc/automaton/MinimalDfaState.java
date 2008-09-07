@@ -46,8 +46,7 @@ public final class MinimalDfaState
     private boolean isStable;
 
     /**
-     * Cached string representation. Is <code>null</code> when not yet
-     * computed.
+     * Cached string representation. Is <code>null</code> when not yet computed.
      */
     private String toString;
 
@@ -101,8 +100,8 @@ public final class MinimalDfaState
     }
 
     /**
-     * Returns a <code>MinimalDfaState<code> representing
-     * the target of the provided symbol.
+     * Returns a <code>MinimalDfaState<code> representing the target of the
+     * provided symbol.
      */
     public MinimalDfaState getTarget(
             Symbol symbol) {

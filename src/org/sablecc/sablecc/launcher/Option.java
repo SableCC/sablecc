@@ -252,7 +252,8 @@ enum Option {
     }
 
     /**
-     * Returns the option that has the provided short name, or <code>null</code>.
+     * Returns the option that has the provided short name, or <code>null</code>
+     * .
      */
     static Option getShortOption(
             String shortName) {

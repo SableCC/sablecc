@@ -322,11 +322,10 @@ public class Alphabet {
     /**
      * Merges this alphabet with the provided one. Merging two alphabets
      * <code>A</code> and <code>B</code> consists of creating a new alphabet
-     * <code>C</code> containing a minimal number of symbols with the
-     * following property: For every symbol <code>x</code> element of
+     * <code>C</code> containing a minimal number of symbols with the following
+     * property: For every symbol <code>x</code> element of
      * <code>(A union B)</code> there exists a corresponding subset
-     * <code>S</code> of <code>C</code> such that:
-     * <code>merge(S) == x</code>.
+     * <code>S</code> of <code>C</code> such that: <code>merge(S) == x</code>.
      */
     public AlphabetMergeResult mergeWith(
             Alphabet alphabet) {
@@ -409,11 +408,11 @@ public class Alphabet {
     }
 
     /**
-     * Computes a <code>Map</code> that maps each symbol pair
-     * <code>(x,y)</code> to a set of shared intervals, where <code>x</code>
-     * is a symbol of <code>alphabet1</code> or <code>null</code>, and
-     * <code>y</code> is a symbol of <code>alphabet2</code> or
-     * <code>null</code>, but both x and y are not null.
+     * Computes a <code>Map</code> that maps each symbol pair <code>(x,y)</code>
+     * to a set of shared intervals, where <code>x</code> is a symbol of
+     * <code>alphabet1</code> or <code>null</code>, and <code>y</code> is a
+     * symbol of <code>alphabet2</code> or <code>null</code>, but both x and y
+     * are not null.
      */
     private static Map<SymbolPair, SortedSet<Interval>> computeSymbolPairToIntervalSetMap(
             Alphabet alphabet1,

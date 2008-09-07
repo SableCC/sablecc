@@ -39,8 +39,8 @@ public class Symbol
     private final SortedSet<Interval> intervals;
 
     /**
-     * The cached hashcode of this symbol. It is <code>null</code> when not
-     * yet computed.
+     * The cached hashcode of this symbol. It is <code>null</code> when not yet
+     * computed.
      */
     private Integer hashCode;
 

@@ -25,9 +25,8 @@ import java.util.SortedSet;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * A state matcher as a <code>Dfa</code> and a <code>Nfa</code> and is used
- * to determine whether a <code>DfaState</code> and a <code>NfaState</code>
- * match.
+ * A state matcher as a <code>Dfa</code> and a <code>Nfa</code> and is used to
+ * determine whether a <code>DfaState</code> and a <code>NfaState</code> match.
  */
 class StateMatcher {
 
@@ -38,14 +37,14 @@ class StateMatcher {
     private final Nfa nfa;
 
     /**
-     * A <code>Map</code> that maps a state contained in the <code>Dfa</code>
-     * to a corresponding set of its states in the <code>Nfa</code>.
+     * A <code>Map</code> that maps a state contained in the <code>Dfa</code> to
+     * a corresponding set of its states in the <code>Nfa</code>.
      */
     private final Map<DfaState, SortedSet<NfaState>> dfaToNfaSetMap = new HashMap<DfaState, SortedSet<NfaState>>();
 
     /**
-     * A <code>Map</code> that maps a set of states of the <code>Nfa</code>
-     * to a corresponding state in the <code>Dfa</code>.
+     * A <code>Map</code> that maps a set of states of the <code>Nfa</code> to a
+     * corresponding state in the <code>Dfa</code>.
      */
     private final Map<SortedSet<NfaState>, DfaState> nfaSetToDfaMap = new HashMap<SortedSet<NfaState>, DfaState>();
 
@@ -103,8 +102,8 @@ class StateMatcher {
     }
 
     /**
-     * Returns the <code>SortedSet</code> of <code>NfaSate</code>
-     * corresponding to the provided <code>DfaSate</code>
+     * Returns the <code>SortedSet</code> of <code>NfaSate</code> corresponding
+     * to the provided <code>DfaSate</code>
      */
     SortedSet<NfaState> getNfaStates(
             DfaState dfaState) {

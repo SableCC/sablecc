@@ -25,8 +25,8 @@ package org.sablecc.objectmacro.exception;
  * <p>
  * In the source code of the software, this exception should be thrown whenever
  * an unexpected situation is detected. For example, the exception should be
- * thrown when some method argument is <code>null</code> and the method
- * requires a non-null argument.
+ * thrown when some method argument is <code>null</code> and the method requires
+ * a non-null argument.
  */
 @SuppressWarnings("serial")
 public class InternalException

@@ -26,9 +26,9 @@ import java.util.Set;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * A partition is the division of states of a <code>Dfa</code> into groups.
- * The minimisation of a <code>Dfa</code> tries to generate the partition
- * which contains the less number of groups possible.
+ * A partition is the division of states of a <code>Dfa</code> into groups. The
+ * minimisation of a <code>Dfa</code> tries to generate the partition which
+ * contains the less number of groups possible.
  */
 class Partition {
 

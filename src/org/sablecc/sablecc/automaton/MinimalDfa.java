@@ -59,8 +59,7 @@ public class MinimalDfa {
     private boolean isStable;
 
     /**
-     * Cached string representation. Is <code>null</code> when not yet
-     * computed.
+     * Cached string representation. Is <code>null</code> when not yet computed.
      */
     private String toString;
 
