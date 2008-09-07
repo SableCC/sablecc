@@ -258,7 +258,7 @@ public class Alphabet {
             return false;
         }
 
-        Iterator i = alphabet.symbols.iterator();
+        Iterator<Symbol> i = alphabet.symbols.iterator();
         for (Symbol symbol : this.symbols) {
             if (!symbol.equals(i.next())) {
                 return false;

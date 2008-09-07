@@ -194,7 +194,7 @@ public class Symbol
             return false;
         }
 
-        Iterator i = symbol.intervals.iterator();
+        Iterator<Interval> i = symbol.intervals.iterator();
         for (Interval interval : this.intervals) {
             if (!interval.equals(i.next())) {
                 return false;
