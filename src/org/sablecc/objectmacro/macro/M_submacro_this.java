@@ -28,14 +28,14 @@ public class M_submacro_this
 
     // ---- expands ----
 
-    private final List<Macro> e_expand_19 = new LinkedList<Macro>();
+    private final List<Macro> e_expand_3 = new LinkedList<Macro>();
 
     // ---- macro creators ----
 
-    public M_submacro_comma new_submacro_comma() {
+    public M_comma new_comma() {
 
-        M_submacro_comma result = new M_submacro_comma(this);
-        this.e_expand_19.add(result);
+        M_comma result = new M_comma();
+        this.e_expand_3.add(result);
         return result;
     }
 
@@ -47,11 +47,11 @@ public class M_submacro_this
 
         sb.append("this");
 
-        if (this.e_expand_19.size() == 0) {
+        if (this.e_expand_3.size() == 0) {
         }
         else {
             boolean first = true;
-            for (Macro macro : this.e_expand_19) {
+            for (Macro macro : this.e_expand_3) {
                 if (first) {
                     first = false;
                 }

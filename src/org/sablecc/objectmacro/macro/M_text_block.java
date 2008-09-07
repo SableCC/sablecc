@@ -37,15 +37,15 @@ public class M_text_block
 
     private final List<Macro> e_expand_0 = new LinkedList<Macro>();
 
-    private final List<Macro> e_expand_32 = new LinkedList<Macro>();
+    private final List<Macro> e_expand_31 = new LinkedList<Macro>();
 
-    private final List<Macro> e_expand_33 = new LinkedList<Macro>();
+    private final List<Macro> e_expand_32 = new LinkedList<Macro>();
 
     private final List<Macro> e_expand_15 = new LinkedList<Macro>();
 
     private final List<Macro> e_expand_16 = new LinkedList<Macro>();
 
-    private final List<Macro> e_expand_34 = new LinkedList<Macro>();
+    private final List<Macro> e_expand_33 = new LinkedList<Macro>();
 
     // ---- parameter accessors ----
 
@@ -140,14 +140,14 @@ public class M_text_block
     public M_top_level_text_block new_top_level_text_block() {
 
         M_top_level_text_block result = new M_top_level_text_block(this);
-        this.e_expand_32.add(result);
+        this.e_expand_31.add(result);
         return result;
     }
 
     public M_sub_level_text_block new_sub_level_text_block() {
 
         M_sub_level_text_block result = new M_sub_level_text_block(this);
-        this.e_expand_33.add(result);
+        this.e_expand_32.add(result);
         return result;
     }
 
@@ -184,14 +184,14 @@ public class M_text_block
             String p_text) {
 
         M_text_append result = new M_text_append(p_text);
-        this.e_expand_34.add(result);
+        this.e_expand_33.add(result);
         return result;
     }
 
     public M_eol_append new_eol_append() {
 
         M_eol_append result = new M_eol_append();
-        this.e_expand_34.add(result);
+        this.e_expand_33.add(result);
         return result;
     }
 
@@ -199,7 +199,7 @@ public class M_text_block
             String p_char) {
 
         M_escape_append result = new M_escape_append(p_char);
-        this.e_expand_34.add(result);
+        this.e_expand_33.add(result);
         return result;
     }
 
@@ -207,7 +207,7 @@ public class M_text_block
             String p_var_name) {
 
         M_var_append result = new M_var_append(p_var_name);
-        this.e_expand_34.add(result);
+        this.e_expand_33.add(result);
         return result;
     }
 
@@ -216,7 +216,7 @@ public class M_text_block
 
         M_text_insert_append result = new M_text_insert_append(
                 p_text_insert_name);
-        this.e_expand_34.add(result);
+        this.e_expand_33.add(result);
         return result;
     }
 
@@ -260,11 +260,11 @@ public class M_text_block
 
         sb.append(EOL);
 
-        if (this.e_expand_32.size() == 0) {
+        if (this.e_expand_31.size() == 0) {
         }
         else {
             boolean first = true;
-            for (Macro macro : this.e_expand_32) {
+            for (Macro macro : this.e_expand_31) {
                 if (first) {
                     first = false;
                 }
@@ -274,11 +274,11 @@ public class M_text_block
             }
         }
 
-        if (this.e_expand_33.size() == 0) {
+        if (this.e_expand_32.size() == 0) {
         }
         else {
             boolean first = true;
-            for (Macro macro : this.e_expand_33) {
+            for (Macro macro : this.e_expand_32) {
                 if (first) {
                     first = false;
                 }
@@ -334,11 +334,11 @@ public class M_text_block
 
         sb.append(EOL);
 
-        if (this.e_expand_34.size() == 0) {
+        if (this.e_expand_33.size() == 0) {
         }
         else {
             boolean first = true;
-            for (Macro macro : this.e_expand_34) {
+            for (Macro macro : this.e_expand_33) {
                 if (first) {
                     first = false;
                 }

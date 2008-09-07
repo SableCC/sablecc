@@ -2,22 +2,21 @@
 
 package org.sablecc.objectmacro.macro;
 
-public class T_comma
-        extends Printable {
+public class M_comma
+        extends Macro {
 
     // ---- constructor ----
 
-    private T_comma() {
+    M_comma() {
 
     }
 
-    // ---- instance ----
+    // ---- parent ----
 
-    private static final T_comma instance = new T_comma();
+    @Override
+    Macro get_parent() {
 
-    static T_comma getInstance() {
-
-        return instance;
+        return null;
     }
 
     // ---- appendTo ----
