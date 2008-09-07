@@ -32,9 +32,9 @@ public class M_macro_constructor_parent
 
     // ---- macro creators ----
 
-    public M_macro_constructor_comma new_macro_constructor_comma() {
+    public M_comma new_comma() {
 
-        M_macro_constructor_comma result = new M_macro_constructor_comma(this);
+        M_comma result = new M_comma();
         this.e_expand_3.add(result);
         return result;
     }

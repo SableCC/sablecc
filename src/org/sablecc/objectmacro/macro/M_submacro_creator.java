@@ -41,11 +41,11 @@ public class M_submacro_creator
 
     private final List<Macro> e_expand_18 = new LinkedList<Macro>();
 
+    private final List<Macro> e_expand_19 = new LinkedList<Macro>();
+
     private final List<Macro> e_expand_20 = new LinkedList<Macro>();
 
     private final List<Macro> e_expand_21 = new LinkedList<Macro>();
-
-    private final List<Macro> e_expand_22 = new LinkedList<Macro>();
 
     // ---- parameter accessors ----
 
@@ -69,22 +69,6 @@ public class M_submacro_creator
         return result;
     }
 
-    // ---- text block accessors ----
-
-    private T_comma cached_t_comma;
-
-    private T_comma get_t_comma() {
-
-        T_comma result = this.cached_t_comma;
-
-        if (result == null) {
-            result = T_comma.getInstance();
-            this.cached_t_comma = result;
-        }
-
-        return result;
-    }
-
     // ---- macro creators ----
 
     public M_submacro_parameter new_submacro_parameter(
@@ -99,7 +83,7 @@ public class M_submacro_creator
     public M_submacro_this new_submacro_this() {
 
         M_submacro_this result = new M_submacro_this(this);
-        this.e_expand_20.add(result);
+        this.e_expand_19.add(result);
         return result;
     }
 
@@ -108,7 +92,7 @@ public class M_submacro_creator
 
         M_submacro_call_param result = new M_submacro_call_param(this,
                 p_param_name);
-        this.e_expand_21.add(result);
+        this.e_expand_20.add(result);
         return result;
     }
 
@@ -116,7 +100,7 @@ public class M_submacro_creator
             String p_expand_name) {
 
         M_add_to_expand result = new M_add_to_expand(this, p_expand_name);
-        this.e_expand_22.add(result);
+        this.e_expand_21.add(result);
         return result;
     }
 
@@ -145,7 +129,7 @@ public class M_submacro_creator
                     first = false;
                 }
                 else {
-                    get_t_comma().appendTo(sb);
+                    sb.append(", ");
                 }
                 macro.appendTo(sb);
             }
@@ -165,6 +149,20 @@ public class M_submacro_creator
 
         sb.append("(");
 
+        if (this.e_expand_19.size() == 0) {
+        }
+        else {
+            boolean first = true;
+            for (Macro macro : this.e_expand_19) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                }
+                macro.appendTo(sb);
+            }
+        }
+
         if (this.e_expand_20.size() == 0) {
         }
         else {
@@ -174,21 +172,7 @@ public class M_submacro_creator
                     first = false;
                 }
                 else {
-                }
-                macro.appendTo(sb);
-            }
-        }
-
-        if (this.e_expand_21.size() == 0) {
-        }
-        else {
-            boolean first = true;
-            for (Macro macro : this.e_expand_21) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    get_t_comma().appendTo(sb);
+                    sb.append(", ");
                 }
                 macro.appendTo(sb);
             }
@@ -198,11 +182,11 @@ public class M_submacro_creator
 
         sb.append(EOL);
 
-        if (this.e_expand_22.size() == 0) {
+        if (this.e_expand_21.size() == 0) {
         }
         else {
             boolean first = true;
-            for (Macro macro : this.e_expand_22) {
+            for (Macro macro : this.e_expand_21) {
                 if (first) {
                     first = false;
                 }

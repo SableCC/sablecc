@@ -187,7 +187,7 @@ public class CodeGenerator
                 M_macro_constructor_parent m_macro_constructor_parent = m_macro_constructor_head
                         .new_macro_constructor_parent();
                 if (node.getParams().size() > 0) {
-                    m_macro_constructor_parent.new_macro_constructor_comma();
+                    m_macro_constructor_parent.new_comma();
                 }
             }
         }
@@ -236,7 +236,7 @@ public class CodeGenerator
                 M_submacro_this m_submacro_this = m_submacro_creator
                         .new_submacro_this();
                 if (referencedMacro.getDefinition().getParams().size() > 0) {
-                    m_submacro_this.new_submacro_comma();
+                    m_submacro_this.new_comma();
                 }
             }
 

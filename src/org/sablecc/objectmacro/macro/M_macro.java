@@ -98,7 +98,7 @@ public class M_macro
 
     private final List<Macro> e_expand_17 = new LinkedList<Macro>();
 
-    private final List<Macro> e_expand_23 = new LinkedList<Macro>();
+    private final List<Macro> e_expand_22 = new LinkedList<Macro>();
 
     // ---- parameter accessors ----
 
@@ -133,20 +133,6 @@ public class M_macro
         if (result == null) {
             result = T_header.getInstance();
             this.cached_t_header = result;
-        }
-
-        return result;
-    }
-
-    private T_comma cached_t_comma;
-
-    private T_comma get_t_comma() {
-
-        T_comma result = this.cached_t_comma;
-
-        if (result == null) {
-            result = T_comma.getInstance();
-            this.cached_t_comma = result;
         }
 
         return result;
@@ -409,14 +395,14 @@ public class M_macro
             String p_text) {
 
         M_text_append result = new M_text_append(p_text);
-        this.e_expand_23.add(result);
+        this.e_expand_22.add(result);
         return result;
     }
 
     public M_eol_append new_eol_append() {
 
         M_eol_append result = new M_eol_append();
-        this.e_expand_23.add(result);
+        this.e_expand_22.add(result);
         return result;
     }
 
@@ -424,7 +410,7 @@ public class M_macro
             String p_char) {
 
         M_escape_append result = new M_escape_append(p_char);
-        this.e_expand_23.add(result);
+        this.e_expand_22.add(result);
         return result;
     }
 
@@ -432,7 +418,7 @@ public class M_macro
             String p_var_name) {
 
         M_var_append result = new M_var_append(p_var_name);
-        this.e_expand_23.add(result);
+        this.e_expand_22.add(result);
         return result;
     }
 
@@ -440,7 +426,7 @@ public class M_macro
             String p_expand_name) {
 
         M_expand_append result = new M_expand_append(this, p_expand_name);
-        this.e_expand_23.add(result);
+        this.e_expand_22.add(result);
         return result;
     }
 
@@ -449,7 +435,7 @@ public class M_macro
 
         M_text_insert_append result = new M_text_insert_append(
                 p_text_insert_name);
-        this.e_expand_23.add(result);
+        this.e_expand_22.add(result);
         return result;
     }
 
@@ -526,7 +512,7 @@ public class M_macro
                     first = false;
                 }
                 else {
-                    get_t_comma().appendTo(sb);
+                    sb.append(", ");
                 }
                 macro.appendTo(sb);
             }
@@ -719,11 +705,11 @@ public class M_macro
 
         sb.append(EOL);
 
-        if (this.e_expand_23.size() == 0) {
+        if (this.e_expand_22.size() == 0) {
         }
         else {
             boolean first = true;
-            for (Macro macro : this.e_expand_23) {
+            for (Macro macro : this.e_expand_22) {
                 if (first) {
                     first = false;
                 }

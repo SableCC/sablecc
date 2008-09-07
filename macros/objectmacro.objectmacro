@@ -79,7 +79,7 @@ $end: blank_line $
 
 $comment: ========== comma ========== $
 
-$text: comma $
+$macro: comma $
 , $comment: no eol $
 $end: comma $
 
@@ -223,10 +223,7 @@ $macro: macro_constructor_public $
 public $comment: no eol $
 $end: macro_constructor_public $
 $macro: macro_constructor_parent $
-$macro: macro_constructor_comma $
-$insert: comma $
-$end: macro_constructor_comma $
-Macro parent$expand: macro_constructor_comma $
+Macro parent$expand: comma $
 $end: macro_constructor_parent $
   $expand: macro_constructor_public $
 M_$macro_name($expand: macro_constructor_parent $
@@ -236,7 +233,7 @@ $comment$
 $end$
 $expand:
   constructor_param,
-  separator=comma
+  separator=", "
 $
 $macro: constructor_param(param_name) $
 String p_$(param_name)$comment: no eol $
@@ -359,22 +356,19 @@ $macro: submacro_creator(submacro_name) $
   public M_$submacro_name new_$submacro_name($comment: no eol $
 $expand:
   submacro_parameter,
-  separator=comma
+  separator=", "
 $
 $macro: submacro_parameter(param_name) $
 String p_$(param_name)$comment: no eol $
 $end: submacro_parameter $
 ) {
 $macro: submacro_this $
-$macro: submacro_comma $
-$insert: comma $
-$end: submacro_comma $
-this$expand: submacro_comma $
+this$expand: comma $
 $end: submacro_this $
     M_$submacro_name result = new M_$submacro_name($expand: submacro_this $
 $expand:
   submacro_call_param,
-  separator=comma
+  separator=", "
 $
 $macro: submacro_call_param(param_name) $
 p_$(param_name)$comment: no eol $
