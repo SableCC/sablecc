@@ -26,7 +26,6 @@ public class M_eol_append
             StringBuilder sb) {
 
         sb.append("    sb.append(EOL);");
-
         sb.append(EOL);
     }
 

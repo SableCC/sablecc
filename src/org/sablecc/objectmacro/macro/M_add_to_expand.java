@@ -63,11 +63,8 @@ public class M_add_to_expand
             StringBuilder sb) {
 
         sb.append("    e_");
-
         sb.append(get_p_expand_name());
-
         sb.append(".add(result);");
-
         sb.append(EOL);
     }
 

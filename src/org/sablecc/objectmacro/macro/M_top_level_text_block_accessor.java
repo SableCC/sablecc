@@ -60,79 +60,42 @@ public class M_top_level_text_block_accessor
             StringBuilder sb) {
 
         sb.append("  private T_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(" cached_t_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(";");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  private T_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(" get_t_");
-
         sb.append(get_p_text_block_name());
-
         sb.append("() {");
-
         sb.append(EOL);
-
         sb.append("    T_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(" result = this.cached_t_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(";");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("    if(result == null) {");
-
         sb.append(EOL);
-
         sb.append("      result = T_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(".getInstance();");
-
         sb.append(EOL);
-
         sb.append("      this.cached_t_");
-
         sb.append(get_p_text_block_name());
-
         sb.append(" = result;");
-
         sb.append(EOL);
-
         sb.append("    }");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("    return result;");
-
         sb.append(EOL);
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

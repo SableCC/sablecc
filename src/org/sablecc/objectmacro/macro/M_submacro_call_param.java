@@ -63,7 +63,6 @@ public class M_submacro_call_param
             StringBuilder sb) {
 
         sb.append("p_");
-
         sb.append(get_p_param_name());
     }
 

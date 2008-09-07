@@ -112,39 +112,22 @@ public class M_param_accessor
             StringBuilder sb) {
 
         sb.append("  private String cached_p_");
-
         sb.append(get_p_param_name());
-
         sb.append(";");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  private String get_p_");
-
         sb.append(get_p_param_name());
-
         sb.append("() {");
-
         sb.append(EOL);
-
         sb.append("    String result = this.cached_p_");
-
         sb.append(get_p_param_name());
-
         sb.append(";");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("    if(result == null) {");
-
         sb.append(EOL);
-
         sb.append("      Macro current = ");
-
         if (this.e_expand_1.size() == 0) {
         }
         else {
@@ -158,65 +141,35 @@ public class M_param_accessor
                 macro.appendTo(sb);
             }
         }
-
         sb.append(";");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("      while(!(current instanceof M_");
-
         sb.append(get_p_containing_macro_name());
-
         sb.append(")) {");
-
         sb.append(EOL);
-
         sb.append("        current = current.get_parent();");
-
         sb.append(EOL);
-
         sb.append("      }");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("      result = ((M_");
-
         sb.append(get_p_containing_macro_name());
-
         sb.append(") current).get_local_p_");
-
         sb.append(get_p_param_name());
-
         sb.append("();");
-
         sb.append(EOL);
-
         sb.append("      this.cached_p_");
-
         sb.append(get_p_param_name());
-
         sb.append(" = result;");
-
         sb.append(EOL);
-
         sb.append("    }");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("    return result;");
-
         sb.append(EOL);
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

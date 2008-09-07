@@ -392,8 +392,7 @@ $expand:
   escape_append,
   var_append,
   expand_append,
-  text_insert_append,
-  separator=blank_line
+  text_insert_append
 $
 $macro: expand_append(expand_name) $
     if(e_$expand_name.size() == 0) {
@@ -509,8 +508,7 @@ $expand:
   eol_append,
   escape_append,
   var_append,
-  text_insert_append,
-  separator=blank_line
+  text_insert_append
 $
   }
 

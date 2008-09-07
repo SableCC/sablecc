@@ -29,9 +29,7 @@ public class T_param_declaration_header
             StringBuilder sb) {
 
         sb.append("  // ---- parameters ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

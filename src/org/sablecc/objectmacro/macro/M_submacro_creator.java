@@ -111,15 +111,10 @@ public class M_submacro_creator
             StringBuilder sb) {
 
         sb.append("  public M_");
-
         sb.append(get_p_submacro_name());
-
         sb.append(" new_");
-
         sb.append(get_p_submacro_name());
-
         sb.append("(");
-
         if (this.e_expand_18.size() == 0) {
         }
         else {
@@ -134,21 +129,13 @@ public class M_submacro_creator
                 macro.appendTo(sb);
             }
         }
-
         sb.append(") {");
-
         sb.append(EOL);
-
         sb.append("    M_");
-
         sb.append(get_p_submacro_name());
-
         sb.append(" result = new M_");
-
         sb.append(get_p_submacro_name());
-
         sb.append("(");
-
         if (this.e_expand_19.size() == 0) {
         }
         else {
@@ -162,7 +149,6 @@ public class M_submacro_creator
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_20.size() == 0) {
         }
         else {
@@ -177,11 +163,8 @@ public class M_submacro_creator
                 macro.appendTo(sb);
             }
         }
-
         sb.append(");");
-
         sb.append(EOL);
-
         if (this.e_expand_21.size() == 0) {
         }
         else {
@@ -195,15 +178,10 @@ public class M_submacro_creator
                 macro.appendTo(sb);
             }
         }
-
         sb.append("    return result;");
-
         sb.append(EOL);
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

@@ -29,9 +29,7 @@ public class T_text_block_declaration_header
             StringBuilder sb) {
 
         sb.append("  // ---- text blocks ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

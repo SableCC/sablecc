@@ -158,13 +158,9 @@ public class M_expand_append
             StringBuilder sb) {
 
         sb.append("    if(e_");
-
         sb.append(get_p_expand_name());
-
         sb.append(".size() == 0) {");
-
         sb.append(EOL);
-
         if (this.e_expand_23.size() == 0) {
         }
         else {
@@ -178,7 +174,6 @@ public class M_expand_append
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_24.size() == 0) {
         }
         else {
@@ -192,35 +187,20 @@ public class M_expand_append
                 macro.appendTo(sb);
             }
         }
-
         sb.append("    }");
-
         sb.append(EOL);
-
         sb.append("    else {");
-
         sb.append(EOL);
-
         sb.append("      boolean first = true;");
-
         sb.append(EOL);
-
         sb.append("      for(Macro macro : e_");
-
         sb.append(get_p_expand_name());
-
         sb.append(") {");
-
         sb.append(EOL);
-
         sb.append("        if(first) {");
-
         sb.append(EOL);
-
         sb.append("          first = false;");
-
         sb.append(EOL);
-
         if (this.e_expand_25.size() == 0) {
         }
         else {
@@ -234,7 +214,6 @@ public class M_expand_append
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_26.size() == 0) {
         }
         else {
@@ -248,15 +227,10 @@ public class M_expand_append
                 macro.appendTo(sb);
             }
         }
-
         sb.append("        }");
-
         sb.append(EOL);
-
         sb.append("        else {");
-
         sb.append(EOL);
-
         if (this.e_expand_27.size() == 0) {
         }
         else {
@@ -270,7 +244,6 @@ public class M_expand_append
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_28.size() == 0) {
         }
         else {
@@ -284,19 +257,12 @@ public class M_expand_append
                 macro.appendTo(sb);
             }
         }
-
         sb.append("        }");
-
         sb.append(EOL);
-
         sb.append("        macro.appendTo(sb);");
-
         sb.append(EOL);
-
         sb.append("      }");
-
         sb.append(EOL);
-
         if (this.e_expand_29.size() == 0) {
         }
         else {
@@ -310,7 +276,6 @@ public class M_expand_append
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_30.size() == 0) {
         }
         else {
@@ -324,9 +289,7 @@ public class M_expand_append
                 macro.appendTo(sb);
             }
         }
-
         sb.append("    }");
-
         sb.append(EOL);
     }
 

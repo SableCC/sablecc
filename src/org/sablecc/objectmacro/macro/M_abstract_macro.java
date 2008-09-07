@@ -59,7 +59,6 @@ public class M_abstract_macro
             StringBuilder sb) {
 
         get_t_header().appendTo(sb);
-
         if (this.e_expand_0.size() == 0) {
         }
         else {
@@ -73,29 +72,17 @@ public class M_abstract_macro
                 macro.appendTo(sb);
             }
         }
-
         sb.append(EOL);
-
         sb.append("abstract class Macro extends Printable {");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  // ---- get_parent ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  abstract Macro get_parent();");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("}");
-
         sb.append(EOL);
     }
 

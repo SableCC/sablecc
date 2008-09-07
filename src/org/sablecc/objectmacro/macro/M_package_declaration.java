@@ -60,13 +60,9 @@ public class M_package_declaration
             StringBuilder sb) {
 
         sb.append(EOL);
-
         sb.append("package ");
-
         sb.append(get_p_package_name());
-
         sb.append(";");
-
         sb.append(EOL);
     }
 

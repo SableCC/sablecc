@@ -63,11 +63,8 @@ public class M_expand_declaration
             StringBuilder sb) {
 
         sb.append("  private final List<Macro> e_");
-
         sb.append(get_p_expand_name());
-
         sb.append(" = new LinkedList<Macro>();");
-
         sb.append(EOL);
     }
 

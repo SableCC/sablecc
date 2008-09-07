@@ -27,9 +27,7 @@ public class T_param_accessor_head
             StringBuilder sb) {
 
         sb.append("  // ---- parameter accessors ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

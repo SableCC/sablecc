@@ -29,9 +29,7 @@ public class T_submacro_creator_head
             StringBuilder sb) {
 
         sb.append("  // ---- macro creators ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 

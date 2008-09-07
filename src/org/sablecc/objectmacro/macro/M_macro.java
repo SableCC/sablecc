@@ -446,7 +446,6 @@ public class M_macro
             StringBuilder sb) {
 
         get_t_header().appendTo(sb);
-
         if (this.e_expand_0.size() == 0) {
         }
         else {
@@ -460,35 +459,20 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         sb.append(EOL);
-
         sb.append("import java.util.LinkedList;");
-
         sb.append(EOL);
-
         sb.append("import java.util.List;");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("public class M_");
-
         sb.append(get_p_macro_name());
-
         sb.append(" extends Macro {");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  // ---- constructor ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         if (this.e_expand_2.size() == 0) {
         }
         else {
@@ -502,7 +486,6 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_6.size() == 0) {
         }
         else {
@@ -517,11 +500,8 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         sb.append(") {");
-
         sb.append(EOL);
-
         if (this.e_expand_7.size() == 0) {
         }
         else {
@@ -535,7 +515,6 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_8.size() == 0) {
         }
         else {
@@ -549,7 +528,6 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_9.size() == 0) {
         }
         else {
@@ -563,13 +541,9 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         if (this.e_expand_10.size() == 0) {
         }
         else {
@@ -583,7 +557,6 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_11.size() == 0) {
         }
         else {
@@ -597,7 +570,6 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_12.size() == 0) {
         }
         else {
@@ -612,7 +584,6 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_13.size() == 0) {
         }
         else {
@@ -627,7 +598,6 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_14.size() == 0) {
         }
         else {
@@ -643,7 +613,6 @@ public class M_macro
             }
             get_t_blank_line().appendTo(sb);
         }
-
         if (this.e_expand_15.size() == 0) {
         }
         else {
@@ -658,7 +627,6 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_16.size() == 0) {
         }
         else {
@@ -673,7 +641,6 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         if (this.e_expand_17.size() == 0) {
         }
         else {
@@ -688,23 +655,14 @@ public class M_macro
                 macro.appendTo(sb);
             }
         }
-
         sb.append(EOL);
-
         sb.append("  // ---- appendTo ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("  @Override");
-
         sb.append(EOL);
-
         sb.append("  public void appendTo(StringBuilder sb) {");
-
         sb.append(EOL);
-
         if (this.e_expand_22.size() == 0) {
         }
         else {
@@ -714,20 +672,14 @@ public class M_macro
                     first = false;
                 }
                 else {
-                    get_t_blank_line().appendTo(sb);
                 }
                 macro.appendTo(sb);
             }
         }
-
         sb.append("  }");
-
         sb.append(EOL);
-
         sb.append(EOL);
-
         sb.append("}");
-
         sb.append(EOL);
     }
 

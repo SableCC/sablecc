@@ -30,7 +30,6 @@ public class M_constructor_parent_initialisation
             StringBuilder sb) {
 
         sb.append("    this.parent = parent;");
-
         sb.append(EOL);
     }
 

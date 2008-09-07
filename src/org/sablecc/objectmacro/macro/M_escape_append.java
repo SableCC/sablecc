@@ -59,11 +59,8 @@ public class M_escape_append
             StringBuilder sb) {
 
         sb.append("    sb.append('");
-
         sb.append(get_p_char());
-
         sb.append("');");
-
         sb.append(EOL);
     }
 

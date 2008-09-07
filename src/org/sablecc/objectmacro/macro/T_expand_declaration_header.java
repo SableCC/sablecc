@@ -29,9 +29,7 @@ public class T_expand_declaration_header
             StringBuilder sb) {
 
         sb.append("  // ---- expands ----");
-
         sb.append(EOL);
-
         sb.append(EOL);
     }
 
