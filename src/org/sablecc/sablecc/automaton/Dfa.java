@@ -349,8 +349,8 @@ public class Dfa {
     }
 
     /**
-     * Calculates and returns the shortest <code>Dfa</code> corresponding to
-     * the provided <code>Nfa</code>.
+     * Calculates and returns the shortest <code>Dfa</code> corresponding to the
+     * provided <code>Nfa</code>.
      */
     static Dfa shortest(
             Nfa nfa) {
@@ -428,8 +428,8 @@ public class Dfa {
     }
 
     /**
-     * Calculates the intersection between the two provided <code>Nfa</code>
-     * and returns the corresponding <code>Dfa</code>.
+     * Calculates the intersection between the two provided <code>Nfa</code> and
+     * returns the corresponding <code>Dfa</code>.
      */
     static Dfa intersection(
             Nfa nfa1,

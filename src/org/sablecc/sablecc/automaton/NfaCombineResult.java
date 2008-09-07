@@ -24,8 +24,8 @@ import org.sablecc.sablecc.exception.InternalException;
 
 /**
  * An instance of this class encapsulates the result of combining two
- * <code>Nfa</code>. It allows for retrieving the new <code>Nfa</code> and
- * for mapping old states to sets of new states.
+ * <code>Nfa</code>. It allows for retrieving the new <code>Nfa</code> and for
+ * mapping old states to sets of new states.
  */
 class NfaCombineResult {
 
@@ -36,8 +36,8 @@ class NfaCombineResult {
     private Nfa oldNfa1;
 
     /**
-     * A <code>SortedMap</code> that maps each state contained in the first
-     * old <code>Nfa</code> to its state in this <code>NfaCombineResult</code>.
+     * A <code>SortedMap</code> that maps each state contained in the first old
+     * <code>Nfa</code> to its state in this <code>NfaCombineResult</code>.
      */
     private SortedMap<NfaState, NfaState> oldNfa1StateMap = new TreeMap<NfaState, NfaState>();
 
@@ -45,8 +45,8 @@ class NfaCombineResult {
     private Nfa oldNfa2;
 
     /**
-     * A <code>SortedMap</code> that maps each state contained in the second
-     * old <code>Nfa</code> to its state in this <code>NfaCombineResult</code>.
+     * A <code>SortedMap</code> that maps each state contained in the second old
+     * <code>Nfa</code> to its state in this <code>NfaCombineResult</code>.
      */
     private SortedMap<NfaState, NfaState> oldNfa2StateMap = new TreeMap<NfaState, NfaState>();
 
@@ -129,8 +129,8 @@ class NfaCombineResult {
 
     /**
      * Returns the state of this instance corresponding to a provided old state.
-     * The provided old state must have the same <code>Nfa</code> as the
-     * second old state of this instance.
+     * The provided old state must have the same <code>Nfa</code> as the second
+     * old state of this instance.
      */
     NfaState getNewNfa2State(
             NfaState oldState) {

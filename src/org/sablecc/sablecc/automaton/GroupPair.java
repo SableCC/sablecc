@@ -20,8 +20,8 @@ package org.sablecc.sablecc.automaton;
 import org.sablecc.sablecc.exception.InternalException;
 
 /**
- * A group pair is a pair <code>(x,y)</code> where each of <code>x</code>
- * and <code>y</code> is a group.
+ * A group pair is a pair <code>(x,y)</code> where each of <code>x</code> and
+ * <code>y</code> is a group.
  */
 class GroupPair {
 
@@ -35,8 +35,7 @@ class GroupPair {
     private Integer hashcode;
 
     /**
-     * Cached string representation. Is <code>null</code> when not yet
-     * computed.
+     * Cached string representation. Is <code>null</code> when not yet computed.
      */
     private String toString;
 

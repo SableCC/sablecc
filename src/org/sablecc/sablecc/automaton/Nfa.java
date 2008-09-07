@@ -57,8 +57,7 @@ public final class Nfa {
     private boolean isStable;
 
     /**
-     * Cached string representation. Is <code>null</code> when not yet
-     * computed.
+     * Cached string representation. Is <code>null</code> when not yet computed.
      */
     private String toString;
 
@@ -100,8 +99,8 @@ public final class Nfa {
     }
 
     /**
-     * Constructs a <code>Nfa</code> for the language <code>{"s"}</code>
-     * where <code>s</code> is the provided symbol.
+     * Constructs a <code>Nfa</code> for the language <code>{"s"}</code> where
+     * <code>s</code> is the provided symbol.
      */
     public Nfa(
             Symbol symbol) {
@@ -121,8 +120,8 @@ public final class Nfa {
     }
 
     /**
-     * Constructs a <code>Nfa</code> for the language <code>{"s"}</code>
-     * where <code>s</code> is a symbol representing a single interval.
+     * Constructs a <code>Nfa</code> for the language <code>{"s"}</code> where
+     * <code>s</code> is a symbol representing a single interval.
      */
     public Nfa(
             Interval interval) {
@@ -301,8 +300,8 @@ public final class Nfa {
     /**
      * Constructs an incomplete <code>Nfa</code>. This private constructor
      * returns a <code>Nfa</code> to which new states can be added. The
-     * <code>stabilize()</code> method should be called on this instance
-     * before exposing it publicly.
+     * <code>stabilize()</code> method should be called on this instance before
+     * exposing it publicly.
      */
     private Nfa(
             Alphabet alphabet) {
@@ -572,8 +571,8 @@ public final class Nfa {
     }
 
     /**
-     * Returns a new <code>Nfa</code> instance which represents the presence
-     * of zero or one of this <code>Nfa</code> instance.
+     * Returns a new <code>Nfa</code> instance which represents the presence of
+     * zero or one of this <code>Nfa</code> instance.
      */
     public Nfa zeroOrOne() {
 
@@ -677,8 +676,8 @@ public final class Nfa {
 
     /**
      * Returns a new <code>Nfa</code> instance which represents at least
-     * <code>lowerBound</code> and at most <code>upperBound</code>
-     * repetitions of this <code>Nfa</code> instance.
+     * <code>lowerBound</code> and at most <code>upperBound</code> repetitions
+     * of this <code>Nfa</code> instance.
      */
     public Nfa rangeExponent(
             int lowerBound,
@@ -814,8 +813,8 @@ public final class Nfa {
     }
 
     /**
-     * Returns a <code>Dfa</code> instance which represents the substraction
-     * of this <code>Nfa</code> with the provided one.
+     * Returns a <code>Dfa</code> instance which represents the substraction of
+     * this <code>Nfa</code> with the provided one.
      */
     public Dfa subtract(
             Nfa nfa) {
@@ -828,8 +827,8 @@ public final class Nfa {
     }
 
     /**
-     * Returns a <code>Dfa</code> instance which represents the intersection
-     * of this <code>Nfa</code> with the provided one.
+     * Returns a <code>Dfa</code> instance which represents the intersection of
+     * this <code>Nfa</code> with the provided one.
      */
     public Dfa intersect(
             Nfa nfa) {
@@ -879,8 +878,8 @@ public final class Nfa {
     }
 
     /**
-     * Adds the states and transitions of this <code>Nfa</code> instance to
-     * the new one provided.
+     * Adds the states and transitions of this <code>Nfa</code> instance to the
+     * new one provided.
      */
     private void addStatesAndTransitionsTo(
             Nfa newNfa,
@@ -914,8 +913,8 @@ public final class Nfa {
     }
 
     /**
-     * Adds the states and transitions of this <code>Nfa</code> instance to
-     * the new one provided.
+     * Adds the states and transitions of this <code>Nfa</code> instance to the
+     * new one provided.
      */
     private void addStatesAndTransitionsTo(
             Nfa newNfa,

@@ -45,8 +45,7 @@ public final class DfaState
     private boolean isStable;
 
     /**
-     * Cached string representation. Is <code>null</code> when not yet
-     * computed.
+     * Cached string representation. Is <code>null</code> when not yet computed.
      */
     private String toString;
 
@@ -107,8 +106,7 @@ public final class DfaState
     }
 
     /**
-     * Returns the target of this <code>DfaState</code> with a provided
-     * symbol.
+     * Returns the target of this <code>DfaState</code> with a provided symbol.
      */
     public DfaState getTarget(
             Symbol symbol) {
@@ -183,8 +181,8 @@ public final class DfaState
     }
 
     /**
-     * Compares this <code>DfaState</code> to the provided one. It compares
-     * the identification number.
+     * Compares this <code>DfaState</code> to the provided one. It compares the
+     * identification number.
      */
     public int compareTo(
             DfaState dfaState) {
