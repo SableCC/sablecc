@@ -191,4 +191,18 @@ public abstract class Scope {
 
         return this.referencedParams;
     }
+
+    public boolean hasAncestorScoppe(
+            Scope scope) {
+
+        if (scope == this) {
+            return true;
+        }
+
+        if (this.parentScope != null) {
+            return this.parentScope.hasAncestorScoppe(scope);
+        }
+
+        return false;
+    }
 }

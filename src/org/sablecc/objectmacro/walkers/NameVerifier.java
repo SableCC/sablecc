@@ -133,7 +133,11 @@ public class NameVerifier
                     "unknown macro " + name, node.getName()));
         }
 
-        macro.unsetAutoexpand();
+        // Unset auto expansion when the referred-to macro is not an ancestor
+        // scope
+        if (!this.currentScope.hasAncestorScoppe(macro)) {
+            macro.unsetAutoexpand();
+        }
     }
 
     @Override
