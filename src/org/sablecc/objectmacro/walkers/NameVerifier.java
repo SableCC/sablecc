@@ -135,7 +135,7 @@ public class NameVerifier
 
         // Unset auto expansion when the referred-to macro is not an ancestor
         // scope
-        if (!this.currentScope.hasAncestorScoppe(macro)) {
+        if (!this.currentScope.hasAncestorScope(macro)) {
             macro.unsetAutoexpand();
         }
     }

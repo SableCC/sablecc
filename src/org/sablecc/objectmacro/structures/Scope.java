@@ -192,7 +192,7 @@ public abstract class Scope {
         return this.referencedParams;
     }
 
-    public boolean hasAncestorScoppe(
+    public boolean hasAncestorScope(
             Scope scope) {
 
         if (scope == this) {
@@ -200,7 +200,7 @@ public abstract class Scope {
         }
 
         if (this.parentScope != null) {
-            return this.parentScope.hasAncestorScoppe(scope);
+            return this.parentScope.hasAncestorScope(scope);
         }
 
         return false;
