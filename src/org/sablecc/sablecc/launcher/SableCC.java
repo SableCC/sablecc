@@ -260,7 +260,7 @@ public class SableCC {
         try {
             FileReader fr = new FileReader(grammarFile);
             BufferedReader br = new BufferedReader(fr);
-            PushbackReader pbr = new PushbackReader(br);
+            PushbackReader pbr = new PushbackReader(br, 1024);
 
             switch (verbosity) {
             case VERBOSE:
