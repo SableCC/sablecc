@@ -39,6 +39,16 @@ public class Symbol
     private final SortedSet<Interval> intervals;
 
     /**
+     * The normal rich symbol associated with this symbol.
+     */
+    private final RichSymbol normalRichSymbol = new RichSymbol(this, false);
+
+    /**
+     * The lookahead rich symbol associated with this symbol.
+     */
+    private final RichSymbol lookaheadRichSymbol = new RichSymbol(this, true);
+
+    /**
      * The cached hashcode of this symbol. It is <code>null</code> when not yet
      * computed.
      */
@@ -167,6 +177,22 @@ public class Symbol
     public SortedSet<Interval> getIntervals() {
 
         return this.intervals;
+    }
+
+    /**
+     * Returns the normal rich symbol associated with this symbol.
+     */
+    public RichSymbol getNormalRichSymbol() {
+
+        return this.normalRichSymbol;
+    }
+
+    /**
+     * Returns the lookahead rich symbol associated with this symbol.
+     */
+    public RichSymbol getLookaheadRichSymbol() {
+
+        return this.lookaheadRichSymbol;
     }
 
     /**
