@@ -131,7 +131,7 @@ public class RichSymbol
             int hashCode = this.symbol.hashCode();
 
             if (this.isLookahead) {
-                hashCode *= 107;
+                hashCode *= 109;
             }
 
             this.hashCode = hashCode;

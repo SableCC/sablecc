@@ -240,7 +240,7 @@ public class Symbol
             int hashCode = 0;
 
             for (Interval interval : this.intervals) {
-                hashCode *= 107;
+                hashCode *= 113;
                 hashCode += interval.hashCode();
             }
 
