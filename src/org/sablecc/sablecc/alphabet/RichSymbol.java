@@ -41,8 +41,8 @@ public class RichSymbol
     private final boolean isLookahead;
 
     /**
-     * The cached hashcode of this rich symbol. It is <code>null</code> when not
-     * yet computed.
+     * The cached hash code of this rich symbol. It is <code>null</code> when
+     * not yet computed.
      */
     private Integer hashCode;
 
@@ -53,7 +53,7 @@ public class RichSymbol
     private String toString;
 
     /**
-     * Constructs a constant rich symbol. Serves to contruct END.
+     * Constructs a constant rich symbol. Serves to construct END.
      */
     private RichSymbol(
             boolean isLookahead) {

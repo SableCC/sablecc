@@ -25,14 +25,18 @@ import org.sablecc.sablecc.exception.InternalException;
 public class Interval
         implements Comparable<Interval> {
 
-    /** The lower bound of this interval. */
+    /**
+     * The lower bound of this interval.
+     */
     private final Bound lowerBound;
 
-    /** The upper bound of this interval. */
+    /**
+     * The upper bound of this interval.
+     */
     private final Bound upperBound;
 
     /**
-     * The cached hashcode of this interval. It is <code>null</code> when not
+     * The cached hash code of this interval. It is <code>null</code> when not
      * yet computed.
      */
     private Integer hashCode;

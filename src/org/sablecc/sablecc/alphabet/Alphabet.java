@@ -49,7 +49,7 @@ public class Alphabet {
     private SortedMap<Interval, Symbol> intervalToSymbolMap;
 
     /**
-     * The cached hashcode of this alphabet. It is <code>null</code> when not
+     * The cached hash code of this alphabet. It is <code>null</code> when not
      * yet computed.
      */
     private Integer hashCode;
@@ -411,8 +411,8 @@ public class Alphabet {
      * Computes a <code>Map</code> that maps each symbol pair <code>(x,y)</code>
      * to a set of shared intervals, where <code>x</code> is a symbol of
      * <code>alphabet1</code> or <code>null</code>, and <code>y</code> is a
-     * symbol of <code>alphabet2</code> or <code>null</code>, but both x and y
-     * are not null.
+     * symbol of <code>alphabet2</code> or <code>null</code>, but both
+     * <code>x</code> and <code>y</code> are not null.
      */
     private static Map<SymbolPair, SortedSet<Interval>> computeSymbolPairToIntervalSetMap(
             Alphabet alphabet1,

@@ -31,7 +31,9 @@ import org.sablecc.sablecc.exception.InternalException;
  */
 public final class AlphabetMergeResult {
 
-    /** The new alphabet. */
+    /**
+     * The new alphabet.
+     */
     private final Alphabet newAlphabet;
 
     /**
