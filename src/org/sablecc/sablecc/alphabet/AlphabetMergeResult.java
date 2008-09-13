@@ -19,6 +19,7 @@ package org.sablecc.sablecc.alphabet;
 
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.sablecc.sablecc.exception.InternalException;
@@ -51,7 +52,15 @@ public final class AlphabetMergeResult {
         }
 
         this.newAlphabet = alphabet;
-        this.mergedAlphabetSymbolMap = null;
+
+        // map each symbol to a set containing itself
+        this.mergedAlphabetSymbolMap = new TreeMap<Symbol, SortedSet<Symbol>>();
+
+        for (Symbol symbol : alphabet.getSymbols()) {
+            TreeSet<Symbol> set = new TreeSet<Symbol>();
+            set.add(symbol);
+            this.mergedAlphabetSymbolMap.put(symbol, set);
+        }
     }
 
     /**
@@ -92,14 +101,6 @@ public final class AlphabetMergeResult {
 
         if (oldSymbol == null) {
             throw new InternalException("oldSymbol may not be null");
-        }
-
-        // special case for an alphabet merged with itslef
-        if (this.mergedAlphabetSymbolMap == null) {
-
-            TreeSet<Symbol> set = new TreeSet<Symbol>();
-            set.add(oldSymbol);
-            return set;
         }
 
         if (!this.mergedAlphabetSymbolMap.containsKey(oldSymbol)) {
