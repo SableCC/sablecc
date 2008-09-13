@@ -49,7 +49,7 @@ public class Symbol
     private final RichSymbol lookaheadRichSymbol = new RichSymbol(this, true);
 
     /**
-     * The cached hashcode of this symbol. It is <code>null</code> when not yet
+     * The cached hash code of this symbol. It is <code>null</code> when not yet
      * computed.
      */
     private Integer hashCode;

@@ -26,15 +26,19 @@ import org.sablecc.sablecc.exception.InternalException;
  */
 class SymbolPair {
 
-    /** The first symbol of the pair, possibly <code>null</code>. */
+    /**
+     * The first symbol of the pair, possibly <code>null</code>.
+     */
     private final Symbol symbol1;
 
-    /** The second symbol of the pair, possibly <code>null</code>. */
+    /**
+     * The second symbol of the pair, possibly <code>null</code>.
+     */
     private final Symbol symbol2;
 
     /**
-     * The cached hashcode of this symbol pair. It is <code>null</code> when not
-     * yet computed.
+     * The cached hash code of this symbol pair. It is <code>null</code> when
+     * not yet computed.
      */
     private Integer hashCode;
 

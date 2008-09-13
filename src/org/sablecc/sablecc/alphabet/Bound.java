@@ -30,17 +30,23 @@ import org.sablecc.sablecc.exception.InternalException;
 public class Bound
         implements Comparable<Bound> {
 
-    /** The minimal bound */
+    /**
+     * The minimal bound.
+     */
     public static final Bound MIN = new Bound();
 
-    /** The maximal bound */
+    /**
+     * The maximal bound.
+     */
     public static final Bound MAX = new Bound();
 
-    /** The value of this bound. It is <code>null</code> for MIN and MAX. */
+    /**
+     * The value of this bound. It is <code>null</code> for MIN and MAX.
+     */
     private final BigInteger value;
 
     /**
-     * The cached hashcode of this bound. It is <code>null</code> when not yet
+     * The cached hash code of this bound. It is <code>null</code> when not yet
      * computed.
      */
     private Integer hashCode;
@@ -51,13 +57,17 @@ public class Bound
      */
     private String toString;
 
-    /** Constructs a constant bound. Serves to contruct MIN and MAX. */
+    /**
+     * Constructs a constant bound. Serves to construct MIN and MAX.
+     */
     private Bound() {
 
         this.value = null;
     }
 
-    /** Constructs a bound with the provided value. */
+    /**
+     * Constructs a bound with the provided value.
+     */
     private Bound(
             BigInteger value) {
 
@@ -68,14 +78,18 @@ public class Bound
         this.value = value;
     }
 
-    /** Constructs a bound with the provided value. */
+    /**
+     * Constructs a bound with the provided value.
+     */
     public Bound(
             char value) {
 
         this(new BigInteger(Integer.toString(value)));
     }
 
-    /** Constructs a bound with the provided value. */
+    /**
+     * Constructs a bound with the provided value.
+     */
     public Bound(
             String value) {
 
@@ -92,7 +106,9 @@ public class Bound
         this(new BigInteger(value, radix));
     }
 
-    /** Returns the predecessor of this bound. */
+    /**
+     * Returns the predecessor of this bound.
+     */
     public Bound getPredecessor() {
 
         if (this.value == null) {
@@ -108,7 +124,9 @@ public class Bound
         return new Bound(this.value.subtract(BigInteger.ONE));
     }
 
-    /** Returns the successor of this bound. */
+    /**
+     * Returns the successor of this bound.
+     */
     public Bound getSuccessor() {
 
         if (this.value == null) {
