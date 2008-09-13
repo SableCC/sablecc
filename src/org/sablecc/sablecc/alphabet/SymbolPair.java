@@ -123,11 +123,11 @@ class SymbolPair {
             int hashCode = 0;
 
             if (this.symbol1 != null) {
-                hashCode += 109 * this.symbol1.hashCode();
+                hashCode += 127 * this.symbol1.hashCode();
             }
 
             if (this.symbol2 != null) {
-                hashCode += 113 * this.symbol2.hashCode();
+                hashCode += 131 * this.symbol2.hashCode();
             }
 
             this.hashCode = hashCode;

@@ -164,8 +164,8 @@ public class Interval
     public int hashCode() {
 
         if (this.hashCode == null) {
-            this.hashCode = this.lowerBound.hashCode() * 101
-                    + this.upperBound.hashCode() * 103;
+            this.hashCode = this.lowerBound.hashCode() * 103
+                    + this.upperBound.hashCode() * 107;
         }
 
         return this.hashCode;

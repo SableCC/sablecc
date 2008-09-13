@@ -278,7 +278,7 @@ public class Alphabet {
             int hashCode = 0;
 
             for (Symbol symbol : this.symbols) {
-                hashCode *= 107;
+                hashCode *= 101;
                 hashCode += symbol.hashCode();
             }
 
