@@ -23,14 +23,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.PushbackReader;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.StringWriter;
 
-import org.sablecc.sablecc.exception.ExitException;
+import org.sablecc.sablecc.errormessages.M_internal_error;
+import org.sablecc.sablecc.errormessages.M_lexical_error;
+import org.sablecc.sablecc.errormessages.M_syntax_error;
+import org.sablecc.sablecc.exception.CompilerException;
 import org.sablecc.sablecc.exception.InternalException;
-import org.sablecc.sablecc.exception.InvalidArgumentException;
-import org.sablecc.sablecc.exception.SemanticException;
+import org.sablecc.sablecc.structures.GlobalData;
 import org.sablecc.sablecc.syntax3.lexer.Lexer;
 import org.sablecc.sablecc.syntax3.lexer.LexerException;
 import org.sablecc.sablecc.syntax3.node.Start;
@@ -38,13 +40,14 @@ import org.sablecc.sablecc.syntax3.parser.Parser;
 import org.sablecc.sablecc.syntax3.parser.ParserException;
 import org.sablecc.sablecc.util.Strictness;
 import org.sablecc.sablecc.util.Verbosity;
+import org.sablecc.sablecc.walkers.DeclarationFinder;
 
 /**
  * The main class of SableCC.
  */
 public class SableCC {
 
-    /** Prevents instanciation of this class. */
+    /** Prevents instantiation of this class. */
     private SableCC() {
 
         throw new InternalException("this class may not have instances");
@@ -57,41 +60,55 @@ public class SableCC {
         try {
             compile(args);
         }
-        catch (ExitException e) {
+        catch (CompilerException e) {
+            System.err.print(e.getMessage());
+            System.err.flush();
             System.exit(1);
-        }
-        catch (InvalidArgumentException e) {
-            System.err.println("ERROR: " + e.getMessage());
-            System.exit(1);
-        }
-        catch (SemanticException e) {
-            System.err.println("ERROR: semantic error on '"
-                    + e.getToken().getText() + "' at " + e.getMessage());
         }
         catch (ParserException e) {
-            System.err.println("ERROR: syntax error on '"
-                    + e.getToken().getText() + "' at " + e.getMessage());
+            int start = e.getMessage().indexOf(' ');
+            System.err.print(new M_syntax_error(e.getToken().getLine() + "", e
+                    .getToken().getPos()
+                    + "", e.getToken().getClass().getSimpleName().substring(1)
+                    .toLowerCase(), e.getToken().getText(), e.getMessage()
+                    .substring(start)));
+            System.err.flush();
             System.exit(1);
         }
         catch (LexerException e) {
-            System.err.println("ERROR: lexical error at " + e.getMessage());
+            int start = e.getMessage().indexOf('[') + 1;
+            int end = e.getMessage().indexOf(',');
+            String line = e.getMessage().substring(start, end);
+
+            start = e.getMessage().indexOf(',') + 1;
+            end = e.getMessage().indexOf(']');
+            String pos = e.getMessage().substring(start, end);
+
+            start = e.getMessage().indexOf(' ') + 1;
+
+            System.err.print(new M_lexical_error(line, pos, e.getMessage()
+                    .substring(start)));
+            System.err.flush();
             System.exit(1);
         }
         catch (InternalException e) {
-            e.printStackTrace(System.err);
-            System.err.println("INTERNAL ERROR: " + e.getMessage());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            pw.flush();
             System.err
-                    .println("Please submit a defect ticket with the full error trace above on:");
-            System.err.println("    http://sablecc.org/");
+                    .print(new M_internal_error(sw.toString(), e.getMessage()));
+            System.err.flush();
             System.exit(1);
         }
-        catch (Error e) {
-            e.printStackTrace(System.err);
-            System.err.println("INTERNAL ERROR: (" + e.getClass().getName()
-                    + ") " + e.getMessage());
+        catch (Throwable e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            pw.flush();
             System.err
-                    .println("Please submit a defect ticket with the full error trace above on:");
-            System.err.println("    http://sablecc.org/");
+                    .print(new M_internal_error(sw.toString(), e.getMessage()));
+            System.err.flush();
             System.exit(1);
         }
 
@@ -104,17 +121,15 @@ public class SableCC {
      */
     public static void compile(
             String[] arguments)
-            throws InvalidArgumentException, ParserException, LexerException,
-            SemanticException {
+            throws ParserException, LexerException {
 
         // default destination directory is current working directory
-        File destinationDirectory = new File(System.getProperty("user.dir"))
-                .getAbsoluteFile();
+        File destinationDirectory = new File(System.getProperty("user.dir"));
 
         // default option values
-        boolean check_only = false;
-        Strictness strictness = Strictness.NORMAL;
-        Verbosity verbosity = Verbosity.NORMAL;
+        boolean no_files = false;
+        Strictness strictness = Strictness.STRICT;
+        Verbosity verbosity = Verbosity.INFORMATIVE;
 
         // parse command line arguments
         ArgumentCollection argumentCollection = new ArgumentCollection(
@@ -130,19 +145,21 @@ public class SableCC {
                 destinationDirectory = new File(optionArgument.getOperand());
 
                 if (!destinationDirectory.exists()) {
-                    throw new InvalidArgumentException(destinationDirectory
-                            + " does not exist");
+                    throw CompilerException
+                            .missing_destination_directory(optionArgument
+                                    .getOperand());
                 }
 
                 if (!destinationDirectory.isDirectory()) {
-                    throw new InvalidArgumentException(destinationDirectory
-                            + " is not a directory");
+                    throw CompilerException
+                            .destination_is_not_directory(optionArgument
+                                    .getOperand());
                 }
 
                 break;
 
-            case CHECK_ONLY:
-                check_only = true;
+            case NO_FILES:
+                no_files = true;
                 break;
 
             case LENIENT:
@@ -158,7 +175,7 @@ public class SableCC {
                 break;
 
             case INFORMATIVE:
-                verbosity = Verbosity.NORMAL;
+                verbosity = Verbosity.INFORMATIVE;
                 break;
 
             case VERBOSE:
@@ -170,10 +187,8 @@ public class SableCC {
                 return;
 
             case HELP:
-                System.out
-                        .println("usage: sablecc "
-                                + Option.getShortHelpMessage()
-                                + " grammar.sablecc ...");
+                System.out.println("usage: sablecc "
+                        + Option.getShortHelpMessage() + " grammar.sablecc");
                 System.out.println("options:");
                 System.out.println(Option.getLongHelpMessage());
                 return;
@@ -184,17 +199,8 @@ public class SableCC {
             }
         }
 
-        // handle text arguments
-        if (argumentCollection.getTextArguments().size() == 0) {
-            System.err.println("usage: sablecc " + Option.getShortHelpMessage()
-                    + " grammar.sablecc ...");
-            System.err.println("type 'sablecc -h' for more information");
-
-            throw new ExitException();
-        }
-
         switch (verbosity) {
-        case NORMAL:
+        case INFORMATIVE:
         case VERBOSE:
             System.out.println();
             System.out.println("SableCC version " + VERSION);
@@ -203,37 +209,36 @@ public class SableCC {
             System.out.println();
         }
 
-        List<File> grammarFiles = new LinkedList<File>();
-
-        for (TextArgument textArgument : argumentCollection.getTextArguments()) {
-
-            if (!textArgument.getText().endsWith(".sablecc")) {
-                throw new InvalidArgumentException(
-                        "grammar file name does not end with .sablecc: "
-                                + textArgument.getText());
-            }
-
-            File grammarFile = new File(textArgument.getText());
-
-            if (!grammarFile.exists()) {
-                throw new InvalidArgumentException(grammarFile
-                        + " does not exist");
-            }
-
-            if (!grammarFile.isFile()) {
-                throw new InvalidArgumentException(grammarFile
-                        + " is not a file");
-            }
-
-            grammarFiles.add(grammarFile);
+        // handle text arguments
+        if (argumentCollection.getTextArguments().size() == 0) {
+            System.out.println("usage: sablecc " + Option.getShortHelpMessage()
+                    + " grammar.sablecc");
+            return;
+        }
+        else if (argumentCollection.getTextArguments().size() > 1) {
+            throw CompilerException.invalid_argument_count();
         }
 
-        // compile grammars
-        for (File grammarFile : grammarFiles) {
+        TextArgument textArgument = argumentCollection.getTextArguments()
+                .get(0);
 
-            compile(grammarFile, destinationDirectory, check_only, strictness,
-                    verbosity);
+        if (!textArgument.getText().endsWith(".sablecc")) {
+            throw CompilerException.invalid_suffix(textArgument.getText());
         }
+
+        File grammarFile = new File(textArgument.getText());
+
+        if (!grammarFile.exists()) {
+            throw CompilerException
+                    .missing_grammar_file(textArgument.getText());
+        }
+
+        if (!grammarFile.isFile()) {
+            throw CompilerException.grammar_not_file(textArgument.getText());
+        }
+
+        compile(grammarFile, destinationDirectory, no_files, strictness,
+                verbosity);
     }
 
     /**
@@ -242,19 +247,17 @@ public class SableCC {
     private static void compile(
             File grammarFile,
             File destinationDirectory,
-            boolean check_only,
+            boolean no_files,
             Strictness strictness,
             Verbosity verbosity)
-            throws InvalidArgumentException, ParserException, LexerException,
-            SemanticException {
+            throws ParserException, LexerException {
 
         switch (verbosity) {
-        case NORMAL:
+        case INFORMATIVE:
         case VERBOSE:
-            System.out.println("Compiling " + grammarFile);
+            System.out.println("Compiling \"" + grammarFile + "\"");
         }
 
-        @SuppressWarnings("unused")
         Start ast;
 
         try {
@@ -274,8 +277,27 @@ public class SableCC {
             fr.close();
         }
         catch (IOException e) {
-            throw new InvalidArgumentException("cannot read " + grammarFile, e);
+            throw CompilerException.input_error(grammarFile.toString(), e);
         }
+
+        GlobalData globalData = new GlobalData(ast, grammarFile);
+
+        verifySemantics(globalData, strictness, verbosity);
+
+        throw new InternalException("unimplemented");
+    }
+
+    private static void verifySemantics(
+            GlobalData globalData,
+            Strictness strictness,
+            Verbosity verbosity) {
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println(" Verifying semantics");
+        }
+
+        globalData.getAst().apply(new DeclarationFinder(globalData));
 
         throw new InternalException("unimplemented");
     }

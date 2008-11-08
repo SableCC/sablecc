@@ -110,7 +110,7 @@ public class Version {
     /** The version. */
     public static final String VERSION = "${package.version}";
 
-    /** Prevents instanciation of this class. */
+    /** Prevents instantiation of this class. */
     private Version() {
 
         throw new InternalException("no instance allowed");
@@ -134,7 +134,7 @@ public class Version {
     /** The version. */
     public static final String VERSION = "${package.version}";
 
-    /** Prevents instanciation of this class. */
+    /** Prevents instantiation of this class. */
     private Version() {
 
         throw new InternalException("no instance allowed");

@@ -22,14 +22,14 @@ package org.sablecc.objectmacro.util;
  */
 public enum Verbosity {
     /**
-     * Display errors only.
+     * Only display errors.
      */
     QUIET,
 
     /**
      * Display progress.
      */
-    NORMAL,
+    INFORMATIVE,
 
     /**
      * Display detailed progress.

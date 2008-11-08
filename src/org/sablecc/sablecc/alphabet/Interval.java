@@ -137,7 +137,8 @@ public class Interval
     }
 
     /**
-     * Returns true if the provided object is equal to this interval.
+     * Returns <code>true</code> when the provided object is equal to this
+     * interval.
      */
     @Override
     public boolean equals(

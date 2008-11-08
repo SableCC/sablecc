@@ -21,6 +21,7 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import org.sablecc.sablecc.exception.InternalException;
 
@@ -43,6 +44,12 @@ public final class AlphabetMergeResult {
     private final SortedMap<Symbol, SortedSet<Symbol>> mergedAlphabetSymbolMap;
 
     /**
+     * The rich symbol map. It maps each old rich symbol (in a merged alphabet)
+     * to a set of new rich symbols that cover the same intervals.
+     */
+    private final SortedMap<RichSymbol, SortedSet<RichSymbol>> mergedAlphabetRichSymbolMap = new TreeMap<RichSymbol, SortedSet<RichSymbol>>();
+
+    /**
      * Constructs an instance to store the result of merging an alphabet with
      * itself.
      */
@@ -63,6 +70,8 @@ public final class AlphabetMergeResult {
             set.add(symbol);
             this.mergedAlphabetSymbolMap.put(symbol, set);
         }
+
+        initMergedAlphabetRichSymbolMap();
     }
 
     /**
@@ -84,6 +93,39 @@ public final class AlphabetMergeResult {
 
         this.newAlphabet = newAlphabet;
         this.mergedAlphabetSymbolMap = mergedAlphabetSymbolMap;
+
+        initMergedAlphabetRichSymbolMap();
+    }
+
+    private void initMergedAlphabetRichSymbolMap() {
+
+        for (Entry<Symbol, SortedSet<Symbol>> entry : this.mergedAlphabetSymbolMap
+                .entrySet()) {
+            Symbol oldSymbol = entry.getKey();
+            SortedSet<Symbol> newSymbols = entry.getValue();
+
+            RichSymbol oldNormalRichSymbol = oldSymbol.getNormalRichSymbol();
+            RichSymbol oldLookaheadRichSymbol = oldSymbol
+                    .getLookaheadRichSymbol();
+
+            SortedSet<RichSymbol> newNormalRichSymbols = new TreeSet<RichSymbol>();
+            SortedSet<RichSymbol> newLookaheadRichSymbols = new TreeSet<RichSymbol>();
+
+            for (Symbol newSymbol : newSymbols) {
+                newNormalRichSymbols.add(newSymbol.getNormalRichSymbol());
+                newLookaheadRichSymbols.add(newSymbol.getLookaheadRichSymbol());
+            }
+
+            this.mergedAlphabetRichSymbolMap.put(oldNormalRichSymbol,
+                    newNormalRichSymbols);
+            this.mergedAlphabetRichSymbolMap.put(oldLookaheadRichSymbol,
+                    newLookaheadRichSymbols);
+        }
+
+        SortedSet<RichSymbol> newEndRichSymbols = new TreeSet<RichSymbol>();
+        newEndRichSymbols.add(RichSymbol.END);
+
+        this.mergedAlphabetRichSymbolMap.put(RichSymbol.END, newEndRichSymbols);
     }
 
     /**
@@ -110,5 +152,23 @@ public final class AlphabetMergeResult {
         }
 
         return this.mergedAlphabetSymbolMap.get(oldSymbol);
+    }
+
+    /**
+     * Returns the set of new rich symbols covering the same intervals as the
+     * provided old rich symbol.
+     */
+    public SortedSet<RichSymbol> getNewRichSymbols(
+            RichSymbol oldRichSymbol) {
+
+        if (oldRichSymbol == null) {
+            throw new InternalException("oldRichSymbol may not be null");
+        }
+
+        if (!this.mergedAlphabetRichSymbolMap.containsKey(oldRichSymbol)) {
+            throw new InternalException("oldRichSymbol is not valid");
+        }
+
+        return this.mergedAlphabetRichSymbolMap.get(oldRichSymbol);
     }
 }

@@ -38,26 +38,40 @@ import org.sablecc.objectmacro.launcher.syntax3.parser.Parser;
  */
 enum Option {
 
+    /** List available target languages and exit. */
+    LIST_TARGETS(null, "list-targets", null,
+            "list available target languages and exit"),
+
+    /** Set target language. */
+    TARGET("t", "target", "language", "set target language (default=java)"),
+
     /** Set destination directory. */
     DESTINATION("d", "destination", "directory", "set destination directory"),
 
     /** Set destination package. */
     PACKAGE("p", "package", "packagename", "set destination package"),
 
+    /** Do not generate files. */
+    NO_FILES("n", "no-files", null, "do not generate files"),
+
     /** Ignore unused constructs. */
     LENIENT("l", "lenient", null, "ignore unused constructs"),
+
     /** Detect unused constructs. */
     STRICT("s", "strict", null, "detect unused constructs (default)"),
 
-    /** Display errors only. */
-    QUIET("q", "quiet", null, "display errors only"),
+    /** Only display errors. */
+    QUIET("q", "quiet", null, "only display errors"),
+
     /** Display progress. */
     INFORMATIVE("i", "informative", null, "display progress (default)"),
+
     /** Display detailed progress. */
     VERBOSE("v", "verbose", null, "display detailed progress"),
 
     /** Display version and exit. */
     VERSION(null, "version", null, "display version and exit"),
+
     /** Display help and exit. */
     HELP("h", "help", null, "display help and exit");
 

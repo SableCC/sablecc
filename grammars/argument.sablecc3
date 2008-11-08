@@ -15,77 +15,116 @@
  * limitations under the License.
  */
 
- Package org.sablecc.sablecc.launcher.syntax3;
+Package org.sablecc.sablecc.launcher.syntax3;
 
- Helpers
+Helpers
 
-   any        = [0 .. 0xffff];
-   not_hyphen = [any - '-'];
-   letter     = [['A'..'Z']+['a'..'z']];
-   digit      = ['0'..'9'];
+  any        = [0 .. 0xffff];
+  not_hyphen = [any - '-'];
+  letter     = [['A'..'Z']+['a'..'z']];
+  digit      = ['0'..'9'];
 
- States
-   start, short_option, long_option, operand;
+States
+  start, short_option, long_option, operand;
 
- Tokens
+Tokens
 
-   {start->short_option}
-   hyphen = '-';
+  {start->short_option}
+  hyphen = '-';
 
-   {start->long_option}
-   double_hyphen = '--';
+  {start->long_option}
+  double_hyphen = '--';
 
-   {start}
-   text = not_hyphen any*;
+  {start}
+  text = not_hyphen any*;
 
-   {short_option}
-   short_name = letter;
+  {short_option}
+  short_name = letter;
 
-   {long_option}
-   long_name = letter (letter | digit)* ('-' letter (letter | digit)*)*;
+  {long_option}
+  long_name = letter (letter | digit)* ('-' letter (letter | digit)*)*;
 
-   {short_option->operand, long_option->operand}
-   assign = '=';
+  {short_option->operand, long_option->operand}
+  assign = '=';
 
-   {operand}
-   operand_text = any+;
+  {operand}
+  operand_text = any+;
 
- Productions
+Productions
 
-   argument =
-     {short_options} hyphen short_options  {-> New argument.short_options([short_options.short_option]) } |
-     {long_option}   double_hyphen long_option  {-> New argument.long_option(long_option) } |
-     {plain}         text;
+  argument
+    =
+      {short_options} hyphen short_options
+        {-> New argument.short_options([short_options.short_option]) }
+    |
+      {long_option} double_hyphen long_option
+        {-> New argument.long_option(long_option) }
+    |
+      {plain} text
+    ;
 
-   short_options  {-> short_option+ } =
-     [simple_short_options]:simple_short_option* last_short_option  {-> [simple_short_options.short_option, last_short_option.short_option] };
+  short_options
+        {-> short_option+ }
+    =
+      [simple_short_options]:simple_short_option* last_short_option
+        {-> [simple_short_options.short_option, last_short_option.short_option] }
+    ;
 
-   simple_short_option  {-> short_option } =
-     short_name  {-> New short_option(short_name, Null) };
+  simple_short_option
+        {-> short_option }
+    =
+      short_name
+        {-> New short_option(short_name, Null) }
+    ;
 
-   last_short_option  {-> short_option } =
-     {simple}  simple_short_option  {-> simple_short_option.short_option } |
-     {complex} complex_short_option  {-> complex_short_option.short_option };
+  last_short_option
+        {-> short_option }
+    =
+      {simple} simple_short_option
+        {-> simple_short_option.short_option }
+    |
+      {complex} complex_short_option
+        {-> complex_short_option.short_option }
+    ;
 
-   complex_short_option  {-> short_option } =
-     short_name assign operand_text?  {-> New short_option(short_name, New operand(operand_text)) };
+  complex_short_option
+        {-> short_option }
+    =
+      short_name assign operand_text?
+        {-> New short_option(short_name, New operand(operand_text)) }
+    ;
 
-   long_option =
-     {simple}  long_name  {-> New long_option(long_name, Null) } |
-     {complex} long_name assign operand_text?  {-> New long_option(long_name, New operand(operand_text)) };
+  long_option
+    =
+      {simple} long_name
+        {-> New long_option(long_name, Null) }
+    |
+      {complex} long_name assign operand_text?
+        {-> New long_option(long_name, New operand(operand_text)) }
+    ;
 
- Abstract Syntax Tree
+Abstract Syntax Tree
 
-   argument =
-     {short_options} [short_options]:short_option+ |
-     {long_option}   long_option |
-     {plain}         text;
+  argument
+    =
+      {short_options} [short_options]:short_option+
+    |
+      {long_option} long_option
+    |
+      {plain} text
+    ;
 
-   short_option =
-     short_name operand?;
+  short_option
+    =
+      short_name operand?
+    ;
 
-   long_option =
-     long_name operand?;
+  long_option
+    =
+      long_name operand?
+    ;
 
-   operand =
-     operand_text?;
+  operand
+    =
+      operand_text?
+    ;

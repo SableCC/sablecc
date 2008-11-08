@@ -143,7 +143,8 @@ public class Bound
     }
 
     /**
-     * Returns true if the provided object is equal to this bound.
+     * Returns <code>true</code> when the provided object is equal to this
+     * bound.
      */
     @Override
     public boolean equals(

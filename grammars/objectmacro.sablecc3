@@ -187,185 +187,327 @@ Ignored Tokens
 
 Productions
 
-  source_file =
-    [source_file_parts]:source_file_part* ctrl_z?
-      {-> New source_file([source_file_parts.source_file_part]) };
+  source_file
+    =
+      [source_file_parts]:source_file_part* ctrl_z?
+        {-> New source_file([source_file_parts.source_file_part]) }
+    ;
 
-  source_file_part {-> source_file_part? } =
-    {short_comment} short_comment {-> Null } |
-    {long_comment} long_comment {-> Null } |
-    {macro} macro |
-    {text_block} text_block;
+  source_file_part
+        {-> source_file_part? }
+    =
+      {short_comment} short_comment
+        {-> Null }
+    |
+      {long_comment} long_comment
+        {-> Null }
+    |
+      {macro} macro
+    |
+      {text_block} text_block
+    ;
 
-  short_comment =
-    short_comment_command short_comment_text? command_tail;
+  short_comment
+    =
+      short_comment_command short_comment_text? command_tail
+    ;
 
-  long_comment =
-    long_comment_start [parts]:long_comment_part* long_comment_end;
+  long_comment
+    =
+      long_comment_start [parts]:long_comment_part* long_comment_end
+    ;
 
-  long_comment_part =
-    {text} long_comment_text |
-    {nested_comment} long_comment;
+  long_comment_part
+    =
+      {text} long_comment_text
+    |
+      {nested_comment} long_comment
+    ;
 
-  macro =
-    macro_head macro_body macro_tail
-      {-> New macro(macro_head.identifier, [macro_head.params],
-                   [macro_body.macro_body_parts], macro_tail.identifier) };
+  macro
+    =
+      macro_head macro_body macro_tail
+        {-> New macro(macro_head.identifier, [macro_head.params], [macro_body.macro_body_parts], macro_tail.identifier) }
+    ;
 
-  macro_head {-> identifier [params]:param* } =
-    macro_command identifier param_list? command_tail
-      {-> identifier [param_list.params] };
+  macro_head
+        {-> identifier [params]:param* }
+    =
+      macro_command identifier param_list? command_tail
+        {-> identifier [param_list.params] }
+    ;
 
-  macro_body {-> [macro_body_parts]:macro_body_part* }=
-    [macro_body_parts]:macro_body_part*
-      {-> [macro_body_parts.macro_body_part] };
+  macro_body
+        {-> [macro_body_parts]:macro_body_part* }
+    =
+      [macro_body_parts]:macro_body_part*
+        {-> [macro_body_parts.macro_body_part] }
+    ;
 
-  macro_body_part {-> macro_body_part? } =
-    {short_comment} short_comment {-> Null } |
-    {long_comment} long_comment {-> Null } |
-    {text} text |
-    {eol} eol |
-    {escape} escape |
-    {var} var |
-    {expand} expand |
-    {macro} macro |
-    {text_insert} text_insert |
-    {text_block} text_block;
+  macro_body_part
+        {-> macro_body_part? }
+    =
+      {short_comment} short_comment
+        {-> Null }
+    |
+      {long_comment} long_comment
+        {-> Null }
+    |
+      {text} text
+    |
+      {eol} eol
+    |
+      {escape} escape
+    |
+      {var} var
+    |
+      {expand} expand
+    |
+      {macro} macro
+    |
+      {text_insert} text_insert
+    |
+      {text_block} text_block
+    ;
 
-  macro_tail {-> identifier } =
-    end_command identifier command_tail {-> identifier };
+  macro_tail
+        {-> identifier }
+    =
+      end_command identifier command_tail
+        {-> identifier }
+    ;
 
-  text_block =
-    text_block_head text_block_body text_block_tail
-      {-> New text_block(text_block_head.identifier,
-                         [text_block_body.text_block_body_parts],
-                         text_block_tail.identifier) };
+  text_block
+    =
+      text_block_head text_block_body text_block_tail
+        {-> New text_block(text_block_head.identifier, [text_block_body.text_block_body_parts], text_block_tail.identifier) }
+    ;
 
-  text_block_head {-> identifier } =
-    text_block_command identifier command_tail {-> identifier };
+  text_block_head
+        {-> identifier }
+    =
+      text_block_command identifier command_tail
+        {-> identifier }
+    ;
 
-  text_block_body {-> [text_block_body_parts]:text_block_body_part* }=
-    [text_block_body_parts]:text_block_body_part*
-      {-> [text_block_body_parts.text_block_body_part] };
+  text_block_body
+        {-> [text_block_body_parts]:text_block_body_part* }
+    =
+      [text_block_body_parts]:text_block_body_part*
+        {-> [text_block_body_parts.text_block_body_part] }
+    ;
 
-  text_block_body_part {-> text_block_body_part? } =
-    {short_comment} short_comment {-> Null } |
-    {long_comment} long_comment {-> Null } |
-    {text} text |
-    {eol} eol |
-    {escape} escape |
-    {var} var |
-    {text_insert} text_insert;
+  text_block_body_part
+        {-> text_block_body_part? }
+    =
+      {short_comment} short_comment
+        {-> Null }
+    |
+      {long_comment} long_comment
+        {-> Null }
+    |
+      {text} text
+    |
+      {eol} eol
+    |
+      {escape} escape
+    |
+      {var} var
+    |
+      {text_insert} text_insert
+    ;
 
-  text_block_tail {-> identifier } =
-    end_command identifier command_tail {-> identifier };
+  text_block_tail
+        {-> identifier }
+    =
+      end_command identifier command_tail
+        {-> identifier }
+    ;
 
-  param_list {-> [params]:param+ } =
-    l_par param [additional_params]:additional_param* r_par
-      {-> [param, additional_params.param] };
+  param_list
+        {-> [params]:param+ }
+    =
+      l_par param [additional_params]:additional_param* r_par
+        {-> [param, additional_params.param] }
+    ;
 
-  additional_param {-> param } =
-    comma param {-> param };
+  additional_param
+        {-> param }
+    =
+      comma param
+        {-> param }
+    ;
 
-  param =
-    [name]:identifier;
+  param
+    =
+      [name]:identifier
+    ;
 
-  expand =
-    expand_command macro_reference_list [options]:option* command_tail
-      {-> New expand([macro_reference_list.macro_references], [options]) };
+  expand
+    =
+      expand_command macro_reference_list [options]:option* command_tail
+        {-> New expand([macro_reference_list.macro_references], [options]) }
+    ;
 
-  macro_reference_list {-> [macro_references]:macro_reference* } =
-    macro_reference [additional_macro_references]:additional_macro_reference*
-      {-> [macro_reference, additional_macro_references.macro_reference] };
+  macro_reference_list
+        {-> [macro_references]:macro_reference* }
+    =
+      macro_reference [additional_macro_references]:additional_macro_reference*
+        {-> [macro_reference, additional_macro_references.macro_reference] }
+    ;
 
-  additional_macro_reference {-> macro_reference } =
-    comma macro_reference {-> macro_reference };
+  additional_macro_reference
+        {-> macro_reference }
+    =
+      comma macro_reference
+        {-> macro_reference }
+    ;
 
-  option =
-    comma [name]:identifier assign static_value
-      {-> New option(name, static_value) };
+  option
+    =
+      comma [name]:identifier assign static_value
+        {-> New option(name, static_value) }
+    ;
 
-  macro_reference =
-    [name]:identifier {-> New macro_reference(name) };
+  macro_reference
+    =
+      [name]:identifier
+        {-> New macro_reference(name) }
+    ;
 
-  text_insert =
-    insert_command text_block_reference command_tail
-      {-> New text_insert(text_block_reference) };
+  text_insert
+    =
+      insert_command text_block_reference command_tail
+        {-> New text_insert(text_block_reference) }
+    ;
 
-  text_block_reference =
-    [name]:identifier {-> New text_block_reference(name) };
+  text_block_reference
+    =
+      [name]:identifier
+        {-> New text_block_reference(name) }
+    ;
 
-  static_value =
-    {text_block_reference} text_block_reference |
-    {string} string;
+  static_value
+    =
+      {text_block_reference} text_block_reference
+    |
+      {string} string
+    ;
 
-  string =
-    [l_dquote]:dquote [parts]:string_part* [r_dquote]:dquote
-      {-> New string([parts]) };
+  string
+    =
+      [l_dquote]:dquote [parts]:string_part* [r_dquote]:dquote
+        {-> New string([parts]) }
+    ;
 
-  string_part =
-    {text} [text]:string_text |
-    {escape} [escape]:string_escape;
+  string_part
+    =
+      {text} [text]:string_text
+    |
+      {escape} [escape]:string_escape
+    ;
 
 Abstract Syntax Tree
 
-  source_file =
-    [parts]:source_file_part*;
+  source_file
+    =
+      [parts]:source_file_part*
+    ;
 
-  source_file_part =
-    {macro} macro |
-    {text_block} text_block;
+  source_file_part
+    =
+      {macro} macro
+    |
+      {text_block} text_block
+    ;
 
-  macro =
-    [name]:identifier [params]:param* [parts]:macro_body_part*
-    [repeat_name]:identifier;
+  macro
+    =
+      [name]:identifier [params]:param* [parts]:macro_body_part* [repeat_name]:identifier
+    ;
 
-  macro_body_part =
-    {text} text |
-    {eol} eol |
-    {escape} escape |
-    {var} var |
-    {expand} expand |
-    {macro} macro |
-    {text_insert} text_insert |
-    {text_block} text_block;
+  macro_body_part
+    =
+      {text} text
+    |
+      {eol} eol
+    |
+      {escape} escape
+    |
+      {var} var
+    |
+      {expand} expand
+    |
+      {macro} macro
+    |
+      {text_insert} text_insert
+    |
+      {text_block} text_block
+    ;
 
-  text_block =
-    [name]:identifier [parts]:text_block_body_part* [repeat_name]:identifier;
+  text_block
+    =
+      [name]:identifier [parts]:text_block_body_part* [repeat_name]:identifier
+    ;
 
-  text_block_body_part =
-    {text} text |
-    {eol} eol |
-    {escape} escape |
-    {var} var |
-    {text_insert} text_insert;
+  text_block_body_part
+    =
+      {text} text
+    |
+      {eol} eol
+    |
+      {escape} escape
+    |
+      {var} var
+    |
+      {text_insert} text_insert
+    ;
 
-  param =
-    [name]:identifier;
+  param
+    =
+      [name]:identifier
+    ;
 
-  expand =
-    [macro_references]:macro_reference+ [options]:option*;
+  expand
+    =
+      [macro_references]:macro_reference+ [options]:option*
+    ;
 
-  option =
-    [name]:identifier static_value;
+  option
+    =
+      [name]:identifier static_value
+    ;
 
-  static_value =
-    {text_block_reference} text_block_reference |
-    {string} string;
+  static_value
+    =
+      {text_block_reference} text_block_reference
+    |
+      {string} string
+    ;
 
-  string =
-    [parts]:string_part*;
+  string
+    =
+      [parts]:string_part*
+    ;
 
-  string_part =
-    {text} [text]:string_text |
-    {escape} [escape]:string_escape;
+  string_part
+    =
+      {text} [text]:string_text
+    |
+      {escape} [escape]:string_escape
+    ;
 
-  macro_reference =
-    [name]:identifier;
+  macro_reference
+    =
+      [name]:identifier
+    ;
 
-  text_insert =
-    text_block_reference;
+  text_insert
+    =
+      text_block_reference
+    ;
 
-  text_block_reference =
-    [name]:identifier;
-
+  text_block_reference
+    =
+      [name]:identifier
+    ;

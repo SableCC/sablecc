@@ -70,9 +70,9 @@ Helpers
 
   // Other helpers
 
-  string_char = [[[ascii - ascii_c] + ascii_pattern_white_space] -
+  single_char = [[[ascii - ascii_c] + ascii_pattern_white_space] -
                  [[0x000A .. 0x000D] + [''' + '\']]];
-  string_escape = '\' [''' + '\'];
+  char_escape = '\' [''' + '\'];
 
   line_comment_char = [[[ascii - ascii_c] + ascii_pattern_white_space] -
                        [[0x000A .. 0x000D] + '\']];
@@ -83,7 +83,10 @@ Helpers
   long_comment_escape = '\' ['*' + '\'];
 
   decimal_digit = ['0' .. '9'];
-  hexadecimal_digit = [decimal_digit + ['A' .. 'F']];  // uppercase letters
+  hexadecimal_digit = [decimal_digit + [['A' .. 'F'] + ['a' .. 'f']]];
+
+  sign = ['+' + '-'];
+  x = ['X' + 'x'];
 
 Tokens
 
@@ -95,8 +98,8 @@ Tokens
   diff_keyword = '$diff';
   end_keyword = '$end';
   group_keyword = '$group';
-  ignore_keyword = '$ignore';
-  inline_keyword = '$inline';
+  ignored_keyword = '$ignored';
+  inlined_keyword = '$inlined';
   investigator_keyword = '$investigator';
   language_keyword = '$language';
   left_keyword = '$left';
@@ -109,7 +112,7 @@ Tokens
   parser_keyword = '$parser';
   priority_keyword = '$priority';
   production_keyword = '$production';
-  reject_keyword = '$reject';
+  rejected_keyword = '$rejected';
   right_keyword = '$right';
   separator_keyword = '$separator';
   shortest_keyword = '$shortest';
@@ -124,12 +127,12 @@ Tokens
   alternative_name = '{' ascii_identifier ':}';
   element_name = '[' ascii_identifier ':]';
 
-  char = ''' (string_char | string_escape) ''';
-  string = ''' (string_char | string_escape)* ''';
+  char = ''' (single_char | char_escape) ''';
+  string = ''' (single_char | char_escape)* ''';
   number = decimal_digit+;
 
-  dec_char = '#' decimal_digit+;
-  hex_char = '#x' hexadecimal_digit+;  // lowercase 'x'
+  dec_char = '#' sign? decimal_digit+;
+  hex_char = '#' x sign? hexadecimal_digit+;
 
   l_par = '(';
   r_par =')';
@@ -138,6 +141,8 @@ Tokens
   arrow = '->';
   bar = '|';
   caret = '^';
+  colon = ':';
+  comma = ',';
   dot = '.';
   gt = '>';
   minus = '-';
@@ -162,8 +167,9 @@ Tokens
 
   invalid_keyword = '$' ascii_identifier;
   invalid_number = decimal_digit+ ascii_identifier;
-  invalid_dec_char = '#' decimal_digit+ ascii_identifier;
-  invalid_hex_char = '#x' hexadecimal_digit+ ascii_identifier;
+  invalid_string = ''' (single_char | char_escape)*;
+  invalid_dec_char = '#' sign? decimal_digit+ ascii_identifier;
+  invalid_hex_char = '#' x sign? hexadecimal_digit+ ascii_identifier;
 
 Ignored Tokens
 
@@ -171,246 +177,421 @@ Ignored Tokens
 
 Productions
 
-  grammar =
-    language_name? lexer? parser transformation? tree? ctrl_z?;
-
-  language_name =
-    language_keyword identifier;
-
-  lexer =
-    lexer_keyword expressions groups lexer_contexts;
-
-  expressions =
-    [named_expressions]:named_expression*;
-
-  named_expression =
-    {normal} identifier assign expression semicolon |
-    {selection} selection assign expression semicolon;
-
-  expression =
-    top_expression [additional_top_expressions]:additional_top_expression*;
-
-  top_expression =
-    {simple} concatenation |
-    {interval} [from]:character two_dots [to]:character |
-    {lookahead} concatenation look_keyword not_keyword? look_expression |
-    {shortest} shortest_keyword concatenation |
-    {longest} longest_keyword concatenation |
-    {exclusion} [left]:concatenation minus [right]:concatenation |
-    {difference} [left]:concatenation diff_keyword [right]:concatenation |
-    {intersection} [left]:concatenation and_keyword [right]:concatenation;
-
-  concatenation =
-    [unary_expressions]:unary_expression+;
-
-  unary_expression =
-    term unary_operator?;
-
-  term =
-    {group} group |
-    {par} l_par expression r_par;
-
-  group =
-    {name} identifier |
-    {string} string |
-    {character} character |
-    {any} any_keyword;
-
-  character =
-    {literal} char |
-    {dec} dec_char |
-    {hex} hex_char;
-
-  unary_operator =
-    {zero_or_one} q_mark |
-    {many} many_operator;
-
-  many_operator =
-    {zero_or_more} star |
-    {one_or_more} plus |
-    {number} caret number |
-    {interval} caret l_par [from]:number two_dots [to]:number r_par |
-    {at_least} caret l_par number three_dots r_par;
-
-  look_expression =
-    {middle} concatenation end_keyword? |
-    {end} end_keyword;
-
-  additional_top_expression =
-    bar top_expression;
-
-  groups =
-    [named_groups]:named_group*;
-
-  named_group =
-    group_keyword identifier [groups]:group*;
-
-  lexer_contexts =
-    lexer_default_context [lexer_named_contexts]:lexer_named_context*;
-
-  lexer_default_context =
-    lexer_context_body;
-
-  lexer_context_body =
-    tokens? ignored? rejected? lexer_priorities lexer_investigators;
-
-  tokens =
-    token_keyword [groups]:group* semicolon;
-
-  ignored =
-    ignore_keyword [groups]:group* semicolon;
-
-  rejected =
-    reject_keyword [groups]:group* semicolon;
-
-  lexer_priorities =
-    [lexer_priorities]:lexer_priority*;
-
-  lexer_priority =
-    priority_keyword [high]:group gt [low]:group semicolon;
-
-  lexer_investigators =
-    [lexer_investigators]:lexer_investigator*;
-
-  lexer_investigator =
-    investigator_keyword identifier l_par group r_par semicolon;
-
-  lexer_named_context =
-    context_keyword identifier lexer_context_body;
-
-  parser =
-    parser_keyword start parser_contexts inline?;
-
-  start =
-    normal_start? start_no_end?;
-
-  normal_start =
-    start_keyword [identifiers]:identifier* semicolon;
-
-  start_no_end =
-    start_no_end_keyword [identifiers]:identifier* semicolon;
-
-  parser_contexts =
-    parser_default_context [parser_named_contexts]:parser_named_context*;
-
-  parser_default_context =
-    [parser_productions]:parser_production*;
-
-  parser_production =
-    {normal} qualifier? parser_production_body parser_priorities?
-             parser_investigators |
-    {selection} selection assign identifier l_par [identifiers]:identifier*
-                r_par;
-
-  qualifier =
-    {dangling} dangling_keyword |
-    {token} token_keyword;
-
-  parser_production_body =
-    identifier assign parser_alternatives semicolon;
-
-  parser_alternatives =
-    parser_alternative
-    [additional_parser_alternatives]:additional_parser_alternative*;
-
-  parser_alternative =
-    alternative_name? [elements]:element* parser_dangling_element?;
-
-  element =
-    {normal} element_name? element_body unary_operator? |
-    {separated} element_name? l_par [left]:element separator_keyword
-                [right]:element r_par many_operator;
-
-  element_body =
-    {group} group |
-    {par} l_par subalternatives r_par;
-
-  subalternatives =
-    subalternative [additional_subalternatives]:additional_subalternative*;
-
-  subalternative =
-    [elements]:element*;
-
-  additional_subalternative =
-    bar subalternative;
-
-  parser_dangling_element =
-    dangling_keyword element_name? identifier q_mark;
-
-  additional_parser_alternative =
-    bar parser_alternative;
-
-  parser_priorities =
-    priority_keyword [parser_priorities]:parser_priority*;
-
-  parser_priority =
-    {left} left_keyword [identifiers]:identifier* semicolon |
-    {right} right_keyword [identifiers]:identifier* semicolon;
-
-  parser_investigators =
-    [parser_investigators]:parser_investigator*;
-
-  parser_investigator =
-    investigator_keyword identifier l_par [identifiers]:identifier* r_par
-    semicolon;
-
-  selection =
-    l_par identifier [additional_identifiers]:additional_identifier+ r_par;
-
-  additional_identifier =
-    bar identifier;
-
-  parser_named_context =
-    context_keyword identifier [parser_productions]:parser_production*;
-
-  inline =
-    inline_keyword [identifiers]:identifier* semicolon;
-
-  transformation =
-    transformation_keyword production_transformations?
-    alternative_transformations?;
-
-  production_transformations =
-    production_keyword [production_transformations]:production_transformation*;
-
-  production_transformation =
-    identifier arrow [elements]:element* semicolon;
-
-  alternative_transformations =
-    alternative_keyword
-    [alternative_transformations]:alternative_transformation*;
-
-  alternative_transformation =
-    alternative_reference arrow
-    [transformation_elements]:transformation_element* semicolon;
-
-  alternative_reference =
-    {unnamed} identifier |
-    {named} [production]:identifier dot [alternative]:identifier;
-
-  transformation_element =
-    {null} null_keyword |
-    {reference} element_reference |
-    {new} new_keyword alternative_reference l_par
-          [transformation_elements]:transformation_element* r_par |
-    {tuple} l_par [transformation_elements]:transformation_element* r_par;
-
-  element_reference =
-    {direct} identifier |
-    {nested} identifier dot [nested_name]:identifier;
-
-  tree =
-    tree_keyword [tree_productions]:tree_production*;
-
-  tree_production =
-    identifier assign tree_alternatives semicolon;
-
-  tree_alternatives =
-    tree_alternative
-    [additional_tree_alternatives]:additional_tree_alternative*;
-
-  tree_alternative =
-    alternative_name? [elements]:element*;
-
-  additional_tree_alternative =
-    bar tree_alternative;
+  grammar
+    =
+      language_name lexer? parser transformation? tree? ctrl_z?
+    ;
+
+  language_name
+    =
+      language_keyword identifier semicolon
+    ;
+
+  lexer
+    =
+      lexer_keyword expressions groups lexer_contexts lexer_investigators
+    ;
+
+  expressions
+    =
+      [named_expressions]:named_expression*
+    ;
+
+  named_expression
+    =
+      {normal} identifier assign expression semicolon
+    |
+      {selection} selection assign [name]:identifier l_par identifier r_par semicolon
+    ;
+
+  selection
+    =
+      l_par identifier [selection_additional_identifiers]:selection_additional_identifier+ r_par
+    ;
+
+  selection_additional_identifier
+    =
+      bar identifier
+    ;
+
+  expression
+    =
+      top_expression [additional_top_expressions]:additional_top_expression*
+    ;
+
+  additional_top_expression
+    =
+      bar top_expression
+    ;
+
+  top_expression
+    =
+      {simple} concatenation
+    |
+      {interval} [from]:character two_dots [to]:character
+    |
+      {look} concatenation look_keyword look_expression
+    |
+      {looknot} concatenation look_keyword not_keyword look_expression
+    |
+      {shortest} shortest_keyword concatenation
+    |
+      {longest} longest_keyword concatenation
+    |
+      {exclusion} [left]:concatenation minus [right]:concatenation
+    |
+      {difference} [left]:concatenation diff_keyword [right]:concatenation
+    |
+      {intersection} [left]:concatenation and_keyword [right]:concatenation
+    ;
+
+  look_expression
+    =
+      {middle} concatenation end_keyword?
+    |
+      {end} end_keyword
+    ;
+
+  concatenation
+    =
+      [unary_expressions]:unary_expression+
+    ;
+
+  unary_expression
+    =
+      {normal} term unary_operator?
+    |
+      {separated} l_par [left]:concatenation separator_keyword [right]:concatenation r_par many_operator
+    ;
+
+  unary_operator
+    =
+      {zero_or_one} q_mark
+    |
+      {many} many_operator
+    ;
+
+  many_operator
+    =
+      {zero_or_more} star
+    |
+      {one_or_more} plus
+    |
+      {number} caret number
+    |
+      {interval} caret l_par [from]:number two_dots [to]:number r_par
+    |
+      {at_least} caret l_par number three_dots r_par
+    ;
+
+  term
+    =
+      {group} group
+    |
+      {par} l_par expression r_par
+    ;
+
+  group
+    =
+      {name} identifier
+    |
+      {string} string
+    |
+      {character} character
+    |
+      {any} any_keyword
+    ;
+
+  character
+    =
+      {literal} char
+    |
+      {dec} dec_char
+    |
+      {hex} hex_char
+    ;
+
+  groups
+    =
+      [named_groups]:named_group*
+    ;
+
+  named_group
+    =
+      group_keyword identifier colon group_list? semicolon
+    ;
+
+  lexer_contexts
+    =
+      lexer_default_context [lexer_named_contexts]:lexer_named_context*
+    ;
+
+  lexer_default_context
+    =
+      lexer_context_body
+    ;
+
+  lexer_named_context
+    =
+      context_keyword identifier colon lexer_context_body
+    ;
+
+  lexer_context_body
+    =
+      tokens? ignored? rejected? lexer_priorities?
+    ;
+
+  tokens
+    =
+      token_keyword group_list? semicolon
+    ;
+
+  ignored
+    =
+      ignored_keyword group_list? semicolon
+    ;
+
+  rejected
+    =
+      rejected_keyword group_list? semicolon
+    ;
+
+  group_list
+    =
+      group [additional_groups]:additional_group*
+    ;
+
+  additional_group
+    =
+      comma group
+    ;
+
+  lexer_priorities
+    =
+      priority_keyword [lexer_priorities]:lexer_priority*
+    ;
+
+  lexer_priority
+    =
+      [high]:group gt [low]:group semicolon
+    ;
+
+  lexer_investigators
+    =
+      investigator_keyword [lexer_investigators]:lexer_investigator*
+    ;
+
+  lexer_investigator
+    =
+      [name]:identifier l_par identifier r_par semicolon
+    ;
+
+  parser
+    =
+      parser_keyword start parser_contexts inlined?
+    ;
+
+  start
+    =
+      normal_start? start_no_end?
+    ;
+
+  normal_start
+    =
+      start_keyword identifier_list? semicolon
+    ;
+
+  start_no_end
+    =
+      start_no_end_keyword identifier_list? semicolon
+    ;
+
+  identifier_list
+    =
+      identifier [additional_identifiers]:additional_identifier*
+    ;
+
+  additional_identifier
+    =
+      comma identifier
+    ;
+
+  parser_contexts
+    =
+      parser_default_context [parser_named_contexts]:parser_named_context*
+    ;
+
+  parser_default_context
+    =
+      [parser_productions]:parser_production*
+    ;
+
+  parser_named_context
+    =
+      context_keyword identifier colon [parser_productions]:parser_production*
+    ;
+
+  parser_production
+    =
+      {normal} qualifier? parser_production_body parser_priorities? parser_investigator?
+    |
+      {selection} selection assign identifier l_par identifier_list r_par
+    ;
+
+  qualifier
+    =
+      {dangling} dangling_keyword
+    |
+      {token} token_keyword
+    ;
+
+  parser_production_body
+    =
+      identifier assign parser_alternatives semicolon
+    ;
+
+  parser_alternatives
+    =
+      parser_alternative [additional_parser_alternatives]:additional_parser_alternative*
+    ;
+
+  additional_parser_alternative
+    =
+      bar parser_alternative
+    ;
+
+  parser_alternative
+    =
+      alternative_name? [elements]:element* parser_dangling_element?
+    ;
+
+  element
+    =
+      {normal} element_name? element_body unary_operator?
+    |
+      {separated} element_name? l_par [left]:element separator_keyword [right]:element r_par many_operator
+    ;
+
+  parser_dangling_element
+    =
+      dangling_keyword element_name? identifier q_mark
+    ;
+
+  element_body
+    =
+      {group} group
+    |
+      {par} l_par subalternatives r_par
+    ;
+
+  subalternatives
+    =
+      subalternative [additional_subalternatives]:additional_subalternative*
+    ;
+
+  additional_subalternative
+    =
+      bar subalternative
+    ;
+
+  subalternative
+    =
+      [elements]:element*
+    ;
+
+  parser_priorities
+    =
+      priority_keyword [parser_priorities]:parser_priority*
+    ;
+
+  parser_priority
+    =
+      {left} left_keyword identifier_list semicolon
+    |
+      {right} right_keyword identifier_list semicolon
+    ;
+
+  parser_investigator
+    =
+      investigator_keyword identifier l_par identifier_list? r_par semicolon
+    ;
+
+  inlined
+    =
+      inlined_keyword identifier_list? semicolon
+    ;
+
+  transformation
+    =
+      transformation_keyword production_transformations? alternative_transformations?
+    ;
+
+  production_transformations
+    =
+      production_keyword [production_transformations]:production_transformation*
+    ;
+
+  production_transformation
+    =
+      identifier arrow [elements]:element* semicolon
+    ;
+
+  alternative_transformations
+    =
+      alternative_keyword [alternative_transformations]:alternative_transformation*
+    ;
+
+  alternative_transformation
+    =
+      alternative_reference arrow [transformation_elements]:transformation_element* semicolon
+    ;
+
+  alternative_reference
+    =
+      {unnamed} identifier
+    |
+      {named} [production]:identifier dot [alternative]:identifier
+    ;
+
+  transformation_element
+    =
+      {null} null_keyword
+    |
+      {reference} element_reference
+    |
+      {new} new_keyword alternative_reference l_par [transformation_elements]:transformation_element* r_par
+    |
+      {tuple} l_par [transformation_elements]:transformation_element* r_par
+    ;
+
+  element_reference
+    =
+      {direct} identifier
+    |
+      {nested} identifier dot [nested_name]:identifier
+    ;
+
+  tree
+    =
+      tree_keyword [tree_productions]:tree_production*
+    ;
+
+  tree_production
+    =
+      identifier assign tree_alternatives semicolon
+    ;
+
+  tree_alternatives
+    =
+      tree_alternative [additional_tree_alternatives]:additional_tree_alternative*
+    ;
+
+  additional_tree_alternative
+    =
+      bar tree_alternative
+    ;
+
+  tree_alternative
+    =
+      alternative_name? [elements]:element*
+    ;

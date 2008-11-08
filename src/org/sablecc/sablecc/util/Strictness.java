@@ -29,10 +29,5 @@ public enum Strictness {
     /**
      * Detect unused constructs.
      */
-    NORMAL,
-
-    /**
-     * Detect non-canonical constructs.
-     */
     STRICT;
 }

@@ -17,223 +17,226 @@
 
 package org.sablecc.sablecc.automaton;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.sablecc.sablecc.alphabet.Alphabet;
+import org.sablecc.sablecc.alphabet.RichSymbol;
 import org.sablecc.sablecc.alphabet.Symbol;
 import org.sablecc.sablecc.exception.InternalException;
 
-/**
- * A group is a collection of state or element which have the same transitions,
- * so we can merge them.
- */
 class Group {
 
-    /** The partition related to this group. */
-    private final Partition partition;
+    private final MinimalOperation minimalAutomatonBuilder;
 
-    /** The set of elements in this group. */
-    private final Set<Element> elements = new LinkedHashSet<Element>();
+    private final SortedSet<State> states;
 
-    /** The minimal state of this group. */
-    private MinimalDfaState state;
+    private final boolean isDeadEnd;
 
-    /** The map of transitions of this group. */
-    private final SortedMap<Symbol, Group> transitions = new TreeMap<Symbol, Group>();
+    private boolean isDeleted = false;
 
-    /**
-     * Constructs a group with the provided partition.
-     */
+    private String toString;
+
     Group(
-            final Partition partition) {
+            MinimalOperation minimalAutomatonBuilder,
+            SortedSet<State> states,
+            boolean isDeadEnd) {
 
-        if (partition == null) {
-            throw new InternalException("partition may not be null");
+        if (minimalAutomatonBuilder == null) {
+            throw new InternalException(
+                    "minimalAutomatonBuilder may not be null");
         }
 
-        this.partition = partition;
+        if (states == null) {
+            throw new InternalException("states may not be null");
+        }
 
-        this.partition.addGroup(this);
+        this.minimalAutomatonBuilder = minimalAutomatonBuilder;
+        this.states = states;
+        this.isDeadEnd = isDeadEnd;
+
+        minimalAutomatonBuilder.addGroup(this);
+
+        if (isDeadEnd) {
+            minimalAutomatonBuilder.setDeadEnd(this);
+        }
+
+        for (State state : states) {
+            setGroup(state, this);
+        }
     }
 
-    /**
-     * Returns the partition of this group.
-     */
-    Partition getPartition() {
-
-        return this.partition;
-    }
-
-    /**
-     * Returns the set of elements of this group.
-     */
-    Set<Element> getElements() {
-
-        return Collections.unmodifiableSet(this.elements);
-    }
-
-    /**
-     * Returns the state of this group.
-     */
-    MinimalDfaState getState() {
-
-        return this.state;
-    }
-
-    /**
-     * Returns the transitions of this group.
-     */
-    SortedMap<Symbol, Group> getTransitions() {
-
-        return Collections.unmodifiableSortedMap(this.transitions);
-    }
-
-    /**
-     * Returns the string representation of this group.
-     */
     @Override
     public String toString() {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Group: {");
-        for (Element element : this.elements) {
-            sb.append(element.getState());
-            sb.append(",");
-        }
-        sb.append("}");
+        if (this.toString == null) {
+            StringBuilder sb = new StringBuilder();
 
-        return sb.toString();
+            sb.append("Group(");
+            boolean first = true;
+            for (State state : this.states) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    sb.append(",");
+                }
+                sb.append(state);
+            }
+            sb.append(")");
+
+            this.toString = sb.toString();
+        }
+
+        return this.toString;
     }
 
-    /**
-     * Set the state of this group with the provided state.
-     */
-    void setState(
-            MinimalDfaState state) {
+    MinimalOperation getMinimalAutomatonBuilder() {
 
-        this.state = state;
+        return this.minimalAutomatonBuilder;
     }
 
-    /**
-     * Adds a new element to this group.
-     */
-    void addElement(
-            Element element) {
+    SortedSet<State> getStates() {
 
-        if (element == null) {
-            throw new InternalException("element may not be null");
-        }
-
-        if (element.getGroup() != this) {
-            throw new InternalException("invalid element");
-        }
-
-        if (!this.elements.add(element)) {
-            throw new InternalException("element is already in this group");
-        }
+        return this.states;
     }
 
-    /**
-     * Removes an element of this group.
-     */
-    void removeElement(
-            Element element) {
+    boolean isDeadEnd() {
 
-        if (element == null) {
-            throw new InternalException("element may not be null");
-        }
-
-        if (!this.elements.remove(element)) {
-            throw new InternalException("element is not in this group");
-        }
+        return this.isDeadEnd;
     }
 
-    /**
-     * Adds a new transition to this group.
-     */
-    void addTransition(
-            Symbol symbol,
+    void delete() {
+
+        this.minimalAutomatonBuilder.removeGroup(this);
+        this.isDeleted = true;
+    }
+
+    boolean isDeleted() {
+
+        return this.isDeleted;
+    }
+
+    private void setGroup(
+            State state,
             Group group) {
 
-        if (symbol == null) {
-            throw new InternalException("symbol may not be null");
+        if (state == null) {
+            throw new InternalException("state may not be null");
         }
 
         if (group == null) {
             throw new InternalException("group may not be null");
         }
 
-        if (this.transitions.containsKey(symbol)
-                && !this.transitions.get(symbol).equals(group)) {
-            throw new InternalException(
-                    "distinct transitions on a single symbol are not allowed");
-        }
-
-        this.transitions.put(symbol, group);
+        this.minimalAutomatonBuilder.setGroup(state, group);
     }
 
-    /**
-     * Refine this group by making a copy of it.
-     */
-    void refine() {
+    private Group getGroup(
+            State state) {
 
-        for (Symbol symbol : this.partition.getDfa().getAlphabet().getSymbols()) {
+        if (state == null) {
+            throw new InternalException("state may not be null");
+        }
 
-            // for each new target, remember the first source (or
-            // representative) element that targeted to it
-            Map<Group, Element> targetToRepresentative = new LinkedHashMap<Group, Element>();
-            Map<Element, Element> elementToRepresentative = new LinkedHashMap<Element, Element>();
+        return this.minimalAutomatonBuilder.getGroup(state);
+    }
 
-            for (Element element : this.elements) {
-                Group target = element.getTarget(symbol);
+    private Group getDeadEndGroup() {
 
-                Element representative = targetToRepresentative.get(target);
+        return this.minimalAutomatonBuilder.getDeadEndGroup();
+    }
 
-                if (representative == null) {
-                    representative = element;
-                    targetToRepresentative.put(target, representative);
-                }
+    boolean splitOnRichSymbol(
+            RichSymbol richSymbol) {
 
-                elementToRepresentative.put(element, representative);
+        Set<Group> destinations = new LinkedHashSet<Group>();
+
+        for (State state : this.states) {
+
+            State target = state.getSingleTarget(richSymbol);
+
+            Group destination;
+            if (target == null) {
+                destination = getDeadEndGroup();
+            }
+            else {
+                destination = getGroup(target);
             }
 
-            if (targetToRepresentative.isEmpty()) {
-                throw new InternalException("corruption detected");
+            destinations.add(destination);
+        }
+
+        if (isDeadEnd()) {
+            destinations.add(this);
+        }
+
+        if (destinations.size() < 2) {
+            return false;
+        }
+
+        Map<Group, SortedSet<State>> stateMap = new HashMap<Group, SortedSet<State>>();
+
+        if (isDeadEnd()) {
+            stateMap.put(this, new TreeSet<State>());
+        }
+
+        for (State state : this.states) {
+
+            State target = state.getSingleTarget(richSymbol);
+
+            Group destination;
+            if (target == null) {
+                destination = getDeadEndGroup();
+            }
+            else {
+                destination = getGroup(target);
             }
 
-            // if there were many targets, we must split the group
-            if (targetToRepresentative.size() > 1) {
+            SortedSet<State> states = stateMap.get(destination);
 
-                // create the new groups
-                boolean first = true;
-                for (Map.Entry<Group, Element> entry : targetToRepresentative
-                        .entrySet()) {
-                    if (first) {
-                        // skip
-                        first = false;
-                    }
-                    else {
-                        entry.getValue().setGroup(new Group(this.partition));
-                    }
-                }
+            if (states == null) {
+                states = new TreeSet<State>();
+                stateMap.put(destination, states);
+            }
 
-                // attach elements to new groups
+            states.add(state);
+        }
 
-                // we get a copy so that modifications to this.elements won't
-                // disturb the iterator
-                for (Element element : new LinkedHashSet<Element>(this.elements)) {
-                    // set the group to the represetative's group
-                    element.setGroup(elementToRepresentative.get(element)
-                            .getGroup());
-                }
+        for (Group destination : destinations) {
+            SortedSet<State> states = stateMap.get(destination);
 
-                break;
+            if (isDeadEnd() && destination == this) {
+                new Group(this.minimalAutomatonBuilder, states, true);
+            }
+            else {
+                new Group(this.minimalAutomatonBuilder, states, false);
             }
         }
+
+        delete();
+
+        return true;
+    }
+
+    void splitIfNecessary(
+            Alphabet alphabet) {
+
+        for (Symbol symbol : alphabet.getSymbols()) {
+
+            if (splitOnRichSymbol(symbol.getNormalRichSymbol())) {
+                return;
+            }
+
+            if (splitOnRichSymbol(symbol.getLookaheadRichSymbol())) {
+                return;
+            }
+        }
+
+        splitOnRichSymbol(RichSymbol.END);
     }
 }

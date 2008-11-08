@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.sablecc.util.Pair;
 
 /**
  * An alphabet is a set of symbols. Two symbols of an alphabet may not contain
@@ -234,7 +235,8 @@ public class Alphabet {
     }
 
     /**
-     * Returns true if the provided object is equal to this alphabet.
+     * Returns <code>true</code> when the provided object is equal to this
+     * alphabet.
      */
     @Override
     public boolean equals(
@@ -334,8 +336,8 @@ public class Alphabet {
             throw new InternalException("alphabet may not be null");
         }
 
-        // no need to really merge, when merging with self
-        if (alphabet == this) {
+        // special treatment when merging with an identical alphabet
+        if (alphabet.equals(this)) {
             return new AlphabetMergeResult(this);
         }
 
@@ -355,7 +357,7 @@ public class Alphabet {
         // of the new alphabet.
 
         // First, we compute a map of (symbol pair,interval set)
-        Map<SymbolPair, SortedSet<Interval>> symbolPairToIntervalSetMap = computeSymbolPairToIntervalSetMap(
+        Map<Pair<Symbol, Symbol>, SortedSet<Interval>> symbolPairToIntervalSetMap = computeSymbolPairToIntervalSetMap(
                 this, alphabet);
 
         // list of new symbols
@@ -364,11 +366,11 @@ public class Alphabet {
         // SortedMap to map old symbols to sets of new symbols
         SortedMap<Symbol, SortedSet<Symbol>> alphabetSymbolMap = new TreeMap<Symbol, SortedSet<Symbol>>();
 
-        for (Map.Entry<SymbolPair, SortedSet<Interval>> entry : symbolPairToIntervalSetMap
+        for (Map.Entry<Pair<Symbol, Symbol>, SortedSet<Interval>> entry : symbolPairToIntervalSetMap
                 .entrySet()) {
 
-            Symbol oldSymbol1 = entry.getKey().getSymbol1();
-            Symbol oldSymbol2 = entry.getKey().getSymbol2();
+            Symbol oldSymbol1 = entry.getKey().getLeft();
+            Symbol oldSymbol2 = entry.getKey().getRight();
 
             // we create a new symbol that relates to the pair
             Symbol newSymbol = new Symbol(entry.getValue());
@@ -414,7 +416,7 @@ public class Alphabet {
      * symbol of <code>alphabet2</code> or <code>null</code>, but both
      * <code>x</code> and <code>y</code> are not null.
      */
-    private static Map<SymbolPair, SortedSet<Interval>> computeSymbolPairToIntervalSetMap(
+    private static Map<Pair<Symbol, Symbol>, SortedSet<Interval>> computeSymbolPairToIntervalSetMap(
             Alphabet alphabet1,
             Alphabet alphabet2) {
 
@@ -425,7 +427,7 @@ public class Alphabet {
          * possible pairs, leading to quadratic running time.
          */
 
-        Map<SymbolPair, SortedSet<Interval>> symbolPairToIntervalSetMap = new LinkedHashMap<SymbolPair, SortedSet<Interval>>();
+        Map<Pair<Symbol, Symbol>, SortedSet<Interval>> symbolPairToIntervalSetMap = new LinkedHashMap<Pair<Symbol, Symbol>, SortedSet<Interval>>();
 
         /*
          * We find all intervals of new symbols by analyzing the space starting
@@ -536,7 +538,8 @@ public class Alphabet {
             }
 
             if (symbol1 != null || symbol2 != null) {
-                SymbolPair symbolPair = new SymbolPair(symbol1, symbol2);
+                Pair<Symbol, Symbol> symbolPair = new Pair<Symbol, Symbol>(
+                        symbol1, symbol2);
 
                 // add interval in (symbol pair,interval set) map
                 SortedSet<Interval> intervalSet = symbolPairToIntervalSetMap
