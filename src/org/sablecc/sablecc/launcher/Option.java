@@ -38,27 +38,40 @@ import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
  */
 enum Option {
 
+    /** List available target languages and exit. */
+    LIST_TARGETS(null, "list-targets", null,
+            "list available target languages and exit"),
+
+    /** Set target language. */
+    TARGET("t", "target", "language", "set target language (default=java)"),
+
     /** Set destination directory. */
     DESTINATION("d", "destination", "directory", "set destination directory"),
 
+    /** Set destination package. */
+    PACKAGE("p", "package", "packagename", "set destination package"),
+
     /** Do not generate files. */
-    CHECK_ONLY("c", "check-only", null, "do not generate files"),
+    NO_FILES("n", "no-files", null, "do not generate files"),
 
     /** Ignore unused constructs. */
     LENIENT("l", "lenient", null, "ignore unused constructs"),
-    /** Detect non-canonical constructs. */
-    STRICT("s", "strict", null, "detect non-canonical constructs"),
 
-    /** Display less information. */
-    QUIET("q", "quiet", null, "display less information"),
-    /** Display normal information. */
-    INFORMATIVE("i", "informative", null,
-            "display normal information (default)"),
-    /** Display more information. */
-    VERBOSE("v", "verbose", null, "display more information"),
+    /** Detect unused constructs. */
+    STRICT("s", "strict", null, "detect unused constructs (default)"),
+
+    /** Only display errors. */
+    QUIET("q", "quiet", null, "only display errors"),
+
+    /** Display progress. */
+    INFORMATIVE("i", "informative", null, "display progress (default)"),
+
+    /** Display detailed progress. */
+    VERBOSE("v", "verbose", null, "display detailed progress"),
 
     /** Display version and exit. */
     VERSION(null, "version", null, "display version and exit"),
+
     /** Display help and exit. */
     HELP("h", "help", null, "display help and exit");
 

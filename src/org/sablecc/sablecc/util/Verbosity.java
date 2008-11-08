@@ -22,17 +22,17 @@ package org.sablecc.sablecc.util;
  */
 public enum Verbosity {
     /**
-     * Display less information.
+     * Only display errors.
      */
     QUIET,
 
     /**
-     * Display normal information.
+     * Display progress.
      */
-    NORMAL,
+    INFORMATIVE,
 
     /**
-     * Display more information.
+     * Display detailed progress.
      */
     VERBOSE;
 }

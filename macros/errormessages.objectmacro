@@ -1,0 +1,236 @@
+$comment$
+This file is part of SableCC ( http://sablecc.org ).
+
+See the NOTICE file distributed with this work for copyright information.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+$end$
+
+$comment: ========== command_line_error_head ========== $
+
+$text: command_line_error_head $
+*** COMMAND ERROR ***
+$end: command_line_error_head $
+
+$comment: ========== command_line_error_tail ========== $
+
+$text: command_line_error_tail $
+The following command provides usage information:
+ sablecc --help
+$end: command_line_error_tail $
+
+$comment: ========== invalid_long_option ========== $
+
+$macro: invalid_long_option(option_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ --$option_name
+It is not a valid option.
+
+$insert: command_line_error_tail $
+$end: invalid_long_option $
+
+$comment: ========== spurious_long_option_operand ========== $
+
+$macro: spurious_long_option_operand(option_name, operand_text) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ --$option_name=$operand_text
+This option does not accept an operand.
+
+$insert: command_line_error_tail $
+$end: spurious_long_option_operand $
+
+$comment: ========== missing_long_option_operand ========== $
+
+$macro: missing_long_option_operand(option_name, operand_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ --$option_name
+This option expects an operand:
+ --$option_name=$operand_name
+
+$insert: command_line_error_tail $
+$end: missing_long_option_operand $
+
+$comment: ========== invalid_short_option ========== $
+
+$macro: invalid_short_option(option_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ -$option_name
+It is not a valid option.
+
+$insert: command_line_error_tail $
+$end: invalid_short_option $
+
+$comment: ========== spurious_short_option_operand ========== $
+
+$macro: spurious_short_option_operand(option_name, operand_text) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ -$option_name=$operand_text
+This option does not accept an operand.
+
+$insert: command_line_error_tail $
+$end: spurious_short_option_operand $
+
+$comment: ========== missing_short_option_operand ========== $
+
+$macro: missing_short_option_operand(option_name, operand_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ -$option_name
+This option expects an operand:
+ -$option_name=$operand_name
+
+$insert: command_line_error_tail $
+$end: missing_short_option_operand $
+
+$comment: ========== invalid_argument ========== $
+
+$macro: invalid_argument(argument_text) $
+$insert: command_line_error_head $
+
+The following argument is rejected:
+ $argument_text
+It is invalid.
+
+$insert: command_line_error_tail $
+$end: invalid_argument $
+
+$comment: ========== missing_destination_directory ========== $
+
+$macro: missing_destination_directory(location) $
+$insert: command_line_error_head $
+
+The destination directory, "$location", does not exist.
+
+$insert: command_line_error_tail $
+$end: missing_destination_directory $
+
+$comment: ========== destination_is_not_directory ========== $
+
+$macro: destination_is_not_directory(location) $
+$insert: command_line_error_head $
+
+The destination, "$location", is not a directory.
+
+$insert: command_line_error_tail $
+$end: destination_is_not_directory $
+
+$comment: ========== invalid_argument_count ========== $
+
+$macro: invalid_argument_count $
+$insert: command_line_error_head $
+
+A single grammar file must be provided.
+
+$insert: command_line_error_tail $
+$end: invalid_argument_count $
+
+$comment: ========== invalid_suffix ========== $
+
+$macro: invalid_suffix(file_name) $
+$insert: command_line_error_head $
+
+The grammar file, "$file_name", does not have a .sablecc suffix.
+
+$insert: command_line_error_tail $
+$end: invalid_suffix $
+
+$comment: ========== missing_grammar_file ========== $
+
+$macro: missing_grammar_file(file_name) $
+$insert: command_line_error_head $
+
+The grammar file, "$file_name", does not exist.
+
+$insert: command_line_error_tail $
+$end: missing_grammar_file $
+
+$comment: ========== grammar_not_file ========== $
+
+$macro: grammar_not_file(file_name) $
+$insert: command_line_error_head $
+
+The grammar argument, "$file_name", is not a file.
+
+$insert: command_line_error_tail $
+$end: grammar_not_file $
+
+$comment: ========== input_error ========== $
+
+$macro: input_error(file_name, message) $
+*** I/O ERROR ***
+
+The following system error happened while reading "$file_name":
+ $message
+$end: input_error $
+
+$comment: ========== syntax_error ========== $
+
+$macro: syntax_error(line, char, token_type, token_text, message) $
+*** SYNTAX ERROR ***
+
+Line: $line
+Char: $char
+Syntax error on unexpected $token_type token "$token_text":
+$message.
+$end: syntax_error $
+
+$comment: ========== lexical_error ========== $
+
+$macro: lexical_error(line, char, message) $
+*** LEXICAL ERROR ***
+
+Line: $line
+Char: $char
+$message.
+$end: lexical_error $
+
+$comment: ========== internal_error ========== $
+
+$macro: internal_error(stack_trace, message) $
+*** INTERNAL ERROR ***
+
+$stack_trace
+An internal error was raised with the following message:
+ $message.
+
+Please submit a defect ticket with the full error trace above on:
+ http://sablecc.org/
+$end: internal_error $
+
+$comment: ========== semantic_error_head ========== $
+
+$text: semantic_error_head $
+*** SEMANTIC ERROR ***
+$end: semantic_error_head $
+
+$comment: ========== duplicate_global_name_declaration ========== $
+
+$macro: duplicate_global_name_declaration(name, line, char, ref_line, ref_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Duplicated declaration of "$name".
+It was already declared at line $ref_line, char $ref_char.
+$end: duplicate_global_name_declaration $

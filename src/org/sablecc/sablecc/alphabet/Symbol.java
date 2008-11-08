@@ -196,7 +196,8 @@ public class Symbol
     }
 
     /**
-     * Returns true if the provided object is equal to this symbol.
+     * Returns <code>true</code> when the provided object is equal to this
+     * symbol.
      */
     @Override
     public boolean equals(

@@ -20,27 +20,25 @@ package ticket39;
 import org.junit.Test;
 import org.sablecc.sablecc.alphabet.Bound;
 import org.sablecc.sablecc.alphabet.Interval;
-import org.sablecc.sablecc.automaton.Dfa;
-import org.sablecc.sablecc.automaton.MinimalDfa;
-import org.sablecc.sablecc.automaton.Nfa;
+import org.sablecc.sablecc.alphabet.Symbol;
+import org.sablecc.sablecc.automaton.Automaton;
 
 public class PartitioningBug {
 
     @Test
     public void bug() {
 
-        Nfa any = new Nfa(new Interval(new Bound('A'), new Bound('Z')));
-        Nfa e = new Nfa('E');
-        Nfa t = new Nfa('T');
-        Nfa i = new Nfa('I');
-        Nfa n = new Nfa('N');
+        Automaton any = Automaton.getSymbolLookAnyStarEnd(new Symbol(
+                new Interval(Bound.MIN, Bound.MAX)));
+        Automaton e = Automaton.getSymbolLookAnyStarEnd(new Symbol('E'));
+        Automaton t = Automaton.getSymbolLookAnyStarEnd(new Symbol('T'));
+        Automaton i = Automaton.getSymbolLookAnyStarEnd(new Symbol('I'));
+        Automaton n = Automaton.getSymbolLookAnyStarEnd(new Symbol('N'));
 
-        Dfa allButEtienne = any.zeroOrMore().subtract(
-                e.concatenateWith(t).concatenateWith(i).concatenateWith(e)
-                        .concatenateWith(n).concatenateWith(n).concatenateWith(
-                                e));
+        Automaton allButEtienne = any.zeroOrMore().diff(
+                e.concat(t).concat(i).concat(e).concat(n).concat(n).concat(e));
 
         // Line that causes the bug
-        new MinimalDfa(allButEtienne);
+        allButEtienne.minimal();
     }
 }

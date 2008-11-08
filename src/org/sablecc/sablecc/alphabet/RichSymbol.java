@@ -94,7 +94,8 @@ public class RichSymbol
     }
 
     /**
-     * Returns true if the provided object is equal to this rich symbol.
+     * Returns <code>true</code> when the provided object is equal to this rich
+     * symbol.
      */
     @Override
     public boolean equals(
@@ -149,11 +150,16 @@ public class RichSymbol
         if (this.toString == null) {
             StringBuilder sb = new StringBuilder();
 
-            sb.append("{");
-            sb.append(this.isLookahead ? "lookahead" : "normal");
-            sb.append(",");
-            sb.append(this.symbol);
-            sb.append("}");
+            if (this.symbol != null) {
+                sb.append("{");
+                sb.append(this.isLookahead ? "lookahead" : "normal");
+                sb.append(",");
+                sb.append(this.symbol);
+                sb.append("}");
+            }
+            else {
+                sb.append("{lookahead,END}");
+            }
 
             this.toString = sb.toString();
         }
@@ -166,6 +172,10 @@ public class RichSymbol
      */
     public int compareTo(
             RichSymbol richSymbol) {
+
+        if (richSymbol == null) {
+            throw new InternalException("richSymbol may not be null");
+        }
 
         if (this.isLookahead != richSymbol.isLookahead) {
             return this.isLookahead ? 1 : -1;

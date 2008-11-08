@@ -128,7 +128,9 @@ public class ObjectMacro {
                 arguments);
 
         Strictness strictness = Strictness.STRICT;
-        Verbosity verbosity = Verbosity.NORMAL;
+        Verbosity verbosity = Verbosity.INFORMATIVE;
+
+        boolean no_files = false;
 
         // handle option arguments
         for (OptionArgument optionArgument : argumentCollection
@@ -155,6 +157,10 @@ public class ObjectMacro {
                 destinationPackage = optionArgument.getOperand();
                 break;
 
+            case NO_FILES:
+                no_files = true;
+                break;
+
             case LENIENT:
                 strictness = Strictness.LENIENT;
                 break;
@@ -168,7 +174,7 @@ public class ObjectMacro {
                 break;
 
             case INFORMATIVE:
-                verbosity = Verbosity.NORMAL;
+                verbosity = Verbosity.INFORMATIVE;
                 break;
 
             case VERBOSE:
@@ -181,8 +187,7 @@ public class ObjectMacro {
 
             case HELP:
                 System.out.println("usage: objectmacro "
-                        + Option.getShortHelpMessage()
-                        + " file.objectmacro ...");
+                        + Option.getShortHelpMessage() + " file.objectmacro");
                 System.out.println("options:");
                 System.out.println(Option.getLongHelpMessage());
                 return;
@@ -194,16 +199,16 @@ public class ObjectMacro {
         }
 
         // handle text arguments
-        if (argumentCollection.getTextArguments().size() == 0) {
+        if (argumentCollection.getTextArguments().size() != 1) {
             System.err.println("usage: objectmacro "
-                    + Option.getShortHelpMessage() + " file.objectmacro ...");
+                    + Option.getShortHelpMessage() + " file.objectmacro");
             System.err.println("type 'objectmacro -h' for more information");
 
             throw new ExitException();
         }
 
         switch (verbosity) {
-        case NORMAL:
+        case INFORMATIVE:
         case VERBOSE:
             System.out.println();
             System.out.println("ObjectMacro of SableCC version " + VERSION);
@@ -241,7 +246,7 @@ public class ObjectMacro {
         for (File macroFile : macroFiles) {
 
             compile(macroFile, destinationDirectory, destinationPackage,
-                    verbosity, strictness);
+                    verbosity, strictness, no_files);
         }
     }
 
@@ -253,12 +258,13 @@ public class ObjectMacro {
             File destinationDirectory,
             String destinationPackage,
             Verbosity verbosity,
-            Strictness strictness)
+            Strictness strictness,
+            boolean no_files)
             throws InvalidArgumentException, ParserException, LexerException,
             SemanticException {
 
         switch (verbosity) {
-        case NORMAL:
+        case INFORMATIVE:
         case VERBOSE:
             System.out.println("Compiling " + macroFile);
             break;
@@ -303,13 +309,16 @@ public class ObjectMacro {
 
         processSemantics(ast, globalData, verbosity);
 
-        switch (verbosity) {
-        case VERBOSE:
-            System.out.println(" Generating code");
-            break;
-        }
+        if (!no_files) {
+            switch (verbosity) {
+            case VERBOSE:
+                System.out.println(" Generating code");
+                break;
+            }
 
-        generateCode(ast, globalData, destinationDirectory, destinationPackage);
+            generateCode(ast, globalData, destinationDirectory,
+                    destinationPackage);
+        }
     }
 
     private static GlobalData verifySemantics(
