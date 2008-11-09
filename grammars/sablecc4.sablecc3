@@ -199,18 +199,24 @@ Productions
   named_expression
     =
       {normal} identifier assign expression semicolon
+        {-> New named_expression.normal(identifier, assign, expression) }
     |
-      {selection} selection assign [name]:identifier l_par identifier r_par semicolon
+      {selection} selection assign [selector]:identifier l_par [parameter]:identifier r_par semicolon
+        {-> New named_expression.selection([selection.identifiers], assign, selector, parameter) }
     ;
 
   selection
+        {-> [identifiers]:identifier+ }
     =
       l_par identifier [selection_additional_identifiers]:selection_additional_identifier+ r_par
+        {-> [identifier, selection_additional_identifiers.identifier]}
     ;
 
   selection_additional_identifier
+        {-> identifier }
     =
       bar identifier
+        {-> identifier }
     ;
 
   expression
@@ -440,6 +446,7 @@ Productions
       {normal} qualifier? parser_production_body parser_priorities? parser_investigator?
     |
       {selection} selection assign identifier l_par identifier_list r_par
+        {-> New parser_production.selection([selection.identifiers], assign, identifier, l_par, identifier_list, r_par) }
     ;
 
   qualifier
@@ -614,19 +621,9 @@ Abstract Syntax Tree
 
   named_expression
     =
-      {normal} identifier assign expression semicolon
+      {normal} identifier assign expression
     |
-      {selection} selection assign [name]:identifier l_par identifier r_par semicolon
-    ;
-
-  selection
-    =
-      l_par identifier [selection_additional_identifiers]:selection_additional_identifier+ r_par
-    ;
-
-  selection_additional_identifier
-    =
-      bar identifier
+      {selection} [names]:identifier+ assign [selector]:identifier [parameter]:identifier
     ;
 
   expression
@@ -825,7 +822,7 @@ Abstract Syntax Tree
     =
       {normal} qualifier? parser_production_body parser_priorities? parser_investigator?
     |
-      {selection} selection assign identifier l_par identifier_list r_par
+      {selection} [names]:identifier+ assign [selector]:identifier l_par identifier_list r_par
     ;
 
   qualifier
