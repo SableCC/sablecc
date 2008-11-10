@@ -127,8 +127,9 @@ Tokens
   alternative_name = '{' ascii_identifier ':}';
   element_name = '[' ascii_identifier ':]';
 
+  epsilon = ''' ''';
   char = ''' (single_char | char_escape) ''';
-  string = ''' (single_char | char_escape)* ''';
+  string = ''' (single_char | char_escape)+ ''';
   number = decimal_digit+;
 
   dec_char = '#' sign? decimal_digit+;
@@ -180,14 +181,14 @@ Productions
   grammar
     =
       language_name lexer? parser transformation? tree? ctrl_z?
-        {-> New grammar(language_name.identifier, lexer, parser, transformation, tree) }
+        {-> New grammar(language_name.language_keyword, language_name.identifier, lexer, parser, transformation, tree) }
     ;
 
   language_name
-        {-> identifier }
+        {-> language_keyword identifier }
     =
       language_keyword identifier semicolon
-        {-> identifier }
+        {-> language_keyword identifier }
     ;
 
   lexer
@@ -221,52 +222,155 @@ Productions
 
   expression
     =
-      top_expression [additional_top_expressions]:additional_top_expression*
-    ;
-
-  additional_top_expression
-    =
-      bar top_expression
+      {simple} top_expression
+        {-> top_expression.expression }
+    |
+      {or} expression bar top_expression
+        {-> New expression.or(expression, bar, top_expression.expression) }
     ;
 
   top_expression
+        {-> expression }
     =
       {simple} concatenation
-    |
-      {interval} [from]:character two_dots [to]:character
+        {-> concatenation.expression }
     |
       {look} concatenation look_keyword look_expression
+        {-> New expression.look(concatenation.expression, look_keyword, look_expression.expression) }
     |
-      {looknot} concatenation look_keyword not_keyword look_expression
+      {look_not} concatenation look_keyword not_keyword look_expression
+        {-> New expression.look_not(concatenation.expression, look_keyword, not_keyword, look_expression.expression) }
     |
       {shortest} shortest_keyword concatenation
+        {-> New expression.shortest(shortest_keyword, concatenation.expression) }
     |
       {longest} longest_keyword concatenation
+        {-> New expression.longest(longest_keyword, concatenation.expression) }
     |
-      {exclusion} [left]:concatenation minus [right]:concatenation
+      {subtraction} [left]:concatenation minus [right]:concatenation
+        {-> New expression.subtraction(left.expression, minus, right.expression) }
     |
       {difference} [left]:concatenation diff_keyword [right]:concatenation
+        {-> New expression.difference(left.expression, diff_keyword, right.expression) }
     |
-      {intersection} [left]:concatenation and_keyword [right]:concatenation
+      {and} [left]:concatenation and_keyword [right]:concatenation
+        {-> New expression.and(left.expression, and_keyword, right.expression) }
+    |
+      {interval} [from]:character two_dots [to]:character
+        {-> New expression.interval(from, two_dots, to) }
     ;
 
   look_expression
+        {-> expression }
     =
-      {middle} concatenation end_keyword?
+      {simple} concatenation
+        {-> concatenation.expression }
+    |
+      {complete} concatenation end_keyword
+        {-> New expression.concatenation(concatenation.expression, New expression.end(end_keyword)) }
     |
       {end} end_keyword
+        {-> New expression.end(end_keyword) }
     ;
 
   concatenation
+        {-> expression }
     =
-      [unary_expressions]:unary_expression+
+      {simple} unary_expression
+        {-> unary_expression.expression }
+    |
+      {complete} concatenation unary_expression
+        {-> New expression.concatenation(concatenation.expression, unary_expression.expression) }
     ;
 
   unary_expression
+        {-> expression }
     =
-      {normal} term unary_operator?
+      {simple} term
+        {-> term.expression }
     |
-      {separated} l_par [left]:concatenation separator_keyword [right]:concatenation r_par many_operator
+      {zero_or_one} term q_mark
+        {-> New expression.zero_or_one(term.expression, q_mark) }
+    |
+      {zero_or_more} term star
+        {-> New expression.zero_or_more(term.expression, star) }
+    |
+      {separated_zero_or_more} l_par [base]:concatenation separator_keyword [separator]:concatenation r_par star
+        {-> New expression.separated_zero_or_more(l_par, base.expression, separator_keyword, separator.expression, r_par, star) }
+    |
+      {one_or_more} term plus
+        {-> New expression.one_or_more(term.expression, plus) }
+    |
+      {separated_one_or_more} l_par [base]:concatenation separator_keyword [separator]:concatenation r_par plus
+        {-> New expression.separated_one_or_more(l_par, base.expression, separator_keyword, separator.expression, r_par, plus) }
+    |
+      {number_exponent} term caret number
+        {-> New expression.number_exponent(term.expression, caret, number) }
+    |
+      {separated_number_exponent} l_par [base]:concatenation separator_keyword [separator]:concatenation r_par caret number
+        {-> New expression.separated_number_exponent(l_par, base.expression, separator_keyword, separator.expression, r_par, caret, number) }
+    |
+      {interval_exponent} term caret l_par [from]:number two_dots [to]:number r_par
+        {-> New expression.interval_exponent(term.expression, caret, l_par, from, two_dots, to, r_par) }
+    |
+      {separated_interval_exponent} [l_par1]:l_par [base]:concatenation separator_keyword [separator]:concatenation [r_par1]:r_par caret [l_par2]:l_par [from]:number two_dots [to]:number [r_par2]:r_par
+        {-> New expression.separated_interval_exponent(l_par1, base.expression, separator_keyword, separator.expression, r_par1, caret, l_par2, from, two_dots, to, r_par2) }
+    |
+      {at_least} term caret l_par number three_dots r_par
+        {-> New expression.at_least(term.expression, caret, l_par, number, three_dots, r_par) }
+    |
+      {separated_at_least} [l_par1]:l_par [base]:concatenation separator_keyword [separator]:concatenation [r_par1]:r_par caret [l_par2]:l_par number three_dots [r_par2]:r_par
+        {-> New expression.separated_at_least(l_par1, base.expression, separator_keyword, separator.expression, r_par1, caret, l_par2, number, three_dots, r_par2) }
+    ;
+
+  term
+        {-> expression }
+    =
+      {name} identifier
+        {-> New expression.name(identifier) }
+    |
+      {string} string
+        {-> New expression.string(string) }
+    |
+      {char} char
+        {-> New expression.char(char) }
+    |
+      {epsilon} epsilon
+        {-> New expression.epsilon(epsilon) }
+    |
+      {dec} dec_char
+        {-> New expression.dec(dec_char) }
+    |
+      {hex} hex_char
+        {-> New expression.hex(hex_char) }
+    |
+      {any} any_keyword
+        {-> New expression.any(any_keyword) }
+    |
+      {par} l_par expression r_par
+        {-> expression }
+    ;
+
+  unit
+    =
+      {name} identifier
+    |
+      {string} string
+    |
+      {character} character
+    |
+      {epsilon} epsilon
+    |
+      {any} any_keyword
+    ;
+
+  character
+    =
+      {literal} char
+    |
+      {dec} dec_char
+    |
+      {hex} hex_char
     ;
 
   unary_operator
@@ -287,33 +391,6 @@ Productions
       {interval} caret l_par [from]:number two_dots [to]:number r_par
     |
       {at_least} caret l_par number three_dots r_par
-    ;
-
-  term
-    =
-      {unit} unit
-    |
-      {par} l_par expression r_par
-    ;
-
-  unit
-    =
-      {name} identifier
-    |
-      {string} string
-    |
-      {character} character
-    |
-      {any} any_keyword
-    ;
-
-  character
-    =
-      {literal} char
-    |
-      {dec} dec_char
-    |
-      {hex} hex_char
     ;
 
   group
@@ -611,7 +688,7 @@ Abstract Syntax Tree
 
   grammar
     =
-      [language_name]:identifier lexer? parser transformation? tree?
+      language_keyword [language_name]:identifier lexer? parser transformation? tree?
     ;
 
   lexer
@@ -628,52 +705,63 @@ Abstract Syntax Tree
 
   expression
     =
-      top_expression [additional_top_expressions]:additional_top_expression*
-    ;
-
-  additional_top_expression
-    =
-      bar top_expression
-    ;
-
-  top_expression
-    =
-      {simple} concatenation
+      {or} [left]:expression bar [right]:expression
+    |
+      {concatenation} [left]:expression [right]:expression
+    |
+      {look} [left]:expression look_keyword [right]:expression
+    |
+      {look_not} [left]:expression look_keyword not_keyword [right]:expression
+    |
+      {shortest} shortest_keyword expression
+    |
+      {longest} longest_keyword expression
+    |
+      {subtraction} [left]:expression minus [right]:expression
+    |
+      {difference} [left]:expression diff_keyword [right]:expression
+    |
+      {and} [left]:expression and_keyword [right]:expression
+    |
+      {zero_or_one} expression q_mark
+    |
+      {zero_or_more} expression star
+    |
+      {separated_zero_or_more} l_par [base]:expression separator_keyword [separator]:expression r_par star
+    |
+      {one_or_more} expression plus
+    |
+      {separated_one_or_more} l_par [base]:expression separator_keyword [separator]:expression r_par plus
+    |
+      {number_exponent} expression caret number
+    |
+      {separated_number_exponent} l_par [base]:expression separator_keyword [separator]:expression r_par caret number
+    |
+      {interval_exponent} expression caret l_par [from]:number two_dots [to]:number r_par
+    |
+      {separated_interval_exponent} [l_par1]:l_par [base]:expression separator_keyword [separator]:expression [r_par1]:r_par caret [l_par2]:l_par [from]:number two_dots [to]:number [r_par2]:r_par
+    |
+      {at_least} expression caret l_par number three_dots r_par
+    |
+      {separated_at_least} [l_par1]:l_par [base]:expression separator_keyword [separator]:expression [r_par1]:r_par caret [l_par2]:l_par number three_dots [r_par2]:r_par
+    |
+      {name} identifier
+    |
+      {string} string
+    |
+      {char} char
+    |
+      {epsilon} epsilon
+    |
+      {dec} dec_char
+    |
+      {hex} hex_char
     |
       {interval} [from]:character two_dots [to]:character
     |
-      {look} concatenation look_keyword look_expression
-    |
-      {looknot} concatenation look_keyword not_keyword look_expression
-    |
-      {shortest} shortest_keyword concatenation
-    |
-      {longest} longest_keyword concatenation
-    |
-      {exclusion} [left]:concatenation minus [right]:concatenation
-    |
-      {difference} [left]:concatenation diff_keyword [right]:concatenation
-    |
-      {intersection} [left]:concatenation and_keyword [right]:concatenation
-    ;
-
-  look_expression
-    =
-      {middle} concatenation end_keyword?
+      {any} any_keyword
     |
       {end} end_keyword
-    ;
-
-  concatenation
-    =
-      [unary_expressions]:unary_expression+
-    ;
-
-  unary_expression
-    =
-      {normal} term unary_operator?
-    |
-      {separated} l_par [left]:concatenation separator_keyword [right]:concatenation r_par many_operator
     ;
 
   unary_operator
@@ -710,6 +798,8 @@ Abstract Syntax Tree
       {string} string
     |
       {character} character
+    |
+      {epsilon} epsilon
     |
       {any} any_keyword
     ;
