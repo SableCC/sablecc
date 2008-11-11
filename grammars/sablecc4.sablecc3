@@ -202,8 +202,8 @@ Productions
       {normal} identifier assign expression semicolon
         {-> New named_expression.normal(identifier, assign, expression) }
     |
-      {selection} selection assign [selector]:identifier l_par [parameter]:identifier r_par semicolon
-        {-> New named_expression.selection([selection.identifiers], assign, selector, parameter) }
+      {selection} selection assign [selector_name]:identifier l_par [parameter]:identifier r_par semicolon
+        {-> New named_expression.selection([selection.identifiers], assign, selector_name, parameter) }
     ;
 
   selection
@@ -296,31 +296,31 @@ Productions
         {-> New expression.zero_or_more(term.expression, star) }
     |
       {separated_zero_or_more} l_par [base]:concatenation separator_keyword [separator]:concatenation r_par star
-        {-> New expression.separated_zero_or_more(l_par, base.expression, separator_keyword, separator.expression, r_par, star) }
+        {-> New expression.separated_zero_or_more(base.expression, separator_keyword, separator.expression, star) }
     |
       {one_or_more} term plus
         {-> New expression.one_or_more(term.expression, plus) }
     |
       {separated_one_or_more} l_par [base]:concatenation separator_keyword [separator]:concatenation r_par plus
-        {-> New expression.separated_one_or_more(l_par, base.expression, separator_keyword, separator.expression, r_par, plus) }
+        {-> New expression.separated_one_or_more(base.expression, separator_keyword, separator.expression, plus) }
     |
       {number_exponent} term caret number
         {-> New expression.number_exponent(term.expression, caret, number) }
     |
       {separated_number_exponent} l_par [base]:concatenation separator_keyword [separator]:concatenation r_par caret number
-        {-> New expression.separated_number_exponent(l_par, base.expression, separator_keyword, separator.expression, r_par, caret, number) }
+        {-> New expression.separated_number_exponent(base.expression, separator_keyword, separator.expression, caret, number) }
     |
       {interval_exponent} term caret l_par [from]:number two_dots [to]:number r_par
-        {-> New expression.interval_exponent(term.expression, caret, l_par, from, two_dots, to, r_par) }
+        {-> New expression.interval_exponent(term.expression, caret, from, two_dots, to) }
     |
       {separated_interval_exponent} [l_par1]:l_par [base]:concatenation separator_keyword [separator]:concatenation [r_par1]:r_par caret [l_par2]:l_par [from]:number two_dots [to]:number [r_par2]:r_par
-        {-> New expression.separated_interval_exponent(l_par1, base.expression, separator_keyword, separator.expression, r_par1, caret, l_par2, from, two_dots, to, r_par2) }
+        {-> New expression.separated_interval_exponent(base.expression, separator_keyword, separator.expression, caret, from, two_dots, to) }
     |
       {at_least} term caret l_par number three_dots r_par
-        {-> New expression.at_least(term.expression, caret, l_par, number, three_dots, r_par) }
+        {-> New expression.at_least(term.expression, caret, number, three_dots) }
     |
       {separated_at_least} [l_par1]:l_par [base]:concatenation separator_keyword [separator]:concatenation [r_par1]:r_par caret [l_par2]:l_par number three_dots [r_par2]:r_par
-        {-> New expression.separated_at_least(l_par1, base.expression, separator_keyword, separator.expression, r_par1, caret, l_par2, number, three_dots, r_par2) }
+        {-> New expression.separated_at_least(base.expression, separator_keyword, separator.expression, caret, number, three_dots) }
     ;
 
   term
@@ -366,7 +366,7 @@ Productions
 
   character
     =
-      {literal} char
+      {char} char
     |
       {dec} dec_char
     |
@@ -396,6 +396,7 @@ Productions
   group
     =
       group_keyword identifier colon unit_list? semicolon
+        {-> New group (group_keyword, identifier, colon, [unit_list.units]) }
     ;
 
   lexer_contexts
@@ -409,56 +410,66 @@ Productions
         {-> lexer_context }
     =
       lexer_context_body
-        {-> New lexer_context(Null, lexer_context_body.tokens, lexer_context_body.ignored, lexer_context_body.rejected, lexer_context_body.lexer_priorities) }
+        {-> New lexer_context(Null, lexer_context_body.tokens, lexer_context_body.ignored, lexer_context_body.rejected, [lexer_context_body.lexer_priorities]) }
     ;
 
   lexer_named_context
         {-> lexer_context }
     =
       context_keyword identifier colon lexer_context_body
-        {-> New lexer_context(identifier, lexer_context_body.tokens, lexer_context_body.ignored, lexer_context_body.rejected, lexer_context_body.lexer_priorities) }
+        {-> New lexer_context(identifier, lexer_context_body.tokens, lexer_context_body.ignored, lexer_context_body.rejected, [lexer_context_body.lexer_priorities]) }
     ;
 
   lexer_context_body
-        {-> tokens? ignored? rejected? lexer_priorities? }
+        {-> tokens? ignored? rejected? [lexer_priorities]:lexer_priority* }
     =
       tokens? ignored? rejected? lexer_priorities?
-        {-> tokens ignored rejected lexer_priorities }
+        {-> tokens ignored rejected [lexer_priorities.lexer_priorities] }
     ;
 
   tokens
     =
       token_keyword unit_list? semicolon
+        {-> New tokens(token_keyword, [unit_list.units]) }
     ;
 
   ignored
     =
       ignored_keyword unit_list? semicolon
+        {-> New ignored(ignored_keyword, [unit_list.units]) }
     ;
 
   rejected
     =
       rejected_keyword unit_list? semicolon
+        {-> New rejected(rejected_keyword, [unit_list.units]) }
     ;
 
   unit_list
+        {-> [units]:unit+ }
     =
       unit [additional_units]:additional_unit*
+        {-> [unit, additional_units.unit] }
     ;
 
   additional_unit
+        {-> unit }
     =
       comma unit
+        {-> unit }
     ;
 
   lexer_priorities
+        {-> [lexer_priorities]:lexer_priority* }
     =
       priority_keyword [lexer_priorities]:lexer_priority*
+        {-> [lexer_priorities] }
     ;
 
   lexer_priority
     =
       [high]:unit gt [low]:unit semicolon
+        {-> New lexer_priority(high, gt, low) }
     ;
 
   lexer_investigators
@@ -471,11 +482,13 @@ Productions
   lexer_investigator
     =
       [name]:identifier l_par identifier r_par semicolon
+        {-> New lexer_investigator(name, identifier) }
     ;
 
   parser
     =
       parser_keyword start parser_contexts inlined?
+        {-> New parser(parser_keyword, start, [parser_contexts.parser_contexts], inlined) }
     ;
 
   start
@@ -486,44 +499,57 @@ Productions
   normal_start
     =
       start_keyword identifier_list? semicolon
+        {-> New normal_start(start_keyword, [identifier_list.identifiers] ) }
     ;
 
   start_no_end
     =
       start_no_end_keyword identifier_list? semicolon
+        {-> New start_no_end(start_no_end_keyword, [identifier_list.identifiers] ) }
     ;
 
   identifier_list
+        {-> [identifiers]:identifier+ }
     =
       identifier [additional_identifiers]:additional_identifier*
+        {-> [identifier, additional_identifiers.identifier] }
     ;
 
   additional_identifier
+        {-> identifier }
     =
       comma identifier
+        {-> identifier }
     ;
 
   parser_contexts
+        {-> [parser_contexts]:parser_context+ }
     =
       parser_default_context [parser_named_contexts]:parser_named_context*
+        {-> [parser_default_context.parser_context, parser_named_contexts.parser_context] }
     ;
 
   parser_default_context
+        {-> parser_context }
     =
       [parser_productions]:parser_production*
+        {-> New parser_context(Null, [parser_productions]) }
     ;
 
   parser_named_context
+        {-> parser_context }
     =
       context_keyword identifier colon [parser_productions]:parser_production*
+        {-> New parser_context(identifier, [parser_productions]) }
     ;
 
   parser_production
     =
       {normal} qualifier? parser_production_body parser_priorities? parser_investigator?
+        {-> New parser_production.normal(qualifier, parser_production_body, [parser_priorities.parser_priorities], parser_investigator) }
     |
       {selection} selection assign identifier l_par identifier_list r_par
-        {-> New parser_production.selection([selection.identifiers], assign, identifier, l_par, identifier_list, r_par) }
+        {-> New parser_production.selection([selection.identifiers], assign, identifier, [identifier_list.identifiers]) }
     ;
 
   qualifier
@@ -536,16 +562,21 @@ Productions
   parser_production_body
     =
       identifier assign parser_alternatives semicolon
+        {-> New parser_production_body(identifier, assign, [parser_alternatives.parser_alternatives]) }
     ;
 
   parser_alternatives
+        {-> [parser_alternatives]:parser_alternative+ }
     =
       parser_alternative [additional_parser_alternatives]:additional_parser_alternative*
+        {-> [parser_alternative, additional_parser_alternatives.parser_alternative] }
     ;
 
   additional_parser_alternative
+        {-> parser_alternative }
     =
       bar parser_alternative
+        {-> parser_alternative }
     ;
 
   parser_alternative
@@ -557,7 +588,8 @@ Productions
     =
       {normal} element_name? element_body unary_operator?
     |
-      {separated} element_name? l_par [left]:element separator_keyword [right]:element r_par many_operator
+      {separated} element_name? l_par [base]:element separator_keyword [separator]:element r_par many_operator
+        {-> New element.separated(element_name, base, separator_keyword, separator, many_operator) }
     ;
 
   parser_dangling_element
@@ -570,16 +602,21 @@ Productions
       {unit} unit
     |
       {par} l_par subalternatives r_par
+        {-> New element_body.par(l_par, [subalternatives.subalternatives], r_par) }
     ;
 
   subalternatives
+        {-> [subalternatives]:subalternative+ }
     =
       subalternative [additional_subalternatives]:additional_subalternative*
+        {-> [subalternative, additional_subalternatives.subalternative] }
     ;
 
   additional_subalternative
+        {-> subalternative }
     =
       bar subalternative
+        {-> subalternative }
     ;
 
   subalternative
@@ -588,25 +625,31 @@ Productions
     ;
 
   parser_priorities
+        {-> [parser_priorities]:parser_priority*}
     =
       priority_keyword [parser_priorities]:parser_priority*
+        {-> [parser_priorities.parser_priority] }
     ;
 
   parser_priority
     =
       {left} left_keyword identifier_list semicolon
+        {-> New parser_priority.left(left_keyword, [identifier_list.identifiers]) }
     |
       {right} right_keyword identifier_list semicolon
+        {-> New parser_priority.right(right_keyword, [identifier_list.identifiers]) }
     ;
 
   parser_investigator
     =
-      investigator_keyword identifier l_par identifier_list? r_par semicolon
+      investigator_keyword [name]:identifier l_par identifier_list? r_par semicolon
+        {-> New parser_investigator(investigator_keyword, name, [identifier_list.identifiers]) }
     ;
 
   inlined
     =
       inlined_keyword identifier_list? semicolon
+        {-> New inlined(inlined_keyword, [identifier_list.identifiers]) }
     ;
 
   transformation
@@ -622,6 +665,7 @@ Productions
   production_transformation
     =
       identifier arrow [elements]:element* semicolon
+        {-> New production_transformation(identifier, arrow, [elements]) }
     ;
 
   alternative_transformations
@@ -632,6 +676,7 @@ Productions
   alternative_transformation
     =
       alternative_reference arrow [transformation_elements]:transformation_element* semicolon
+        {-> New alternative_transformation(alternative_reference, arrow, [transformation_elements]) }
     ;
 
   alternative_reference
@@ -667,16 +712,21 @@ Productions
   tree_production
     =
       identifier assign tree_alternatives semicolon
+        {-> New tree_production(identifier, assign, [tree_alternatives.tree_alternatives]) }
     ;
 
   tree_alternatives
+        {-> [tree_alternatives]:tree_alternative+ }
     =
       tree_alternative [additional_tree_alternatives]:additional_tree_alternative*
+        {-> [tree_alternative, additional_tree_alternatives.tree_alternative] }
     ;
 
   additional_tree_alternative
+        {-> tree_alternative }
     =
       bar tree_alternative
+        {-> tree_alternative }
     ;
 
   tree_alternative
@@ -700,7 +750,7 @@ Abstract Syntax Tree
     =
       {normal} identifier assign expression
     |
-      {selection} [names]:identifier+ assign [selector]:identifier [parameter]:identifier
+      {selection} [names]:identifier+ assign [selector_name]:identifier [parameter]:identifier
     ;
 
   expression
@@ -727,23 +777,23 @@ Abstract Syntax Tree
     |
       {zero_or_more} expression star
     |
-      {separated_zero_or_more} l_par [base]:expression separator_keyword [separator]:expression r_par star
+      {separated_zero_or_more} [base]:expression separator_keyword [separator]:expression star
     |
       {one_or_more} expression plus
     |
-      {separated_one_or_more} l_par [base]:expression separator_keyword [separator]:expression r_par plus
+      {separated_one_or_more} [base]:expression separator_keyword [separator]:expression plus
     |
       {number_exponent} expression caret number
     |
-      {separated_number_exponent} l_par [base]:expression separator_keyword [separator]:expression r_par caret number
+      {separated_number_exponent} [base]:expression separator_keyword [separator]:expression caret number
     |
-      {interval_exponent} expression caret l_par [from]:number two_dots [to]:number r_par
+      {interval_exponent} expression caret [from]:number two_dots [to]:number
     |
-      {separated_interval_exponent} [l_par1]:l_par [base]:expression separator_keyword [separator]:expression [r_par1]:r_par caret [l_par2]:l_par [from]:number two_dots [to]:number [r_par2]:r_par
+      {separated_interval_exponent} [base]:expression separator_keyword [separator]:expression caret [from]:number two_dots [to]:number
     |
-      {at_least} expression caret l_par number three_dots r_par
+      {at_least} expression caret number three_dots
     |
-      {separated_at_least} [l_par1]:l_par [base]:expression separator_keyword [separator]:expression [r_par1]:r_par caret [l_par2]:l_par number three_dots [r_par2]:r_par
+      {separated_at_least} [base]:expression separator_keyword [separator]:expression caret number three_dots
     |
       {name} identifier
     |
@@ -762,6 +812,119 @@ Abstract Syntax Tree
       {any} any_keyword
     |
       {end} end_keyword
+    ;
+
+  character
+    =
+      {char} char
+    |
+      {dec} dec_char
+    |
+      {hex} hex_char
+    ;
+
+  group
+    =
+      group_keyword [name]:identifier colon unit*
+    ;
+
+  unit
+    =
+      {name} identifier
+    |
+      {string} string
+    |
+      {character} character
+    |
+      {epsilon} epsilon
+    |
+      {any} any_keyword
+    ;
+
+  lexer_context
+    =
+      [name]:identifier? tokens? ignored? rejected? [lexer_priorities]:lexer_priority*
+    ;
+
+  tokens
+    =
+      token_keyword unit*
+    ;
+
+  ignored
+    =
+      ignored_keyword unit*
+    ;
+
+  rejected
+    =
+      rejected_keyword unit*
+    ;
+
+  lexer_priority
+    =
+      [high]:unit gt [low]:unit
+    ;
+
+  lexer_investigator
+    =
+      [name]:identifier [parameter]:identifier
+    ;
+
+  parser
+    =
+      parser_keyword start [parser_contexts]:parser_context+ inlined?
+    ;
+
+  start
+    =
+      normal_start? start_no_end?
+    ;
+
+  normal_start
+    =
+      start_keyword [identifiers]:identifier*
+    ;
+
+  start_no_end
+    =
+      start_no_end_keyword [identifiers]:identifier*
+    ;
+
+  parser_context
+    =
+      [name]:identifier? [parser_productions]:parser_production*
+    ;
+
+  parser_production
+    =
+      {normal} qualifier? parser_production_body [parser_priorities]:parser_priority* parser_investigator?
+    |
+      {selection} [names]:identifier+ assign [selector_name]:identifier [parameters]:identifier+
+    ;
+
+  qualifier
+    =
+      {dangling} dangling_keyword
+    |
+      {token} token_keyword
+    ;
+
+  parser_production_body
+    =
+      identifier assign [parser_alternatives]:parser_alternative+
+    ;
+
+  parser_alternative
+    =
+      alternative_name? [elements]:element* parser_dangling_element?
+    ;
+
+  element
+    =
+      {normal} element_name? element_body unary_operator?
+    |
+      {separated} element_name? [base]:element separator_keyword [separator]:element many_operator
     ;
 
   unary_operator
@@ -784,171 +947,6 @@ Abstract Syntax Tree
       {at_least} caret l_par number three_dots r_par
     ;
 
-  term
-    =
-      {unit} unit
-    |
-      {par} l_par expression r_par
-    ;
-
-  unit
-    =
-      {name} identifier
-    |
-      {string} string
-    |
-      {character} character
-    |
-      {epsilon} epsilon
-    |
-      {any} any_keyword
-    ;
-
-  character
-    =
-      {literal} char
-    |
-      {dec} dec_char
-    |
-      {hex} hex_char
-    ;
-
-  group
-    =
-      group_keyword identifier colon unit_list? semicolon
-    ;
-
-  lexer_context
-    =
-      [name]:identifier? tokens? ignored? rejected? lexer_priorities?
-    ;
-
-  tokens
-    =
-      token_keyword unit_list? semicolon
-    ;
-
-  ignored
-    =
-      ignored_keyword unit_list? semicolon
-    ;
-
-  rejected
-    =
-      rejected_keyword unit_list? semicolon
-    ;
-
-  unit_list
-    =
-      unit [additional_units]:additional_unit*
-    ;
-
-  additional_unit
-    =
-      comma unit
-    ;
-
-  lexer_priorities
-    =
-      priority_keyword [lexer_priorities]:lexer_priority*
-    ;
-
-  lexer_priority
-    =
-      [high]:unit gt [low]:unit semicolon
-    ;
-
-  lexer_investigator
-    =
-      [name]:identifier l_par identifier r_par semicolon
-    ;
-
-  parser
-    =
-      parser_keyword start parser_contexts inlined?
-    ;
-
-  start
-    =
-      normal_start? start_no_end?
-    ;
-
-  normal_start
-    =
-      start_keyword identifier_list? semicolon
-    ;
-
-  start_no_end
-    =
-      start_no_end_keyword identifier_list? semicolon
-    ;
-
-  identifier_list
-    =
-      identifier [additional_identifiers]:additional_identifier*
-    ;
-
-  additional_identifier
-    =
-      comma identifier
-    ;
-
-  parser_contexts
-    =
-      parser_default_context [parser_named_contexts]:parser_named_context*
-    ;
-
-  parser_default_context
-    =
-      [parser_productions]:parser_production*
-    ;
-
-  parser_named_context
-    =
-      context_keyword identifier colon [parser_productions]:parser_production*
-    ;
-
-  parser_production
-    =
-      {normal} qualifier? parser_production_body parser_priorities? parser_investigator?
-    |
-      {selection} [names]:identifier+ assign [selector]:identifier l_par identifier_list r_par
-    ;
-
-  qualifier
-    =
-      {dangling} dangling_keyword
-    |
-      {token} token_keyword
-    ;
-
-  parser_production_body
-    =
-      identifier assign parser_alternatives semicolon
-    ;
-
-  parser_alternatives
-    =
-      parser_alternative [additional_parser_alternatives]:additional_parser_alternative*
-    ;
-
-  additional_parser_alternative
-    =
-      bar parser_alternative
-    ;
-
-  parser_alternative
-    =
-      alternative_name? [elements]:element* parser_dangling_element?
-    ;
-
-  element
-    =
-      {normal} element_name? element_body unary_operator?
-    |
-      {separated} element_name? l_par [left]:element separator_keyword [right]:element r_par many_operator
-    ;
-
   parser_dangling_element
     =
       dangling_keyword element_name? identifier q_mark
@@ -958,17 +956,7 @@ Abstract Syntax Tree
     =
       {unit} unit
     |
-      {par} l_par subalternatives r_par
-    ;
-
-  subalternatives
-    =
-      subalternative [additional_subalternatives]:additional_subalternative*
-    ;
-
-  additional_subalternative
-    =
-      bar subalternative
+      {par} l_par [subalternatives]:subalternative+ r_par
     ;
 
   subalternative
@@ -976,26 +964,21 @@ Abstract Syntax Tree
       [elements]:element*
     ;
 
-  parser_priorities
-    =
-      priority_keyword [parser_priorities]:parser_priority*
-    ;
-
   parser_priority
     =
-      {left} left_keyword identifier_list semicolon
+      {left} left_keyword [identifiers]:identifier+
     |
-      {right} right_keyword identifier_list semicolon
+      {right} right_keyword [identifiers]:identifier+
     ;
 
   parser_investigator
     =
-      investigator_keyword identifier l_par identifier_list? r_par semicolon
+      investigator_keyword [name]:identifier [parameters]:identifier*
     ;
 
   inlined
     =
-      inlined_keyword identifier_list? semicolon
+      inlined_keyword [identifiers]:identifier*
     ;
 
   transformation
@@ -1010,7 +993,7 @@ Abstract Syntax Tree
 
   production_transformation
     =
-      identifier arrow [elements]:element* semicolon
+      identifier arrow [elements]:element*
     ;
 
   alternative_transformations
@@ -1020,7 +1003,7 @@ Abstract Syntax Tree
 
   alternative_transformation
     =
-      alternative_reference arrow [transformation_elements]:transformation_element* semicolon
+      alternative_reference arrow [transformation_elements]:transformation_element*
     ;
 
   alternative_reference
@@ -1055,17 +1038,7 @@ Abstract Syntax Tree
 
   tree_production
     =
-      identifier assign tree_alternatives semicolon
-    ;
-
-  tree_alternatives
-    =
-      tree_alternative [additional_tree_alternatives]:additional_tree_alternative*
-    ;
-
-  additional_tree_alternative
-    =
-      bar tree_alternative
+      identifier assign [tree_alternatives]:tree_alternative+
     ;
 
   tree_alternative
