@@ -19,7 +19,7 @@ package org.sablecc.sablecc.util;
 
 import java.math.BigInteger;
 
-import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.exception.InternalException;
 
 /**
  * This class provides commonly used constants for static import.
@@ -36,7 +36,7 @@ public class UsefulStaticImports {
     /** BigInteger constant 126. */
     public static final BigInteger BI_126 = new BigInteger("126");
 
-    /** Prevents instanciation of this class. */
+    /** Prevents instantiation of this class. */
     private UsefulStaticImports() {
 
         throw new InternalException("no instance allowed");

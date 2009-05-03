@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.exception.InternalException;
 
 /**
  * A symbol is a non-empty set of non-intersecting, non-adjacent intervals.

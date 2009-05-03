@@ -21,9 +21,11 @@
 /lib/
 /sablecc-*/
 /sablecc-*.zip
+/src/org/sablecc/objectmacro/intermediate/syntax3/
 /src/org/sablecc/objectmacro/launcher/Version.java
 /src/org/sablecc/objectmacro/launcher/syntax3/
 /src/org/sablecc/objectmacro/syntax3/
+/src/org/sablecc/sablecc/intermediate/syntax3/
 /src/org/sablecc/sablecc/launcher/Version.java
 /src/org/sablecc/sablecc/launcher/syntax3/
 /src/org/sablecc/sablecc/syntax3/

@@ -1,0 +1,350 @@
+$comment$
+This file is part of SableCC ( http://sablecc.org ).
+
+See the NOTICE file distributed with this work for copyright information.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+$end$
+
+$comment: ========== syntax_error ========== $
+
+$macro: syntax_error(line, char, token_type, token_text, message) $
+*** SYNTAX ERROR ***
+
+Line: $line
+Char: $char
+Syntax error on unexpected $token_type token "$token_text":
+$message.
+$end: syntax_error $
+
+$comment: ========== lexical_error ========== $
+
+$macro: lexical_error(line, char, message) $
+*** LEXICAL ERROR ***
+
+Line: $line
+Char: $char
+$message.
+$end: lexical_error $
+
+$comment: ========== internal_error ========== $
+
+$macro: internal_error(stack_trace, message) $
+*** INTERNAL ERROR ***
+
+$stack_trace
+An internal error was raised with the following message:
+ $message.
+
+Please submit a defect ticket with the full error trace above on:
+ http://sablecc.org/
+$end: internal_error $
+
+$comment: ========== command_line_error_head ========== $
+
+$text: command_line_error_head $
+*** COMMAND ERROR ***
+$end: command_line_error_head $
+
+$comment: ========== command_line_error_tail ========== $
+
+$text: command_line_error_tail $
+The following command provides usage information:
+ objectmacro --help
+$end: command_line_error_tail $
+
+$comment: ========== invalid_argument ========== $
+
+$macro: invalid_argument(argument_text) $
+$insert: command_line_error_head $
+
+The following argument is rejected:
+ $argument_text
+It is invalid.
+
+$insert: command_line_error_tail $
+$end: invalid_argument $
+
+$comment: ========== missing_long_option_operand ========== $
+
+$macro: missing_long_option_operand(option_name, operand_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ --$option_name
+This option expects an operand:
+ --$option_name=$operand_name
+
+$insert: command_line_error_tail $
+$end: missing_long_option_operand $
+
+$comment: ========== missing_short_option_operand ========== $
+
+$macro: missing_short_option_operand(option_name, operand_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ -$option_name
+This option expects an operand:
+ -$option_name=$operand_name
+
+$insert: command_line_error_tail $
+$end: missing_short_option_operand $
+
+$comment: ========== invalid_long_option ========== $
+
+$macro: invalid_long_option(option_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ --$option_name
+It is not a valid option.
+
+$insert: command_line_error_tail $
+$end: invalid_long_option $
+
+$comment: ========== spurious_long_option_operand ========== $
+
+$macro: spurious_long_option_operand(option_name, operand_text) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ --$option_name=$operand_text
+This option does not accept an operand.
+
+$insert: command_line_error_tail $
+$end: spurious_long_option_operand $
+
+$comment: ========== invalid_short_option ========== $
+
+$macro: invalid_short_option(option_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ -$option_name
+It is not a valid option.
+
+$insert: command_line_error_tail $
+$end: invalid_short_option $
+
+$comment: ========== spurious_short_option_operand ========== $
+
+$macro: spurious_short_option_operand(option_name, operand_text) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ -$option_name=$operand_text
+This option does not accept an operand.
+
+$insert: command_line_error_tail $
+$end: spurious_short_option_operand $
+
+$comment: ========== unknown_target ========== $
+
+$macro: unknown_target(target) $
+$insert: command_line_error_head $
+
+The "$target" target is not supported.
+
+The following command lists available target languages:
+ objectmacro --list-targets
+
+$insert: command_line_error_tail $
+$end: unknown_target $
+
+$comment: ========== invalid_argument_count ========== $
+
+$macro: invalid_argument_count $
+$insert: command_line_error_head $
+
+A single macro file must be provided.
+
+$insert: command_line_error_tail $
+$end: invalid_argument_count $
+
+$comment: ========== invalid_suffix ========== $
+
+$macro: invalid_suffix(file_name) $
+$insert: command_line_error_head $
+
+The macro file, "$file_name", does not have a .objectmacro suffix.
+
+$insert: command_line_error_tail $
+$end: invalid_suffix $
+
+$comment: ========== missing_macro_file ========== $
+
+$macro: missing_macro_file(file_name) $
+$insert: command_line_error_head $
+
+The macro file, "$file_name", does not exist.
+
+$insert: command_line_error_tail $
+$end: missing_macro_file $
+
+$comment: ========== macro_not_file ========== $
+
+$macro: macro_not_file(file_name) $
+$insert: command_line_error_head $
+
+The macro argument, "$file_name", is not a file.
+
+$insert: command_line_error_tail $
+$end: macro_not_file $
+
+$comment: ========== input_error ========== $
+
+$macro: input_error(file_name, message) $
+*** I/O ERROR ***
+
+The following system error happened while reading "$file_name":
+ $message
+$end: input_error $
+
+$comment: ========== output_error ========== $
+
+$macro: output_error(file_name, message) $
+*** I/O ERROR ***
+
+The following system error happened while writing "$file_name":
+ $message
+$end: output_error $
+
+$comment: ========== semantic_error_head ========== $
+
+$text: semantic_error_head $
+*** SEMANTIC ERROR ***
+$end: semantic_error_head $
+
+$comment: ========== unknown_macro ========== $
+
+$macro: unknown_macro(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Macro "$name" does not exist.
+$end: unknown_macro $
+
+$comment: ========== unknown_text_block ========== $
+
+$macro: unknown_text_block(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Text block "$name" does not exist.
+$end: unknown_text_block $
+
+$comment: ========== duplicate_declaration ========== $
+
+$macro: duplicate_declaration(name, line, char, ref_line, ref_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Duplicate declaration of "$name".
+It was already declared at line $ref_line, char $ref_char.
+$end: duplicate_declaration $
+
+$comment: ========== duplicate_option ========== $
+
+$macro: duplicate_option(name, line, char, ref_line, ref_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Duplicate "$name" option.
+It was already provided at line $ref_line, char $ref_char.
+$end: duplicate_option $
+
+$comment: ========== unknown_option ========== $
+
+$macro: unknown_option(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Option "$name" is invalid.
+$end: unknown_option $
+
+$comment: ========== end_mismatch ========== $
+
+$macro: end_mismatch(name, line, char, ref_name, ref_line, ref_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+End "$name" does not match "$ref_name" of line $ref_line, char $ref_char.
+$end: end_mismatch $
+
+$comment: ========== unknown_param ========== $
+
+$macro: unknown_param(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Parameter "$name" does not exist.
+$end: unknown_param $
+
+$comment: ========== cyclic_reference ========== $
+
+$macro: cyclic_reference(reference, line, char, context, context_line, context_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$reference" is a cyclic reference to text block "$context" of line $context_line, char $context_char.
+$end: cyclic_reference $
+
+$comment: ========== unused_text_block ========== $
+
+$macro: unused_text_block(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The "$name" text block is not useful.
+$end: unused_text_block $
+
+$comment: ========== unused_param ========== $
+
+$macro: unused_param(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The "$name" parameter is not used.
+$end: unused_param $
+
+$comment: ========== incorrect_argument_count ========== $
+
+$macro: incorrect_argument_count(line, char, current_count, name, ref_line, ref_char, expected_count) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The insert has $current_count arguments, instead of $expected_count arguments.
+The "$name" text block is defined on line $ref_line, char $ref_char.
+$end: incorrect_argument_count $
+
+$comment: ========== cannot_create_directory ========== $
+
+$macro: cannot_create_directory(location) $
+$insert: command_line_error_head $
+
+The directory "$location" could not be created.
+
+$insert: command_line_error_tail $
+$end: cannot_create_directory $

@@ -1,0 +1,326 @@
+/* This file is part of SableCC ( http://sablecc.org ).
+ *
+ * See the NOTICE file distributed with this work for copyright information.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+Package org.sablecc.objectmacro.intermediate.syntax3;
+
+Helpers
+  any = [0..0xffff];
+  string_char = [any - [[''' + '\'] + [10 + 13]]];
+
+Tokens
+  after_last_keyword = 'after_last';
+  ancestor_ref_keyword = 'ancestor_ref';
+  arg_keyword = 'arg';
+  before_first_keyword = 'before_first';
+  context_name_keyword = 'context_name';
+  eol_keyword = 'eol';
+  expand_keyword = 'expand';
+  expand_insert_keyword = 'expand_insert';
+  expanded_macro_keyword = 'expanded_macro';
+  false_keyword = 'false';
+  is_public_keyword = 'is_public';
+  macro_keyword = 'macro';
+  name_keyword = 'name';
+  none_keyword = 'none';
+  param_keyword = 'param';
+  param_insert_keyword = 'param_insert';
+  param_ref_keyword = 'param_ref';
+  self_ref_keyword = 'self_ref';
+  separator_keyword = 'separator';
+  text_keyword = 'text';
+  text_insert_keyword = 'text_insert';
+  true_keyword = 'true';
+
+  assign = '=';
+  semicolon = ';';
+  l_brace = '{';
+  r_brace = '}';
+
+  string = ''' (string_char | '\' ''' | '\\')* ''';
+
+  blank = (' ' | 13 | 10)+;
+
+  invalid_character = [0..0xffff];
+
+Ignored Tokens
+  blank;
+
+Productions
+
+  intermediate_representation
+    =
+      [texts]:text* [macros]:macro*
+    ;
+
+  text
+    =
+      text_keyword l_brace name [params]:param* self_ref
+      [ancestor_refs]:ancestor_ref* [param_refs]:param_ref*
+      [text_parts]:text_part* r_brace
+        {-> New text(name.string, [params.string], self_ref.boolean,
+        [ancestor_refs.string], [param_refs], [text_parts]) }
+    ;
+
+  macro
+    =
+      macro_keyword l_brace name is_public [params]:param* self_ref
+      [ancestor_refs]:ancestor_ref* [param_refs]:param_ref*
+      [expands]:expand* [expanded_macros]:expanded_macro*
+      [macro_parts]:macro_part* r_brace
+        {-> New macro(name.string, is_public.boolean, [params.string],
+        self_ref.boolean, [ancestor_refs.string], [param_refs],
+        [expands.string], [expanded_macros], [macro_parts]) }
+    ;
+
+  param_ref
+    =
+      param_ref_keyword l_brace name context_name r_brace
+        {-> New param_ref(name.string, context_name.string) }
+    ;
+
+  expanded_macro
+    =
+      expanded_macro_keyword l_brace name [params]:param*
+      [ancestor_refs]:ancestor_ref* [expands]:expand+ r_brace
+        {-> New expanded_macro(name.string, [params.string],
+        [ancestor_refs.string], [expands.string]) }
+    ;
+
+  text_part
+    =
+      {string} string semicolon
+        {-> New text_part.string(string) }
+    |
+      {eol} eol_keyword semicolon
+        {-> New text_part.eol() }
+    |
+      {param_insert} param_insert
+        {-> New text_part.param_insert(param_insert.string) }
+    |
+      {text_insert} text_insert
+    ;
+
+  macro_part
+    =
+      {string} string semicolon
+        {-> New macro_part.string(string) }
+    |
+      {eol} eol_keyword semicolon
+        {-> New macro_part.eol() }
+    |
+      {param_insert} param_insert
+        {-> New macro_part.param_insert(param_insert.string) }
+    |
+      {text_insert} text_insert
+    |
+      {expand_insert} expand_insert
+    ;
+
+  expand_insert
+    =
+      expand_insert_keyword l_brace name none? separator? before_first?
+      after_last? r_brace
+        {-> New expand_insert(name.string, none.value, separator.value,
+        before_first.value, after_last.value) }
+    ;
+
+  none
+        {-> value }
+    =
+      {string} none_keyword assign string semicolon
+        {-> New value.string(string) }
+    |
+      {var} none_keyword l_brace param_insert r_brace
+        {-> New value.param_insert(param_insert.string) }
+    |
+      {text} none_keyword l_brace text_insert r_brace
+        {-> New value.text_insert(text_insert) }
+    ;
+
+  separator
+        {-> value }
+    =
+      {string} separator_keyword assign string semicolon
+        {-> New value.string(string) }
+    |
+      {var} separator_keyword l_brace param_insert r_brace
+        {-> New value.param_insert(param_insert.string) }
+    |
+      {text} separator_keyword l_brace text_insert r_brace
+        {-> New value.text_insert(text_insert) }
+    ;
+
+  before_first
+        {-> value }
+    =
+      {string} before_first_keyword assign string semicolon
+        {-> New value.string(string) }
+    |
+      {var} before_first_keyword l_brace param_insert r_brace
+        {-> New value.param_insert(param_insert.string) }
+    |
+      {text} before_first_keyword l_brace text_insert r_brace
+        {-> New value.text_insert(text_insert) }
+    ;
+
+  after_last
+        {-> value }
+    =
+      {string} after_last_keyword assign string semicolon
+        {-> New value.string(string) }
+    |
+      {var} after_last_keyword l_brace param_insert r_brace
+        {-> New value.param_insert(param_insert.string) }
+    |
+      {text} after_last_keyword l_brace text_insert r_brace
+        {-> New value.text_insert(text_insert) }
+    ;
+
+  boolean
+    =
+      {true} true_keyword
+        {-> New boolean.true() }
+    |
+      {false} false_keyword
+        {-> New boolean.false() }
+    ;
+
+  name
+        {-> string }
+    =
+      name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  is_public
+        {-> boolean }
+    =
+      is_public_keyword assign boolean semicolon
+        {-> boolean }
+    ;
+
+  ancestor_ref
+        {-> string }
+    =
+      ancestor_ref_keyword assign string semicolon
+        {-> string }
+    ;
+
+  param
+        {-> string }
+    =
+      param_keyword assign string semicolon
+        {-> string }
+    ;
+
+  self_ref
+        {-> boolean }
+    =
+      self_ref_keyword assign boolean semicolon
+        {-> boolean }
+    ;
+
+  expand
+        {-> string }
+    =
+      expand_keyword assign string semicolon
+        {-> string }
+    ;
+
+  context_name
+        {-> string }
+    =
+      context_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  param_insert
+        {-> string }
+    =
+      param_insert_keyword assign string semicolon
+        {-> string }
+    ;
+
+  text_insert
+    =
+      text_insert_keyword l_brace name [args]:arg*
+      [ancestor_refs]:ancestor_ref* r_brace
+        {-> New text_insert(name.string, [args.value],
+        [ancestor_refs.string]) }
+    ;
+
+  arg
+        {-> value }
+    =
+      {string} arg_keyword assign string semicolon
+        {-> New value.string(string) }
+    |
+      {var} arg_keyword l_brace param_insert r_brace
+        {-> New value.param_insert(param_insert.string) }
+    |
+      {text} arg_keyword l_brace text_insert r_brace
+        {-> New value.text_insert(text_insert) }
+    ;
+
+Abstract Syntax Tree
+
+  intermediate_representation =
+    [texts]:text* [macros]:macro*;
+
+  text =
+    [name]:string [params]:string* [self_ref]:boolean [ancestor_refs]:string*
+    [param_refs]:param_ref* [text_parts]:text_part*;
+
+  macro =
+    [name]:string [is_public]:boolean [params]:string* [self_ref]:boolean
+    [ancestor_refs]:string* [param_refs]:param_ref* [expands]:string*
+    [expanded_macros]:expanded_macro* [macro_parts]:macro_part*;
+
+  param_ref =
+    [name]:string [context]:string;
+
+  expanded_macro =
+    [name]:string [params]:string* [ancestor_refs]:string* [expands]:string+;
+
+  text_part =
+    {string} string |
+    {eol} |
+    {param_insert} [param_insert]:string |
+    {text_insert} text_insert;
+
+  macro_part =
+    {string} string |
+    {eol} |
+    {param_insert} [param_insert]:string |
+    {text_insert} text_insert |
+    {expand_insert} expand_insert;
+
+  expand_insert =
+    [name]:string [none]:value? [separator]:value? [before_first]:value?
+    [after_last]:value?;
+
+  text_insert =
+    [name]:string [args]:value* [ancestor_refs]:string*;
+
+  value =
+    {string} string |
+    {param_insert} [param_insert]:string |
+    {text_insert} text_insert;
+
+  boolean =
+    {true} |
+    {false};

@@ -24,11 +24,11 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.alphabet.RichSymbol;
 import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.exception.InternalException;
-import org.sablecc.sablecc.util.Pair;
-import org.sablecc.sablecc.util.WorkSet;
+import org.sablecc.util.Pair;
+import org.sablecc.util.WorkSet;
 
 class ShortestOperation {
 

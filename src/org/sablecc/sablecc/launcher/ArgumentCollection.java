@@ -72,7 +72,7 @@ class ArgumentCollection {
                         arguments[currentArgIndex]), 1024))).parse();
             }
             catch (Exception e) {
-                throw CompilerException.invalid_argument(
+                throw CompilerException.invalidArgument(
                         arguments[currentArgIndex], e);
             }
 
@@ -84,12 +84,12 @@ class ArgumentCollection {
                 if (currentArgIndex + 1 >= arguments.length) {
 
                     if (arguments[currentArgIndex].startsWith("--")) {
-                        throw CompilerException.missing_long_option_operand(
+                        throw CompilerException.missingLongOptionOperand(
                                 incompleteOption.getLongName(),
                                 incompleteOption.getOperandName());
                     }
                     else {
-                        throw CompilerException.missing_short_option_operand(
+                        throw CompilerException.missingShortOptionOperand(
                                 incompleteOption.getShortName(),
                                 incompleteOption.getOperandName());
                     }

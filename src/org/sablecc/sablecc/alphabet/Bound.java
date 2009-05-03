@@ -22,7 +22,7 @@ import static org.sablecc.sablecc.util.UsefulStaticImports.BI_32;
 
 import java.math.BigInteger;
 
-import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.exception.InternalException;
 
 /**
  * A bound is a value that is used to construct intervals.

@@ -17,174 +17,241 @@
 
 package org.sablecc.objectmacro.structures;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.sablecc.objectmacro.exception.InternalException;
-import org.sablecc.objectmacro.exception.SemanticException;
-import org.sablecc.objectmacro.syntax3.node.AMacro;
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.syntax3.node.AParam;
 import org.sablecc.objectmacro.syntax3.node.ATextBlock;
+import org.sablecc.objectmacro.syntax3.node.PParam;
+import org.sablecc.objectmacro.syntax3.node.PSourceFilePart;
+import org.sablecc.objectmacro.syntax3.node.PTextInsert;
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
+import org.sablecc.objectmacro.syntax3.node.TVar;
+import org.sablecc.objectmacro.util.Utils;
 
 public abstract class Scope {
 
-    private final Scope parentScope;
+    private final GlobalIndex globalIndex;
 
-    private final GlobalData globalData;
+    private final Set<Param> params = new LinkedHashSet<Param>();
 
-    private final Map<String, Macro> localMacroMap = new HashMap<String, Macro>();
+    private final Map<String, Param> paramMap = new HashMap<String, Param>();
 
-    private final Map<String, TextBlock> localTextBlockMap = new HashMap<String, TextBlock>();
+    private final Set<TextBlock> textBlocks = new LinkedHashSet<TextBlock>();
 
-    private final Map<String, Param> localParamMap = new HashMap<String, Param>();
+    private final Map<String, TextBlock> textBlockMap = new HashMap<String, TextBlock>();
 
-    private final Set<TextBlock> referencedTextBlocks = new LinkedHashSet<TextBlock>();
+    private final Set<Scope> referencedAncestors = new LinkedHashSet<Scope>();
+
+    private boolean referencesSelf;
 
     private final Set<Param> referencedParams = new LinkedHashSet<Param>();
 
+    private final Set<TextBlock> referencedTextBlocks = new LinkedHashSet<TextBlock>();
+
+    private Set<TextBlock> indirectlyReferencedTextBlocks;
+
+    private final Set<Scope> callers = new LinkedHashSet<Scope>();
+
     Scope(
-            Scope parentScope,
-            GlobalData globalData) {
+            GlobalIndex globalIndex) {
 
-        if (parentScope == null && !(this instanceof SourceFile)) {
-
-            throw new InternalException("parentScope may not be null");
+        if (globalIndex == null) {
+            throw new InternalException("globalIndex may not be null");
         }
 
-        if (globalData == null) {
-            throw new InternalException("globalData may not be null");
-        }
-
-        this.parentScope = parentScope;
-        this.globalData = globalData;
+        this.globalIndex = globalIndex;
     }
 
-    public Macro getMacro(
-            String macroName) {
+    public TextBlock newTextBlock(
+            ATextBlock pDeclaration) {
 
-        if (macroName == null) {
-            throw new InternalException("macroName may not be null");
+        if (pDeclaration == null) {
+            throw new InternalException("pDeclaration may not be null");
         }
 
-        Macro macro = this.localMacroMap.get(macroName);
-
-        if (macro == null) {
-            if (this.parentScope != null) {
-                return this.parentScope.getMacro(macroName);
-            }
+        if (pDeclaration.parent() instanceof PSourceFilePart) {
+            throw new InternalException(
+                    "pDeclaration may not be a top-level text block");
         }
 
-        return macro;
-    }
+        TextBlock textBlock = this.globalIndex.newTextBlock(pDeclaration, this);
 
-    Macro addMacro(
-            AMacro definition)
-            throws SemanticException {
+        this.textBlockMap.put(textBlock.getName(), textBlock);
+        this.textBlocks.add(textBlock);
 
-        if (definition == null) {
-            throw new InternalException("definition may not be null");
-        }
-
-        this.globalData.addGlobalName(definition.getName());
-
-        Macro macro = new Macro(definition, this, this.globalData);
-        this.localMacroMap.put(macro.getName(), macro);
-        return macro;
+        return textBlock;
     }
 
     public TextBlock getTextBlock(
-            String textBlockName) {
+            TIdentifier identifier) {
 
-        if (textBlockName == null) {
-            throw new InternalException("textBlockName may not be null");
+        if (identifier == null) {
+            throw new InternalException("identifier may not be null");
         }
 
-        TextBlock textBlock = this.localTextBlockMap.get(textBlockName);
+        String name = identifier.getText();
 
-        if (textBlock == null) {
-            if (this.parentScope != null) {
-                return this.parentScope.getTextBlock(textBlockName);
-            }
+        if (this.textBlockMap.containsKey(name)) {
+            return this.textBlockMap.get(name);
         }
 
-        return textBlock;
+        if (getParent() != null) {
+            return getParent().getTextBlock(identifier);
+        }
+
+        return this.globalIndex.getTopTextBlock(identifier);
     }
 
-    TextBlock addTextBlock(
-            ATextBlock definition)
-            throws SemanticException {
+    public Param newParam(
+            PParam pDeclaration) {
 
-        if (definition == null) {
-            throw new InternalException("definition may not be null");
+        if (pDeclaration == null) {
+            throw new InternalException("pDeclaration may not be null");
         }
 
-        this.globalData.addGlobalName(definition.getName());
+        AParam declaration = (AParam) pDeclaration;
+        TIdentifier nameId = declaration.getName();
+        String name = nameId.getText();
 
-        TextBlock textBlock = new TextBlock(definition, this, this.globalData);
-        this.localTextBlockMap.put(textBlock.getName(), textBlock);
-        return textBlock;
+        Param firstParam = getParamOrNull(name);
+        if (firstParam != null) {
+            throw CompilerException.duplicateDeclaration(nameId, firstParam
+                    .getNameDeclaration());
+        }
+
+        Param param = new Param(declaration, this);
+
+        this.paramMap.put(name, param);
+        this.params.add(param);
+
+        return param;
     }
 
     public Param getParam(
-            String paramName) {
+            TVar var) {
 
-        if (paramName == null) {
-            throw new InternalException("paramName may not be null");
+        if (var == null) {
+            throw new InternalException("var may not be null");
         }
 
-        Param param = this.localParamMap.get(paramName);
+        Param param = getParamOrNull(Utils.getVarName(var));
 
         if (param == null) {
-            if (this.parentScope != null) {
-                return this.parentScope.getParam(paramName);
+            throw CompilerException.unknownParam(var);
+        }
+
+        Scope paramScope = param.getScope();
+        if (paramScope == this) {
+            this.referencesSelf = true;
+        }
+        else {
+            this.referencedAncestors.add(paramScope);
+        }
+
+        this.referencedParams.add(param);
+
+        param.setUsed();
+        return param;
+    }
+
+    private Param getParamOrNull(
+            String name) {
+
+        if (name == null) {
+            throw new InternalException("name may not be null");
+        }
+
+        Param param = this.paramMap.get(name);
+
+        if (param == null && getParent() != null) {
+            param = getParent().getParamOrNull(name);
+        }
+
+        return param;
+    }
+
+    public TextInsert getTextInsert(
+            PTextInsert declaration) {
+
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
+        }
+
+        TextInsert textInsert = this.globalIndex.getTextInsert(declaration,
+                this);
+
+        if (textInsert.getEnclosingScope() != this) {
+            throw new InternalError(
+                    "getTextInsert must be called on its enclosing scope");
+        }
+
+        textInsert.getInsertedTextBlock().addCaller(this);
+        this.referencedTextBlocks.add(textInsert.getInsertedTextBlock());
+
+        return textInsert;
+    }
+
+    public boolean propagateAncestorReferences() {
+
+        boolean modified = false;
+
+        for (Scope caller : this.callers) {
+            for (Scope ancestor : getReferencedAncestors()) {
+                if (caller == ancestor) {
+                    if (!caller.referencesSelf()) {
+                        caller.referencesSelf = true;
+                        modified = true;
+                    }
+                }
+                else if (!caller.getReferencedAncestors().contains(ancestor)) {
+                    caller.getReferencedAncestors().add(ancestor);
+                    modified = true;
+                }
             }
         }
 
-        return param;
+        return modified;
     }
 
-    Param addParam(
-            AParam definition)
-            throws SemanticException {
+    void addCaller(
+            Scope scope) {
 
-        if (definition == null) {
-            throw new InternalException("definition may not be null");
+        if (scope == null) {
+            throw new InternalException("scope may not be null");
         }
 
-        String paramName = definition.getName().getText();
-
-        if (getParam(paramName) != null) {
-            throw new SemanticException("duplicate definition of " + paramName,
-                    definition.getName());
-        }
-
-        Param param = new Param(definition, this.globalData);
-        this.localParamMap.put(param.getName(), param);
-        return param;
+        this.callers.add(scope);
     }
 
-    public Scope getParentScope() {
+    public String getName() {
 
-        return this.parentScope;
+        return getNameDeclaration().getText();
     }
 
-    public void addReferencedTextBlock(
-            TextBlock textBlock) {
+    public String getCamelCaseName() {
 
-        this.referencedTextBlocks.add(textBlock);
+        return Utils.toCamelCase(getNameDeclaration());
     }
 
-    public Set<TextBlock> getReferencedTextBlocks() {
+    public Set<Param> getParams() {
 
-        return this.referencedTextBlocks;
+        return this.params;
     }
 
-    public void addReferencedParam(
-            Param param) {
+    public Set<Scope> getReferencedAncestors() {
 
-        this.referencedParams.add(param);
+        return this.referencedAncestors;
+    }
+
+    public boolean referencesSelf() {
+
+        return this.referencesSelf;
     }
 
     public Set<Param> getReferencedParams() {
@@ -192,17 +259,40 @@ public abstract class Scope {
         return this.referencedParams;
     }
 
-    public boolean hasAncestorScope(
-            Scope scope) {
+    public Set<TextBlock> getIndirectlyReferencedTextBlocks() {
 
-        if (scope == this) {
-            return true;
-        }
-
-        if (this.parentScope != null) {
-            return this.parentScope.hasAncestorScope(scope);
-        }
-
-        return false;
+        return this.indirectlyReferencedTextBlocks;
     }
+
+    GlobalIndex getGlobalIndex() {
+
+        return this.globalIndex;
+    }
+
+    Set<TextBlock> getDirectlyReferencedTextBlocks() {
+
+        return this.referencedTextBlocks;
+    }
+
+    void setIndirectlyReferencedTextBlocks(
+            Set<TextBlock> indirectlyReferencedTextBlocks) {
+
+        if (indirectlyReferencedTextBlocks == null) {
+            throw new InternalException(
+                    "indirectlyReferencedTextBlocks may not be null");
+        }
+
+        if (this.indirectlyReferencedTextBlocks != null) {
+            throw new InternalException(
+                    "indirectlyReferencedTextBlocks is already set");
+        }
+
+        this.indirectlyReferencedTextBlocks = Collections
+                .unmodifiableSet(indirectlyReferencedTextBlocks);
+    }
+
+    public abstract Scope getParent();
+
+    public abstract TIdentifier getNameDeclaration();
+
 }

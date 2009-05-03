@@ -28,8 +28,8 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.sablecc.sablecc.exception.InternalException;
-import org.sablecc.sablecc.util.Pair;
+import org.sablecc.exception.InternalException;
+import org.sablecc.util.Pair;
 
 /**
  * An alphabet is a set of symbols. Two symbols of an alphabet may not contain

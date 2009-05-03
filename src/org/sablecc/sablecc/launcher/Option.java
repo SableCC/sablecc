@@ -22,7 +22,7 @@ import java.io.StringReader;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.launcher.syntax3.lexer.Lexer;
 import org.sablecc.sablecc.launcher.syntax3.node.ALongOption;
 import org.sablecc.sablecc.launcher.syntax3.node.ALongOptionArgument;
@@ -52,7 +52,10 @@ enum Option {
     PACKAGE("p", "package", "packagename", "set destination package"),
 
     /** Do not generate files. */
-    NO_FILES("n", "no-files", null, "do not generate files"),
+    GENERATE("g", "generate-code", null, "generate code (default)"),
+
+    /** Do not generate files. */
+    NO_CODE("n", "no-code", null, "do not generate code"),
 
     /** Ignore unused constructs. */
     LENIENT("l", "lenient", null, "ignore unused constructs"),

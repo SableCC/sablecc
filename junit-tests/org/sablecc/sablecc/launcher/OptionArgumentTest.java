@@ -19,7 +19,7 @@ package org.sablecc.sablecc.launcher;
 
 import junit.framework.TestCase;
 
-import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.exception.InternalException;
 
 public class OptionArgumentTest
         extends TestCase {

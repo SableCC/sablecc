@@ -1,0 +1,813 @@
+/* This file is part of SableCC ( http://sablecc.org ).
+ *
+ * See the NOTICE file distributed with this work for copyright information.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+Package org.sablecc.sablecc.intermediate.syntax3;
+
+Helpers
+  any = [0..0xffff];
+  string_char = [any - [[''' + '\'] + [10 + 13]]];
+  digit = ['0'..'9'];
+  sign = ['+' + '-'];
+
+Tokens
+
+  accept_keyword = 'accept';
+  alphabet_keyword = 'alphabet';
+  alternative_keyword = 'alternative';
+  argument_name_keyword = 'argument_name';
+  at_least_type_keyword = 'at_least_type';
+  at_least_value_keyword = 'at_least_value';
+  back_count_keyword = 'back_count';
+  choice_keyword = 'choice';
+  condition_keyword = 'condition';
+  context_name_keyword = 'context_name';
+  depth_keyword = 'depth';
+  element_keyword = 'element';
+  end_expected_keyword = 'end_expected';
+  expected_selection_keyword = 'expected_selection';
+  false_keyword = 'false';
+  from_keyword = 'from';
+  group_keyword = 'group';
+  groups_keyword = 'groups';
+  ignore_keyword = 'ignore';
+  interval_keyword = 'interval';
+  interval_type_keyword = 'interval_type';
+  interval_value_keyword = 'interval_value';
+  investigator_name_keyword = 'investigator_name';
+  investigators_keyword = 'investigators';
+  language_keyword = 'language';
+  lexer_keyword = 'lexer';
+  lexer_automaton_keyword = 'lexer_automaton';
+  lexer_state_keyword = 'lexer_state';
+  lexer_transition_keyword = 'lexer_transition';
+  list_reference_value_keyword = 'list_reference_value';
+  look_depth_keyword = 'look_depth';
+  look_symbol_keyword = 'look_symbol';
+  marker_keyword = 'marker';
+  name_keyword = 'name';
+  new_value_keyword = 'new_value';
+  null_value_keyword = 'null_value';
+  number_type_keyword = 'number_type';
+  number_value_keyword = 'number_value';
+  one_keyword = 'one';
+  parse_keyword = 'parse';
+  parse_alternative_keyword = 'parse_alternative';
+  parse_alternative_name_keyword = 'parse_alternative_name';
+  parse_element_keyword = 'parse_element';
+  parse_element_name_keyword = 'parse_element_name';
+  parse_production_keyword = 'parse_production';
+  parse_production_name_keyword = 'parse_production_name';
+  parser_keyword = 'parser';
+  parser_investigator_keyword = 'parser_investigator';
+  parser_selector_keyword = 'parser_selector';
+  parser_state_keyword = 'parser_state';
+  production_keyword = 'production';
+  production_transition_keyword = 'production_transition';
+  public_keyword = 'public';
+  reduce_action_keyword = 'reduce_action';
+  reference_value_keyword = 'reference_value';
+  reject_keyword = 'reject';
+  retained_element_keyword = 'retained_element';
+  retained_element_name_keyword = 'retained_element_name';
+  shift_action_keyword = 'shift_action';
+  start_name_keyword = 'start_name';
+  selection_action_keyword = 'selection_action';
+  selector_name_keyword = 'selector_name';
+  separator_keyword = 'separator';
+  start_keyword = 'start';
+  symbol_keyword = 'symbol';
+  symbol_name_keyword = 'symbol_name';
+  target_name_keyword = 'target_name';
+  to_keyword = 'to';
+  token_keyword = 'token';
+  token_action_keyword = 'token_action';
+  token_name_keyword = 'token_name';
+  token_transition_keyword = 'token_transition';
+  tokens_keyword = 'tokens';
+  transformation_keyword = 'transformation';
+  tree_action_keyword = 'tree_action';
+  true_keyword = 'true';
+  zero_or_one_keyword = 'zero_or_one';
+
+  assign = '=';
+  semicolon = ';';
+  l_brace = '{';
+  r_brace = '}';
+
+  string = ''' (string_char | '\' ''' | '\\')* ''';
+
+  number = sign? digit+;
+
+  blank = (' ' | 13 | 10)+;
+
+  invalid_character = [0..0xffff];
+
+Ignored Tokens
+  blank;
+
+Productions
+
+  intermediate_representation
+    =
+      language lexer parser
+    ;
+
+  language
+    =
+      language_keyword assign [name]:string semicolon
+        {-> New language(name) }
+    ;
+
+  lexer
+    =
+      lexer_keyword l_brace [groups]:group* [tokens]:token* [token_selectors]:token_selector* [contexts]:context* [token_investigators]:token_investigator* r_brace
+        {-> New lexer([groups], [tokens], [token_selectors], [contexts], [token_investigators]) }
+    ;
+
+  group
+    =
+      group_keyword assign [name]:string semicolon
+        {-> New group(name) }
+    ;
+
+  token
+    =
+      {normal} token_keyword l_brace name public groups investigators r_brace
+        {-> New token.normal(name.string, public.boolean, [groups.strings], [investigators.strings]) }
+    |
+      {selection} token_keyword l_brace name public selector_name r_brace
+        {-> New token.selection(name.string, public.boolean, selector_name.string) }
+    ;
+
+  name
+        {-> string }
+    =
+      name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  public
+        {-> boolean }
+    =
+      public_keyword assign boolean semicolon
+        {-> boolean }
+    ;
+
+  selector_name
+        {-> string }
+    =
+      selector_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  groups
+        {-> [strings]:string* }
+    =
+      groups_keyword l_brace [string_parts]:string_part* r_brace
+        {-> [string_parts.string] }
+    ;
+
+  investigators
+        {-> [strings]:string* }
+    =
+      investigators_keyword l_brace [string_parts]:string_part* r_brace
+        {-> [string_parts.string] }
+    ;
+
+  string_part
+        {-> string }
+    =
+      string semicolon
+        {-> string }
+    ;
+
+  boolean =
+      {true} true_keyword
+        {-> New boolean.true() }
+    |
+      {false} false_keyword
+        {-> New boolean.false() }
+    ;
+
+  token_selector
+    =
+      name argument_name tokens
+        {-> New token_selector(name.string, argument_name.string, [tokens.strings]) }
+    ;
+
+  argument_name
+        {-> string }
+    =
+      argument_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  tokens
+        {-> [strings]:string* }
+    =
+      tokens_keyword l_brace [string_parts]:string_part* r_brace
+        {-> [string_parts.string] }
+    ;
+
+  token_investigator
+    =
+      name argument_name
+        {-> New token_investigator(name.string, argument_name.string) }
+    ;
+
+  context
+    =
+      name? alphabet lexer_automaton [lexer_actions]:lexer_action*
+        {-> New context(name.string, alphabet, lexer_automaton, [lexer_actions]) }
+    ;
+
+  alphabet
+    =
+      alphabet_keyword l_brace [symbols]:symbol* [intervals]:interval* r_brace
+        {-> New alphabet([symbols], [intervals]) }
+    ;
+
+  symbol
+    =
+      symbol_keyword l_brace name [intervals]:interval+ r_brace
+        {-> New symbol(name.string, [intervals]) }
+    ;
+
+  interval
+    =
+      interval_keyword l_brace from? to? r_brace
+        {-> New interval(from.number, to.number) }
+    ;
+
+  from
+        {-> number }
+    =
+      from_keyword assign number semicolon
+        {-> number }
+    ;
+
+  to
+        {-> number }
+    =
+      to_keyword assign number semicolon
+        {-> number }
+    ;
+
+  lexer_automaton
+    =
+      lexer_automaton_keyword l_brace [lexer_states]:lexer_state+ [markers]:marker* r_brace
+        {-> New lexer_automaton([lexer_states], [markers.string]) }
+    ;
+
+  marker
+        {-> string }
+    =
+      marker_keyword assign string semicolon
+        {-> string }
+    ;
+
+  lexer_state
+    =
+      {progress} lexer_state_keyword l_brace name marker? [lexer_transitions]:lexer_transition* [expected_intervals]:interval* end_expected r_brace
+        {-> New lexer_state.progress(name.string, marker.string, [lexer_transitions], [expected_intervals], end_expected.boolean) }
+    |
+      {token} lexer_state_keyword l_brace name back_count marker? token_name r_brace
+        {-> New lexer_state.token(name.string, back_count.number, marker.string, token_name.string) }
+    ;
+
+  end_expected
+        {-> boolean }
+    =
+      end_expected_keyword assign boolean semicolon
+        {-> boolean }
+    ;
+  back_count
+        {-> number }
+    =
+      back_count_keyword assign number semicolon
+        {-> number }
+    ;
+
+  token_name
+        {-> string }
+    =
+      token_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  lexer_transition
+    =
+      lexer_transition_keyword l_brace symbol_name? target_name r_brace
+        {-> New lexer_transition(symbol_name.string, target_name.string) }
+    ;
+
+  symbol_name
+        {-> string }
+    =
+      symbol_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  target_name
+        {-> string }
+    =
+      target_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  lexer_action
+    =
+      {accept} accept_keyword assign [token]:string semicolon
+        {-> New lexer_action.accept(token) }
+    |
+      {ignore} ignore_keyword assign [token]:string semicolon
+        {-> New lexer_action.ignore(token) }
+    |
+      {reject} reject_keyword assign [token]:string semicolon
+        {-> New lexer_action.reject(token) }
+    |
+      {parse} parse_keyword l_brace token_name start_name r_brace
+        {-> New lexer_action.parse(token_name.string, start_name.string) }
+    ;
+
+  start_name
+        {-> string }
+    =
+      start_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  parser
+    =
+      parser_keyword l_brace [productions]:production* [parse_productions]:parse_production* [starts]:start* [parser_investigators]:parser_investigator* [parser_selectors]:parser_selector* r_brace
+        {-> New parser([productions], [parse_productions], [starts], [parser_investigators], [parser_selectors]) }
+    ;
+
+  production
+    =
+      production_keyword l_brace name [alternatives]:alternative+ r_brace
+        {-> New production(name.string, [alternatives]) }
+    ;
+
+  alternative
+    =
+      alternative_keyword l_brace name public [elements]:element* r_brace
+        {-> New alternative(name.string, public.boolean, [elements]) }
+    ;
+
+  element
+    =
+      element_keyword l_brace name public element_type r_brace
+        {-> New element(name.string, public.boolean, element_type) }
+    ;
+
+  element_type
+    =
+      {single} single_type
+    |
+      {list} list_type
+    ;
+
+  single_type
+    =
+      {one} one_keyword l_brace [unit]:name public r_brace
+        {-> New single_type.one(unit.string, public.boolean) }
+    |
+      {zero_or_one} zero_or_one_keyword l_brace [unit]:name public r_brace
+        {-> New single_type.zero_or_one(unit.string, public.boolean) }
+    ;
+
+  list_type
+    =
+      {number} number_type_keyword l_brace [unit]:name [public_unit]:public number semicolon r_brace
+        {-> New list_type.number(unit.string, public_unit.boolean, number) }
+    |
+      {interval} interval_type_keyword l_brace [unit]:name [public_unit]:public from to r_brace
+        {-> New list_type.interval(unit.string, public_unit.boolean, from.number, to.number) }
+    |
+      {at_least} at_least_type_keyword l_brace [unit]:name [public_unit]:public number semicolon r_brace
+        {-> New list_type.at_least(unit.string, public_unit.boolean, number)}
+    |
+      {separated_number} number_type_keyword l_brace [unit]:name [public_unit]:public separator [public_separator]:public number semicolon r_brace
+        {-> New list_type.separated_number(unit.string, public_unit.boolean, separator.string, public_separator.boolean, number) }
+    |
+      {separated_interval} interval_type_keyword l_brace [unit]:name [public_unit]:public separator [public_separator]:public from to r_brace
+        {-> New list_type.separated_interval(unit.string, public_unit.boolean, separator.string, public_separator.boolean, from.number, to.number) }
+    |
+      {separated_at_least} at_least_type_keyword l_brace [unit]:name [public_unit]:public separator [public_separator]:public number semicolon r_brace
+        {-> New list_type.separated_number(unit.string, public_unit.boolean, separator.string, public_separator.boolean, number) }
+    ;
+
+  separator
+        {-> string }
+    =
+      separator_keyword assign string semicolon
+        {-> string }
+    ;
+
+  parse_production
+    =
+      parse_production_keyword l_brace name [parse_alternatives]:parse_alternative+ [retained_elements]:retained_element* r_brace
+        {-> New parse_production(name.string, [parse_alternatives], [retained_elements]) }
+    ;
+
+  retained_element
+    =
+      retained_element_keyword l_brace name element_type r_brace
+        {-> New retained_element(name.string, element_type) }
+    ;
+
+  parse_alternative
+    =
+      parse_alternative_keyword l_brace name [parse_elements]:parse_element* [transformations]:transformation* r_brace
+        {-> New parse_alternative(name.string, [parse_elements], [transformations]) }
+    ;
+
+  parse_element
+    =
+      parse_element_keyword assign [name]:string semicolon
+        {-> New parse_element(name) }
+    ;
+
+  transformation
+    =
+      transformation_keyword l_brace retained_element_name value r_brace
+        {-> New transformation(retained_element_name.string, value) }
+    ;
+
+  retained_element_name
+        {-> string }
+    =
+      retained_element_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  parse_element_name
+        {-> string }
+    =
+      parse_element_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  value
+    =
+      {null} null_value_keyword semicolon
+        {-> New value.null() }
+    |
+      {reference} reference_value_keyword l_brace parse_element_name retained_element_name r_brace
+        {-> New value.reference(parse_element_name.string, retained_element_name.string) }
+    |
+      {new} new_value_keyword l_brace [alternative]:name [values]:value* r_brace
+        {-> New value.new(alternative.string, [values]) }
+    |
+      {number} number_value_keyword l_brace [unit]:name [public_unit]:public number semicolon [list_values]:list_value* r_brace
+        {-> New value.number(unit.string, public_unit.boolean, number, [list_values]) }
+    |
+      {interval} interval_value_keyword l_brace [unit]:name [public_unit]:public from to [list_values]:list_value* r_brace
+        {-> New value.interval(unit.string, public_unit.boolean, from.number, to.number, [list_values]) }
+    |
+      {at_least} at_least_value_keyword l_brace [unit]:name [public_unit]:public number semicolon [list_values]:list_value* r_brace
+        {-> New value.at_least(unit.string, public_unit.boolean, number, [list_values]) }
+    |
+      {separated_number} number_value_keyword l_brace [unit]:name [public_unit]:public separator [public_separator]:public number semicolon [list_values]:list_value* r_brace
+        {-> New value.separated_number(unit.string, public_unit.boolean, separator.string, public_separator.boolean, number, [list_values]) }
+    |
+      {separated_interval} interval_value_keyword l_brace [unit]:name [public_unit]:public separator [public_separator]:public from to [list_values]:list_value* r_brace
+        {-> New value.separated_interval(unit.string, public_unit.boolean, separator.string, public_separator.boolean, from.number, to.number, [list_values]) }
+    |
+      {separated_at_least} at_least_value_keyword l_brace [unit]:name [public_unit]:public separator [public_separator]:public number semicolon [list_values]:list_value* r_brace
+        {-> New value.separated_at_least(unit.string, public_unit.boolean, separator.string, public_separator.boolean, number, [list_values]) }
+    ;
+
+  list_value
+    =
+      {reference} reference_value_keyword l_brace parse_element_name retained_element_name r_brace
+        {-> New list_value.reference(parse_element_name.string, retained_element_name.string) }
+    |
+      {list_reference} list_reference_value_keyword l_brace parse_element_name retained_element_name r_brace
+        {-> New list_value.list_reference(parse_element_name.string, retained_element_name.string) }
+    |
+      {new} new_value_keyword l_brace [alternative]:name [values]:value* r_brace
+        {-> New list_value.new(alternative.string, [values]) }
+    ;
+
+  start
+    =
+      start_keyword l_brace parser_automaton r_brace
+        {-> New start(parser_automaton) }
+    ;
+
+  parser_automaton
+    =
+      [parser_states]:parser_state+
+    ;
+
+  parser_state
+    =
+      parser_state_keyword l_brace name investigator_name? decision [parser_transitions]:parser_transition* r_brace
+        {-> New parser_state(name.string, investigator_name.string, decision, [parser_transitions]) }
+    ;
+
+  investigator_name
+        {-> string }
+    =
+      investigator_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  parser_investigator
+    =
+      parser_investigator_keyword l_brace name [elements]:element* r_brace
+        {-> New parser_investigator(name.string, [elements]) }
+    ;
+
+  decision
+    =
+      {no_look} action
+    |
+      {look} [depths]:depth+
+    ;
+
+  depth
+    =
+      depth_keyword l_brace look_depth context_name? [choices]:choice* r_brace
+        {-> New depth(look_depth.number, context_name.string, [choices]) }
+    ;
+
+  look_depth
+        {-> number }
+    =
+      look_depth_keyword assign number semicolon
+        {-> number }
+    ;
+
+  context_name
+        {-> string }
+    =
+      context_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  choice
+    =
+      choice_keyword l_brace [conditions]:condition+ action r_brace
+        {-> New choice([conditions], action) }
+    ;
+
+  condition
+    =
+      condition_keyword l_brace look_depth [look_symbols]:look_symbol+ r_brace
+        {-> New condition(look_depth.number, [look_symbols]) }
+    ;
+
+  look_symbol
+    =
+      look_symbol_keyword l_brace symbol_name? r_brace
+        {-> New look_symbol(symbol_name.string) }
+    ;
+
+  action
+    =
+      {shift} shift_action_keyword assign [context]:string semicolon
+        {-> New action.shift(context) }
+    |
+      {reduce} reduce_action_keyword assign [parse_alternative]:string semicolon
+        {-> New action.reduce(parse_alternative) }
+    |
+      {selection} selection_action_keyword l_brace selector_name [expected_selections]:expected_selection+ r_brace
+        {-> New action.selection(selector_name.string, [expected_selections]) }
+    |
+      {tree} tree_action_keyword assign [parse_alternative]:string semicolon
+        {-> New action.tree(parse_alternative) }
+    |
+      {token} token_action_keyword l_brace name parse_alternative_name r_brace
+        {-> New action.token(name.string, parse_alternative_name.string) }
+    ;
+
+  parse_alternative_name
+        {-> string }
+    =
+      parse_alternative_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  expected_selection
+    =
+      expected_selection_keyword l_brace parse_production_name parse_alternative_name r_brace
+        {-> New expected_selection(parse_production_name.string, parse_alternative_name.string) }
+    ;
+
+  parse_production_name
+        {-> string }
+    =
+      parse_production_name_keyword assign string semicolon
+        {-> string }
+    ;
+
+  parser_selector
+    =
+      parser_selector_keyword l_brace name [elements]:element* [parse_productions]:parse_production_name+ r_brace
+        {-> New parser_selector(name.string, [elements], [parse_productions.string]) }
+    ;
+
+  parser_transition
+    =
+      {token} token_transition_keyword l_brace token_name target_name r_brace
+        {-> New parser_transition.token(token_name.string, target_name.string) }
+    |
+      {production} production_transition_keyword l_brace parse_production_name target_name r_brace
+        {-> New parser_transition.production(parse_production_name.string, target_name.string) }
+    ;
+
+Abstract Syntax Tree
+
+  intermediate_representation =
+    language lexer parser;
+
+  language =
+    [name]:string;
+
+  lexer =
+    [groups]:group* [tokens]:token* [token_selectors]:token_selector*
+    [contexts]:context* [token_investigators]:token_investigator*;
+
+  group =
+    [name]:string;
+
+  token =
+    {normal} [name]:string [public]:boolean [groups]:string*
+      [investigators]:string* |
+    {selection} [name]:string [public]:boolean [selector]:string;
+
+  token_selector =
+    [name]:string [argument]:string [tokens]:string+;
+
+  token_investigator =
+    [name]:string [argument]:string;
+
+  context =
+    [name]:string? alphabet lexer_automaton [lexer_actions]:lexer_action*;
+
+  alphabet =
+    [symbols]:symbol* [intervals]:interval*;
+
+  symbol =
+    [name]:string [intervals]:interval+;
+
+  interval =
+    [from]:number? [to]:number?;
+
+  lexer_automaton =
+    [lexer_states]:lexer_state+ [markers]:string*;
+
+  lexer_state =
+    {progress} [name]:string [marker]:string?
+      [lexer_transitions]:lexer_transition* [expected_intervals]:interval*
+      [end_expected]:boolean |
+    {token} [name]:string [back_count]:number [marker]:string? [token]:string;
+
+  lexer_transition =
+    [symbol]:string? [target]:string;
+
+  lexer_action =
+    {accept} [token]:string |
+    {ignore} [token]:string |
+    {reject} [token]:string |
+    {parse} [token]:string [start]:string;
+
+  boolean =
+    {true} |
+    {false};
+
+  parser =
+    [productions]:production* [parse_productions]:parse_production*
+    [starts]:start* [parser_investigators]:parser_investigator*
+    [parser_selectors]:parser_selector*;
+
+  production =
+    [name]:string [alternatives]:alternative+;
+
+  alternative =
+    [name]:string [public]:boolean [elements]:element*;
+
+  element =
+    [name]:string [public]:boolean element_type;
+
+  element_type =
+    {single} single_type |
+    {list} list_type;
+
+  single_type =
+    {one} [unit]:string [public]:boolean |
+    {zero_or_one} [unit]:string [public]:boolean;
+
+  list_type =
+    {number} [unit]:string [public_unit]:boolean number |
+    {interval} [unit]:string [public_unit]:boolean [from]:number [to]:number |
+    {at_least} [unit]:string [public_unit]:boolean number |
+    {separated_number} [unit]:string [public_unit]:boolean [separator]:string
+      [public_separator]:boolean number |
+    {separated_interval} [unit]:string [public_unit]:boolean [separator]:string
+      [public_separator]:boolean [from]:number [to]:number |
+    {separated_at_least} [unit]:string [public_unit]:boolean [separator]:string
+      [public_separator]:boolean number;
+
+  parse_production =
+    [name]:string [parse_alternatives]:parse_alternative+
+    [retained_elements]:retained_element*;
+
+  retained_element =
+    [name]:string element_type;
+
+  parse_alternative =
+    [name]:string [parse_elements]:parse_element*
+    [transformations]:transformation*;
+
+  parse_element =
+    [name]:string;
+
+  transformation =
+    [retained_element]:string value;
+
+  value =
+    {null} |
+    {reference} [parse_element]:string [retained_element]:string |
+    {new} [alternative]:string [values]:value* |
+    {number} [unit]:string [public_unit]:boolean number
+      [list_values]:list_value* |
+    {interval} [unit]:string [public_unit]:boolean [from]:number [to]:number
+      [list_values]:list_value* |
+    {at_least} [unit]:string [public_unit]:boolean number
+      [list_values]:list_value* |
+    {separated_number} [unit]:string [public_unit]:boolean [separator]:string
+      [public_separator]:boolean number [list_values]:list_value* |
+    {separated_interval} [unit]:string [public_unit]:boolean [separator]:string
+      [public_separator]:boolean [from]:number [to]:number
+      [list_values]:list_value* |
+    {separated_at_least} [unit]:string [public_unit]:boolean [separator]:string
+      [public_separator]:boolean number [list_values]:list_value*;
+
+  list_value =
+    {reference} [parse_element]:string [retained_element]:string |
+    {list_reference} [parse_element]:string [retained_element]:string |
+    {new} [alternative]:string [values]:value*;
+
+  start =
+    parser_automaton;
+
+  parser_automaton =
+    [parser_states]:parser_state+;
+
+  parser_state =
+    [name]:string [investigator]:string? decision
+    [parser_transitions]:parser_transition*;
+
+  parser_investigator =
+    [name]:string [elements]:element*;
+
+  decision =
+    {no_look} action |
+    {look} [depths]:depth+;
+
+  depth =
+    [look_depth]:number [context]:string? [choices]:choice*;
+
+  choice =
+    [conditions]:condition+ action;
+
+  condition =
+    [look_depth]:number [look_symbols]:look_symbol+;
+
+  look_symbol =
+    [symbol]:string?;
+
+  action =
+    {shift} [context]:string |
+    {reduce} [parse_alternative]:string |
+    {selection} [selector]:string [expected_selections]:expected_selection+ |
+    {tree} [parse_alternative]:string |
+    {token} [name]:string [parse_alternative]:string;
+
+  expected_selection =
+    [parse_production]:string [parse_alternative]:string;
+
+  parser_selector =
+    [name]:string [elements]:element* [parse_productions]:string+;
+
+  parser_transition =
+    {token} [token]:string [target]:string |
+    {production} [parse_production]:string [target]:string;

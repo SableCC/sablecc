@@ -19,8 +19,8 @@ package org.sablecc.sablecc.launcher;
 
 import java.util.List;
 
+import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.exception.InternalException;
 import org.sablecc.sablecc.launcher.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.sablecc.launcher.syntax3.node.ALongOption;
 import org.sablecc.sablecc.launcher.syntax3.node.AOperand;
@@ -87,7 +87,7 @@ class ArgumentExtractor
         Option option = Option.getLongOption(longName);
 
         if (option == null) {
-            throw CompilerException.invalid_long_option(longName);
+            throw CompilerException.invalidLongOption(longName);
         }
 
         // expects an operand?
@@ -119,7 +119,7 @@ class ArgumentExtractor
             if (node.getOperand() != null) {
                 AOperand operand = (AOperand) node.getOperand();
 
-                throw CompilerException.spurious_long_option_operand(longName,
+                throw CompilerException.spuriousLongOptionOperand(longName,
                         operand.getOperandText().getText());
             }
 
@@ -136,7 +136,7 @@ class ArgumentExtractor
             AShortOption node) {
 
         if (this.incompleteOption != null) {
-            throw CompilerException.missing_short_option_operand(
+            throw CompilerException.missingShortOptionOperand(
                     this.incompleteOption.getShortName(), this.incompleteOption
                             .getOperandName());
         }
@@ -147,7 +147,7 @@ class ArgumentExtractor
         Option option = Option.getShortOption(shortName);
 
         if (option == null) {
-            throw CompilerException.invalid_short_option(shortName);
+            throw CompilerException.invalidShortOption(shortName);
         }
 
         // expects an operand?
@@ -179,8 +179,8 @@ class ArgumentExtractor
             if (node.getOperand() != null) {
                 AOperand operand = (AOperand) node.getOperand();
 
-                throw CompilerException.spurious_short_option_operand(
-                        shortName, operand.getOperandText().getText());
+                throw CompilerException.spuriousShortOptionOperand(shortName,
+                        operand.getOperandText().getText());
             }
 
             this.optionArguments.add(new OptionArgument(option, null));

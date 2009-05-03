@@ -25,9 +25,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.alphabet.RichSymbol;
-import org.sablecc.sablecc.exception.InternalException;
-import org.sablecc.sablecc.util.WorkSet;
+import org.sablecc.util.WorkSet;
 
 class DeterministicOperation {
 

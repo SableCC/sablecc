@@ -17,28 +17,24 @@
 
 package org.sablecc.objectmacro.structures;
 
+import java.util.Collections;
 import java.util.Set;
 
-import org.sablecc.objectmacro.exception.InternalException;
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.util.Utils;
 
 public class ExpandSignature {
 
     private final Set<Macro> macroSet;
 
-    // for code generation
-
-    private final int id;
-
     ExpandSignature(
-            Set<Macro> macroSet,
-            GlobalData globalData) {
+            Set<Macro> macroSet) {
 
         if (macroSet == null) {
             throw new InternalException("macroSet may not be null");
         }
 
-        this.macroSet = macroSet;
-        this.id = globalData.getNextSignatureId();
+        this.macroSet = Collections.unmodifiableSet(macroSet);
     }
 
     public Set<Macro> getMacroSet() {
@@ -46,8 +42,21 @@ public class ExpandSignature {
         return this.macroSet;
     }
 
-    public String getName() {
+    public String toCamelCase() {
 
-        return "expand_" + this.id;
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (Macro macro : this.macroSet) {
+            if (first) {
+                first = false;
+            }
+            else {
+                sb.append('_');
+            }
+
+            sb.append(Utils.toCamelCase(macro.getNameDeclaration()));
+        }
+
+        return sb.toString();
     }
 }

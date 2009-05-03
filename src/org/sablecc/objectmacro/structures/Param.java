@@ -17,46 +17,62 @@
 
 package org.sablecc.objectmacro.structures;
 
-import org.sablecc.objectmacro.exception.InternalException;
-import org.sablecc.objectmacro.exception.SemanticException;
-import org.sablecc.objectmacro.syntax3.node.AMacro;
+import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.syntax3.node.AParam;
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
+import org.sablecc.objectmacro.util.Utils;
 
 public class Param {
 
-    private final AParam definition;
+    private final AParam declaration;
 
-    private final Macro macro;
+    private final Scope scope;
+
+    private boolean isUsed;
 
     Param(
-            AParam definition,
-            GlobalData globalData)
-            throws SemanticException {
+            AParam declaration,
+            Scope scope) {
 
-        if (definition == null) {
-            throw new InternalException("definition may not be null");
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
         }
 
-        if (globalData == null) {
-            throw new InternalException("globalData may not be null");
+        if (scope == null) {
+            throw new InternalException("scope may not be null");
         }
 
-        this.definition = definition;
-        this.macro = globalData.getMacro((AMacro) definition.parent());
+        this.declaration = declaration;
+        this.scope = scope;
     }
 
-    public AParam getDefinition() {
+    public TIdentifier getNameDeclaration() {
 
-        return this.definition;
-    }
-
-    public Macro getMacro() {
-
-        return this.macro;
+        return this.declaration.getName();
     }
 
     public String getName() {
 
-        return this.definition.getName().getText();
+        return this.declaration.getName().getText();
+    }
+
+    public String getCamelCaseName() {
+
+        return Utils.toCamelCase(this.declaration.getName());
+    }
+
+    public Scope getScope() {
+
+        return this.scope;
+    }
+
+    public boolean isUsed() {
+
+        return this.isUsed;
+    }
+
+    void setUsed() {
+
+        this.isUsed = true;
     }
 }

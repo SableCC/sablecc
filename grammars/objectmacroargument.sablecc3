@@ -105,26 +105,16 @@ Productions
 
 Abstract Syntax Tree
 
-  argument
-    =
-      {short_options} [short_options]:short_option+
-    |
-      {long_option} long_option
-    |
-      {plain} text
-    ;
+  argument =
+    {short_options} [short_options]:short_option+ |
+    {long_option} long_option |
+    {plain} text;
 
-  short_option
-    =
-      short_name operand?
-    ;
+  short_option =
+    short_name operand?;
 
-  long_option
-    =
-      long_name operand?
-    ;
+  long_option =
+    long_name operand?;
 
-  operand
-    =
-      operand_text?
-    ;
+  operand =
+    operand_text?;

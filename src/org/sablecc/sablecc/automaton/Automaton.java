@@ -21,22 +21,25 @@ import static org.sablecc.sablecc.util.UsefulStaticImports.LINE_SEPARATOR;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.alphabet.Alphabet;
 import org.sablecc.sablecc.alphabet.AlphabetMergeResult;
 import org.sablecc.sablecc.alphabet.Bound;
 import org.sablecc.sablecc.alphabet.Interval;
 import org.sablecc.sablecc.alphabet.RichSymbol;
 import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.exception.InternalException;
-import org.sablecc.sablecc.util.WorkSet;
+import org.sablecc.util.ComponentFinder;
+import org.sablecc.util.Progeny;
+import org.sablecc.util.WorkSet;
 
 /**
  * An instance of this class represents a finite automaton.
@@ -63,6 +66,25 @@ public final class Automaton {
             }
 
             return richSymbol1.compareTo(richSymbol2);
+        }
+    };
+
+    private static final Progeny<State> lookaheadProgeny = new Progeny<State>() {
+
+        public Set<State> getChildren(
+                State sourceState) {
+
+            Set<State> children = new LinkedHashSet<State>();
+
+            for (RichSymbol richSymbol : sourceState.getTransitions().keySet()) {
+                if (!richSymbol.isLookahead()) {
+                    continue;
+                }
+                State targetState = sourceState.getSingleTarget(richSymbol);
+                children.add(targetState);
+            }
+
+            return Collections.unmodifiableSet(children);
         }
     };
 
@@ -407,6 +429,21 @@ public final class Automaton {
 
         for (Acceptation acceptation : this.acceptations) {
             if (acceptation != Acceptation.ACCEPT) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasEndTransition() {
+
+        if (!this.isStable) {
+            throw new InternalException("this automaton is not yet stable");
+        }
+
+        for (State state : this.states) {
+            if (state.getTransitions().containsKey(RichSymbol.END)) {
                 return true;
             }
         }
@@ -1193,7 +1230,7 @@ public final class Automaton {
         return Automaton.richSymbolComparator;
     }
 
-    void identifyCyclicStates() {
+    void identifyCyclicStatesOnLookaheadTransitions() {
 
         if (!this.isStable) {
             throw new InternalException("this automaton is not yet stable");
@@ -1203,88 +1240,13 @@ public final class Automaton {
             throw new InternalException("invalid operation");
         }
 
-        // based on Tarjan's strongly connected components algorithm
+        ComponentFinder<State> componentFinder = new ComponentFinder<State>(
+                getStates(), lookaheadProgeny);
 
-        new Runnable() {
-
-            SortedSet<State> unprocessedStates = new TreeSet<State>();
-
-            Integer time = 0;
-
-            LinkedList<State> stack = new LinkedList<State>();
-
-            public void run() {
-
-                this.unprocessedStates.addAll(getStates());
-                while (this.unprocessedStates.size() > 0) {
-                    State state = this.unprocessedStates.first();
-                    visit(state);
-                }
-            }
-
-            void visit(
-                    State sourceState) {
-
-                this.unprocessedStates.remove(sourceState);
-
-                sourceState.setDiscoveryTime(this.time);
-                sourceState.setLowestReachableDiscoveryTime(this.time);
-                this.time++;
-
-                this.stack.addFirst(sourceState);
-                sourceState.setOnStack(true);
-
-                for (RichSymbol richSymbol : sourceState.getTransitions()
-                        .keySet()) {
-                    if (!richSymbol.isLookahead()) {
-                        continue;
-                    }
-                    State targetState = sourceState.getSingleTarget(richSymbol);
-                    if (targetState.getDiscoveryTime() == null) {
-                        visit(targetState);
-                        sourceState.setLowestReachableDiscoveryTime(Math.min(
-                                sourceState.getLowestReachableDiscoveryTime(),
-                                targetState.getLowestReachableDiscoveryTime()));
-                    }
-                    else if (targetState.isOnStack()) {
-                        sourceState.setLowestReachableDiscoveryTime(Math.min(
-                                sourceState.getLowestReachableDiscoveryTime(),
-                                targetState.getDiscoveryTime()));
-                    }
-                }
-
-                if (sourceState.getLowestReachableDiscoveryTime() == sourceState
-                        .getDiscoveryTime()) {
-                    if (this.stack.getFirst().equals(sourceState)) {
-                        this.stack.removeFirst();
-                        sourceState.setOnStack(false);
-
-                        sourceState.setIsCyclic(false);
-                        for (RichSymbol richSymbol : sourceState
-                                .getTransitions().keySet()) {
-                            if (!richSymbol.isLookahead()) {
-                                continue;
-                            }
-                            State targetState = sourceState
-                                    .getSingleTarget(richSymbol);
-                            if (targetState.equals(sourceState)) {
-                                sourceState.setIsCyclic(true);
-                                break;
-                            }
-                        }
-                    }
-                    else {
-                        State state;
-                        do {
-                            state = this.stack.removeFirst();
-                            state.setOnStack(false);
-
-                            state.setIsCyclic(true);
-                        }
-                        while (!sourceState.equals(state));
-                    }
-                }
-            }
-        }.run();
+        for (State state : getStates()) {
+            State representative = componentFinder.getRepresentative(state);
+            state.setIsCyclic(componentFinder.getReach(representative)
+                    .contains(state));
+        }
     }
 }

@@ -19,9 +19,8 @@ package org.sablecc.objectmacro.launcher;
 
 import java.util.List;
 
-import org.sablecc.objectmacro.exception.InternalException;
-import org.sablecc.objectmacro.exception.InvalidArgumentException;
-import org.sablecc.objectmacro.exception.InvalidArgumentRuntimeException;
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.launcher.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.launcher.syntax3.node.ALongOption;
 import org.sablecc.objectmacro.launcher.syntax3.node.AOperand;
@@ -80,8 +79,7 @@ class ArgumentExtractor
      */
     @Override
     public void caseALongOption(
-            ALongOption node)
-            throws InvalidArgumentRuntimeException {
+            ALongOption node) {
 
         String longName = node.getLongName().getText();
 
@@ -89,9 +87,7 @@ class ArgumentExtractor
         Option option = Option.getLongOption(longName);
 
         if (option == null) {
-            throw new InvalidArgumentRuntimeException(
-                    new InvalidArgumentException("invalid option: --"
-                            + longName));
+            throw CompilerException.invalidLongOption(longName);
         }
 
         // expects an operand?
@@ -121,9 +117,10 @@ class ArgumentExtractor
             // no
 
             if (node.getOperand() != null) {
-                throw new InvalidArgumentRuntimeException(
-                        new InvalidArgumentException("option --" + longName
-                                + " does not expect an operand"));
+                AOperand operand = (AOperand) node.getOperand();
+
+                throw CompilerException.spuriousLongOptionOperand(longName,
+                        operand.getOperandText().getText());
             }
 
             this.optionArguments.add(new OptionArgument(option, null));
@@ -139,12 +136,9 @@ class ArgumentExtractor
             AShortOption node) {
 
         if (this.incompleteOption != null) {
-            throw new InvalidArgumentRuntimeException(
-                    new InvalidArgumentException("option -"
-                            + this.incompleteOption.getShortName()
-                            + " is missing a "
-                            + this.incompleteOption.getOperandName()
-                            + " operand"));
+            throw CompilerException.missingShortOptionOperand(
+                    this.incompleteOption.getShortName(), this.incompleteOption
+                            .getOperandName());
         }
 
         String shortName = node.getShortName().getText();
@@ -153,9 +147,7 @@ class ArgumentExtractor
         Option option = Option.getShortOption(shortName);
 
         if (option == null) {
-            throw new InvalidArgumentRuntimeException(
-                    new InvalidArgumentException("invalid option: -"
-                            + shortName));
+            throw CompilerException.invalidShortOption(shortName);
         }
 
         // expects an operand?
@@ -185,9 +177,10 @@ class ArgumentExtractor
             // no
 
             if (node.getOperand() != null) {
-                throw new InvalidArgumentRuntimeException(
-                        new InvalidArgumentException("option -" + shortName
-                                + " does not expect an operand"));
+                AOperand operand = (AOperand) node.getOperand();
+
+                throw CompilerException.spuriousShortOptionOperand(shortName,
+                        operand.getOperandText().getText());
             }
 
             this.optionArguments.add(new OptionArgument(option, null));
@@ -202,18 +195,12 @@ class ArgumentExtractor
     static Option extractArguments(
             Start ast,
             List<OptionArgument> optionArguments,
-            List<TextArgument> textArguments)
-            throws InvalidArgumentException {
+            List<TextArgument> textArguments) {
 
         ArgumentExtractor extractor = new ArgumentExtractor(optionArguments,
                 textArguments);
 
-        try {
-            ast.apply(extractor);
-        }
-        catch (InvalidArgumentRuntimeException e) {
-            throw e.getInvalidArgumentException();
-        }
+        ast.apply(extractor);
 
         return extractor.incompleteOption;
     }

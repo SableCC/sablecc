@@ -1,0 +1,138 @@
+$comment$
+This file is part of SableCC ( http://sablecc.org ).
+
+See the NOTICE file distributed with this work for copyright information.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+$end$
+
+$macro: intermediate_representation $
+$expand: text $
+$expand: macro $
+$end: intermediate_representation $
+
+$macro: text(name, self_ref) $
+text {
+  name = $name;
+$expand: param $
+  self_ref = $self_ref;
+$expand: ancestor_ref $
+$expand: param_ref $
+$expand: string_part, eol_part, param_insert_part, text_insert_part $
+}
+$end: text $
+
+$macro: macro(name, is_public, self_ref) $
+macro {
+  name = $name;
+  is_public = $is_public;
+$expand: param $
+  self_ref = $self_ref;
+$expand: ancestor_ref $
+$expand: param_ref $
+$expand: expand $
+$expand: expanded_macro $
+$expand: string_part, eol_part, param_insert_part, text_insert_part, expand_insert_part $
+}
+$end: macro $
+
+$macro: param(name, indent) $
+$indent  param = $name;
+$end: param $
+
+$macro: ancestor_ref(name, indent) $
+$indent  ancestor_ref = $name;
+$end: ancestor_ref $
+
+$macro: param_ref(name, context_name) $
+  param_ref {
+    name = $name;
+    context_name = $context_name;
+  }
+$end: param_ref $
+
+$macro: expand(name, indent) $
+$indent  expand = $name;
+$end: expand $
+
+$macro: expanded_macro(name) $
+  expanded_macro {
+    name = $name;
+$expand: param $
+$expand: ancestor_ref $
+$expand: expand $
+  }
+$end: expanded_macro $
+
+$macro: string_part(string) $
+  $string;
+$end: string_part $
+
+$macro: eol_part $
+  eol;
+$end: eol_part $
+
+$macro: param_insert_part(name) $
+  param_insert = $name;
+$end: param_insert_part $
+
+$macro: text_insert_part $
+$expand: text_insert $
+$end: text_insert_part $
+
+$macro: text_insert(name, indent) $
+$indent  text_insert {
+$indent    name = $name;
+$expand: string_arg, param_insert_arg, text_insert_arg $
+$expand: ancestor_ref $
+$indent  }
+$end: text_insert $
+
+$macro: string_arg(string, indent) $
+$indent    arg = $string;
+$end: string_arg $
+
+$macro: param_insert_arg(name, indent) $
+$indent    arg {
+$indent      param_insert = $name;
+$indent    }
+$end: param_insert_arg $
+
+$macro: text_insert_arg(indent) $
+$indent    arg {
+$expand: text_insert $
+$indent    }
+$end: text_insert_arg $
+
+$macro: expand_insert_part(name) $
+  expand_insert {
+    name = $name;
+$expand: string_option, param_insert_option, text_insert_option $
+  }
+$end: expand_insert_part $
+
+$macro: string_option(option, string) $
+    $option = $string;
+$end: string_option $
+
+$macro: param_insert_option(option, name) $
+    $option {
+      param_insert = $name;
+    }
+$end: param_insert_option $
+
+$macro: text_insert_option(option) $
+    $option {
+$expand: text_insert $
+    }
+$end: text_insert_option $

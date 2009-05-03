@@ -24,10 +24,10 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.alphabet.Alphabet;
 import org.sablecc.sablecc.alphabet.RichSymbol;
 import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.exception.InternalException;
 
 class Group {
 

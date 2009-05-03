@@ -17,161 +17,70 @@
 
 package org.sablecc.objectmacro.structures;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import org.sablecc.objectmacro.exception.InternalException;
-import org.sablecc.objectmacro.exception.SemanticException;
-import org.sablecc.objectmacro.macro.M_text_block;
-import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AParam;
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.syntax3.node.ATextBlock;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
 public class TextBlock
         extends Scope {
 
-    private final ATextBlock definition;
+    private final ATextBlock declaration;
 
-    private final GlobalData globalData;
+    private final Scope parent;
 
-    private boolean unused = true;
-
-    // for code generation
-
-    private M_text_block m_text_block;
-
-    private final Set<TextBlock> inserts = new LinkedHashSet<TextBlock>();
+    private boolean reachable;
 
     TextBlock(
-            ATextBlock definition,
-            Scope parentScope,
-            GlobalData globalData)
-            throws SemanticException {
+            GlobalIndex globalIndex,
+            ATextBlock declaration,
+            Scope parent) {
 
-        super(parentScope, globalData);
+        super(globalIndex);
 
-        if (definition == null) {
-            throw new InternalException("definition may not be null");
+        if (globalIndex == null) {
+            throw new InternalException("globalIndex may not be null");
         }
 
-        if (parentScope == null) {
-            throw new InternalException("parentScope may not be null");
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
         }
 
-        if (globalData == null) {
-            throw new InternalException("globalData may not be null");
+        this.declaration = declaration;
+        this.parent = parent;
+
+        if (!declaration.getRepeatName().getText().equals(
+                declaration.getName().getText())) {
+            throw CompilerException.endMismatch(declaration.getRepeatName(),
+                    declaration.getName());
         }
-
-        this.definition = definition;
-        this.globalData = globalData;
-
-        if (!definition.getRepeatName().getText().equals(
-                definition.getName().getText())) {
-            throw new SemanticException("does not match "
-                    + definition.getName().getText(), definition
-                    .getRepeatName());
-        }
-
-        globalData.addTextBlock(this);
     }
 
-    public ATextBlock getDefinition() {
+    public ATextBlock getDeclaration() {
 
-        return this.definition;
-    }
-
-    public String getName() {
-
-        return this.definition.getName().getText();
-    }
-
-    public boolean isTopLevel() {
-
-        return getParentScope() == this.globalData.getSourceFile();
+        return this.declaration;
     }
 
     @Override
-    Macro addMacro(
-            AMacro definition) {
+    public TIdentifier getNameDeclaration() {
 
-        throw new InternalException("a text block does not have macros");
+        return this.declaration.getName();
     }
 
     @Override
-    TextBlock addTextBlock(
-            ATextBlock definition) {
+    public Scope getParent() {
 
-        throw new InternalException("a text block does not have text blocks");
+        return this.parent;
     }
 
-    @Override
-    Param addParam(
-            AParam definition) {
+    public boolean isReachable() {
 
-        throw new InternalException("a text block does not have parameters");
+        return this.reachable;
     }
 
-    public void addTextInsert(
-            TextBlock textBlock,
-            TIdentifier name)
-            throws SemanticException {
+    public void setReachable() {
 
-        if (textBlock == null) {
-            throw new InternalException("textBlock may not be null");
-        }
-
-        if (name == null) {
-            throw new InternalException("name may not be null");
-        }
-
-        if (this.inserts.add(textBlock)) {
-            Set<TextBlock> visitedTextBlocks = new HashSet<TextBlock>();
-            detectCycles(textBlock, this, visitedTextBlocks, name);
-        }
+        this.reachable = true;
     }
 
-    private void detectCycles(
-            TextBlock textBlock,
-            TextBlock target,
-            Set<TextBlock> visitedTextBlocks,
-            TIdentifier name)
-            throws SemanticException {
-
-        if (textBlock == target) {
-            throw new SemanticException("cyclic text block reference", name);
-        }
-
-        if (visitedTextBlocks.contains(textBlock)) {
-            return;
-        }
-
-        visitedTextBlocks.add(textBlock);
-
-        for (TextBlock insert : textBlock.inserts) {
-            detectCycles(insert, target, visitedTextBlocks, name);
-        }
-    }
-
-    public void unsetUnused() {
-
-        this.unused = false;
-    }
-
-    public boolean isUnused() {
-
-        return this.unused;
-    }
-
-    public M_text_block getM_text_block() {
-
-        return this.m_text_block;
-    }
-
-    public void setM_text_block(
-            M_text_block m_text_block) {
-
-        this.m_text_block = m_text_block;
-    }
 }
