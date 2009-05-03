@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sablecc.objectmacro.util;
+package org.sablecc.util;
 
 /**
  * This enumeration encapsulates verbosity levels.

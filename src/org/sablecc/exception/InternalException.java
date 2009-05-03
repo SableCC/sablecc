@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.exception;
+package org.sablecc.exception;
 
 /**
  * An internal exception is thrown when an unexpected error happens during the

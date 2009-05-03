@@ -15,24 +15,19 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.util;
+package org.sablecc.util;
 
 /**
- * This enumeration encapsulates verbosity levels.
+ * This enumeration encapsulates strictness levels.
  */
-public enum Verbosity {
+public enum Strictness {
     /**
-     * Only display errors.
+     * Ignore unused constructs.
      */
-    QUIET,
+    LENIENT,
 
     /**
-     * Display progress.
+     * Detect unused constructs.
      */
-    INFORMATIVE,
-
-    /**
-     * Display detailed progress.
-     */
-    VERBOSE;
+    STRICT;
 }
