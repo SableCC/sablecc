@@ -24,8 +24,8 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.alphabet.RichSymbol;
-import org.sablecc.sablecc.exception.InternalException;
 
 /**
  * An instance of this class represents a state in a finite automaton.
@@ -54,7 +54,7 @@ public final class State
     private SortedMap<RichSymbol, SortedSet<State>> transitions;
 
     /**
-     * The markers of this state.
+     * The marker of this state.
      */
     private Marker marker;
 
@@ -450,7 +450,7 @@ public final class State
         }
 
         if (this.isCyclic == null) {
-            this.automaton.identifyCyclicStates();
+            this.automaton.identifyCyclicStatesOnLookaheadTransitions();
         }
 
         return this.isCyclic;

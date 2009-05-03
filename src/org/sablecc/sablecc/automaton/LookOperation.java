@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.Map.Entry;
 
+import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.alphabet.RichSymbol;
-import org.sablecc.sablecc.exception.InternalException;
 
 class LookOperation {
 

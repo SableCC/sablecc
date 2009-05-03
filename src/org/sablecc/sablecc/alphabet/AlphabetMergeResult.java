@@ -23,7 +23,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
-import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.exception.InternalException;
 
 /**
  * An instance of this class stores the result of merging two alphabets. It

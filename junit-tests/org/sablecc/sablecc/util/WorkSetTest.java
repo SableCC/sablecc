@@ -24,7 +24,8 @@ import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.exception.InternalException;
+import org.sablecc.util.WorkSet;
 
 public class WorkSetTest {
 
@@ -57,10 +58,12 @@ public class WorkSetTest {
         this.workSet.add(25);
         this.workSet.add(50);
 
-        assertEquals("the first element should be 100", 100, this.workSet
-                .next());
-        assertEquals("the first element should be 25", 25, this.workSet.next());
-        assertEquals("the first element should be 50", 50, this.workSet.next());
+        assertEquals("the first element should be 100", (Integer) 100,
+                this.workSet.next());
+        assertEquals("the first element should be 25", (Integer) 25,
+                this.workSet.next());
+        assertEquals("the first element should be 50", (Integer) 50,
+                this.workSet.next());
 
         assertFalse("the WorkSet is empty.", this.workSet.hasNext());
 

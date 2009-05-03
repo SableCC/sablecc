@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.automaton;
 
-import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.exception.InternalException;
 
 /**
  * A marker is used to mark states as starting point for back counts.

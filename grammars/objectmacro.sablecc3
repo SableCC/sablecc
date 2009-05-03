@@ -73,17 +73,22 @@ Helpers
   white_space_not_newline = [ascii_pattern_white_space - [0x000A .. 0x000D]];
 
   short_comment_char = [[[ascii - ascii_c] + white_space_not_newline] - '$'];
-
   long_comment_char = [[[ascii - ascii_c] + ascii_pattern_white_space] - '$'];
 
   text_char = [[[ascii - ascii_c] + white_space_not_newline] - ['\' + '$']];
-
   text_escape = '\' ['\' + '$'];
 
   string_char = [[[ascii - ascii_c] + white_space_not_newline] -
                  [['\' + '$'] + '"']];
-
   string_escape = '\' [['\' + '$'] + '"'];
+
+  lowercase = ['a'..'z'];
+  digit = ['0'..'9'];
+
+  normal_part = lowercase (lowercase | digit)*;
+  normal_identifier = normal_part ('_' normal_part)*;
+
+  rich_identifier = '<' [ascii_id_start - '_'] [ascii_id_continue - '_']* '>';
 
 States
   top_level, command, text, short_comment, long_comment, string;
@@ -127,7 +132,7 @@ Tokens
   long_comment_end = '$end$' (white_space_not_newline* ascii_newline)?;
 
   {top_level, command, text, short_comment}
-  invalid_command = '$' ascii_identifier (':' | '$');
+  invalid_command = '$' (lowercase | digit | '_')* (':' | '$');
 
   {short_comment}
   short_comment_text = short_comment_char+;
@@ -145,13 +150,19 @@ Tokens
   escape = text_escape;
 
   {top_level, command, text, short_comment}
-  var = '$' ascii_identifier | '$(' ascii_identifier ')';
+  var = '$' (normal_identifier | rich_identifier) |
+        '$(' normal_identifier ')';
 
   {top_level, command, text, short_comment}
-  invalid_var = '$(' ascii_identifier? ')'?;
+  invalid_var = '$' ascii_id_continue+ |
+                '$<' ascii_id_continue* '>'? |
+                '$(' ascii_id_continue* ')'?;
 
   {top_level, command}
-  identifier = ascii_identifier;
+  identifier = normal_identifier | rich_identifier;
+
+  {top_level, command}
+  invalid_identifier = ascii_id_continue+ | '<' ascii_id_continue* '>'?;
 
   {top_level, command}
   l_par = '(';
@@ -227,7 +238,8 @@ Productions
   macro
     =
       macro_head macro_body macro_tail
-        {-> New macro(macro_head.identifier, [macro_head.params], [macro_body.macro_body_parts], macro_tail.identifier) }
+        {-> New macro(macro_head.identifier, [macro_head.params],
+        [macro_body.macro_body_parts], macro_tail.identifier) }
     ;
 
   macro_head
@@ -280,14 +292,16 @@ Productions
   text_block
     =
       text_block_head text_block_body text_block_tail
-        {-> New text_block(text_block_head.identifier, [text_block_body.text_block_body_parts], text_block_tail.identifier) }
+        {-> New text_block(text_block_head.identifier,
+        [text_block_head.params], [text_block_body.text_block_body_parts],
+        text_block_tail.identifier) }
     ;
 
   text_block_head
-        {-> identifier }
+        {-> identifier [params]:param* }
     =
-      text_block_command identifier command_tail
-        {-> identifier }
+      text_block_command identifier param_list? command_tail
+        {-> identifier [param_list.params] }
     ;
 
   text_block_body
@@ -315,6 +329,8 @@ Productions
       {var} var
     |
       {text_insert} text_insert
+    |
+      {text_block} text_block
     ;
 
   text_block_tail
@@ -378,18 +394,37 @@ Productions
   text_insert
     =
       insert_command text_block_reference command_tail
-        {-> New text_insert(text_block_reference) }
+        {-> text_block_reference.text_insert }
     ;
 
   text_block_reference
+        {-> text_insert }
     =
-      [name]:identifier
-        {-> New text_block_reference(name) }
+      [name]:identifier arg_list?
+        {-> New text_insert(name, [arg_list.static_values]) }
+    ;
+
+  arg_list
+        {-> [static_values]:static_value+ }
+    =
+      l_par static_value [additional_static_values]:additional_static_value*
+      r_par
+        {-> [static_value, additional_static_values.static_value] }
+    ;
+
+  additional_static_value
+        {-> static_value }
+    =
+      comma static_value
+        {-> static_value }
     ;
 
   static_value
     =
       {text_block_reference} text_block_reference
+        {-> New static_value.text_insert(text_block_reference.text_insert) }
+    |
+      {var} var
     |
       {string} string
     ;
@@ -409,105 +444,62 @@ Productions
 
 Abstract Syntax Tree
 
-  source_file
-    =
-      [parts]:source_file_part*
-    ;
+  source_file =
+    [parts]:source_file_part*;
 
-  source_file_part
-    =
-      {macro} macro
-    |
-      {text_block} text_block
-    ;
+  source_file_part =
+    {macro} macro |
+    {text_block} text_block;
 
-  macro
-    =
-      [name]:identifier [params]:param* [parts]:macro_body_part* [repeat_name]:identifier
-    ;
+  macro =
+    [name]:identifier [params]:param* [parts]:macro_body_part*
+    [repeat_name]:identifier;
 
-  macro_body_part
-    =
-      {text} text
-    |
-      {eol} eol
-    |
-      {escape} escape
-    |
-      {var} var
-    |
-      {expand} expand
-    |
-      {macro} macro
-    |
-      {text_insert} text_insert
-    |
-      {text_block} text_block
-    ;
+  macro_body_part =
+    {text} text |
+    {eol} eol |
+    {escape} escape |
+    {var} var |
+    {expand} expand |
+    {macro} macro |
+    {text_insert} text_insert |
+    {text_block} text_block;
 
-  text_block
-    =
-      [name]:identifier [parts]:text_block_body_part* [repeat_name]:identifier
-    ;
+  text_block =
+    [name]:identifier [params]:param* [parts]:text_block_body_part*
+    [repeat_name]:identifier;
 
-  text_block_body_part
-    =
-      {text} text
-    |
-      {eol} eol
-    |
-      {escape} escape
-    |
-      {var} var
-    |
-      {text_insert} text_insert
-    ;
+  text_block_body_part =
+    {text} text |
+    {eol} eol |
+    {escape} escape |
+    {var} var |
+    {text_insert} text_insert |
+    {text_block} text_block;
 
-  param
-    =
-      [name]:identifier
-    ;
+  param =
+    [name]:identifier;
 
-  expand
-    =
-      [macro_references]:macro_reference+ [options]:option*
-    ;
+  expand =
+    [macro_references]:macro_reference+ [options]:option*;
 
-  option
-    =
-      [name]:identifier static_value
-    ;
+  option =
+    [name]:identifier static_value;
 
-  static_value
-    =
-      {text_block_reference} text_block_reference
-    |
-      {string} string
-    ;
+  static_value =
+    {text_insert} text_insert |
+    {var} var |
+    {string} string;
 
-  string
-    =
-      [parts]:string_part*
-    ;
+  string =
+    [parts]:string_part*;
 
-  string_part
-    =
-      {text} [text]:string_text
-    |
-      {escape} [escape]:string_escape
-    ;
+  string_part =
+    {text} [text]:string_text |
+    {escape} [escape]:string_escape;
 
-  macro_reference
-    =
-      [name]:identifier
-    ;
+  macro_reference =
+    [name]:identifier;
 
-  text_insert
-    =
-      text_block_reference
-    ;
-
-  text_block_reference
-    =
-      [name]:identifier
-    ;
+  text_insert =
+    [name]:identifier  [static_values]:static_value*;

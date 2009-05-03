@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import org.sablecc.sablecc.exception.InternalException;
+import org.sablecc.exception.InternalException;
 
 /**
  * An interval is defined by a lower bound and an upper bound.
@@ -183,8 +183,13 @@ public class Interval
     public String toString() {
 
         if (this.toString == null) {
-            this.toString = "[" + this.lowerBound + ".." + this.upperBound
-                    + "]";
+            if (this.lowerBound.equals(this.upperBound)) {
+                this.toString = this.lowerBound.toString();
+            }
+            else {
+                this.toString = "[" + this.lowerBound + ".." + this.upperBound
+                        + "]";
+            }
         }
 
         return this.toString;

@@ -22,141 +22,156 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.sablecc.objectmacro.exception.InternalException;
-import org.sablecc.objectmacro.exception.SemanticException;
-import org.sablecc.objectmacro.macro.M_macro;
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AMacroMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AParam;
-import org.sablecc.objectmacro.syntax3.node.ATextBlock;
-import org.sablecc.objectmacro.syntax3.node.ATextBlockMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.PMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.PParam;
+import org.sablecc.objectmacro.syntax3.node.AMacroSourceFilePart;
+import org.sablecc.objectmacro.syntax3.node.PExpand;
+import org.sablecc.objectmacro.syntax3.node.PMacro;
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
 public class Macro
         extends Scope {
 
-    private final AMacro definition;
+    private final AMacro declaration;
 
-    private final GlobalData globalData;
+    private final Macro parent;
 
-    private boolean autoexpand = true;
+    private final Set<Macro> macros = new LinkedHashSet<Macro>();
 
-    private final Map<Macro, Set<ExpandSignature>> macro2ExpandSignatureSetMap = new HashMap<Macro, Set<ExpandSignature>>();
+    private final Map<String, Macro> macroMap = new HashMap<String, Macro>();
 
-    private final Set<Macro> referencedMacros = new LinkedHashSet<Macro>();
+    private final Set<Macro> explicitlyExpandedMacros = new LinkedHashSet<Macro>();
+
+    private final Set<Macro> implicitlyExpandedMacros = new LinkedHashSet<Macro>();
 
     private final Set<ExpandSignature> expandSignatures = new LinkedHashSet<ExpandSignature>();
 
-    // for code generation
+    private boolean isImplicitlyExpanded;
 
-    private M_macro m_macro;
+    private ExpandSignature implicitSignature;
 
     Macro(
-            AMacro definition,
-            Scope parentScope,
-            GlobalData globalData)
-            throws SemanticException {
+            GlobalIndex globalIndex,
+            AMacro declaration,
+            Macro parent) {
 
-        super(parentScope, globalData);
+        super(globalIndex);
 
-        if (definition == null) {
-            throw new InternalException("definition may not be null");
+        if (globalIndex == null) {
+            throw new InternalException("globalIndex may not be null");
         }
 
-        if (parentScope == null) {
-            throw new InternalException("parentScope may not be null");
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
         }
 
-        if (globalData == null) {
-            throw new InternalException("globalData may not be null");
-        }
+        this.declaration = declaration;
+        this.parent = parent;
 
-        this.definition = definition;
-        this.globalData = globalData;
-
-        if (!definition.getRepeatName().getText().equals(
-                definition.getName().getText())) {
-            throw new SemanticException("does not match "
-                    + definition.getName().getText(), definition
-                    .getRepeatName());
-        }
-
-        globalData.addMacro(this);
-
-        for (PParam param : definition.getParams()) {
-            addParam((AParam) param);
-        }
-
-        for (PMacroBodyPart part : definition.getParts()) {
-            if (part instanceof AMacroMacroBodyPart) {
-                AMacroMacroBodyPart macroPart = (AMacroMacroBodyPart) part;
-                addMacro((AMacro) macroPart.getMacro());
-            }
-            else if (part instanceof ATextBlockMacroBodyPart) {
-                ATextBlockMacroBodyPart textBlockPart = (ATextBlockMacroBodyPart) part;
-                addTextBlock((ATextBlock) textBlockPart.getTextBlock());
-            }
-        }
-
-    }
-
-    public AMacro getDefinition() {
-
-        return this.definition;
-    }
-
-    public String getName() {
-
-        return this.definition.getName().getText();
-    }
-
-    public boolean isTopLevel() {
-
-        return getParentScope() == this.globalData.getSourceFile();
-    }
-
-    public void unsetAutoexpand() {
-
-        this.autoexpand = false;
-    }
-
-    public boolean isAutoexpand() {
-
-        return this.autoexpand;
-    }
-
-    public void addExpandSignature(
-            ExpandSignature expandSignature) {
-
-        if (expandSignature == null) {
-            throw new InternalException("expandSignature may not be null");
-        }
-
-        if (this.expandSignatures.add(expandSignature)) {
-            for (Macro macro : expandSignature.getMacroSet()) {
-                this.referencedMacros.add(macro);
-                Set<ExpandSignature> expandSignatureSet = this.macro2ExpandSignatureSetMap
-                        .get(macro);
-                if (expandSignatureSet == null) {
-                    expandSignatureSet = new LinkedHashSet<ExpandSignature>();
-                    this.macro2ExpandSignatureSetMap.put(macro,
-                            expandSignatureSet);
-                }
-                expandSignatureSet.add(expandSignature);
-            }
+        if (!declaration.getRepeatName().getText().equals(
+                declaration.getName().getText())) {
+            throw CompilerException.endMismatch(declaration.getRepeatName(),
+                    declaration.getName());
         }
     }
 
-    public M_macro getM_macro() {
+    public Macro newMacro(
+            PMacro pDeclaration) {
 
-        return this.m_macro;
+        if (pDeclaration == null) {
+            throw new InternalException("pDeclaration may not be null");
+        }
+
+        if (pDeclaration.parent() instanceof AMacroSourceFilePart) {
+            throw new InternalException(
+                    "pDeclaration may not be a top-level macro");
+        }
+
+        Macro macro = getGlobalIndex().newMacro(pDeclaration, this);
+
+        this.macroMap.put(macro.getName(), macro);
+        this.macros.add(macro);
+
+        return macro;
     }
 
-    public void setM_macro(
-            M_macro m_macro) {
+    public Macro getMacro(
+            TIdentifier identifier) {
 
-        this.m_macro = m_macro;
+        if (identifier == null) {
+            throw new InternalException("identifier may not be null");
+        }
+
+        String name = identifier.getText();
+
+        if (this.macroMap.containsKey(name)) {
+            return this.macroMap.get(name);
+        }
+
+        if (this.parent != null) {
+            return this.parent.getMacro(identifier);
+        }
+
+        return getGlobalIndex().getTopMacro(identifier);
+    }
+
+    public Expand getExpand(
+            PExpand declaration) {
+
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
+        }
+
+        Expand expand = getGlobalIndex().getExpand(declaration, this);
+
+        if (expand.getEnclosingMacro() != this) {
+            throw new InternalError(
+                    "getExpand must be called on its enclosing macro");
+        }
+
+        ExpandSignature signature = expand.getSignature();
+        this.expandSignatures.add(signature);
+
+        for (Macro macro : signature.getMacroSet()) {
+            this.explicitlyExpandedMacros.add(macro);
+            macro.addCaller(this);
+        }
+
+        return expand;
+    }
+
+    public void computeImplicitExpansion() {
+
+        this.isImplicitlyExpanded = this.parent != null
+                && !this.parent.explicitlyExpandedMacros.contains(this);
+
+        if (this.isImplicitlyExpanded) {
+            Set<Macro> macroSet = new LinkedHashSet<Macro>();
+            macroSet.add(this);
+            this.implicitSignature = getGlobalIndex().getExpandSignature(
+                    macroSet);
+            this.parent.expandSignatures.add(this.implicitSignature);
+            this.parent.implicitlyExpandedMacros.add(this);
+            addCaller(this.parent);
+        }
+    }
+
+    public AMacro getDeclaration() {
+
+        return this.declaration;
+    }
+
+    @Override
+    public TIdentifier getNameDeclaration() {
+
+        return this.declaration.getName();
+    }
+
+    @Override
+    public Macro getParent() {
+
+        return this.parent;
     }
 
     public Set<ExpandSignature> getExpandSignatures() {
@@ -164,14 +179,23 @@ public class Macro
         return this.expandSignatures;
     }
 
-    public Set<Macro> getReferencedMacros() {
+    public Set<Macro> getExplicitlyExpandedMacros() {
 
-        return this.referencedMacros;
+        return this.explicitlyExpandedMacros;
     }
 
-    public Set<ExpandSignature> getExpandSignaturesOfReferencedMacro(
-            Macro referencedMacro) {
+    public Set<Macro> getImplicitlyExpandedMacros() {
 
-        return this.macro2ExpandSignatureSetMap.get(referencedMacro);
+        return this.implicitlyExpandedMacros;
+    }
+
+    public boolean isImplicitlyExpanded() {
+
+        return this.isImplicitlyExpanded;
+    }
+
+    public ExpandSignature getImplicitSignature() {
+
+        return this.implicitSignature;
     }
 }

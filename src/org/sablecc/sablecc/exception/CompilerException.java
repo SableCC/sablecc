@@ -17,22 +17,27 @@
 
 package org.sablecc.sablecc.exception;
 
-import org.sablecc.sablecc.errormessages.M_destination_is_not_directory;
-import org.sablecc.sablecc.errormessages.M_duplicate_global_name_declaration;
-import org.sablecc.sablecc.errormessages.M_grammar_not_file;
-import org.sablecc.sablecc.errormessages.M_input_error;
-import org.sablecc.sablecc.errormessages.M_invalid_argument;
-import org.sablecc.sablecc.errormessages.M_invalid_argument_count;
-import org.sablecc.sablecc.errormessages.M_invalid_long_option;
-import org.sablecc.sablecc.errormessages.M_invalid_short_option;
-import org.sablecc.sablecc.errormessages.M_invalid_suffix;
-import org.sablecc.sablecc.errormessages.M_missing_destination_directory;
-import org.sablecc.sablecc.errormessages.M_missing_grammar_file;
-import org.sablecc.sablecc.errormessages.M_missing_long_option_operand;
-import org.sablecc.sablecc.errormessages.M_missing_short_option_operand;
-import org.sablecc.sablecc.errormessages.M_spurious_long_option_operand;
-import org.sablecc.sablecc.errormessages.M_spurious_short_option_operand;
-import org.sablecc.sablecc.structures.Name;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.errormessages.MCyclicReference;
+import org.sablecc.sablecc.errormessages.MDuplicateDeclaration;
+import org.sablecc.sablecc.errormessages.MGrammarNotFile;
+import org.sablecc.sablecc.errormessages.MInputError;
+import org.sablecc.sablecc.errormessages.MInvalidArgument;
+import org.sablecc.sablecc.errormessages.MInvalidArgumentCount;
+import org.sablecc.sablecc.errormessages.MInvalidInterval;
+import org.sablecc.sablecc.errormessages.MInvalidLongOption;
+import org.sablecc.sablecc.errormessages.MInvalidReference;
+import org.sablecc.sablecc.errormessages.MInvalidShortOption;
+import org.sablecc.sablecc.errormessages.MInvalidSuffix;
+import org.sablecc.sablecc.errormessages.MMissingGrammarFile;
+import org.sablecc.sablecc.errormessages.MMissingLongOptionOperand;
+import org.sablecc.sablecc.errormessages.MMissingShortOptionOperand;
+import org.sablecc.sablecc.errormessages.MSpuriousLongOptionOperand;
+import org.sablecc.sablecc.errormessages.MSpuriousShortOptionOperand;
+import org.sablecc.sablecc.errormessages.MUndefinedReference;
+import org.sablecc.sablecc.errormessages.MUnknownTarget;
+import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.sablecc.syntax3.node.TTwoDots;
 import org.sablecc.sablecc.syntax3.node.Token;
 
 @SuppressWarnings("serial")
@@ -64,122 +69,148 @@ public class CompilerException
         }
     }
 
-    public static CompilerException invalid_argument(
+    public static CompilerException invalidArgument(
             String argument_text,
             Throwable cause) {
 
-        return new CompilerException(new M_invalid_argument(argument_text)
+        return new CompilerException(new MInvalidArgument(argument_text)
                 .toString(), cause);
     }
 
-    public static CompilerException missing_long_option_operand(
-            String option_name,
-            String operand_name) {
+    public static CompilerException missingLongOptionOperand(
+            String optionName,
+            String operandName) {
 
-        return new CompilerException(new M_missing_long_option_operand(
-                option_name, operand_name).toString());
+        return new CompilerException(new MMissingLongOptionOperand(optionName,
+                operandName).toString());
     }
 
-    public static CompilerException missing_short_option_operand(
-            String option_name,
-            String operand_name) {
+    public static CompilerException missingShortOptionOperand(
+            String optionName,
+            String operandName) {
 
-        return new CompilerException(new M_missing_short_option_operand(
-                option_name, operand_name).toString());
+        return new CompilerException(new MMissingShortOptionOperand(optionName,
+                operandName).toString());
     }
 
-    public static CompilerException invalid_long_option(
-            String option_name) {
+    public static CompilerException invalidLongOption(
+            String optionName) {
 
-        return new CompilerException(new M_invalid_long_option(option_name)
+        return new CompilerException(new MInvalidLongOption(optionName)
                 .toString());
     }
 
-    public static CompilerException invalid_short_option(
-            String option_name) {
+    public static CompilerException invalidShortOption(
+            String optionName) {
 
-        return new CompilerException(new M_invalid_short_option(option_name)
+        return new CompilerException(new MInvalidShortOption(optionName)
                 .toString());
     }
 
-    public static CompilerException spurious_long_option_operand(
-            String option_name,
+    public static CompilerException spuriousLongOptionOperand(
+            String optionName,
             String operand_text) {
 
-        return new CompilerException(new M_spurious_long_option_operand(
-                option_name, operand_text).toString());
+        return new CompilerException(new MSpuriousLongOptionOperand(optionName,
+                operand_text).toString());
     }
 
-    public static CompilerException spurious_short_option_operand(
-            String option_name,
+    public static CompilerException spuriousShortOptionOperand(
+            String optionName,
             String operand_text) {
 
-        return new CompilerException(new M_spurious_short_option_operand(
-                option_name, operand_text).toString());
+        return new CompilerException(new MSpuriousShortOptionOperand(
+                optionName, operand_text).toString());
     }
 
-    public static CompilerException input_error(
-            String file_name,
+    public static CompilerException inputError(
+            String fileName,
             Throwable cause) {
 
-        return new CompilerException(new M_input_error(file_name, cause
+        return new CompilerException(new MInputError(fileName, cause
                 .getMessage()).toString(), cause);
     }
 
-    public static CompilerException missing_destination_directory(
-            String location) {
+    public static CompilerException invalidArgumentCount() {
 
-        return new CompilerException(new M_missing_destination_directory(
-                location).toString());
+        return new CompilerException(new MInvalidArgumentCount().toString());
     }
 
-    public static CompilerException destination_is_not_directory(
-            String location) {
+    public static CompilerException invalidSuffix(
+            String fileName) {
 
-        return new CompilerException(new M_destination_is_not_directory(
-                location).toString());
+        return new CompilerException(new MInvalidSuffix(fileName).toString());
     }
 
-    public static CompilerException invalid_argument_count() {
+    public static CompilerException missingGrammarFile(
+            String fileName) {
 
-        return new CompilerException(new M_invalid_argument_count().toString());
-    }
-
-    public static CompilerException invalid_suffix(
-            String file_name) {
-
-        return new CompilerException(new M_invalid_suffix(file_name).toString());
-    }
-
-    public static CompilerException missing_grammar_file(
-            String file_name) {
-
-        return new CompilerException(new M_missing_grammar_file(file_name)
+        return new CompilerException(new MMissingGrammarFile(fileName)
                 .toString());
     }
 
-    public static CompilerException grammar_not_file(
-            String file_name) {
+    public static CompilerException grammarNotFile(
+            String fileName) {
 
-        return new CompilerException(new M_grammar_not_file(file_name)
-                .toString());
+        return new CompilerException(new MGrammarNotFile(fileName).toString());
     }
 
-    public static CompilerException duplicate_global_name_declaration(
-            Name duplicateGlobalName,
-            Name firstGlobalName) {
+    public static CompilerException duplicateDeclaration(
+            TIdentifier duplicateName,
+            TIdentifier firstName) {
 
-        String name = duplicateGlobalName.getNameString();
-        if (!name.equals(firstGlobalName.getNameString())) {
-            throw new InternalException("name must be identical");
+        String name = duplicateName.getText();
+        if (!name.equals(firstName.getText())) {
+            throw new InternalException("names must be identical");
         }
 
-        Token duplicateToken = duplicateGlobalName.getNameToken();
-        Token firstToken = firstGlobalName.getNameToken();
+        return new CompilerException(new MDuplicateDeclaration(name,
+                duplicateName.getLine() + "", duplicateName.getPos() + "",
+                firstName.getLine() + "", firstName.getPos() + "").toString());
+    }
 
-        return new CompilerException(new M_duplicate_global_name_declaration(
-                name, duplicateToken.getLine() + "", duplicateToken.getPos()
-                        + "", firstToken.getLine() + "", firstToken.getPos()
+    public static CompilerException unknownTarget(
+            String targetLanguage) {
+
+        return new CompilerException(new MUnknownTarget(targetLanguage)
+                .toString());
+    }
+
+    public static CompilerException invalidInterval(
+            TTwoDots twoDots,
+            Token from,
+            Token to) {
+
+        return new CompilerException(new MInvalidInterval(twoDots.getLine()
+                + "", twoDots.getPos() + "", from.getText(), to.getText())
+                .toString());
+    }
+
+    public static CompilerException undefinedReference(
+            TIdentifier identifier) {
+
+        return new CompilerException(
+                new MUndefinedReference(identifier.getText(), identifier
+                        .getLine()
+                        + "", identifier.getPos() + "").toString());
+    }
+
+    public static CompilerException invalidReference(
+            TIdentifier identifier) {
+
+        return new CompilerException(new MInvalidReference(
+                identifier.getText(), identifier.getLine() + "", identifier
+                        .getPos()
+                        + "").toString());
+    }
+
+    public static CompilerException cyclicReference(
+            TIdentifier reference,
+            TIdentifier context) {
+
+        return new CompilerException(new MCyclicReference(reference.getText(),
+                reference.getLine() + "", reference.getPos() + "", context
+                        .getText(), context.getLine() + "", context.getPos()
                         + "").toString());
     }
 }

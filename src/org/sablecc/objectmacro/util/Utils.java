@@ -17,6 +17,7 @@
 
 package org.sablecc.objectmacro.util;
 
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 import org.sablecc.objectmacro.syntax3.node.TVar;
 
 public class Utils {
@@ -30,6 +31,45 @@ public class Utils {
         }
         int length = text.length();
         return text.substring(2, length - 1);
+    }
+
+    public static String toCamelCase(
+            TIdentifier identifier) {
+
+        String text = identifier.getText();
+        return toCamelCase(text);
+    }
+
+    public static String toCamelCase(
+            TVar var) {
+
+        String text = getVarName(var);
+        return toCamelCase(text);
+    }
+
+    private static String toCamelCase(
+            String text) {
+
+        if (text.charAt(0) == '<') {
+            int length = text.length();
+            return "_" + text.substring(1, length - 1);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        boolean upcase = true;
+        for (char c : text.toCharArray()) {
+            if (upcase) {
+                upcase = false;
+                sb.append((char) (c + ('A' - 'a')));
+            }
+            else if (c == '_') {
+                upcase = true;
+            }
+            else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
 }

@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class OptionTest {
 
-    Option checkOnly = Option.NO_FILES;
+    Option checkOnly = Option.NO_CODE;
 
     Option destination = Option.DESTINATION;
 
