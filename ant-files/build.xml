@@ -52,7 +52,7 @@
   <!-- Global Properties -->
 
   <property name="package.name" value="sablecc" />
-  <property name="package.version" value="repository-snapshot" />
+  <property name="package.version" value="4-alpha.5" />
 
   <property name="src.dir" value="src" />
   <property name="grammars.dir" value="grammars" />

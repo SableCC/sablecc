@@ -15,10 +15,11 @@ encourage you to join the project and help develop SableCC 4. You can
 participate in various ways: write new code, test existing code,
 suggest improvements, etc.
 
-SableCC 4 does not yet generate any code. However, you can use it to
-parse grammars using the new syntax. You can also use it as a library
-for your own programs.  You will find the executable jar file in the
-lib/ directory and its API documentation in the doc/ directory.
+SableCC 4 does not yet generate code.  However, you can use its
+ObjectMacro component, a text generator which currently supports Java
+as a target language.  You can also use SableCC to parse grammars
+written using the new syntax.  You will find the executable jar files
+in the lib/ directory and the API documentation in the doc/ directory.
 
 Package Content
 ===============
@@ -28,11 +29,12 @@ Here is a description of the content of this package:
 * README: This file.
 * LICENSE and NOTICE: License terms.
 
-* lib/: Executable jar file.
+* lib/: Executable jar files.
 * doc/: API documentation.
 
 * src/: Source code.
 * grammars/: Source grammars.
+* macros/: Source macros.
 * manifest/: Jar manifest file.
 
 * junit-tests/: JUnit tests.
@@ -57,12 +59,25 @@ features:
 * Improved lexer engine (additional operators, lookahead, and more).
 * Improved parser engine (linear approximate LR(K) parsing, semantic
   selectors, and more).
-* Improved conflict reporting (enabling LR grammar debugging).
+* Improved conflict reporting (enabling grammar debugging).
 * Flexible code generation (to enable back-ends for various
   languages).
 * Improved syntax for CST->AST transformations.
 
-What's New in SableCC [version]
+SableCC 4 also includes ObjectMacro, a powerful system for generating
+text that keeps a clean separation between presentation, structure,
+and logic.
+
+For more information on ObjectMacro, please visit:
+
+    http://sablecc.org/wiki/ObjectMacro
+
+What's New in SableCC 4-alpha.5
 ===============================
 
-[Milestone text]
+ * Implement the ObjectMacro system for flexible and robust code
+   generation.
+ * Add lookahead handling to finite state automatons.
+ * Refactor the alphabet package to remove cryptic generic signatures.
+ * Improve launcher package.
+ * Improve source documentation.
