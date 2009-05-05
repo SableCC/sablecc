@@ -172,12 +172,14 @@ $end: ancestor_arg $
 $comment: ========== param_constructor_init ========== $
 
 $macro: param_constructor_init(name) $
+    if(p$name == null) throw new NullPointerException();
     this.p$name = p$name;
 $end: param_constructor_init $
 
 $comment: ========== ancestor_constructor_init ========== $
 
 $macro: ancestor_constructor_init(name) $
+    if(m$name == null) throw new NullPointerException();
     this.m$name = m$name;
 $end: ancestor_constructor_init $
 
