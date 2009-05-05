@@ -11,6 +11,9 @@ public class MInvalidShortOption {
     public MInvalidShortOption(
             String pOptionName) {
 
+        if (pOptionName == null) {
+            throw new NullPointerException();
+        }
         this.pOptionName = pOptionName;
     }
 

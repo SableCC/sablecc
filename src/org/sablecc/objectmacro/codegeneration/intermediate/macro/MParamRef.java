@@ -14,7 +14,13 @@ public class MParamRef {
             String pName,
             String pContextName) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
+        if (pContextName == null) {
+            throw new NullPointerException();
+        }
         this.pContextName = pContextName;
     }
 

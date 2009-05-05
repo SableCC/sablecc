@@ -14,7 +14,13 @@ public class MInternalError {
             String pStackTrace,
             String pMessage) {
 
+        if (pStackTrace == null) {
+            throw new NullPointerException();
+        }
         this.pStackTrace = pStackTrace;
+        if (pMessage == null) {
+            throw new NullPointerException();
+        }
         this.pMessage = pMessage;
     }
 

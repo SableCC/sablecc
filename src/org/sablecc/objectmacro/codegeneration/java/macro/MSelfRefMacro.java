@@ -9,6 +9,9 @@ public class MSelfRefMacro {
     MSelfRefMacro(
             MMacro mMacro) {
 
+        if (mMacro == null) {
+            throw new NullPointerException();
+        }
         this.mMacro = mMacro;
     }
 

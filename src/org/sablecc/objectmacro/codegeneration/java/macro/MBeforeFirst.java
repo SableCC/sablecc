@@ -14,6 +14,9 @@ public class MBeforeFirst {
     MBeforeFirst(
             MExpandInsertPart mExpandInsertPart) {
 
+        if (mExpandInsertPart == null) {
+            throw new NullPointerException();
+        }
         this.mExpandInsertPart = mExpandInsertPart;
     }
 

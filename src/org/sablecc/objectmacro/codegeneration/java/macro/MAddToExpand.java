@@ -14,7 +14,13 @@ public class MAddToExpand {
             String pSignature,
             MMacroCreator mMacroCreator) {
 
+        if (pSignature == null) {
+            throw new NullPointerException();
+        }
         this.pSignature = pSignature;
+        if (mMacroCreator == null) {
+            throw new NullPointerException();
+        }
         this.mMacroCreator = mMacroCreator;
     }
 

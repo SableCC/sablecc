@@ -14,7 +14,13 @@ public class MOutputError {
             String pFileName,
             String pMessage) {
 
+        if (pFileName == null) {
+            throw new NullPointerException();
+        }
         this.pFileName = pFileName;
+        if (pMessage == null) {
+            throw new NullPointerException();
+        }
         this.pMessage = pMessage;
     }
 

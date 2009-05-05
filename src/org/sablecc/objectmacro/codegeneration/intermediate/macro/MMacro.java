@@ -32,8 +32,17 @@ public class MMacro {
             String pIsPublic,
             String pSelfRef) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
+        if (pIsPublic == null) {
+            throw new NullPointerException();
+        }
         this.pIsPublic = pIsPublic;
+        if (pSelfRef == null) {
+            throw new NullPointerException();
+        }
         this.pSelfRef = pSelfRef;
     }
 

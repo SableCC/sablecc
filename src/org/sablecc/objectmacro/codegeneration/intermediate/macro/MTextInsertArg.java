@@ -16,6 +16,9 @@ public class MTextInsertArg {
     public MTextInsertArg(
             String pIndent) {
 
+        if (pIndent == null) {
+            throw new NullPointerException();
+        }
         this.pIndent = pIndent;
     }
 

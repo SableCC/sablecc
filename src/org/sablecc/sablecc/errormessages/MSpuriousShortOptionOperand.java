@@ -14,7 +14,13 @@ public class MSpuriousShortOptionOperand {
             String pOptionName,
             String pOperandText) {
 
+        if (pOptionName == null) {
+            throw new NullPointerException();
+        }
         this.pOptionName = pOptionName;
+        if (pOperandText == null) {
+            throw new NullPointerException();
+        }
         this.pOperandText = pOperandText;
     }
 

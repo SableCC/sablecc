@@ -11,6 +11,9 @@ public class MStringPart {
     public MStringPart(
             String pString) {
 
+        if (pString == null) {
+            throw new NullPointerException();
+        }
         this.pString = pString;
     }
 

@@ -17,8 +17,17 @@ public class MLexicalError {
             String pChar,
             String pMessage) {
 
+        if (pLine == null) {
+            throw new NullPointerException();
+        }
         this.pLine = pLine;
+        if (pChar == null) {
+            throw new NullPointerException();
+        }
         this.pChar = pChar;
+        if (pMessage == null) {
+            throw new NullPointerException();
+        }
         this.pMessage = pMessage;
     }
 

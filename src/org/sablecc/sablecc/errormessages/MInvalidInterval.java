@@ -20,9 +20,21 @@ public class MInvalidInterval {
             String pFrom,
             String pTo) {
 
+        if (pLine == null) {
+            throw new NullPointerException();
+        }
         this.pLine = pLine;
+        if (pChar == null) {
+            throw new NullPointerException();
+        }
         this.pChar = pChar;
+        if (pFrom == null) {
+            throw new NullPointerException();
+        }
         this.pFrom = pFrom;
+        if (pTo == null) {
+            throw new NullPointerException();
+        }
         this.pTo = pTo;
     }
 

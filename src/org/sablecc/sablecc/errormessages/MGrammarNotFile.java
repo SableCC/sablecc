@@ -11,6 +11,9 @@ public class MGrammarNotFile {
     public MGrammarNotFile(
             String pFileName) {
 
+        if (pFileName == null) {
+            throw new NullPointerException();
+        }
         this.pFileName = pFileName;
     }
 

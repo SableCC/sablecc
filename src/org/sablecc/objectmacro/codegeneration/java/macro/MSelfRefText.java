@@ -9,6 +9,9 @@ public class MSelfRefText {
     MSelfRefText(
             MText mText) {
 
+        if (mText == null) {
+            throw new NullPointerException();
+        }
         this.mText = mText;
     }
 

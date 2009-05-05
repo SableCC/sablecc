@@ -26,11 +26,29 @@ public class MCyclicReference {
             String pContextLine,
             String pContextChar) {
 
+        if (pReference == null) {
+            throw new NullPointerException();
+        }
         this.pReference = pReference;
+        if (pLine == null) {
+            throw new NullPointerException();
+        }
         this.pLine = pLine;
+        if (pChar == null) {
+            throw new NullPointerException();
+        }
         this.pChar = pChar;
+        if (pContext == null) {
+            throw new NullPointerException();
+        }
         this.pContext = pContext;
+        if (pContextLine == null) {
+            throw new NullPointerException();
+        }
         this.pContextLine = pContextLine;
+        if (pContextChar == null) {
+            throw new NullPointerException();
+        }
         this.pContextChar = pContextChar;
     }
 

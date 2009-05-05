@@ -11,6 +11,9 @@ public class MMissingMacroFile {
     public MMissingMacroFile(
             String pFileName) {
 
+        if (pFileName == null) {
+            throw new NullPointerException();
+        }
         this.pFileName = pFileName;
     }
 

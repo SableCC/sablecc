@@ -14,6 +14,9 @@ public class MSeparator {
     MSeparator(
             MExpandInsertPart mExpandInsertPart) {
 
+        if (mExpandInsertPart == null) {
+            throw new NullPointerException();
+        }
         this.mExpandInsertPart = mExpandInsertPart;
     }
 

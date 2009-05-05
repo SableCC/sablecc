@@ -9,6 +9,9 @@ public class MNoSeparator {
     MNoSeparator(
             MExpandInsertPart mExpandInsertPart) {
 
+        if (mExpandInsertPart == null) {
+            throw new NullPointerException();
+        }
         this.mExpandInsertPart = mExpandInsertPart;
     }
 

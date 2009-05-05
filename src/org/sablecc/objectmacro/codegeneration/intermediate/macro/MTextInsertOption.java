@@ -16,6 +16,9 @@ public class MTextInsertOption {
     public MTextInsertOption(
             String pOption) {
 
+        if (pOption == null) {
+            throw new NullPointerException();
+        }
         this.pOption = pOption;
     }
 
