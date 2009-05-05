@@ -56,6 +56,7 @@
 
   <property name="src.dir" value="src" />
   <property name="grammars.dir" value="grammars" />
+  <property name="macros.dir" value="macros" />
   <property name="junit-tests.dir" value="junit-tests" />
   <property name="regression-tests.dir" value="regression-tests" />
   <property name="manifest.dir" value="manifest" />
@@ -302,6 +303,7 @@ public class Version {
 
       <fileset dir="." includes="${src.dir}/**" />
       <fileset dir="." includes="${grammars.dir}/**" />
+      <fileset dir="." includes="${macros.dir}/**" />
       <fileset dir="." includes="${junit-tests.dir}/**" />
       <fileset dir="." includes="${regression-tests.dir}/**" />
       <fileset dir="." includes="${manifest.dir}/**" />
