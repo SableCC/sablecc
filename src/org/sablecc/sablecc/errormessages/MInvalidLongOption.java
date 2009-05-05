@@ -11,6 +11,9 @@ public class MInvalidLongOption {
     public MInvalidLongOption(
             String pOptionName) {
 
+        if (pOptionName == null) {
+            throw new NullPointerException();
+        }
         this.pOptionName = pOptionName;
     }
 

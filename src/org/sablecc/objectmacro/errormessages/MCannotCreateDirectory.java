@@ -11,6 +11,9 @@ public class MCannotCreateDirectory {
     public MCannotCreateDirectory(
             String pLocation) {
 
+        if (pLocation == null) {
+            throw new NullPointerException();
+        }
         this.pLocation = pLocation;
     }
 

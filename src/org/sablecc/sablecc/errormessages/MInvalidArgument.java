@@ -11,6 +11,9 @@ public class MInvalidArgument {
     public MInvalidArgument(
             String pArgumentText) {
 
+        if (pArgumentText == null) {
+            throw new NullPointerException();
+        }
         this.pArgumentText = pArgumentText;
     }
 

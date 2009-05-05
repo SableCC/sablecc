@@ -11,6 +11,9 @@ public class MUnknownTarget {
     public MUnknownTarget(
             String pTarget) {
 
+        if (pTarget == null) {
+            throw new NullPointerException();
+        }
         this.pTarget = pTarget;
     }
 

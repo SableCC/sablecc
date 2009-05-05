@@ -14,7 +14,13 @@ public class MParamInsertOption {
             String pOption,
             String pName) {
 
+        if (pOption == null) {
+            throw new NullPointerException();
+        }
         this.pOption = pOption;
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
     }
 

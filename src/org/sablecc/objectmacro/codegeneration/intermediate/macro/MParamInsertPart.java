@@ -11,6 +11,9 @@ public class MParamInsertPart {
     public MParamInsertPart(
             String pName) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
     }
 

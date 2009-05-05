@@ -14,7 +14,13 @@ public class MStringArg {
             String pString,
             String pIndent) {
 
+        if (pString == null) {
+            throw new NullPointerException();
+        }
         this.pString = pString;
+        if (pIndent == null) {
+            throw new NullPointerException();
+        }
         this.pIndent = pIndent;
     }
 

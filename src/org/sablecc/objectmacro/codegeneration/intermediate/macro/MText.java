@@ -25,7 +25,13 @@ public class MText {
             String pName,
             String pSelfRef) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
+        if (pSelfRef == null) {
+            throw new NullPointerException();
+        }
         this.pSelfRef = pSelfRef;
     }
 

@@ -29,12 +29,33 @@ public class MIncorrectArgumentCount {
             String pRefChar,
             String pExpectedCount) {
 
+        if (pLine == null) {
+            throw new NullPointerException();
+        }
         this.pLine = pLine;
+        if (pChar == null) {
+            throw new NullPointerException();
+        }
         this.pChar = pChar;
+        if (pCurrentCount == null) {
+            throw new NullPointerException();
+        }
         this.pCurrentCount = pCurrentCount;
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
+        if (pRefLine == null) {
+            throw new NullPointerException();
+        }
         this.pRefLine = pRefLine;
+        if (pRefChar == null) {
+            throw new NullPointerException();
+        }
         this.pRefChar = pRefChar;
+        if (pExpectedCount == null) {
+            throw new NullPointerException();
+        }
         this.pExpectedCount = pExpectedCount;
     }
 

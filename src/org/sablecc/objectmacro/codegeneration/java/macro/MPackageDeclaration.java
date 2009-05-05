@@ -11,6 +11,9 @@ public class MPackageDeclaration {
     public MPackageDeclaration(
             String pPackageName) {
 
+        if (pPackageName == null) {
+            throw new NullPointerException();
+        }
         this.pPackageName = pPackageName;
     }
 

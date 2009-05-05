@@ -17,8 +17,17 @@ public class MUnknownOption {
             String pLine,
             String pChar) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
+        if (pLine == null) {
+            throw new NullPointerException();
+        }
         this.pLine = pLine;
+        if (pChar == null) {
+            throw new NullPointerException();
+        }
         this.pChar = pChar;
     }
 

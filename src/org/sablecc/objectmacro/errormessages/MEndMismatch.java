@@ -26,11 +26,29 @@ public class MEndMismatch {
             String pRefLine,
             String pRefChar) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
+        if (pLine == null) {
+            throw new NullPointerException();
+        }
         this.pLine = pLine;
+        if (pChar == null) {
+            throw new NullPointerException();
+        }
         this.pChar = pChar;
+        if (pRefName == null) {
+            throw new NullPointerException();
+        }
         this.pRefName = pRefName;
+        if (pRefLine == null) {
+            throw new NullPointerException();
+        }
         this.pRefLine = pRefLine;
+        if (pRefChar == null) {
+            throw new NullPointerException();
+        }
         this.pRefChar = pRefChar;
     }
 

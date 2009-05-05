@@ -11,6 +11,9 @@ public class MTextInsertAncestor {
     public MTextInsertAncestor(
             String pName) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
     }
 

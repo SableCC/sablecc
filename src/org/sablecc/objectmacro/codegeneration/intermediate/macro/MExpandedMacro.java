@@ -20,6 +20,9 @@ public class MExpandedMacro {
     public MExpandedMacro(
             String pName) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
     }
 

@@ -11,6 +11,9 @@ public class MMissingGrammarFile {
     public MMissingGrammarFile(
             String pFileName) {
 
+        if (pFileName == null) {
+            throw new NullPointerException();
+        }
         this.pFileName = pFileName;
     }
 

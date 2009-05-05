@@ -23,10 +23,25 @@ public class MDuplicateOption {
             String pRefLine,
             String pRefChar) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
+        if (pLine == null) {
+            throw new NullPointerException();
+        }
         this.pLine = pLine;
+        if (pChar == null) {
+            throw new NullPointerException();
+        }
         this.pChar = pChar;
+        if (pRefLine == null) {
+            throw new NullPointerException();
+        }
         this.pRefLine = pRefLine;
+        if (pRefChar == null) {
+            throw new NullPointerException();
+        }
         this.pRefChar = pRefChar;
     }
 

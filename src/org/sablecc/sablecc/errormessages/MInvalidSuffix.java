@@ -11,6 +11,9 @@ public class MInvalidSuffix {
     public MInvalidSuffix(
             String pFileName) {
 
+        if (pFileName == null) {
+            throw new NullPointerException();
+        }
         this.pFileName = pFileName;
     }
 

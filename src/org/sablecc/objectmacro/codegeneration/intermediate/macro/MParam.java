@@ -14,7 +14,13 @@ public class MParam {
             String pName,
             String pIndent) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
+        if (pIndent == null) {
+            throw new NullPointerException();
+        }
         this.pIndent = pIndent;
     }
 

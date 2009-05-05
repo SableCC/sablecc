@@ -14,6 +14,9 @@ public class MNone {
     MNone(
             MExpandInsertPart mExpandInsertPart) {
 
+        if (mExpandInsertPart == null) {
+            throw new NullPointerException();
+        }
         this.mExpandInsertPart = mExpandInsertPart;
     }
 

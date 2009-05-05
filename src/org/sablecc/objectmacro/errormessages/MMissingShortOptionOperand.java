@@ -14,7 +14,13 @@ public class MMissingShortOptionOperand {
             String pOptionName,
             String pOperandName) {
 
+        if (pOptionName == null) {
+            throw new NullPointerException();
+        }
         this.pOptionName = pOptionName;
+        if (pOperandName == null) {
+            throw new NullPointerException();
+        }
         this.pOperandName = pOperandName;
     }
 

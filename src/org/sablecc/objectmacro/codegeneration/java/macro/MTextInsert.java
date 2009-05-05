@@ -16,6 +16,9 @@ public class MTextInsert {
     public MTextInsert(
             String pName) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
     }
 

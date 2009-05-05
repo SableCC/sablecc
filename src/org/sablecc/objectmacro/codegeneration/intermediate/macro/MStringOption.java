@@ -14,7 +14,13 @@ public class MStringOption {
             String pOption,
             String pString) {
 
+        if (pOption == null) {
+            throw new NullPointerException();
+        }
         this.pOption = pOption;
+        if (pString == null) {
+            throw new NullPointerException();
+        }
         this.pString = pString;
     }
 

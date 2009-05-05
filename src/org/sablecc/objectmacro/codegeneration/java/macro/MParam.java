@@ -11,6 +11,9 @@ public class MParam {
     public MParam(
             String pName) {
 
+        if (pName == null) {
+            throw new NullPointerException();
+        }
         this.pName = pName;
     }
 

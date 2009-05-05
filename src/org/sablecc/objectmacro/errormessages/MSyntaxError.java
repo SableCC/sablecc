@@ -23,10 +23,25 @@ public class MSyntaxError {
             String pTokenText,
             String pMessage) {
 
+        if (pLine == null) {
+            throw new NullPointerException();
+        }
         this.pLine = pLine;
+        if (pChar == null) {
+            throw new NullPointerException();
+        }
         this.pChar = pChar;
+        if (pTokenType == null) {
+            throw new NullPointerException();
+        }
         this.pTokenType = pTokenType;
+        if (pTokenText == null) {
+            throw new NullPointerException();
+        }
         this.pTokenText = pTokenText;
+        if (pMessage == null) {
+            throw new NullPointerException();
+        }
         this.pMessage = pMessage;
     }
 
