@@ -72,12 +72,7 @@ For more information on ObjectMacro, please visit:
 
     http://sablecc.org/wiki/ObjectMacro
 
-What's New in SableCC 4-alpha.5
+What's New in SableCC [version]
 ===============================
 
- * Implement the ObjectMacro system for flexible and robust code
-   generation.
- * Add lookahead handling to finite state automatons.
- * Refactor the alphabet package to remove cryptic generic signatures.
- * Improve launcher package.
- * Improve source documentation.
+[Milestone text]
