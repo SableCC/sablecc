@@ -28,6 +28,10 @@ public class MAncestorConstructorInit {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
+        sb.append("    if(m");
+        sb.append(rName());
+        sb.append(" == null) throw new NullPointerException();");
+        sb.append(System.getProperty("line.separator"));
         sb.append("    this.m");
         sb.append(rName());
         sb.append(" = m");
