@@ -34,6 +34,7 @@ import org.sablecc.objectmacro.codegeneration.CodeGenerator;
 import org.sablecc.objectmacro.codegeneration.IntermediateRepresentation;
 import org.sablecc.objectmacro.codegeneration.intermediate.IntermediateCodeGenerator;
 import org.sablecc.objectmacro.codegeneration.java.JavaCodeGenerator;
+import org.sablecc.objectmacro.codegeneration.scala.ScalaCodeGenerator;
 import org.sablecc.objectmacro.errormessages.MInternalError;
 import org.sablecc.objectmacro.errormessages.MLexicalError;
 import org.sablecc.objectmacro.errormessages.MSyntaxError;
@@ -223,6 +224,7 @@ public class ObjectMacro {
             case LIST_TARGETS:
                 System.out.println("Available targets:");
                 System.out.println(" java (default)");
+                System.out.println(" scala");
                 System.out.println(" intermediate");
                 return;
 
@@ -307,8 +309,9 @@ public class ObjectMacro {
         }
 
         // check target
-        if (!(targetLanguage.equals("java") || targetLanguage
-                .equals("intermediate"))) {
+        if (!(targetLanguage.equals("java")
+                || targetLanguage.equals("intermediate") || targetLanguage
+                .equals("scala"))) {
             throw CompilerException.unknownTarget(targetLanguage);
         }
 
@@ -395,6 +398,9 @@ public class ObjectMacro {
         }
         else if (targetLanguage.equals("intermediate")) {
             codeGenerator = new IntermediateCodeGenerator(ir);
+        }
+        else if (targetLanguage.equals("scala")) {
+            codeGenerator = new ScalaCodeGenerator(ir);
         }
         else {
             throw new InternalException("unhandled case");
