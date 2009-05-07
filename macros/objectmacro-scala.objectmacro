@@ -47,7 +47,7 @@ $expand: package_declaration, before_first=eol $
 $expand: imports, before_first=eol $
 
 class M$name $expand: protected $ ($expand: param_class, ancestor_param_class, separator=", " $) {
-$expand: self_ref_macro, expand_field, before_first=eol $
+$expand: self_ref_macro, check_param_not_null, check_ancestor_param_not_null, expand_field, before_first=eol $
 $macro: self_ref_macro $
   private val m$name = this
 $end: self_ref_macro $
@@ -56,7 +56,7 @@ $expand: macro_creator, before_first=eol, separator=eol $
 $expand: param_ref, before_first=eol, separator=eol $
 
   override def toString = {
-    var sb = new StringBuilder();
+    var sb = new StringBuilder()
 $expand: string_part, eol_part, param_insert_part, text_insert_part, expand_insert_part, separator=eol $
     sb toString
   }
@@ -85,7 +85,7 @@ $end: eol $
 $comment: ========== param_class ========== $
 
 $macro: param_class(name) $
-val p$(name)$comment: no eol $ : String
+val p$(name): String$comment: no eol $
 $end: param_class $
 
 $comment: ========== expand_field ========== $
@@ -98,7 +98,7 @@ $comment: ========== macro_creator ========== $
 
 $macro: macro_creator(name) $
   def new$name($expand: param_param, separator=", " $): M$name = {
-    var l$name = new M$name($expand: param_arg, ancestor_arg, separator=", " $);
+    var l$name = new M$name($expand: param_arg, ancestor_arg, separator=", " $)
 $macro: add_to_expand(signature) $
     e$signature + l$name
 $end: add_to_expand $
@@ -117,13 +117,13 @@ $end: param_ref $
 $comment: ========== param_param ========== $
 
 $macro: param_param(name) $
-p$(name)$comment: no eol $ : String
+p$(name): String$comment: no eol $
 $end: param_param $
 
 $comment: ========== ancestor_param_class ========== $
 
 $macro: ancestor_param_class(name) $
-private val m$(name)$comment: no eol $ : M$name
+private val m$(name): M$(name)$comment: no eol $
 $end: ancestor_param_class $
 
 $comment: ========== param_arg ========== $
@@ -235,3 +235,15 @@ $comment: ========== protected ========== $
 $macro: protected(package) $
 protected[$package]$comment: no eol $
 $end: protected $
+
+$comment: ========== check_param_not_null ========== $
+
+$macro: check_param_not_null(name) $
+  require(p$name != null)
+$end: check_param_not_null $
+
+$comment: ========== check_ancestor_param_not_null ========== $
+
+$macro: check_ancestor_param_not_null(name) $
+  require(m$name != null)
+$end: check_ancestor_param_not_null $

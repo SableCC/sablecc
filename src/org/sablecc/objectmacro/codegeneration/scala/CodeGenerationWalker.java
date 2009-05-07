@@ -219,6 +219,8 @@ public class CodeGenerationWalker
 
         for (TString param : node.getParams()) {
             this.currentMacro.newParamClass(string(param));
+            // check that the given parameters are not null
+            this.currentMacro.newCheckParamNotNull(string(param));
         }
 
         if (bool(node.getSelfRef())) {
@@ -227,6 +229,8 @@ public class CodeGenerationWalker
 
         for (TString ancersorRef : node.getAncestorRefs()) {
             this.currentMacro.newAncestorParamClass(string(ancersorRef));
+            // check that the given parameters are not null
+            this.currentMacro.newCheckAncestorParamNotNull(string(ancersorRef));
         }
 
         for (TString expand : node.getExpands()) {
