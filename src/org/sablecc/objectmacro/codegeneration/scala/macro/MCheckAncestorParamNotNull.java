@@ -2,13 +2,13 @@
 
 package org.sablecc.objectmacro.codegeneration.scala.macro;
 
-public class MAncestorParamClass {
+public class MCheckAncestorParamNotNull {
 
     private final String pName;
 
-    private final MAncestorParamClass mAncestorParamClass = this;
+    private final MCheckAncestorParamNotNull mCheckAncestorParamNotNull = this;
 
-    public MAncestorParamClass(
+    public MCheckAncestorParamNotNull(
             String pName) {
 
         if (pName == null) {
@@ -24,17 +24,17 @@ public class MAncestorParamClass {
 
     private String rName() {
 
-        return this.mAncestorParamClass.pName();
+        return this.mCheckAncestorParamNotNull.pName();
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("private val m");
+        sb.append("  require(m");
         sb.append(rName());
-        sb.append(": M");
-        sb.append(rName());
+        sb.append(" != null)");
+        sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }
 

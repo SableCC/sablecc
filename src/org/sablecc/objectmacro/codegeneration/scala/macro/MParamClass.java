@@ -33,8 +33,7 @@ public class MParamClass {
         StringBuilder sb = new StringBuilder();
         sb.append("val p");
         sb.append(rName());
-        sb.append(" : String");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(": String");
         return sb.toString();
     }
 

@@ -109,7 +109,7 @@ public class MMacroCreator {
                 sb.append(oParamArg_AncestorArg.toString());
             }
         }
-        sb.append(");");
+        sb.append(")");
         sb.append(System.getProperty("line.separator"));
         for (Object oAddToExpand : this.eAddToExpand) {
             sb.append(oAddToExpand.toString());

@@ -33,8 +33,7 @@ public class MParamParam {
         StringBuilder sb = new StringBuilder();
         sb.append("p");
         sb.append(rName());
-        sb.append(" : String");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(": String");
         return sb.toString();
     }
 

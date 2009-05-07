@@ -19,7 +19,7 @@ public class MMacro {
 
     private final List<Object> eParamClass_AncestorParamClass = new LinkedList<Object>();
 
-    private final List<Object> eSelfRefMacro_ExpandField = new LinkedList<Object>();
+    private final List<Object> eSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField = new LinkedList<Object>();
 
     private final List<Object> eMacroCreator = new LinkedList<Object>();
 
@@ -79,15 +79,36 @@ public class MMacro {
     public MSelfRefMacro newSelfRefMacro() {
 
         MSelfRefMacro lSelfRefMacro = new MSelfRefMacro(this.mMacro);
-        this.eSelfRefMacro_ExpandField.add(lSelfRefMacro);
+        this.eSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField
+                .add(lSelfRefMacro);
         return lSelfRefMacro;
+    }
+
+    public MCheckParamNotNull newCheckParamNotNull(
+            String pName) {
+
+        MCheckParamNotNull lCheckParamNotNull = new MCheckParamNotNull(pName);
+        this.eSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField
+                .add(lCheckParamNotNull);
+        return lCheckParamNotNull;
+    }
+
+    public MCheckAncestorParamNotNull newCheckAncestorParamNotNull(
+            String pName) {
+
+        MCheckAncestorParamNotNull lCheckAncestorParamNotNull = new MCheckAncestorParamNotNull(
+                pName);
+        this.eSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField
+                .add(lCheckAncestorParamNotNull);
+        return lCheckAncestorParamNotNull;
     }
 
     public MExpandField newExpandField(
             String pName) {
 
         MExpandField lExpandField = new MExpandField(pName);
-        this.eSelfRefMacro_ExpandField.add(lExpandField);
+        this.eSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField
+                .add(lExpandField);
         return lExpandField;
     }
 
@@ -200,11 +221,14 @@ public class MMacro {
         }
         sb.append(") {");
         sb.append(System.getProperty("line.separator"));
-        if (this.eSelfRefMacro_ExpandField.size() > 0) {
+        if (this.eSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField
+                .size() > 0) {
             sb.append(new MEol().toString());
         }
-        for (Object oSelfRefMacro_ExpandField : this.eSelfRefMacro_ExpandField) {
-            sb.append(oSelfRefMacro_ExpandField.toString());
+        for (Object oSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField : this.eSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField) {
+            sb
+                    .append(oSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField
+                            .toString());
         }
         sb.append(System.getProperty("line.separator"));
         if (this.eMacroCreator.size() > 0) {
@@ -240,7 +264,7 @@ public class MMacro {
         sb.append(System.getProperty("line.separator"));
         sb.append("  override def toString = {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    var sb = new StringBuilder();");
+        sb.append("    var sb = new StringBuilder()");
         sb.append(System.getProperty("line.separator"));
         {
             boolean first = true;
