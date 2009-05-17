@@ -68,22 +68,14 @@ Productions
 
   text
     =
-      text_keyword l_brace name [params]:param* self_ref
-      [ancestor_refs]:ancestor_ref* [param_refs]:param_ref*
-      [text_parts]:text_part* r_brace
-        {-> New text(name.string, [params.string], self_ref.boolean,
-        [ancestor_refs.string], [param_refs], [text_parts]) }
+      text_keyword l_brace name [params]:param* self_ref [ancestor_refs]:ancestor_ref* [param_refs]:param_ref* [text_parts]:text_part* r_brace
+        {-> New text(name.string, [params.string], self_ref.boolean, [ancestor_refs.string], [param_refs], [text_parts]) }
     ;
 
   macro
     =
-      macro_keyword l_brace name is_public [params]:param* self_ref
-      [ancestor_refs]:ancestor_ref* [param_refs]:param_ref*
-      [expands]:expand* [expanded_macros]:expanded_macro*
-      [macro_parts]:macro_part* r_brace
-        {-> New macro(name.string, is_public.boolean, [params.string],
-        self_ref.boolean, [ancestor_refs.string], [param_refs],
-        [expands.string], [expanded_macros], [macro_parts]) }
+      macro_keyword l_brace name is_public [params]:param* self_ref [ancestor_refs]:ancestor_ref* [param_refs]:param_ref* [expands]:expand* [expanded_macros]:expanded_macro* [macro_parts]:macro_part* r_brace
+        {-> New macro(name.string, is_public.boolean, [params.string], self_ref.boolean, [ancestor_refs.string], [param_refs], [expands.string], [expanded_macros], [macro_parts]) }
     ;
 
   param_ref
@@ -94,10 +86,8 @@ Productions
 
   expanded_macro
     =
-      expanded_macro_keyword l_brace name [params]:param*
-      [ancestor_refs]:ancestor_ref* [expands]:expand+ r_brace
-        {-> New expanded_macro(name.string, [params.string],
-        [ancestor_refs.string], [expands.string]) }
+      expanded_macro_keyword l_brace name [params]:param* [ancestor_refs]:ancestor_ref* [expands]:expand+ r_brace
+        {-> New expanded_macro(name.string, [params.string], [ancestor_refs.string], [expands.string]) }
     ;
 
   text_part
@@ -132,10 +122,8 @@ Productions
 
   expand_insert
     =
-      expand_insert_keyword l_brace name none? separator? before_first?
-      after_last? r_brace
-        {-> New expand_insert(name.string, none.value, separator.value,
-        before_first.value, after_last.value) }
+      expand_insert_keyword l_brace name none? separator? before_first? after_last? r_brace
+        {-> New expand_insert(name.string, none.value, separator.value, before_first.value, after_last.value) }
     ;
 
   none
@@ -257,10 +245,8 @@ Productions
 
   text_insert
     =
-      text_insert_keyword l_brace name [args]:arg*
-      [ancestor_refs]:ancestor_ref* r_brace
-        {-> New text_insert(name.string, [args.value],
-        [ancestor_refs.string]) }
+      text_insert_keyword l_brace name [args]:arg* [ancestor_refs]:ancestor_ref* r_brace
+        {-> New text_insert(name.string, [args.value], [ancestor_refs.string]) }
     ;
 
   arg
