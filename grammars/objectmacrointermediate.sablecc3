@@ -23,9 +23,13 @@ Helpers
 
 Tokens
   after_last_keyword = 'after_last';
+  after_many_keyword = 'after_many';
+  after_one_keyword = 'after_one';
   ancestor_ref_keyword = 'ancestor_ref';
   arg_keyword = 'arg';
   before_first_keyword = 'before_first';
+  before_many_keyword = 'before_many';
+  before_one_keyword = 'before_one';
   context_name_keyword = 'context_name';
   eol_keyword = 'eol';
   expand_keyword = 'expand';
@@ -122,8 +126,8 @@ Productions
 
   expand_insert
     =
-      expand_insert_keyword l_brace name none? separator? before_first? after_last? r_brace
-        {-> New expand_insert(name.string, none.value, separator.value, before_first.value, after_last.value) }
+      expand_insert_keyword l_brace name none? separator? before_first? after_last? before_one? after_one? before_many? after_many? r_brace
+        {-> New expand_insert(name.string, none.value, separator.value, before_first.value, after_last.value, before_one.value, after_one.value, before_many.value, after_many.value) }
     ;
 
   none
@@ -175,6 +179,58 @@ Productions
         {-> New value.param_insert(param_insert.string) }
     |
       {text} after_last_keyword l_brace text_insert r_brace
+        {-> New value.text_insert(text_insert) }
+    ;
+
+  before_one
+        {-> value }
+    =
+      {string} before_one_keyword assign string semicolon
+        {-> New value.string(string) }
+    |
+      {var} before_one_keyword l_brace param_insert r_brace
+        {-> New value.param_insert(param_insert.string) }
+    |
+      {text} before_one_keyword l_brace text_insert r_brace
+        {-> New value.text_insert(text_insert) }
+    ;
+
+  after_one
+        {-> value }
+    =
+      {string} after_one_keyword assign string semicolon
+        {-> New value.string(string) }
+    |
+      {var} after_one_keyword l_brace param_insert r_brace
+        {-> New value.param_insert(param_insert.string) }
+    |
+      {text} after_one_keyword l_brace text_insert r_brace
+        {-> New value.text_insert(text_insert) }
+    ;
+
+  before_many
+        {-> value }
+    =
+      {string} before_many_keyword assign string semicolon
+        {-> New value.string(string) }
+    |
+      {var} before_many_keyword l_brace param_insert r_brace
+        {-> New value.param_insert(param_insert.string) }
+    |
+      {text} before_many_keyword l_brace text_insert r_brace
+        {-> New value.text_insert(text_insert) }
+    ;
+
+  after_many
+        {-> value }
+    =
+      {string} after_many_keyword assign string semicolon
+        {-> New value.string(string) }
+    |
+      {var} after_many_keyword l_brace param_insert r_brace
+        {-> New value.param_insert(param_insert.string) }
+    |
+      {text} after_many_keyword l_brace text_insert r_brace
         {-> New value.text_insert(text_insert) }
     ;
 
@@ -297,7 +353,8 @@ Abstract Syntax Tree
 
   expand_insert =
     [name]:string [none]:value? [separator]:value? [before_first]:value?
-    [after_last]:value?;
+    [after_last]:value? [before_one]:value? [after_one]:value?
+    [before_many]:value? [after_many]:value?;
 
   text_insert =
     [name]:string [args]:value* [ancestor_refs]:string*;

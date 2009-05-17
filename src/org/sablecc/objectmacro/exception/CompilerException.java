@@ -19,6 +19,7 @@ package org.sablecc.objectmacro.exception;
 
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.errormessages.MCannotCreateDirectory;
+import org.sablecc.objectmacro.errormessages.MConflictingOption;
 import org.sablecc.objectmacro.errormessages.MCyclicReference;
 import org.sablecc.objectmacro.errormessages.MDuplicateDeclaration;
 import org.sablecc.objectmacro.errormessages.MDuplicateOption;
@@ -228,6 +229,20 @@ public class CompilerException
                 + "", duplicateOption.getName().getPos() + "", firstOption
                 .getName().getLine()
                 + "", firstOption.getName().getPos() + "").toString());
+    }
+
+    public static CompilerException conflictingOption(
+            AOption conflictingOption,
+            AOption firstOption) {
+
+        String conflictingName = conflictingOption.getName().getText();
+        String firstName = conflictingOption.getName().getText();
+
+        return new CompilerException(new MConflictingOption(conflictingName,
+                conflictingOption.getName().getLine() + "", conflictingOption
+                        .getName().getPos()
+                        + "", firstName, firstOption.getName().getLine() + "",
+                firstOption.getName().getPos() + "").toString());
     }
 
     public static CompilerException unknownOption(
