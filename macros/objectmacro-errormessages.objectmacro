@@ -268,6 +268,16 @@ Duplicate "$name" option.
 It was already provided at line $ref_line, char $ref_char.
 $end: duplicate_option $
 
+$comment: ========== conflicting_option ========== $
+
+$macro: conflicting_option(name, line, char, ref_name, ref_line, ref_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Option "$name" conflicts with "$ref_name" option at line $ref_line, char $ref_char.
+$end: conflicting_option $
+
 $comment: ========== unknown_option ========== $
 
 $macro: unknown_option(name, line, char) $

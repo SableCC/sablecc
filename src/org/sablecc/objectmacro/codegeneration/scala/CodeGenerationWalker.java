@@ -24,7 +24,11 @@ import java.io.IOException;
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.codegeneration.IntermediateRepresentation;
 import org.sablecc.objectmacro.codegeneration.scala.macro.MAfterLast;
+import org.sablecc.objectmacro.codegeneration.scala.macro.MAfterMany;
+import org.sablecc.objectmacro.codegeneration.scala.macro.MAfterOne;
 import org.sablecc.objectmacro.codegeneration.scala.macro.MBeforeFirst;
+import org.sablecc.objectmacro.codegeneration.scala.macro.MBeforeMany;
+import org.sablecc.objectmacro.codegeneration.scala.macro.MBeforeOne;
 import org.sablecc.objectmacro.codegeneration.scala.macro.MExpandInsertPart;
 import org.sablecc.objectmacro.codegeneration.scala.macro.MMacro;
 import org.sablecc.objectmacro.codegeneration.scala.macro.MMacroCreator;
@@ -76,6 +80,14 @@ public class CodeGenerationWalker
     private MBeforeFirst currentBeforeFirst;
 
     private MAfterLast currentAfterLast;
+
+    private MBeforeOne currentBeforeOne;
+
+    private MAfterOne currentAfterOne;
+
+    private MBeforeMany currentBeforeMany;
+
+    private MAfterMany currentAfterMany;
 
     private MTextInsert currentTextInsert;
 
@@ -398,6 +410,30 @@ public class CodeGenerationWalker
             node.getAfterLast().apply(this);
             this.currentAfterLast = null;
         }
+
+        if (node.getBeforeOne() != null) {
+            this.currentBeforeOne = currentExpandInsertPart.newBeforeOne();
+            node.getBeforeOne().apply(this);
+            this.currentBeforeOne = null;
+        }
+
+        if (node.getAfterOne() != null) {
+            this.currentAfterOne = currentExpandInsertPart.newAfterOne();
+            node.getAfterOne().apply(this);
+            this.currentAfterOne = null;
+        }
+
+        if (node.getBeforeMany() != null) {
+            this.currentBeforeMany = currentExpandInsertPart.newBeforeMany();
+            node.getBeforeMany().apply(this);
+            this.currentBeforeMany = null;
+        }
+
+        if (node.getAfterMany() != null) {
+            this.currentAfterMany = currentExpandInsertPart.newAfterMany();
+            node.getAfterMany().apply(this);
+            this.currentAfterMany = null;
+        }
     }
 
     @Override
@@ -424,6 +460,22 @@ public class CodeGenerationWalker
         }
         else if (this.currentAfterLast != null) {
             this.currentTextInsert = this.currentAfterLast
+                    .newTextInsert(string(node.getName()));
+        }
+        else if (this.currentBeforeOne != null) {
+            this.currentTextInsert = this.currentBeforeOne
+                    .newTextInsert(string(node.getName()));
+        }
+        else if (this.currentAfterOne != null) {
+            this.currentTextInsert = this.currentAfterOne
+                    .newTextInsert(string(node.getName()));
+        }
+        else if (this.currentBeforeMany != null) {
+            this.currentTextInsert = this.currentBeforeMany
+                    .newTextInsert(string(node.getName()));
+        }
+        else if (this.currentAfterMany != null) {
+            this.currentTextInsert = this.currentAfterMany
                     .newTextInsert(string(node.getName()));
         }
         else if (this.currentTextInsertPart != null) {
@@ -464,6 +516,18 @@ public class CodeGenerationWalker
         else if (this.currentAfterLast != null) {
             this.currentAfterLast.newString(escapedString(node.getString()));
         }
+        else if (this.currentBeforeOne != null) {
+            this.currentBeforeOne.newString(escapedString(node.getString()));
+        }
+        else if (this.currentAfterOne != null) {
+            this.currentAfterOne.newString(escapedString(node.getString()));
+        }
+        else if (this.currentBeforeMany != null) {
+            this.currentBeforeMany.newString(escapedString(node.getString()));
+        }
+        else if (this.currentAfterMany != null) {
+            this.currentAfterMany.newString(escapedString(node.getString()));
+        }
         else {
             throw new InternalException("unhandled case");
         }
@@ -489,6 +553,18 @@ public class CodeGenerationWalker
         }
         else if (this.currentAfterLast != null) {
             this.currentAfterLast.newParamInsert(string(node.getParamInsert()));
+        }
+        else if (this.currentBeforeOne != null) {
+            this.currentBeforeOne.newParamInsert(string(node.getParamInsert()));
+        }
+        else if (this.currentAfterOne != null) {
+            this.currentAfterOne.newParamInsert(string(node.getParamInsert()));
+        }
+        else if (this.currentBeforeMany != null) {
+            this.currentBeforeOne.newParamInsert(string(node.getParamInsert()));
+        }
+        else if (this.currentAfterMany != null) {
+            this.currentAfterOne.newParamInsert(string(node.getParamInsert()));
         }
         else {
             throw new InternalException("unhandled case");

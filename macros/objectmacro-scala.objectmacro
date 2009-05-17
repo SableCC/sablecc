@@ -175,6 +175,16 @@ $macro: before_first $
       sb.append($expand: string, param_insert, text_insert $)
     }
 $end: before_first $
+$macro: before_one $
+    if(e$name.size == 1) {
+      sb.append($expand: string, param_insert, text_insert $)
+    }
+$end: before_one $
+$macro: before_many $
+    if(e$name.size > 1) {
+      sb.append($expand: string, param_insert, text_insert $)
+    }
+$end: before_many $
 $macro: separator $
     {
       var first = true
@@ -198,6 +208,16 @@ $macro: after_last $
       sb.append($expand: string, param_insert, text_insert $)
     }
 $end: after_last $
+$macro: after_one $
+    if(e$name.size == 0) {
+      sb.append($expand: string, param_insert, text_insert $)
+    }
+$end: after_one $
+$macro: after_many $
+    if(e$name.size > 1) {
+      sb.append($expand: string, param_insert, text_insert $)
+    }
+$end: after_many $
 $end: expand_insert_part $
 
 $comment: ========== text_insert ========== $

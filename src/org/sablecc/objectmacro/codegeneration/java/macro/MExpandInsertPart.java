@@ -15,11 +15,19 @@ public class MExpandInsertPart {
 
     private final List<Object> eBeforeFirst = new LinkedList<Object>();
 
+    private final List<Object> eBeforeOne = new LinkedList<Object>();
+
+    private final List<Object> eBeforeMany = new LinkedList<Object>();
+
     private final List<Object> eSeparator = new LinkedList<Object>();
 
     private final List<Object> eNoSeparator = new LinkedList<Object>();
 
     private final List<Object> eAfterLast = new LinkedList<Object>();
+
+    private final List<Object> eAfterOne = new LinkedList<Object>();
+
+    private final List<Object> eAfterMany = new LinkedList<Object>();
 
     public MExpandInsertPart(
             String pName) {
@@ -44,6 +52,20 @@ public class MExpandInsertPart {
         return lBeforeFirst;
     }
 
+    public MBeforeOne newBeforeOne() {
+
+        MBeforeOne lBeforeOne = new MBeforeOne(this.mExpandInsertPart);
+        this.eBeforeOne.add(lBeforeOne);
+        return lBeforeOne;
+    }
+
+    public MBeforeMany newBeforeMany() {
+
+        MBeforeMany lBeforeMany = new MBeforeMany(this.mExpandInsertPart);
+        this.eBeforeMany.add(lBeforeMany);
+        return lBeforeMany;
+    }
+
     public MSeparator newSeparator() {
 
         MSeparator lSeparator = new MSeparator(this.mExpandInsertPart);
@@ -65,6 +87,20 @@ public class MExpandInsertPart {
         return lAfterLast;
     }
 
+    public MAfterOne newAfterOne() {
+
+        MAfterOne lAfterOne = new MAfterOne(this.mExpandInsertPart);
+        this.eAfterOne.add(lAfterOne);
+        return lAfterOne;
+    }
+
+    public MAfterMany newAfterMany() {
+
+        MAfterMany lAfterMany = new MAfterMany(this.mExpandInsertPart);
+        this.eAfterMany.add(lAfterMany);
+        return lAfterMany;
+    }
+
     String pName() {
 
         return this.pName;
@@ -80,6 +116,12 @@ public class MExpandInsertPart {
         for (Object oBeforeFirst : this.eBeforeFirst) {
             sb.append(oBeforeFirst.toString());
         }
+        for (Object oBeforeOne : this.eBeforeOne) {
+            sb.append(oBeforeOne.toString());
+        }
+        for (Object oBeforeMany : this.eBeforeMany) {
+            sb.append(oBeforeMany.toString());
+        }
         for (Object oSeparator : this.eSeparator) {
             sb.append(oSeparator.toString());
         }
@@ -88,6 +130,12 @@ public class MExpandInsertPart {
         }
         for (Object oAfterLast : this.eAfterLast) {
             sb.append(oAfterLast.toString());
+        }
+        for (Object oAfterOne : this.eAfterOne) {
+            sb.append(oAfterOne.toString());
+        }
+        for (Object oAfterMany : this.eAfterMany) {
+            sb.append(oAfterMany.toString());
         }
         return sb.toString();
     }

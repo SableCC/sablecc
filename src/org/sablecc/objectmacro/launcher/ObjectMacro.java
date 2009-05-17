@@ -935,6 +935,10 @@ public class ObjectMacro {
                     PValue separator = null;
                     PValue before_first = null;
                     PValue after_last = null;
+                    PValue before_one = null;
+                    PValue after_one = null;
+                    PValue before_many = null;
+                    PValue after_many = null;
 
                     if (expand.getNone() != null) {
                         none = createValue(expand.getNone().getStaticValue(),
@@ -956,9 +960,30 @@ public class ObjectMacro {
                                 .getStaticValue(), macro);
                     }
 
+                    if (expand.getBeforeOne() != null) {
+                        before_one = createValue(expand.getBeforeOne()
+                                .getStaticValue(), macro);
+                    }
+
+                    if (expand.getAfterOne() != null) {
+                        after_one = createValue(expand.getAfterOne()
+                                .getStaticValue(), macro);
+                    }
+
+                    if (expand.getBeforeMany() != null) {
+                        before_many = createValue(expand.getBeforeMany()
+                                .getStaticValue(), macro);
+                    }
+
+                    if (expand.getAfterMany() != null) {
+                        after_many = createValue(expand.getAfterMany()
+                                .getStaticValue(), macro);
+                    }
+
                     macro_parts.add(new AExpandInsertMacroPart(
                             new AExpandInsert(expandName, none, separator,
-                                    before_first, after_last)));
+                                    before_first, after_last, before_one,
+                                    after_one, before_many, after_many)));
                 }
                 else if (pMacroBodyPart instanceof AMacroMacroBodyPart) {
                     AMacroMacroBodyPart macroBodyPart = (AMacroMacroBodyPart) pMacroBodyPart;
@@ -976,7 +1001,7 @@ public class ObjectMacro {
                                 + "'");
                         macro_parts.add(new AExpandInsertMacroPart(
                                 new AExpandInsert(expandName, null, null, null,
-                                        null)));
+                                        null, null, null, null, null)));
                     }
                 }
                 else {

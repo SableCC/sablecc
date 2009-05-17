@@ -45,6 +45,14 @@ public class Expand {
 
     private AOption afterLast;
 
+    private AOption beforeOne;
+
+    private AOption afterOne;
+
+    private AOption beforeMany;
+
+    private AOption afterMany;
+
     Expand(
             GlobalIndex globalIndex,
             AExpand declaration,
@@ -109,6 +117,14 @@ public class Expand {
                 throw CompilerException.duplicateOption(option,
                         this.beforeFirst);
             }
+            else if (this.beforeOne != null) {
+                throw CompilerException.conflictingOption(option,
+                        this.beforeOne);
+            }
+            else if (this.beforeMany != null) {
+                throw CompilerException.conflictingOption(option,
+                        this.beforeMany);
+            }
 
             this.beforeFirst = option;
         }
@@ -117,8 +133,65 @@ public class Expand {
             if (this.afterLast != null) {
                 throw CompilerException.duplicateOption(option, this.afterLast);
             }
+            else if (this.afterOne != null) {
+                throw CompilerException
+                        .conflictingOption(option, this.afterOne);
+            }
+            else if (this.afterMany != null) {
+                throw CompilerException.conflictingOption(option,
+                        this.afterMany);
+            }
 
             this.afterLast = option;
+        }
+        else if (name.equals("before_one")) {
+
+            if (this.beforeOne != null) {
+                throw CompilerException.duplicateOption(option, this.beforeOne);
+            }
+            else if (this.beforeFirst != null) {
+                throw CompilerException.conflictingOption(option,
+                        this.beforeFirst);
+            }
+
+            this.beforeOne = option;
+        }
+        else if (name.equals("after_one")) {
+
+            if (this.afterOne != null) {
+                throw CompilerException.duplicateOption(option, this.afterOne);
+            }
+            else if (this.afterLast != null) {
+                throw CompilerException.conflictingOption(option,
+                        this.afterLast);
+            }
+
+            this.afterOne = option;
+        }
+        else if (name.equals("before_many")) {
+
+            if (this.beforeMany != null) {
+                throw CompilerException
+                        .duplicateOption(option, this.beforeMany);
+            }
+            else if (this.beforeFirst != null) {
+                throw CompilerException.conflictingOption(option,
+                        this.beforeFirst);
+            }
+
+            this.beforeMany = option;
+        }
+        else if (name.equals("after_many")) {
+
+            if (this.afterMany != null) {
+                throw CompilerException.duplicateOption(option, this.afterMany);
+            }
+            else if (this.afterLast != null) {
+                throw CompilerException.conflictingOption(option,
+                        this.afterLast);
+            }
+
+            this.afterMany = option;
         }
         else {
             throw CompilerException.unknownOption(option);
@@ -158,6 +231,26 @@ public class Expand {
     public AOption getAfterLast() {
 
         return this.afterLast;
+    }
+
+    public AOption getBeforeOne() {
+
+        return this.beforeOne;
+    }
+
+    public AOption getAfterOne() {
+
+        return this.afterOne;
+    }
+
+    public AOption getBeforeMany() {
+
+        return this.beforeMany;
+    }
+
+    public AOption getAfterMany() {
+
+        return this.afterMany;
     }
 
 }

@@ -280,6 +280,26 @@ public class CodeGenerationWalker
             node.getAfterLast().apply(this);
         }
 
+        if (node.getBeforeOne() != null) {
+            this.currentOption = "before_one";
+            node.getBeforeOne().apply(this);
+        }
+
+        if (node.getAfterOne() != null) {
+            this.currentOption = "after_one";
+            node.getAfterOne().apply(this);
+        }
+
+        if (node.getBeforeMany() != null) {
+            this.currentOption = "before_many";
+            node.getBeforeMany().apply(this);
+        }
+
+        if (node.getAfterMany() != null) {
+            this.currentOption = "after_many";
+            node.getAfterMany().apply(this);
+        }
+
         this.currentExpandInsertPart = null;
         this.currentOption = null;
     }
