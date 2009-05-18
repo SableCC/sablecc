@@ -55,7 +55,7 @@ public class MAfterOne {
         StringBuilder sb = new StringBuilder();
         sb.append("    if(e");
         sb.append(rName());
-        sb.append(".size == 0) {");
+        sb.append(".size == 1) {");
         sb.append(System.getProperty("line.separator"));
         sb.append("      sb.append(");
         for (Object oString_ParamInsert_TextInsert : this.eString_ParamInsert_TextInsert) {
