@@ -261,7 +261,7 @@ public class CodeGenerationWalker
             throw CompilerException.outputError(destination.toString(), e);
         }
 
-        this.currentText = null;
+        this.currentMacro = null;
     }
 
     @Override
