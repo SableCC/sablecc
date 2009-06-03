@@ -13,7 +13,7 @@ public class MTextInsert {
 
     private final MTextInsert mTextInsert = this;
 
-    private final List<Object> eStringArg_ParamInsertArg_TextInsertArg = new LinkedList<Object>();
+    private final List<Object> eInlineTextArg_ParamInsertArg_TextInsertArg = new LinkedList<Object>();
 
     private final List<Object> eAncestorRef = new LinkedList<Object>();
 
@@ -31,13 +31,12 @@ public class MTextInsert {
         this.pIndent = pIndent;
     }
 
-    public MStringArg newStringArg(
-            String pString,
+    public MInlineTextArg newInlineTextArg(
             String pIndent) {
 
-        MStringArg lStringArg = new MStringArg(pString, pIndent);
-        this.eStringArg_ParamInsertArg_TextInsertArg.add(lStringArg);
-        return lStringArg;
+        MInlineTextArg lInlineTextArg = new MInlineTextArg(pIndent);
+        this.eInlineTextArg_ParamInsertArg_TextInsertArg.add(lInlineTextArg);
+        return lInlineTextArg;
     }
 
     public MParamInsertArg newParamInsertArg(
@@ -45,7 +44,7 @@ public class MTextInsert {
             String pIndent) {
 
         MParamInsertArg lParamInsertArg = new MParamInsertArg(pName, pIndent);
-        this.eStringArg_ParamInsertArg_TextInsertArg.add(lParamInsertArg);
+        this.eInlineTextArg_ParamInsertArg_TextInsertArg.add(lParamInsertArg);
         return lParamInsertArg;
     }
 
@@ -53,7 +52,7 @@ public class MTextInsert {
             String pIndent) {
 
         MTextInsertArg lTextInsertArg = new MTextInsertArg(pIndent);
-        this.eStringArg_ParamInsertArg_TextInsertArg.add(lTextInsertArg);
+        this.eInlineTextArg_ParamInsertArg_TextInsertArg.add(lTextInsertArg);
         return lTextInsertArg;
     }
 
@@ -98,8 +97,8 @@ public class MTextInsert {
         sb.append(rName());
         sb.append(";");
         sb.append(System.getProperty("line.separator"));
-        for (Object oStringArg_ParamInsertArg_TextInsertArg : this.eStringArg_ParamInsertArg_TextInsertArg) {
-            sb.append(oStringArg_ParamInsertArg_TextInsertArg.toString());
+        for (Object oInlineTextArg_ParamInsertArg_TextInsertArg : this.eInlineTextArg_ParamInsertArg_TextInsertArg) {
+            sb.append(oInlineTextArg_ParamInsertArg_TextInsertArg.toString());
         }
         for (Object oAncestorRef : this.eAncestorRef) {
             sb.append(oAncestorRef.toString());

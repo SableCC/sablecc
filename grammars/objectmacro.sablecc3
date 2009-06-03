@@ -80,7 +80,7 @@ Helpers
 
   string_char = [[[ascii - ascii_c] + white_space_not_newline] -
                  [['\' + '$'] + '"']];
-  string_escape = '\' [['\' + '$'] + '"'];
+  string_escape = '\' [['\' + '$'] + ['"' + 'n']];
 
   lowercase = ['a'..'z'];
   digit = ['0'..'9'];

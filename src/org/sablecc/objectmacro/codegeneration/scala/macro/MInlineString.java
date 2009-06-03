@@ -2,13 +2,13 @@
 
 package org.sablecc.objectmacro.codegeneration.scala.macro;
 
-public class MString {
+public class MInlineString {
 
     private final String pString;
 
-    private final MString mString = this;
+    private final MInlineString mInlineString = this;
 
-    public MString(
+    public MInlineString(
             String pString) {
 
         if (pString == null) {
@@ -24,7 +24,7 @@ public class MString {
 
     private String rString() {
 
-        return this.mString.pString();
+        return this.mInlineString.pString();
     }
 
     @Override

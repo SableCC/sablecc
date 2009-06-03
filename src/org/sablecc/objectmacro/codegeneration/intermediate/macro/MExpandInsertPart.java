@@ -11,7 +11,7 @@ public class MExpandInsertPart {
 
     private final MExpandInsertPart mExpandInsertPart = this;
 
-    private final List<Object> eStringOption_ParamInsertOption_TextInsertOption = new LinkedList<Object>();
+    private final List<Object> eInlineTextOption_ParamInsertOption_TextInsertOption = new LinkedList<Object>();
 
     public MExpandInsertPart(
             String pName) {
@@ -22,14 +22,13 @@ public class MExpandInsertPart {
         this.pName = pName;
     }
 
-    public MStringOption newStringOption(
-            String pOption,
-            String pString) {
+    public MInlineTextOption newInlineTextOption(
+            String pOption) {
 
-        MStringOption lStringOption = new MStringOption(pOption, pString);
-        this.eStringOption_ParamInsertOption_TextInsertOption
-                .add(lStringOption);
-        return lStringOption;
+        MInlineTextOption lInlineTextOption = new MInlineTextOption(pOption);
+        this.eInlineTextOption_ParamInsertOption_TextInsertOption
+                .add(lInlineTextOption);
+        return lInlineTextOption;
     }
 
     public MParamInsertOption newParamInsertOption(
@@ -38,7 +37,7 @@ public class MExpandInsertPart {
 
         MParamInsertOption lParamInsertOption = new MParamInsertOption(pOption,
                 pName);
-        this.eStringOption_ParamInsertOption_TextInsertOption
+        this.eInlineTextOption_ParamInsertOption_TextInsertOption
                 .add(lParamInsertOption);
         return lParamInsertOption;
     }
@@ -47,7 +46,7 @@ public class MExpandInsertPart {
             String pOption) {
 
         MTextInsertOption lTextInsertOption = new MTextInsertOption(pOption);
-        this.eStringOption_ParamInsertOption_TextInsertOption
+        this.eInlineTextOption_ParamInsertOption_TextInsertOption
                 .add(lTextInsertOption);
         return lTextInsertOption;
     }
@@ -72,8 +71,8 @@ public class MExpandInsertPart {
         sb.append(rName());
         sb.append(";");
         sb.append(System.getProperty("line.separator"));
-        for (Object oStringOption_ParamInsertOption_TextInsertOption : this.eStringOption_ParamInsertOption_TextInsertOption) {
-            sb.append(oStringOption_ParamInsertOption_TextInsertOption
+        for (Object oInlineTextOption_ParamInsertOption_TextInsertOption : this.eInlineTextOption_ParamInsertOption_TextInsertOption) {
+            sb.append(oInlineTextOption_ParamInsertOption_TextInsertOption
                     .toString());
         }
         sb.append("  }");

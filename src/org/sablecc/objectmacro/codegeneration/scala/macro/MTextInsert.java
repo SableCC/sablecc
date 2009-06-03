@@ -11,7 +11,7 @@ public class MTextInsert {
 
     private final MTextInsert mTextInsert = this;
 
-    private final List<Object> eString_ParamInsert_TextInsert_TextInsertAncestor = new LinkedList<Object>();
+    private final List<Object> eInlineText_ParamInsert_TextInsert_TextInsertAncestor = new LinkedList<Object>();
 
     public MTextInsert(
             String pName) {
@@ -22,19 +22,19 @@ public class MTextInsert {
         this.pName = pName;
     }
 
-    public MString newString(
-            String pString) {
+    public MInlineText newInlineText() {
 
-        MString lString = new MString(pString);
-        this.eString_ParamInsert_TextInsert_TextInsertAncestor.add(lString);
-        return lString;
+        MInlineText lInlineText = new MInlineText();
+        this.eInlineText_ParamInsert_TextInsert_TextInsertAncestor
+                .add(lInlineText);
+        return lInlineText;
     }
 
     public MParamInsert newParamInsert(
             String pName) {
 
         MParamInsert lParamInsert = new MParamInsert(pName);
-        this.eString_ParamInsert_TextInsert_TextInsertAncestor
+        this.eInlineText_ParamInsert_TextInsert_TextInsertAncestor
                 .add(lParamInsert);
         return lParamInsert;
     }
@@ -43,7 +43,8 @@ public class MTextInsert {
             String pName) {
 
         MTextInsert lTextInsert = new MTextInsert(pName);
-        this.eString_ParamInsert_TextInsert_TextInsertAncestor.add(lTextInsert);
+        this.eInlineText_ParamInsert_TextInsert_TextInsertAncestor
+                .add(lTextInsert);
         return lTextInsert;
     }
 
@@ -51,7 +52,7 @@ public class MTextInsert {
             String pName) {
 
         MTextInsertAncestor lTextInsertAncestor = new MTextInsertAncestor(pName);
-        this.eString_ParamInsert_TextInsert_TextInsertAncestor
+        this.eInlineText_ParamInsert_TextInsert_TextInsertAncestor
                 .add(lTextInsertAncestor);
         return lTextInsertAncestor;
     }
@@ -75,14 +76,14 @@ public class MTextInsert {
         sb.append("(");
         {
             boolean first = true;
-            for (Object oString_ParamInsert_TextInsert_TextInsertAncestor : this.eString_ParamInsert_TextInsert_TextInsertAncestor) {
+            for (Object oInlineText_ParamInsert_TextInsert_TextInsertAncestor : this.eInlineText_ParamInsert_TextInsert_TextInsertAncestor) {
                 if (first) {
                     first = false;
                 }
                 else {
                     sb.append(", ");
                 }
-                sb.append(oString_ParamInsert_TextInsert_TextInsertAncestor
+                sb.append(oInlineText_ParamInsert_TextInsert_TextInsertAncestor
                         .toString());
             }
         }

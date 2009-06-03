@@ -20,6 +20,8 @@ package org.sablecc.objectmacro.codegeneration.intermediate;
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.codegeneration.intermediate.macro.MExpandInsertPart;
 import org.sablecc.objectmacro.codegeneration.intermediate.macro.MExpandedMacro;
+import org.sablecc.objectmacro.codegeneration.intermediate.macro.MInlineTextArg;
+import org.sablecc.objectmacro.codegeneration.intermediate.macro.MInlineTextOption;
 import org.sablecc.objectmacro.codegeneration.intermediate.macro.MIntermediateRepresentation;
 import org.sablecc.objectmacro.codegeneration.intermediate.macro.MMacro;
 import org.sablecc.objectmacro.codegeneration.intermediate.macro.MText;
@@ -28,19 +30,21 @@ import org.sablecc.objectmacro.codegeneration.intermediate.macro.MTextInsertArg;
 import org.sablecc.objectmacro.codegeneration.intermediate.macro.MTextInsertOption;
 import org.sablecc.objectmacro.codegeneration.intermediate.macro.MTextInsertPart;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AEolInlineText;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AEolMacroPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AEolTextPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AExpandInsert;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AExpandedMacro;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AInlineTextValue;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AIntermediateRepresentation;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AMacro;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertMacroPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertTextPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertValue;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamRef;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AStringInlineText;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AStringMacroPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AStringTextPart;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AStringValue;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AText;
 import org.sablecc.objectmacro.intermediate.syntax3.node.ATextInsert;
 import org.sablecc.objectmacro.intermediate.syntax3.node.ATextInsertMacroPart;
@@ -73,6 +77,10 @@ public class CodeGenerationWalker
     private MTextInsertOption currentTextInsertOption;
 
     private MTextInsertArg currentTextInsertArg;
+
+    private MInlineTextOption currentInlineTextOption;
+
+    private MInlineTextArg currentInlineTextArg;
 
     public String getStringRepresentation() {
 
@@ -339,16 +347,63 @@ public class CodeGenerationWalker
     }
 
     @Override
-    public void inAStringValue(
-            AStringValue node) {
+    public void inAInlineTextValue(
+            AInlineTextValue node) {
 
         if (node.parent() instanceof AExpandInsert) {
-            this.currentExpandInsertPart.newStringOption(this.currentOption,
-                    node.getString().getText());
+            this.currentInlineTextOption = this.currentExpandInsertPart
+                    .newInlineTextOption(this.currentOption);
         }
         else if (node.parent() instanceof ATextInsert) {
-            this.currentTextInsert.newStringArg(node.getString().getText(),
-                    this.currentIndent);
+            this.currentInlineTextArg = this.currentTextInsert
+                    .newInlineTextArg(this.currentIndent);
+        }
+        else {
+            throw new InternalException("unhandled case");
+        }
+    }
+
+    @Override
+    public void outAInlineTextValue(
+            AInlineTextValue node) {
+
+        if (node.parent() instanceof AExpandInsert) {
+            this.currentInlineTextOption = null;
+        }
+        else if (node.parent() instanceof ATextInsert) {
+            this.currentInlineTextArg = null;
+        }
+        else {
+            throw new InternalException("unhandled case");
+        }
+    }
+
+    @Override
+    public void inAStringInlineText(
+            AStringInlineText node) {
+
+        if (this.currentInlineTextOption != null) {
+            this.currentInlineTextOption.newInlineString(node.getString()
+                    .getText());
+        }
+        else if (this.currentInlineTextArg != null) {
+            this.currentInlineTextArg.newInlineString(node.getString()
+                    .getText());
+        }
+        else {
+            throw new InternalException("unhandled case");
+        }
+    }
+
+    @Override
+    public void inAEolInlineText(
+            AEolInlineText node) {
+
+        if (this.currentInlineTextOption != null) {
+            this.currentInlineTextOption.newInlineEol();
+        }
+        else if (this.currentInlineTextArg != null) {
+            this.currentInlineTextArg.newInlineEol();
         }
         else {
             throw new InternalException("unhandled case");

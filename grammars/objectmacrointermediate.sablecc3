@@ -50,6 +50,7 @@ Tokens
   true_keyword = 'true';
 
   assign = '=';
+  comma = ',';
   semicolon = ';';
   l_brace = '{';
   r_brace = '}';
@@ -130,11 +131,33 @@ Productions
         {-> New expand_insert(name.string, none.value, separator.value, before_first.value, after_last.value, before_one.value, after_one.value, before_many.value, after_many.value) }
     ;
 
+  inline_text_list
+        {-> [inline_texts]:inline_text+ }
+    =
+      inline_text [additional_inline_texts]:additional_inline_text*
+        {-> [inline_text, additional_inline_texts.inline_text] }
+    ;
+
+  additional_inline_text
+        {-> inline_text }
+    =
+      comma inline_text
+        {-> inline_text }
+    ;
+
+  inline_text
+    =
+      {string} string
+    |
+      {eol} eol_keyword
+        {-> New inline_text.eol() }
+    ;
+
   none
         {-> value }
     =
-      {string} none_keyword assign string semicolon
-        {-> New value.string(string) }
+      {inline_text} none_keyword assign inline_text_list semicolon
+        {-> New value.inline_text([inline_text_list.inline_texts]) }
     |
       {var} none_keyword l_brace param_insert r_brace
         {-> New value.param_insert(param_insert.string) }
@@ -146,8 +169,8 @@ Productions
   separator
         {-> value }
     =
-      {string} separator_keyword assign string semicolon
-        {-> New value.string(string) }
+      {inline_text} separator_keyword assign inline_text_list semicolon
+        {-> New value.inline_text([inline_text_list.inline_texts]) }
     |
       {var} separator_keyword l_brace param_insert r_brace
         {-> New value.param_insert(param_insert.string) }
@@ -159,8 +182,8 @@ Productions
   before_first
         {-> value }
     =
-      {string} before_first_keyword assign string semicolon
-        {-> New value.string(string) }
+      {inline_text} before_first_keyword assign inline_text_list semicolon
+        {-> New value.inline_text([inline_text_list.inline_texts]) }
     |
       {var} before_first_keyword l_brace param_insert r_brace
         {-> New value.param_insert(param_insert.string) }
@@ -172,8 +195,8 @@ Productions
   after_last
         {-> value }
     =
-      {string} after_last_keyword assign string semicolon
-        {-> New value.string(string) }
+      {inline_text} after_last_keyword assign inline_text_list semicolon
+        {-> New value.inline_text([inline_text_list.inline_texts]) }
     |
       {var} after_last_keyword l_brace param_insert r_brace
         {-> New value.param_insert(param_insert.string) }
@@ -185,8 +208,8 @@ Productions
   before_one
         {-> value }
     =
-      {string} before_one_keyword assign string semicolon
-        {-> New value.string(string) }
+      {inline_text} before_one_keyword assign inline_text_list semicolon
+        {-> New value.inline_text([inline_text_list.inline_texts]) }
     |
       {var} before_one_keyword l_brace param_insert r_brace
         {-> New value.param_insert(param_insert.string) }
@@ -198,8 +221,8 @@ Productions
   after_one
         {-> value }
     =
-      {string} after_one_keyword assign string semicolon
-        {-> New value.string(string) }
+      {inline_text} after_one_keyword assign inline_text_list semicolon
+        {-> New value.inline_text([inline_text_list.inline_texts]) }
     |
       {var} after_one_keyword l_brace param_insert r_brace
         {-> New value.param_insert(param_insert.string) }
@@ -211,8 +234,8 @@ Productions
   before_many
         {-> value }
     =
-      {string} before_many_keyword assign string semicolon
-        {-> New value.string(string) }
+      {inline_text} before_many_keyword assign inline_text_list semicolon
+        {-> New value.inline_text([inline_text_list.inline_texts]) }
     |
       {var} before_many_keyword l_brace param_insert r_brace
         {-> New value.param_insert(param_insert.string) }
@@ -224,8 +247,8 @@ Productions
   after_many
         {-> value }
     =
-      {string} after_many_keyword assign string semicolon
-        {-> New value.string(string) }
+      {inline_text} after_many_keyword assign inline_text_list semicolon
+        {-> New value.inline_text([inline_text_list.inline_texts]) }
     |
       {var} after_many_keyword l_brace param_insert r_brace
         {-> New value.param_insert(param_insert.string) }
@@ -308,8 +331,8 @@ Productions
   arg
         {-> value }
     =
-      {string} arg_keyword assign string semicolon
-        {-> New value.string(string) }
+      {inline_text} arg_keyword assign inline_text_list semicolon
+        {-> New value.inline_text([inline_text_list.inline_texts]) }
     |
       {var} arg_keyword l_brace param_insert r_brace
         {-> New value.param_insert(param_insert.string) }
@@ -360,9 +383,13 @@ Abstract Syntax Tree
     [name]:string [args]:value* [ancestor_refs]:string*;
 
   value =
-    {string} string |
+    {inline_text} [inline_texts]:inline_text+ |
     {param_insert} [param_insert]:string |
     {text_insert} text_insert;
+
+  inline_text =
+    {string} string |
+    {eol};
 
   boolean =
     {true} |

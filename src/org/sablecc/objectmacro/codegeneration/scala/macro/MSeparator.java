@@ -9,7 +9,7 @@ public class MSeparator {
 
     private final MExpandInsertPart mExpandInsertPart;
 
-    private final List<Object> eString_ParamInsert_TextInsert = new LinkedList<Object>();
+    private final List<Object> eInlineText_ParamInsert_TextInsert = new LinkedList<Object>();
 
     MSeparator(
             MExpandInsertPart mExpandInsertPart) {
@@ -20,19 +20,18 @@ public class MSeparator {
         this.mExpandInsertPart = mExpandInsertPart;
     }
 
-    public MString newString(
-            String pString) {
+    public MInlineText newInlineText() {
 
-        MString lString = new MString(pString);
-        this.eString_ParamInsert_TextInsert.add(lString);
-        return lString;
+        MInlineText lInlineText = new MInlineText();
+        this.eInlineText_ParamInsert_TextInsert.add(lInlineText);
+        return lInlineText;
     }
 
     public MParamInsert newParamInsert(
             String pName) {
 
         MParamInsert lParamInsert = new MParamInsert(pName);
-        this.eString_ParamInsert_TextInsert.add(lParamInsert);
+        this.eInlineText_ParamInsert_TextInsert.add(lParamInsert);
         return lParamInsert;
     }
 
@@ -40,7 +39,7 @@ public class MSeparator {
             String pName) {
 
         MTextInsert lTextInsert = new MTextInsert(pName);
-        this.eString_ParamInsert_TextInsert.add(lTextInsert);
+        this.eInlineText_ParamInsert_TextInsert.add(lTextInsert);
         return lTextInsert;
     }
 
@@ -70,8 +69,8 @@ public class MSeparator {
         sb.append("        } else {");
         sb.append(System.getProperty("line.separator"));
         sb.append("          sb.append(");
-        for (Object oString_ParamInsert_TextInsert : this.eString_ParamInsert_TextInsert) {
-            sb.append(oString_ParamInsert_TextInsert.toString());
+        for (Object oInlineText_ParamInsert_TextInsert : this.eInlineText_ParamInsert_TextInsert) {
+            sb.append(oInlineText_ParamInsert_TextInsert.toString());
         }
         sb.append(")");
         sb.append(System.getProperty("line.separator"));
