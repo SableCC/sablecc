@@ -212,22 +212,22 @@ $comment: ========== expand_insert_part ========== $
 $macro: expand_insert_part(name) $
 $macro: none $
     if(this.e$name.size() == 0) {
-      sb.append($expand: string, param_insert, text_insert $);
+      sb.append($expand: inline_text, param_insert, text_insert $);
     }
 $end: none $
 $macro: before_first $
     if(this.e$name.size() > 0) {
-      sb.append($expand: string, param_insert, text_insert $);
+      sb.append($expand: inline_text, param_insert, text_insert $);
     }
 $end: before_first $
 $macro: before_one $
     if(this.e$name.size() == 1) {
-      sb.append($expand: string, param_insert, text_insert $);
+      sb.append($expand: inline_text, param_insert, text_insert $);
     }
 $end: before_one $
 $macro: before_many $
     if(this.e$name.size() > 1) {
-      sb.append($expand: string, param_insert, text_insert $);
+      sb.append($expand: inline_text, param_insert, text_insert $);
     }
 $end: before_many $
 $macro: separator $
@@ -238,7 +238,7 @@ $macro: separator $
           first = false;
         }
         else {
-          sb.append($expand: string, param_insert, text_insert $);
+          sb.append($expand: inline_text, param_insert, text_insert $);
         }
         sb.append(o$name.toString());
       }
@@ -251,17 +251,17 @@ $macro: no_separator $
 $end: no_separator $
 $macro: after_last $
     if(this.e$name.size() > 0) {
-      sb.append($expand: string, param_insert, text_insert $);
+      sb.append($expand: inline_text, param_insert, text_insert $);
     }
 $end: after_last $
 $macro: after_one $
     if(this.e$name.size() == 1) {
-      sb.append($expand: string, param_insert, text_insert $);
+      sb.append($expand: inline_text, param_insert, text_insert $);
     }
 $end: after_one $
 $macro: after_many $
     if(this.e$name.size() > 1) {
-      sb.append($expand: string, param_insert, text_insert $);
+      sb.append($expand: inline_text, param_insert, text_insert $);
     }
 $end: after_many $
 $end: expand_insert_part $
@@ -269,14 +269,26 @@ $end: expand_insert_part $
 $comment: ========== text_insert ========== $
 
 $macro: text_insert(name) $
-new M$name($expand: string, param_insert, text_insert, text_insert_ancestor, separator=", " $).toString()$comment: no eol $
+new M$name($expand: inline_text, param_insert, text_insert, text_insert_ancestor, separator=", " $).toString()$comment: no eol $
 $end: text_insert $
 
-$comment: ========== string ========== $
+$comment: ========== inline_text ========== $
 
-$macro: string(string) $
+$macro: inline_text $
+$expand: inline_string, inline_eol, separator=" + " $
+$end: inline_text $
+
+$comment: ========== inline_string ========== $
+
+$macro: inline_string(string) $
 "$string"$comment: no eol $
-$end: string $
+$end: inline_string $
+
+$comment: ========== inline_eol ========== $
+
+$macro: inline_eol $
+System.getProperty("line.separator")$comment: no eol $
+$end: inline_eol $
 
 $comment: ========== param_insert ========== $
 

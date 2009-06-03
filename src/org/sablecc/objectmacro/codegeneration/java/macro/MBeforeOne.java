@@ -9,7 +9,7 @@ public class MBeforeOne {
 
     private final MExpandInsertPart mExpandInsertPart;
 
-    private final List<Object> eString_ParamInsert_TextInsert = new LinkedList<Object>();
+    private final List<Object> eInlineText_ParamInsert_TextInsert = new LinkedList<Object>();
 
     MBeforeOne(
             MExpandInsertPart mExpandInsertPart) {
@@ -20,19 +20,18 @@ public class MBeforeOne {
         this.mExpandInsertPart = mExpandInsertPart;
     }
 
-    public MString newString(
-            String pString) {
+    public MInlineText newInlineText() {
 
-        MString lString = new MString(pString);
-        this.eString_ParamInsert_TextInsert.add(lString);
-        return lString;
+        MInlineText lInlineText = new MInlineText();
+        this.eInlineText_ParamInsert_TextInsert.add(lInlineText);
+        return lInlineText;
     }
 
     public MParamInsert newParamInsert(
             String pName) {
 
         MParamInsert lParamInsert = new MParamInsert(pName);
-        this.eString_ParamInsert_TextInsert.add(lParamInsert);
+        this.eInlineText_ParamInsert_TextInsert.add(lParamInsert);
         return lParamInsert;
     }
 
@@ -40,7 +39,7 @@ public class MBeforeOne {
             String pName) {
 
         MTextInsert lTextInsert = new MTextInsert(pName);
-        this.eString_ParamInsert_TextInsert.add(lTextInsert);
+        this.eInlineText_ParamInsert_TextInsert.add(lTextInsert);
         return lTextInsert;
     }
 
@@ -58,8 +57,8 @@ public class MBeforeOne {
         sb.append(".size() == 1) {");
         sb.append(System.getProperty("line.separator"));
         sb.append("      sb.append(");
-        for (Object oString_ParamInsert_TextInsert : this.eString_ParamInsert_TextInsert) {
-            sb.append(oString_ParamInsert_TextInsert.toString());
+        for (Object oInlineText_ParamInsert_TextInsert : this.eInlineText_ParamInsert_TextInsert) {
+            sb.append(oInlineText_ParamInsert_TextInsert.toString());
         }
         sb.append(");");
         sb.append(System.getProperty("line.separator"));

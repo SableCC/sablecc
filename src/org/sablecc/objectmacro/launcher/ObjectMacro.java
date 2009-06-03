@@ -39,21 +39,23 @@ import org.sablecc.objectmacro.errormessages.MInternalError;
 import org.sablecc.objectmacro.errormessages.MLexicalError;
 import org.sablecc.objectmacro.errormessages.MSyntaxError;
 import org.sablecc.objectmacro.exception.CompilerException;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AEolInlineText;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AEolMacroPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AEolTextPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AExpandInsert;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AExpandInsertMacroPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AExpandedMacro;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AFalseBoolean;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AInlineTextValue;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AIntermediateRepresentation;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AMacro;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertMacroPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertTextPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertValue;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamRef;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AStringInlineText;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AStringMacroPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AStringTextPart;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AStringValue;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AText;
 import org.sablecc.objectmacro.intermediate.syntax3.node.ATextInsert;
 import org.sablecc.objectmacro.intermediate.syntax3.node.ATextInsertMacroPart;
@@ -62,6 +64,7 @@ import org.sablecc.objectmacro.intermediate.syntax3.node.ATextInsertValue;
 import org.sablecc.objectmacro.intermediate.syntax3.node.ATrueBoolean;
 import org.sablecc.objectmacro.intermediate.syntax3.node.PBoolean;
 import org.sablecc.objectmacro.intermediate.syntax3.node.PExpandedMacro;
+import org.sablecc.objectmacro.intermediate.syntax3.node.PInlineText;
 import org.sablecc.objectmacro.intermediate.syntax3.node.PIntermediateRepresentation;
 import org.sablecc.objectmacro.intermediate.syntax3.node.PMacro;
 import org.sablecc.objectmacro.intermediate.syntax3.node.PMacroPart;
@@ -607,14 +610,30 @@ public class ObjectMacro {
                 }
                 else if (pTextBlockBodyPart instanceof AEscapeTextBlockBodyPart) {
                     AEscapeTextBlockBodyPart textBlockBodyPart = (AEscapeTextBlockBodyPart) pTextBlockBodyPart;
-                    if (textBuilder == null) {
-                        textBuilder = new StringBuilder();
+
+                    char c = textBlockBodyPart.getEscape().getText().charAt(1);
+                    if (c == '$') {
+                        if (textBuilder == null) {
+                            textBuilder = new StringBuilder();
+                        }
+                        textBuilder.append(c);
                     }
-                    if (textBlockBodyPart.getEscape().getText().charAt(1) == '$') {
-                        textBuilder.append("$");
+                    else if (c == '\\') {
+                        if (textBuilder == null) {
+                            textBuilder = new StringBuilder();
+                        }
+                        textBuilder.append("\\\\");
+                    }
+                    else if (c == 'n') {
+                        if (textBuilder != null) {
+                            text_parts.add(new AStringTextPart(new TString("'"
+                                    + textBuilder.toString() + "'")));
+                            textBuilder = null;
+                        }
+                        text_parts.add(new AEolTextPart());
                     }
                     else {
-                        textBuilder.append("\\\\");
+                        throw new InternalException("unhandled case");
                     }
                 }
                 else if (pTextBlockBodyPart instanceof AVarTextBlockBodyPart) {
@@ -706,23 +725,28 @@ public class ObjectMacro {
         else if (pStaticValue instanceof AStringStaticValue) {
             AStringStaticValue staticValue = (AStringStaticValue) pStaticValue;
 
-            return new AStringValue(createString(staticValue.getString()));
+            return new AInlineTextValue(createInlineText(staticValue
+                    .getString()));
         }
         else {
             throw new InternalException("unhandled case");
         }
     }
 
-    private static TString createString(
+    private static List<PInlineText> createInlineText(
             PString pString) {
 
         AString string = (AString) pString;
-        StringBuilder textBuilder = new StringBuilder();
+        List<PInlineText> inlineTexts = new LinkedList<PInlineText>();
+        StringBuilder textBuilder = null;
 
         for (PStringPart pStringPart : string.getParts()) {
             if (pStringPart instanceof ATextStringPart) {
                 ATextStringPart stringPart = (ATextStringPart) pStringPart;
 
+                if (textBuilder == null) {
+                    textBuilder = new StringBuilder();
+                }
                 String text = stringPart.getText().getText();
                 for (char c : text.toCharArray()) {
                     if (c == '\'') {
@@ -736,14 +760,35 @@ public class ObjectMacro {
             else if (pStringPart instanceof AEscapeStringPart) {
                 AEscapeStringPart stringPart = (AEscapeStringPart) pStringPart;
 
-                if (stringPart.getEscape().getText().charAt(1) == '$') {
+                char c = stringPart.getEscape().getText().charAt(1);
+                if (c == '$') {
+                    if (textBuilder == null) {
+                        textBuilder = new StringBuilder();
+                    }
                     textBuilder.append("$");
                 }
-                else if (stringPart.getEscape().getText().charAt(1) == '\"') {
+                else if (c == '\"') {
+                    if (textBuilder == null) {
+                        textBuilder = new StringBuilder();
+                    }
                     textBuilder.append("\"");
                 }
-                else {
+                else if (c == '\\') {
+                    if (textBuilder == null) {
+                        textBuilder = new StringBuilder();
+                    }
                     textBuilder.append("\\\\");
+                }
+                else if (c == 'n') {
+                    if (textBuilder != null) {
+                        inlineTexts.add(new AStringInlineText(new TString("'"
+                                + textBuilder.toString() + "'")));
+                        textBuilder = null;
+                    }
+                    inlineTexts.add(new AEolInlineText());
+                }
+                else {
+                    throw new InternalException("unhandled case");
                 }
             }
             else {
@@ -751,7 +796,12 @@ public class ObjectMacro {
             }
         }
 
-        return new TString("'" + textBuilder.toString() + "'");
+        if (textBuilder != null) {
+            inlineTexts.add(new AStringInlineText(new TString("'"
+                    + textBuilder.toString() + "'")));
+        }
+
+        return inlineTexts;
     }
 
     private static AMacro createMacro(
@@ -886,15 +936,30 @@ public class ObjectMacro {
                 }
                 else if (pMacroBodyPart instanceof AEscapeMacroBodyPart) {
                     AEscapeMacroBodyPart macroBodyPart = (AEscapeMacroBodyPart) pMacroBodyPart;
-                    if (textBuilder == null) {
-                        textBuilder = new StringBuilder();
-                    }
+
                     char c = macroBodyPart.getEscape().getText().charAt(1);
+                    if (c == '$') {
+                        if (textBuilder == null) {
+                            textBuilder = new StringBuilder();
+                        }
+                        textBuilder.append(c);
+                    }
                     if (c == '\\') {
+                        if (textBuilder == null) {
+                            textBuilder = new StringBuilder();
+                        }
                         textBuilder.append("\\\\");
                     }
+                    else if (c == 'n') {
+                        if (textBuilder != null) {
+                            macro_parts.add(new AStringMacroPart(new TString(
+                                    "'" + textBuilder.toString() + "'")));
+                            textBuilder = null;
+                        }
+                        macro_parts.add(new AEolMacroPart());
+                    }
                     else {
-                        textBuilder.append(c);
+                        throw new InternalException("unhandled case");
                     }
                 }
                 else if (pMacroBodyPart instanceof AVarMacroBodyPart) {

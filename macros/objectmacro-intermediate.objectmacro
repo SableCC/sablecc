@@ -93,14 +93,14 @@ $end: text_insert_part $
 $macro: text_insert(name, indent) $
 $indent  text_insert {
 $indent    name = $name;
-$expand: string_arg, param_insert_arg, text_insert_arg $
+$expand: inline_text_arg, param_insert_arg, text_insert_arg $
 $expand: ancestor_ref $
 $indent  }
 $end: text_insert $
 
-$macro: string_arg(string, indent) $
-$indent    arg = $string;
-$end: string_arg $
+$macro: inline_text_arg(indent) $
+$indent    arg = $expand: inline_string, inline_eol, separator=", " $;
+$end: inline_text_arg $
 
 $macro: param_insert_arg(name, indent) $
 $indent    arg {
@@ -117,13 +117,13 @@ $end: text_insert_arg $
 $macro: expand_insert_part(name) $
   expand_insert {
     name = $name;
-$expand: string_option, param_insert_option, text_insert_option $
+$expand: inline_text_option, param_insert_option, text_insert_option $
   }
 $end: expand_insert_part $
 
-$macro: string_option(option, string) $
-    $option = $string;
-$end: string_option $
+$macro: inline_text_option(option) $
+    $option = $expand: inline_string, inline_eol, separator=", " $;
+$end: inline_text_option $
 
 $macro: param_insert_option(option, name) $
     $option {
@@ -136,3 +136,11 @@ $macro: text_insert_option(option) $
 $expand: text_insert $
     }
 $end: text_insert_option $
+
+$macro: inline_string(string) $
+$(string)$comment: no_eol $
+$end: inline_string $
+
+$macro: inline_eol $
+eol$comment: no_eol $
+$end: inline_eol $

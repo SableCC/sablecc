@@ -30,6 +30,7 @@ import org.sablecc.objectmacro.codegeneration.java.macro.MBeforeFirst;
 import org.sablecc.objectmacro.codegeneration.java.macro.MBeforeMany;
 import org.sablecc.objectmacro.codegeneration.java.macro.MBeforeOne;
 import org.sablecc.objectmacro.codegeneration.java.macro.MExpandInsertPart;
+import org.sablecc.objectmacro.codegeneration.java.macro.MInlineText;
 import org.sablecc.objectmacro.codegeneration.java.macro.MMacro;
 import org.sablecc.objectmacro.codegeneration.java.macro.MMacroCreator;
 import org.sablecc.objectmacro.codegeneration.java.macro.MNone;
@@ -39,18 +40,20 @@ import org.sablecc.objectmacro.codegeneration.java.macro.MTextInsert;
 import org.sablecc.objectmacro.codegeneration.java.macro.MTextInsertPart;
 import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AEolInlineText;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AEolMacroPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AEolTextPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AExpandInsert;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AExpandedMacro;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AInlineTextValue;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AMacro;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertMacroPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertTextPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertValue;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParamRef;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AStringInlineText;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AStringMacroPart;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AStringTextPart;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AStringValue;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AText;
 import org.sablecc.objectmacro.intermediate.syntax3.node.ATextInsert;
 import org.sablecc.objectmacro.intermediate.syntax3.node.ATextInsertMacroPart;
@@ -90,6 +93,8 @@ public class CodeGenerationWalker
     private MAfterMany currentAfterMany;
 
     private MTextInsert currentTextInsert;
+
+    private MInlineText currentInlineText;
 
     public CodeGenerationWalker(
             IntermediateRepresentation ir,
@@ -493,39 +498,89 @@ public class CodeGenerationWalker
     }
 
     @Override
-    public void outAStringValue(
-            AStringValue node) {
+    public void inAInlineTextValue(
+            AInlineTextValue node) {
 
         if (this.currentTextInsert != null) {
-            this.currentTextInsert.newString(escapedString(node.getString()));
+            this.currentInlineText = this.currentTextInsert.newInlineText();
         }
         else if (this.currentNone != null) {
-            this.currentNone.newString(escapedString(node.getString()));
+            this.currentInlineText = this.currentNone.newInlineText();
         }
         else if (this.currentSeparator != null) {
-            this.currentSeparator.newString(escapedString(node.getString()));
+            this.currentInlineText = this.currentSeparator.newInlineText();
         }
         else if (this.currentBeforeFirst != null) {
-            this.currentBeforeFirst.newString(escapedString(node.getString()));
+            this.currentInlineText = this.currentBeforeFirst.newInlineText();
         }
         else if (this.currentAfterLast != null) {
-            this.currentAfterLast.newString(escapedString(node.getString()));
+            this.currentInlineText = this.currentAfterLast.newInlineText();
         }
         else if (this.currentBeforeOne != null) {
-            this.currentBeforeOne.newString(escapedString(node.getString()));
+            this.currentInlineText = this.currentBeforeOne.newInlineText();
         }
         else if (this.currentAfterOne != null) {
-            this.currentAfterOne.newString(escapedString(node.getString()));
+            this.currentInlineText = this.currentAfterOne.newInlineText();
         }
         else if (this.currentBeforeMany != null) {
-            this.currentBeforeMany.newString(escapedString(node.getString()));
+            this.currentInlineText = this.currentBeforeMany.newInlineText();
         }
         else if (this.currentAfterMany != null) {
-            this.currentAfterMany.newString(escapedString(node.getString()));
+            this.currentInlineText = this.currentAfterMany.newInlineText();
         }
         else {
             throw new InternalException("unhandled case");
         }
+    }
+
+    @Override
+    public void outAInlineTextValue(
+            AInlineTextValue node) {
+
+        if (this.currentTextInsert != null) {
+            this.currentInlineText = null;
+        }
+        else if (this.currentNone != null) {
+            this.currentInlineText = null;
+        }
+        else if (this.currentSeparator != null) {
+            this.currentInlineText = null;
+        }
+        else if (this.currentBeforeFirst != null) {
+            this.currentInlineText = null;
+        }
+        else if (this.currentAfterLast != null) {
+            this.currentInlineText = null;
+        }
+        else if (this.currentBeforeOne != null) {
+            this.currentInlineText = null;
+        }
+        else if (this.currentAfterOne != null) {
+            this.currentInlineText = null;
+        }
+        else if (this.currentBeforeMany != null) {
+            this.currentInlineText = null;
+        }
+        else if (this.currentAfterMany != null) {
+            this.currentInlineText = null;
+        }
+        else {
+            throw new InternalException("unhandled case");
+        }
+    }
+
+    @Override
+    public void outAStringInlineText(
+            AStringInlineText node) {
+
+        this.currentInlineText.newInlineString(escapedString(node.getString()));
+    }
+
+    @Override
+    public void outAEolInlineText(
+            AEolInlineText node) {
+
+        this.currentInlineText.newInlineEol();
     }
 
     @Override
