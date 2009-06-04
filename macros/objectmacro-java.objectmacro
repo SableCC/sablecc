@@ -20,10 +20,10 @@ $comment: ========== text ========== $
 
 $macro: text(name) $
 $insert: header $
-$expand: package_declaration, before_first=eol $
+$expand: package_declaration, before_first="\n" $
 
 class M$name {
-$expand: param_field, self_ref_text, ancestor_field, before_first=eol $
+$expand: param_field, self_ref_text, ancestor_field, before_first="\n" $
 $macro: self_ref_text $
   private final M$name m$name = this;
 $end: self_ref_text $
@@ -31,8 +31,8 @@ $end: self_ref_text $
   M$name($expand: param_param, ancestor_param, separator=", " $) {
 $expand: param_constructor_init, ancestor_constructor_init $
   }
-$expand: param, before_first=eol, separator=eol $
-$expand: param_ref, before_first=eol, separator=eol $
+$expand: param, before_first="\n", separator="\n" $
+$expand: param_ref, before_first="\n", separator="\n" $
 
   @Override
   public String toString() {
@@ -48,11 +48,11 @@ $comment: ========== macro ========== $
 
 $macro: macro(name) $
 $insert: header $
-$expand: package_declaration, before_first=eol $
-$expand: import_java_util, before_first=eol $
+$expand: package_declaration, before_first="\n" $
+$expand: import_java_util, before_first="\n" $
 
 public class M$name {
-$expand: param_field, self_ref_macro, ancestor_field, expand_field, before_first=eol $
+$expand: param_field, self_ref_macro, ancestor_field, expand_field, before_first="\n" $
 $macro: self_ref_macro $
   private final M$name m$name = this;
 $end: self_ref_macro $
@@ -61,9 +61,9 @@ $end: self_ref_macro $
 M$name($expand: param_param, ancestor_param, separator=", " $) {
 $expand: param_constructor_init, ancestor_constructor_init $
   }
-$expand: macro_creator, before_first=eol, separator=eol $
-$expand: param, before_first=eol, separator=eol $
-$expand: param_ref, before_first=eol, separator=eol $
+$expand: macro_creator, before_first="\n", separator="\n" $
+$expand: param, before_first="\n", separator="\n" $
+$expand: param_ref, before_first="\n", separator="\n" $
 
   @Override
   public String toString() {
@@ -92,12 +92,6 @@ $comment: ========== import_java_util ========== $
 $macro: import_java_util $
 import java.util.*;
 $end: import_java_util $
-
-$comment: ========== eol ========== $
-
-$text: eol $
-
-$end: eol $
 
 $comment: ========== param_field ========== $
 
