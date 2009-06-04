@@ -20,19 +20,19 @@ $comment: ========== text ========== $
 
 $macro: text(name) $
 $insert: header $
-$expand: package_declaration, before_first=eol $
+$expand: package_declaration, before_first="\n" $
 
 class M$name ($expand: param_class, ancestor_param_class, separator=", " $) {
-$expand: self_ref_text, before_first=eol $
+$expand: self_ref_text, before_first="\n" $
 $macro: self_ref_text $
   private val m$name = this
 $end: self_ref_text $
 
-$expand: param_ref, before_first=eol, separator=eol $
+$expand: param_ref, before_first="\n", separator="\n" $
 
   override def toString = {
     var sb = new StringBuilder()
-$expand: string_part, eol_part, param_insert_part, text_insert_part, separator=eol $
+$expand: string_part, eol_part, param_insert_part, text_insert_part, separator="\n" $
     sb toString
   }
 
@@ -43,21 +43,21 @@ $comment: ========== macro ========== $
 
 $macro: macro(name) $
 $insert: header $
-$expand: package_declaration, before_first=eol $
-$expand: imports, before_first=eol $
+$expand: package_declaration, before_first="\n" $
+$expand: imports, before_first="\n" $
 
 class M$name $expand: protected $ ($expand: param_class, ancestor_param_class, separator=", " $) {
-$expand: self_ref_macro, check_param_not_null, check_ancestor_param_not_null, expand_field, before_first=eol $
+$expand: self_ref_macro, check_param_not_null, check_ancestor_param_not_null, expand_field, before_first="\n" $
 $macro: self_ref_macro $
   private val m$name = this
 $end: self_ref_macro $
 
-$expand: macro_creator, before_first=eol, separator=eol $
-$expand: param_ref, before_first=eol, separator=eol $
+$expand: macro_creator, before_first="\n", separator="\n" $
+$expand: param_ref, before_first="\n", separator="\n" $
 
   override def toString = {
     var sb = new StringBuilder()
-$expand: string_part, eol_part, param_insert_part, text_insert_part, expand_insert_part, separator=eol $
+$expand: string_part, eol_part, param_insert_part, text_insert_part, expand_insert_part, separator="\n" $
     sb toString
   }
 
@@ -75,12 +75,6 @@ $comment: ========== package_declaration ========== $
 $macro: package_declaration(package_name) $
 package $package_name
 $end: package_declaration $
-
-$comment: ========== eol ========== $
-
-$text: eol $
-
-$end: eol $
 
 $comment: ========== param_class ========== $
 
