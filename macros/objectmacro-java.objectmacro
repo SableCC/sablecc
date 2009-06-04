@@ -142,25 +142,25 @@ $end: param_ref $
 $comment: ========== param_param ========== $
 
 $macro: param_param(name) $
-String p$(name)$comment: no eol $
+String p$(name)$no_eol$
 $end: param_param $
 
 $comment: ========== ancestor_param ========== $
 
 $macro: ancestor_param(name) $
-M$name m$(name)$comment: no eol $
+M$name m$(name)$no_eol$
 $end: ancestor_param $
 
 $comment: ========== param_arg ========== $
 
 $macro: param_arg(name) $
-p$(name)$comment: no eol $
+p$(name)$no_eol$
 $end: param_arg $
 
 $comment: ========== ancestor_arg ========== $
 
 $macro: ancestor_arg(name) $
-m$(name)$comment: no eol $
+m$(name)$no_eol$
 $end: ancestor_arg $
 
 $comment: ========== param_constructor_init ========== $
@@ -263,7 +263,7 @@ $end: expand_insert_part $
 $comment: ========== text_insert ========== $
 
 $macro: text_insert(name) $
-new M$name($expand: inline_text, param_insert, text_insert, text_insert_ancestor, separator=", " $).toString()$comment: no eol $
+new M$name($expand: inline_text, param_insert, text_insert, text_insert_ancestor, separator=", " $).toString()$no_eol$
 $end: text_insert $
 
 $comment: ========== inline_text ========== $
@@ -275,29 +275,29 @@ $end: inline_text $
 $comment: ========== inline_string ========== $
 
 $macro: inline_string(string) $
-"$string"$comment: no eol $
+"$string"$no_eol$
 $end: inline_string $
 
 $comment: ========== inline_eol ========== $
 
 $macro: inline_eol $
-System.getProperty("line.separator")$comment: no eol $
+System.getProperty("line.separator")$no_eol$
 $end: inline_eol $
 
 $comment: ========== param_insert ========== $
 
 $macro: param_insert(name) $
-r$name()$comment: no eol $
+r$name()$no_eol$
 $end: param_insert $
 
 $comment: ========== text_insert_ancestor ========== $
 
 $macro: text_insert_ancestor(name) $
-this.m$(name)$comment: no eol $
+this.m$(name)$no_eol$
 $end: text_insert_ancestor $
 
 $comment: ========== public ========== $
 
 $macro: public $
-public $comment: no eol $
+public $no_eol$
 $end: public $

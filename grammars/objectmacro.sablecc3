@@ -132,6 +132,12 @@ Tokens
   long_comment_end = '$end$' (white_space_not_newline* ascii_newline)?;
 
   {top_level, command, text, short_comment}
+  no_eol = '$no_eol$' white_space_not_newline* ascii_newline;
+
+  {top_level, command, text, short_comment}
+  invalid_mid_line_no_eol = '$no_eol$';
+
+  {top_level, command, text, short_comment}
   invalid_command = '$' (lowercase | digit | '_')* (':' | '$');
 
   {short_comment}
@@ -265,6 +271,9 @@ Productions
       {long_comment} long_comment
         {-> Null }
     |
+      {no_eol} no_eol
+        {-> Null }
+    |
       {text} text
     |
       {eol} eol
@@ -318,6 +327,9 @@ Productions
         {-> Null }
     |
       {long_comment} long_comment
+        {-> Null }
+    |
+      {no_eol} no_eol
         {-> Null }
     |
       {text} text
