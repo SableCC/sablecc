@@ -120,7 +120,7 @@ public class MText {
         StringBuilder sb = new StringBuilder();
         sb.append(new MHeader().toString());
         if (this.ePackageDeclaration.size() > 0) {
-            sb.append(new MEol().toString());
+            sb.append(System.getProperty("line.separator"));
         }
         for (Object oPackageDeclaration : this.ePackageDeclaration) {
             sb.append(oPackageDeclaration.toString());
@@ -144,14 +144,14 @@ public class MText {
         sb.append(") {");
         sb.append(System.getProperty("line.separator"));
         if (this.eSelfRefText.size() > 0) {
-            sb.append(new MEol().toString());
+            sb.append(System.getProperty("line.separator"));
         }
         for (Object oSelfRefText : this.eSelfRefText) {
             sb.append(oSelfRefText.toString());
         }
         sb.append(System.getProperty("line.separator"));
         if (this.eParamRef.size() > 0) {
-            sb.append(new MEol().toString());
+            sb.append(System.getProperty("line.separator"));
         }
         {
             boolean first = true;
@@ -160,7 +160,7 @@ public class MText {
                     first = false;
                 }
                 else {
-                    sb.append(new MEol().toString());
+                    sb.append(System.getProperty("line.separator"));
                 }
                 sb.append(oParamRef.toString());
             }
@@ -177,7 +177,7 @@ public class MText {
                     first = false;
                 }
                 else {
-                    sb.append(new MEol().toString());
+                    sb.append(System.getProperty("line.separator"));
                 }
                 sb.append(oStringPart_EolPart_ParamInsertPart_TextInsertPart
                         .toString());

@@ -188,13 +188,13 @@ public class MMacro {
         StringBuilder sb = new StringBuilder();
         sb.append(new MHeader().toString());
         if (this.ePackageDeclaration.size() > 0) {
-            sb.append(new MEol().toString());
+            sb.append(System.getProperty("line.separator"));
         }
         for (Object oPackageDeclaration : this.ePackageDeclaration) {
             sb.append(oPackageDeclaration.toString());
         }
         if (this.eImports.size() > 0) {
-            sb.append(new MEol().toString());
+            sb.append(System.getProperty("line.separator"));
         }
         for (Object oImports : this.eImports) {
             sb.append(oImports.toString());
@@ -223,7 +223,7 @@ public class MMacro {
         sb.append(System.getProperty("line.separator"));
         if (this.eSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField
                 .size() > 0) {
-            sb.append(new MEol().toString());
+            sb.append(System.getProperty("line.separator"));
         }
         for (Object oSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField : this.eSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField) {
             sb
@@ -232,7 +232,7 @@ public class MMacro {
         }
         sb.append(System.getProperty("line.separator"));
         if (this.eMacroCreator.size() > 0) {
-            sb.append(new MEol().toString());
+            sb.append(System.getProperty("line.separator"));
         }
         {
             boolean first = true;
@@ -241,13 +241,13 @@ public class MMacro {
                     first = false;
                 }
                 else {
-                    sb.append(new MEol().toString());
+                    sb.append(System.getProperty("line.separator"));
                 }
                 sb.append(oMacroCreator.toString());
             }
         }
         if (this.eParamRef.size() > 0) {
-            sb.append(new MEol().toString());
+            sb.append(System.getProperty("line.separator"));
         }
         {
             boolean first = true;
@@ -256,7 +256,7 @@ public class MMacro {
                     first = false;
                 }
                 else {
-                    sb.append(new MEol().toString());
+                    sb.append(System.getProperty("line.separator"));
                 }
                 sb.append(oParamRef.toString());
             }
@@ -273,7 +273,7 @@ public class MMacro {
                     first = false;
                 }
                 else {
-                    sb.append(new MEol().toString());
+                    sb.append(System.getProperty("line.separator"));
                 }
                 sb
                         .append(oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
