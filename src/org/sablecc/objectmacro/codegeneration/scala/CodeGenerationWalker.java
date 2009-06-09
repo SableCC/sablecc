@@ -616,10 +616,10 @@ public class CodeGenerationWalker
             this.currentAfterOne.newParamInsert(string(node.getParamInsert()));
         }
         else if (this.currentBeforeMany != null) {
-            this.currentBeforeOne.newParamInsert(string(node.getParamInsert()));
+            this.currentBeforeMany.newParamInsert(string(node.getParamInsert()));
         }
         else if (this.currentAfterMany != null) {
-            this.currentAfterOne.newParamInsert(string(node.getParamInsert()));
+            this.currentAfterMany.newParamInsert(string(node.getParamInsert()));
         }
         else {
             throw new InternalException("unhandled case");
