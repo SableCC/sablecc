@@ -616,7 +616,8 @@ public class CodeGenerationWalker
             this.currentAfterOne.newParamInsert(string(node.getParamInsert()));
         }
         else if (this.currentBeforeMany != null) {
-            this.currentBeforeMany.newParamInsert(string(node.getParamInsert()));
+            this.currentBeforeMany
+                    .newParamInsert(string(node.getParamInsert()));
         }
         else if (this.currentAfterMany != null) {
             this.currentAfterMany.newParamInsert(string(node.getParamInsert()));
