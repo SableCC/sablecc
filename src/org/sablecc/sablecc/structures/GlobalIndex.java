@@ -18,6 +18,7 @@
 package org.sablecc.sablecc.structures;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -865,5 +866,10 @@ public class GlobalIndex {
 
         return (NormalExpression) this.expressions
                 .get(node.getName().getText());
+    }
+
+    public Set<NormalExpression> getNormalExpressions() {
+
+        return Collections.unmodifiableSet(this.normalExpressions);
     }
 }

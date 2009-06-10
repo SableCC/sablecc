@@ -38,6 +38,7 @@ import org.sablecc.sablecc.syntax3.lexer.LexerException;
 import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.parser.Parser;
 import org.sablecc.sablecc.syntax3.parser.ParserException;
+import org.sablecc.sablecc.walkers.CyclicExpressionDetector;
 import org.sablecc.sablecc.walkers.DeclarationCollector;
 import org.sablecc.sablecc.walkers.ExpressionVerifier;
 import org.sablecc.util.Strictness;
@@ -322,6 +323,7 @@ public class SableCC {
 
         ast.apply(new DeclarationCollector(globalIndex));
         ast.apply(new ExpressionVerifier(globalIndex));
+        ast.apply(new CyclicExpressionDetector(globalIndex));
 
         throw new InternalException("unimplemented");
     }
