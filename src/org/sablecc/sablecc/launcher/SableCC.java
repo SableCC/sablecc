@@ -39,6 +39,7 @@ import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.parser.Parser;
 import org.sablecc.sablecc.syntax3.parser.ParserException;
 import org.sablecc.sablecc.walkers.DeclarationCollector;
+import org.sablecc.sablecc.walkers.ExpressionVerifier;
 import org.sablecc.util.Strictness;
 import org.sablecc.util.Verbosity;
 
@@ -320,6 +321,7 @@ public class SableCC {
         GlobalIndex globalIndex = new GlobalIndex();
 
         ast.apply(new DeclarationCollector(globalIndex));
+        ast.apply(new ExpressionVerifier(globalIndex));
 
         throw new InternalException("unimplemented");
     }
