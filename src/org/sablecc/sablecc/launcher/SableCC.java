@@ -32,11 +32,13 @@ import org.sablecc.sablecc.errormessages.MInternalError;
 import org.sablecc.sablecc.errormessages.MLexicalError;
 import org.sablecc.sablecc.errormessages.MSyntaxError;
 import org.sablecc.sablecc.exception.CompilerException;
+import org.sablecc.sablecc.structures.GlobalIndex;
 import org.sablecc.sablecc.syntax3.lexer.Lexer;
 import org.sablecc.sablecc.syntax3.lexer.LexerException;
 import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.parser.Parser;
 import org.sablecc.sablecc.syntax3.parser.ParserException;
+import org.sablecc.sablecc.walkers.DeclarationCollector;
 import org.sablecc.util.Strictness;
 import org.sablecc.util.Verbosity;
 
@@ -298,6 +300,26 @@ public class SableCC {
         catch (IOException e) {
             throw CompilerException.inputError(grammarFile.toString(), e);
         }
+
+        GlobalIndex globalIndex = verifySemantics(ast, strictness, verbosity);
+
+        throw new InternalException("unimplemented");
+    }
+
+    private static GlobalIndex verifySemantics(
+            Start ast,
+            Strictness strictness,
+            Verbosity verbosity) {
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println(" Verifying semantics");
+            break;
+        }
+
+        GlobalIndex globalIndex = new GlobalIndex();
+
+        ast.apply(new DeclarationCollector(globalIndex));
 
         throw new InternalException("unimplemented");
     }
