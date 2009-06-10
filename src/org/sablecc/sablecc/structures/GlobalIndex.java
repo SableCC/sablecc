@@ -849,4 +849,21 @@ public class GlobalIndex {
         NormalExpression expression = (NormalExpression) declaration;
         this.nameExpressionResolution.put(node, expression);
     }
+
+    public NormalExpression getResolution(
+            ANameExpression node) {
+
+        if (node == null) {
+            throw new InternalException("node may not be null");
+        }
+
+        return this.nameExpressionResolution.get(node);
+    }
+
+    public NormalExpression getExpression(
+            ANormalNamedExpression node) {
+
+        return (NormalExpression) this.expressions
+                .get(node.getName().getText());
+    }
 }
