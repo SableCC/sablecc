@@ -149,6 +149,7 @@ public class SableCC {
             case LIST_TARGETS:
                 System.out.println("Available targets:");
                 System.out.println(" java (default)");
+                System.out.println(" c");
                 System.out.println(" scala");
                 System.out.println(" intermediate");
                 return;
@@ -233,8 +234,8 @@ public class SableCC {
 
         // check target
         if (!(targetLanguage.equals("java")
-                || targetLanguage.equals("intermediate") || targetLanguage
-                .equals("scala"))) {
+                || targetLanguage.equals("intermediate")
+                || targetLanguage.equals("c") || targetLanguage.equals("scala"))) {
             throw CompilerException.unknownTarget(targetLanguage);
         }
 
