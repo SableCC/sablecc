@@ -120,7 +120,7 @@ public class CodeGenerationWalker
         MListH mListH = new MListH();
         MListC mListC = new MListC();
 
-        File destination = new File(this.packageDirectory, "MList.h");
+        File destination = new File(this.packageDirectory, "List.h");
         try {
             FileWriter fw = new FileWriter(destination);
             fw.write(mListH.toString());
@@ -132,7 +132,7 @@ public class CodeGenerationWalker
 
         mListH = null;
 
-        destination = new File(this.packageDirectory, "MList.c");
+        destination = new File(this.packageDirectory, "List.c");
         try {
             FileWriter fw = new FileWriter(destination);
             fw.write(mListC.toString());
@@ -146,7 +146,7 @@ public class CodeGenerationWalker
 
         MAbstractMacroH mAbstractMacroH = new MAbstractMacroH();
 
-        destination = new File(this.packageDirectory, "MAbstractMacro.h");
+        destination = new File(this.packageDirectory, "AbstractMacro.h");
         try {
             FileWriter fw = new FileWriter(destination);
             fw.write(mAbstractMacroH.toString());
