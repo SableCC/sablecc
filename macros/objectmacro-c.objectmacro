@@ -31,8 +31,8 @@ $insert: header $
 #include <stdlib.h>
 #include <string.h>
 
-#include "MList.h"
-#include "MAbstractMacro.h"
+#include "List.h"
+#include "AbstractMacro.h"
 $expand: include $
 
 typedef struct M$name {
@@ -75,17 +75,17 @@ $expand: param_ref, before_first="\n", separator="\n" $
 //@Override
 char* M$(name)_toString(M$(name)* m$(name)) {
   int size = 1;
-  MList* lsb = MList_init();
+  List* lsb = List_init();
 $expand: string_part, eol_part, param_insert_part, text_insert_part $
 
   char* sb = (char*)calloc(size, sizeof(char));
-  MNode* temp = lsb->_first_;
+  Node* temp = lsb->_first_;
   while(temp != NULL) {
     strcat(sb, temp->_elem_);
     temp = temp->_next_;
   }
 
-  MList_free(lsb);
+  List_free(lsb);
 
   return sb;
 }
@@ -103,8 +103,8 @@ $insert: header $
 #include <stdlib.h>
 #include <string.h>
 
-#include "MList.h"
-#include "MAbstractMacro.h"
+#include "List.h"
+#include "AbstractMacro.h"
 $expand: include $
 
 typedef struct M$name {
@@ -151,17 +151,17 @@ $expand: param_ref, before_first="\n", separator="\n" $
 //@Override
 char* M$(name)_toString(M$(name)* m$(name)) {
   int size = 1;
-  MList* lsb = MList_init();
+  List* lsb = List_init();
 $expand: string_part, eol_part, param_insert_part, text_insert_part, expand_insert_part $
 
   char* sb = (char*)calloc(size, sizeof(char));
-  MNode* temp = lsb->_first_;
+  Node* temp = lsb->_first_;
   while(temp != NULL) {
     strcat(sb, temp->_elem_);
     temp = temp->_next_;
   }
 
-  MList_free(lsb);
+  List_free(lsb);
 
   return sb;
 }
@@ -202,13 +202,13 @@ $end: ancestor_field $
 $comment: ========== expand_field ========== $
 
 $macro: expand_field(pname) $
-  struct MList* _e$(pname)_;
+  struct List* _e$(pname)_;
 $end: expand_field $
 
 $comment: ========== expand_destructor ========== $
 
 $macro: expand_destructor(pname) $
-  MList_free(m$(name)->_e$(pname)_);
+  List_free(m$(name)->_e$(pname)_);
 $end: expand_destructor $
 
 $comment: ========== macro_creator ========== $
@@ -217,7 +217,7 @@ $macro: macro_creator(pname) $
 M$(pname)* M$(name)_new$(pname)(M$(name)* m$(name)$expand: param_param, before_first=", ", separator=", " $) {
   M$(pname)* l$pname = M$(pname)_init($expand: param_arg, ancestor_arg, separator=", " $);
 $macro: add_to_expand(signature) $
-  MList_pushback_MType(m$(name)->_e$(signature)_, l$(pname), 1);
+  List_pushback_MType(m$(name)->_e$(signature)_, l$(pname), 1);
 $end: add_to_expand $
   return l$(pname);
 }
@@ -296,32 +296,32 @@ $end: ancestor_constructor_init $
 $comment: ========== expand_constructor_init ========== $
 
 $macro: expand_constructor_init(pname) $
-  m$(name)->_e$(pname)_ = MList_init();
+  m$(name)->_e$(pname)_ = List_init();
 $end: expand_constructor_init $
 
 $comment: ========== string_part ========== $
 
 $macro: string_part(string) $
-  size += MList_pushback(lsb, strdup("$string"));
+  size += List_pushback(lsb, strdup("$string"));
 $end: string_part $
 
 $comment: ========== eol_part ========== $
 
 $macro: eol_part $
-  size += MList_pushback(lsb, strdup("\\n"));
+  size += List_pushback(lsb, strdup("\\n"));
 $end: eol_part $
 
 $comment: ========== param_insert_part ========== $
 
 $macro: param_insert_part(pname) $
-  size += MList_pushback(lsb, strdup(M$(name)_r$(pname)(m$(name))));
+  size += List_pushback(lsb, strdup(M$(name)_r$(pname)(m$(name))));
 $end: param_insert_part $
 
 $comment: ========== text_insert_part ========== $
 
 $macro: text_insert_part $
 $expand: text_insert $
-  size += MList_pushback(lsb, strdup($expand: text_insert_str, none="\"\"" $));
+  size += List_pushback(lsb, strdup($expand: text_insert_str, none="\"\"" $));
 $expand: text_insert_dest $
 $end: text_insert_part $
 
@@ -331,46 +331,46 @@ $macro: expand_insert_part(pname) $
 $macro: none $
   if(m$(name)->_e$(pname)_->_size_ == 0) {
   $expand: text_insert $
-    size += MList_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str $));
+    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str $));
   $expand: text_insert_dest $
   }
 $end: none $
 $macro: before_first $
   if(m$(name)->_e$(pname)_->_size_ > 0) {
   $expand: text_insert $
-    size += MList_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
+    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
   $expand: text_insert_dest $
   }
 $end: before_first $
 $macro: before_one $
   if(m$(name)->_e$(pname)_->_size_ == 1) {
   $expand: text_insert $
-    size += MList_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
+    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
   $expand: text_insert_dest $
   }
 $end: before_one $
 $macro: before_many $
   if(m$(name)->_e$(pname)_->_size_ > 1) {
   $expand: text_insert $
-    size += MList_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
+    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
   $expand: text_insert_dest $
   }
 $end: before_many $
 $macro: separator $
   {
     int first = 1;
-    MNode* temp = m$(name)->_e$(pname)_->_first_;
+    Node* temp = m$(name)->_e$(pname)_->_first_;
     while(temp != NULL) {
       if(first)
         first = 0;
       else $expand: brace $
       $expand: text_insert, none="\n" $
-        size += MList_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
+        size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
       $expand: text_insert_dest $
       $expand: brace_end $
 
-      struct MAbstractMacro* Mtemp = temp->_elem_;
-      size += MList_pushback(lsb, Mtemp->toString(Mtemp));
+      struct AbstractMacro* Mtemp = temp->_elem_;
+      size += List_pushback(lsb, Mtemp->toString(Mtemp));
       temp = temp->_next_;
     }
   }
@@ -383,10 +383,10 @@ $end: brace_end $
 $end: separator $
 $macro: no_separator $
   {
-    MNode* temp = m$(name)->_e$(pname)_->_first_;
+    Node* temp = m$(name)->_e$(pname)_->_first_;
     while(temp != NULL) {
-      struct MAbstractMacro* Mtemp = temp->_elem_;
-      size += MList_pushback(lsb, Mtemp->toString(Mtemp));
+      struct AbstractMacro* Mtemp = temp->_elem_;
+      size += List_pushback(lsb, Mtemp->toString(Mtemp));
       temp = temp->_next_;
     }
   }
@@ -394,21 +394,21 @@ $end: no_separator $
 $macro: after_last $
   if(m$(name)->_e$(pname)_->_size_ > 0) {
   $expand: text_insert $
-    size += MList_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
+    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
   $expand: text_insert_dest $
   }
 $end: after_last $
 $macro: after_one $
   if(m$(name)->_e$(pname)_->_size_ == 1) {
   $expand: text_insert $
-    size += MList_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
+    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
   $expand: text_insert_dest $
   }
 $end: after_one $
 $macro: after_many $
   if(m$(name)->_e$(pname)_->_size_ > 1) {
   $expand: text_insert $
-    size += MList_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\""  $));
+    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\""  $));
   $expand: text_insert_dest $
   }
 $end: after_many $
@@ -478,30 +478,30 @@ $comment: ========== list (.h) ========== $
 $macro: list_h $
 $insert: header $
 
-#ifndef MList_H
-#define MList_H
+#ifndef List_H
+#define List_H
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "MAbstractMacro.h"
+#include "AbstractMacro.h"
 
-typedef struct MNode {
+typedef struct Node {
   void* _elem_;
-  struct MNode* _next_;
+  struct Node* _next_;
   int _bool_MType_;
-}MNode;
+}Node;
 
-typedef struct MList {
+typedef struct List {
   int _size_;
-  MNode* _first_;
-  MNode* _last_;
-}MList;
+  Node* _first_;
+  Node* _last_;
+}List;
 
-MList* MList_init();
-void MList_free(MList* array);
-int MList_pushback(MList* array, void* _elem_);
-int MList_pushback_Mtype(MList* array, void* _elem_, int _bool_MType_);
+List* List_init();
+void List_free(List* array);
+int List_pushback(List* array, void* _elem_);
+int List_pushback_Mtype(List* array, void* _elem_, int _bool_MType_);
 
 #endif
 
@@ -512,14 +512,14 @@ $comment: ========== list (.c) ========== $
 $macro: list_c $
 $insert: header $
 
-#include "MList.h"
+#include "List.h"
 
-int MList_pushback(MList* array, void* _elem_) {
-  return MList_pushback_MType(array, _elem_, 0);
+int List_pushback(List* array, void* _elem_) {
+  return List_pushback_MType(array, _elem_, 0);
 }
 
-int MList_pushback_MType(MList* array, void* _elem_, int _bool_MType_) {
-  MNode* node = (MNode*)calloc(1, sizeof(MNode));
+int List_pushback_MType(List* array, void* _elem_, int _bool_MType_) {
+  Node* node = (Node*)calloc(1, sizeof(Node));
   node->_next_ = NULL;
   node->_elem_ = _elem_;
   node->_bool_MType_ = _bool_MType_;
@@ -538,14 +538,14 @@ int MList_pushback_MType(MList* array, void* _elem_, int _bool_MType_) {
     return strlen(_elem_);
 }
 
-void MList_free(MList* array) {
-  MNode* temp = array->_first_;
-  MNode* temp2 = NULL;
+void List_free(List* array) {
+  Node* temp = array->_first_;
+  Node* temp2 = NULL;
 
   while(temp != NULL) {
     if(temp->_elem_ != NULL) {
       if(temp->_bool_MType_) {
-        struct MAbstractMacro* Mtemp = temp->_elem_;
+        struct AbstractMacro* Mtemp = temp->_elem_;
         Mtemp->free(Mtemp);
       }
       else
@@ -558,8 +558,8 @@ void MList_free(MList* array) {
   free(array);
 }
 
-MList* MList_init() {
-  MList* array = (MList*)calloc(1, sizeof(MList));
+List* List_init() {
+  List* array = (List*)calloc(1, sizeof(List));
   array->_size_ = 0;
   array->_first_ = NULL;
   array->_last_ = NULL;
@@ -573,10 +573,10 @@ $comment: ========== abstract_macro (.h) ========== $
 $macro: abstract_macro_h $
 $insert: header $
 
-#ifndef MAbstractMacro_H
-#define MAbstractMacro_H
+#ifndef AbstractMacro_H
+#define AbstractMacro_H
 
-struct MAbstractMacro {
+struct AbstractMacro {
   char* (*toString)(void*);
   void (*free)(void*);
 };
