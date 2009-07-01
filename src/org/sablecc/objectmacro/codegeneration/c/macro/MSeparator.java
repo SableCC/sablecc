@@ -106,7 +106,7 @@ public class MSeparator {
         sb.append(System.getProperty("line.separator"));
         sb.append("    int first = 1;");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    MNode* temp = m");
+        sb.append("    Node* temp = m");
         sb.append(rName());
         sb.append("->_e");
         sb.append(rPname());
@@ -129,7 +129,7 @@ public class MSeparator {
         for (Object oTextInsert : this.eTextInsert) {
             sb.append(oTextInsert.toString());
         }
-        sb.append("        size += MList_pushback(lsb, strdup(");
+        sb.append("        size += List_pushback(lsb, strdup(");
         if (this.eInlineText_ParamInsert_TextInsertStr.size() == 0) {
             sb.append("\"\"");
         }
@@ -147,9 +147,9 @@ public class MSeparator {
             sb.append(oBraceEnd.toString());
         }
         sb.append(System.getProperty("line.separator"));
-        sb.append("      struct MAbstractMacro* Mtemp = temp->_elem_;");
+        sb.append("      struct AbstractMacro* Mtemp = temp->_elem_;");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      size += MList_pushback(lsb, Mtemp->toString(Mtemp));");
+        sb.append("      size += List_pushback(lsb, Mtemp->toString(Mtemp));");
         sb.append(System.getProperty("line.separator"));
         sb.append("      temp = temp->_next_;");
         sb.append(System.getProperty("line.separator"));

@@ -43,7 +43,7 @@ public class MExpandDestructor {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("  MList_free(m");
+        sb.append("  List_free(m");
         sb.append(rName());
         sb.append("->_e");
         sb.append(rPname());

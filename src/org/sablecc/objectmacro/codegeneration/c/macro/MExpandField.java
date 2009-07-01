@@ -31,7 +31,7 @@ public class MExpandField {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("  struct MList* _e");
+        sb.append("  struct List* _e");
         sb.append(rPname());
         sb.append("_;");
         sb.append(System.getProperty("line.separator"));

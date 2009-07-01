@@ -38,7 +38,7 @@ public class MNoSeparator {
         StringBuilder sb = new StringBuilder();
         sb.append("  {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    MNode* temp = m");
+        sb.append("    Node* temp = m");
         sb.append(rName());
         sb.append("->_e");
         sb.append(rPname());
@@ -46,9 +46,9 @@ public class MNoSeparator {
         sb.append(System.getProperty("line.separator"));
         sb.append("    while(temp != NULL) {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      struct MAbstractMacro* Mtemp = temp->_elem_;");
+        sb.append("      struct AbstractMacro* Mtemp = temp->_elem_;");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      size += MList_pushback(lsb, Mtemp->toString(Mtemp));");
+        sb.append("      size += List_pushback(lsb, Mtemp->toString(Mtemp));");
         sb.append(System.getProperty("line.separator"));
         sb.append("      temp = temp->_next_;");
         sb.append(System.getProperty("line.separator"));

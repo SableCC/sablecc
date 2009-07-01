@@ -55,7 +55,7 @@ public class MAddToExpand {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("  MList_pushback_MType(m");
+        sb.append("  List_pushback_MType(m");
         sb.append(rName());
         sb.append("->_e");
         sb.append(rSignature());

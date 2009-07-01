@@ -43,7 +43,7 @@ public class MParamInsertPart {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("  size += MList_pushback(lsb, strdup(M");
+        sb.append("  size += List_pushback(lsb, strdup(M");
         sb.append(rName());
         sb.append("_r");
         sb.append(rPname());

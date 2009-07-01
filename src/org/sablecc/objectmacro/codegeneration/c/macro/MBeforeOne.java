@@ -94,7 +94,7 @@ public class MBeforeOne {
         for (Object oTextInsert : this.eTextInsert) {
             sb.append(oTextInsert.toString());
         }
-        sb.append("    size += MList_pushback(lsb, strdup(");
+        sb.append("    size += List_pushback(lsb, strdup(");
         if (this.eInlineText_ParamInsert_TextInsertStr.size() == 0) {
             sb.append("\"\"");
         }

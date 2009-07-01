@@ -309,7 +309,7 @@ public class MMacroC {
         sb.append(System.getProperty("line.separator"));
         sb.append("  int size = 1;");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  MList* lsb = MList_init();");
+        sb.append("  List* lsb = List_init();");
         sb.append(System.getProperty("line.separator"));
         for (Object oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart : this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart) {
             sb
@@ -319,7 +319,7 @@ public class MMacroC {
         sb.append(System.getProperty("line.separator"));
         sb.append("  char* sb = (char*)calloc(size, sizeof(char));");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  MNode* temp = lsb->_first_;");
+        sb.append("  Node* temp = lsb->_first_;");
         sb.append(System.getProperty("line.separator"));
         sb.append("  while(temp != NULL) {");
         sb.append(System.getProperty("line.separator"));
@@ -330,7 +330,7 @@ public class MMacroC {
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("  MList_free(lsb);");
+        sb.append("  List_free(lsb);");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("  return sb;");
