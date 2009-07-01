@@ -46,9 +46,7 @@ import org.sablecc.objectmacro.codegeneration.c.macro.MSeparator;
 import org.sablecc.objectmacro.codegeneration.c.macro.MTextC;
 import org.sablecc.objectmacro.codegeneration.c.macro.MTextH;
 import org.sablecc.objectmacro.codegeneration.c.macro.MTextInsert;
-import org.sablecc.objectmacro.codegeneration.c.macro.MTextInsertDest;
 import org.sablecc.objectmacro.codegeneration.c.macro.MTextInsertPart;
-import org.sablecc.objectmacro.codegeneration.c.macro.MTextInsertStr;
 import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AEolInlineText;
@@ -77,8 +75,6 @@ import org.sablecc.objectmacro.intermediate.syntax3.node.TString;
 public class CodeGenerationWalker
         extends DepthFirstAdapter {
 
-    private final IntermediateRepresentation ir;
-
     private final File packageDirectory;
 
     private MFile currentFile;
@@ -92,10 +88,6 @@ public class CodeGenerationWalker
     private MMacroC currentMacroC;
 
     private MTextInsert currentTextInsert;
-
-    private MTextInsertStr currentTextInsertStr;
-
-    private MTextInsertDest currentTextInsertDest;
 
     private MTextInsertPart currentTextInsertPart;
 
@@ -123,7 +115,6 @@ public class CodeGenerationWalker
             IntermediateRepresentation ir,
             File packageDirectory) {
 
-        this.ir = ir;
         this.packageDirectory = packageDirectory;
 
         MListH mListH = new MListH();
@@ -587,75 +578,58 @@ public class CodeGenerationWalker
         else if (this.currentNone != null) {
             this.currentTextInsert = this.currentNone.newTextInsert(string(node
                     .getName()));
-            this.currentTextInsertStr = this.currentNone
-                    .newTextInsertStr(string(node.getName()));
-            this.currentTextInsertDest = this.currentNone
-                    .newTextInsertDest(string(node.getName()));
+            this.currentNone.newTextInsertStr(string(node.getName()));
+            this.currentNone.newTextInsertDest(string(node.getName()));
         }
         else if (this.currentSeparator != null) {
             this.currentTextInsert = this.currentSeparator
                     .newTextInsert(string(node.getName()));
-            this.currentTextInsertStr = this.currentSeparator
-                    .newTextInsertStr(string(node.getName()));
-            this.currentTextInsertDest = this.currentSeparator
-                    .newTextInsertDest(string(node.getName()));
+            this.currentSeparator.newTextInsertStr(string(node.getName()));
+            this.currentSeparator.newTextInsertDest(string(node.getName()));
             this.currentSeparator.newBrace();
             this.currentSeparator.newBraceEnd();
         }
         else if (this.currentBeforeFirst != null) {
             this.currentTextInsert = this.currentBeforeFirst
                     .newTextInsert(string(node.getName()));
-            this.currentTextInsertStr = this.currentBeforeFirst
-                    .newTextInsertStr(string(node.getName()));
-            this.currentTextInsertDest = this.currentBeforeFirst
-                    .newTextInsertDest(string(node.getName()));
+            this.currentBeforeFirst.newTextInsertStr(string(node.getName()));
+            this.currentBeforeFirst.newTextInsertDest(string(node.getName()));
         }
         else if (this.currentAfterLast != null) {
             this.currentTextInsert = this.currentAfterLast
                     .newTextInsert(string(node.getName()));
-            this.currentTextInsertStr = this.currentAfterLast
-                    .newTextInsertStr(string(node.getName()));
-            this.currentTextInsertDest = this.currentAfterLast
-                    .newTextInsertDest(string(node.getName()));
+            this.currentAfterLast.newTextInsertStr(string(node.getName()));
+            this.currentAfterLast.newTextInsertDest(string(node.getName()));
         }
         else if (this.currentBeforeOne != null) {
             this.currentTextInsert = this.currentBeforeOne
                     .newTextInsert(string(node.getName()));
-            this.currentTextInsertStr = this.currentBeforeOne
-                    .newTextInsertStr(string(node.getName()));
-            this.currentTextInsertDest = this.currentBeforeOne
-                    .newTextInsertDest(string(node.getName()));
+            this.currentBeforeOne.newTextInsertStr(string(node.getName()));
+            this.currentBeforeOne.newTextInsertDest(string(node.getName()));
         }
         else if (this.currentAfterOne != null) {
             this.currentTextInsert = this.currentAfterOne
                     .newTextInsert(string(node.getName()));
-            this.currentTextInsertStr = this.currentAfterOne
-                    .newTextInsertStr(string(node.getName()));
-            this.currentTextInsertDest = this.currentAfterOne
-                    .newTextInsertDest(string(node.getName()));
+            this.currentAfterOne.newTextInsertStr(string(node.getName()));
+            this.currentAfterOne.newTextInsertDest(string(node.getName()));
         }
         else if (this.currentBeforeMany != null) {
             this.currentTextInsert = this.currentBeforeMany
                     .newTextInsert(string(node.getName()));
-            this.currentTextInsertStr = this.currentBeforeMany
-                    .newTextInsertStr(string(node.getName()));
-            this.currentTextInsertDest = this.currentBeforeMany
-                    .newTextInsertDest(string(node.getName()));
+            this.currentBeforeMany.newTextInsertStr(string(node.getName()));
+            this.currentBeforeMany.newTextInsertDest(string(node.getName()));
         }
         else if (this.currentAfterMany != null) {
             this.currentTextInsert = this.currentAfterMany
                     .newTextInsert(string(node.getName()));
-            this.currentTextInsertStr = this.currentAfterMany
-                    .newTextInsertStr(string(node.getName()));
-            this.currentTextInsertDest = this.currentAfterMany
-                    .newTextInsertDest(string(node.getName()));
+            this.currentAfterMany.newTextInsertStr(string(node.getName()));
+            this.currentAfterMany.newTextInsertDest(string(node.getName()));
         }
         else if (this.currentTextInsertPart != null) {
             this.currentTextInsert = this.currentTextInsertPart
                     .newTextInsert(string(node.getName()));
-            this.currentTextInsertStr = this.currentTextInsertPart
-                    .newTextInsertStr(string(node.getName()));
-            this.currentTextInsertDest = this.currentTextInsertPart
+            this.currentTextInsertPart.newTextInsertStr(string(node.getName()));
+            this.currentTextInsertPart
                     .newTextInsertDest(string(node.getName()));
         }
         else {
