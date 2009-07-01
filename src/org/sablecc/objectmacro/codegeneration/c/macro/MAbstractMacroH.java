@@ -14,12 +14,12 @@ public class MAbstractMacroH {
         StringBuilder sb = new StringBuilder();
         sb.append(new MHeader().toString());
         sb.append(System.getProperty("line.separator"));
-        sb.append("#ifndef MAbstractMacro_H");
+        sb.append("#ifndef AbstractMacro_H");
         sb.append(System.getProperty("line.separator"));
-        sb.append("#define MAbstractMacro_H");
+        sb.append("#define AbstractMacro_H");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("struct MAbstractMacro {");
+        sb.append("struct AbstractMacro {");
         sb.append(System.getProperty("line.separator"));
         sb.append("  char* (*toString)(void*);");
         sb.append(System.getProperty("line.separator"));

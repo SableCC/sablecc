@@ -48,7 +48,7 @@ public class MTextInsertPart {
         for (Object oTextInsert : this.eTextInsert) {
             sb.append(oTextInsert.toString());
         }
-        sb.append("  size += MList_pushback(lsb, strdup(");
+        sb.append("  size += List_pushback(lsb, strdup(");
         if (this.eTextInsertStr.size() == 0) {
             sb.append("\"\"");
         }

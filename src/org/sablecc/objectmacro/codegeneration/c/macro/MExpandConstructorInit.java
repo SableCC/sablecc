@@ -47,7 +47,7 @@ public class MExpandConstructorInit {
         sb.append(rName());
         sb.append("->_e");
         sb.append(rPname());
-        sb.append("_ = MList_init();");
+        sb.append("_ = List_init();");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

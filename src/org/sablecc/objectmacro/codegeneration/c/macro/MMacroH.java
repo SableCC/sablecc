@@ -137,9 +137,9 @@ public class MMacroH {
         sb.append("#include <string.h>");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("#include \"MList.h\"");
+        sb.append("#include \"List.h\"");
         sb.append(System.getProperty("line.separator"));
-        sb.append("#include \"MAbstractMacro.h\"");
+        sb.append("#include \"AbstractMacro.h\"");
         sb.append(System.getProperty("line.separator"));
         for (Object oInclude : this.eInclude) {
             sb.append(oInclude.toString());

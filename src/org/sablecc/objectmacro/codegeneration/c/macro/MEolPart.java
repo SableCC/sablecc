@@ -12,7 +12,7 @@ public class MEolPart {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("  size += MList_pushback(lsb, strdup(\"\\n\"));");
+        sb.append("  size += List_pushback(lsb, strdup(\"\\n\"));");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }
