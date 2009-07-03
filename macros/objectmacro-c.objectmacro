@@ -18,15 +18,15 @@ $end$
 
 $comment: ========== file ========== $
 
-$macro: file(name) $
+$macro: file(file_name) $
 
 $comment: ========== text (.h) ========== $
 
 $macro: text_h $
 $insert: header $
 
-#ifndef M$(name)_H
-#define M$(name)_H
+#ifndef M$(file_name)_H
+#define M$(file_name)_H
 
 #include <stdlib.h>
 #include <string.h>
@@ -35,17 +35,17 @@ $insert: header $
 #include "AbstractMacro.h"
 $expand: include $
 
-typedef struct M$name {
+typedef struct M$file_name {
   char* (*toString)(void*);
   void (*free)(void*);
 $expand: param_field, self_ref_h, ancestor_field $
-}M$(name);
+}M$(file_name);
 
-M$(name)* M$(name)_init($expand: param_param, ancestor_param, separator=", " $);
-void M$(name)_free(M$(name)* m$(name));
+M$(file_name)* M$(file_name)_init($expand: param_param, ancestor_param, separator=", " $);
+void M$(file_name)_free(M$(file_name)* m$(file_name));
 $expand: param_prototype, separator="\n" $
 $expand: param_ref_prototype, separator="\n" $
-char* M$(name)_toString(M$(name)* m$(name));
+char* M$(file_name)_toString(M$(file_name)* m$(file_name));
 
 #endif
 
@@ -56,38 +56,38 @@ $comment: ========== text (.c) ========== $
 $macro: text_c $
 $insert: header $
 
-#include "M$(name).h"
+#include "M$(file_name).h"
 
-M$(name)* M$(name)_init($expand: param_param, ancestor_param, separator=", " $) {
-  M$(name)* m$(name) = (M$(name)*)malloc(sizeof(M$(name)));
-  m$(name)->toString = &M$(name)_toString;
-  m$(name)->free = &M$(name)_free;
+M$(file_name)* M$(file_name)_init($expand: param_param, ancestor_param, separator=", " $) {
+  M$(file_name)* m$(file_name) = (M$(file_name)*)malloc(sizeof(M$(file_name)));
+  m$(file_name)->toString = &M$(file_name)_toString;
+  m$(file_name)->free = &M$(file_name)_free;
 $expand: param_constructor_init, self_ref_c, ancestor_constructor_init $
-  return m$(name);
+  return m$(file_name);
 }
 
-void M$(name)_free(M$(name)* m$(name)) {
-  free(m$(name));
+void M$(file_name)_free(M$(file_name)* m$(file_name)) {
+  free(m$(file_name));
 }
 $expand: param, before_first="\n", separator="\n" $
 $expand: param_ref, before_first="\n", separator="\n" $
 
 //@Override
-char* M$(name)_toString(M$(name)* m$(name)) {
-  int size = 1;
-  List* lsb = List_init();
+char* M$(file_name)_toString(M$(file_name)* m$(file_name)) {
+  int sizeString = 1;
+  List* listString = List_init();
 $expand: string_part, eol_part, param_insert_part, text_insert_part $
 
-  char* sb = (char*)calloc(size, sizeof(char));
-  Node* temp = lsb->_first_;
+  char* str = (char*)calloc(sizeString, sizeof(char));
+  Node* temp = listString->_first_;
   while(temp != NULL) {
-    strcat(sb, temp->_elem_);
+    strcat(str, temp->_elem_);
     temp = temp->_next_;
   }
 
-  List_free(lsb);
+  List_free(listString);
 
-  return sb;
+  return str;
 }
 
 $end: text_c $
@@ -97,8 +97,8 @@ $comment: ========== macro (.h) ========== $
 $macro: macro_h $
 $insert: header $
 
-#ifndef M$(name)_H
-#define M$(name)_H
+#ifndef M$(file_name)_H
+#define M$(file_name)_H
 
 #include <stdlib.h>
 #include <string.h>
@@ -107,18 +107,18 @@ $insert: header $
 #include "AbstractMacro.h"
 $expand: include $
 
-typedef struct M$name {
+typedef struct M$file_name {
   char* (*toString)(void*);
   void (*free)(void*);
 $expand: param_field, self_ref_h, ancestor_field, expand_field $
-}M$name;
+}M$file_name;
 
-M$name* M$(name)_init($expand: param_param, ancestor_param, separator=", " $);
-void M$(name)_free(M$(name)* m$(name));
+M$file_name* M$(file_name)_init($expand: param_param, ancestor_param, separator=", " $);
+void M$(file_name)_free(M$(file_name)* m$(file_name));
 $expand: macro_creator_prototype $
 $expand: param_prototype $
 $expand: param_ref_prototype $
-char* M$(name)_toString(M$(name)* m$(name));
+char* M$(file_name)_toString(M$(file_name)* m$(file_name));
 
 #endif
 
@@ -130,40 +130,40 @@ $comment: ========== macro (.c) ========== $
 $macro: macro_c $
 $insert: header $
 
-#include "M$(name).h"
+#include "M$(file_name).h"
 
-M$(name)* M$(name)_init($expand: param_param, ancestor_param, separator=", " $) {
-  M$(name)* m$(name) = (M$(name)*)malloc(sizeof(M$(name)));
-  m$(name)->toString = &M$(name)_toString;
-  m$(name)->free = &M$(name)_free;
+M$(file_name)* M$(file_name)_init($expand: param_param, ancestor_param, separator=", " $) {
+  M$(file_name)* m$(file_name) = (M$(file_name)*)malloc(sizeof(M$(file_name)));
+  m$(file_name)->toString = &M$(file_name)_toString;
+  m$(file_name)->free = &M$(file_name)_free;
 $expand: param_constructor_init, self_ref_c, ancestor_constructor_init, expand_constructor_init $
-  return m$(name);
+  return m$(file_name);
 }
 
-void M$(name)_free(M$(name)* m$(name)) {
+void M$(file_name)_free(M$(file_name)* m$(file_name)) {
 $expand: expand_destructor $
-  free(m$(name));
+  free(m$(file_name));
 }
 $expand: macro_creator, before_first="\n", separator="\n" $
 $expand: param, before_first="\n", separator="\n" $
 $expand: param_ref, before_first="\n", separator="\n" $
 
 //@Override
-char* M$(name)_toString(M$(name)* m$(name)) {
-  int size = 1;
-  List* lsb = List_init();
+char* M$(file_name)_toString(M$(file_name)* m$(file_name)) {
+  int sizeString = 1;
+  List* listString = List_init();
 $expand: string_part, eol_part, param_insert_part, text_insert_part, expand_insert_part $
 
-  char* sb = (char*)calloc(size, sizeof(char));
-  Node* temp = lsb->_first_;
+  char* str = (char*)calloc(sizeString, sizeof(char));
+  Node* temp = listString->_first_;
   while(temp != NULL) {
-    strcat(sb, temp->_elem_);
+    strcat(str, temp->_elem_);
     temp = temp->_next_;
   }
 
-  List_free(lsb);
+  List_free(listString);
 
-  return sb;
+  return str;
 }
 
 $end: macro_c $
@@ -171,206 +171,206 @@ $end: macro_c $
 
 $comment: ========== include ========== $
 
-$macro: include(pname) $
-#include "M$(pname).h"
+$macro: include(name) $
+#include "M$(name).h"
 $end: include $
 
 $comment: ========== self_ref_h ========== $
 
 $macro: self_ref_h $
-  struct M$(name)* _m$(name)_;
+  struct M$(file_name)* _m$(file_name)_;
 $end: self_ref_h $
 
 $comment: ========== self_ref_c ========== $
 
 $macro: self_ref_c $
-  m$(name)->_m$(name)_ = m$(name);
+  m$(file_name)->_m$(file_name)_ = m$(file_name);
 $end: self_ref_c $
 
 $comment: ========== param_field ========== $
 
-$macro: param_field(pname) $
-  char* _p$(pname)_;
+$macro: param_field(name) $
+  char* _p$(name)_;
 $end: param_field $
 
 $comment: ========== ancestor_field ========== $
 
-$macro: ancestor_field(pname) $
-  struct M$(pname)* _m$(pname)_;
+$macro: ancestor_field(name) $
+  struct M$(name)* _m$(name)_;
 $end: ancestor_field $
 
 $comment: ========== expand_field ========== $
 
-$macro: expand_field(pname) $
-  struct List* _e$(pname)_;
+$macro: expand_field(name) $
+  struct List* _e$(name)_;
 $end: expand_field $
 
 $comment: ========== expand_destructor ========== $
 
-$macro: expand_destructor(pname) $
-  List_free(m$(name)->_e$(pname)_);
+$macro: expand_destructor(name) $
+  List_free(m$(file_name)->_e$(name)_);
 $end: expand_destructor $
 
 $comment: ========== macro_creator ========== $
 
-$macro: macro_creator(pname) $
-M$(pname)* M$(name)_new$(pname)(M$(name)* m$(name)$expand: param_param, before_first=", ", separator=", " $) {
-  M$(pname)* l$pname = M$(pname)_init($expand: param_arg, ancestor_arg, separator=", " $);
+$macro: macro_creator(name) $
+M$(name)* M$(file_name)_new$(name)(M$(file_name)* m$(file_name)$expand: param_param, before_first=", ", separator=", " $) {
+  M$(name)* l$name = M$(name)_init($expand: param_arg, ancestor_arg, separator=", " $);
 $macro: add_to_expand(signature) $
-  List_pushback_MType(m$(name)->_e$(signature)_, l$(pname), 1);
+  List_pushback_MType(m$(file_name)->_e$(signature)_, l$(name), 1);
 $end: add_to_expand $
-  return l$(pname);
+  return l$(name);
 }
 $end: macro_creator $
 
 $comment: ========== macro_creator_prototype ========== $
 
-$macro: macro_creator_prototype(pname) $
-struct M$(pname)* M$(name)_new$(pname)(M$(name)* m$(name)$expand: param_param, before_first=", ", separator=", " $);
+$macro: macro_creator_prototype(name) $
+struct M$(name)* M$(file_name)_new$(name)(M$(file_name)* m$(file_name)$expand: param_param, before_first=", ", separator=", " $);
 $end: macro_creator_prototype $
 
 $comment: ========== param ========== $
 
-$macro: param(pname) $
-char* M$(name)_p$(pname)(M$(name)* m$(name)) {
-  return m$(name)->_p$(pname)_;
+$macro: param(name) $
+char* M$(file_name)_p$(name)(M$(file_name)* m$(file_name)) {
+  return m$(file_name)->_p$(name)_;
 }
 $end: param $
 
 $comment: ========== param_prototype ========== $
 
-$macro: param_prototype(pname) $
-char* M$(name)_p$(pname)(M$(name)* m$(name));
+$macro: param_prototype(name) $
+char* M$(file_name)_p$(name)(M$(file_name)* m$(file_name));
 $end: param_prototype $
 
 $comment: ========== param_ref ========== $
 
-$macro: param_ref(pname, context) $
-char* M$(name)_r$(pname)(M$(name)* m$(name)) {
-  return M$(context)_p$pname(m$(name)->_m$(context)_);
+$macro: param_ref(name, context) $
+char* M$(file_name)_r$(name)(M$(file_name)* m$(file_name)) {
+  return M$(context)_p$name(m$(file_name)->_m$(context)_);
 }
 $end: param_ref $
 
 $comment: ========== param_ref_prototype ========== $
 
-$macro: param_ref_prototype(pname) $
-char* M$(name)_r$(pname)(M$(name)* m$(name));
+$macro: param_ref_prototype(name) $
+char* M$(file_name)_r$(name)(M$(file_name)* m$(file_name));
 $end: param_ref_prototype $
 
 $comment: ========== param_param ========== $
 
-$macro: param_param(pname) $
-char* _p$(pname)_$no_eol$
+$macro: param_param(name) $
+char* _p$(name)_$no_eol$
 $end: param_param $
 
 $comment: ========== ancestor_param ========== $
 
-$macro: ancestor_param(pname) $
-struct M$(pname)* m$(pname)$no_eol$
+$macro: ancestor_param(name) $
+struct M$(name)* m$(name)$no_eol$
 $end: ancestor_param $
 
 $comment: ========== param_arg ========== $
 
-$macro: param_arg(pname) $
-_p$(pname)_$no_eol$
+$macro: param_arg(name) $
+_p$(name)_$no_eol$
 $end: param_arg $
 
 $comment: ========== ancestor_arg ========== $
 
-$macro: ancestor_arg(pname) $
-m$(name)->_m$(pname)_$no_eol$
+$macro: ancestor_arg(name) $
+m$(file_name)->_m$(name)_$no_eol$
 $end: ancestor_arg $
 
 $comment: ========== param_constructor_init ========== $
 
-$macro: param_constructor_init(pname) $
-  m$(name)->_p$(pname)_ = _p$(pname)_;
+$macro: param_constructor_init(name) $
+  m$(file_name)->_p$(name)_ = _p$(name)_;
 $end: param_constructor_init $
 
 $comment: ========== ancestor_constructor_init ========== $
 
-$macro: ancestor_constructor_init(pname) $
-  m$(name)->_m$(pname)_ = m$(pname);
+$macro: ancestor_constructor_init(name) $
+  m$(file_name)->_m$(name)_ = m$(name);
 $end: ancestor_constructor_init $
 
 $comment: ========== expand_constructor_init ========== $
 
-$macro: expand_constructor_init(pname) $
-  m$(name)->_e$(pname)_ = List_init();
+$macro: expand_constructor_init(name) $
+  m$(file_name)->_e$(name)_ = List_init();
 $end: expand_constructor_init $
 
 $comment: ========== string_part ========== $
 
 $macro: string_part(string) $
-  size += List_pushback(lsb, strdup("$string"));
+  sizeString += List_pushback(listString, strdup("$string"));
 $end: string_part $
 
 $comment: ========== eol_part ========== $
 
 $macro: eol_part $
-  size += List_pushback(lsb, strdup("\\n"));
+  sizeString += List_pushback(listString, strdup("\\n"));
 $end: eol_part $
 
 $comment: ========== param_insert_part ========== $
 
-$macro: param_insert_part(pname) $
-  size += List_pushback(lsb, strdup(M$(name)_r$(pname)(m$(name))));
+$macro: param_insert_part(name) $
+  sizeString += List_pushback(listString, strdup(M$(file_name)_r$(name)(m$(file_name))));
 $end: param_insert_part $
 
 $comment: ========== text_insert_part ========== $
 
 $macro: text_insert_part $
 $expand: text_insert $
-  size += List_pushback(lsb, strdup($expand: text_insert_str, none="\"\"" $));
-$expand: text_insert_dest $
+  sizeString += List_pushback(listString, strdup($expand: text_insert_string, none="\"\"" $));
+$expand: text_insert_destructor $
 $end: text_insert_part $
 
 $comment: ========== expand_insert_part ========== $
 
-$macro: expand_insert_part(pname) $
+$macro: expand_insert_part(name) $
 $macro: none $
-  if(m$(name)->_e$(pname)_->_size_ == 0) {
+  if(m$(file_name)->_e$(name)_->_size_ == 0) {
   $expand: text_insert $
-    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str $));
-  $expand: text_insert_dest $
+    sizeString += List_pushback(listString, strdup($expand: inline_text, param_insert, text_insert_string $));
+  $expand: text_insert_destructor $
   }
 $end: none $
 $macro: before_first $
-  if(m$(name)->_e$(pname)_->_size_ > 0) {
+  if(m$(file_name)->_e$(name)_->_size_ > 0) {
   $expand: text_insert $
-    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
-  $expand: text_insert_dest $
+    sizeString += List_pushback(listString, strdup($expand: inline_text, param_insert, text_insert_string, none="\"\"" $));
+  $expand: text_insert_destructor $
   }
 $end: before_first $
 $macro: before_one $
-  if(m$(name)->_e$(pname)_->_size_ == 1) {
+  if(m$(file_name)->_e$(name)_->_size_ == 1) {
   $expand: text_insert $
-    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
-  $expand: text_insert_dest $
+    sizeString += List_pushback(listString, strdup($expand: inline_text, param_insert, text_insert_string, none="\"\"" $));
+  $expand: text_insert_destructor $
   }
 $end: before_one $
 $macro: before_many $
-  if(m$(name)->_e$(pname)_->_size_ > 1) {
+  if(m$(file_name)->_e$(name)_->_size_ > 1) {
   $expand: text_insert $
-    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
-  $expand: text_insert_dest $
+    sizeString += List_pushback(listString, strdup($expand: inline_text, param_insert, text_insert_string, none="\"\"" $));
+  $expand: text_insert_destructor $
   }
 $end: before_many $
 $macro: separator $
   {
     int first = 1;
-    Node* temp = m$(name)->_e$(pname)_->_first_;
+    Node* temp = m$(file_name)->_e$(name)_->_first_;
     while(temp != NULL) {
       if(first)
         first = 0;
       else $expand: brace $
       $expand: text_insert, none="\n" $
-        size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
-      $expand: text_insert_dest $
+        sizeString += List_pushback(listString, strdup($expand: inline_text, param_insert, text_insert_string, none="\"\"" $));
+      $expand: text_insert_destructor $
       $expand: brace_end $
 
       struct AbstractMacro* Mtemp = temp->_elem_;
-      size += List_pushback(lsb, Mtemp->toString(Mtemp));
+      sizeString += List_pushback(listString, Mtemp->toString(Mtemp));
       temp = temp->_next_;
     }
   }
@@ -383,54 +383,54 @@ $end: brace_end $
 $end: separator $
 $macro: no_separator $
   {
-    Node* temp = m$(name)->_e$(pname)_->_first_;
+    Node* temp = m$(file_name)->_e$(name)_->_first_;
     while(temp != NULL) {
       struct AbstractMacro* Mtemp = temp->_elem_;
-      size += List_pushback(lsb, Mtemp->toString(Mtemp));
+      sizeString += List_pushback(listString, Mtemp->toString(Mtemp));
       temp = temp->_next_;
     }
   }
 $end: no_separator $
 $macro: after_last $
-  if(m$(name)->_e$(pname)_->_size_ > 0) {
+  if(m$(file_name)->_e$(name)_->_size_ > 0) {
   $expand: text_insert $
-    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
-  $expand: text_insert_dest $
+    sizeString += List_pushback(listString, strdup($expand: inline_text, param_insert, text_insert_string, none="\"\"" $));
+  $expand: text_insert_destructor $
   }
 $end: after_last $
 $macro: after_one $
-  if(m$(name)->_e$(pname)_->_size_ == 1) {
+  if(m$(file_name)->_e$(name)_->_size_ == 1) {
   $expand: text_insert $
-    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\"" $));
-  $expand: text_insert_dest $
+    sizeString += List_pushback(listString, strdup($expand: inline_text, param_insert, text_insert_string, none="\"\"" $));
+  $expand: text_insert_destructor $
   }
 $end: after_one $
 $macro: after_many $
-  if(m$(name)->_e$(pname)_->_size_ > 1) {
+  if(m$(file_name)->_e$(name)_->_size_ > 1) {
   $expand: text_insert $
-    size += List_pushback(lsb, strdup($expand: inline_text, param_insert, text_insert_str, none="\"\""  $));
-  $expand: text_insert_dest $
+    sizeString += List_pushback(listString, strdup($expand: inline_text, param_insert, text_insert_string, none="\"\""  $));
+  $expand: text_insert_destructor $
   }
 $end: after_many $
 $end: expand_insert_part $
 
 $comment: ========== text_insert ========== $
 
-$macro: text_insert(sname) $
-  struct M$(sname)* t$(sname) = M$(sname)_init($expand: inline_text, param_insert, text_insert, text_insert_ancestor, separator=", " $);
+$macro: text_insert(name) $
+  struct M$(name)* t$(name) = M$(name)_init($expand: inline_text, param_insert, text_insert, text_insert_ancestor, separator=", " $);
 $end: text_insert $
 
-$comment: ========== text_insert_str ========== $
+$comment: ========== text_insert_string ========== $
 
-$macro: text_insert_str(sname) $
-M$(sname)_toString(t$(sname))$no_eol$
-$end: text_insert_str $
+$macro: text_insert_string(name) $
+M$(name)_toString(t$(name))$no_eol$
+$end: text_insert_string $
 
-$comment: ========== text_insert_dest ========== $
+$comment: ========== text_insert_destructor ========== $
 
-$macro: text_insert_dest(sname) $
-  M$(sname)_free(t$(sname));
-$end: text_insert_dest $
+$macro: text_insert_destructor(name) $
+  M$(name)_free(t$(name));
+$end: text_insert_destructor $
 
 $comment: ========== inline_text ========== $
 
@@ -452,14 +452,14 @@ $end: inline_eol $
 
 $comment: ========== param_insert ========== $
 
-$macro: param_insert(pname) $
-r$(pname)()$no_eol$
+$macro: param_insert(name) $
+M$(file_name)_r$(name)(m$(file_name))$no_eol$
 $end: param_insert $
 
 $comment: ========== text_insert_ancestor ========== $
 
-$macro: text_insert_ancestor(pname) $
-_m$(pname)_$no_eol$
+$macro: text_insert_ancestor(name) $
+M$(file_name)->_m$(name)_$no_eol$
 $end: text_insert_ancestor $
 
 $end: file $
