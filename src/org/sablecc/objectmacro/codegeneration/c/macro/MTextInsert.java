@@ -7,19 +7,26 @@ import java.util.List;
 
 public class MTextInsert {
 
-    private final String pSname;
+    private final String pName;
 
     private final MTextInsert mTextInsert = this;
+
+    private final MFile mFile;
 
     private final List<Object> eInlineText_ParamInsert_TextInsert_TextInsertAncestor = new LinkedList<Object>();
 
     MTextInsert(
-            String pSname) {
+            String pName,
+            MFile mFile) {
 
-        if (pSname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pSname = pSname;
+        this.pName = pName;
+        if (mFile == null) {
+            throw new NullPointerException();
+        }
+        this.mFile = mFile;
     }
 
     public MInlineText newInlineText() {
@@ -31,41 +38,41 @@ public class MTextInsert {
     }
 
     public MParamInsert newParamInsert(
-            String pPname) {
+            String pName) {
 
-        MParamInsert lParamInsert = new MParamInsert(pPname);
+        MParamInsert lParamInsert = new MParamInsert(pName, this.mFile);
         this.eInlineText_ParamInsert_TextInsert_TextInsertAncestor
                 .add(lParamInsert);
         return lParamInsert;
     }
 
     public MTextInsert newTextInsert(
-            String pSname) {
+            String pName) {
 
-        MTextInsert lTextInsert = new MTextInsert(pSname);
+        MTextInsert lTextInsert = new MTextInsert(pName, this.mFile);
         this.eInlineText_ParamInsert_TextInsert_TextInsertAncestor
                 .add(lTextInsert);
         return lTextInsert;
     }
 
     public MTextInsertAncestor newTextInsertAncestor(
-            String pPname) {
+            String pName) {
 
         MTextInsertAncestor lTextInsertAncestor = new MTextInsertAncestor(
-                pPname);
+                pName, this.mFile);
         this.eInlineText_ParamInsert_TextInsert_TextInsertAncestor
                 .add(lTextInsertAncestor);
         return lTextInsertAncestor;
     }
 
-    String pSname() {
+    String pName() {
 
-        return this.pSname;
+        return this.pName;
     }
 
-    private String rSname() {
+    private String rName() {
 
-        return this.mTextInsert.pSname();
+        return this.mTextInsert.pName();
     }
 
     @Override
@@ -73,11 +80,11 @@ public class MTextInsert {
 
         StringBuilder sb = new StringBuilder();
         sb.append("  struct M");
-        sb.append(rSname());
+        sb.append(rName());
         sb.append("* t");
-        sb.append(rSname());
+        sb.append(rName());
         sb.append(" = M");
-        sb.append(rSname());
+        sb.append(rName());
         sb.append("_init(");
         {
             boolean first = true;

@@ -7,7 +7,7 @@ import java.util.List;
 
 public class MFile {
 
-    private final String pName;
+    private final String pFileName;
 
     private final MFile mFile = this;
 
@@ -71,9 +71,9 @@ public class MFile {
 
     private final List<Object> eTextInsert = new LinkedList<Object>();
 
-    private final List<Object> eTextInsertStr = new LinkedList<Object>();
+    private final List<Object> eTextInsertString = new LinkedList<Object>();
 
-    private final List<Object> eTextInsertDest = new LinkedList<Object>();
+    private final List<Object> eTextInsertDestructor = new LinkedList<Object>();
 
     private final List<Object> eInlineText = new LinkedList<Object>();
 
@@ -86,12 +86,12 @@ public class MFile {
     private final List<Object> eTextInsertAncestor = new LinkedList<Object>();
 
     public MFile(
-            String pName) {
+            String pFileName) {
 
-        if (pName == null) {
+        if (pFileName == null) {
             throw new NullPointerException();
         }
-        this.pName = pName;
+        this.pFileName = pFileName;
     }
 
     public MTextH newTextH() {
@@ -123,9 +123,9 @@ public class MFile {
     }
 
     public MInclude newInclude(
-            String pPname) {
+            String pName) {
 
-        MInclude lInclude = new MInclude(pPname);
+        MInclude lInclude = new MInclude(pName);
         this.eInclude.add(lInclude);
         return lInclude;
     }
@@ -145,145 +145,144 @@ public class MFile {
     }
 
     public MParamField newParamField(
-            String pPname) {
+            String pName) {
 
-        MParamField lParamField = new MParamField(pPname);
+        MParamField lParamField = new MParamField(pName);
         this.eParamField.add(lParamField);
         return lParamField;
     }
 
     public MAncestorField newAncestorField(
-            String pPname) {
+            String pName) {
 
-        MAncestorField lAncestorField = new MAncestorField(pPname);
+        MAncestorField lAncestorField = new MAncestorField(pName);
         this.eAncestorField.add(lAncestorField);
         return lAncestorField;
     }
 
     public MExpandField newExpandField(
-            String pPname) {
+            String pName) {
 
-        MExpandField lExpandField = new MExpandField(pPname);
+        MExpandField lExpandField = new MExpandField(pName);
         this.eExpandField.add(lExpandField);
         return lExpandField;
     }
 
     public MExpandDestructor newExpandDestructor(
-            String pPname) {
+            String pName) {
 
-        MExpandDestructor lExpandDestructor = new MExpandDestructor(pPname,
+        MExpandDestructor lExpandDestructor = new MExpandDestructor(pName,
                 this.mFile);
         this.eExpandDestructor.add(lExpandDestructor);
         return lExpandDestructor;
     }
 
     public MMacroCreator newMacroCreator(
-            String pPname) {
+            String pName) {
 
-        MMacroCreator lMacroCreator = new MMacroCreator(pPname, this.mFile);
+        MMacroCreator lMacroCreator = new MMacroCreator(pName, this.mFile);
         this.eMacroCreator.add(lMacroCreator);
         return lMacroCreator;
     }
 
     public MMacroCreatorPrototype newMacroCreatorPrototype(
-            String pPname) {
+            String pName) {
 
         MMacroCreatorPrototype lMacroCreatorPrototype = new MMacroCreatorPrototype(
-                pPname, this.mFile);
+                pName, this.mFile);
         this.eMacroCreatorPrototype.add(lMacroCreatorPrototype);
         return lMacroCreatorPrototype;
     }
 
     public MParam newParam(
-            String pPname) {
+            String pName) {
 
-        MParam lParam = new MParam(pPname, this.mFile);
+        MParam lParam = new MParam(pName, this.mFile);
         this.eParam.add(lParam);
         return lParam;
     }
 
     public MParamPrototype newParamPrototype(
-            String pPname) {
+            String pName) {
 
-        MParamPrototype lParamPrototype = new MParamPrototype(pPname,
-                this.mFile);
+        MParamPrototype lParamPrototype = new MParamPrototype(pName, this.mFile);
         this.eParamPrototype.add(lParamPrototype);
         return lParamPrototype;
     }
 
     public MParamRef newParamRef(
-            String pPname,
+            String pName,
             String pContext) {
 
-        MParamRef lParamRef = new MParamRef(pPname, pContext, this.mFile);
+        MParamRef lParamRef = new MParamRef(pName, pContext, this.mFile);
         this.eParamRef.add(lParamRef);
         return lParamRef;
     }
 
     public MParamRefPrototype newParamRefPrototype(
-            String pPname) {
+            String pName) {
 
-        MParamRefPrototype lParamRefPrototype = new MParamRefPrototype(pPname,
+        MParamRefPrototype lParamRefPrototype = new MParamRefPrototype(pName,
                 this.mFile);
         this.eParamRefPrototype.add(lParamRefPrototype);
         return lParamRefPrototype;
     }
 
     public MParamParam newParamParam(
-            String pPname) {
+            String pName) {
 
-        MParamParam lParamParam = new MParamParam(pPname);
+        MParamParam lParamParam = new MParamParam(pName);
         this.eParamParam.add(lParamParam);
         return lParamParam;
     }
 
     public MAncestorParam newAncestorParam(
-            String pPname) {
+            String pName) {
 
-        MAncestorParam lAncestorParam = new MAncestorParam(pPname);
+        MAncestorParam lAncestorParam = new MAncestorParam(pName);
         this.eAncestorParam.add(lAncestorParam);
         return lAncestorParam;
     }
 
     public MParamArg newParamArg(
-            String pPname) {
+            String pName) {
 
-        MParamArg lParamArg = new MParamArg(pPname);
+        MParamArg lParamArg = new MParamArg(pName);
         this.eParamArg.add(lParamArg);
         return lParamArg;
     }
 
     public MAncestorArg newAncestorArg(
-            String pPname) {
+            String pName) {
 
-        MAncestorArg lAncestorArg = new MAncestorArg(pPname, this.mFile);
+        MAncestorArg lAncestorArg = new MAncestorArg(pName, this.mFile);
         this.eAncestorArg.add(lAncestorArg);
         return lAncestorArg;
     }
 
     public MParamConstructorInit newParamConstructorInit(
-            String pPname) {
+            String pName) {
 
         MParamConstructorInit lParamConstructorInit = new MParamConstructorInit(
-                pPname, this.mFile);
+                pName, this.mFile);
         this.eParamConstructorInit.add(lParamConstructorInit);
         return lParamConstructorInit;
     }
 
     public MAncestorConstructorInit newAncestorConstructorInit(
-            String pPname) {
+            String pName) {
 
         MAncestorConstructorInit lAncestorConstructorInit = new MAncestorConstructorInit(
-                pPname, this.mFile);
+                pName, this.mFile);
         this.eAncestorConstructorInit.add(lAncestorConstructorInit);
         return lAncestorConstructorInit;
     }
 
     public MExpandConstructorInit newExpandConstructorInit(
-            String pPname) {
+            String pName) {
 
         MExpandConstructorInit lExpandConstructorInit = new MExpandConstructorInit(
-                pPname, this.mFile);
+                pName, this.mFile);
         this.eExpandConstructorInit.add(lExpandConstructorInit);
         return lExpandConstructorInit;
     }
@@ -304,9 +303,9 @@ public class MFile {
     }
 
     public MParamInsertPart newParamInsertPart(
-            String pPname) {
+            String pName) {
 
-        MParamInsertPart lParamInsertPart = new MParamInsertPart(pPname,
+        MParamInsertPart lParamInsertPart = new MParamInsertPart(pName,
                 this.mFile);
         this.eParamInsertPart.add(lParamInsertPart);
         return lParamInsertPart;
@@ -314,42 +313,43 @@ public class MFile {
 
     public MTextInsertPart newTextInsertPart() {
 
-        MTextInsertPart lTextInsertPart = new MTextInsertPart();
+        MTextInsertPart lTextInsertPart = new MTextInsertPart(this.mFile);
         this.eTextInsertPart.add(lTextInsertPart);
         return lTextInsertPart;
     }
 
     public MExpandInsertPart newExpandInsertPart(
-            String pPname) {
+            String pName) {
 
-        MExpandInsertPart lExpandInsertPart = new MExpandInsertPart(pPname,
+        MExpandInsertPart lExpandInsertPart = new MExpandInsertPart(pName,
                 this.mFile);
         this.eExpandInsertPart.add(lExpandInsertPart);
         return lExpandInsertPart;
     }
 
     public MTextInsert newTextInsert(
-            String pSname) {
+            String pName) {
 
-        MTextInsert lTextInsert = new MTextInsert(pSname);
+        MTextInsert lTextInsert = new MTextInsert(pName, this.mFile);
         this.eTextInsert.add(lTextInsert);
         return lTextInsert;
     }
 
-    public MTextInsertStr newTextInsertStr(
-            String pSname) {
+    public MTextInsertString newTextInsertString(
+            String pName) {
 
-        MTextInsertStr lTextInsertStr = new MTextInsertStr(pSname);
-        this.eTextInsertStr.add(lTextInsertStr);
-        return lTextInsertStr;
+        MTextInsertString lTextInsertString = new MTextInsertString(pName);
+        this.eTextInsertString.add(lTextInsertString);
+        return lTextInsertString;
     }
 
-    public MTextInsertDest newTextInsertDest(
-            String pSname) {
+    public MTextInsertDestructor newTextInsertDestructor(
+            String pName) {
 
-        MTextInsertDest lTextInsertDest = new MTextInsertDest(pSname);
-        this.eTextInsertDest.add(lTextInsertDest);
-        return lTextInsertDest;
+        MTextInsertDestructor lTextInsertDestructor = new MTextInsertDestructor(
+                pName);
+        this.eTextInsertDestructor.add(lTextInsertDestructor);
+        return lTextInsertDestructor;
     }
 
     public MInlineText newInlineText() {
@@ -375,25 +375,25 @@ public class MFile {
     }
 
     public MParamInsert newParamInsert(
-            String pPname) {
+            String pName) {
 
-        MParamInsert lParamInsert = new MParamInsert(pPname);
+        MParamInsert lParamInsert = new MParamInsert(pName, this.mFile);
         this.eParamInsert.add(lParamInsert);
         return lParamInsert;
     }
 
     public MTextInsertAncestor newTextInsertAncestor(
-            String pPname) {
+            String pName) {
 
         MTextInsertAncestor lTextInsertAncestor = new MTextInsertAncestor(
-                pPname);
+                pName, this.mFile);
         this.eTextInsertAncestor.add(lTextInsertAncestor);
         return lTextInsertAncestor;
     }
 
-    String pName() {
+    String pFileName() {
 
-        return this.pName;
+        return this.pFileName;
     }
 
     @Override
@@ -554,13 +554,13 @@ public class MFile {
         }
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        for (Object oTextInsertStr : this.eTextInsertStr) {
-            sb.append(oTextInsertStr.toString());
+        for (Object oTextInsertString : this.eTextInsertString) {
+            sb.append(oTextInsertString.toString());
         }
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        for (Object oTextInsertDest : this.eTextInsertDest) {
-            sb.append(oTextInsertDest.toString());
+        for (Object oTextInsertDestructor : this.eTextInsertDestructor) {
+            sb.append(oTextInsertDestructor.toString());
         }
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));

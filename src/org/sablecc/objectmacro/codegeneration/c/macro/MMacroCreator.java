@@ -7,7 +7,7 @@ import java.util.List;
 
 public class MMacroCreator {
 
-    private final String pPname;
+    private final String pName;
 
     private final MMacroCreator mMacroCreator = this;
 
@@ -20,13 +20,13 @@ public class MMacroCreator {
     private final List<Object> eAddToExpand = new LinkedList<Object>();
 
     MMacroCreator(
-            String pPname,
+            String pName,
             MFile mFile) {
 
-        if (pPname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
         if (mFile == null) {
             throw new NullPointerException();
         }
@@ -43,42 +43,42 @@ public class MMacroCreator {
     }
 
     public MParamParam newParamParam(
-            String pPname) {
+            String pName) {
 
-        MParamParam lParamParam = new MParamParam(pPname);
+        MParamParam lParamParam = new MParamParam(pName);
         this.eParamParam.add(lParamParam);
         return lParamParam;
     }
 
     public MParamArg newParamArg(
-            String pPname) {
+            String pName) {
 
-        MParamArg lParamArg = new MParamArg(pPname);
+        MParamArg lParamArg = new MParamArg(pName);
         this.eParamArg_AncestorArg.add(lParamArg);
         return lParamArg;
     }
 
     public MAncestorArg newAncestorArg(
-            String pPname) {
+            String pName) {
 
-        MAncestorArg lAncestorArg = new MAncestorArg(pPname, this.mFile);
+        MAncestorArg lAncestorArg = new MAncestorArg(pName, this.mFile);
         this.eParamArg_AncestorArg.add(lAncestorArg);
         return lAncestorArg;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
-    }
-
-    private String rPname() {
-
-        return this.mMacroCreator.pPname();
+        return this.pName;
     }
 
     private String rName() {
 
-        return this.mFile.pName();
+        return this.mMacroCreator.pName();
+    }
+
+    private String rFileName() {
+
+        return this.mFile.pFileName();
     }
 
     @Override
@@ -86,15 +86,15 @@ public class MMacroCreator {
 
         StringBuilder sb = new StringBuilder();
         sb.append("M");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("* M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_new");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("(M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* m");
-        sb.append(rName());
+        sb.append(rFileName());
         if (this.eParamParam.size() > 0) {
             sb.append(", ");
         }
@@ -113,11 +113,11 @@ public class MMacroCreator {
         sb.append(") {");
         sb.append(System.getProperty("line.separator"));
         sb.append("  M");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("* l");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append(" = M");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("_init(");
         {
             boolean first = true;
@@ -137,7 +137,7 @@ public class MMacroCreator {
             sb.append(oAddToExpand.toString());
         }
         sb.append("  return l");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append(";");
         sb.append(System.getProperty("line.separator"));
         sb.append("}");

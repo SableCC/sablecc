@@ -4,27 +4,27 @@ package org.sablecc.objectmacro.codegeneration.c.macro;
 
 public class MExpandField {
 
-    private final String pPname;
+    private final String pName;
 
     private final MExpandField mExpandField = this;
 
     MExpandField(
-            String pPname) {
+            String pName) {
 
-        if (pPname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
+        return this.pName;
     }
 
-    private String rPname() {
+    private String rName() {
 
-        return this.mExpandField.pPname();
+        return this.mExpandField.pName();
     }
 
     @Override
@@ -32,7 +32,7 @@ public class MExpandField {
 
         StringBuilder sb = new StringBuilder();
         sb.append("  struct List* _e");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("_;");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();

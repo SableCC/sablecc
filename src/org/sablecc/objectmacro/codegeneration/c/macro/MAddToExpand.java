@@ -36,9 +36,9 @@ public class MAddToExpand {
         return this.pSignature;
     }
 
-    private String rName() {
+    private String rFileName() {
 
-        return this.mFile.pName();
+        return this.mFile.pFileName();
     }
 
     private String rSignature() {
@@ -46,9 +46,9 @@ public class MAddToExpand {
         return this.mAddToExpand.pSignature();
     }
 
-    private String rPname() {
+    private String rName() {
 
-        return this.mMacroCreator.pPname();
+        return this.mMacroCreator.pName();
     }
 
     @Override
@@ -56,11 +56,11 @@ public class MAddToExpand {
 
         StringBuilder sb = new StringBuilder();
         sb.append("  List_pushback_MType(m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("->_e");
         sb.append(rSignature());
         sb.append("_, l");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append(", 1);");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();

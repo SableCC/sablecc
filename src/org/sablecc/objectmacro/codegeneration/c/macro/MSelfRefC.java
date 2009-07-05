@@ -15,9 +15,9 @@ public class MSelfRefC {
         this.mFile = mFile;
     }
 
-    private String rName() {
+    private String rFileName() {
 
-        return this.mFile.pName();
+        return this.mFile.pFileName();
     }
 
     @Override
@@ -25,11 +25,11 @@ public class MSelfRefC {
 
         StringBuilder sb = new StringBuilder();
         sb.append("  m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("->_m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_ = m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(";");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();

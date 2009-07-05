@@ -29,17 +29,17 @@ public class MTextH {
     }
 
     public MInclude newInclude(
-            String pPname) {
+            String pName) {
 
-        MInclude lInclude = new MInclude(pPname);
+        MInclude lInclude = new MInclude(pName);
         this.eInclude.add(lInclude);
         return lInclude;
     }
 
     public MParamField newParamField(
-            String pPname) {
+            String pName) {
 
-        MParamField lParamField = new MParamField(pPname);
+        MParamField lParamField = new MParamField(pName);
         this.eParamField_SelfRefH_AncestorField.add(lParamField);
         return lParamField;
     }
@@ -52,50 +52,49 @@ public class MTextH {
     }
 
     public MAncestorField newAncestorField(
-            String pPname) {
+            String pName) {
 
-        MAncestorField lAncestorField = new MAncestorField(pPname);
+        MAncestorField lAncestorField = new MAncestorField(pName);
         this.eParamField_SelfRefH_AncestorField.add(lAncestorField);
         return lAncestorField;
     }
 
     public MParamParam newParamParam(
-            String pPname) {
+            String pName) {
 
-        MParamParam lParamParam = new MParamParam(pPname);
+        MParamParam lParamParam = new MParamParam(pName);
         this.eParamParam_AncestorParam.add(lParamParam);
         return lParamParam;
     }
 
     public MAncestorParam newAncestorParam(
-            String pPname) {
+            String pName) {
 
-        MAncestorParam lAncestorParam = new MAncestorParam(pPname);
+        MAncestorParam lAncestorParam = new MAncestorParam(pName);
         this.eParamParam_AncestorParam.add(lAncestorParam);
         return lAncestorParam;
     }
 
     public MParamPrototype newParamPrototype(
-            String pPname) {
+            String pName) {
 
-        MParamPrototype lParamPrototype = new MParamPrototype(pPname,
-                this.mFile);
+        MParamPrototype lParamPrototype = new MParamPrototype(pName, this.mFile);
         this.eParamPrototype.add(lParamPrototype);
         return lParamPrototype;
     }
 
     public MParamRefPrototype newParamRefPrototype(
-            String pPname) {
+            String pName) {
 
-        MParamRefPrototype lParamRefPrototype = new MParamRefPrototype(pPname,
+        MParamRefPrototype lParamRefPrototype = new MParamRefPrototype(pName,
                 this.mFile);
         this.eParamRefPrototype.add(lParamRefPrototype);
         return lParamRefPrototype;
     }
 
-    private String rName() {
+    private String rFileName() {
 
-        return this.mFile.pName();
+        return this.mFile.pFileName();
     }
 
     @Override
@@ -105,11 +104,11 @@ public class MTextH {
         sb.append(new MHeader().toString());
         sb.append(System.getProperty("line.separator"));
         sb.append("#ifndef M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_H");
         sb.append(System.getProperty("line.separator"));
         sb.append("#define M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_H");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
@@ -127,7 +126,7 @@ public class MTextH {
         }
         sb.append(System.getProperty("line.separator"));
         sb.append("typedef struct M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(" {");
         sb.append(System.getProperty("line.separator"));
         sb.append("  char* (*toString)(void*);");
@@ -138,14 +137,14 @@ public class MTextH {
             sb.append(oParamField_SelfRefH_AncestorField.toString());
         }
         sb.append("}M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(";");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_init(");
         {
             boolean first = true;
@@ -162,11 +161,11 @@ public class MTextH {
         sb.append(");");
         sb.append(System.getProperty("line.separator"));
         sb.append("void M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_free(M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(");");
         sb.append(System.getProperty("line.separator"));
         {
@@ -194,11 +193,11 @@ public class MTextH {
             }
         }
         sb.append("char* M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_toString(M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(");");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));

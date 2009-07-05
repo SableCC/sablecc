@@ -4,36 +4,52 @@ package org.sablecc.objectmacro.codegeneration.c.macro;
 
 public class MParamInsert {
 
-    private final String pPname;
+    private final String pName;
 
     private final MParamInsert mParamInsert = this;
 
-    MParamInsert(
-            String pPname) {
+    private final MFile mFile;
 
-        if (pPname == null) {
+    MParamInsert(
+            String pName,
+            MFile mFile) {
+
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
+        if (mFile == null) {
+            throw new NullPointerException();
+        }
+        this.mFile = mFile;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
+        return this.pName;
     }
 
-    private String rPname() {
+    private String rFileName() {
 
-        return this.mParamInsert.pPname();
+        return this.mFile.pFileName();
+    }
+
+    private String rName() {
+
+        return this.mParamInsert.pName();
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("r");
-        sb.append(rPname());
-        sb.append("()");
+        sb.append("M");
+        sb.append(rFileName());
+        sb.append("_r");
+        sb.append(rName());
+        sb.append("(m");
+        sb.append(rFileName());
+        sb.append(")");
         return sb.toString();
     }
 

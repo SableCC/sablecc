@@ -31,7 +31,7 @@ public class MStringPart {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("  size += List_pushback(lsb, strdup(\"");
+        sb.append("  sizeString += List_pushback(listString, strdup(\"");
         sb.append(rString());
         sb.append("\"));");
         sb.append(System.getProperty("line.separator"));

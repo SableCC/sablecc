@@ -4,51 +4,51 @@ package org.sablecc.objectmacro.codegeneration.c.macro;
 
 public class MParamInsertPart {
 
-    private final String pPname;
+    private final String pName;
 
     private final MParamInsertPart mParamInsertPart = this;
 
     private final MFile mFile;
 
     MParamInsertPart(
-            String pPname,
+            String pName,
             MFile mFile) {
 
-        if (pPname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
         if (mFile == null) {
             throw new NullPointerException();
         }
         this.mFile = mFile;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
+        return this.pName;
+    }
+
+    private String rFileName() {
+
+        return this.mFile.pFileName();
     }
 
     private String rName() {
 
-        return this.mFile.pName();
-    }
-
-    private String rPname() {
-
-        return this.mParamInsertPart.pPname();
+        return this.mParamInsertPart.pName();
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("  size += List_pushback(lsb, strdup(M");
-        sb.append(rName());
+        sb.append("  sizeString += List_pushback(listString, strdup(M");
+        sb.append(rFileName());
         sb.append("_r");
-        sb.append(rPname());
-        sb.append("(m");
         sb.append(rName());
+        sb.append("(m");
+        sb.append(rFileName());
         sb.append(")));");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();

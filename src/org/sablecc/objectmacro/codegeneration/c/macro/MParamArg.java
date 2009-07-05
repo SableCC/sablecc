@@ -4,27 +4,27 @@ package org.sablecc.objectmacro.codegeneration.c.macro;
 
 public class MParamArg {
 
-    private final String pPname;
+    private final String pName;
 
     private final MParamArg mParamArg = this;
 
     MParamArg(
-            String pPname) {
+            String pName) {
 
-        if (pPname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
+        return this.pName;
     }
 
-    private String rPname() {
+    private String rName() {
 
-        return this.mParamArg.pPname();
+        return this.mParamArg.pName();
     }
 
     @Override
@@ -32,7 +32,7 @@ public class MParamArg {
 
         StringBuilder sb = new StringBuilder();
         sb.append("_p");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("_");
         return sb.toString();
     }

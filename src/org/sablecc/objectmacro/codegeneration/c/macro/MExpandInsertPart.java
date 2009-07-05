@@ -7,7 +7,7 @@ import java.util.List;
 
 public class MExpandInsertPart {
 
-    private final String pPname;
+    private final String pName;
 
     private final MExpandInsertPart mExpandInsertPart = this;
 
@@ -32,13 +32,13 @@ public class MExpandInsertPart {
     private final List<Object> eAfterMany = new LinkedList<Object>();
 
     MExpandInsertPart(
-            String pPname,
+            String pName,
             MFile mFile) {
 
-        if (pPname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
         if (mFile == null) {
             throw new NullPointerException();
         }
@@ -115,9 +115,9 @@ public class MExpandInsertPart {
         return lAfterMany;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
+        return this.pName;
     }
 
     @Override

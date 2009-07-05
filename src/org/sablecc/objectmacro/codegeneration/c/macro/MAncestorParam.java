@@ -4,27 +4,27 @@ package org.sablecc.objectmacro.codegeneration.c.macro;
 
 public class MAncestorParam {
 
-    private final String pPname;
+    private final String pName;
 
     private final MAncestorParam mAncestorParam = this;
 
     MAncestorParam(
-            String pPname) {
+            String pName) {
 
-        if (pPname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
+        return this.pName;
     }
 
-    private String rPname() {
+    private String rName() {
 
-        return this.mAncestorParam.pPname();
+        return this.mAncestorParam.pName();
     }
 
     @Override
@@ -32,9 +32,9 @@ public class MAncestorParam {
 
         StringBuilder sb = new StringBuilder();
         sb.append("struct M");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("* m");
-        sb.append(rPname());
+        sb.append(rName());
         return sb.toString();
     }
 

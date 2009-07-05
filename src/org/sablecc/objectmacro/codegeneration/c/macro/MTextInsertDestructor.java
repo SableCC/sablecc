@@ -2,29 +2,29 @@
 
 package org.sablecc.objectmacro.codegeneration.c.macro;
 
-public class MTextInsertDest {
+public class MTextInsertDestructor {
 
-    private final String pSname;
+    private final String pName;
 
-    private final MTextInsertDest mTextInsertDest = this;
+    private final MTextInsertDestructor mTextInsertDestructor = this;
 
-    MTextInsertDest(
-            String pSname) {
+    MTextInsertDestructor(
+            String pName) {
 
-        if (pSname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pSname = pSname;
+        this.pName = pName;
     }
 
-    String pSname() {
+    String pName() {
 
-        return this.pSname;
+        return this.pName;
     }
 
-    private String rSname() {
+    private String rName() {
 
-        return this.mTextInsertDest.pSname();
+        return this.mTextInsertDestructor.pName();
     }
 
     @Override
@@ -32,9 +32,9 @@ public class MTextInsertDest {
 
         StringBuilder sb = new StringBuilder();
         sb.append("  M");
-        sb.append(rSname());
+        sb.append(rName());
         sb.append("_free(t");
-        sb.append(rSname());
+        sb.append(rName());
         sb.append(");");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();

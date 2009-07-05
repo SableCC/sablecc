@@ -4,7 +4,7 @@ package org.sablecc.objectmacro.codegeneration.c.macro;
 
 public class MParamRef {
 
-    private final String pPname;
+    private final String pName;
 
     private final String pContext;
 
@@ -13,14 +13,14 @@ public class MParamRef {
     private final MFile mFile;
 
     MParamRef(
-            String pPname,
+            String pName,
             String pContext,
             MFile mFile) {
 
-        if (pPname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
         if (pContext == null) {
             throw new NullPointerException();
         }
@@ -31,9 +31,9 @@ public class MParamRef {
         this.mFile = mFile;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
+        return this.pName;
     }
 
     String pContext() {
@@ -41,14 +41,14 @@ public class MParamRef {
         return this.pContext;
     }
 
-    private String rName() {
+    private String rFileName() {
 
-        return this.mFile.pName();
+        return this.mFile.pFileName();
     }
 
-    private String rPname() {
+    private String rName() {
 
-        return this.mParamRef.pPname();
+        return this.mParamRef.pName();
     }
 
     private String rContext() {
@@ -61,21 +61,21 @@ public class MParamRef {
 
         StringBuilder sb = new StringBuilder();
         sb.append("char* M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_r");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("(M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(") {");
         sb.append(System.getProperty("line.separator"));
         sb.append("  return M");
         sb.append(rContext());
         sb.append("_p");
-        sb.append(rPname());
-        sb.append("(m");
         sb.append(rName());
+        sb.append("(m");
+        sb.append(rFileName());
         sb.append("->_m");
         sb.append(rContext());
         sb.append("_);");
