@@ -7,7 +7,7 @@ import java.util.List;
 
 public class MMacroCreatorPrototype {
 
-    private final String pPname;
+    private final String pName;
 
     private final MMacroCreatorPrototype mMacroCreatorPrototype = this;
 
@@ -16,13 +16,13 @@ public class MMacroCreatorPrototype {
     private final List<Object> eParamParam = new LinkedList<Object>();
 
     MMacroCreatorPrototype(
-            String pPname,
+            String pName,
             MFile mFile) {
 
-        if (pPname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
         if (mFile == null) {
             throw new NullPointerException();
         }
@@ -30,26 +30,26 @@ public class MMacroCreatorPrototype {
     }
 
     public MParamParam newParamParam(
-            String pPname) {
+            String pName) {
 
-        MParamParam lParamParam = new MParamParam(pPname);
+        MParamParam lParamParam = new MParamParam(pName);
         this.eParamParam.add(lParamParam);
         return lParamParam;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
-    }
-
-    private String rPname() {
-
-        return this.mMacroCreatorPrototype.pPname();
+        return this.pName;
     }
 
     private String rName() {
 
-        return this.mFile.pName();
+        return this.mMacroCreatorPrototype.pName();
+    }
+
+    private String rFileName() {
+
+        return this.mFile.pFileName();
     }
 
     @Override
@@ -57,15 +57,15 @@ public class MMacroCreatorPrototype {
 
         StringBuilder sb = new StringBuilder();
         sb.append("struct M");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("* M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_new");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("(M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* m");
-        sb.append(rName());
+        sb.append(rFileName());
         if (this.eParamParam.size() > 0) {
             sb.append(", ");
         }

@@ -4,27 +4,27 @@ package org.sablecc.objectmacro.codegeneration.c.macro;
 
 public class MAncestorField {
 
-    private final String pPname;
+    private final String pName;
 
     private final MAncestorField mAncestorField = this;
 
     MAncestorField(
-            String pPname) {
+            String pName) {
 
-        if (pPname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
+        return this.pName;
     }
 
-    private String rPname() {
+    private String rName() {
 
-        return this.mAncestorField.pPname();
+        return this.mAncestorField.pName();
     }
 
     @Override
@@ -32,9 +32,9 @@ public class MAncestorField {
 
         StringBuilder sb = new StringBuilder();
         sb.append("  struct M");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("* _m");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("_;");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();

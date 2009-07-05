@@ -4,35 +4,49 @@ package org.sablecc.objectmacro.codegeneration.c.macro;
 
 public class MTextInsertAncestor {
 
-    private final String pPname;
+    private final String pName;
 
     private final MTextInsertAncestor mTextInsertAncestor = this;
 
-    MTextInsertAncestor(
-            String pPname) {
+    private final MFile mFile;
 
-        if (pPname == null) {
+    MTextInsertAncestor(
+            String pName,
+            MFile mFile) {
+
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
+        if (mFile == null) {
+            throw new NullPointerException();
+        }
+        this.mFile = mFile;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
+        return this.pName;
     }
 
-    private String rPname() {
+    private String rFileName() {
 
-        return this.mTextInsertAncestor.pPname();
+        return this.mFile.pFileName();
+    }
+
+    private String rName() {
+
+        return this.mTextInsertAncestor.pName();
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("_m");
-        sb.append(rPname());
+        sb.append("M");
+        sb.append(rFileName());
+        sb.append("->_m");
+        sb.append(rName());
         sb.append("_");
         return sb.toString();
     }

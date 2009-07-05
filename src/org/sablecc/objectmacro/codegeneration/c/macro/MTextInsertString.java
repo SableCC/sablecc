@@ -2,13 +2,13 @@
 
 package org.sablecc.objectmacro.codegeneration.c.macro;
 
-public class MInclude {
+public class MTextInsertString {
 
     private final String pName;
 
-    private final MInclude mInclude = this;
+    private final MTextInsertString mTextInsertString = this;
 
-    MInclude(
+    MTextInsertString(
             String pName) {
 
         if (pName == null) {
@@ -24,17 +24,18 @@ public class MInclude {
 
     private String rName() {
 
-        return this.mInclude.pName();
+        return this.mTextInsertString.pName();
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("#include \"M");
+        sb.append("M");
         sb.append(rName());
-        sb.append(".h\"");
-        sb.append(System.getProperty("line.separator"));
+        sb.append("_toString(t");
+        sb.append(rName());
+        sb.append(")");
         return sb.toString();
     }
 

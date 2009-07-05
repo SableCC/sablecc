@@ -15,9 +15,9 @@ public class MSeparator {
 
     private final List<Object> eTextInsert = new LinkedList<Object>();
 
-    private final List<Object> eInlineText_ParamInsert_TextInsertStr = new LinkedList<Object>();
+    private final List<Object> eInlineText_ParamInsert_TextInsertString = new LinkedList<Object>();
 
-    private final List<Object> eTextInsertDest = new LinkedList<Object>();
+    private final List<Object> eTextInsertDestructor = new LinkedList<Object>();
 
     private final List<Object> eBraceEnd = new LinkedList<Object>();
 
@@ -43,9 +43,9 @@ public class MSeparator {
     }
 
     public MTextInsert newTextInsert(
-            String pSname) {
+            String pName) {
 
-        MTextInsert lTextInsert = new MTextInsert(pSname);
+        MTextInsert lTextInsert = new MTextInsert(pName, this.mFile);
         this.eTextInsert.add(lTextInsert);
         return lTextInsert;
     }
@@ -53,32 +53,33 @@ public class MSeparator {
     public MInlineText newInlineText() {
 
         MInlineText lInlineText = new MInlineText();
-        this.eInlineText_ParamInsert_TextInsertStr.add(lInlineText);
+        this.eInlineText_ParamInsert_TextInsertString.add(lInlineText);
         return lInlineText;
     }
 
     public MParamInsert newParamInsert(
-            String pPname) {
+            String pName) {
 
-        MParamInsert lParamInsert = new MParamInsert(pPname);
-        this.eInlineText_ParamInsert_TextInsertStr.add(lParamInsert);
+        MParamInsert lParamInsert = new MParamInsert(pName, this.mFile);
+        this.eInlineText_ParamInsert_TextInsertString.add(lParamInsert);
         return lParamInsert;
     }
 
-    public MTextInsertStr newTextInsertStr(
-            String pSname) {
+    public MTextInsertString newTextInsertString(
+            String pName) {
 
-        MTextInsertStr lTextInsertStr = new MTextInsertStr(pSname);
-        this.eInlineText_ParamInsert_TextInsertStr.add(lTextInsertStr);
-        return lTextInsertStr;
+        MTextInsertString lTextInsertString = new MTextInsertString(pName);
+        this.eInlineText_ParamInsert_TextInsertString.add(lTextInsertString);
+        return lTextInsertString;
     }
 
-    public MTextInsertDest newTextInsertDest(
-            String pSname) {
+    public MTextInsertDestructor newTextInsertDestructor(
+            String pName) {
 
-        MTextInsertDest lTextInsertDest = new MTextInsertDest(pSname);
-        this.eTextInsertDest.add(lTextInsertDest);
-        return lTextInsertDest;
+        MTextInsertDestructor lTextInsertDestructor = new MTextInsertDestructor(
+                pName);
+        this.eTextInsertDestructor.add(lTextInsertDestructor);
+        return lTextInsertDestructor;
     }
 
     public MBraceEnd newBraceEnd() {
@@ -88,14 +89,14 @@ public class MSeparator {
         return lBraceEnd;
     }
 
-    private String rName() {
+    private String rFileName() {
 
-        return this.mFile.pName();
+        return this.mFile.pFileName();
     }
 
-    private String rPname() {
+    private String rName() {
 
-        return this.mExpandInsertPart.pPname();
+        return this.mExpandInsertPart.pName();
     }
 
     @Override
@@ -107,9 +108,9 @@ public class MSeparator {
         sb.append("    int first = 1;");
         sb.append(System.getProperty("line.separator"));
         sb.append("    Node* temp = m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("->_e");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("_->_first_;");
         sb.append(System.getProperty("line.separator"));
         sb.append("    while(temp != NULL) {");
@@ -129,18 +130,18 @@ public class MSeparator {
         for (Object oTextInsert : this.eTextInsert) {
             sb.append(oTextInsert.toString());
         }
-        sb.append("        size += List_pushback(lsb, strdup(");
-        if (this.eInlineText_ParamInsert_TextInsertStr.size() == 0) {
+        sb.append("        sizeString += List_pushback(listString, strdup(");
+        if (this.eInlineText_ParamInsert_TextInsertString.size() == 0) {
             sb.append("\"\"");
         }
-        for (Object oInlineText_ParamInsert_TextInsertStr : this.eInlineText_ParamInsert_TextInsertStr) {
-            sb.append(oInlineText_ParamInsert_TextInsertStr.toString());
+        for (Object oInlineText_ParamInsert_TextInsertString : this.eInlineText_ParamInsert_TextInsertString) {
+            sb.append(oInlineText_ParamInsert_TextInsertString.toString());
         }
         sb.append("));");
         sb.append(System.getProperty("line.separator"));
         sb.append("      ");
-        for (Object oTextInsertDest : this.eTextInsertDest) {
-            sb.append(oTextInsertDest.toString());
+        for (Object oTextInsertDestructor : this.eTextInsertDestructor) {
+            sb.append(oTextInsertDestructor.toString());
         }
         sb.append("      ");
         for (Object oBraceEnd : this.eBraceEnd) {
@@ -149,7 +150,8 @@ public class MSeparator {
         sb.append(System.getProperty("line.separator"));
         sb.append("      struct AbstractMacro* Mtemp = temp->_elem_;");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      size += List_pushback(lsb, Mtemp->toString(Mtemp));");
+        sb
+                .append("      sizeString += List_pushback(listString, Mtemp->toString(Mtemp));");
         sb.append(System.getProperty("line.separator"));
         sb.append("      temp = temp->_next_;");
         sb.append(System.getProperty("line.separator"));

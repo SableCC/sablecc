@@ -7,38 +7,46 @@ import java.util.List;
 
 public class MTextInsertPart {
 
+    private final MFile mFile;
+
     private final List<Object> eTextInsert = new LinkedList<Object>();
 
-    private final List<Object> eTextInsertStr = new LinkedList<Object>();
+    private final List<Object> eTextInsertString = new LinkedList<Object>();
 
-    private final List<Object> eTextInsertDest = new LinkedList<Object>();
+    private final List<Object> eTextInsertDestructor = new LinkedList<Object>();
 
-    MTextInsertPart() {
+    MTextInsertPart(
+            MFile mFile) {
 
+        if (mFile == null) {
+            throw new NullPointerException();
+        }
+        this.mFile = mFile;
     }
 
     public MTextInsert newTextInsert(
-            String pSname) {
+            String pName) {
 
-        MTextInsert lTextInsert = new MTextInsert(pSname);
+        MTextInsert lTextInsert = new MTextInsert(pName, this.mFile);
         this.eTextInsert.add(lTextInsert);
         return lTextInsert;
     }
 
-    public MTextInsertStr newTextInsertStr(
-            String pSname) {
+    public MTextInsertString newTextInsertString(
+            String pName) {
 
-        MTextInsertStr lTextInsertStr = new MTextInsertStr(pSname);
-        this.eTextInsertStr.add(lTextInsertStr);
-        return lTextInsertStr;
+        MTextInsertString lTextInsertString = new MTextInsertString(pName);
+        this.eTextInsertString.add(lTextInsertString);
+        return lTextInsertString;
     }
 
-    public MTextInsertDest newTextInsertDest(
-            String pSname) {
+    public MTextInsertDestructor newTextInsertDestructor(
+            String pName) {
 
-        MTextInsertDest lTextInsertDest = new MTextInsertDest(pSname);
-        this.eTextInsertDest.add(lTextInsertDest);
-        return lTextInsertDest;
+        MTextInsertDestructor lTextInsertDestructor = new MTextInsertDestructor(
+                pName);
+        this.eTextInsertDestructor.add(lTextInsertDestructor);
+        return lTextInsertDestructor;
     }
 
     @Override
@@ -48,17 +56,17 @@ public class MTextInsertPart {
         for (Object oTextInsert : this.eTextInsert) {
             sb.append(oTextInsert.toString());
         }
-        sb.append("  size += List_pushback(lsb, strdup(");
-        if (this.eTextInsertStr.size() == 0) {
+        sb.append("  sizeString += List_pushback(listString, strdup(");
+        if (this.eTextInsertString.size() == 0) {
             sb.append("\"\"");
         }
-        for (Object oTextInsertStr : this.eTextInsertStr) {
-            sb.append(oTextInsertStr.toString());
+        for (Object oTextInsertString : this.eTextInsertString) {
+            sb.append(oTextInsertString.toString());
         }
         sb.append("));");
         sb.append(System.getProperty("line.separator"));
-        for (Object oTextInsertDest : this.eTextInsertDest) {
-            sb.append(oTextInsertDest.toString());
+        for (Object oTextInsertDestructor : this.eTextInsertDestructor) {
+            sb.append(oTextInsertDestructor.toString());
         }
         return sb.toString();
     }

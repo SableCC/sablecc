@@ -4,39 +4,39 @@ package org.sablecc.objectmacro.codegeneration.c.macro;
 
 public class MExpandConstructorInit {
 
-    private final String pPname;
+    private final String pName;
 
     private final MExpandConstructorInit mExpandConstructorInit = this;
 
     private final MFile mFile;
 
     MExpandConstructorInit(
-            String pPname,
+            String pName,
             MFile mFile) {
 
-        if (pPname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
         if (mFile == null) {
             throw new NullPointerException();
         }
         this.mFile = mFile;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
+        return this.pName;
+    }
+
+    private String rFileName() {
+
+        return this.mFile.pFileName();
     }
 
     private String rName() {
 
-        return this.mFile.pName();
-    }
-
-    private String rPname() {
-
-        return this.mExpandConstructorInit.pPname();
+        return this.mExpandConstructorInit.pName();
     }
 
     @Override
@@ -44,9 +44,9 @@ public class MExpandConstructorInit {
 
         StringBuilder sb = new StringBuilder();
         sb.append("  m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("->_e");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("_ = List_init();");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();

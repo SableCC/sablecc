@@ -31,17 +31,17 @@ public class MMacroH {
     }
 
     public MInclude newInclude(
-            String pPname) {
+            String pName) {
 
-        MInclude lInclude = new MInclude(pPname);
+        MInclude lInclude = new MInclude(pName);
         this.eInclude.add(lInclude);
         return lInclude;
     }
 
     public MParamField newParamField(
-            String pPname) {
+            String pName) {
 
-        MParamField lParamField = new MParamField(pPname);
+        MParamField lParamField = new MParamField(pName);
         this.eParamField_SelfRefH_AncestorField_ExpandField.add(lParamField);
         return lParamField;
     }
@@ -54,67 +54,66 @@ public class MMacroH {
     }
 
     public MAncestorField newAncestorField(
-            String pPname) {
+            String pName) {
 
-        MAncestorField lAncestorField = new MAncestorField(pPname);
+        MAncestorField lAncestorField = new MAncestorField(pName);
         this.eParamField_SelfRefH_AncestorField_ExpandField.add(lAncestorField);
         return lAncestorField;
     }
 
     public MExpandField newExpandField(
-            String pPname) {
+            String pName) {
 
-        MExpandField lExpandField = new MExpandField(pPname);
+        MExpandField lExpandField = new MExpandField(pName);
         this.eParamField_SelfRefH_AncestorField_ExpandField.add(lExpandField);
         return lExpandField;
     }
 
     public MParamParam newParamParam(
-            String pPname) {
+            String pName) {
 
-        MParamParam lParamParam = new MParamParam(pPname);
+        MParamParam lParamParam = new MParamParam(pName);
         this.eParamParam_AncestorParam.add(lParamParam);
         return lParamParam;
     }
 
     public MAncestorParam newAncestorParam(
-            String pPname) {
+            String pName) {
 
-        MAncestorParam lAncestorParam = new MAncestorParam(pPname);
+        MAncestorParam lAncestorParam = new MAncestorParam(pName);
         this.eParamParam_AncestorParam.add(lAncestorParam);
         return lAncestorParam;
     }
 
     public MMacroCreatorPrototype newMacroCreatorPrototype(
-            String pPname) {
+            String pName) {
 
         MMacroCreatorPrototype lMacroCreatorPrototype = new MMacroCreatorPrototype(
-                pPname, this.mFile);
+                pName, this.mFile);
         this.eMacroCreatorPrototype.add(lMacroCreatorPrototype);
         return lMacroCreatorPrototype;
     }
 
     public MParamPrototype newParamPrototype(
-            String pPname) {
+            String pName) {
 
-        MParamPrototype lParamPrototype = new MParamPrototype(pPname,
-                this.mFile);
+        MParamPrototype lParamPrototype = new MParamPrototype(pName, this.mFile);
         this.eParamPrototype.add(lParamPrototype);
         return lParamPrototype;
     }
 
     public MParamRefPrototype newParamRefPrototype(
-            String pPname) {
+            String pName) {
 
-        MParamRefPrototype lParamRefPrototype = new MParamRefPrototype(pPname,
+        MParamRefPrototype lParamRefPrototype = new MParamRefPrototype(pName,
                 this.mFile);
         this.eParamRefPrototype.add(lParamRefPrototype);
         return lParamRefPrototype;
     }
 
-    private String rName() {
+    private String rFileName() {
 
-        return this.mFile.pName();
+        return this.mFile.pFileName();
     }
 
     @Override
@@ -124,11 +123,11 @@ public class MMacroH {
         sb.append(new MHeader().toString());
         sb.append(System.getProperty("line.separator"));
         sb.append("#ifndef M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_H");
         sb.append(System.getProperty("line.separator"));
         sb.append("#define M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_H");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
@@ -146,7 +145,7 @@ public class MMacroH {
         }
         sb.append(System.getProperty("line.separator"));
         sb.append("typedef struct M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(" {");
         sb.append(System.getProperty("line.separator"));
         sb.append("  char* (*toString)(void*);");
@@ -159,14 +158,14 @@ public class MMacroH {
                             .toString());
         }
         sb.append("}M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(";");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_init(");
         {
             boolean first = true;
@@ -183,11 +182,11 @@ public class MMacroH {
         sb.append(");");
         sb.append(System.getProperty("line.separator"));
         sb.append("void M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_free(M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(");");
         sb.append(System.getProperty("line.separator"));
         for (Object oMacroCreatorPrototype : this.eMacroCreatorPrototype) {
@@ -200,11 +199,11 @@ public class MMacroH {
             sb.append(oParamRefPrototype.toString());
         }
         sb.append("char* M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_toString(M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(");");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));

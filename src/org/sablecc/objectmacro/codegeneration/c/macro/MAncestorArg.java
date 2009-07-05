@@ -4,39 +4,39 @@ package org.sablecc.objectmacro.codegeneration.c.macro;
 
 public class MAncestorArg {
 
-    private final String pPname;
+    private final String pName;
 
     private final MAncestorArg mAncestorArg = this;
 
     private final MFile mFile;
 
     MAncestorArg(
-            String pPname,
+            String pName,
             MFile mFile) {
 
-        if (pPname == null) {
+        if (pName == null) {
             throw new NullPointerException();
         }
-        this.pPname = pPname;
+        this.pName = pName;
         if (mFile == null) {
             throw new NullPointerException();
         }
         this.mFile = mFile;
     }
 
-    String pPname() {
+    String pName() {
 
-        return this.pPname;
+        return this.pName;
+    }
+
+    private String rFileName() {
+
+        return this.mFile.pFileName();
     }
 
     private String rName() {
 
-        return this.mFile.pName();
-    }
-
-    private String rPname() {
-
-        return this.mAncestorArg.pPname();
+        return this.mAncestorArg.pName();
     }
 
     @Override
@@ -44,9 +44,9 @@ public class MAncestorArg {
 
         StringBuilder sb = new StringBuilder();
         sb.append("m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("->_m");
-        sb.append(rPname());
+        sb.append(rName());
         sb.append("_");
         return sb.toString();
     }

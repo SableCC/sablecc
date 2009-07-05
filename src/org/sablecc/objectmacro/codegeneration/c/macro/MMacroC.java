@@ -33,26 +33,26 @@ public class MMacroC {
     }
 
     public MParamParam newParamParam(
-            String pPname) {
+            String pName) {
 
-        MParamParam lParamParam = new MParamParam(pPname);
+        MParamParam lParamParam = new MParamParam(pName);
         this.eParamParam_AncestorParam.add(lParamParam);
         return lParamParam;
     }
 
     public MAncestorParam newAncestorParam(
-            String pPname) {
+            String pName) {
 
-        MAncestorParam lAncestorParam = new MAncestorParam(pPname);
+        MAncestorParam lAncestorParam = new MAncestorParam(pName);
         this.eParamParam_AncestorParam.add(lAncestorParam);
         return lAncestorParam;
     }
 
     public MParamConstructorInit newParamConstructorInit(
-            String pPname) {
+            String pName) {
 
         MParamConstructorInit lParamConstructorInit = new MParamConstructorInit(
-                pPname, this.mFile);
+                pName, this.mFile);
         this.eParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit
                 .add(lParamConstructorInit);
         return lParamConstructorInit;
@@ -67,55 +67,55 @@ public class MMacroC {
     }
 
     public MAncestorConstructorInit newAncestorConstructorInit(
-            String pPname) {
+            String pName) {
 
         MAncestorConstructorInit lAncestorConstructorInit = new MAncestorConstructorInit(
-                pPname, this.mFile);
+                pName, this.mFile);
         this.eParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit
                 .add(lAncestorConstructorInit);
         return lAncestorConstructorInit;
     }
 
     public MExpandConstructorInit newExpandConstructorInit(
-            String pPname) {
+            String pName) {
 
         MExpandConstructorInit lExpandConstructorInit = new MExpandConstructorInit(
-                pPname, this.mFile);
+                pName, this.mFile);
         this.eParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit
                 .add(lExpandConstructorInit);
         return lExpandConstructorInit;
     }
 
     public MExpandDestructor newExpandDestructor(
-            String pPname) {
+            String pName) {
 
-        MExpandDestructor lExpandDestructor = new MExpandDestructor(pPname,
+        MExpandDestructor lExpandDestructor = new MExpandDestructor(pName,
                 this.mFile);
         this.eExpandDestructor.add(lExpandDestructor);
         return lExpandDestructor;
     }
 
     public MMacroCreator newMacroCreator(
-            String pPname) {
+            String pName) {
 
-        MMacroCreator lMacroCreator = new MMacroCreator(pPname, this.mFile);
+        MMacroCreator lMacroCreator = new MMacroCreator(pName, this.mFile);
         this.eMacroCreator.add(lMacroCreator);
         return lMacroCreator;
     }
 
     public MParam newParam(
-            String pPname) {
+            String pName) {
 
-        MParam lParam = new MParam(pPname, this.mFile);
+        MParam lParam = new MParam(pName, this.mFile);
         this.eParam.add(lParam);
         return lParam;
     }
 
     public MParamRef newParamRef(
-            String pPname,
+            String pName,
             String pContext) {
 
-        MParamRef lParamRef = new MParamRef(pPname, pContext, this.mFile);
+        MParamRef lParamRef = new MParamRef(pName, pContext, this.mFile);
         this.eParamRef.add(lParamRef);
         return lParamRef;
     }
@@ -138,9 +138,9 @@ public class MMacroC {
     }
 
     public MParamInsertPart newParamInsertPart(
-            String pPname) {
+            String pName) {
 
-        MParamInsertPart lParamInsertPart = new MParamInsertPart(pPname,
+        MParamInsertPart lParamInsertPart = new MParamInsertPart(pName,
                 this.mFile);
         this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
                 .add(lParamInsertPart);
@@ -149,25 +149,25 @@ public class MMacroC {
 
     public MTextInsertPart newTextInsertPart() {
 
-        MTextInsertPart lTextInsertPart = new MTextInsertPart();
+        MTextInsertPart lTextInsertPart = new MTextInsertPart(this.mFile);
         this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
                 .add(lTextInsertPart);
         return lTextInsertPart;
     }
 
     public MExpandInsertPart newExpandInsertPart(
-            String pPname) {
+            String pName) {
 
-        MExpandInsertPart lExpandInsertPart = new MExpandInsertPart(pPname,
+        MExpandInsertPart lExpandInsertPart = new MExpandInsertPart(pName,
                 this.mFile);
         this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
                 .add(lExpandInsertPart);
         return lExpandInsertPart;
     }
 
-    private String rName() {
+    private String rFileName() {
 
-        return this.mFile.pName();
+        return this.mFile.pFileName();
     }
 
     @Override
@@ -177,14 +177,14 @@ public class MMacroC {
         sb.append(new MHeader().toString());
         sb.append(System.getProperty("line.separator"));
         sb.append("#include \"M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(".h\"");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_init(");
         {
             boolean first = true;
@@ -201,25 +201,25 @@ public class MMacroC {
         sb.append(") {");
         sb.append(System.getProperty("line.separator"));
         sb.append("  M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(" = (M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("*)malloc(sizeof(M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("));");
         sb.append(System.getProperty("line.separator"));
         sb.append("  m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("->toString = &M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_toString;");
         sb.append(System.getProperty("line.separator"));
         sb.append("  m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("->free = &M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_free;");
         sb.append(System.getProperty("line.separator"));
         for (Object oParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit : this.eParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit) {
@@ -228,25 +228,25 @@ public class MMacroC {
                             .toString());
         }
         sb.append("  return m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(";");
         sb.append(System.getProperty("line.separator"));
         sb.append("}");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("void M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_free(M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(") {");
         sb.append(System.getProperty("line.separator"));
         for (Object oExpandDestructor : this.eExpandDestructor) {
             sb.append(oExpandDestructor.toString());
         }
         sb.append("  free(m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(");");
         sb.append(System.getProperty("line.separator"));
         sb.append("}");
@@ -300,16 +300,16 @@ public class MMacroC {
         sb.append("//@Override");
         sb.append(System.getProperty("line.separator"));
         sb.append("char* M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_toString(M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append(") {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  int size = 1;");
+        sb.append("  int sizeString = 1;");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  List* lsb = List_init();");
+        sb.append("  List* listString = List_init();");
         sb.append(System.getProperty("line.separator"));
         for (Object oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart : this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart) {
             sb
@@ -317,23 +317,23 @@ public class MMacroC {
                             .toString());
         }
         sb.append(System.getProperty("line.separator"));
-        sb.append("  char* sb = (char*)calloc(size, sizeof(char));");
+        sb.append("  char* str = (char*)calloc(sizeString, sizeof(char));");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  Node* temp = lsb->_first_;");
+        sb.append("  Node* temp = listString->_first_;");
         sb.append(System.getProperty("line.separator"));
         sb.append("  while(temp != NULL) {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    strcat(sb, temp->_elem_);");
+        sb.append("    strcat(str, temp->_elem_);");
         sb.append(System.getProperty("line.separator"));
         sb.append("    temp = temp->_next_;");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("  List_free(lsb);");
+        sb.append("  List_free(listString);");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("  return sb;");
+        sb.append("  return str;");
         sb.append(System.getProperty("line.separator"));
         sb.append("}");
         sb.append(System.getProperty("line.separator"));

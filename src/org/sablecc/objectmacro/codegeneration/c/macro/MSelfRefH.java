@@ -15,9 +15,9 @@ public class MSelfRefH {
         this.mFile = mFile;
     }
 
-    private String rName() {
+    private String rFileName() {
 
-        return this.mFile.pName();
+        return this.mFile.pFileName();
     }
 
     @Override
@@ -25,9 +25,9 @@ public class MSelfRefH {
 
         StringBuilder sb = new StringBuilder();
         sb.append("  struct M");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("* _m");
-        sb.append(rName());
+        sb.append(rFileName());
         sb.append("_;");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
