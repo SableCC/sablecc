@@ -745,6 +745,11 @@ public class ObjectMacro {
         List<PInlineText> inlineTexts = new LinkedList<PInlineText>();
         StringBuilder textBuilder = null;
 
+        if (string.getParts().size() == 0) {
+            inlineTexts.add(new AStringInlineText(new TString("''")));
+            return inlineTexts;
+        }
+
         for (PStringPart pStringPart : string.getParts()) {
             if (pStringPart instanceof ATextStringPart) {
                 ATextStringPart stringPart = (ATextStringPart) pStringPart;
