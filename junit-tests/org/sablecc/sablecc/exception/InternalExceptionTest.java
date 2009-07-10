@@ -26,7 +26,6 @@ import org.sablecc.exception.InternalException;
 public class InternalExceptionTest {
 
     @Test
-    @SuppressWarnings("unused")
     public void testInternalExceptionString() {
 
         // Initializing a good internal exception.
@@ -43,8 +42,7 @@ public class InternalExceptionTest {
 
         // Testing thrown exception when the message is null.
         try {
-            InternalException nullMessageInternalException = new InternalException(
-                    null);
+            new InternalException(null);
             fail("An InternalException should be thrown.");
         }
         catch (InternalException e) {
@@ -57,7 +55,6 @@ public class InternalExceptionTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     public void testInternalExceptionStringThrowable() {
 
         Throwable cause = new Throwable();
@@ -77,8 +74,7 @@ public class InternalExceptionTest {
 
         // Testing thrown exception when message is null, cause is good.
         try {
-            InternalException nullMessageInternalException = new InternalException(
-                    null, cause);
+            new InternalException(null, cause);
             fail("An InternalException should be thrown.");
         }
         catch (InternalException e) {
@@ -87,8 +83,7 @@ public class InternalExceptionTest {
 
         // Testing thrown exception when cause is null, message is good.
         try {
-            InternalException nullCauseInternalException = new InternalException(
-                    "Message", null);
+            new InternalException("Message", null);
             fail("An InternalException should be thrown.");
         }
         catch (InternalException e) {
@@ -97,8 +92,7 @@ public class InternalExceptionTest {
 
         // Testing thrown exception when message and cause are null.
         try {
-            InternalException nullMessageAndCauseInternalException = new InternalException(
-                    null, null);
+            new InternalException(null, null);
             fail("An InternalException should be thrown.");
         }
         catch (InternalException e) {
