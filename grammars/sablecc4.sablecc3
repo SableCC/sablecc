@@ -116,7 +116,6 @@ Tokens
   parser_keyword = 'Parser';
   priority_keyword = 'Priority';
   production_keyword = 'Production';
-  rejected_keyword = 'Rejected';
   restartable_keyword = 'Restartable';
   right_keyword = 'Right';
   separator_keyword = 'Separator';
@@ -417,21 +416,21 @@ Productions
         {-> lexer_context }
     =
       lexer_context_body
-        {-> New lexer_context(Null, lexer_context_body.tokens, lexer_context_body.ignored, lexer_context_body.rejected, [lexer_context_body.lexer_priorities]) }
+        {-> New lexer_context(Null, lexer_context_body.tokens, lexer_context_body.ignored, [lexer_context_body.lexer_priorities]) }
     ;
 
   lexer_named_context
         {-> lexer_context }
     =
       context_keyword identifier colon lexer_context_body
-        {-> New lexer_context(identifier, lexer_context_body.tokens, lexer_context_body.ignored, lexer_context_body.rejected, [lexer_context_body.lexer_priorities]) }
+        {-> New lexer_context(identifier, lexer_context_body.tokens, lexer_context_body.ignored, [lexer_context_body.lexer_priorities]) }
     ;
 
   lexer_context_body
-        {-> tokens? ignored? rejected? [lexer_priorities]:lexer_priority* }
+        {-> tokens? ignored? [lexer_priorities]:lexer_priority* }
     =
-      tokens? ignored? rejected? lexer_priorities?
-        {-> tokens ignored rejected [lexer_priorities.lexer_priorities] }
+      tokens? ignored? lexer_priorities?
+        {-> tokens ignored [lexer_priorities.lexer_priorities] }
     ;
 
   tokens
@@ -444,12 +443,6 @@ Productions
     =
       ignored_keyword unit_list? semicolon
         {-> New ignored(ignored_keyword, [unit_list.units]) }
-    ;
-
-  rejected
-    =
-      rejected_keyword unit_list? semicolon
-        {-> New rejected(rejected_keyword, [unit_list.units]) }
     ;
 
   unit_list
@@ -786,17 +779,13 @@ Abstract Syntax Tree
     {end} end_keyword;
 
   lexer_context =
-    [name]:identifier? tokens? ignored? rejected?
-    [lexer_priorities]:lexer_priority*;
+    [name]:identifier? tokens? ignored? [lexer_priorities]:lexer_priority*;
 
   tokens =
     token_keyword unit*;
 
   ignored =
     ignored_keyword unit*;
-
-  rejected =
-    rejected_keyword unit*;
 
   lexer_priority =
     [high]:unit gt [low]:unit;
