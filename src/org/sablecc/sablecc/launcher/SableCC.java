@@ -28,19 +28,19 @@ import java.io.PushbackReader;
 import java.io.StringWriter;
 
 import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.errormessages.MInternalError;
-import org.sablecc.sablecc.errormessages.MLexicalError;
-import org.sablecc.sablecc.errormessages.MSyntaxError;
+import org.sablecc.sablecc.errormessage.MInternalError;
+import org.sablecc.sablecc.errormessage.MLexicalError;
+import org.sablecc.sablecc.errormessage.MSyntaxError;
 import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.structures.GlobalIndex;
+import org.sablecc.sablecc.structure.GlobalIndex;
 import org.sablecc.sablecc.syntax3.lexer.Lexer;
 import org.sablecc.sablecc.syntax3.lexer.LexerException;
 import org.sablecc.sablecc.syntax3.node.Start;
 import org.sablecc.sablecc.syntax3.parser.Parser;
 import org.sablecc.sablecc.syntax3.parser.ParserException;
-import org.sablecc.sablecc.walkers.CyclicExpressionDetector;
-import org.sablecc.sablecc.walkers.DeclarationCollector;
-import org.sablecc.sablecc.walkers.ExpressionVerifier;
+import org.sablecc.sablecc.walker.CyclicExpressionDetector;
+import org.sablecc.sablecc.walker.DeclarationCollector;
+import org.sablecc.sablecc.walker.ExpressionVerifier;
 import org.sablecc.util.Strictness;
 import org.sablecc.util.Verbosity;
 
