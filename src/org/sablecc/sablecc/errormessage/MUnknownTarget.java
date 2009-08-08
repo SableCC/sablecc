@@ -40,7 +40,7 @@ public class MUnknownTarget {
         sb.append(System.getProperty("line.separator"));
         sb.append("The following command lists available target languages:");
         sb.append(System.getProperty("line.separator"));
-        sb.append(" objectmacro --list-targets");
+        sb.append(" sablecc --list-targets");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append(new MCommandLineErrorTail().toString());
