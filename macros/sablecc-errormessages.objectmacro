@@ -267,3 +267,13 @@ Line: $line
 Char: $char
 "$reference" is a cyclic reference to "$context" of line $context_line, char $context_char.
 $end: cyclic_reference $
+
+$comment: ========== not_implemented ========== $
+
+$macro: not_implemented(feature, line, char) $
+*** IMPLEMENTATION ERROR ***
+
+Line: $line
+Char: $char
+The $feature feature is not yet implemented.
+$end: not_implemented $

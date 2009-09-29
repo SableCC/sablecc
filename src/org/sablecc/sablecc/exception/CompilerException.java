@@ -32,6 +32,7 @@ import org.sablecc.sablecc.errormessage.MInvalidSuffix;
 import org.sablecc.sablecc.errormessage.MMissingGrammarFile;
 import org.sablecc.sablecc.errormessage.MMissingLongOptionOperand;
 import org.sablecc.sablecc.errormessage.MMissingShortOptionOperand;
+import org.sablecc.sablecc.errormessage.MNotImplemented;
 import org.sablecc.sablecc.errormessage.MSpuriousLongOptionOperand;
 import org.sablecc.sablecc.errormessage.MSpuriousShortOptionOperand;
 import org.sablecc.sablecc.errormessage.MUndefinedReference;
@@ -212,5 +213,14 @@ public class CompilerException
                 reference.getLine() + "", reference.getPos() + "", context
                         .getText(), context.getLine() + "", context.getPos()
                         + "").toString());
+    }
+
+    public static CompilerException notImplemented(
+            Token token,
+            String feature) {
+
+        return new CompilerException(new MNotImplemented(feature, token
+                .getLine()
+                + "", token.getPos() + "").toString());
     }
 }
