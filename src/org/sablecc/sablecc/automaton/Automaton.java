@@ -17,10 +17,14 @@
 
 package org.sablecc.sablecc.automaton;
 
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
 import static org.sablecc.sablecc.util.UsefulStaticImports.LINE_SEPARATOR;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +41,12 @@ import org.sablecc.sablecc.alphabet.Bound;
 import org.sablecc.sablecc.alphabet.Interval;
 import org.sablecc.sablecc.alphabet.RichSymbol;
 import org.sablecc.sablecc.alphabet.Symbol;
+import org.sablecc.sablecc.exception.CompilerException;
+import org.sablecc.sablecc.structure.Context;
+import org.sablecc.sablecc.structure.MatchedToken;
 import org.sablecc.util.ComponentFinder;
+import org.sablecc.util.Pair;
+import org.sablecc.util.PairExtractor;
 import org.sablecc.util.Progeny;
 import org.sablecc.util.WorkSet;
 
@@ -773,22 +782,22 @@ public final class Automaton {
     }
 
     public Automaton nTimes(
-            int n) {
+            BigInteger n) {
 
         if (!this.isStable) {
             throw new InternalException("this automaton is not yet stable");
         }
 
-        if (n < 0) {
+        if (n.compareTo(ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
-        if (n == 0) {
+        if (n.compareTo(ZERO) == 0) {
             return getEpsilonLookAnyStarEnd();
         }
 
         Automaton newAutomaton = this;
-        for (int i = 1; i < n; i++) {
+        for (BigInteger i = ONE; i.compareTo(n) < 0; i = i.add(ONE)) {
             newAutomaton = newAutomaton.concat(this);
         }
 
@@ -797,7 +806,7 @@ public final class Automaton {
 
     public Automaton nTimesWithSeparator(
             Automaton automaton,
-            int n) {
+            BigInteger n) {
 
         if (!this.isStable) {
             throw new InternalException("this automaton is not yet stable");
@@ -811,29 +820,29 @@ public final class Automaton {
             throw new InternalException("automaton is not yet stable");
         }
 
-        if (n < 0) {
+        if (n.compareTo(ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
-        if (n == 0) {
+        if (n.compareTo(ZERO) == 0) {
             return getEpsilonLookAnyStarEnd();
         }
 
-        if (n == 1) {
+        if (n.compareTo(ONE) == 0) {
             return this;
         }
 
-        return concat(automaton.concat(this).nTimes(n - 1));
+        return concat(automaton.concat(this).nTimes(n.subtract(ONE)));
     }
 
     public Automaton nOrMore(
-            int n) {
+            BigInteger n) {
 
         if (!this.isStable) {
             throw new InternalException("this automaton is not yet stable");
         }
 
-        if (n < 0) {
+        if (n.compareTo(ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
@@ -842,7 +851,7 @@ public final class Automaton {
 
     public Automaton nOrMoreWithSeparator(
             Automaton automaton,
-            int n) {
+            BigInteger n) {
 
         if (!this.isStable) {
             throw new InternalException("this automaton is not yet stable");
@@ -856,40 +865,40 @@ public final class Automaton {
             throw new InternalException("automaton is not yet stable");
         }
 
-        if (n < 0) {
+        if (n.compareTo(ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
-        if (n == 0) {
+        if (n.compareTo(ZERO) == 0) {
             return zeroOrMoreWithSeparator(automaton);
         }
 
-        if (n == 1) {
+        if (n.compareTo(ONE) == 0) {
             return oneOrMoreWithSeparator(automaton);
         }
 
-        return concat(automaton.concat(this).nOrMore(n - 1));
+        return concat(automaton.concat(this).nOrMore(n.subtract(ONE)));
     }
 
     public Automaton nToM(
-            int n,
-            int m) {
+            BigInteger n,
+            BigInteger m) {
 
         if (!this.isStable) {
             throw new InternalException("this automaton is not yet stable");
         }
 
-        if (n < 0) {
+        if (n.compareTo(ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
-        if (m < n) {
+        if (m.compareTo(n) < 0) {
             throw new InternalException("m may not be smaller than n");
         }
 
         Automaton tailAutomaton = getEpsilonLookAnyStarEnd();
 
-        for (int i = n; i < m; i++) {
+        for (BigInteger i = n; i.compareTo(m) < 0; i = i.add(ONE)) {
             tailAutomaton = tailAutomaton.concat(this).zeroOrOne();
         }
 
@@ -898,8 +907,8 @@ public final class Automaton {
 
     public Automaton nToMWithSeparator(
             Automaton automaton,
-            int n,
-            int m) {
+            BigInteger n,
+            BigInteger m) {
 
         if (!this.isStable) {
             throw new InternalException("this automaton is not yet stable");
@@ -913,22 +922,22 @@ public final class Automaton {
             throw new InternalException("automaton is not yet stable");
         }
 
-        if (n < 0) {
+        if (n.compareTo(ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
-        if (m < n) {
+        if (m.compareTo(n) < 0) {
             throw new InternalException("m may not be smaller than n");
         }
 
-        if (m == n) {
+        if (m.compareTo(n) == 0) {
             return nTimesWithSeparator(automaton, n);
         }
 
         Automaton tailAutomaton = getEpsilonLookAnyStarEnd();
 
-        if (n == 0) {
-            for (int i = 1; i < m; i++) {
+        if (n.compareTo(ZERO) == 0) {
+            for (BigInteger i = ONE; i.compareTo(m) < 0; i = i.add(ONE)) {
                 tailAutomaton = tailAutomaton.concat(automaton.concat(this))
                         .zeroOrOne();
             }
@@ -936,7 +945,7 @@ public final class Automaton {
             return concat(tailAutomaton).zeroOrOne();
         }
 
-        for (int i = n; i < m; i++) {
+        for (BigInteger i = n; i.compareTo(m) < 0; i = i.add(ONE)) {
             tailAutomaton = tailAutomaton.concat(automaton.concat(this))
                     .zeroOrOne();
         }
@@ -1221,6 +1230,13 @@ public final class Automaton {
         return automaton;
     }
 
+    public static Automaton getEmptyAutomaton() {
+
+        Automaton automaton = new Automaton(new Alphabet());
+        automaton.stabilize();
+        return automaton;
+    }
+
     /**
      * Returns a comparator for rich symbols which can handle epsilon (null)
      * comparisons.
@@ -1248,5 +1264,167 @@ public final class Automaton {
             state.setIsCyclic(componentFinder.getReach(representative)
                     .contains(state));
         }
+    }
+
+    public Automaton withPriorities(
+            Context context) {
+
+        if (!this.isStable) {
+            throw new InternalException("this automaton is not yet stable");
+        }
+
+        if (this.acceptations.size() == 1
+                && this.acceptations.first() == Acceptation.ACCEPT) {
+            throw new InternalException("invalid operation");
+        }
+
+        if (hasMarkers()) {
+            throw new InternalException("invalid operation");
+        }
+
+        if (context == null) {
+            throw new InternalException("context may not be null");
+        }
+
+        Automaton oldAutomaton = minimal();
+        Automaton newAutomaton = new Automaton(oldAutomaton.getAlphabet());
+
+        Map<Acceptation, MatchedToken> acceptationToMatchedTokenMap = new LinkedHashMap<Acceptation, MatchedToken>();
+
+        for (Acceptation acceptation : oldAutomaton.acceptations) {
+            newAutomaton.addAcceptation(acceptation);
+
+            MatchedToken matchedToken = context.getMatchedToken(acceptation
+                    .getName());
+            acceptationToMatchedTokenMap.put(acceptation, matchedToken);
+        }
+
+        SortedMap<State, State> oldStatetoNewStateMap = new TreeMap<State, State>();
+        Map<Acceptation, Set<State>> acceptationToStateSetMap = new LinkedHashMap<Acceptation, Set<State>>();
+
+        for (State oldState : oldAutomaton.getStates()) {
+            State newState = oldState == oldAutomaton.getStartState() ? newAutomaton
+                    .getStartState()
+                    : new State(newAutomaton);
+
+            oldStatetoNewStateMap.put(oldState, newState);
+
+            for (Acceptation acceptation : oldState.getAcceptations()) {
+                Set<State> stateSet = acceptationToStateSetMap.get(acceptation);
+
+                if (stateSet == null) {
+                    stateSet = new LinkedHashSet<State>();
+                    acceptationToStateSetMap.put(acceptation, stateSet);
+                }
+
+                stateSet.add(oldState);
+            }
+        }
+
+        for (State oldSourceState : oldAutomaton.getStates()) {
+            State newSourceState = oldStatetoNewStateMap.get(oldSourceState);
+            for (Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
+                    .getTransitions().entrySet()) {
+                RichSymbol richSymbol = entry.getKey();
+                for (State oldTargetState : entry.getValue()) {
+                    State newTargetState = oldStatetoNewStateMap
+                            .get(oldTargetState);
+                    newSourceState.addTransition(richSymbol, newTargetState);
+                }
+            }
+        }
+
+        // set acceptations
+
+        for (State oldState : oldAutomaton.getStates()) {
+            State newState = oldStatetoNewStateMap.get(oldState);
+
+            // no acceptation
+            if (oldState.getAcceptations().size() == 0) {
+                continue;
+            }
+
+            // one acceptation
+            if (oldState.getAcceptations().size() == 1) {
+                newState.addAcceptation(oldState.getAcceptations().first());
+                continue;
+            }
+
+            // more acceptations
+
+            PairExtractor<Acceptation> pairExtractor = new PairExtractor<Acceptation>(
+                    oldState.getAcceptations());
+
+            // check for a total order between matched tokens
+            for (Pair<Acceptation, Acceptation> pair : pairExtractor.getPairs()) {
+
+                Acceptation leftAcceptation = pair.getLeft();
+                Acceptation rightAcceptation = pair.getRight();
+                MatchedToken leftMatchedToken = acceptationToMatchedTokenMap
+                        .get(leftAcceptation);
+                MatchedToken rightMatchedToken = acceptationToMatchedTokenMap
+                        .get(rightAcceptation);
+
+                if (leftMatchedToken.hasPriorityOver(rightMatchedToken)
+                        || rightMatchedToken.hasPriorityOver(leftMatchedToken)) {
+                    continue;
+                }
+
+                Set<State> leftStateSet = acceptationToStateSetMap
+                        .get(leftAcceptation);
+                Set<State> rightStateSet = acceptationToStateSetMap
+                        .get(rightAcceptation);
+
+                if (leftStateSet.size() == rightStateSet.size()) {
+                    throw CompilerException.lexerConflict(leftMatchedToken,
+                            rightMatchedToken);
+                }
+
+                if (leftStateSet.size() < rightStateSet.size()) {
+                    if (rightStateSet.containsAll(leftStateSet)) {
+                        leftMatchedToken
+                                .addNaturalPriorityOver(rightMatchedToken);
+                    }
+                    else {
+                        throw CompilerException.lexerConflict(leftMatchedToken,
+                                rightMatchedToken);
+                    }
+                }
+                else {
+                    if (leftStateSet.containsAll(rightStateSet)) {
+                        rightMatchedToken
+                                .addNaturalPriorityOver(leftMatchedToken);
+                    }
+                    else {
+                        throw CompilerException.lexerConflict(leftMatchedToken,
+                                rightMatchedToken);
+                    }
+                }
+            }
+
+            // select highest priority acceptation
+            Acceptation winningAcceptation = null;
+            MatchedToken winningMatchedToken = null;
+            for (Acceptation acceptation : oldState.getAcceptations()) {
+                MatchedToken matchedToken = acceptationToMatchedTokenMap
+                        .get(acceptation);
+
+                if (winningAcceptation == null) {
+                    winningAcceptation = acceptation;
+                    winningMatchedToken = matchedToken;
+                }
+                else if (matchedToken.hasPriorityOver(winningMatchedToken)) {
+                    winningAcceptation = acceptation;
+                    winningMatchedToken = matchedToken;
+                }
+            }
+
+            newState.addAcceptation(winningAcceptation);
+        }
+
+        newAutomaton.stabilize();
+
+        return newAutomaton;
+
     }
 }

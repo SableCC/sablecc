@@ -21,27 +21,25 @@ import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.syntax3.node.ATreeProduction;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
-public class TreeProduction {
+public class TreeProduction
+        extends Production {
 
     private final ATreeProduction declaration;
 
     TreeProduction(
-            ATreeProduction declaration) {
+            ATreeProduction node) {
 
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
+        if (node == null) {
+            throw new InternalException("node may not be null");
         }
 
-        this.declaration = declaration;
+        this.declaration = node;
     }
 
-    public TIdentifier getNameDeclaration() {
+    @Override
+    public TIdentifier getNameToken() {
 
         return this.declaration.getName();
     }
 
-    public String getName() {
-
-        return getNameDeclaration().getText();
-    }
 }

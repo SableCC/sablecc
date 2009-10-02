@@ -18,29 +18,36 @@
 package org.sablecc.sablecc.structure;
 
 import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.syntax3.node.AGrammar;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.sablecc.util.Utils;
 
 public class Language {
 
-    private final TIdentifier declaration;
+    private final AGrammar declaration;
 
     Language(
-            TIdentifier declaration) {
+            AGrammar node) {
 
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
+        if (node == null) {
+            throw new InternalException("node may not be null");
         }
 
-        this.declaration = declaration;
+        this.declaration = node;
     }
 
-    public TIdentifier getNameDeclaration() {
+    public TIdentifier getNameToken() {
 
-        return this.declaration;
+        return this.declaration.getLanguageName();
     }
 
-    public String getName() {
+    public String get_CamelCaseName() {
 
-        return this.declaration.getText();
+        return Utils.to_CamelCase(getNameToken());
+    }
+
+    public String get_camelCaseName() {
+
+        return Utils.to_camelCase(getNameToken());
     }
 }

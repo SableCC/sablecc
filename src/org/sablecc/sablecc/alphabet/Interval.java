@@ -335,4 +335,9 @@ public class Interval
 
         return interval2;
     }
+
+    public String getSimpleName() {
+
+        return this.lowerBound.getSimpleName();
+    }
 }

@@ -282,6 +282,11 @@ public class Symbol
         return this.toString;
     }
 
+    public String getSimpleName() {
+
+        return this.intervals.first().getSimpleName();
+    }
+
     /**
      * Compares this symbol to the provided one.
      */

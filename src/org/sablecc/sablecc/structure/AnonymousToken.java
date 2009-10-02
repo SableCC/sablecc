@@ -17,31 +17,25 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.syntax3.node.ASelectionNamedExpression;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
+public abstract class AnonymousToken
+        extends MatchedToken {
 
-public class LexerSelector {
+    private static int nextId;
 
-    private final ASelectionNamedExpression declaration;
+    private int id = -1;
 
-    LexerSelector(
-            ASelectionNamedExpression declaration) {
+    AnonymousToken(
+            boolean isIgnored) {
 
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
+        super(isIgnored);
+
+        if (!isIgnored) {
+            this.id = nextId++;
         }
-
-        this.declaration = declaration;
     }
 
-    public TIdentifier getNameDeclaration() {
+    public int getId() {
 
-        return this.declaration.getSelectorName();
-    }
-
-    public String getName() {
-
-        return getNameDeclaration().getText();
+        return this.id;
     }
 }

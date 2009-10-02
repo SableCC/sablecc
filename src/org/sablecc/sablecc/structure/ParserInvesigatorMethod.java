@@ -18,31 +18,31 @@
 package org.sablecc.sablecc.structure;
 
 import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.syntax3.node.ALexerContext;
+import org.sablecc.sablecc.syntax3.node.AParserInvestigator;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
-public class LexerContext {
+public class ParserInvesigatorMethod
+        extends Method {
 
-    private final ALexerContext declaration;
+    private final AParserInvestigator declaration;
 
-    LexerContext(
-            ALexerContext declaration) {
+    ParserInvesigatorMethod(
+            AParserInvestigator node,
+            GlobalIndex globalIndex) {
 
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
+        super(globalIndex);
+
+        if (node == null) {
+            throw new InternalException("node may not be null");
         }
 
-        this.declaration = declaration;
+        this.declaration = node;
     }
 
-    public TIdentifier getNameDeclaration() {
+    @Override
+    public TIdentifier getNameToken() {
 
         return this.declaration.getName();
-    }
-
-    public String getName() {
-
-        return getNameDeclaration().getText();
     }
 
 }

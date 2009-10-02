@@ -17,32 +17,14 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.syntax3.node.AParserInvestigator;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
-public class ParserInvestigator {
+public abstract class NameUnit {
 
-    private final AParserInvestigator declaration;
+    NameUnit() {
 
-    ParserInvestigator(
-            AParserInvestigator declaration) {
-
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
-        }
-
-        this.declaration = declaration;
+        // prevents non-package construction
     }
 
-    public TIdentifier getNameDeclaration() {
-
-        return this.declaration.getName();
-    }
-
-    public String getName() {
-
-        return getNameDeclaration().getText();
-    }
-
+    public abstract TIdentifier getNameToken();
 }

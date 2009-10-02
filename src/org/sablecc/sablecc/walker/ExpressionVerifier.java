@@ -24,21 +24,19 @@ import java.util.Map;
 import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.exception.CompilerException;
 import org.sablecc.sablecc.structure.GlobalIndex;
+import org.sablecc.sablecc.structure.NameUnit;
 import org.sablecc.sablecc.structure.NormalExpression;
 import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.sablecc.syntax3.node.ACharCharacter;
-import org.sablecc.sablecc.syntax3.node.ACharExpression;
 import org.sablecc.sablecc.syntax3.node.ADecCharacter;
-import org.sablecc.sablecc.syntax3.node.ADecExpression;
 import org.sablecc.sablecc.syntax3.node.AHexCharacter;
-import org.sablecc.sablecc.syntax3.node.AHexExpression;
 import org.sablecc.sablecc.syntax3.node.AIntervalExponentExpression;
 import org.sablecc.sablecc.syntax3.node.AIntervalExpression;
 import org.sablecc.sablecc.syntax3.node.ANameExpression;
 import org.sablecc.sablecc.syntax3.node.ANormalNamedExpression;
 import org.sablecc.sablecc.syntax3.node.ASeparatedIntervalExponentExpression;
 import org.sablecc.sablecc.syntax3.node.PCharacter;
-import org.sablecc.sablecc.syntax3.node.PExpression;
+import org.sablecc.sablecc.syntax3.node.TIdentifier;
 import org.sablecc.sablecc.syntax3.node.Token;
 
 public class ExpressionVerifier
@@ -46,9 +44,9 @@ public class ExpressionVerifier
 
     private final GlobalIndex globalIndex;
 
-    private final Map<PCharacter, Token> chars = new LinkedHashMap<PCharacter, Token>();
-
     private NormalExpression currentNormalExpression;
+
+    private final Map<PCharacter, Token> characterTokens = new LinkedHashMap<PCharacter, Token>();
 
     public ExpressionVerifier(
             GlobalIndex globalIndex) {
@@ -64,7 +62,10 @@ public class ExpressionVerifier
     public void inANormalNamedExpression(
             ANormalNamedExpression node) {
 
-        this.currentNormalExpression = this.globalIndex.getExpression(node);
+        NormalExpression normalExpression = this.globalIndex
+                .getExpression(node);
+
+        this.currentNormalExpression = normalExpression;
     }
 
     @Override
@@ -78,8 +79,8 @@ public class ExpressionVerifier
     public void outAIntervalExponentExpression(
             AIntervalExponentExpression node) {
 
-        BigInteger from = new BigInteger(node.getFrom().getText());
-        BigInteger to = new BigInteger(node.getTo().getText());
+        BigInteger from = this.globalIndex.getBigIntegerValue(node.getFrom());
+        BigInteger to = this.globalIndex.getBigIntegerValue(node.getTo());
 
         if (from.compareTo(to) > 0) {
             throw CompilerException.invalidInterval(node.getTwoDots(), node
@@ -91,8 +92,8 @@ public class ExpressionVerifier
     public void outASeparatedIntervalExponentExpression(
             ASeparatedIntervalExponentExpression node) {
 
-        BigInteger from = new BigInteger(node.getFrom().getText());
-        BigInteger to = new BigInteger(node.getTo().getText());
+        BigInteger from = this.globalIndex.getBigIntegerValue(node.getFrom());
+        BigInteger to = this.globalIndex.getBigIntegerValue(node.getTo());
 
         if (from.compareTo(to) > 0) {
             throw CompilerException.invalidInterval(node.getTwoDots(), node
@@ -101,69 +102,50 @@ public class ExpressionVerifier
     }
 
     @Override
-    public void outACharExpression(
-            ACharExpression node) {
-
-        this.globalIndex.addCharacter(node.getChar());
-    }
-
-    @Override
-    public void outADecExpression(
-            ADecExpression node) {
-
-        this.globalIndex.addCharacter(node.getDecChar());
-    }
-
-    @Override
-    public void outAHexExpression(
-            AHexExpression node) {
-
-        this.globalIndex.addCharacter(node.getHexChar());
-    }
-
-    @Override
-    public void outAIntervalExpression(
-            AIntervalExpression node) {
-
-        Token fromToken = this.chars.get(node.getFrom());
-        Token toToken = this.chars.get(node.getTo());
-
-        BigInteger from = this.globalIndex.getCharacterValue(fromToken);
-        BigInteger to = this.globalIndex.getCharacterValue(toToken);
-
-        if (from.compareTo(to) > 0) {
-            throw CompilerException.invalidInterval(node.getTwoDots(),
-                    fromToken, toToken);
-        }
-    }
-
-    @Override
     public void outACharCharacter(
             ACharCharacter node) {
 
-        this.globalIndex.addCharacter(node.getChar());
-        if (node.parent() instanceof PExpression) {
-            this.chars.put(node, node.getChar());
+        String charText = node.getChar().getText();
+        char c = charText.charAt(1);
+        if (c == '\\') {
+            c = charText.charAt(2);
         }
+        BigInteger value = new BigInteger(Integer.toString(c));
+        this.globalIndex.setCharacterValue(node, value);
+        this.characterTokens.put(node, node.getChar());
     }
 
     @Override
     public void outADecCharacter(
             ADecCharacter node) {
 
-        this.globalIndex.addCharacter(node.getDecChar());
-        if (node.parent() instanceof PExpression) {
-            this.chars.put(node, node.getDecChar());
-        }
+        BigInteger value = new BigInteger(node.getDecChar().getText()
+                .substring(1));
+        this.globalIndex.setCharacterValue(node, value);
+        this.characterTokens.put(node, node.getDecChar());
     }
 
     @Override
     public void outAHexCharacter(
             AHexCharacter node) {
 
-        this.globalIndex.addCharacter(node.getHexChar());
-        if (node.parent() instanceof PExpression) {
-            this.chars.put(node, node.getHexChar());
+        BigInteger value = new BigInteger(node.getHexChar().getText()
+                .substring(2), 16);
+        this.globalIndex.setCharacterValue(node, value);
+        this.characterTokens.put(node, node.getHexChar());
+    }
+
+    @Override
+    public void outAIntervalExpression(
+            AIntervalExpression node) {
+
+        BigInteger from = this.globalIndex.getCharacterValue(node.getFrom());
+        BigInteger to = this.globalIndex.getCharacterValue(node.getTo());
+
+        if (from.compareTo(to) > 0) {
+            throw CompilerException.invalidInterval(node.getTwoDots(),
+                    this.characterTokens.get(node.getFrom()),
+                    this.characterTokens.get(node.getTo()));
         }
     }
 
@@ -171,9 +153,16 @@ public class ExpressionVerifier
     public void outANameExpression(
             ANameExpression node) {
 
-        this.globalIndex.addResolution(node);
-        this.currentNormalExpression.addDependency(this.globalIndex
-                .getResolution(node));
+        TIdentifier identifier = node.getIdentifier();
+        NameUnit nameUnit = this.globalIndex.getParserResolution(identifier);
+
+        if (!(nameUnit instanceof NormalExpression)) {
+            throw CompilerException.invalidReference(identifier);
+        }
+
+        NormalExpression normalExpression = (NormalExpression) nameUnit;
+
+        this.currentNormalExpression.addDependency(normalExpression);
     }
 
 }

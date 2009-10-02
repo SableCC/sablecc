@@ -22,7 +22,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.automaton.Automaton;
 import org.sablecc.sablecc.syntax3.node.ANormalNamedExpression;
+import org.sablecc.sablecc.syntax3.node.PExpression;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
 public class NormalExpression
@@ -32,34 +34,56 @@ public class NormalExpression
 
     private final Set<NormalExpression> dependencies = new LinkedHashSet<NormalExpression>();
 
-    NormalExpression(
-            ANormalNamedExpression declaration) {
+    private Automaton automaton;
 
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
+    NormalExpression(
+            ANormalNamedExpression node) {
+
+        if (node == null) {
+            throw new InternalException("node may not be null");
         }
 
-        this.declaration = declaration;
+        this.declaration = node;
     }
 
     @Override
-    public TIdentifier getNameDeclaration() {
+    public TIdentifier getNameToken() {
 
         return this.declaration.getName();
     }
 
-    public void addDependency(
-            NormalExpression expression) {
+    public PExpression getExpression() {
 
-        if (expression == null) {
-            throw new InternalException("expression may not be null");
+        return this.declaration.getExpression();
+    }
+
+    public void addDependency(
+            NormalExpression normalExpression) {
+
+        if (normalExpression == null) {
+            throw new InternalException("normalExpression may not be null");
         }
 
-        this.dependencies.add(expression);
+        this.dependencies.add(normalExpression);
     }
 
     public Set<NormalExpression> getDependencies() {
 
         return Collections.unmodifiableSet(this.dependencies);
+    }
+
+    public void setAutomaton(
+            Automaton automaton) {
+
+        if (this.automaton != null) {
+            throw new InternalException("automaton is already set");
+        }
+
+        this.automaton = automaton;
+    }
+
+    public Automaton getAutomaton() {
+
+        return this.automaton;
     }
 }

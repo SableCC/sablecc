@@ -18,40 +18,30 @@
 package org.sablecc.sablecc.structure;
 
 import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.syntax3.node.ALexerInvestigator;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
-public class ParserSelectionProduction
-        extends ParserProduction {
+public class LexerInvesigatorMethod
+        extends Method {
 
-    private final TIdentifier nameDeclaration;
+    private final ALexerInvestigator declaration;
 
-    private final ParserSelector parserSelector;
+    LexerInvesigatorMethod(
+            ALexerInvestigator node,
+            GlobalIndex globalIndex) {
 
-    ParserSelectionProduction(
-            TIdentifier nameDeclaration,
-            ParserSelector parserSelector) {
+        super(globalIndex);
 
-        if (nameDeclaration == null) {
-            throw new InternalException("nameDeclaration may not be null");
+        if (node == null) {
+            throw new InternalException("node may not be null");
         }
 
-        if (parserSelector == null) {
-            throw new InternalException("parserSelector may not be null");
-        }
-
-        this.nameDeclaration = nameDeclaration;
-        this.parserSelector = parserSelector;
+        this.declaration = node;
     }
 
     @Override
-    public TIdentifier getNameDeclaration() {
+    public TIdentifier getNameToken() {
 
-        return this.nameDeclaration;
+        return this.declaration.getName();
     }
-
-    public ParserSelector getParserSelector() {
-
-        return this.parserSelector;
-    }
-
 }

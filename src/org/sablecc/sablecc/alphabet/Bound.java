@@ -280,4 +280,37 @@ public class Bound
 
         return bound2;
     }
+
+    public String getSimpleName() {
+
+        if (this.value == null) {
+            if (this == MIN) {
+                return "min";
+            }
+
+            return "max";
+        }
+
+        if (this.value.compareTo(BI_32) < 0 || this.value.compareTo(BI_126) > 0) {
+            return this.value.toString();
+        }
+
+        char c = (char) Integer.parseInt(this.value.toString());
+
+        if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A'
+                && c <= 'Z') {
+            return "_" + c;
+        }
+
+        return "" + (int) c;
+    }
+
+    public BigInteger getValue() {
+
+        if (this.value == null) {
+            throw new InternalException("no value");
+        }
+
+        return this.value;
+    }
 }
