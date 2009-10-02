@@ -17,14 +17,35 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.util.NamedItem;
 
-public abstract class ParserProduction {
+public abstract class Alternative
+        implements NamedItem {
 
-    public abstract TIdentifier getNameDeclaration();
+    private String internalName;
 
-    public String getName() {
+    Alternative() {
 
-        return getNameDeclaration().getText();
+        // prevents non-package construction
+    }
+
+    void setInternalName(
+            String internalName) {
+
+        if (internalName != null) {
+            throw new InternalException("internalName is already set");
+        }
+
+        this.internalName = internalName;
+    }
+
+    public String getInternalName() {
+
+        if (this.internalName == null) {
+            throw new InternalException("internalName is not set");
+        }
+
+        return this.internalName;
     }
 }

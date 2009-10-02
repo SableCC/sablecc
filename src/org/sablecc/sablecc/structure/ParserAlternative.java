@@ -17,57 +17,30 @@
 
 package org.sablecc.sablecc.structure;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.syntax3.node.AParserAlternative;
-import org.sablecc.sablecc.syntax3.node.PElement;
-import org.sablecc.sablecc.syntax3.node.TAlternativeName;
 
-public class ParserAlternative {
+public class ParserAlternative
+        extends Alternative {
 
-    private final AParserAlternative declaration;
+    private final AParserAlternative parserAlternative;
 
-    private final ParserNormalProduction parserProduction;
+    private final String publicName;
 
-    private final Map<PElement, ParserElement> astElementsMap = new LinkedHashMap<PElement, ParserElement>();
+    public ParserAlternative(
+            AParserAlternative parserAlternative) {
 
-    ParserAlternative(
-            AParserAlternative declaration,
-            ParserNormalProduction parserProduction) {
-
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
+        if (parserAlternative == null) {
+            throw new InternalException("parserAlternative may not be null");
         }
 
-        if (parserProduction == null) {
-            throw new InternalException("parserProduction may not be null");
-        }
-
-        this.declaration = declaration;
-        this.parserProduction = parserProduction;
+        this.parserAlternative = parserAlternative;
+        this.publicName = parserAlternative.getAlternativeName() == null ? ""
+                : parserAlternative.getAlternativeName().getText();
     }
 
-    public ParserElement addParserElement(
-            PElement declaration) {
+    public String getPublicName() {
 
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
-        }
-
-        ParserElement parserElement = new ParserElement(declaration, this);
-        this.astElementsMap.put(declaration, parserElement);
-        return parserElement;
-    }
-
-    public TAlternativeName getNameDeclaration() {
-
-        return this.declaration.getAlternativeName();
-    }
-
-    public ParserNormalProduction getParserProduction() {
-
-        return this.parserProduction;
+        return this.publicName;
     }
 }

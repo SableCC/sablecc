@@ -18,12 +18,10 @@
 package org.sablecc.sablecc.walker;
 
 import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.structure.Alternative;
+import org.sablecc.sablecc.structure.Context;
 import org.sablecc.sablecc.structure.GlobalIndex;
-import org.sablecc.sablecc.structure.LexerSelector;
-import org.sablecc.sablecc.structure.ParserAlternative;
-import org.sablecc.sablecc.structure.ParserContext;
-import org.sablecc.sablecc.structure.ParserNormalProduction;
-import org.sablecc.sablecc.structure.ParserSelector;
+import org.sablecc.sablecc.structure.Production;
 import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.sablecc.syntax3.node.AGrammar;
 import org.sablecc.sablecc.syntax3.node.AGroup;
@@ -31,25 +29,20 @@ import org.sablecc.sablecc.syntax3.node.ALexerContext;
 import org.sablecc.sablecc.syntax3.node.ALexerInvestigator;
 import org.sablecc.sablecc.syntax3.node.ANormalNamedExpression;
 import org.sablecc.sablecc.syntax3.node.ANormalParserProduction;
-import org.sablecc.sablecc.syntax3.node.AParserAlternative;
 import org.sablecc.sablecc.syntax3.node.AParserContext;
-import org.sablecc.sablecc.syntax3.node.AParserInvestigator;
 import org.sablecc.sablecc.syntax3.node.ASelectionNamedExpression;
 import org.sablecc.sablecc.syntax3.node.ASelectionParserProduction;
-import org.sablecc.sablecc.syntax3.node.ATreeProduction;
-import org.sablecc.sablecc.syntax3.node.AUnitElement;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
 public class DeclarationCollector
         extends DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;
 
-    private ParserContext currentParserContext;
+    private Context currentContext;
 
-    private ParserNormalProduction currentNormalParserProduction;
+    private Production currentProduction;
 
-    private ParserAlternative currentParserAlternative;
+    private Alternative currentAlternative;
 
     public DeclarationCollector(
             GlobalIndex globalIndex) {
@@ -65,7 +58,7 @@ public class DeclarationCollector
     public void inAGrammar(
             AGrammar node) {
 
-        this.globalIndex.setLanguage(node.getLanguageName());
+        this.globalIndex.setLanguage(node);
     }
 
     @Override
@@ -79,11 +72,7 @@ public class DeclarationCollector
     public void inASelectionNamedExpression(
             ASelectionNamedExpression node) {
 
-        LexerSelector lexerSelector = this.globalIndex.addLexerSelector(node);
-
-        for (TIdentifier name : node.getNames()) {
-            this.globalIndex.addExpression(name, lexerSelector);
-        }
+        this.globalIndex.addMethod(node);
     }
 
     @Override
@@ -97,91 +86,80 @@ public class DeclarationCollector
     public void inALexerContext(
             ALexerContext node) {
 
-        this.globalIndex.addLexerContext(node);
+        this.globalIndex.addContext(node);
     }
 
     @Override
     public void inALexerInvestigator(
             ALexerInvestigator node) {
 
-        this.globalIndex.addLexerInvestigator(node);
+        this.globalIndex.addMethod(node);
     }
 
     @Override
     public void inAParserContext(
             AParserContext node) {
 
-        this.currentParserContext = this.globalIndex.addParserContext(node);
+        this.globalIndex.addContext(node);
+        this.currentContext = this.globalIndex.getContext(node);
     }
 
     @Override
     public void outAParserContext(
             AParserContext node) {
 
-        this.currentParserContext = null;
+        this.currentContext = null;
     }
 
     @Override
     public void inANormalParserProduction(
             ANormalParserProduction node) {
 
-        this.currentNormalParserProduction = this.currentParserContext
-                .addParserProduction(node);
+        this.globalIndex.addProduction(node);
+        this.currentProduction = this.globalIndex.getProduction(node);
     }
 
     @Override
     public void outANormalParserProduction(
             ANormalParserProduction node) {
 
-        this.currentNormalParserProduction = null;
+        this.currentProduction = null;
     }
 
     @Override
     public void inASelectionParserProduction(
             ASelectionParserProduction node) {
 
-        ParserSelector parserSelector = this.currentParserContext
-                .addParserSelector(node);
-        for (TIdentifier name : node.getNames()) {
-            parserSelector.addParserProduction(name);
-        }
+        this.globalIndex.addMethod(node);
     }
 
-    @Override
-    public void inAParserAlternative(
-            AParserAlternative node) {
-
-        this.currentParserAlternative = this.currentNormalParserProduction
-                .addParserAlternative(node);
-    }
-
-    @Override
-    public void outAParserAlternative(
-            AParserAlternative node) {
-
-        this.currentParserAlternative = null;
-    }
-
-    @Override
-    public void inAUnitElement(
-            AUnitElement node) {
-
-        if (this.currentParserAlternative != null) {
-            this.currentParserAlternative.addParserElement(node);
-        }
-    }
-
-    @Override
-    public void inAParserInvestigator(
-            AParserInvestigator node) {
-
-        this.currentNormalParserProduction.addParserInvestigator(node);
-    }
-
-    @Override
-    public void inATreeProduction(
-            ATreeProduction node) {
-
-        this.globalIndex.addTreeProduction(node);
-    }
+    // @Override
+    // public void outAParserAlternative(
+    // AParserAlternative node) {
+    //
+    // this.currentParserAlternative = null;
+    // }
+    //
+    // @Override
+    // public void inAUnitElement(
+    // AUnitElement node) {
+    //
+    // if (this.currentParserAlternative != null) {
+    // this.currentParserAlternative.addParserElement(node);
+    // }
+    // }
+    //
+    // @Override
+    // public void inAParserInvestigator(
+    // AParserInvestigator node) {
+    //
+    // this.currentNormalParserProduction.addParserInvestigator(node);
+    // }
+    //
+    // @Override
+    // public void inATreeProduction(
+    // ATreeProduction node) {
+    //
+    // this.globalIndex.addTreeProduction(node);
+    // }
 }

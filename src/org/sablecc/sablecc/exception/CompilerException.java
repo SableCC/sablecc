@@ -18,6 +18,7 @@
 package org.sablecc.sablecc.exception;
 
 import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.errormessage.MConflictingPriorities;
 import org.sablecc.sablecc.errormessage.MCyclicReference;
 import org.sablecc.sablecc.errormessage.MDuplicateDeclaration;
 import org.sablecc.sablecc.errormessage.MGrammarNotFile;
@@ -26,17 +27,23 @@ import org.sablecc.sablecc.errormessage.MInvalidArgument;
 import org.sablecc.sablecc.errormessage.MInvalidArgumentCount;
 import org.sablecc.sablecc.errormessage.MInvalidInterval;
 import org.sablecc.sablecc.errormessage.MInvalidLongOption;
+import org.sablecc.sablecc.errormessage.MInvalidPriority;
 import org.sablecc.sablecc.errormessage.MInvalidReference;
 import org.sablecc.sablecc.errormessage.MInvalidShortOption;
 import org.sablecc.sablecc.errormessage.MInvalidSuffix;
+import org.sablecc.sablecc.errormessage.MLexerConflict;
 import org.sablecc.sablecc.errormessage.MMissingGrammarFile;
 import org.sablecc.sablecc.errormessage.MMissingLongOptionOperand;
 import org.sablecc.sablecc.errormessage.MMissingShortOptionOperand;
+import org.sablecc.sablecc.errormessage.MNotAToken;
 import org.sablecc.sablecc.errormessage.MNotImplemented;
+import org.sablecc.sablecc.errormessage.MOutputError;
 import org.sablecc.sablecc.errormessage.MSpuriousLongOptionOperand;
 import org.sablecc.sablecc.errormessage.MSpuriousShortOptionOperand;
 import org.sablecc.sablecc.errormessage.MUndefinedReference;
 import org.sablecc.sablecc.errormessage.MUnknownTarget;
+import org.sablecc.sablecc.structure.MatchedToken;
+import org.sablecc.sablecc.syntax3.node.TGt;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
 import org.sablecc.sablecc.syntax3.node.TTwoDots;
 import org.sablecc.sablecc.syntax3.node.Token;
@@ -157,8 +164,8 @@ public class CompilerException
     }
 
     public static CompilerException duplicateDeclaration(
-            TIdentifier duplicateName,
-            TIdentifier firstName) {
+            Token duplicateName,
+            Token firstName) {
 
         String name = duplicateName.getText();
         if (!name.equals(firstName.getText())) {
@@ -197,12 +204,10 @@ public class CompilerException
     }
 
     public static CompilerException invalidReference(
-            TIdentifier identifier) {
+            TIdentifier token) {
 
-        return new CompilerException(new MInvalidReference(
-                identifier.getText(), identifier.getLine() + "", identifier
-                        .getPos()
-                        + "").toString());
+        return new CompilerException(new MInvalidReference(token.getText(),
+                token.getLine() + "", token.getPos() + "").toString());
     }
 
     public static CompilerException cyclicReference(
@@ -215,6 +220,43 @@ public class CompilerException
                         + "").toString());
     }
 
+    public static CompilerException invalidPriority(
+            TGt gt,
+            MatchedToken matchedToken) {
+
+        return new CompilerException(new MInvalidPriority(gt.getLine() + "", gt
+                .getPos()
+                + "", matchedToken.getName()).toString());
+    }
+
+    public static CompilerException conflictingPriorities(
+            TGt gt,
+            MatchedToken high,
+            MatchedToken low,
+            TGt prior_gt) {
+
+        return new CompilerException(new MConflictingPriorities(gt.getLine()
+                + "", gt.getPos() + "", high.getName(), low.getName(), prior_gt
+                .getLine()
+                + "", prior_gt.getPos() + "").toString());
+    }
+
+    public static CompilerException notAToken(
+            Token token) {
+
+        return new CompilerException(new MNotAToken(token.getLine() + "", token
+                .getPos()
+                + "", token.getText()).toString());
+    }
+
+    public static CompilerException lexerConflict(
+            MatchedToken matchedToken1,
+            MatchedToken matchedToken2) {
+
+        return new CompilerException(new MLexerConflict(
+                matchedToken1.getName(), matchedToken2.getName()).toString());
+    }
+
     public static CompilerException notImplemented(
             Token token,
             String feature) {
@@ -223,4 +265,13 @@ public class CompilerException
                 .getLine()
                 + "", token.getPos() + "").toString());
     }
+
+    public static CompilerException outputError(
+            String fileName,
+            Throwable cause) {
+
+        return new CompilerException(new MOutputError(fileName, cause
+                .getMessage()).toString(), cause);
+    }
+
 }

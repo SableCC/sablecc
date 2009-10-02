@@ -268,6 +268,45 @@ Char: $char
 "$reference" is a cyclic reference to "$context" of line $context_line, char $context_char.
 $end: cyclic_reference $
 
+$comment: ========== invalid_priority ========== $
+
+$macro: invalid_priority(line, char, token) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The priority is invalid, as "$token" appears on both sides.
+$end: invalid_priority $
+
+$comment: ========== conflicting_priorities ========== $
+
+$macro: conflicting_priorities(line, char, high_token, low_token, context_line, context_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The priority of "$high_token" over "$low_token" conflicts with the reverse priority of line $context_line, char $context_char.
+$end: conflicting_priorities $
+
+$comment: ========== not_a_token ========== $
+
+$macro: not_a_token(line, char, token) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$token" is not a token.
+$end: not_a_token $
+
+$comment: ========== lexer_conflict ========== $
+
+$macro: lexer_conflict(token1, token2) $
+$insert: semantic_error_head $
+
+A conflict has been detected between the "$token1" and "$token2" tokens.
+An explicit priority must be added between these tokens.
+$end: lexer_conflict $
+
 $comment: ========== not_implemented ========== $
 
 $macro: not_implemented(feature, line, char) $
@@ -277,3 +316,12 @@ Line: $line
 Char: $char
 The $feature feature is not yet implemented.
 $end: not_implemented $
+
+$comment: ========== output_error ========== $
+
+$macro: output_error(file_name, message) $
+*** I/O ERROR ***
+
+The following system error happened while writing "$file_name":
+ $message
+$end: output_error $

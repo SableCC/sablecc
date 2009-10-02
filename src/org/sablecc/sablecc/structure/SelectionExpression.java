@@ -23,34 +23,40 @@ import org.sablecc.sablecc.syntax3.node.TIdentifier;
 public class SelectionExpression
         extends Expression {
 
-    private final TIdentifier nameDeclaration;
+    private final TIdentifier nameToken;
 
-    private final LexerSelector lexerSelector;
+    private final LexerSelectorMethod lexerSelectorMethod;
 
     SelectionExpression(
-            TIdentifier nameDeclaration,
-            LexerSelector lexerSelector) {
+            TIdentifier nameToken,
+            LexerSelectorMethod lexerSelectorMethod) {
 
-        if (nameDeclaration == null) {
-            throw new InternalException("nameDeclaration may not be null");
+        if (nameToken == null) {
+            throw new InternalException("nameToken may not be null");
         }
 
-        if (lexerSelector == null) {
-            throw new InternalException("lexerSelector may not be null");
+        if (lexerSelectorMethod == null) {
+            throw new InternalException("lexerSelectorMethod may not be null");
         }
 
-        this.nameDeclaration = nameDeclaration;
-        this.lexerSelector = lexerSelector;
+        if (!lexerSelectorMethod.getDeclaration().getNames()
+                .contains(nameToken)) {
+            throw new InternalException("invalid nameToken");
+        }
+
+        this.nameToken = nameToken;
+        this.lexerSelectorMethod = lexerSelectorMethod;
     }
 
     @Override
-    public TIdentifier getNameDeclaration() {
+    public TIdentifier getNameToken() {
 
-        return this.nameDeclaration;
+        return this.nameToken;
     }
 
-    public LexerSelector getLexerSelector() {
+    public LexerSelectorMethod getLexerSelectorMethod() {
 
-        return this.lexerSelector;
+        return this.lexerSelectorMethod;
     }
+
 }

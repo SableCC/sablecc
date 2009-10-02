@@ -17,39 +17,33 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.syntax3.node.PElement;
+import org.sablecc.sablecc.exception.CompilerException;
+import org.sablecc.sablecc.syntax3.node.ALexerPriority;
 
-public class ParserElement {
+public class Priority {
 
-    private final PElement declaration;
+    private final ALexerPriority declaration;
 
-    private final ParserAlternative parserAlternative;
+    private final MatchedToken high;
 
-    ParserElement(
-            PElement declaration,
-            ParserAlternative parserAlternative) {
+    private final MatchedToken low;
 
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
+    Priority(
+            ALexerPriority declaration,
+            MatchedToken high,
+            MatchedToken low) {
+
+        if (high == low) {
+            throw CompilerException.invalidPriority(declaration.getGt(), high);
         }
-
-        if (parserAlternative == null) {
-            throw new InternalException("parserAlternative may not be null");
-        }
-
         this.declaration = declaration;
-        this.parserAlternative = parserAlternative;
+        this.high = high;
+        this.low = low;
+
     }
 
-    public PElement getDeclaration() {
+    public ALexerPriority getDeclaration() {
 
         return this.declaration;
     }
-
-    public ParserAlternative getParserAlternative() {
-
-        return this.parserAlternative;
-    }
-
 }

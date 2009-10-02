@@ -17,14 +17,12 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
+public abstract class Expression
+        extends NameUnit {
 
-public abstract class Expression {
+    Expression() {
 
-    public abstract TIdentifier getNameDeclaration();
-
-    public String getName() {
-
-        return getNameDeclaration().getText();
+        // prevents non-package construction
     }
+
 }

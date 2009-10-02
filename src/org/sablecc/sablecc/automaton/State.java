@@ -195,7 +195,7 @@ public final class State
     }
 
     /**
-     * Returns the markers of this state.
+     * Returns the marker of this state.
      */
     public Marker getMarker() {
 

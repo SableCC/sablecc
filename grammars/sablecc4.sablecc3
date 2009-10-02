@@ -366,8 +366,6 @@ Productions
       {epsilon} epsilon
     |
       {any} any_keyword
-    |
-      {end} end_keyword
     ;
 
   character
@@ -541,7 +539,7 @@ Productions
   parser_production
     =
       {normal} qualifier? parser_production_body parser_priorities? parser_investigator?
-        {-> New parser_production.normal(qualifier, parser_production_body, [parser_priorities.parser_priorities], parser_investigator) }
+        {-> New parser_production.normal(qualifier, parser_production_body.identifier, parser_production_body.assign, [parser_production_body.parser_alternatives], [parser_priorities.parser_priorities], parser_investigator) }
     |
       {selection} selection assign identifier l_par [parameter]:identifier r_par
         {-> New parser_production.selection([selection.identifiers], assign, identifier, parameter) }
@@ -555,9 +553,10 @@ Productions
     ;
 
   parser_production_body
+        {-> identifier assign [parser_alternatives]:parser_alternative+ }
     =
       identifier assign parser_alternatives semicolon
-        {-> New parser_production_body(identifier, assign, [parser_alternatives.parser_alternatives]) }
+        {-> identifier assign [parser_alternatives.parser_alternatives] }
     ;
 
   parser_alternatives
@@ -775,8 +774,7 @@ Abstract Syntax Tree
     {string} string |
     {character} character |
     {epsilon} epsilon |
-    {any} any_keyword |
-    {end} end_keyword;
+    {any} any_keyword;
 
   lexer_context =
     [name]:identifier? tokens? ignored? [lexer_priorities]:lexer_priority*;
@@ -807,7 +805,8 @@ Abstract Syntax Tree
     [name]:identifier? [parser_productions]:parser_production*;
 
   parser_production =
-    {normal} qualifier? parser_production_body
+    {normal} qualifier? [name]:identifier assign
+      [parser_alternatives]:parser_alternative+
       [parser_priorities]:parser_priority* parser_investigator? |
     {selection} [names]:identifier+ assign [selector_name]:identifier
       [parameter]:identifier;
@@ -815,9 +814,6 @@ Abstract Syntax Tree
   qualifier =
     {dangling} dangling_keyword |
     {token} token_keyword;
-
-  parser_production_body =
-    [name]:identifier assign [parser_alternatives]:parser_alternative+;
 
   parser_alternative =
     alternative_name? [elements]:element* dangling_element?;

@@ -17,32 +17,14 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.syntax3.node.ALexerInvestigator;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.sablecc.util.NamedItem;
 
-public class LexerInvestigator {
+public abstract class Element
+        implements NamedItem {
 
-    private final ALexerInvestigator declaration;
+    Element() {
 
-    LexerInvestigator(
-            ALexerInvestigator declaration) {
-
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
-        }
-
-        this.declaration = declaration;
-    }
-
-    public TIdentifier getNameDeclaration() {
-
-        return this.declaration.getName();
-    }
-
-    public String getName() {
-
-        return getNameDeclaration().getText();
+        // prevents non-package construction
     }
 
 }

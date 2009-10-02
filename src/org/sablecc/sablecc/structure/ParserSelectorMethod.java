@@ -21,42 +21,37 @@ import org.sablecc.exception.InternalException;
 import org.sablecc.sablecc.syntax3.node.ASelectionParserProduction;
 import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
-public class ParserSelector {
-
-    private final GlobalIndex globalIndex;
+public class ParserSelectorMethod
+        extends Method {
 
     private final ASelectionParserProduction declaration;
 
-    ParserSelector(
-            GlobalIndex globalIndex,
-            ASelectionParserProduction declaration) {
+    ParserSelectorMethod(
+            ASelectionParserProduction node,
+            GlobalIndex globalIndex) {
 
-        if (globalIndex == null) {
-            throw new InternalException("globalIndex may not be null");
+        super(globalIndex);
+
+        if (node == null) {
+            throw new InternalException("node may not be null");
         }
 
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
+        this.declaration = node;
+
+        for (TIdentifier name : this.declaration.getNames()) {
+            getGlobalIndex().addProduction(name, this);
         }
-
-        this.globalIndex = globalIndex;
-        this.declaration = declaration;
     }
 
-    public ParserSelectionProduction addParserProduction(
-            TIdentifier nameDeclaration) {
-
-        return this.globalIndex.addParserProduction(nameDeclaration, this);
-    }
-
-    public TIdentifier getNameDeclaration() {
+    @Override
+    public TIdentifier getNameToken() {
 
         return this.declaration.getSelectorName();
     }
 
-    public String getName() {
+    public ASelectionParserProduction getDeclaration() {
 
-        return getNameDeclaration().getText();
+        return this.declaration;
     }
 
 }
