@@ -23,7 +23,7 @@ Lexer
 
   eol = #13 | #10 | #13 #10;
 
-  line_comment = '//' (Shortest Any* (eol | '' Look End));
+  line_comment = '//' (Shortest (Any* Look (eol | '' Look End))) (eol | '' Look End);
 
   letter = upper_case | lower_case;
   upper_case = 'A'..'Z';
