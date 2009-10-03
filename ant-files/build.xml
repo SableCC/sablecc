@@ -61,10 +61,10 @@
   <property name="regression-tests.dir" value="regression-tests" />
   <property name="manifest.dir" value="manifest" />
 
+  <property name="examples.dir" value="examples" />
+
   <property name="classes.dir" value="classes" />
   <property name="test-classes.dir" value="test-classes" />
-  <property name="doc.dir" value="doc" />
-  <property name="devel-doc.dir" value="devel-doc" />
   <property name="lib.dir" value="lib" />
 
   <property name="dist.dir" value="${package.name}-${package.version}" />
@@ -200,57 +200,6 @@ public class Version {
 
   </target>
 
-  <!-- User Documentation Generation -->
-
-  <target name="generate-documentation"
-          depends="compile-sources"
-          description="Generate user documentation.">
-
-    <delete dir="${doc.dir}" />
-
-    <mkdir dir="${doc.dir}" />
-
-    <javadoc destdir="${doc.dir}" splitindex="true" access="protected">
-
-      <packageset dir="${src.dir}">
-        <exclude name="org/sablecc/sablecc/syntax3/**" />
-        <exclude name="org/sablecc/sablecc/launcher/syntax3/**" />
-        <exclude name="org/sablecc/sablecc/intermediate/syntax3/**" />
-        <exclude name="org/sablecc/objectmacro/syntax3/**" />
-        <exclude name="org/sablecc/objectmacro/launcher/syntax3/**" />
-        <exclude name="org/sablecc/objectmacro/intermediate/syntax3/**" />
-      </packageset>
-
-      <link href="http://java.sun.com/javase/6/docs/api/" />
-
-    </javadoc>
-
-  </target>
-
-  <!-- Developer Documentation Generation -->
-
-  <target name="generate-developer-documentation"
-          depends="compile-sources"
-          description="Generate developer documentation.">
-
-    <delete dir="${devel-doc.dir}" />
-
-    <mkdir dir="${devel-doc.dir}" />
-
-    <javadoc destdir="${devel-doc.dir}"
-             use="true"
-             linksource="true"
-             splitindex="true"
-             access="private">
-
-      <packageset dir="${src.dir}" />
-
-      <link href="http://java.sun.com/javase/6/docs/api/" />
-
-    </javadoc>
-
-  </target>
-
   <!-- Jar Library Creation -->
 
   <target name="create-jar"
@@ -285,7 +234,7 @@ public class Version {
 
   <!-- Distribution Zip File Creation -->
   <target name="create-zip"
-          depends="run-tests, create-jar, generate-documentation"
+          depends="run-tests, create-jar"
           description="Create distribution zip file.">
 
     <delete dir="${dist.dir}" />
@@ -308,6 +257,8 @@ public class Version {
       <fileset dir="." includes="${regression-tests.dir}/**" />
       <fileset dir="." includes="${manifest.dir}/**" />
 
+      <fileset dir="." includes="${examples.dir}/**" />
+
       <fileset dir="." includes="${doc.dir}/**" />
       <fileset dir="." includes="${lib.dir}/**" />
 
@@ -324,9 +275,6 @@ public class Version {
     <delete file="${dist.file}" />
     <delete dir="${dist.dir}" />
     <delete dir="${lib.dir}" />
-
-    <delete dir="${devel-doc.dir}" />
-    <delete dir="${doc.dir}" />
 
     <delete dir="${test-classes.dir}" />
     <delete dir="${classes.dir}" />
@@ -345,7 +293,7 @@ public class Version {
   <!-- Development -->
 
   <target name="development"
-          depends="run-tests, generate-developer-documentation"
-          description="Run tests and generate developer documentation." />
+          depends="run-tests, create-jar"
+          description="Run tests and create executable jar." />
 
 </project>
