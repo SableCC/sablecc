@@ -102,6 +102,8 @@ public class MLexer {
         sb.append(System.getProperty("line.separator"));
         sb.append("  private int current_sb_length;");
         sb.append(System.getProperty("line.separator"));
+        sb.append("  private boolean sb_contains_eof;");
+        sb.append(System.getProperty("line.separator"));
         for (Object oMarkerDeclaration : this.eMarkerDeclaration) {
             sb.append(oMarkerDeclaration.toString());
         }
@@ -183,6 +185,8 @@ public class MLexer {
         sb.append(System.getProperty("line.separator"));
         sb.append("        }");
         sb.append(System.getProperty("line.separator"));
+        sb.append("        this.sb_contains_eof = true;");
+        sb.append(System.getProperty("line.separator"));
         sb.append("        symbol = Symbol.Symbol_end;");
         sb.append(System.getProperty("line.separator"));
         sb.append("      }");
@@ -203,6 +207,8 @@ public class MLexer {
         sb.append("            return new End(this.line, this.pos);");
         sb.append(System.getProperty("line.separator"));
         sb.append("          }");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("          this.sb_contains_eof = true;");
         sb.append(System.getProperty("line.separator"));
         sb.append("          symbol = Symbol.Symbol_end;");
         sb.append(System.getProperty("line.separator"));
@@ -348,6 +354,14 @@ public class MLexer {
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("  String accept(int backCount) {");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    if(this.sb_contains_eof) {");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("      this.sb_contains_eof = false;");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("      backCount--;");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    }");
         sb.append(System.getProperty("line.separator"));
         sb
                 .append("    String text = this.sb.toString().substring(0, this.sb.length() - backCount);");

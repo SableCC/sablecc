@@ -173,6 +173,7 @@ public class Lexer {
   private int acceptLine;
   private int acceptPos;
   private int current_sb_length;
+  private boolean sb_contains_eof;
 $macro: marker_declaration(name) $
   private int marker$name;
 $end: marker_declaration $
@@ -223,6 +224,7 @@ $end: set_marker_declaration $
         if(sb.length() == 0) {
           return new End(this.line, this.pos);
         }
+        this.sb_contains_eof = true;
         symbol = Symbol.Symbol_end;
       }
       else {
@@ -234,6 +236,7 @@ $end: set_marker_declaration $
           if(sb.length() == 0) {
             return new End(this.line, this.pos);
           }
+          this.sb_contains_eof = true;
           symbol = Symbol.Symbol_end;
         }
         else {
@@ -313,6 +316,10 @@ $end: set_marker_declaration $
   }
 
   String accept(int backCount) {
+    if(this.sb_contains_eof) {
+      this.sb_contains_eof = false;
+      backCount--;
+    }
     String text = this.sb.toString().substring(0, this.sb.length() - backCount);
     String leftover = this.sb.toString().substring(this.sb.length() - backCount, this.sb.length());
     this.buffer.insert(0, leftover);
@@ -322,6 +329,10 @@ $end: set_marker_declaration $
 
 $macro: accept_marker_declaration(name) $
   String acceptWithMarker$name(int backCount) {
+    if(this.sb_contains_eof) {
+      this.sb_contains_eof = false;
+      backCount--;
+    }
     String text = this.sb.toString().substring(0, this.marker$name - backCount);
     String leftover = this.sb.toString().substring(this.marker$name - backCount, this.sb.length());
     this.buffer.insert(0, leftover);
