@@ -39,14 +39,16 @@ Lexer
   ip_address = (number Separator '.')^4;
 
   hex_digit = 'a'..'f' | upper_case - ('G'..'Z') | digit;
+  hex = '0x' hex_digit+;
 
-  ill_deffined_hex = hex_digit+;
+  zero = '0'+ | 'zero';
 
   Token
-    if_keyword, 'else', while_keyword, identifier, number, ip_address, ill_deffined_hex;
+    zero, if_keyword, 'else', while_keyword, identifier, number, ip_address, hex;
 
   Ignored
     c_comment, line_comment, ' ', #10, #xD;
 
   Priority
-    ill_deffined_hex > identifier;
+    zero > identifier;
+    zero > number;
