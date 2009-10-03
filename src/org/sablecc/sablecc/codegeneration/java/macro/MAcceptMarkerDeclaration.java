@@ -35,6 +35,14 @@ public class MAcceptMarkerDeclaration {
         sb.append(rName());
         sb.append("(int backCount) {");
         sb.append(System.getProperty("line.separator"));
+        sb.append("    if(this.sb_contains_eof) {");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("      this.sb_contains_eof = false;");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("      backCount--;");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    }");
+        sb.append(System.getProperty("line.separator"));
         sb
                 .append("    String text = this.sb.toString().substring(0, this.marker");
         sb.append(rName());
