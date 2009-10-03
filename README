@@ -1,8 +1,7 @@
 ----------------------------------------------------------------------
-WARNING: This is an early ("alpha") version of SableCC 4. It is
-targeted to developers that want to contribute to the development of
-SableCC4. IT IS NOT TARGETED TO NORMAL SABLECC USERS. If you are a
-normal user, please visit:
+WARNING: This is an incomplete ("beta") version of SableCC 4. It is
+targeted to users that want to test the new features of SableCC 4.
+If you are are looking for a stable SableCC version, please visit:
 
     http://sablecc.org/wiki/DownloadPage
 ----------------------------------------------------------------------
@@ -10,16 +9,13 @@ normal user, please visit:
 Welcome to SableCC 4!
 =====================
 
-This version is a work in progress release. We hope that it will
-encourage you to join the project and help develop SableCC 4. You can
-participate in various ways: write new code, test existing code,
-suggest improvements, etc.
-
-SableCC 4 does not yet generate code.  However, you can use its
-ObjectMacro component, a text generator which currently supports Java
-as a target language.  You can also use SableCC to parse grammars
-written using the new syntax.  You will find the executable jar files
-in the lib/ directory and the API documentation in the doc/ directory.
+This beta version of SableCC 4 is able to generate lexers and tokens.
+It also includes a stable version of the ObjectMacro system, a text
+generator. The lexer specification supports many new operators,
+including some purely "lexical" operators: "Look" for looking ahead
+beyond the end of a token, and "-" for providing the intuitively
+desired subtraction behavior. You will find the executable jar files
+of SableCC and ObjectMacro in the lib/ directory.
 
 Package Content
 ===============
@@ -30,7 +26,8 @@ Here is a description of the content of this package:
 * LICENSE and NOTICE: License terms.
 
 * lib/: Executable jar files.
-* doc/: API documentation.
+
+* examples/: Examples.
 
 * src/: Source code.
 * grammars/: Source grammars.
