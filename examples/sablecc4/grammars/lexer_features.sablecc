@@ -21,6 +21,10 @@ Lexer
 
   c_comment = Shortest '/*' Any* '*/';
 
+  eol = #13 | #10 | #13 #10;
+
+  line_comment = '//' (Shortest Any* (eol | '' Look End));
+
   letter = upper_case | lower_case;
   upper_case = 'A'..'Z';
   lower_case = 'a'..'z';
@@ -42,7 +46,7 @@ Lexer
     if_keyword, 'else', while_keyword, identifier, number, ip_address, ill_deffined_hex;
 
   Ignored
-    c_comment, ' ', #10, #xD;
+    c_comment, line_comment, ' ', #10, #xD;
 
   Priority
     ill_deffined_hex > identifier;
