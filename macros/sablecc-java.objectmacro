@@ -573,9 +573,7 @@ public class Test {
     Token token;
     do {
       token = lexer.next();
-      if(token != null) {
-        System.out.println(token);
-      }
+      System.out.println(token);
     } while (token.getType() != Node.Type.TEnd);
   }
 }
