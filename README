@@ -69,12 +69,7 @@ For more information on ObjectMacro, please visit:
 
     http://sablecc.org/wiki/ObjectMacro
 
-What's New in SableCC 4-beta.1
-==============================
+What's New in SableCC [version]
+===============================
 
-This beta version brings the following new features:
-
-* Implement an initial lexer generator supporting Java as target.
-* Add Scala, C++, and C targets to ObjectMacro.
-* Add before/after_one/many options to ObjectMacro.
-* Add end-of-line escape and no-eol command to ObjectMacro.
+[Milestone text]
