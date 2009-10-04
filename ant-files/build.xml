@@ -62,6 +62,7 @@
   <property name="manifest.dir" value="manifest" />
 
   <property name="examples.dir" value="examples" />
+  <property name="tests.dir" value="tests" />
 
   <property name="classes.dir" value="classes" />
   <property name="test-classes.dir" value="test-classes" />
@@ -258,6 +259,7 @@ public class Version {
       <fileset dir="." includes="${manifest.dir}/**" />
 
       <fileset dir="." includes="${examples.dir}/**" />
+      <fileset dir="." includes="${tests.dir}/**" />
 
       <fileset dir="." includes="${doc.dir}/**" />
       <fileset dir="." includes="${lib.dir}/**" />
