@@ -77,11 +77,7 @@ public class MTest {
         sb.append(System.getProperty("line.separator"));
         sb.append("      token = lexer.next();");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      if(token != null) {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("        System.out.println(token);");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      }");
+        sb.append("      System.out.println(token);");
         sb.append(System.getProperty("line.separator"));
         sb.append("    } while (token.getType() != Node.Type.TEnd);");
         sb.append(System.getProperty("line.separator"));
