@@ -36,6 +36,7 @@ Here is a description of the content of this package:
 
 * junit-tests/: JUnit tests.
 * regression-tests/: Regression tests.
+* tests/: Other tests.
 
 * ant-files/: Build file.
 
