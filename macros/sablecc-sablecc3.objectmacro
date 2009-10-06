@@ -109,7 +109,6 @@ $comment: ========== lexer ========== $
 
 $macro: lexer $
 $insert: header $
-$insert: header $
 
 package $no_eol$
 $expand: package $

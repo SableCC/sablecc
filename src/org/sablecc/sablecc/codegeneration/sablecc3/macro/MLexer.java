@@ -58,7 +58,6 @@ public class MLexer {
 
         StringBuilder sb = new StringBuilder();
         sb.append(new MHeader().toString());
-        sb.append(new MHeader().toString());
         sb.append(System.getProperty("line.separator"));
         sb.append("package ");
         for (Object oPackage : this.ePackage) {
