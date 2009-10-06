@@ -55,6 +55,7 @@ import org.sablecc.sablecc.codegeneration.java.macro.MTest;
 import org.sablecc.sablecc.codegeneration.java.macro.MToken;
 import org.sablecc.sablecc.codegeneration.java.macro.MTransitionState;
 import org.sablecc.sablecc.codegeneration.java.macro.MTransitionStateSingleton;
+import org.sablecc.sablecc.codegeneration.sablecc3.SableCC3CodeGenerator;
 import org.sablecc.sablecc.errormessage.MInternalError;
 import org.sablecc.sablecc.errormessage.MLexicalError;
 import org.sablecc.sablecc.errormessage.MSyntaxError;
@@ -184,9 +185,7 @@ public class SableCC {
             case LIST_TARGETS:
                 System.out.println("Available targets:");
                 System.out.println(" java (default)");
-                System.out.println(" c");
-                System.out.println(" scala");
-                System.out.println(" intermediate");
+                System.out.println(" sablecc3");
                 return;
 
             case TARGET:
@@ -268,9 +267,8 @@ public class SableCC {
         }
 
         // check target
-        if (!(targetLanguage.equals("java")
-                || targetLanguage.equals("intermediate")
-                || targetLanguage.equals("c") || targetLanguage.equals("scala"))) {
+        if (!(targetLanguage.equals("java") || targetLanguage
+                .equals("sablecc3"))) {
             throw CompilerException.unknownTarget(targetLanguage);
         }
 
@@ -343,12 +341,17 @@ public class SableCC {
         Automaton lexer = computeLexer(globalIndex);
 
         if (generateCode) {
-            if (!targetLanguage.equals("java")) {
+            if (targetLanguage.equals("java")) {
+                generateJavaLexer(destinationDirectory, destinationPackage,
+                        globalIndex, lexer);
+            }
+            else if (targetLanguage.equals("sablecc3")) {
+                SableCC3CodeGenerator.generateJavaLexer(destinationDirectory,
+                        destinationPackage, globalIndex, lexer);
+            }
+            else {
                 throw new InternalException("unimplemented");
             }
-
-            generateLexer(destinationDirectory, destinationPackage,
-                    globalIndex, lexer);
         }
     }
 
@@ -400,7 +403,7 @@ public class SableCC {
         return lexerAutomaton;
     }
 
-    private static void generateLexer(
+    private static void generateJavaLexer(
             File destinationDirectory,
             String destinationPackage,
             GlobalIndex globalIndex,
