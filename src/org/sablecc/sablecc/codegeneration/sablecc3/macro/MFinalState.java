@@ -2,8 +2,7 @@
 
 package org.sablecc.sablecc.codegeneration.sablecc3.macro;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class MFinalState {
 

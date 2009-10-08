@@ -17,36 +17,10 @@
 
 package org.sablecc.sablecc.exception;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.errormessage.MConflictingPriorities;
-import org.sablecc.sablecc.errormessage.MCyclicReference;
-import org.sablecc.sablecc.errormessage.MDuplicateDeclaration;
-import org.sablecc.sablecc.errormessage.MGrammarNotFile;
-import org.sablecc.sablecc.errormessage.MInputError;
-import org.sablecc.sablecc.errormessage.MInvalidArgument;
-import org.sablecc.sablecc.errormessage.MInvalidArgumentCount;
-import org.sablecc.sablecc.errormessage.MInvalidInterval;
-import org.sablecc.sablecc.errormessage.MInvalidLongOption;
-import org.sablecc.sablecc.errormessage.MInvalidPriority;
-import org.sablecc.sablecc.errormessage.MInvalidReference;
-import org.sablecc.sablecc.errormessage.MInvalidShortOption;
-import org.sablecc.sablecc.errormessage.MInvalidSuffix;
-import org.sablecc.sablecc.errormessage.MLexerConflict;
-import org.sablecc.sablecc.errormessage.MMissingGrammarFile;
-import org.sablecc.sablecc.errormessage.MMissingLongOptionOperand;
-import org.sablecc.sablecc.errormessage.MMissingShortOptionOperand;
-import org.sablecc.sablecc.errormessage.MNotAToken;
-import org.sablecc.sablecc.errormessage.MNotImplemented;
-import org.sablecc.sablecc.errormessage.MOutputError;
-import org.sablecc.sablecc.errormessage.MSpuriousLongOptionOperand;
-import org.sablecc.sablecc.errormessage.MSpuriousShortOptionOperand;
-import org.sablecc.sablecc.errormessage.MUndefinedReference;
-import org.sablecc.sablecc.errormessage.MUnknownTarget;
-import org.sablecc.sablecc.structure.MatchedToken;
-import org.sablecc.sablecc.syntax3.node.TGt;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
-import org.sablecc.sablecc.syntax3.node.TTwoDots;
-import org.sablecc.sablecc.syntax3.node.Token;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.errormessage.*;
+import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 @SuppressWarnings("serial")
 public class CompilerException

@@ -17,22 +17,10 @@
 
 package org.sablecc.sablecc.walker;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.structure.Context;
-import org.sablecc.sablecc.structure.GlobalIndex;
-import org.sablecc.sablecc.structure.MatchedToken;
-import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.sablecc.syntax3.node.AAnyUnit;
-import org.sablecc.sablecc.syntax3.node.ACharCharacter;
-import org.sablecc.sablecc.syntax3.node.ADecCharacter;
-import org.sablecc.sablecc.syntax3.node.AEpsilonUnit;
-import org.sablecc.sablecc.syntax3.node.AHexCharacter;
-import org.sablecc.sablecc.syntax3.node.AIgnored;
-import org.sablecc.sablecc.syntax3.node.ALexerContext;
-import org.sablecc.sablecc.syntax3.node.ALexerPriority;
-import org.sablecc.sablecc.syntax3.node.ANameUnit;
-import org.sablecc.sablecc.syntax3.node.AStringUnit;
-import org.sablecc.sablecc.syntax3.node.ATokens;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class LexerContextVerifier
         extends DepthFirstAdapter {

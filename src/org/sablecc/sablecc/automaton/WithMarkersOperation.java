@@ -17,22 +17,12 @@
 
 package org.sablecc.sablecc.automaton;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Map.Entry;
+import java.util.*;
+import java.util.Map.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.alphabet.Alphabet;
-import org.sablecc.sablecc.alphabet.RichSymbol;
-import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.util.Pair;
-import org.sablecc.util.WorkSet;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.util.*;
 
 class WithMarkersOperation {
 

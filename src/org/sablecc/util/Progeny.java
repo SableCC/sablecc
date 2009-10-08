@@ -17,7 +17,7 @@
 
 package org.sablecc.util;
 
-import java.util.Set;
+import java.util.*;
 
 public interface Progeny<T> {
 

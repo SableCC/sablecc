@@ -17,15 +17,11 @@
 
 package org.sablecc.sablecc.structure;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.sablecc.automaton.Acceptation;
-import org.sablecc.sablecc.automaton.Automaton;
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.syntax3.node.Token;
+import org.sablecc.sablecc.automaton.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public abstract class MatchedToken {
 

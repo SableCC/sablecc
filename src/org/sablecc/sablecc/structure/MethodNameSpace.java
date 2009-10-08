@@ -17,17 +17,11 @@
 
 package org.sablecc.sablecc.structure;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.syntax3.node.ALexerInvestigator;
-import org.sablecc.sablecc.syntax3.node.AParserInvestigator;
-import org.sablecc.sablecc.syntax3.node.ASelectionNamedExpression;
-import org.sablecc.sablecc.syntax3.node.ASelectionParserProduction;
-import org.sablecc.sablecc.syntax3.node.Node;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 class MethodNameSpace {
 

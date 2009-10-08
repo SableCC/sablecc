@@ -17,52 +17,15 @@
 
 package org.sablecc.sablecc.walker;
 
-import java.math.BigInteger;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.math.*;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.alphabet.Bound;
-import org.sablecc.sablecc.alphabet.Interval;
-import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.automaton.Automaton;
-import org.sablecc.sablecc.structure.GlobalIndex;
-import org.sablecc.sablecc.structure.NormalExpression;
-import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.sablecc.syntax3.node.AAndExpression;
-import org.sablecc.sablecc.syntax3.node.AAnyExpression;
-import org.sablecc.sablecc.syntax3.node.AAtLeastExpression;
-import org.sablecc.sablecc.syntax3.node.ACharCharacter;
-import org.sablecc.sablecc.syntax3.node.ACharExpression;
-import org.sablecc.sablecc.syntax3.node.AConcatenationExpression;
-import org.sablecc.sablecc.syntax3.node.ADecCharacter;
-import org.sablecc.sablecc.syntax3.node.ADecExpression;
-import org.sablecc.sablecc.syntax3.node.ADifferenceExpression;
-import org.sablecc.sablecc.syntax3.node.AEndExpression;
-import org.sablecc.sablecc.syntax3.node.AEpsilonExpression;
-import org.sablecc.sablecc.syntax3.node.AHexCharacter;
-import org.sablecc.sablecc.syntax3.node.AHexExpression;
-import org.sablecc.sablecc.syntax3.node.AIntervalExponentExpression;
-import org.sablecc.sablecc.syntax3.node.AIntervalExpression;
-import org.sablecc.sablecc.syntax3.node.ALongestExpression;
-import org.sablecc.sablecc.syntax3.node.ALookExpression;
-import org.sablecc.sablecc.syntax3.node.ALookNotExpression;
-import org.sablecc.sablecc.syntax3.node.ANameExpression;
-import org.sablecc.sablecc.syntax3.node.ANumberExponentExpression;
-import org.sablecc.sablecc.syntax3.node.AOneOrMoreExpression;
-import org.sablecc.sablecc.syntax3.node.AOrExpression;
-import org.sablecc.sablecc.syntax3.node.ASeparatedAtLeastExpression;
-import org.sablecc.sablecc.syntax3.node.ASeparatedIntervalExponentExpression;
-import org.sablecc.sablecc.syntax3.node.ASeparatedNumberExponentExpression;
-import org.sablecc.sablecc.syntax3.node.ASeparatedOneOrMoreExpression;
-import org.sablecc.sablecc.syntax3.node.ASeparatedZeroOrMoreExpression;
-import org.sablecc.sablecc.syntax3.node.AShortestExpression;
-import org.sablecc.sablecc.syntax3.node.AStringExpression;
-import org.sablecc.sablecc.syntax3.node.ASubtractionExpression;
-import org.sablecc.sablecc.syntax3.node.AZeroOrMoreExpression;
-import org.sablecc.sablecc.syntax3.node.AZeroOrOneExpression;
-import org.sablecc.sablecc.syntax3.node.PCharacter;
-import org.sablecc.sablecc.syntax3.node.PExpression;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.sablecc.automaton.*;
+import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class RegularExpressionEvaluator
         extends DepthFirstAdapter {

@@ -17,18 +17,11 @@
 
 package org.sablecc.sablecc.automaton;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.alphabet.RichSymbol;
-import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.util.Pair;
-import org.sablecc.util.WorkSet;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.util.*;
 
 class LongestOperation {
 

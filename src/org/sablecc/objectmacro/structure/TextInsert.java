@@ -17,8 +17,8 @@
 
 package org.sablecc.objectmacro.structure;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.syntax3.node.ATextInsert;
+import org.sablecc.exception.*;
+import org.sablecc.objectmacro.syntax3.node.*;
 
 public class TextInsert {
 

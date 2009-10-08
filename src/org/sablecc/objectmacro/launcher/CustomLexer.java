@@ -17,20 +17,10 @@
 
 package org.sablecc.objectmacro.launcher;
 
-import java.io.IOException;
-import java.io.PushbackReader;
+import java.io.*;
 
-import org.sablecc.objectmacro.syntax3.lexer.Lexer;
-import org.sablecc.objectmacro.syntax3.lexer.LexerException;
-import org.sablecc.objectmacro.syntax3.node.TCommandTail;
-import org.sablecc.objectmacro.syntax3.node.TEndCommand;
-import org.sablecc.objectmacro.syntax3.node.TExpandCommand;
-import org.sablecc.objectmacro.syntax3.node.TInsertCommand;
-import org.sablecc.objectmacro.syntax3.node.TLongCommentEnd;
-import org.sablecc.objectmacro.syntax3.node.TLongCommentStart;
-import org.sablecc.objectmacro.syntax3.node.TMacroCommand;
-import org.sablecc.objectmacro.syntax3.node.TShortCommentCommand;
-import org.sablecc.objectmacro.syntax3.node.TTextBlockCommand;
+import org.sablecc.objectmacro.syntax3.lexer.*;
+import org.sablecc.objectmacro.syntax3.node.*;
 
 public class CustomLexer
         extends Lexer {

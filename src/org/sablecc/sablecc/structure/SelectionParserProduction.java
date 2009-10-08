@@ -17,8 +17,8 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class SelectionParserProduction
         extends Production {

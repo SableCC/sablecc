@@ -17,11 +17,10 @@
 
 package org.sablecc.objectmacro.structure;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.util.Utils;
+import org.sablecc.exception.*;
+import org.sablecc.objectmacro.util.*;
 
 public class ExpandSignature {
 

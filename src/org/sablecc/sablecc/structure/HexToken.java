@@ -17,11 +17,9 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.automaton.Automaton;
-import org.sablecc.sablecc.syntax3.node.AHexCharacter;
-import org.sablecc.sablecc.syntax3.node.THexChar;
-import org.sablecc.sablecc.syntax3.node.Token;
+import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.sablecc.automaton.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class HexToken
         extends AnonymousToken {

@@ -17,21 +17,10 @@
 
 package org.sablecc.sablecc.walker;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.structure.Alternative;
-import org.sablecc.sablecc.structure.Context;
-import org.sablecc.sablecc.structure.GlobalIndex;
-import org.sablecc.sablecc.structure.Production;
-import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.sablecc.syntax3.node.AGrammar;
-import org.sablecc.sablecc.syntax3.node.AGroup;
-import org.sablecc.sablecc.syntax3.node.ALexerContext;
-import org.sablecc.sablecc.syntax3.node.ALexerInvestigator;
-import org.sablecc.sablecc.syntax3.node.ANormalNamedExpression;
-import org.sablecc.sablecc.syntax3.node.ANormalParserProduction;
-import org.sablecc.sablecc.syntax3.node.AParserContext;
-import org.sablecc.sablecc.syntax3.node.ASelectionNamedExpression;
-import org.sablecc.sablecc.syntax3.node.ASelectionParserProduction;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class DeclarationCollector
         extends DepthFirstAdapter {

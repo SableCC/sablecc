@@ -17,68 +17,26 @@
 
 package org.sablecc.sablecc.launcher;
 
-import static org.sablecc.sablecc.launcher.Version.VERSION;
+import static org.sablecc.sablecc.launcher.Version.*;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.PushbackReader;
-import java.io.StringWriter;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.Map.Entry;
+import java.io.*;
+import java.util.*;
+import java.util.Map.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.alphabet.Bound;
-import org.sablecc.sablecc.alphabet.Interval;
-import org.sablecc.sablecc.alphabet.RichSymbol;
-import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.automaton.Acceptation;
-import org.sablecc.sablecc.automaton.Automaton;
-import org.sablecc.sablecc.automaton.Marker;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.sablecc.automaton.*;
 import org.sablecc.sablecc.automaton.State;
-import org.sablecc.sablecc.codegeneration.java.macro.MAnonymousToken;
-import org.sablecc.sablecc.codegeneration.java.macro.MCustomToken;
-import org.sablecc.sablecc.codegeneration.java.macro.MEnd;
-import org.sablecc.sablecc.codegeneration.java.macro.MFinalState;
-import org.sablecc.sablecc.codegeneration.java.macro.MFinalStateSingleton;
-import org.sablecc.sablecc.codegeneration.java.macro.MLexer;
-import org.sablecc.sablecc.codegeneration.java.macro.MLexerException;
-import org.sablecc.sablecc.codegeneration.java.macro.MNode;
-import org.sablecc.sablecc.codegeneration.java.macro.MState;
-import org.sablecc.sablecc.codegeneration.java.macro.MSymbol;
-import org.sablecc.sablecc.codegeneration.java.macro.MTest;
-import org.sablecc.sablecc.codegeneration.java.macro.MToken;
-import org.sablecc.sablecc.codegeneration.java.macro.MTransitionState;
-import org.sablecc.sablecc.codegeneration.java.macro.MTransitionStateSingleton;
-import org.sablecc.sablecc.codegeneration.sablecc3.SableCC3CodeGenerator;
-import org.sablecc.sablecc.errormessage.MInternalError;
-import org.sablecc.sablecc.errormessage.MLexicalError;
-import org.sablecc.sablecc.errormessage.MSyntaxError;
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.structure.AnonymousToken;
-import org.sablecc.sablecc.structure.Context;
-import org.sablecc.sablecc.structure.GlobalIndex;
-import org.sablecc.sablecc.structure.MatchedToken;
-import org.sablecc.sablecc.structure.NameToken;
-import org.sablecc.sablecc.structure.NormalExpression;
-import org.sablecc.sablecc.syntax3.lexer.Lexer;
-import org.sablecc.sablecc.syntax3.lexer.LexerException;
-import org.sablecc.sablecc.syntax3.node.Start;
-import org.sablecc.sablecc.syntax3.parser.Parser;
-import org.sablecc.sablecc.syntax3.parser.ParserException;
-import org.sablecc.sablecc.walker.CyclicExpressionDetector;
-import org.sablecc.sablecc.walker.DeclarationCollector;
-import org.sablecc.sablecc.walker.ExpressionVerifier;
-import org.sablecc.sablecc.walker.LexerContextVerifier;
-import org.sablecc.sablecc.walker.RegularExpressionEvaluator;
-import org.sablecc.sablecc.walker.SimpleLexerRestricter;
-import org.sablecc.util.Strictness;
-import org.sablecc.util.Verbosity;
+import org.sablecc.sablecc.codegeneration.java.macro.*;
+import org.sablecc.sablecc.codegeneration.sablecc3.*;
+import org.sablecc.sablecc.errormessage.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.syntax3.lexer.*;
+import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.sablecc.syntax3.parser.*;
+import org.sablecc.sablecc.walker.*;
+import org.sablecc.util.*;
 
 /**
  * The main class of SableCC.

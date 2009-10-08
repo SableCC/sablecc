@@ -17,9 +17,9 @@
 
 package org.sablecc.objectmacro.codegeneration;
 
-import java.io.File;
+import java.io.*;
 
-import org.sablecc.objectmacro.intermediate.syntax3.node.PIntermediateRepresentation;
+import org.sablecc.objectmacro.intermediate.syntax3.node.*;
 
 public class IntermediateRepresentation {
 

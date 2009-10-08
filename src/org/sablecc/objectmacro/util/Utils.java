@@ -17,8 +17,7 @@
 
 package org.sablecc.objectmacro.util;
 
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
-import org.sablecc.objectmacro.syntax3.node.TVar;
+import org.sablecc.objectmacro.syntax3.node.*;
 
 public class Utils {
 

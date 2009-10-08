@@ -17,14 +17,10 @@
 
 package org.sablecc.objectmacro.walker;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.structure.Expand;
-import org.sablecc.objectmacro.structure.GlobalIndex;
-import org.sablecc.objectmacro.structure.Macro;
-import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.objectmacro.syntax3.node.AExpand;
-import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AOption;
+import org.sablecc.exception.*;
+import org.sablecc.objectmacro.structure.*;
+import org.sablecc.objectmacro.syntax3.analysis.*;
+import org.sablecc.objectmacro.syntax3.node.*;
 
 public class ExpandCollector
         extends DepthFirstAdapter {

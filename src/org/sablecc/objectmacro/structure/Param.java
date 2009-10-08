@@ -17,10 +17,9 @@
 
 package org.sablecc.objectmacro.structure;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.syntax3.node.AParam;
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
-import org.sablecc.objectmacro.util.Utils;
+import org.sablecc.exception.*;
+import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.objectmacro.util.*;
 
 public class Param {
 

@@ -17,10 +17,8 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.sablecc.automaton.Automaton;
-import org.sablecc.sablecc.syntax3.node.AEpsilonUnit;
-import org.sablecc.sablecc.syntax3.node.TEpsilon;
-import org.sablecc.sablecc.syntax3.node.Token;
+import org.sablecc.sablecc.automaton.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class EpsilonToken
         extends AnonymousToken {

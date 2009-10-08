@@ -17,27 +17,14 @@
 
 package org.sablecc.sablecc.walker;
 
-import java.math.BigInteger;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.math.*;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.structure.GlobalIndex;
-import org.sablecc.sablecc.structure.NameUnit;
-import org.sablecc.sablecc.structure.NormalExpression;
-import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.sablecc.syntax3.node.ACharCharacter;
-import org.sablecc.sablecc.syntax3.node.ADecCharacter;
-import org.sablecc.sablecc.syntax3.node.AHexCharacter;
-import org.sablecc.sablecc.syntax3.node.AIntervalExponentExpression;
-import org.sablecc.sablecc.syntax3.node.AIntervalExpression;
-import org.sablecc.sablecc.syntax3.node.ANameExpression;
-import org.sablecc.sablecc.syntax3.node.ANormalNamedExpression;
-import org.sablecc.sablecc.syntax3.node.ASeparatedIntervalExponentExpression;
-import org.sablecc.sablecc.syntax3.node.PCharacter;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
-import org.sablecc.sablecc.syntax3.node.Token;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class ExpressionVerifier
         extends DepthFirstAdapter {

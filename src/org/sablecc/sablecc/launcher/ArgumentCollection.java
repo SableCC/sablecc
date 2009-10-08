@@ -17,16 +17,13 @@
 
 package org.sablecc.sablecc.launcher;
 
-import java.io.PushbackReader;
-import java.io.StringReader;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.launcher.syntax3.lexer.Lexer;
-import org.sablecc.sablecc.launcher.syntax3.node.Start;
-import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.launcher.syntax3.lexer.*;
+import org.sablecc.sablecc.launcher.syntax3.node.*;
+import org.sablecc.sablecc.launcher.syntax3.parser.*;
 
 /**
  * Encapsulates a collection of option and text command-line arguments.

@@ -17,14 +17,10 @@
 
 package ticket20;
 
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.*;
 
-import org.junit.Test;
-import org.sablecc.sablecc.alphabet.Alphabet;
-import org.sablecc.sablecc.alphabet.Bound;
-import org.sablecc.sablecc.alphabet.Interval;
-import org.sablecc.sablecc.alphabet.Symbol;
+import org.junit.*;
+import org.sablecc.sablecc.alphabet.*;
 
 public class MergeBug {
 

@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.sablecc.util.NamedItem;
+import org.sablecc.sablecc.util.*;
 
 public abstract class Element
         implements NamedItem {

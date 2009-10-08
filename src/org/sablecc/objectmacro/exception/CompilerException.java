@@ -17,41 +17,11 @@
 
 package org.sablecc.objectmacro.exception;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.errormessage.MCannotCreateDirectory;
-import org.sablecc.objectmacro.errormessage.MConflictingOption;
-import org.sablecc.objectmacro.errormessage.MCyclicReference;
-import org.sablecc.objectmacro.errormessage.MDuplicateDeclaration;
-import org.sablecc.objectmacro.errormessage.MDuplicateOption;
-import org.sablecc.objectmacro.errormessage.MEndMismatch;
-import org.sablecc.objectmacro.errormessage.MIncorrectArgumentCount;
-import org.sablecc.objectmacro.errormessage.MInputError;
-import org.sablecc.objectmacro.errormessage.MInvalidArgument;
-import org.sablecc.objectmacro.errormessage.MInvalidArgumentCount;
-import org.sablecc.objectmacro.errormessage.MInvalidLongOption;
-import org.sablecc.objectmacro.errormessage.MInvalidShortOption;
-import org.sablecc.objectmacro.errormessage.MInvalidSuffix;
-import org.sablecc.objectmacro.errormessage.MMacroNotFile;
-import org.sablecc.objectmacro.errormessage.MMissingLongOptionOperand;
-import org.sablecc.objectmacro.errormessage.MMissingMacroFile;
-import org.sablecc.objectmacro.errormessage.MMissingShortOptionOperand;
-import org.sablecc.objectmacro.errormessage.MOutputError;
-import org.sablecc.objectmacro.errormessage.MSpuriousLongOptionOperand;
-import org.sablecc.objectmacro.errormessage.MSpuriousShortOptionOperand;
-import org.sablecc.objectmacro.errormessage.MUnknownMacro;
-import org.sablecc.objectmacro.errormessage.MUnknownOption;
-import org.sablecc.objectmacro.errormessage.MUnknownParam;
-import org.sablecc.objectmacro.errormessage.MUnknownTarget;
-import org.sablecc.objectmacro.errormessage.MUnknownTextBlock;
-import org.sablecc.objectmacro.errormessage.MUnusedParam;
-import org.sablecc.objectmacro.errormessage.MUnusedTextBlock;
-import org.sablecc.objectmacro.structure.Param;
-import org.sablecc.objectmacro.structure.TextBlock;
-import org.sablecc.objectmacro.structure.TextInsert;
-import org.sablecc.objectmacro.syntax3.node.AOption;
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
-import org.sablecc.objectmacro.syntax3.node.TVar;
-import org.sablecc.objectmacro.util.Utils;
+import org.sablecc.exception.*;
+import org.sablecc.objectmacro.errormessage.*;
+import org.sablecc.objectmacro.structure.*;
+import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.objectmacro.util.*;
 
 @SuppressWarnings("serial")
 public class CompilerException

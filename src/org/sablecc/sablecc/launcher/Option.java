@@ -17,19 +17,13 @@
 
 package org.sablecc.sablecc.launcher;
 
-import java.io.PushbackReader;
-import java.io.StringReader;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.io.*;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.launcher.syntax3.lexer.Lexer;
-import org.sablecc.sablecc.launcher.syntax3.node.ALongOption;
-import org.sablecc.sablecc.launcher.syntax3.node.ALongOptionArgument;
-import org.sablecc.sablecc.launcher.syntax3.node.AShortOption;
-import org.sablecc.sablecc.launcher.syntax3.node.AShortOptionsArgument;
-import org.sablecc.sablecc.launcher.syntax3.node.Start;
-import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.launcher.syntax3.lexer.*;
+import org.sablecc.sablecc.launcher.syntax3.node.*;
+import org.sablecc.sablecc.launcher.syntax3.parser.*;
 
 /**
  * The Option enum encapsulates command-line options. This enum provides short

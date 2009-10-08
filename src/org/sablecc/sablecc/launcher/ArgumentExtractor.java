@@ -17,16 +17,12 @@
 
 package org.sablecc.sablecc.launcher;
 
-import java.util.List;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.launcher.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.sablecc.launcher.syntax3.node.ALongOption;
-import org.sablecc.sablecc.launcher.syntax3.node.AOperand;
-import org.sablecc.sablecc.launcher.syntax3.node.APlainArgument;
-import org.sablecc.sablecc.launcher.syntax3.node.AShortOption;
-import org.sablecc.sablecc.launcher.syntax3.node.Start;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.launcher.syntax3.analysis.*;
+import org.sablecc.sablecc.launcher.syntax3.node.*;
 
 /**
  * An argument extractor is an AST walker that extracts information from a

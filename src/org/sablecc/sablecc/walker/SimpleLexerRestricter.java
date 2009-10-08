@@ -17,15 +17,9 @@
 
 package org.sablecc.sablecc.walker;
 
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.sablecc.syntax3.node.AGroup;
-import org.sablecc.sablecc.syntax3.node.ALexerContext;
-import org.sablecc.sablecc.syntax3.node.ALexerInvestigator;
-import org.sablecc.sablecc.syntax3.node.AParser;
-import org.sablecc.sablecc.syntax3.node.ASelectionNamedExpression;
-import org.sablecc.sablecc.syntax3.node.ATransformation;
-import org.sablecc.sablecc.syntax3.node.ATree;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class SimpleLexerRestricter
         extends DepthFirstAdapter {

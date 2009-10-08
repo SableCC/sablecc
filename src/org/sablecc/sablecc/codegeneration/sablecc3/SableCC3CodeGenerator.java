@@ -17,39 +17,16 @@
 
 package org.sablecc.sablecc.codegeneration.sablecc3;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.Map.Entry;
+import java.io.*;
+import java.util.*;
+import java.util.Map.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.alphabet.Bound;
-import org.sablecc.sablecc.alphabet.Interval;
-import org.sablecc.sablecc.alphabet.RichSymbol;
-import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.automaton.Acceptation;
-import org.sablecc.sablecc.automaton.Automaton;
-import org.sablecc.sablecc.automaton.Marker;
-import org.sablecc.sablecc.automaton.State;
-import org.sablecc.sablecc.codegeneration.sablecc3.macro.MCustomToken;
-import org.sablecc.sablecc.codegeneration.sablecc3.macro.MEof;
-import org.sablecc.sablecc.codegeneration.sablecc3.macro.MFinalState;
-import org.sablecc.sablecc.codegeneration.sablecc3.macro.MFinalStateSingleton;
-import org.sablecc.sablecc.codegeneration.sablecc3.macro.MLexer;
-import org.sablecc.sablecc.codegeneration.sablecc3.macro.MLexerException;
-import org.sablecc.sablecc.codegeneration.sablecc3.macro.MState;
-import org.sablecc.sablecc.codegeneration.sablecc3.macro.MSymbol;
-import org.sablecc.sablecc.codegeneration.sablecc3.macro.MTransitionState;
-import org.sablecc.sablecc.codegeneration.sablecc3.macro.MTransitionStateSingleton;
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.structure.AnonymousToken;
-import org.sablecc.sablecc.structure.Context;
-import org.sablecc.sablecc.structure.GlobalIndex;
-import org.sablecc.sablecc.structure.MatchedToken;
-import org.sablecc.sablecc.structure.NameToken;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.sablecc.automaton.*;
+import org.sablecc.sablecc.codegeneration.sablecc3.macro.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.structure.*;
 
 public class SableCC3CodeGenerator {
 

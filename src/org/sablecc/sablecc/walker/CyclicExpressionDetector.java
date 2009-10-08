@@ -17,20 +17,14 @@
 
 package org.sablecc.sablecc.walker;
 
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.structure.GlobalIndex;
-import org.sablecc.sablecc.structure.NameUnit;
-import org.sablecc.sablecc.structure.NormalExpression;
-import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.sablecc.syntax3.node.AGrammar;
-import org.sablecc.sablecc.syntax3.node.ANameExpression;
-import org.sablecc.sablecc.syntax3.node.ANormalNamedExpression;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
-import org.sablecc.util.ComponentFinder;
-import org.sablecc.util.Progeny;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
+import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.util.*;
 
 public class CyclicExpressionDetector
         extends DepthFirstAdapter {

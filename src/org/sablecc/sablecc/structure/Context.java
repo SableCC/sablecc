@@ -17,26 +17,11 @@
 
 package org.sablecc.sablecc.structure;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.syntax3.node.AAnyUnit;
-import org.sablecc.sablecc.syntax3.node.ACharCharacter;
-import org.sablecc.sablecc.syntax3.node.ADecCharacter;
-import org.sablecc.sablecc.syntax3.node.AEpsilonUnit;
-import org.sablecc.sablecc.syntax3.node.AHexCharacter;
-import org.sablecc.sablecc.syntax3.node.ALexerContext;
-import org.sablecc.sablecc.syntax3.node.ALexerPriority;
-import org.sablecc.sablecc.syntax3.node.ANameUnit;
-import org.sablecc.sablecc.syntax3.node.AParserContext;
-import org.sablecc.sablecc.syntax3.node.AStringUnit;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
-import org.sablecc.sablecc.syntax3.node.Token;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class Context {
 

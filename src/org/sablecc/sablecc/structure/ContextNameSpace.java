@@ -17,17 +17,10 @@
 
 package org.sablecc.sablecc.structure;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.syntax3.node.ALexerContext;
-import org.sablecc.sablecc.syntax3.node.AParserContext;
-import org.sablecc.sablecc.syntax3.node.Node;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 class ContextNameSpace {
 

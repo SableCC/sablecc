@@ -17,13 +17,11 @@
 
 package org.sablecc.sablecc.automaton;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.Map.Entry;
+import java.util.*;
+import java.util.Map.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.alphabet.RichSymbol;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.alphabet.*;
 
 class LookOperation {
 

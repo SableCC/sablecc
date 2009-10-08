@@ -17,10 +17,9 @@
 
 package org.sablecc.objectmacro.structure;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.syntax3.node.ATextBlock;
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
+import org.sablecc.exception.*;
+import org.sablecc.objectmacro.exception.*;
+import org.sablecc.objectmacro.syntax3.node.*;
 
 public class TextBlock
         extends Scope {
