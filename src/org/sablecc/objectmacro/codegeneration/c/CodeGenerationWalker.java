@@ -17,60 +17,15 @@
 
 package org.sablecc.objectmacro.codegeneration.c;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.codegeneration.IntermediateRepresentation;
-import org.sablecc.objectmacro.codegeneration.c.macro.MAbstractMacroH;
-import org.sablecc.objectmacro.codegeneration.c.macro.MAfterLast;
-import org.sablecc.objectmacro.codegeneration.c.macro.MAfterMany;
-import org.sablecc.objectmacro.codegeneration.c.macro.MAfterOne;
-import org.sablecc.objectmacro.codegeneration.c.macro.MBeforeFirst;
-import org.sablecc.objectmacro.codegeneration.c.macro.MBeforeMany;
-import org.sablecc.objectmacro.codegeneration.c.macro.MBeforeOne;
-import org.sablecc.objectmacro.codegeneration.c.macro.MExpandInsertPart;
-import org.sablecc.objectmacro.codegeneration.c.macro.MFile;
-import org.sablecc.objectmacro.codegeneration.c.macro.MInlineText;
-import org.sablecc.objectmacro.codegeneration.c.macro.MListC;
-import org.sablecc.objectmacro.codegeneration.c.macro.MListH;
-import org.sablecc.objectmacro.codegeneration.c.macro.MMacroC;
-import org.sablecc.objectmacro.codegeneration.c.macro.MMacroCreator;
-import org.sablecc.objectmacro.codegeneration.c.macro.MMacroCreatorPrototype;
-import org.sablecc.objectmacro.codegeneration.c.macro.MMacroH;
-import org.sablecc.objectmacro.codegeneration.c.macro.MNone;
-import org.sablecc.objectmacro.codegeneration.c.macro.MSeparator;
-import org.sablecc.objectmacro.codegeneration.c.macro.MTextC;
-import org.sablecc.objectmacro.codegeneration.c.macro.MTextH;
-import org.sablecc.objectmacro.codegeneration.c.macro.MTextInsert;
-import org.sablecc.objectmacro.codegeneration.c.macro.MTextInsertPart;
-import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AEolInlineText;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AEolMacroPart;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AEolTextPart;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AExpandInsert;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AExpandedMacro;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AInlineTextValue;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AMacro;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertMacroPart;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertTextPart;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AParamInsertValue;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AParamRef;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AStringInlineText;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AStringMacroPart;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AStringTextPart;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AText;
-import org.sablecc.objectmacro.intermediate.syntax3.node.ATextInsert;
-import org.sablecc.objectmacro.intermediate.syntax3.node.ATextInsertMacroPart;
-import org.sablecc.objectmacro.intermediate.syntax3.node.ATextInsertTextPart;
-import org.sablecc.objectmacro.intermediate.syntax3.node.ATrueBoolean;
-import org.sablecc.objectmacro.intermediate.syntax3.node.PBoolean;
-import org.sablecc.objectmacro.intermediate.syntax3.node.PValue;
-import org.sablecc.objectmacro.intermediate.syntax3.node.TString;
+import org.sablecc.exception.*;
+import org.sablecc.objectmacro.codegeneration.*;
+import org.sablecc.objectmacro.codegeneration.c.macro.*;
+import org.sablecc.objectmacro.exception.*;
+import org.sablecc.objectmacro.intermediate.syntax3.analysis.*;
+import org.sablecc.objectmacro.intermediate.syntax3.node.*;
 
 public class CodeGenerationWalker
         extends DepthFirstAdapter {

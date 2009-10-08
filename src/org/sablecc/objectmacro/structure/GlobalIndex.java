@@ -17,29 +17,12 @@
 
 package org.sablecc.objectmacro.structure;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.syntax3.node.AExpand;
-import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AMacroSourceFilePart;
-import org.sablecc.objectmacro.syntax3.node.ATextBlock;
-import org.sablecc.objectmacro.syntax3.node.ATextBlockSourceFilePart;
-import org.sablecc.objectmacro.syntax3.node.ATextInsert;
-import org.sablecc.objectmacro.syntax3.node.PExpand;
-import org.sablecc.objectmacro.syntax3.node.PMacro;
-import org.sablecc.objectmacro.syntax3.node.PTextBlock;
-import org.sablecc.objectmacro.syntax3.node.PTextInsert;
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
-import org.sablecc.util.ComponentFinder;
-import org.sablecc.util.Progeny;
+import org.sablecc.exception.*;
+import org.sablecc.objectmacro.exception.*;
+import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.util.*;
 
 public class GlobalIndex {
 

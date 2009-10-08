@@ -17,15 +17,11 @@
 
 package org.sablecc.sablecc.structure;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.automaton.Automaton;
-import org.sablecc.sablecc.syntax3.node.ANormalNamedExpression;
-import org.sablecc.sablecc.syntax3.node.PExpression;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.automaton.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class NormalExpression
         extends Expression {

@@ -17,18 +17,11 @@
 
 package org.sablecc.objectmacro.structure;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.syntax3.node.AMacro;
-import org.sablecc.objectmacro.syntax3.node.AMacroSourceFilePart;
-import org.sablecc.objectmacro.syntax3.node.PExpand;
-import org.sablecc.objectmacro.syntax3.node.PMacro;
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
+import org.sablecc.exception.*;
+import org.sablecc.objectmacro.exception.*;
+import org.sablecc.objectmacro.syntax3.node.*;
 
 public class Macro
         extends Scope {

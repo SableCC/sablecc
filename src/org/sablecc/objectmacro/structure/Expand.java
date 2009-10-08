@@ -17,17 +17,11 @@
 
 package org.sablecc.objectmacro.structure;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.syntax3.node.AExpand;
-import org.sablecc.objectmacro.syntax3.node.AMacroReference;
-import org.sablecc.objectmacro.syntax3.node.AOption;
-import org.sablecc.objectmacro.syntax3.node.PMacroReference;
-import org.sablecc.objectmacro.syntax3.node.POption;
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
+import org.sablecc.exception.*;
+import org.sablecc.objectmacro.exception.*;
+import org.sablecc.objectmacro.syntax3.node.*;
 
 public class Expand {
 

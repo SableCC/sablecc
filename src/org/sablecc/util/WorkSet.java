@@ -17,11 +17,9 @@
 
 package org.sablecc.util;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
+import org.sablecc.exception.*;
 
 /**
  * A work set is a special set that returns each of its elements only once

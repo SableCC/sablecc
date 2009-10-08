@@ -17,16 +17,9 @@
 
 package org.sablecc.util;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
+import org.sablecc.exception.*;
 
 public class ComponentFinder<T> {
 

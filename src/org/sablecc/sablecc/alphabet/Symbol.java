@@ -17,14 +17,9 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
+import org.sablecc.exception.*;
 
 /**
  * A symbol is a non-empty set of non-intersecting, non-adjacent intervals.

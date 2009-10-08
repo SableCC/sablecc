@@ -17,13 +17,9 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.sablecc.alphabet.Bound;
-import org.sablecc.sablecc.alphabet.Interval;
-import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.automaton.Automaton;
-import org.sablecc.sablecc.syntax3.node.AAnyUnit;
-import org.sablecc.sablecc.syntax3.node.TAnyKeyword;
-import org.sablecc.sablecc.syntax3.node.Token;
+import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.sablecc.automaton.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class AnyToken
         extends AnonymousToken {

@@ -2,8 +2,7 @@
 
 package org.sablecc.objectmacro.codegeneration.intermediate.macro;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class MInlineTextArg {
 

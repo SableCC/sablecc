@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.automaton;
 
-import org.sablecc.exception.InternalException;
+import org.sablecc.exception.*;
 
 /**
  * An acceptation represents the nature of an accept automaton state. A

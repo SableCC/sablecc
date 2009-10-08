@@ -17,10 +17,9 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.syntax3.node.AGrammar;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
-import org.sablecc.sablecc.util.Utils;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.sablecc.util.*;
 
 public class Language {
 

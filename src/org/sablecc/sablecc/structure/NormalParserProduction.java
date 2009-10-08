@@ -17,19 +17,11 @@
 
 package org.sablecc.sablecc.structure;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.syntax3.node.ANormalParserProduction;
-import org.sablecc.sablecc.syntax3.node.AParserAlternative;
-import org.sablecc.sablecc.syntax3.node.Node;
-import org.sablecc.sablecc.syntax3.node.PParserAlternative;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
-import org.sablecc.sablecc.util.ItemNameGiver;
-import org.sablecc.sablecc.util.NamedItem;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.sablecc.util.*;
 
 public class NormalParserProduction
         extends Production {

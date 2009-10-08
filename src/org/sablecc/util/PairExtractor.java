@@ -17,10 +17,7 @@
 
 package org.sablecc.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class PairExtractor<T> {
 

@@ -17,8 +17,8 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.util.NamedItem;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.util.*;
 
 public abstract class Alternative
         implements NamedItem {

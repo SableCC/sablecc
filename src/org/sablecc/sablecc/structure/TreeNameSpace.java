@@ -17,16 +17,11 @@
 
 package org.sablecc.sablecc.structure;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.syntax3.node.AGroup;
-import org.sablecc.sablecc.syntax3.node.ANormalNamedExpression;
-import org.sablecc.sablecc.syntax3.node.ATreeProduction;
-import org.sablecc.sablecc.syntax3.node.Node;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 class TreeNameSpace {
 

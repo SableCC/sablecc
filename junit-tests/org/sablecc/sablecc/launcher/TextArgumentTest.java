@@ -17,11 +17,10 @@
 
 package org.sablecc.sablecc.launcher;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
-import org.junit.Test;
-import org.sablecc.exception.InternalException;
+import org.junit.*;
+import org.sablecc.exception.*;
 
 public class TextArgumentTest {
 

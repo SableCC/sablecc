@@ -17,26 +17,11 @@
 
 package org.sablecc.sablecc.structure;
 
-import java.math.BigInteger;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.math.*;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.syntax3.node.AGrammar;
-import org.sablecc.sablecc.syntax3.node.AGroup;
-import org.sablecc.sablecc.syntax3.node.ALexerContext;
-import org.sablecc.sablecc.syntax3.node.ALexerInvestigator;
-import org.sablecc.sablecc.syntax3.node.ANormalNamedExpression;
-import org.sablecc.sablecc.syntax3.node.ANormalParserProduction;
-import org.sablecc.sablecc.syntax3.node.AParserContext;
-import org.sablecc.sablecc.syntax3.node.AParserInvestigator;
-import org.sablecc.sablecc.syntax3.node.ASelectionNamedExpression;
-import org.sablecc.sablecc.syntax3.node.ASelectionParserProduction;
-import org.sablecc.sablecc.syntax3.node.ATreeProduction;
-import org.sablecc.sablecc.syntax3.node.PCharacter;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
-import org.sablecc.sablecc.syntax3.node.TNumber;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class GlobalIndex {
 

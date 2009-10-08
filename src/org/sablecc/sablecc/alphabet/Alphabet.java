@@ -17,19 +17,10 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.util.Pair;
+import org.sablecc.exception.*;
+import org.sablecc.util.*;
 
 /**
  * An alphabet is a set of symbols. Two symbols of an alphabet may not contain

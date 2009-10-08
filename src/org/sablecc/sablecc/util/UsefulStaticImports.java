@@ -17,9 +17,9 @@
 
 package org.sablecc.sablecc.util;
 
-import java.math.BigInteger;
+import java.math.*;
 
-import org.sablecc.exception.InternalException;
+import org.sablecc.exception.*;
 
 /**
  * This class provides commonly used constants for static import.

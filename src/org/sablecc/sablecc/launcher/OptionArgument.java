@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.launcher;
 
-import org.sablecc.exception.InternalException;
+import org.sablecc.exception.*;
 
 /**
  * The option argument class encapsulates a command-line option argument and its

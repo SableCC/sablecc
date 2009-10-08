@@ -17,22 +17,12 @@
 
 package org.sablecc.objectmacro.structure;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.syntax3.node.AParam;
-import org.sablecc.objectmacro.syntax3.node.ATextBlock;
-import org.sablecc.objectmacro.syntax3.node.PParam;
-import org.sablecc.objectmacro.syntax3.node.PSourceFilePart;
-import org.sablecc.objectmacro.syntax3.node.PTextInsert;
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
-import org.sablecc.objectmacro.syntax3.node.TVar;
-import org.sablecc.objectmacro.util.Utils;
+import org.sablecc.exception.*;
+import org.sablecc.objectmacro.exception.*;
+import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.objectmacro.util.*;
 
 public abstract class Scope {
 

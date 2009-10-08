@@ -17,11 +17,9 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.sablecc.automaton.Automaton;
-import org.sablecc.sablecc.syntax3.node.ANameUnit;
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
-import org.sablecc.sablecc.syntax3.node.Token;
-import org.sablecc.sablecc.util.Utils;
+import org.sablecc.sablecc.automaton.*;
+import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.sablecc.util.*;
 
 public class NameToken
         extends MatchedToken {

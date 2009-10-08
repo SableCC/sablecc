@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.util;
 
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class Utils {
 

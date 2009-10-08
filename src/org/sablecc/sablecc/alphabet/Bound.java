@@ -17,12 +17,11 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import static org.sablecc.sablecc.util.UsefulStaticImports.BI_126;
-import static org.sablecc.sablecc.util.UsefulStaticImports.BI_32;
+import static org.sablecc.sablecc.util.UsefulStaticImports.*;
 
-import java.math.BigInteger;
+import java.math.*;
 
-import org.sablecc.exception.InternalException;
+import org.sablecc.exception.*;
 
 /**
  * A bound is a value that is used to construct intervals.

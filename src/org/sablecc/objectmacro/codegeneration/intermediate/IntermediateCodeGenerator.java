@@ -17,14 +17,11 @@
 
 package org.sablecc.objectmacro.codegeneration.intermediate;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
-import org.sablecc.objectmacro.codegeneration.CodeGenerator;
-import org.sablecc.objectmacro.codegeneration.IntermediateRepresentation;
-import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.util.Strictness;
+import org.sablecc.objectmacro.codegeneration.*;
+import org.sablecc.objectmacro.exception.*;
+import org.sablecc.util.*;
 
 public class IntermediateCodeGenerator
         extends CodeGenerator {

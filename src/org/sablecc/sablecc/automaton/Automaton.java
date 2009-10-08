@@ -17,38 +17,18 @@
 
 package org.sablecc.sablecc.automaton;
 
-import static java.math.BigInteger.ONE;
-import static java.math.BigInteger.ZERO;
-import static org.sablecc.sablecc.util.UsefulStaticImports.LINE_SEPARATOR;
+import static java.math.BigInteger.*;
+import static org.sablecc.sablecc.util.UsefulStaticImports.*;
 
-import java.math.BigInteger;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Map.Entry;
+import java.math.*;
+import java.util.*;
+import java.util.Map.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.alphabet.Alphabet;
-import org.sablecc.sablecc.alphabet.AlphabetMergeResult;
-import org.sablecc.sablecc.alphabet.Bound;
-import org.sablecc.sablecc.alphabet.Interval;
-import org.sablecc.sablecc.alphabet.RichSymbol;
-import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.structure.Context;
-import org.sablecc.sablecc.structure.MatchedToken;
-import org.sablecc.util.ComponentFinder;
-import org.sablecc.util.Pair;
-import org.sablecc.util.PairExtractor;
-import org.sablecc.util.Progeny;
-import org.sablecc.util.WorkSet;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.structure.*;
+import org.sablecc.util.*;
 
 /**
  * An instance of this class represents a finite automaton.

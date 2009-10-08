@@ -17,15 +17,10 @@
 
 package org.sablecc.sablecc.automaton;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.alphabet.RichSymbol;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.alphabet.*;
 
 /**
  * An instance of this class represents a state in a finite automaton.

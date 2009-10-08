@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import org.sablecc.exception.InternalException;
+import org.sablecc.exception.*;
 
 /**
  * An interval is defined by a lower bound and an upper bound.

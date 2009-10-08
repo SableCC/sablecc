@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import org.sablecc.exception.InternalException;
+import org.sablecc.exception.*;
 
 /**
  * A rich symbol is a symbol augmented with lookahead information.

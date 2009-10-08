@@ -17,8 +17,8 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.sablecc.exception.CompilerException;
-import org.sablecc.sablecc.syntax3.node.ALexerPriority;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class Priority {
 

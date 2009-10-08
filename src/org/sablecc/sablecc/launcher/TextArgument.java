@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.launcher;
 
-import org.sablecc.exception.InternalException;
+import org.sablecc.exception.*;
 
 /**
  * The text argument class encapsulates the text of a command-line text

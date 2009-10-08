@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public abstract class Method {
 

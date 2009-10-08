@@ -17,11 +17,9 @@
 
 package ticket39;
 
-import org.junit.Test;
-import org.sablecc.sablecc.alphabet.Bound;
-import org.sablecc.sablecc.alphabet.Interval;
-import org.sablecc.sablecc.alphabet.Symbol;
-import org.sablecc.sablecc.automaton.Automaton;
+import org.junit.*;
+import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.sablecc.automaton.*;
 
 public class PartitioningBug {
 

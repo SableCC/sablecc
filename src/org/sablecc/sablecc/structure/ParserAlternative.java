@@ -17,8 +17,8 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.sablecc.syntax3.node.AParserAlternative;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class ParserAlternative
         extends Alternative {

@@ -17,15 +17,11 @@
 
 package org.sablecc.sablecc.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.sablecc.exception.InternalException;
-import org.sablecc.util.WorkSet;
+import org.junit.*;
+import org.sablecc.exception.*;
+import org.sablecc.util.*;
 
 public class WorkSetTest {
 
