@@ -295,10 +295,29 @@ public class SableCC {
             throw CompilerException.inputError(grammarFile.toString(), e);
         }
 
-        GlobalIndex globalIndex = verifySemantics(ast, strictness, verbosity);
-        Automaton lexer = computeLexer(globalIndex);
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println(" Verifying semantics");
+            break;
+        }
+
+        GlobalIndex globalIndex = verifySemantics(ast, strictness);
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println(" Computing lexer");
+            break;
+        }
+
+        Automaton lexer = computeLexer(globalIndex, verbosity);
 
         if (generateCode) {
+            switch (verbosity) {
+            case VERBOSE:
+                System.out.println(" Generating code");
+                break;
+            }
+
             if (targetLanguage.equals("java")) {
                 generateJavaLexer(destinationDirectory, destinationPackage,
                         globalIndex, lexer);
@@ -315,14 +334,7 @@ public class SableCC {
 
     private static GlobalIndex verifySemantics(
             Start ast,
-            Strictness strictness,
-            Verbosity verbosity) {
-
-        switch (verbosity) {
-        case VERBOSE:
-            System.out.println(" Verifying semantics");
-            break;
-        }
+            Strictness strictness) {
 
         GlobalIndex globalIndex = new GlobalIndex();
 
@@ -336,10 +348,18 @@ public class SableCC {
     }
 
     private static Automaton computeLexer(
-            GlobalIndex globalIndex) {
+            GlobalIndex globalIndex,
+            Verbosity verbosity) {
 
         for (NormalExpression normalExpression : globalIndex
                 .getNormalNamedExpressionLinearization()) {
+
+            switch (verbosity) {
+            case VERBOSE:
+                System.out.println("  - "
+                        + normalExpression.getNameToken().getText());
+                break;
+            }
 
             Automaton automaton = RegularExpressionEvaluator
                     .evaluateExpression(globalIndex, normalExpression
@@ -348,11 +368,23 @@ public class SableCC {
             normalExpression.setAutomaton(automaton);
         }
 
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println("  Computing automaton");
+            break;
+        }
+
         Context context = globalIndex.getContexts().iterator().next();
         Automaton lexerAutomaton = Automaton.getEmptyAutomaton();
 
         for (MatchedToken matchedToken : context.getMatchedTokens()) {
             lexerAutomaton = lexerAutomaton.or(matchedToken.getAutomaton());
+        }
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println("  Minimizing automaton");
+            break;
         }
 
         lexerAutomaton = lexerAutomaton.withPriorities(context).withMarkers()
