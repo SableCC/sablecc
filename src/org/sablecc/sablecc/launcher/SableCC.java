@@ -338,7 +338,7 @@ public class SableCC {
 
         GlobalIndex globalIndex = new GlobalIndex();
 
-        ast.apply(new SimpleLexerRestricter());
+        ast.apply(new SimpleLexerAndParserRestricter());
         ast.apply(new DeclarationCollector(globalIndex));
         ast.apply(new ExpressionVerifier(globalIndex));
         ast.apply(new CyclicExpressionDetector(globalIndex));
