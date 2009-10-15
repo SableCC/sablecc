@@ -18,11 +18,10 @@
 package org.sablecc.sablecc.walker;
 
 import org.sablecc.sablecc.exception.*;
-import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class SimpleLexerAndParserRestricter
-        extends DepthFirstAdapter {
+        extends Walker {
 
     @Override
     public void inASelectionNamedExpression(

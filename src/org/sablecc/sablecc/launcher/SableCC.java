@@ -338,11 +338,14 @@ public class SableCC {
 
         GlobalIndex globalIndex = new GlobalIndex();
 
-        ast.apply(new SimpleLexerAndParserRestricter());
-        ast.apply(new DeclarationCollector(globalIndex));
-        ast.apply(new ExpressionVerifier(globalIndex));
-        ast.apply(new CyclicExpressionDetector(globalIndex));
-        ast.apply(new LexerContextVerifier(globalIndex));
+        new SimpleLexerAndParserRestricter().visit(ast);
+
+        new GlobalDeclarationCollector(globalIndex).visit(ast);
+        new LexerDeclarationCollector(globalIndex).visit(ast);
+        new LexerPriorityCollector(globalIndex).visit(ast);
+
+        new ExpressionVerifier(globalIndex).visit(ast);
+        new CyclicExpressionDetector(globalIndex).visit(ast);
 
         return globalIndex;
     }
