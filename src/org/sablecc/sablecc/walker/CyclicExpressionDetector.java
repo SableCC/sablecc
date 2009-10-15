@@ -22,12 +22,11 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.structure.*;
-import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.util.*;
 
 public class CyclicExpressionDetector
-        extends DepthFirstAdapter {
+        extends Walker {
 
     private final GlobalIndex globalIndex;
 

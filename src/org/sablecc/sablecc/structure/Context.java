@@ -232,19 +232,39 @@ public class Context {
         this.matchedTokens.add(matchedToken);
     }
 
-    public MatchedToken getMatchedToken(
+    public MatchedToken getMatchedTokenOrNull(
             ANameUnit node) {
 
         TIdentifier nameToken = node.getIdentifier();
+
+        // check that it's a valid name
+        this.globalIndex.getParserResolution(nameToken);
+
         MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
                 .getText());
 
-        if (matchedToken == null) {
-            // check that it's a valid name
-            this.globalIndex.getParserResolution(nameToken);
+        return matchedToken;
+    }
 
+    public MatchedToken getMatchedToken(
+            ANameUnit node) {
+
+        MatchedToken matchedToken = getMatchedTokenOrNull(node);
+
+        if (matchedToken == null) {
+            TIdentifier nameToken = node.getIdentifier();
             throw CompilerException.notAToken(nameToken);
         }
+
+        return matchedToken;
+    }
+
+    public MatchedToken getMatchedTokenOrNull(
+            AStringUnit node) {
+
+        Token nameToken = node.getString();
+        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
+                .getText());
 
         return matchedToken;
     }
@@ -252,13 +272,22 @@ public class Context {
     public MatchedToken getMatchedToken(
             AStringUnit node) {
 
-        Token nameToken = node.getString();
-        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
-                .getText());
+        MatchedToken matchedToken = getMatchedTokenOrNull(node);
 
         if (matchedToken == null) {
+            Token nameToken = node.getString();
             throw CompilerException.notAToken(nameToken);
         }
+
+        return matchedToken;
+    }
+
+    public MatchedToken getMatchedTokenOrNull(
+            AEpsilonUnit node) {
+
+        Token nameToken = node.getEpsilon();
+        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
+                .getText());
 
         return matchedToken;
     }
@@ -266,13 +295,22 @@ public class Context {
     public MatchedToken getMatchedToken(
             AEpsilonUnit node) {
 
-        Token nameToken = node.getEpsilon();
-        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
-                .getText());
+        MatchedToken matchedToken = getMatchedTokenOrNull(node);
 
         if (matchedToken == null) {
+            Token nameToken = node.getEpsilon();
             throw CompilerException.notAToken(nameToken);
         }
+
+        return matchedToken;
+    }
+
+    public MatchedToken getMatchedTokenOrNull(
+            AAnyUnit node) {
+
+        Token nameToken = node.getAnyKeyword();
+        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
+                .getText());
 
         return matchedToken;
     }
@@ -280,13 +318,22 @@ public class Context {
     public MatchedToken getMatchedToken(
             AAnyUnit node) {
 
-        Token nameToken = node.getAnyKeyword();
-        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
-                .getText());
+        MatchedToken matchedToken = getMatchedTokenOrNull(node);
 
         if (matchedToken == null) {
+            Token nameToken = node.getAnyKeyword();
             throw CompilerException.notAToken(nameToken);
         }
+
+        return matchedToken;
+    }
+
+    public MatchedToken getMatchedTokenOrNull(
+            ACharCharacter node) {
+
+        Token nameToken = node.getChar();
+        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
+                .getText());
 
         return matchedToken;
     }
@@ -294,13 +341,22 @@ public class Context {
     public MatchedToken getMatchedToken(
             ACharCharacter node) {
 
-        Token nameToken = node.getChar();
-        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
-                .getText());
+        MatchedToken matchedToken = getMatchedTokenOrNull(node);
 
         if (matchedToken == null) {
+            Token nameToken = node.getChar();
             throw CompilerException.notAToken(nameToken);
         }
+
+        return matchedToken;
+    }
+
+    public MatchedToken getMatchedTokenOrNull(
+            ADecCharacter node) {
+
+        Token nameToken = node.getDecChar();
+        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
+                .getText());
 
         return matchedToken;
     }
@@ -308,13 +364,22 @@ public class Context {
     public MatchedToken getMatchedToken(
             ADecCharacter node) {
 
-        Token nameToken = node.getDecChar();
-        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
-                .getText());
+        MatchedToken matchedToken = getMatchedTokenOrNull(node);
 
         if (matchedToken == null) {
+            Token nameToken = node.getDecChar();
             throw CompilerException.notAToken(nameToken);
         }
+
+        return matchedToken;
+    }
+
+    public MatchedToken getMatchedTokenOrNull(
+            AHexCharacter node) {
+
+        Token nameToken = node.getHexChar();
+        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
+                .getText());
 
         return matchedToken;
     }
@@ -322,11 +387,10 @@ public class Context {
     public MatchedToken getMatchedToken(
             AHexCharacter node) {
 
-        Token nameToken = node.getHexChar();
-        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
-                .getText());
+        MatchedToken matchedToken = getMatchedTokenOrNull(node);
 
         if (matchedToken == null) {
+            Token nameToken = node.getHexChar();
             throw CompilerException.notAToken(nameToken);
         }
 
