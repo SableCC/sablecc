@@ -119,4 +119,9 @@ public class Alternative {
             element.stabilize();
         }
     }
+
+    public String getFullName() {
+
+        return this.production.getName() + "." + getName();
+    }
 }

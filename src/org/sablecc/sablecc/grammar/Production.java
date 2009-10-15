@@ -86,4 +86,9 @@ public class Production {
             alternative.stabilize();
         }
     }
+
+    public String getName() {
+
+        return this.name;
+    }
 }

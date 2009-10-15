@@ -31,4 +31,9 @@ public class TokenElement
         super(alternative, position, shortName);
         this.token = token;
     }
+
+    public Token getToken() {
+
+        return this.token;
+    }
 }
