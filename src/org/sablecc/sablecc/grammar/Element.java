@@ -17,13 +17,55 @@
 
 package org.sablecc.sablecc.grammar;
 
+import org.sablecc.exception.*;
+
 public abstract class Element {
-    
+
     private final Alternative alternative;
 
+    private final int position;
+
+    private final String shortName;
+
+    private String name;
+
+    private boolean isStable;
+
     Element(
-            Alternative alternative) {
+            Alternative alternative,
+            int position,
+            String shortName) {
 
         this.alternative = alternative;
+        this.position = position;
+        this.shortName = shortName;
+    }
+
+    public String getShortName() {
+
+        return this.shortName;
+    }
+
+    void setName(
+            String name) {
+
+        if (this.isStable) {
+            throw new InternalException("element is stable");
+        }
+        this.name = name;
+    }
+
+    public String getName() {
+
+        return this.name;
+    }
+
+    void stabilize() {
+
+        if (this.isStable) {
+            throw new InternalException("element is already stable");
+        }
+
+        this.isStable = true;
     }
 }

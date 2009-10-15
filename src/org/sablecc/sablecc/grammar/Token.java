@@ -17,6 +17,17 @@
 
 package org.sablecc.sablecc.grammar;
 
-public abstract class Token {
+public class Token {
 
+    private final Grammar grammar;
+
+    private final String name;
+
+    Token(
+            Grammar grammar,
+            String name) {
+
+        this.grammar = grammar;
+        this.name = name;
+    }
 }

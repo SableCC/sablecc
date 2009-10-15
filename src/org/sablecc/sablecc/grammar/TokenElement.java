@@ -24,9 +24,11 @@ public class TokenElement
 
     TokenElement(
             Alternative alternative,
+            int position,
+            String shortName,
             Token token) {
 
-        super(alternative);
+        super(alternative, position, shortName);
         this.token = token;
     }
 }

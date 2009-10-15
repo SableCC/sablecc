@@ -19,9 +19,67 @@ package org.sablecc.sablecc.grammar;
 
 import java.util.*;
 
+import org.sablecc.exception.*;
+
 public class Grammar {
 
-    private final Set<Production> productions = new LinkedHashSet<Production>();
+    private final Map<String, Production> nameToProductionMap = new LinkedHashMap<String, Production>();
 
-    private final Set<Token> tokens = new LinkedHashSet<Token>();
+    private final Map<String, Token> nameToTokenMap = new LinkedHashMap<String, Token>();
+
+    private boolean isStable;
+
+    public Grammar(
+            String firstProductionName) {
+
+        Production firstProduction = getProduction(firstProductionName);
+
+        Production startProduction = getProduction("$Start");
+        Alternative startAlternative = startProduction.addAlternative("");
+        startAlternative.addProductionElement("", firstProduction);
+        startAlternative.addTokenElement("", getToken("$End"));
+    }
+
+    public Production getProduction(
+            String name) {
+
+        Production production = this.nameToProductionMap.get(name);
+
+        if (production == null) {
+            if (this.isStable) {
+                throw new InternalException("grammar is stable");
+            }
+            production = new Production(this, name);
+            this.nameToProductionMap.put(name, production);
+        }
+
+        return production;
+    }
+
+    public Token getToken(
+            String name) {
+
+        Token token = this.nameToTokenMap.get(name);
+
+        if (token == null) {
+            if (this.isStable) {
+                throw new InternalException("grammar is stable");
+            }
+            token = new Token(this, name);
+            this.nameToTokenMap.put(name, token);
+        }
+
+        return token;
+    }
+
+    public void stabilize() {
+
+        if (this.isStable) {
+            throw new InternalException("grammar is already stable");
+        }
+        this.isStable = true;
+        for (Production production : this.nameToProductionMap.values()) {
+            production.stabilize();
+        }
+    }
 }
