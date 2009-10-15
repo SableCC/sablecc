@@ -68,4 +68,14 @@ public abstract class Element {
 
         this.isStable = true;
     }
+
+    public String getFullName() {
+
+        return this.alternative.getFullName() + "." + getName();
+    }
+
+    public int getPosition() {
+
+        return this.position;
+    }
 }

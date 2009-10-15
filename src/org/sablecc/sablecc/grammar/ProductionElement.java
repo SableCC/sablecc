@@ -31,4 +31,9 @@ public class ProductionElement
         super(alternative, position, shortName);
         this.production = production;
     }
+
+    public Production getProduction() {
+
+        return this.production;
+    }
 }

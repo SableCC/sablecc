@@ -30,4 +30,9 @@ public class Token {
         this.grammar = grammar;
         this.name = name;
     }
+
+    public String getName() {
+
+        return this.name;
+    }
 }
