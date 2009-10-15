@@ -24,9 +24,11 @@ public class ProductionElement
 
     ProductionElement(
             Alternative alternative,
+            int position,
+            String shortName,
             Production production) {
 
-        super(alternative);
+        super(alternative, position, shortName);
         this.production = production;
     }
 }

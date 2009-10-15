@@ -19,13 +19,17 @@ package org.sablecc.sablecc.grammar;
 
 import java.util.*;
 
+import org.sablecc.exception.*;
+
 public class Production {
 
     private final Grammar grammar;
-    
+
     private final String name;
 
-    private final Set<Alternative> alternatives = new LinkedHashSet<Alternative>();
+    private final LinkedList<Alternative> alternatives = new LinkedList<Alternative>();
+
+    private boolean isStable;
 
     Production(
             Grammar grammar,
@@ -33,5 +37,53 @@ public class Production {
 
         this.grammar = grammar;
         this.name = name;
+    }
+
+    public Alternative addAlternative(
+            String shortName) {
+
+        if (this.isStable) {
+            throw new InternalException("production is stable");
+        }
+        Alternative alternative = new Alternative(this, shortName);
+        this.alternatives.add(alternative);
+        return alternative;
+    }
+
+    void stabilize() {
+
+        if (this.isStable) {
+            throw new InternalException("production is already stable");
+        }
+        this.isStable = true;
+
+        Map<String, List<Alternative>> nameToAlternativeListMap = new LinkedHashMap<String, List<Alternative>>();
+        for (Alternative alternative : this.alternatives) {
+            String shortName = alternative.getShortName();
+            List<Alternative> alternativeList = nameToAlternativeListMap
+                    .get(shortName);
+            if (alternativeList == null) {
+                alternativeList = new LinkedList<Alternative>();
+                nameToAlternativeListMap.put(shortName, alternativeList);
+            }
+            alternativeList.add(alternative);
+        }
+        for (List<Alternative> alternativeList : nameToAlternativeListMap
+                .values()) {
+            if (alternativeList.size() == 1) {
+                Alternative alternative = alternativeList.get(0);
+                alternative.setName(alternative.getShortName());
+            }
+            else {
+                int index = 1;
+                for (Alternative alternative : alternativeList) {
+                    alternative.setName(alternative.getShortName() + "$"
+                            + index++);
+                }
+            }
+        }
+        for (Alternative alternative : this.alternatives) {
+            alternative.stabilize();
+        }
     }
 }
