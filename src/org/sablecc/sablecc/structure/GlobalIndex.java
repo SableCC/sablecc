@@ -21,6 +21,7 @@ import java.math.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.grammar.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class GlobalIndex {
@@ -40,6 +41,8 @@ public class GlobalIndex {
     private final Map<PCharacter, BigInteger> characterValues = new LinkedHashMap<PCharacter, BigInteger>();
 
     private Set<NormalExpression> normalNamedExpressionLinearization;
+
+    private Grammar grammar;
 
     public void setLanguage(
             AGrammar node) {
@@ -271,5 +274,16 @@ public class GlobalIndex {
     public Set<Context> getContexts() {
 
         return this.contextNameSpace.getContexts();
+    }
+
+    public void setGrammar(
+            Grammar grammar) {
+
+        this.grammar = grammar;
+    }
+
+    public Grammar getGrammar() {
+
+        return this.grammar;
     }
 }
