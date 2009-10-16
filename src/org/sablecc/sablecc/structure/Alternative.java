@@ -33,7 +33,7 @@ public abstract class Alternative
     void setInternalName(
             String internalName) {
 
-        if (internalName != null) {
+        if (this.internalName != null) {
             throw new InternalException("internalName is already set");
         }
 
