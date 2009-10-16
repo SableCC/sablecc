@@ -100,7 +100,8 @@ public class SableCC {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             pw.flush();
-            System.err.print(new MInternalError(sw.toString(), e.getMessage()));
+            String message = e.getMessage() == null ? "" : e.getMessage();
+            System.err.print(new MInternalError(sw.toString(), message));
             System.err.flush();
             System.exit(1);
         }
