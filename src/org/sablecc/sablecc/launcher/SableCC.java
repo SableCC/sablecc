@@ -331,6 +331,13 @@ public class SableCC {
                 throw new InternalException("unimplemented");
             }
         }
+
+        switch (verbosity) {
+        case INFORMATIVE:
+        case VERBOSE:
+            System.out.println("Done compiling \"" + grammarFile + "\"");
+            break;
+        }
     }
 
     private static GlobalIndex verifySemantics(
