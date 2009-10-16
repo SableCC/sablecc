@@ -36,4 +36,10 @@ public class ProductionElement
 
         return this.production;
     }
+
+    @Override
+    public String toString() {
+
+        return "[" + getName() + ":]" + this.production.getName();
+    }
 }

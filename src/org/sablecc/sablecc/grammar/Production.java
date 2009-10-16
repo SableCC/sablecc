@@ -72,7 +72,13 @@ public class Production {
                 .values()) {
             if (alternativeList.size() == 1) {
                 Alternative alternative = alternativeList.get(0);
-                alternative.setName(alternative.getShortName());
+                if (alternative.getShortName().equals("")
+                        && this.alternatives.size() > 1) {
+                    alternative.setName("$1");
+                }
+                else {
+                    alternative.setName(alternative.getShortName());
+                }
             }
             else {
                 int index = 1;
@@ -90,5 +96,28 @@ public class Production {
     public String getName() {
 
         return this.name;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        sb.append("  ");
+        sb.append(getName());
+        for (Alternative alternative : this.alternatives) {
+            if (first) {
+                first = false;
+                sb.append(" =");
+            }
+            else {
+                sb.append(" |");
+            }
+            sb.append(System.getProperty("line.separator"));
+            sb.append("    ");
+            sb.append(alternative);
+        }
+        sb.append(";");
+        return sb.toString();
     }
 }

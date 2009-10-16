@@ -78,4 +78,7 @@ public abstract class Element {
 
         return this.position;
     }
+
+    @Override
+    public abstract String toString();
 }
