@@ -52,10 +52,10 @@ class ContextNameSpace {
         if (context == null) {
             context = new Context(this.globalIndex, name);
             this.nameToContextMap.put(name, context);
-            this.nodeToContextMap.put(node, context);
             this.contexts.add(context);
         }
 
+        this.nodeToContextMap.put(node, context);
         context.setDeclaration(node);
     }
 
@@ -83,10 +83,10 @@ class ContextNameSpace {
         if (context == null) {
             context = new Context(this.globalIndex, name);
             this.nameToContextMap.put(name, context);
-            this.nodeToContextMap.put(node, context);
             this.contexts.add(context);
         }
 
+        this.nodeToContextMap.put(node, context);
         context.setDeclaration(node);
     }
 
