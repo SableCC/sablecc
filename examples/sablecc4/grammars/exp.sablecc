@@ -18,8 +18,8 @@
 Language exp;
 
 Lexer
-  digit = '0'..'9';
   number = digit+;
+  digit = '0'..'9';
 
   Ignored
    ' ', #9, #10, #13;
