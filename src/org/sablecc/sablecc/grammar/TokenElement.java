@@ -36,4 +36,10 @@ public class TokenElement
 
         return this.token;
     }
+
+    @Override
+    public String toString() {
+
+        return "[" + getName() + ":]" + this.token.getName();
+    }
 }

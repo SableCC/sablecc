@@ -82,4 +82,18 @@ public class Grammar {
             production.stabilize();
         }
     }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Grammar{");
+        sb.append(System.getProperty("line.separator"));
+        for (Production production : this.nameToProductionMap.values()) {
+            sb.append(production);
+            sb.append(System.getProperty("line.separator"));
+        }
+        sb.append("}");
+        return sb.toString();
+    }
 }

@@ -124,4 +124,19 @@ public class Alternative {
 
         return this.production.getName() + "." + getName();
     }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        sb.append("{");
+        sb.append(getName());
+        sb.append(":}");
+        for (Element element : this.elements) {
+            sb.append(" ");
+            sb.append(element);
+        }
+        return sb.toString();
+    }
 }
