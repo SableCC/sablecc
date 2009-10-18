@@ -31,7 +31,7 @@ import org.sablecc.sablecc.codegeneration.java.macro.*;
 import org.sablecc.sablecc.codegeneration.sablecc3.*;
 import org.sablecc.sablecc.errormessage.*;
 import org.sablecc.sablecc.exception.*;
-import org.sablecc.sablecc.grammar.*;
+import org.sablecc.sablecc.lrautomaton.*;
 import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.node.*;

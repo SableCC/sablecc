@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.grammar;
+package org.sablecc.sablecc.lrautomaton;
 
 import java.util.*;
 

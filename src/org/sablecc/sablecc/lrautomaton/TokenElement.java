@@ -15,31 +15,31 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.grammar;
+package org.sablecc.sablecc.lrautomaton;
 
-public class ProductionElement
+public class TokenElement
         extends Element {
 
-    private final Production production;
+    private final Token token;
 
-    ProductionElement(
+    TokenElement(
             Alternative alternative,
             int position,
             String shortName,
-            Production production) {
+            Token token) {
 
         super(alternative, position, shortName);
-        this.production = production;
+        this.token = token;
     }
 
-    public Production getProduction() {
+    public Token getToken() {
 
-        return this.production;
+        return this.token;
     }
 
     @Override
     public String toString() {
 
-        return "[" + getName() + ":]" + this.production.getName();
+        return "[" + getName() + ":]" + this.token.getName();
     }
 }
