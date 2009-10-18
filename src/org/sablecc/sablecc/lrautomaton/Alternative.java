@@ -146,7 +146,6 @@ public class Alternative {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        boolean first = true;
         sb.append("{");
         sb.append(getName());
         sb.append(":}");
