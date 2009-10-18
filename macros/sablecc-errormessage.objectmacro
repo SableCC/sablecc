@@ -307,6 +307,14 @@ A conflict has been detected between the "$token1" and "$token2" tokens.
 An explicit priority must be added between these tokens.
 $end: lexer_conflict $
 
+$comment: ========== parser_useless_production ========== $
+
+$macro: parser_useless_production(name) $
+$insert: semantic_error_head $
+
+The "$name" production is useless; it cannot match any finite sentence.
+$end: parser_useless_production $
+
 $comment: ========== not_implemented ========== $
 
 $macro: not_implemented(feature, line, char) $

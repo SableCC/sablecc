@@ -33,6 +33,8 @@ public class Alternative {
 
     private boolean isStable;
 
+    private Integer shortestLength;
+
     Alternative(
             Production production,
             String shortName) {
@@ -138,5 +140,42 @@ public class Alternative {
             sb.append(element);
         }
         return sb.toString();
+    }
+
+    public Integer getShortestLength() {
+
+        return this.shortestLength;
+    }
+
+    public boolean computeShortestLength() {
+
+        Integer length = 0;
+
+        for (Element element : this.elements) {
+            if (element instanceof TokenElement) {
+                length++;
+            }
+            else {
+                ProductionElement productionElement = (ProductionElement) element;
+                Integer elementLength = productionElement.getProduction()
+                        .getShortestLength();
+                if (elementLength == null) {
+                    return false;
+                }
+                else {
+                    length += elementLength;
+                }
+            }
+        }
+
+        if (length != null) {
+            if (this.shortestLength == null
+                    || length.compareTo(this.shortestLength) < 0) {
+                this.shortestLength = length;
+                return true;
+            }
+        }
+
+        return false;
     }
 }

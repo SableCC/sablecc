@@ -31,6 +31,7 @@ import org.sablecc.sablecc.codegeneration.java.macro.*;
 import org.sablecc.sablecc.codegeneration.sablecc3.*;
 import org.sablecc.sablecc.errormessage.*;
 import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.grammar.*;
 import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.node.*;
@@ -312,6 +313,14 @@ public class SableCC {
 
         Automaton lexer = computeLexer(globalIndex, verbosity);
 
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println(" Computing parser");
+            break;
+        }
+
+        computeParser(globalIndex, verbosity);
+
         if (generateCode) {
             switch (verbosity) {
             case VERBOSE:
@@ -403,6 +412,14 @@ public class SableCC {
                 .minimal();
 
         return lexerAutomaton;
+    }
+
+    private static void computeParser(
+            GlobalIndex globalIndex,
+            Verbosity verbosity) {
+
+        Grammar grammar = globalIndex.getGrammar();
+        grammar.computeShortestLength();
     }
 
     private static void generateJavaLexer(
