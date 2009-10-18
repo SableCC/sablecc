@@ -231,6 +231,13 @@ public class CompilerException
                 matchedToken1.getName(), matchedToken2.getName()).toString());
     }
 
+    public static CompilerException parserUselessProduction(
+            String name) {
+
+        return new CompilerException(new MParserUselessProduction(name)
+                .toString());
+    }
+
     public static CompilerException notImplemented(
             Token token,
             String feature) {

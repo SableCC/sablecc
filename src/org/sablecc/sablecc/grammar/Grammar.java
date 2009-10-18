@@ -20,6 +20,7 @@ package org.sablecc.sablecc.grammar;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.exception.*;
 
 public class Grammar {
 
@@ -95,5 +96,25 @@ public class Grammar {
         }
         sb.append("}");
         return sb.toString();
+    }
+
+    public void computeShortestLength() {
+
+        boolean modified = true;
+        while (modified) {
+            modified = false;
+
+            for (Production production : this.nameToProductionMap.values()) {
+                modified = modified || production.computeShortestLength();
+            }
+        }
+
+        for (Production production : this.nameToProductionMap.values()) {
+            if (production.getShortestLength() == null) {
+                throw CompilerException.parserUselessProduction(production
+                        .getName());
+            }
+        }
+
     }
 }

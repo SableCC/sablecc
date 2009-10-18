@@ -31,6 +31,8 @@ public class Production {
 
     private boolean isStable;
 
+    private Integer shortestLength;
+
     Production(
             Grammar grammar,
             String name) {
@@ -119,5 +121,36 @@ public class Production {
         }
         sb.append(";");
         return sb.toString();
+    }
+
+    public Integer getShortestLength() {
+
+        return this.shortestLength;
+    }
+
+    public boolean computeShortestLength() {
+
+        Integer minLength = null;
+        boolean modified = false;
+
+        for (Alternative alternative : this.alternatives) {
+            modified = modified || alternative.computeShortestLength();
+            Integer length = alternative.getShortestLength();
+            if (length != null) {
+                if (minLength == null || length.compareTo(minLength) < 0) {
+                    minLength = length;
+                }
+            }
+        }
+
+        if (minLength != null) {
+            if (this.shortestLength == null
+                    || minLength.compareTo(this.shortestLength) < 0) {
+                this.shortestLength = minLength;
+                return true;
+            }
+        }
+
+        return modified;
     }
 }
