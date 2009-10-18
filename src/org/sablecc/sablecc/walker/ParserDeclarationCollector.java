@@ -18,9 +18,9 @@
 package org.sablecc.sablecc.walker;
 
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.grammar.*;
-import org.sablecc.sablecc.grammar.Alternative;
-import org.sablecc.sablecc.grammar.Production;
+import org.sablecc.sablecc.lrautomaton.*;
+import org.sablecc.sablecc.lrautomaton.Alternative;
+import org.sablecc.sablecc.lrautomaton.Production;
 import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.node.*;
 

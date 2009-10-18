@@ -21,7 +21,7 @@ import java.math.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.grammar.*;
+import org.sablecc.sablecc.lrautomaton.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class GlobalIndex {
