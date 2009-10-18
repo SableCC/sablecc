@@ -35,6 +35,8 @@ public class Alternative {
 
     private Integer shortestLength;
 
+    private ArrayList<Item> items;
+
     Alternative(
             Production production,
             String shortName) {
@@ -120,6 +122,19 @@ public class Alternative {
         for (Element element : this.elements) {
             element.stabilize();
         }
+
+        int position = 0;
+        for (Element element : this.elements) {
+            if (element instanceof TokenElement) {
+                this.items.add(new Item(this, position, ItemType.BEFORE_TOKEN));
+            }
+            else {
+                this.items.add(new Item(this, position,
+                        ItemType.BEFORE_PRODUCTION));
+            }
+            position++;
+        }
+        this.items.add(new Item(this, position, ItemType.END));
     }
 
     public String getFullName() {
@@ -177,5 +192,11 @@ public class Alternative {
         }
 
         return false;
+    }
+
+    public Item getItem(
+            int position) {
+
+        return this.items.get(position);
     }
 }
