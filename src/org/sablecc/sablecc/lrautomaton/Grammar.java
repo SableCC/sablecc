@@ -33,9 +33,9 @@ public class Grammar {
     public Grammar(
             String firstProductionName) {
 
+        Production startProduction = getProduction("$Start");
         Production firstProduction = getProduction(firstProductionName);
 
-        Production startProduction = getProduction("$Start");
         Alternative startAlternative = startProduction.addAlternative("");
         startAlternative.addProductionElement("", firstProduction);
         startAlternative.addTokenElement("", getToken("$End"));
