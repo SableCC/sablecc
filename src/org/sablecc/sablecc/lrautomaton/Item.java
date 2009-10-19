@@ -70,4 +70,9 @@ public class Item {
 
         return this.alternative.getFullName() + ":" + this.position;
     }
+
+    public Alternative getAlternative() {
+
+        return this.alternative;
+    }
 }

@@ -19,6 +19,7 @@ package org.sablecc.sablecc.lrautomaton;
 
 import java.util.*;
 
+import org.sablecc.exception.*;
 import org.sablecc.util.*;
 
 public class LRState {
@@ -32,6 +33,12 @@ public class LRState {
     private final Map<Token, LRState> tokenTransitions = new LinkedHashMap<Token, LRState>();
 
     private final Map<Production, LRState> productionTransitions = new LinkedHashMap<Production, LRState>();
+
+    private final Set<Item> shiftItems = new LinkedHashSet<Item>();
+
+    private final Set<Item> reduceItems = new LinkedHashSet<Item>();
+
+    private final Set<Action> actions = new LinkedHashSet<Action>();
 
     public LRState(
             LRAutomaton automaton,
@@ -57,6 +64,17 @@ public class LRState {
                     this.items.add(newItem);
                     workSet.add(newItem);
                 }
+            }
+        }
+
+        for (Item item : this.items) {
+            switch (item.getType()) {
+            case BEFORE_TOKEN:
+                this.shiftItems.add(item);
+                break;
+            case END:
+                this.reduceItems.add(item);
+                break;
             }
         }
     }
@@ -129,5 +147,23 @@ public class LRState {
         sb.append("}");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
+    }
+
+    public void computeActions() {
+
+        // LR(0) shift state
+        if (this.reduceItems.size() == 0) {
+            this.actions.add(new ShiftAction(null));
+            return;
+        }
+
+        // LR(0) reduce state
+        if (this.shiftItems.size() == 0 && this.reduceItems.size() == 1) {
+            this.actions.add(new ReduceAction(null, this.reduceItems.iterator()
+                    .next().getAlternative()));
+            return;
+        }
+
+        throw new InternalException("LR(0) conflict in state" + this);
     }
 }
