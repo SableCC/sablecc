@@ -36,6 +36,10 @@ public class LRAutomaton {
         LRState startState = new LRState(this, startSet);
         this.coreItemSetToLRStateMap.put(startSet, startState);
         startState.computeTransitions();
+
+        for (LRState state : this.coreItemSetToLRStateMap.values()) {
+            state.computeActions();
+        }
     }
 
     public LRState getState(
