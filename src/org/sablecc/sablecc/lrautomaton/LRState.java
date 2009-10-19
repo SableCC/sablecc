@@ -149,11 +149,19 @@ public class LRState {
         return sb.toString();
     }
 
-    public void computeActions() {
+    public void computeActions(
+            Verbosity verbosity) {
 
         // LR(0) shift state
         if (this.reduceItems.size() == 0) {
             this.actions.add(new ShiftAction(null));
+
+            switch (verbosity) {
+            case VERBOSE:
+                System.out.println("   - LR(0) shift");
+                break;
+            }
+
             return;
         }
 
@@ -161,6 +169,13 @@ public class LRState {
         if (this.shiftItems.size() == 0 && this.reduceItems.size() == 1) {
             this.actions.add(new ReduceAction(null, this.reduceItems.iterator()
                     .next().getAlternative()));
+
+            switch (verbosity) {
+            case VERBOSE:
+                System.out.println("   - LR(0) reduce");
+                break;
+            }
+
             return;
         }
 

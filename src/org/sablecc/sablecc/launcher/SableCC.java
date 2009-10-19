@@ -419,8 +419,16 @@ public class SableCC {
             Verbosity verbosity) {
 
         Grammar grammar = globalIndex.getGrammar();
-        grammar.computeShortestLength();
-        LRAutomaton automaton = new LRAutomaton(grammar);
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println("  Detecting useless productions");
+            break;
+        }
+
+        grammar.computeShortestLengthAndDetectUselessProductions();
+
+        LRAutomaton automaton = new LRAutomaton(grammar, verbosity);
     }
 
     private static void generateJavaLexer(
