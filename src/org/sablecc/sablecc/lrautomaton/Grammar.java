@@ -98,7 +98,7 @@ public class Grammar {
         return sb.toString();
     }
 
-    public void computeShortestLength() {
+    public void computeShortestLengthAndDetectUselessProductions() {
 
         boolean modified = true;
         while (modified) {

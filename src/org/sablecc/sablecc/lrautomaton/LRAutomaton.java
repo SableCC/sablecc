@@ -19,6 +19,8 @@ package org.sablecc.sablecc.lrautomaton;
 
 import java.util.*;
 
+import org.sablecc.util.*;
+
 public class LRAutomaton {
 
     private final Grammar grammar;
@@ -26,9 +28,17 @@ public class LRAutomaton {
     private final Map<Set<Item>, LRState> coreItemSetToLRStateMap = new LinkedHashMap<Set<Item>, LRState>();
 
     public LRAutomaton(
-            Grammar grammar) {
+            Grammar grammar,
+            Verbosity verbosity) {
 
         this.grammar = grammar;
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println("  Computing LR(0) automaton");
+            break;
+
+        }
 
         Set<Item> startSet = new LinkedHashSet<Item>();
         startSet.add(grammar.getProduction("$Start").getAlternatives().get(0)
@@ -37,8 +47,15 @@ public class LRAutomaton {
         this.coreItemSetToLRStateMap.put(startSet, startState);
         startState.computeTransitions();
 
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println("  Analyzing "
+                    + this.coreItemSetToLRStateMap.size() + " states");
+            break;
+        }
+
         for (LRState state : this.coreItemSetToLRStateMap.values()) {
-            state.computeActions();
+            state.computeActions(verbosity);
         }
     }
 
