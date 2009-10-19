@@ -123,6 +123,7 @@ public class Alternative {
             element.stabilize();
         }
 
+        this.items = new ArrayList<Item>(this.elements.size() + 1);
         int position = 0;
         for (Element element : this.elements) {
             if (element instanceof TokenElement) {
