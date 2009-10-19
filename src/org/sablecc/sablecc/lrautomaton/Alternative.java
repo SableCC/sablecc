@@ -199,4 +199,10 @@ public class Alternative {
 
         return this.items.get(position);
     }
+
+    public Element getElement(
+            int position) {
+
+        return this.elements.get(position);
+    }
 }

@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.lrautomaton;
 
+import org.sablecc.exception.*;
+
 public class Item {
 
     private final Alternative alternative;
@@ -33,5 +35,39 @@ public class Item {
         this.alternative = alternative;
         this.position = position;
         this.itemType = itemType;
+    }
+
+    public ItemType getType() {
+
+        return this.itemType;
+    }
+
+    public ProductionElement getProductionElement() {
+
+        if (this.itemType != ItemType.BEFORE_PRODUCTION) {
+            throw new InternalException("invalid call");
+        }
+
+        return (ProductionElement) this.alternative.getElement(this.position);
+    }
+
+    public TokenElement getTokenElement() {
+
+        if (this.itemType != ItemType.BEFORE_TOKEN) {
+            throw new InternalException("invalid call");
+        }
+
+        return (TokenElement) this.alternative.getElement(this.position);
+    }
+
+    public Item next() {
+
+        return this.alternative.getItem(this.position + 1);
+    }
+
+    @Override
+    public String toString() {
+
+        return this.alternative.getFullName() + ":" + this.position;
     }
 }

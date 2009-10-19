@@ -420,6 +420,7 @@ public class SableCC {
 
         Grammar grammar = globalIndex.getGrammar();
         grammar.computeShortestLength();
+        LRAutomaton automaton = new LRAutomaton(grammar);
     }
 
     private static void generateJavaLexer(
