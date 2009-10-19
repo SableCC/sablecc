@@ -153,4 +153,9 @@ public class Production {
 
         return modified;
     }
+
+    public LinkedList<Alternative> getAlternatives() {
+
+        return this.alternatives;
+    }
 }
