@@ -21,13 +21,16 @@ import java.util.*;
 
 public abstract class Action {
 
-    private final Set<LookCondition> lookConditions = new LinkedHashSet<LookCondition>();
+    private final Map<Integer, Set<Item>> distanceToItemSetMap;
 
     Action(
-            Set<LookCondition> lookConditions) {
+            Map<Integer, Set<Item>> distanceToItemSetMap) {
 
-        if (lookConditions != null) {
-            this.lookConditions.addAll(lookConditions);
+        if (distanceToItemSetMap != null) {
+            this.distanceToItemSetMap = distanceToItemSetMap;
+        }
+        else {
+            this.distanceToItemSetMap = new LinkedHashMap<Integer, Set<Item>>();
         }
     }
 }

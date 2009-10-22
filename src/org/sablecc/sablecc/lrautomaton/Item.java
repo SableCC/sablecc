@@ -17,9 +17,12 @@
 
 package org.sablecc.sablecc.lrautomaton;
 
+import java.util.*;
+
 import org.sablecc.exception.*;
 
-public class Item {
+public class Item
+        implements Ahead {
 
     private final Alternative alternative;
 
@@ -74,5 +77,88 @@ public class Item {
     public Alternative getAlternative() {
 
         return this.alternative;
+    }
+
+    public int getPosition() {
+
+        return this.position;
+    }
+
+    public Set<Ahead> look(
+            int distance) {
+
+        if (distance < 1) {
+            throw new InternalException("invalid distance");
+        }
+
+        if (this.position == this.alternative.getElements().size()) {
+            Set<Ahead> result = new LinkedHashSet<Ahead>();
+            result.add(Farther.get(distance));
+            return result;
+        }
+
+        Element element = this.alternative.getElement(this.position);
+        if (element instanceof TokenElement) {
+            if (distance == 1) {
+                Set<Ahead> result = new LinkedHashSet<Ahead>();
+                result.add(this);
+                return result;
+            }
+
+            return next().look(distance - 1);
+        }
+
+        ProductionElement productionElement = (ProductionElement) element;
+        Production production = productionElement.getProduction();
+        Set<Ahead> result = new LinkedHashSet<Ahead>();
+        for (Ahead ahead : production.look(distance)) {
+            if (ahead instanceof Item) {
+                result.add(ahead);
+            }
+            else {
+                Farther farther = (Farther) ahead;
+                result.addAll(next().look(farther.getDistance()));
+            }
+        }
+        return result;
+    }
+
+    public Set<Ahead> tryLook(
+            int distance) {
+
+        if (distance < 1) {
+            throw new InternalException("invalid distance");
+        }
+
+        if (this.position == this.alternative.getElements().size()) {
+            Set<Ahead> result = new LinkedHashSet<Ahead>();
+            result.add(Farther.get(distance));
+            return result;
+        }
+
+        Element element = this.alternative.getElement(this.position);
+        if (element instanceof TokenElement) {
+            if (distance == 1) {
+                Set<Ahead> result = new LinkedHashSet<Ahead>();
+                result.add(this);
+                return result;
+            }
+
+            return next().tryLook(distance - 1);
+        }
+
+        ProductionElement productionElement = (ProductionElement) element;
+        Production production = productionElement.getProduction();
+        Set<Ahead> result = new LinkedHashSet<Ahead>();
+        for (Ahead ahead : production.tryLook(distance)) {
+            if (ahead instanceof Item) {
+                result.add(ahead);
+            }
+            else {
+                Farther farther = (Farther) ahead;
+                result.addAll(next().tryLook(farther.getDistance()));
+            }
+        }
+        return result;
     }
 }

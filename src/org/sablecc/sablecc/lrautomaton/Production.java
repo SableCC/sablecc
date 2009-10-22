@@ -33,6 +33,8 @@ public class Production {
 
     private Integer shortestLength;
 
+    private final Map<Integer, Set<Ahead>> distanceToAheadSetMap = new LinkedHashMap<Integer, Set<Ahead>>();
+
     Production(
             Grammar grammar,
             String name) {
@@ -128,7 +130,7 @@ public class Production {
         return this.shortestLength;
     }
 
-    public boolean computeShortestLength() {
+    boolean computeShortestLength() {
 
         Integer minLength = null;
         boolean modified = false;
@@ -157,5 +159,70 @@ public class Production {
     public LinkedList<Alternative> getAlternatives() {
 
         return this.alternatives;
+    }
+
+    public Set<Ahead> look(
+            int distance) {
+
+        Set<Ahead> result = this.distanceToAheadSetMap.get(distance);
+
+        if (result == null) {
+            computeLook(distance);
+            result = this.distanceToAheadSetMap.get(distance);
+        }
+
+        return result;
+    }
+
+    void computeLook(
+            int distance) {
+
+        do {
+            this.grammar.resetLookComputationData();
+            tryLook(distance);
+        }
+        while (this.grammar.lookComputationDataHasChanged());
+
+        this.grammar.storeLookComputationResults();
+    }
+
+    Set<Ahead> tryLook(
+            int distance) {
+
+        Set<Ahead> currentLookComputationData = this.distanceToAheadSetMap
+                .get(distance);
+
+        if (currentLookComputationData != null) {
+            return currentLookComputationData;
+        }
+
+        currentLookComputationData = this.grammar
+                .getCurrentLookComputationData(this, distance);
+
+        if (currentLookComputationData == null) {
+            this.grammar
+                    .setCurrentLookComputationData(this, distance, this.grammar
+                            .getPreviousLookComputationData(this, distance));
+            currentLookComputationData = new LinkedHashSet<Ahead>();
+            for (Alternative alternative : this.alternatives) {
+                currentLookComputationData
+                        .addAll(alternative.tryLook(distance));
+            }
+            this.grammar.setCurrentLookComputationData(this, distance,
+                    currentLookComputationData);
+        }
+
+        return currentLookComputationData;
+    }
+
+    void setLook(
+            Integer distance,
+            Set<Ahead> aheadSet) {
+
+        if (this.distanceToAheadSetMap.containsKey(distance)) {
+            throw new InternalException("look data is already set");
+        }
+
+        this.distanceToAheadSetMap.put(distance, aheadSet);
     }
 }
