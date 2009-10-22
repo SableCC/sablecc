@@ -19,16 +19,38 @@ package org.sablecc.sablecc.lrautomaton;
 
 import java.util.*;
 
-public class ReduceAction
-        extends Action {
+public class Farther
+        implements Ahead {
 
-    private final Alternative alternative;
+    private static Map<Integer, Farther> distanceToFartherMap = new LinkedHashMap<Integer, Farther>();
 
-    ReduceAction(
-            Map<Integer, Set<Item>> distanceToItemSetMap,
-            Alternative alternative) {
+    private final int distance;
 
-        super(distanceToItemSetMap);
-        this.alternative = alternative;
+    private Farther(
+            int distance) {
+
+        this.distance = distance;
+    }
+
+    public static Farther get(
+            int distance) {
+
+        Farther farther = distanceToFartherMap.get(distance);
+        if (farther == null) {
+            farther = new Farther(distance);
+            distanceToFartherMap.put(distance, farther);
+        }
+        return farther;
+    }
+
+    public int getDistance() {
+
+        return this.distance;
+    }
+
+    @Override
+    public String toString() {
+
+        return "Farther(" + this.distance + ")";
     }
 }

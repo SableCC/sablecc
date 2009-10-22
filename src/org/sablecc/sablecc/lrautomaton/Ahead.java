@@ -17,19 +17,6 @@
 
 package org.sablecc.sablecc.lrautomaton;
 
-import java.util.*;
+public interface Ahead {
 
-public class LookCondition {
-
-    private final int distance;
-
-    private final Set<Item> items = new LinkedHashSet<Item>();
-
-    LookCondition(
-            int distance,
-            Set<Item> items) {
-
-        this.distance = distance;
-        this.items.addAll(items);
-    }
 }

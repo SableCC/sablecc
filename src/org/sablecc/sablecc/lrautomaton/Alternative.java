@@ -162,7 +162,7 @@ public class Alternative {
         return this.shortestLength;
     }
 
-    public boolean computeShortestLength() {
+    boolean computeShortestLength() {
 
         Integer length = 0;
 
@@ -204,5 +204,21 @@ public class Alternative {
             int position) {
 
         return this.elements.get(position);
+    }
+
+    public ArrayList<Element> getElements() {
+
+        return this.elements;
+    }
+
+    Set<Ahead> tryLook(
+            int distance) {
+
+        return this.items.get(0).tryLook(distance);
+    }
+
+    public Production getProduction() {
+
+        return this.production;
     }
 }

@@ -40,7 +40,11 @@ public class LRState {
 
     private final Set<Action> actions = new LinkedHashSet<Action>();
 
-    public LRState(
+    private final Map<Item, Set<LRState>> origins = new LinkedHashMap<Item, Set<LRState>>();
+
+    private Map<Production, Map<Integer, Set<Item>>> productionToLookaheadMap = new LinkedHashMap<Production, Map<Integer, Set<Item>>>();
+
+    LRState(
             LRAutomaton automaton,
             Set<Item> coreItemSet) {
 
@@ -79,7 +83,7 @@ public class LRState {
         }
     }
 
-    public void computeTransitions() {
+    void computeTransitions() {
 
         Map<Token, Set<Item>> tokenToItemSetMap = new LinkedHashMap<Token, Set<Item>>();
         Map<Production, Set<Item>> productionToItemSetMap = new LinkedHashMap<Production, Set<Item>>();
@@ -149,7 +153,69 @@ public class LRState {
         return sb.toString();
     }
 
-    public void computeActions(
+    void computeOrigins() {
+
+        for (Item item : this.items) {
+            if (item.getPosition() == 0) {
+                LRState state = this;
+                Item stateItem = item;
+                state.addOrigin(stateItem, this);
+                for (Element element : item.getAlternative().getElements()) {
+                    if (element instanceof TokenElement) {
+                        TokenElement tokenElement = (TokenElement) element;
+                        state = state.getTarget(tokenElement.getToken());
+                    }
+                    else {
+                        ProductionElement productionElement = (ProductionElement) element;
+                        state = state.getTarget(productionElement
+                                .getProduction());
+                    }
+                    stateItem = stateItem.next();
+                    state.addOrigin(stateItem, this);
+                }
+            }
+        }
+    }
+
+    void addOrigin(
+            Item stateItem,
+            LRState origin) {
+
+        if (!this.items.contains(stateItem)) {
+            throw new InternalException("invalid item");
+        }
+
+        Set<LRState> stateSet = this.origins.get(stateItem);
+        if (stateSet == null) {
+            stateSet = new LinkedHashSet<LRState>();
+            this.origins.put(stateItem, stateSet);
+        }
+        stateSet.add(origin);
+    }
+
+    public LRState getTarget(
+            Token token) {
+
+        return this.tokenTransitions.get(token);
+    }
+
+    public LRState getTarget(
+            Production production) {
+
+        return this.productionTransitions.get(production);
+    }
+
+    public Set<LRState> getOrigins(
+            Item item) {
+
+        if (!this.items.contains(item)) {
+            throw new InternalException("invalid item");
+        }
+
+        return this.origins.get(item);
+    }
+
+    void computeActions(
             Verbosity verbosity) {
 
         // LR(0) shift state
@@ -158,7 +224,7 @@ public class LRState {
 
             switch (verbosity) {
             case VERBOSE:
-                System.out.println("   - LR(0) shift");
+                System.out.println("   - LR(0) shift state");
                 break;
             }
 
@@ -172,13 +238,296 @@ public class LRState {
 
             switch (verbosity) {
             case VERBOSE:
-                System.out.println("   - LR(0) reduce");
+                System.out.println("   - LR(0) reduce state");
                 break;
             }
 
             return;
         }
 
-        throw new InternalException("LR(0) conflict in state" + this);
+        Set<Item> conflictItems = new LinkedHashSet<Item>();
+        conflictItems.addAll(this.shiftItems);
+        conflictItems.addAll(this.reduceItems);
+        PairExtractor<Item> pairExtractor = new PairExtractor<Item>(
+                conflictItems);
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println("   - Analyzing "
+                    + pairExtractor.getPairs().size() + " potential conflicts");
+            break;
+        }
+
+        Map<Item, Map<Integer, Set<Item>>> itemToLookaheadMap = new LinkedHashMap<Item, Map<Integer, Set<Item>>>();
+
+        for (Pair<Item, Item> pair : pairExtractor.getPairs()) {
+            Item leftItem = pair.getLeft();
+            Item rightItem = pair.getRight();
+
+            Map<Integer, Set<Item>> leftLookahead = itemToLookaheadMap
+                    .get(leftItem);
+            Map<Integer, Set<Item>> rightLookahead = itemToLookaheadMap
+                    .get(rightItem);
+
+            if (leftLookahead == null) {
+                leftLookahead = new LinkedHashMap<Integer, Set<Item>>();
+                itemToLookaheadMap.put(leftItem, leftLookahead);
+            }
+
+            if (rightLookahead == null) {
+                rightLookahead = new LinkedHashMap<Integer, Set<Item>>();
+                itemToLookaheadMap.put(rightItem, rightLookahead);
+            }
+
+            if (leftItem.getType() == ItemType.BEFORE_TOKEN
+                    && rightItem.getType() == ItemType.BEFORE_TOKEN) {
+
+                // shift/shift => no conflict
+
+                if (!leftLookahead.containsKey(1)) {
+                    Set<Item> itemSet = new LinkedHashSet<Item>();
+                    itemSet.add(leftItem);
+                    leftLookahead.put(1, itemSet);
+                }
+
+                if (!rightLookahead.containsKey(1)) {
+                    Set<Item> itemSet = new LinkedHashSet<Item>();
+                    itemSet.add(rightItem);
+                    rightLookahead.put(1, itemSet);
+                }
+
+                continue;
+            }
+
+            switch (verbosity) {
+            case VERBOSE:
+                if (leftItem.getType() == ItemType.BEFORE_TOKEN
+                        || rightItem.getType() == ItemType.BEFORE_TOKEN) {
+                    System.out.println("    Shift/reduce conflict found");
+                }
+                else {
+                    System.out.println("    Reduce/reduce conflict found");
+                }
+                break;
+            }
+
+            int distance = 0;
+            boolean resolved = false;
+            while (!resolved) {
+                distance++;
+
+                switch (verbosity) {
+                case VERBOSE:
+                    System.out.println("     Trying linear approximate LALR("
+                            + distance + ")");
+                    break;
+                }
+
+                Set<Item> leftItems = leftLookahead.get(distance);
+                Set<Item> rightItems = rightLookahead.get(distance);
+
+                if (leftItems == null) {
+                    leftItems = new LinkedHashSet<Item>();
+                    Set<Farther> fartherSet = new LinkedHashSet<Farther>();
+                    for (Ahead ahead : leftItem.look(distance)) {
+                        if (ahead instanceof Item) {
+                            leftItems.add((Item) ahead);
+                        }
+                        else {
+                            fartherSet.add((Farther) ahead);
+                        }
+                    }
+                    for (Farther farther : fartherSet) {
+                        leftItems.addAll(lookBeyond(leftItem, farther
+                                .getDistance()));
+                    }
+                }
+
+                if (rightItems == null) {
+                    rightItems = new LinkedHashSet<Item>();
+                    Set<Farther> fartherSet = new LinkedHashSet<Farther>();
+                    for (Ahead ahead : rightItem.look(distance)) {
+                        if (ahead instanceof Item) {
+                            rightItems.add((Item) ahead);
+                        }
+                        else {
+                            fartherSet.add((Farther) ahead);
+                        }
+                    }
+                    for (Farther farther : fartherSet) {
+                        rightItems.addAll(lookBeyond(rightItem, farther
+                                .getDistance()));
+                    }
+                }
+
+                Set<Token> leftTokens = new LinkedHashSet<Token>();
+                Set<Token> rightTokens = new LinkedHashSet<Token>();
+
+                for (Item item : leftItems) {
+                    leftTokens.add(item.getTokenElement().getToken());
+                }
+                for (Item item : rightItems) {
+                    rightTokens.add(item.getTokenElement().getToken());
+                }
+
+                Set<Token> intersection = new LinkedHashSet<Token>(leftTokens);
+                intersection.retainAll(rightTokens);
+
+                if (intersection.size() == 0) {
+                    resolved = true;
+                }
+
+                for (Token token : intersection) {
+                    if (token.getName().equals("$End")) {
+                        throw new InternalException("conflit confirmed");
+                    }
+                }
+            }
+        }
+    }
+
+    private Set<Item> lookBeyond(
+            Item item,
+            int distance) {
+
+        Set<Item> items = new LinkedHashSet<Item>();
+
+        if (this.origins.get(item).size() == 0) {
+            if (!item.getAlternative().getProduction().getName().equals(
+                    "$Start")) {
+                throw new InternalException("invalid item");
+            }
+            items.add(item.getAlternative().getItem(1));
+            return items;
+        }
+
+        for (LRState state : this.origins.get(item)) {
+            items.addAll(state.look(item.getAlternative().getProduction(),
+                    distance));
+        }
+
+        return items;
+    }
+
+    public Set<Item> look(
+            Production production,
+            int distance) {
+
+        Map<Integer, Set<Item>> lookahead = this.productionToLookaheadMap
+                .get(production);
+
+        if (lookahead == null) {
+            lookahead = new LinkedHashMap<Integer, Set<Item>>();
+            this.productionToLookaheadMap.put(production, lookahead);
+        }
+
+        Set<Item> items = lookahead.get(distance);
+
+        if (items == null) {
+            computeLook(production, distance);
+            items = lookahead.get(distance);
+        }
+
+        return items;
+    }
+
+    void computeLook(
+            Production production,
+            int distance) {
+
+        do {
+            this.automaton.resetLookComputationData();
+            tryLook(production, distance);
+        }
+        while (this.automaton.lookComputationDataHasChanged());
+
+        this.automaton.storeLookComputationResults();
+    }
+
+    Set<Item> tryLook(
+            Production production,
+            int distance) {
+
+        Map<Integer, Set<Item>> lookahead = this.productionToLookaheadMap
+                .get(production);
+
+        if (lookahead == null) {
+            lookahead = new LinkedHashMap<Integer, Set<Item>>();
+            this.productionToLookaheadMap.put(production, lookahead);
+        }
+
+        Set<Item> currentLookComputationData = lookahead.get(distance);
+
+        if (currentLookComputationData != null) {
+            return currentLookComputationData;
+        }
+
+        currentLookComputationData = this.automaton
+                .getCurrentLookComputationData(this, production, distance);
+
+        if (currentLookComputationData == null) {
+            this.automaton.setCurrentLookComputationData(this, production,
+                    distance, this.automaton.getPreviousLookComputationData(
+                            this, production, distance));
+
+            currentLookComputationData = new LinkedHashSet<Item>();
+            for (Item item : this.items) {
+                if (item.getType() == ItemType.BEFORE_PRODUCTION
+                        && item.getProductionElement().getProduction() == production) {
+                    Set<Farther> fartherSet = new LinkedHashSet<Farther>();
+                    for (Ahead ahead : item.next().look(distance)) {
+                        if (ahead instanceof Item) {
+                            currentLookComputationData.add((Item) ahead);
+                        }
+                        else {
+                            fartherSet.add((Farther) ahead);
+                        }
+                    }
+                    for (Farther farther : fartherSet) {
+
+                        if (this.origins.get(item).size() == 0) {
+                            if (!item.getAlternative().getProduction()
+                                    .getName().equals("$Start")) {
+                                throw new InternalException("invalid item");
+                            }
+                            currentLookComputationData.add(item
+                                    .getAlternative().getItem(1));
+                            continue;
+                        }
+
+                        for (LRState state : this.origins.get(item)) {
+                            currentLookComputationData.addAll(state.tryLook(
+                                    item.getAlternative().getProduction(),
+                                    farther.getDistance()));
+                        }
+                    }
+                }
+            }
+
+            this.automaton.setCurrentLookComputationData(this, production,
+                    distance, currentLookComputationData);
+        }
+
+        return currentLookComputationData;
+    }
+
+    void setLook(
+            Production production,
+            Integer distance,
+            Set<Item> items) {
+
+        Map<Integer, Set<Item>> lookahead = this.productionToLookaheadMap
+                .get(production);
+
+        if (lookahead == null) {
+            lookahead = new LinkedHashMap<Integer, Set<Item>>();
+            this.productionToLookaheadMap.put(production, lookahead);
+        }
+
+        if (lookahead.containsKey(distance)) {
+            throw new InternalException("look data is already set");
+        }
+
+        lookahead.put(distance, items);
     }
 }

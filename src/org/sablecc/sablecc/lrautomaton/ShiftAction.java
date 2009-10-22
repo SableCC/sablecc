@@ -23,8 +23,8 @@ public class ShiftAction
         extends Action {
 
     ShiftAction(
-            Set<LookCondition> lookConditions) {
+            Map<Integer, Set<Item>> distanceToItemSetMap) {
 
-        super(lookConditions);
+        super(distanceToItemSetMap);
     }
 }

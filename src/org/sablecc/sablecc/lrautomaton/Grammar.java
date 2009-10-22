@@ -18,6 +18,7 @@
 package org.sablecc.sablecc.lrautomaton;
 
 import java.util.*;
+import java.util.Map.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.exception.*;
@@ -29,6 +30,12 @@ public class Grammar {
     private final Map<String, Token> nameToTokenMap = new LinkedHashMap<String, Token>();
 
     private boolean isStable;
+
+    private boolean lookComputationDataHasChanged;
+
+    private Map<Production, Map<Integer, Set<Ahead>>> previousLookComputationData;
+
+    private Map<Production, Map<Integer, Set<Ahead>>> currentLookComputationData;
 
     public Grammar(
             String firstProductionName) {
@@ -116,5 +123,89 @@ public class Grammar {
             }
         }
 
+    }
+
+    void resetLookComputationData() {
+
+        this.lookComputationDataHasChanged = false;
+        if (this.currentLookComputationData != null) {
+            this.previousLookComputationData = this.currentLookComputationData;
+        }
+        else {
+            this.previousLookComputationData = new LinkedHashMap<Production, Map<Integer, Set<Ahead>>>();
+        }
+        this.currentLookComputationData = new LinkedHashMap<Production, Map<Integer, Set<Ahead>>>();
+    }
+
+    boolean lookComputationDataHasChanged() {
+
+        return this.lookComputationDataHasChanged;
+    }
+
+    void storeLookComputationResults() {
+
+        for (Entry<Production, Map<Integer, Set<Ahead>>> productionEntry : this.currentLookComputationData
+                .entrySet()) {
+            Production production = productionEntry.getKey();
+            for (Entry<Integer, Set<Ahead>> distanceEntry : productionEntry
+                    .getValue().entrySet()) {
+                production.setLook(distanceEntry.getKey(), distanceEntry
+                        .getValue());
+            }
+        }
+        this.previousLookComputationData = null;
+        this.currentLookComputationData = null;
+        this.lookComputationDataHasChanged = false;
+    }
+
+    Set<Ahead> getCurrentLookComputationData(
+            Production production,
+            int distance) {
+
+        Map<Integer, Set<Ahead>> distanceToAheadSetMap = this.currentLookComputationData
+                .get(production);
+        if (distanceToAheadSetMap == null) {
+            return null;
+        }
+        return distanceToAheadSetMap.get(distance);
+    }
+
+    Set<Ahead> getPreviousLookComputationData(
+            Production production,
+            int distance) {
+
+        Map<Integer, Set<Ahead>> distanceToAheadSetMap = this.previousLookComputationData
+                .get(production);
+        if (distanceToAheadSetMap == null) {
+            return new LinkedHashSet<Ahead>();
+        }
+        Set<Ahead> aheadSet = distanceToAheadSetMap.get(distance);
+        if (aheadSet == null) {
+            return new LinkedHashSet<Ahead>();
+        }
+        return aheadSet;
+    }
+
+    void setCurrentLookComputationData(
+            Production production,
+            int distance,
+            Set<Ahead> lookComputationData) {
+
+        Map<Integer, Set<Ahead>> distanceToAheadSetMap = this.currentLookComputationData
+                .get(production);
+        if (distanceToAheadSetMap == null) {
+            distanceToAheadSetMap = new LinkedHashMap<Integer, Set<Ahead>>();
+            this.currentLookComputationData.put(production,
+                    distanceToAheadSetMap);
+        }
+        distanceToAheadSetMap.put(distance, lookComputationData);
+
+        // detect change
+
+        Set<Ahead> previousLookComputationData = getPreviousLookComputationData(
+                production, distance);
+        if (!lookComputationData.equals(previousLookComputationData)) {
+            this.lookComputationDataHasChanged = true;
+        }
     }
 }
