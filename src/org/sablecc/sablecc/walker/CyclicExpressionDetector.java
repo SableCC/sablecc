@@ -26,7 +26,7 @@ import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.util.*;
 
 public class CyclicExpressionDetector
-        extends Walker {
+        extends TreeWalker {
 
     private final GlobalIndex globalIndex;
 

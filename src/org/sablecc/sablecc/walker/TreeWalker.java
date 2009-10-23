@@ -20,7 +20,7 @@ package org.sablecc.sablecc.walker;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public abstract class Walker
+public abstract class TreeWalker
         extends DepthFirstAdapter {
 
     public void visit(
