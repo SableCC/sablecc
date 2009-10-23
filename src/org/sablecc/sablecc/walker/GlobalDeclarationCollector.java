@@ -22,7 +22,7 @@ import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class GlobalDeclarationCollector
-        extends Walker {
+        extends TreeWalker {
 
     private final GlobalIndex globalIndex;
 

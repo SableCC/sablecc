@@ -21,7 +21,7 @@ import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class SimpleLexerAndParserRestricter
-        extends Walker {
+        extends TreeWalker {
 
     @Override
     public void inASelectionNamedExpression(
