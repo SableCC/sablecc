@@ -224,7 +224,7 @@ public class LRState {
 
             switch (verbosity) {
             case VERBOSE:
-                System.out.println("   - LR(0) shift state");
+                System.out.println("   - LR(0) shift state found");
                 break;
             }
 
@@ -238,7 +238,7 @@ public class LRState {
 
             switch (verbosity) {
             case VERBOSE:
-                System.out.println("   - LR(0) reduce state");
+                System.out.println("   - LR(0) reduce state found");
                 break;
             }
 
@@ -303,10 +303,10 @@ public class LRState {
             case VERBOSE:
                 if (leftItem.getType() == ItemType.BEFORE_TOKEN
                         || rightItem.getType() == ItemType.BEFORE_TOKEN) {
-                    System.out.println("    Shift/reduce conflict found");
+                    System.out.println("    - Shift/reduce conflict found");
                 }
                 else {
-                    System.out.println("    Reduce/reduce conflict found");
+                    System.out.println("    - Reduce/reduce conflict found");
                 }
                 break;
             }
@@ -374,6 +374,11 @@ public class LRState {
                 intersection.retainAll(rightTokens);
 
                 if (intersection.size() == 0) {
+                    switch (verbosity) {
+                    case VERBOSE:
+                        System.out.println("     Conflict is resolved");
+                        break;
+                    }
                     resolved = true;
                 }
 
