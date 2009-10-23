@@ -26,11 +26,6 @@ public abstract class Action {
     Action(
             Map<Integer, Set<Item>> distanceToItemSetMap) {
 
-        if (distanceToItemSetMap != null) {
-            this.distanceToItemSetMap = distanceToItemSetMap;
-        }
-        else {
-            this.distanceToItemSetMap = new LinkedHashMap<Integer, Set<Item>>();
-        }
+        this.distanceToItemSetMap = distanceToItemSetMap;
     }
 }
