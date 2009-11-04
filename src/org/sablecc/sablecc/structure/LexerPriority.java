@@ -20,7 +20,7 @@ package org.sablecc.sablecc.structure;
 import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class Priority {
+public class LexerPriority {
 
     private final ALexerPriority declaration;
 
@@ -28,7 +28,7 @@ public class Priority {
 
     private final MatchedToken low;
 
-    Priority(
+    LexerPriority(
             ALexerPriority declaration,
             MatchedToken high,
             MatchedToken low) {

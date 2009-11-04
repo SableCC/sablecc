@@ -402,7 +402,7 @@ public class Context {
             MatchedToken high,
             MatchedToken low) {
 
-        Priority priority = new Priority(node, high, low);
+        LexerPriority priority = new LexerPriority(node, high, low);
 
         high.addPriorityOver(low, priority);
         low.addPriorityUnder(high, priority);

@@ -29,9 +29,9 @@ public abstract class MatchedToken {
 
     private final boolean isIgnored;
 
-    private final Map<MatchedToken, Priority> overPriorities = new LinkedHashMap<MatchedToken, Priority>();
+    private final Map<MatchedToken, LexerPriority> overPriorities = new LinkedHashMap<MatchedToken, LexerPriority>();
 
-    private final Map<MatchedToken, Priority> underPriorities = new LinkedHashMap<MatchedToken, Priority>();
+    private final Map<MatchedToken, LexerPriority> underPriorities = new LinkedHashMap<MatchedToken, LexerPriority>();
 
     private final Set<MatchedToken> naturalOverPriorities = new LinkedHashSet<MatchedToken>();
 
@@ -64,10 +64,10 @@ public abstract class MatchedToken {
 
     public void addPriorityOver(
             MatchedToken low,
-            Priority priority) {
+            LexerPriority priority) {
 
         if (this.underPriorities.containsKey(low)) {
-            Priority formerPriority = this.underPriorities.get(low);
+            LexerPriority formerPriority = this.underPriorities.get(low);
             throw CompilerException.conflictingPriorities(priority
                     .getDeclaration().getGt(), this, low, formerPriority
                     .getDeclaration().getGt());
@@ -80,10 +80,10 @@ public abstract class MatchedToken {
 
     public void addPriorityUnder(
             MatchedToken high,
-            Priority priority) {
+            LexerPriority priority) {
 
         if (this.overPriorities.containsKey(high)) {
-            Priority formerPriority = this.underPriorities.get(high);
+            LexerPriority formerPriority = this.underPriorities.get(high);
             throw CompilerException.conflictingPriorities(priority
                     .getDeclaration().getGt(), high, this, formerPriority
                     .getDeclaration().getGt());
