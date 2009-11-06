@@ -28,10 +28,10 @@ public class Utils {
         return to_CamelCase(text);
     }
 
-    private static String to_CamelCase(
+    public static String to_CamelCase(
             String text) {
 
-        if (text.charAt(0) == '<') {
+        if (text.length() > 0 && text.charAt(0) == '<') {
             int length = text.length();
             return "_" + text.substring(1, length - 1);
         }
@@ -41,7 +41,12 @@ public class Utils {
         for (char c : text.toCharArray()) {
             if (upcase) {
                 upcase = false;
-                sb.append((char) (c + ('A' - 'a')));
+                if (c >= 'a' && c <= 'z') {
+                    sb.append((char) (c + ('A' - 'a')));
+                }
+                else {
+                    sb.append(c);
+                }
             }
             else if (c == '_') {
                 upcase = true;
@@ -60,10 +65,10 @@ public class Utils {
         return to_camelCase(text);
     }
 
-    private static String to_camelCase(
+    public static String to_camelCase(
             String text) {
 
-        if (text.charAt(0) == '<') {
+        if (text.length() > 0 && text.charAt(0) == '<') {
             int length = text.length();
             return "_" + text.substring(1, length - 1);
         }
@@ -73,7 +78,12 @@ public class Utils {
         for (char c : text.toCharArray()) {
             if (upcase) {
                 upcase = false;
-                sb.append((char) (c + ('A' - 'a')));
+                if (c >= 'a' && c <= 'z') {
+                    sb.append((char) (c + ('A' - 'a')));
+                }
+                else {
+                    sb.append(c);
+                }
             }
             else if (c == '_') {
                 upcase = true;
