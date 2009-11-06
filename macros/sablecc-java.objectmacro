@@ -601,3 +601,42 @@ public class End
   }
 }
 $end: end $
+
+$comment: ========== production ========== $
+
+$macro: production(name) $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+$macro: named_production_header $
+public abstract class N$name
+$end: named_production_header $
+$macro: anonymous_production_header $
+abstract class N$name
+$end: anonymous_production_header $
+    extends Node {
+
+}
+$end: production $
+
+$comment: ========== alternative ========== $
+
+$macro: alternative(name) $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+$macro: named_alternative_header $
+public abstract class N$name
+$end: named_alternative_header $
+$macro: anonymous_alternative_header $
+abstract class N$name
+$end: anonymous_alternative_header $
+$macro: normal_alternative_parent(parent) $
+    extends N$parent {
+$end: normal_alternative_parent $
+$macro: node_alternative_parent $
+    extends Node {
+$end: node_alternative_parent $
+
+}
+$end: alternative $

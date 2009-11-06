@@ -731,24 +731,88 @@ public class SableCC {
                     || !production.getAlternatives().iterator().next()
                             .getName().equals("")) {
 
+                MProduction mProduction = new MProduction(
+                        production_CamelCaseName);
+
+                if (destinationPackage.equals("")) {
+                    mProduction.newDefaultPackage(globalIndex.getLanguage()
+                            .get_camelCaseName());
+                }
+                else {
+                    mProduction.newSpecifiedPackage(globalIndex.getLanguage()
+                            .get_camelCaseName(), destinationPackage);
+                }
+
+                mNode.newNodeInternalTypeEnumEntry(production_CamelCaseName);
                 if (production_CamelCaseName.indexOf('$') == -1) {
                     mNode.newNodeTypeEnumEntry(production_CamelCaseName);
+                    mProduction.newNamedProductionHeader();
                 }
-                mNode.newNodeInternalTypeEnumEntry(production_CamelCaseName);
+                else {
+                    mProduction.newAnonymousProductionHeader();
+                }
+
+                try {
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(
+                            new File(packageDirectory, "N"
+                                    + production_CamelCaseName + ".java")));
+
+                    bw.write(mProduction.toString());
+                    bw.close();
+                }
+                catch (IOException e) {
+                    throw CompilerException.outputError("N"
+                            + production_CamelCaseName + ".java", e);
+                }
             }
 
             for (Alternative alternative : production.getAlternatives()) {
-                String alternative_CamelCaseName = to_CamelCase(alternative
-                        .getName());
-                String alternative_CamelCaseFullName = production_CamelCaseName
-                        + (alternative_CamelCaseName.equals("") ? "" : "_"
-                                + alternative_CamelCaseName);
+                String alt_CamelCaseName = to_CamelCase(alternative.getName());
+                String alt_CamelCaseFullName = production_CamelCaseName
+                        + (alt_CamelCaseName.equals("") ? "" : "_"
+                                + alt_CamelCaseName);
 
-                if (alternative_CamelCaseFullName.indexOf('$') == -1) {
-                    mNode.newNodeTypeEnumEntry(alternative_CamelCaseFullName);
+                MAlternative mAlternative = new MAlternative(
+                        alt_CamelCaseFullName);
+
+                if (destinationPackage.equals("")) {
+                    mAlternative.newDefaultPackage(globalIndex.getLanguage()
+                            .get_camelCaseName());
                 }
-                mNode
-                        .newNodeInternalTypeEnumEntry(alternative_CamelCaseFullName);
+                else {
+                    mAlternative.newSpecifiedPackage(globalIndex.getLanguage()
+                            .get_camelCaseName(), destinationPackage);
+                }
+
+                mNode.newNodeInternalTypeEnumEntry(alt_CamelCaseFullName);
+                if (alt_CamelCaseFullName.indexOf('$') == -1) {
+                    mNode.newNodeTypeEnumEntry(alt_CamelCaseFullName);
+                    mAlternative.newNamedAlternativeHeader();
+                }
+                else {
+                    mAlternative.newAnonymousAlternativeHeader();
+                }
+
+                if (alt_CamelCaseFullName.indexOf('_') == -1) {
+                    mAlternative.newNodeAlternativeParent();
+                }
+                else {
+                    mAlternative
+                            .newNormalAlternativeParent(production_CamelCaseName);
+                }
+
+                try {
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(
+                            new File(packageDirectory, "N"
+                                    + alt_CamelCaseFullName + ".java")));
+
+                    bw.write(mAlternative.toString());
+                    bw.close();
+                }
+                catch (IOException e) {
+                    throw CompilerException.outputError("N"
+                            + alt_CamelCaseFullName + ".java", e);
+                }
             }
         }
 
