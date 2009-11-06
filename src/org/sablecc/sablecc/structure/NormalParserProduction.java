@@ -20,17 +20,20 @@ package org.sablecc.sablecc.structure;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.lrautomaton.Production;
 import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.sablecc.util.*;
 
 public class NormalParserProduction
-        extends Production {
+        extends org.sablecc.sablecc.structure.Production {
 
     private final ANormalParserProduction declaration;
 
     private final Map<String, Alternative> nameToAlternativeMap = new LinkedHashMap<String, Alternative>();
 
     private final Map<Node, Alternative> nodeToAlternativeMap = new LinkedHashMap<Node, Alternative>();
+
+    private Production grammarProduction;
 
     NormalParserProduction(
             ANormalParserProduction node) {
@@ -79,4 +82,26 @@ public class NormalParserProduction
         return this.declaration.getName();
     }
 
+    public Alternative getAlternativeOrNull(
+            String name) {
+
+        return this.nameToAlternativeMap.get(name);
+    }
+
+    public void setGrammarProduction(
+            Production grammarProduction) {
+
+        this.grammarProduction = grammarProduction;
+    }
+
+    public Production getGrammarProduction() {
+
+        return this.grammarProduction;
+    }
+
+    public ParserAlternative getAlternative(
+            AParserAlternative node) {
+
+        return (ParserAlternative) this.nodeToAlternativeMap.get(node);
+    }
 }

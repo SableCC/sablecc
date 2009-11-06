@@ -315,6 +315,36 @@ $insert: semantic_error_head $
 The "$name" production is useless; it cannot match any finite sentence.
 $end: parser_useless_production $
 
+$comment: ========== parser_spurious_priority ========== $
+
+$macro: parser_spurious_priority(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The priority of "$name" is already set.
+$end: parser_spurious_priority $
+
+$comment: ========== alternative_not_recursive ========== $
+
+$macro: alternative_not_recursive(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The "$name" alternative is not left or right recursive.
+$end: alternative_not_recursive $
+
+$comment: ========== recursion_not_followed_by_token ========== $
+
+$macro: recursion_not_followed_by_token(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The operator of the "$name" alternative is not a token.
+$end: recursion_not_followed_by_token $
+
 $comment: ========== not_implemented ========== $
 
 $macro: not_implemented(feature, line, char) $

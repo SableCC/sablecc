@@ -39,6 +39,8 @@ public class ParserDeclarationCollector
 
     private String currentElementName;
 
+    private NormalParserProduction currentParserProduction;
+
     public ParserDeclarationCollector(
             GlobalIndex globalIndex) {
 
@@ -88,7 +90,11 @@ public class ParserDeclarationCollector
             this.currentGrammar = new Grammar(name);
         }
 
+        this.currentParserProduction = (NormalParserProduction) this.globalIndex
+                .getProduction(node);
         this.currentProduction = this.currentGrammar.getProduction(name);
+        this.currentParserProduction
+                .setGrammarProduction(this.currentProduction);
     }
 
     @Override
@@ -96,6 +102,7 @@ public class ParserDeclarationCollector
             ANormalParserProduction node) {
 
         this.currentProduction = null;
+        this.currentParserProduction = null;
     }
 
     @Override
@@ -111,6 +118,9 @@ public class ParserDeclarationCollector
             name = name.substring(1, name.length() - 2);
         }
         this.currentAlternative = this.currentProduction.addAlternative(name);
+        ParserAlternative alternative = this.currentParserProduction
+                .getAlternative(node);
+        alternative.setGrammarAlternative(this.currentAlternative);
     }
 
     @Override

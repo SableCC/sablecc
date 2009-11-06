@@ -238,6 +238,32 @@ public class CompilerException
                 .toString());
     }
 
+    public static CompilerException parserSpuriousPriority(
+            TIdentifier identifier) {
+
+        return new CompilerException(
+                new MParserSpuriousPriority(identifier.getText(), ""
+                        + identifier.getLine(), "" + identifier.getPos())
+                        .toString());
+    }
+
+    public static CompilerException alternativeNotRecursive(
+            TIdentifier identifier) {
+
+        return new CompilerException(
+                new MAlternativeNotRecursive(identifier.getText(), ""
+                        + identifier.getLine(), "" + identifier.getPos())
+                        .toString());
+    }
+
+    public static CompilerException recursionNotFollowedByToken(
+            TIdentifier identifier) {
+
+        return new CompilerException(new MRecursionNotFollowedByToken(
+                identifier.getText(), "" + identifier.getLine(), ""
+                        + identifier.getPos()).toString());
+    }
+
     public static CompilerException notImplemented(
             Token token,
             String feature) {

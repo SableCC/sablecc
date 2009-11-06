@@ -361,6 +361,7 @@ public class SableCC {
         new LexerDeclarationCollector(globalIndex).visit(ast);
         new LexerPriorityCollector(globalIndex).visit(ast);
         new ParserDeclarationCollector(globalIndex).visit(ast);
+        new ParserPriorityCollector(globalIndex).visit(ast);
 
         new ExpressionVerifier(globalIndex).visit(ast);
         new CyclicExpressionDetector(globalIndex).visit(ast);

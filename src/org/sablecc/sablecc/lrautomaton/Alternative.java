@@ -20,6 +20,9 @@ package org.sablecc.sablecc.lrautomaton;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class Alternative {
 
@@ -36,6 +39,8 @@ public class Alternative {
     private Integer shortestLength;
 
     private ArrayList<Item> items;
+
+    private ParserPriorityLevel priorityLevel;
 
     Alternative(
             Production production,
@@ -220,5 +225,69 @@ public class Alternative {
     public Production getProduction() {
 
         return this.production;
+    }
+
+    public void setPriorityLevel(
+            ParserPriorityLevel priorityLevel,
+            TIdentifier identifier) {
+
+        if (this.priorityLevel != null) {
+            throw CompilerException.parserSpuriousPriority(identifier);
+        }
+
+        this.priorityLevel = priorityLevel;
+    }
+
+    public ParserPriorityLevel getPriorityLevel() {
+
+        return this.priorityLevel;
+    }
+
+    public boolean hasPriorityOver(
+            Alternative alternative) {
+
+        if (this.priorityLevel == null) {
+            return false;
+        }
+
+        if (alternative.priorityLevel == null) {
+            return false;
+        }
+
+        if (this.priorityLevel == alternative.priorityLevel) {
+            throw new InternalException(
+                    "cannot decide within a single priority level");
+        }
+
+        ParserPriorityLevel currentPriorityLevel = this.priorityLevel;
+        while (currentPriorityLevel != null) {
+
+            if (currentPriorityLevel == alternative.priorityLevel) {
+                return true;
+            }
+
+            currentPriorityLevel = currentPriorityLevel
+                    .getNextLowerPriorityLevel();
+        }
+
+        return false;
+    }
+
+    public boolean isLeftAssociative() {
+
+        if (this.priorityLevel == null) {
+            return false;
+        }
+
+        return this.priorityLevel.getType() == PriorityType.LEFT;
+    }
+
+    public boolean isRightAssociative() {
+
+        if (this.priorityLevel == null) {
+            return false;
+        }
+
+        return this.priorityLevel.getType() == PriorityType.RIGHT;
     }
 }
