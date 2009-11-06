@@ -33,6 +33,7 @@ import org.sablecc.sablecc.errormessage.*;
 import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.lrautomaton.*;
 import org.sablecc.sablecc.lrautomaton.Alternative;
+import org.sablecc.sablecc.lrautomaton.Element;
 import org.sablecc.sablecc.lrautomaton.Production;
 import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
@@ -799,6 +800,47 @@ public class SableCC {
                 else {
                     mAlternative
                             .newNormalAlternativeParent(production_CamelCaseName);
+                }
+
+                for (Element element : alternative.getElements()) {
+                    String element_CamelCaseName = to_CamelCase(element
+                            .getName());
+                    String element_CamelCaseType;
+                    if (element instanceof TokenElement) {
+                        TokenElement tokenElement = (TokenElement) element;
+                        if (tokenElement.getToken().getName().equals("$end")) {
+                            element_CamelCaseType = "$end";
+                        }
+                        else {
+                            MatchedToken matchedToken = context
+                                    .getMatchedToken(tokenElement.getToken()
+                                            .getName());
+                            if (matchedToken instanceof NameToken) {
+                                NameToken nameToken = (NameToken) matchedToken;
+                                element_CamelCaseType = nameToken
+                                        .get_CamelCaseName();
+                            }
+                            else {
+                                AnonymousToken anonymousToken = (AnonymousToken) matchedToken;
+
+                                element_CamelCaseType = ""
+                                        + anonymousToken.getId();
+                            }
+                        }
+                    }
+                    else {
+                        ProductionElement productionElement = (ProductionElement) element;
+                        element_CamelCaseType = to_camelCase(productionElement
+                                .getProduction().getName());
+                    }
+
+                    if (element_CamelCaseType.equals("$end")) {
+                        mAlternative.newEndElement(element_CamelCaseName);
+                    }
+                    else {
+                        mAlternative.newElement(element_CamelCaseType,
+                                element_CamelCaseName);
+                    }
                 }
 
                 try {

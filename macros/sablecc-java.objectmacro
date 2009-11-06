@@ -638,5 +638,17 @@ $macro: node_alternative_parent $
     extends Node {
 $end: node_alternative_parent $
 
+$macro: element(type, element_name) $
+  private final N$type e$element_name;
+  public N$type get$element_name() {
+    return this.e$element_name;
+  }
+$end: element$
+$macro: end_element(element_name) $
+  private final End e$element_name;
+  public End get$element_name() {
+    return this.e$element_name;
+  }
+$end: end_element$
 }
 $end: alternative $

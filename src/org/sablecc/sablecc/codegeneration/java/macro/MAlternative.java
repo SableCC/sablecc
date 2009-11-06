@@ -20,6 +20,10 @@ public class MAlternative {
 
     private final List<Object> eNodeAlternativeParent = new LinkedList<Object>();
 
+    private final List<Object> eElement = new LinkedList<Object>();
+
+    private final List<Object> eEndElement = new LinkedList<Object>();
+
     public MAlternative(
             String pName) {
 
@@ -59,6 +63,23 @@ public class MAlternative {
         MNodeAlternativeParent lNodeAlternativeParent = new MNodeAlternativeParent();
         this.eNodeAlternativeParent.add(lNodeAlternativeParent);
         return lNodeAlternativeParent;
+    }
+
+    public MElement newElement(
+            String pType,
+            String pElementName) {
+
+        MElement lElement = new MElement(pType, pElementName);
+        this.eElement.add(lElement);
+        return lElement;
+    }
+
+    public MEndElement newEndElement(
+            String pElementName) {
+
+        MEndElement lEndElement = new MEndElement(pElementName);
+        this.eEndElement.add(lEndElement);
+        return lEndElement;
     }
 
     public MDefaultPackage newDefaultPackage(
@@ -108,8 +129,13 @@ public class MAlternative {
         for (Object oNodeAlternativeParent : this.eNodeAlternativeParent) {
             sb.append(oNodeAlternativeParent.toString());
         }
-        sb.append("    ");
         sb.append(System.getProperty("line.separator"));
+        for (Object oElement : this.eElement) {
+            sb.append(oElement.toString());
+        }
+        for (Object oEndElement : this.eEndElement) {
+            sb.append(oEndElement.toString());
+        }
         sb.append("}");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();

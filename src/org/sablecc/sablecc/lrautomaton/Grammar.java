@@ -45,7 +45,7 @@ public class Grammar {
 
         Alternative startAlternative = startProduction.addAlternative("");
         startAlternative.addProductionElement("", firstProduction);
-        startAlternative.addTokenElement("", getToken("$End"));
+        startAlternative.addTokenElement("", getToken("$end"));
     }
 
     public Production getProduction(

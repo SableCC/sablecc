@@ -84,7 +84,6 @@ public class MProduction {
         }
         sb.append("    extends Node {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    ");
         sb.append(System.getProperty("line.separator"));
         sb.append("}");
         sb.append(System.getProperty("line.separator"));

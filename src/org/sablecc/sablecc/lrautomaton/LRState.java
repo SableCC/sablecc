@@ -509,7 +509,7 @@ public class LRState {
                 }
                 else {
                     for (Token token : intersection) {
-                        if (token.getName().equals("$End")) {
+                        if (token.getName().equals("$end")) {
                             throw new InternalException(
                                     "conflit confirmed between items "
                                             + leftItem + " and " + rightItem);
