@@ -28,7 +28,6 @@ import org.sablecc.sablecc.alphabet.*;
 import org.sablecc.sablecc.automaton.*;
 import org.sablecc.sablecc.automaton.State;
 import org.sablecc.sablecc.codegeneration.java.macro.*;
-import org.sablecc.sablecc.codegeneration.sablecc3.*;
 import org.sablecc.sablecc.errormessage.*;
 import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.lrautomaton.*;
@@ -145,7 +144,6 @@ public class SableCC {
             case LIST_TARGETS:
                 System.out.println("Available targets:");
                 System.out.println(" java (default)");
-                System.out.println(" sablecc3");
                 return;
 
             case TARGET:
@@ -227,8 +225,7 @@ public class SableCC {
         }
 
         // check target
-        if (!(targetLanguage.equals("java") || targetLanguage
-                .equals("sablecc3"))) {
+        if (!targetLanguage.equals("java")) {
             throw CompilerException.unknownTarget(targetLanguage);
         }
 
@@ -331,10 +328,6 @@ public class SableCC {
             if (targetLanguage.equals("java")) {
                 generateJavaLexer(destinationDirectory, destinationPackage,
                         globalIndex, lexer);
-            }
-            else if (targetLanguage.equals("sablecc3")) {
-                SableCC3CodeGenerator.generateJavaLexer(destinationDirectory,
-                        destinationPackage, globalIndex, lexer);
             }
             else {
                 throw new InternalException("unimplemented");
