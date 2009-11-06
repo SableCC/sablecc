@@ -161,4 +161,19 @@ public class Item
         }
         return result;
     }
+
+    public boolean hasPriorityOver(
+            Item rightItem) {
+
+        if (this.alternative.getPriorityLevel() != rightItem.alternative
+                .getPriorityLevel()) {
+            return this.alternative.hasPriorityOver(rightItem.alternative);
+        }
+
+        if (this.itemType == ItemType.END) {
+            return this.alternative.isLeftAssociative();
+        }
+
+        return this.alternative.isRightAssociative();
+    }
 }
