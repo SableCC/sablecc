@@ -18,6 +18,7 @@
 package org.sablecc.sablecc.launcher;
 
 import static org.sablecc.sablecc.launcher.Version.*;
+import static org.sablecc.sablecc.util.Utils.*;
 
 import java.io.*;
 import java.util.*;
@@ -31,6 +32,8 @@ import org.sablecc.sablecc.codegeneration.java.macro.*;
 import org.sablecc.sablecc.errormessage.*;
 import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.lrautomaton.*;
+import org.sablecc.sablecc.lrautomaton.Alternative;
+import org.sablecc.sablecc.lrautomaton.Production;
 import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.node.*;
@@ -316,7 +319,7 @@ public class SableCC {
             break;
         }
 
-        computeParser(globalIndex, verbosity);
+        LRAutomaton parser = computeParser(globalIndex, verbosity);
 
         if (generateCode) {
             switch (verbosity) {
@@ -326,8 +329,8 @@ public class SableCC {
             }
 
             if (targetLanguage.equals("java")) {
-                generateJavaLexer(destinationDirectory, destinationPackage,
-                        globalIndex, lexer);
+                generateJavaCode(destinationDirectory, destinationPackage,
+                        globalIndex, lexer, parser);
             }
             else {
                 throw new InternalException("unimplemented");
@@ -408,7 +411,7 @@ public class SableCC {
         return lexerAutomaton;
     }
 
-    private static void computeParser(
+    private static LRAutomaton computeParser(
             GlobalIndex globalIndex,
             Verbosity verbosity) {
 
@@ -422,14 +425,15 @@ public class SableCC {
 
         grammar.computeShortestLengthAndDetectUselessProductions();
 
-        LRAutomaton automaton = new LRAutomaton(grammar, verbosity);
+        return new LRAutomaton(grammar, verbosity);
     }
 
-    private static void generateJavaLexer(
+    private static void generateJavaCode(
             File destinationDirectory,
             String destinationPackage,
             GlobalIndex globalIndex,
-            Automaton lexer) {
+            Automaton lexer,
+            LRAutomaton parser) {
 
         String languagePackageName = "language_"
                 + globalIndex.getLanguage().get_camelCaseName();
@@ -716,6 +720,36 @@ public class SableCC {
             mLexer.newMarkerDeclaration(marker.getName());
             mLexer.newSetMarkerDeclaration(marker.getName());
             mLexer.newAcceptMarkerDeclaration(marker.getName());
+        }
+
+        for (Production production : parser.getGrammar().getProductions()) {
+
+            String production_CamelCaseName = to_CamelCase(production.getName());
+
+            // if production is not a single anonymous alternative
+            if (production.getAlternatives().size() > 1
+                    || !production.getAlternatives().iterator().next()
+                            .getName().equals("")) {
+
+                if (production_CamelCaseName.indexOf('$') == -1) {
+                    mNode.newNodeTypeEnumEntry(production_CamelCaseName);
+                }
+                mNode.newNodeInternalTypeEnumEntry(production_CamelCaseName);
+            }
+
+            for (Alternative alternative : production.getAlternatives()) {
+                String alternative_CamelCaseName = to_CamelCase(alternative
+                        .getName());
+                String alternative_CamelCaseFullName = production_CamelCaseName
+                        + (alternative_CamelCaseName.equals("") ? "" : "_"
+                                + alternative_CamelCaseName);
+
+                if (alternative_CamelCaseFullName.indexOf('$') == -1) {
+                    mNode.newNodeTypeEnumEntry(alternative_CamelCaseFullName);
+                }
+                mNode
+                        .newNodeInternalTypeEnumEntry(alternative_CamelCaseFullName);
+            }
         }
 
         try {

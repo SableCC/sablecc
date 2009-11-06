@@ -198,4 +198,9 @@ public class LRAutomaton {
             this.lookComputationDataHasChanged = true;
         }
     }
+
+    public Grammar getGrammar() {
+
+        return this.grammar;
+    }
 }

@@ -208,4 +208,9 @@ public class Grammar {
             this.lookComputationDataHasChanged = true;
         }
     }
+
+    public Collection<Production> getProductions() {
+
+        return this.nameToProductionMap.values();
+    }
 }
