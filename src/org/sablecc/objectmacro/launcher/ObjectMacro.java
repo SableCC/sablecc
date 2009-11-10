@@ -876,7 +876,7 @@ public class ObjectMacro {
                         }
                         textBuilder.append(c);
                     }
-                    if (c == '\\') {
+                    else if (c == '\\') {
                         if (textBuilder == null) {
                             textBuilder = new StringBuilder();
                         }
@@ -891,7 +891,8 @@ public class ObjectMacro {
                         macro_parts.add(new AEolMacroPart());
                     }
                     else {
-                        throw new InternalException("unhandled case");
+                        throw new InternalException("unhandled case c = (" + c
+                                + ")");
                     }
                 }
                 else if (pMacroBodyPart instanceof AVarMacroBodyPart) {
