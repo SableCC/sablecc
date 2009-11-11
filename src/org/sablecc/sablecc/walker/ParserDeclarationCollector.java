@@ -188,7 +188,7 @@ public class ParserDeclarationCollector
 
         String elementName = this.currentElementName;
         if (elementName == null) {
-            elementName = matchedToken.getName();
+            elementName = "$" + ((AnonymousToken) matchedToken).getId();
         }
 
         this.currentAlternative.addTokenElement(elementName,
@@ -208,7 +208,7 @@ public class ParserDeclarationCollector
 
         String elementName = this.currentElementName;
         if (elementName == null) {
-            elementName = matchedToken.getName();
+            elementName = "$" + ((AnonymousToken) matchedToken).getId();
         }
 
         this.currentAlternative.addTokenElement(elementName,
@@ -228,7 +228,7 @@ public class ParserDeclarationCollector
 
         String elementName = this.currentElementName;
         if (elementName == null) {
-            elementName = matchedToken.getName();
+            elementName = "$" + ((AnonymousToken) matchedToken).getId();
         }
 
         this.currentAlternative.addTokenElement(elementName,
@@ -248,7 +248,7 @@ public class ParserDeclarationCollector
 
         String elementName = this.currentElementName;
         if (elementName == null) {
-            elementName = matchedToken.getName();
+            elementName = "$" + ((AnonymousToken) matchedToken).getId();
         }
 
         this.currentAlternative.addTokenElement(elementName,
@@ -268,7 +268,7 @@ public class ParserDeclarationCollector
 
         String elementName = this.currentElementName;
         if (elementName == null) {
-            elementName = matchedToken.getName();
+            elementName = "$" + ((AnonymousToken) matchedToken).getId();
         }
 
         this.currentAlternative.addTokenElement(elementName,
@@ -288,7 +288,7 @@ public class ParserDeclarationCollector
 
         String elementName = this.currentElementName;
         if (elementName == null) {
-            elementName = matchedToken.getName();
+            elementName = "$" + ((AnonymousToken) matchedToken).getId();
         }
 
         this.currentAlternative.addTokenElement(elementName,

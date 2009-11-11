@@ -2,9 +2,9 @@
 
 package org.sablecc.sablecc.codegeneration.java.macro;
 
-public class MNodeAlternativeParent {
+public class MEndElementAccessor {
 
-    MNodeAlternativeParent() {
+    MEndElementAccessor() {
 
     }
 
@@ -12,7 +12,11 @@ public class MNodeAlternativeParent {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("    extends Node {");
+        sb.append("  End internalGet$end() {");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    return this.e$end;");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

@@ -76,6 +76,8 @@ public class MCustomToken {
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
+        sb.append("  @Override");
+        sb.append(System.getProperty("line.separator"));
         sb.append("  public Type getType() {");
         sb.append(System.getProperty("line.separator"));
         sb.append("    return Node.Type.T_");
@@ -85,7 +87,9 @@ public class MCustomToken {
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("  public InternalType getInternalType() {");
+        sb.append("  @Override");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  InternalType getInternalType() {");
         sb.append(System.getProperty("line.separator"));
         sb.append("    return Node.InternalType.T_");
         sb.append(rName());
