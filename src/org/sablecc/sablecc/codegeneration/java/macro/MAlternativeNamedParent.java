@@ -2,13 +2,13 @@
 
 package org.sablecc.sablecc.codegeneration.java.macro;
 
-public class MNormalAlternativeParent {
+public class MAlternativeNamedParent {
 
     private final String pParent;
 
-    private final MNormalAlternativeParent mNormalAlternativeParent = this;
+    private final MAlternativeNamedParent mAlternativeNamedParent = this;
 
-    MNormalAlternativeParent(
+    MAlternativeNamedParent(
             String pParent) {
 
         if (pParent == null) {
@@ -24,17 +24,15 @@ public class MNormalAlternativeParent {
 
     private String rParent() {
 
-        return this.mNormalAlternativeParent.pParent();
+        return this.mAlternativeNamedParent.pParent();
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("    extends N");
+        sb.append("N");
         sb.append(rParent());
-        sb.append(" {");
-        sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }
 

@@ -2,31 +2,31 @@
 
 package org.sablecc.sablecc.codegeneration.java.macro;
 
-public class MElement {
+public class MNormalElementAccessor {
 
-    private final String pType;
+    private final String pElementType;
 
     private final String pElementName;
 
-    private final MElement mElement = this;
+    private final MNormalElementAccessor mNormalElementAccessor = this;
 
-    MElement(
-            String pType,
+    MNormalElementAccessor(
+            String pElementType,
             String pElementName) {
 
-        if (pType == null) {
+        if (pElementType == null) {
             throw new NullPointerException();
         }
-        this.pType = pType;
+        this.pElementType = pElementType;
         if (pElementName == null) {
             throw new NullPointerException();
         }
         this.pElementName = pElementName;
     }
 
-    String pType() {
+    String pElementType() {
 
-        return this.pType;
+        return this.pElementType;
     }
 
     String pElementName() {
@@ -34,29 +34,23 @@ public class MElement {
         return this.pElementName;
     }
 
-    private String rType() {
+    private String rElementType() {
 
-        return this.mElement.pType();
+        return this.mNormalElementAccessor.pElementType();
     }
 
     private String rElementName() {
 
-        return this.mElement.pElementName();
+        return this.mNormalElementAccessor.pElementName();
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("  private final N");
-        sb.append(rType());
-        sb.append(" e");
-        sb.append(rElementName());
-        sb.append(";");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  public N");
-        sb.append(rType());
-        sb.append(" get");
+        sb.append("  N");
+        sb.append(rElementType());
+        sb.append(" internalGet");
         sb.append(rElementName());
         sb.append("() {");
         sb.append(System.getProperty("line.separator"));

@@ -2,19 +2,31 @@
 
 package org.sablecc.sablecc.codegeneration.java.macro;
 
-public class MEndElement {
+public class MNormalElementDeclaration {
+
+    private final String pElementType;
 
     private final String pElementName;
 
-    private final MEndElement mEndElement = this;
+    private final MNormalElementDeclaration mNormalElementDeclaration = this;
 
-    MEndElement(
+    MNormalElementDeclaration(
+            String pElementType,
             String pElementName) {
 
+        if (pElementType == null) {
+            throw new NullPointerException();
+        }
+        this.pElementType = pElementType;
         if (pElementName == null) {
             throw new NullPointerException();
         }
         this.pElementName = pElementName;
+    }
+
+    String pElementType() {
+
+        return this.pElementType;
     }
 
     String pElementName() {
@@ -22,28 +34,25 @@ public class MEndElement {
         return this.pElementName;
     }
 
+    private String rElementType() {
+
+        return this.mNormalElementDeclaration.pElementType();
+    }
+
     private String rElementName() {
 
-        return this.mEndElement.pElementName();
+        return this.mNormalElementDeclaration.pElementName();
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("  private final End e");
+        sb.append("  private final N");
+        sb.append(rElementType());
+        sb.append(" e");
         sb.append(rElementName());
         sb.append(";");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  public End get");
-        sb.append(rElementName());
-        sb.append("() {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    return this.e");
-        sb.append(rElementName());
-        sb.append(";");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

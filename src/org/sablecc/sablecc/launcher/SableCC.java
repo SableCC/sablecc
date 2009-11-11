@@ -544,10 +544,10 @@ public class SableCC {
                     AnonymousToken anonymousToken = (AnonymousToken) matchedToken;
 
                     mNode.newNodeInternalTypeEnumEntry(""
-                            + anonymousToken.getId());
+                            + anonymousToken.get_CamelCaseName());
 
                     MAnonymousToken mAnonymousToken = new MAnonymousToken(""
-                            + anonymousToken.getId());
+                            + anonymousToken.get_CamelCaseName());
 
                     if (destinationPackage.equals("")) {
                         mAnonymousToken.newDefaultPackage(globalIndex
@@ -562,14 +562,16 @@ public class SableCC {
                     try {
                         BufferedWriter bw = new BufferedWriter(new FileWriter(
                                 new File(packageDirectory, "N"
-                                        + anonymousToken.getId() + ".java")));
+                                        + anonymousToken.get_CamelCaseName()
+                                        + ".java")));
 
                         bw.write(mAnonymousToken.toString());
                         bw.close();
                     }
                     catch (IOException e) {
                         throw CompilerException.outputError("N"
-                                + anonymousToken.getId() + ".java", e);
+                                + anonymousToken.get_CamelCaseName() + ".java",
+                                e);
                     }
                 }
             }
@@ -651,7 +653,7 @@ public class SableCC {
                         AnonymousToken anonymousToken = (AnonymousToken) matchedToken;
 
                         mFinalStateSingleton.newAcceptNormalToken(""
-                                + anonymousToken.getId());
+                                + anonymousToken.get_CamelCaseName());
                     }
                 }
 
@@ -772,6 +774,8 @@ public class SableCC {
                 String alt_CamelCaseFullName = production_CamelCaseName
                         + (alt_CamelCaseName.equals("") ? "" : "_"
                                 + alt_CamelCaseName);
+                boolean altIsPublic = alt_CamelCaseFullName.indexOf('$') == -1;
+                boolean altExtendsNode = alt_CamelCaseFullName.indexOf('_') == -1;
 
                 MAlternative mAlternative = new MAlternative(
                         alt_CamelCaseFullName);
@@ -786,30 +790,37 @@ public class SableCC {
                 }
 
                 mNode.newNodeInternalTypeEnumEntry(alt_CamelCaseFullName);
-                if (alt_CamelCaseFullName.indexOf('$') == -1) {
+                if (altIsPublic) {
                     mNode.newNodeTypeEnumEntry(alt_CamelCaseFullName);
-                    mAlternative.newNamedAlternativeHeader();
+                    mAlternative.newPublic();
+                    mAlternative.newNamedAltType();
                 }
                 else {
-                    mAlternative.newAnonymousAlternativeHeader();
+                    mAlternative.newAnonymousAltType();
                 }
 
-                if (alt_CamelCaseFullName.indexOf('_') == -1) {
-                    mAlternative.newNodeAlternativeParent();
+                if (altExtendsNode) {
+                    mAlternative.newAlternativeNodeParent();
                 }
                 else {
                     mAlternative
-                            .newNormalAlternativeParent(production_CamelCaseName);
+                            .newAlternativeNamedParent(production_CamelCaseName);
                 }
 
+                boolean altHasPublicConstructor = true;
                 for (Element element : alternative.getElements()) {
                     String element_CamelCaseName = to_CamelCase(element
                             .getName());
-                    String element_CamelCaseType;
+                    String element_CamelCaseType = null;
+                    boolean elementIsEndToken;
+                    boolean elementIsPublicReadable;
+                    boolean elementIsPublicWritable;
                     if (element instanceof TokenElement) {
                         TokenElement tokenElement = (TokenElement) element;
                         if (tokenElement.getToken().getName().equals("$end")) {
-                            element_CamelCaseType = "$end";
+                            elementIsEndToken = true;
+                            elementIsPublicReadable = false;
+                            elementIsPublicWritable = false;
                         }
                         else {
                             MatchedToken matchedToken = context
@@ -824,23 +835,66 @@ public class SableCC {
                                 AnonymousToken anonymousToken = (AnonymousToken) matchedToken;
 
                                 element_CamelCaseType = ""
-                                        + anonymousToken.getId();
+                                        + anonymousToken.get_CamelCaseName();
                             }
+
+                            elementIsEndToken = false;
+                            elementIsPublicReadable = altIsPublic
+                                    && element_CamelCaseName.indexOf('$') == -1;
+                            elementIsPublicWritable = elementIsPublicReadable
+                                    && element_CamelCaseType.indexOf('$') == -1;
                         }
                     }
                     else {
                         ProductionElement productionElement = (ProductionElement) element;
-                        element_CamelCaseType = to_camelCase(productionElement
+                        element_CamelCaseType = to_CamelCase(productionElement
                                 .getProduction().getName());
+
+                        elementIsEndToken = false;
+                        elementIsPublicReadable = altIsPublic
+                                && element_CamelCaseName.indexOf('$') == -1;
+                        elementIsPublicWritable = elementIsPublicReadable
+                                && element_CamelCaseType.indexOf('$') == -1;
                     }
 
-                    if (element_CamelCaseType.equals("$end")) {
-                        mAlternative.newEndElement(element_CamelCaseName);
+                    if (!elementIsPublicWritable) {
+                        altHasPublicConstructor = false;
+                    }
+
+                    if (elementIsEndToken) {
+                        mAlternative.newEndConstructorParameter();
+                        mAlternative.newEndContructorInitialization();
+
+                        mAlternative.newEndElementDeclaration();
+                        mAlternative.newEndElementAccessor();
                     }
                     else {
-                        mAlternative.newElement(element_CamelCaseType,
-                                element_CamelCaseName);
+                        mAlternative.newNormalConstructorParameter(
+                                element_CamelCaseType, element_CamelCaseName);
+                        mAlternative
+                                .newNormalContructorInitialization(element_CamelCaseName);
+
+                        mAlternative.newNormalElementDeclaration(
+                                element_CamelCaseType, element_CamelCaseName);
+                        mAlternative.newNormalElementAccessor(
+                                element_CamelCaseType, element_CamelCaseName);
+
+                        if (elementIsPublicReadable) {
+                            MPublicElementAccessor publicElementAccessor = mAlternative
+                                    .newPublicElementAccessor(element_CamelCaseName);
+                            if (elementIsPublicWritable) {
+                                publicElementAccessor
+                                        .newPublicElementType(element_CamelCaseType);
+                            }
+                            else {
+                                publicElementAccessor.newTokenElementType();
+                            }
+                        }
                     }
+                }
+
+                if (altHasPublicConstructor) {
+                    mAlternative.newPublicConstructor();
                 }
 
                 try {

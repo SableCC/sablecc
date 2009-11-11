@@ -38,4 +38,9 @@ public abstract class AnonymousToken
 
         return this.id;
     }
+
+    public String get_CamelCaseName() {
+
+        return "$" + getId();
+    }
 }

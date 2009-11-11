@@ -120,11 +120,13 @@ public class N$name
     super(text, line, pos);
   }
 
+  @Override
   public Type getType() {
     return Node.Type.T_$name;
   }
 
-  public InternalType getInternalType() {
+  @Override
+  InternalType getInternalType() {
     return Node.InternalType.T_$name;
   }
 }
@@ -143,11 +145,13 @@ class N$name
     super(text, line, pos);
   }
 
+  @Override
   public Type getType() {
     return Node.Type.TAnonymous;
   }
 
-  public InternalType getInternalType() {
+  @Override
+  InternalType getInternalType() {
     return Node.InternalType.T_$name;
   }
 }
@@ -592,11 +596,13 @@ public class End
     super("", line, pos);
   }
 
+  @Override
   public Type getType() {
     return Node.Type.TEnd;
   }
 
-  public InternalType getInternalType() {
+  @Override
+  InternalType getInternalType() {
     return Node.InternalType.TEnd;
   }
 }
@@ -619,36 +625,110 @@ $end: anonymous_production_header $
 }
 $end: production $
 
+$comment: ========== public ========== $
+
+$macro: public $
+public $no_eol$
+$end: public $
+
 $comment: ========== alternative ========== $
 
 $macro: alternative(name) $
 $insert: header $
 $expand: default_package, specified_package, before_first="\n" $
 
-$macro: named_alternative_header $
-public abstract class N$name
-$end: named_alternative_header $
-$macro: anonymous_alternative_header $
-abstract class N$name
-$end: anonymous_alternative_header $
-$macro: normal_alternative_parent(parent) $
-    extends N$parent {
-$end: normal_alternative_parent $
-$macro: node_alternative_parent $
-    extends Node {
-$end: node_alternative_parent $
+$expand: public $
+class N$name
+    extends $expand: alternative_named_parent, alternative_node_parent $ {
+$macro: alternative_named_parent(parent) $
+N$(parent)$no_eol$
+$end: alternative_named_parent $
+$macro: alternative_node_parent $
+Node$no_eol$
+$end: alternative_node_parent $
 
-$macro: element(type, element_name) $
-  private final N$type e$element_name;
-  public N$type get$element_name() {
+  private final int line;
+  private final int pos;
+$expand: normal_element_declaration, end_element_declaration $
+
+  @Override
+  public int getLine() {
+    return this.line;
+  }
+
+  @Override
+  public int getPos() {
+    return this.pos;
+  }
+
+  @Override
+  public String getText() {
+    return null;
+  }
+
+  $expand: public_constructor $
+$macro: public_constructor $
+public $no_eol$
+$end: public_constructor $
+N$name(int line, int pos$expand: normal_constructor_parameter, end_constructor_parameter, before_first=", ", separator=", " $) {
+$macro: normal_constructor_parameter(element_type, element_name) $
+N$element_type p$(element_name)$no_eol$
+$end: normal_constructor_parameter $
+$macro: end_constructor_parameter $
+End p\$end$no_eol$
+$end: end_constructor_parameter $
+    this.line = line;
+    this.pos = pos;
+$macro: normal_contructor_initialization(element_name) $
+    this.e$element_name = p$element_name;
+$end: normal_contructor_initialization $
+$macro: end_contructor_initialization $
+    this.e\$end = p\$end;
+$end: end_contructor_initialization $
+  }
+
+  @Override
+  public Type getType() {
+$macro: named_alt_type $
+    return Node.Type.T_$name;
+$end: named_alt_type $
+$macro: anonymous_alt_type $
+    return Node.Type.TAnonymous;
+$end: anonymous_alt_type $
+  }
+
+  @Override
+  InternalType getInternalType() {
+    return Node.InternalType.T_$name;
+  }
+$expand: public_element_accessor, before_first="\n", separator="\n" $
+$expand: normal_element_accessor, end_element_accessor, before_first="\n", separator="\n" $
+$macro: normal_element_declaration(element_type, element_name) $
+  private final N$element_type e$element_name;
+$end: normal_element_declaration $
+$macro: public_element_accessor(element_name) $
+  public $expand: public_element_type, token_element_type $ get$element_name() {
+$macro: public_element_type(element_type) $
+N$(element_type)$no_eol$
+$end: public_element_type $
+$macro: token_element_type $
+Token$no_eol$
+$end: token_element_type $
     return this.e$element_name;
   }
-$end: element$
-$macro: end_element(element_name) $
-  private final End e$element_name;
-  public End get$element_name() {
+$end: public_element_accessor$
+$macro: normal_element_accessor(element_type, element_name) $
+  N$element_type internalGet$element_name() {
     return this.e$element_name;
   }
-$end: end_element$
+$end: normal_element_accessor$
+$macro: end_element_declaration $
+  private final End e\$end;
+$end: end_element_declaration $
+$macro: end_element_accessor $
+  End internalGet\$end() {
+    return this.e\$end;
+  }
+$end: end_element_accessor$
 }
 $end: alternative $

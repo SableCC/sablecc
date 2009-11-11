@@ -42,7 +42,6 @@ public class ParserAlternative
                 .getAlternativeName();
         this.publicName = alternativeName == null ? "" : alternativeName
                 .getText().substring(1, alternativeName.getText().length() - 2);
-        System.out.println(getPublicName());
     }
 
     public String getPublicName() {
