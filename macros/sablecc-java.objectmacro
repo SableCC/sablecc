@@ -57,6 +57,16 @@ $end: node_type_enum_entry $
   public abstract void apply(Walker walker);
   public abstract void applyOnChildren(Walker walker);
 
+  private Node parent;
+
+  public Node getParent() {
+    return this.parent;
+  }
+
+  void setParent(Node parent) {
+    this.parent = parent;
+  }
+
   @Override
   public String toString() {
     return "\\"" + getText() + "\\"@(" + getLine() + "," + getPos() + ")";
@@ -751,7 +761,7 @@ $macro: normal_element_declaration(element_type, element_name) $
   private final N$element_type e$element_name;
 $end: normal_element_declaration $
 $macro: public_element_accessor(element_name) $
-  public $expand: public_element_type, token_element_type $ get$element_name() {
+  public $expand: public_element_type, token_element_type $ get_$element_name() {
 $macro: public_element_type(element_type) $
 N$(element_type)$no_eol$
 $end: public_element_type $
