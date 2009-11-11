@@ -18,7 +18,7 @@
 Language exp;
 
 Lexer
-  number = digit+;
+  num = digit+;
   digit = '0'..'9';
 
   Ignored
@@ -26,10 +26,13 @@ Lexer
 
 Parser
 
+  program =
+    exp ';';
+
   exp =
-    {add:} exp '+' exp |
-    {mul:} exp '*' exp |
-    number;
+    {add:} exp [op:]'+' exp |
+    {mul:} exp [op:]'*' exp |
+    {num:} num;
 
     Priority
       Left mul;
