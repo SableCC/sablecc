@@ -26,6 +26,14 @@ public class MAlternative {
 
     private final List<Object> eNormalElementAccessor_EndElementAccessor = new LinkedList<Object>();
 
+    private final List<Object> eAltNormalApply = new LinkedList<Object>();
+
+    private final List<Object> eAltAnonymousApply = new LinkedList<Object>();
+
+    private final List<Object> eNormalChildApply = new LinkedList<Object>();
+
+    private final List<Object> eEndChildApply = new LinkedList<Object>();
+
     private final List<Object> eNormalContructorInitialization = new LinkedList<Object>();
 
     private final List<Object> eEndContructorInitialization = new LinkedList<Object>();
@@ -41,6 +49,36 @@ public class MAlternative {
             throw new NullPointerException();
         }
         this.pName = pName;
+    }
+
+    public MAltNormalApply newAltNormalApply() {
+
+        MAltNormalApply lAltNormalApply = new MAltNormalApply(this.mAlternative);
+        this.eAltNormalApply.add(lAltNormalApply);
+        return lAltNormalApply;
+    }
+
+    public MAltAnonymousApply newAltAnonymousApply() {
+
+        MAltAnonymousApply lAltAnonymousApply = new MAltAnonymousApply();
+        this.eAltAnonymousApply.add(lAltAnonymousApply);
+        return lAltAnonymousApply;
+    }
+
+    public MNormalChildApply newNormalChildApply(
+            String pElementName) {
+
+        MNormalChildApply lNormalChildApply = new MNormalChildApply(
+                pElementName);
+        this.eNormalChildApply.add(lNormalChildApply);
+        return lNormalChildApply;
+    }
+
+    public MEndChildApply newEndChildApply() {
+
+        MEndChildApply lEndChildApply = new MEndChildApply();
+        this.eEndChildApply.add(lEndChildApply);
+        return lEndChildApply;
     }
 
     public MNormalContructorInitialization newNormalContructorInitialization(
@@ -257,6 +295,32 @@ public class MAlternative {
         sb.append(System.getProperty("line.separator"));
         sb.append("    return null;");
         sb.append(System.getProperty("line.separator"));
+        sb.append("  }");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  @Override");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  public void apply(Walker walker) {");
+        sb.append(System.getProperty("line.separator"));
+        for (Object oAltNormalApply : this.eAltNormalApply) {
+            sb.append(oAltNormalApply.toString());
+        }
+        for (Object oAltAnonymousApply : this.eAltAnonymousApply) {
+            sb.append(oAltAnonymousApply.toString());
+        }
+        sb.append("  }");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  @Override");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  public void applyOnChildren(Walker walker) {");
+        sb.append(System.getProperty("line.separator"));
+        for (Object oNormalChildApply : this.eNormalChildApply) {
+            sb.append(oNormalChildApply.toString());
+        }
+        for (Object oEndChildApply : this.eEndChildApply) {
+            sb.append(oEndChildApply.toString());
+        }
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));

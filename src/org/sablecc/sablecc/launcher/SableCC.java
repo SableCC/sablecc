@@ -449,6 +449,7 @@ public class SableCC {
         MLexerException mLexerException = new MLexerException();
         MTest mTest = new MTest();
         MEnd mEnd = new MEnd();
+        MWalker mWalker = new MWalker();
 
         if (destinationPackage.equals("")) {
             packageDirectory = new File(destinationDirectory,
@@ -472,6 +473,8 @@ public class SableCC {
             mTest.newDefaultPackage(globalIndex.getLanguage()
                     .get_camelCaseName());
             mEnd.newDefaultPackage(globalIndex.getLanguage()
+                    .get_camelCaseName());
+            mWalker.newDefaultPackage(globalIndex.getLanguage()
                     .get_camelCaseName());
         }
         else {
@@ -498,6 +501,8 @@ public class SableCC {
                     .get_camelCaseName(), destinationPackage);
             mEnd.newSpecifiedPackage(globalIndex.getLanguage()
                     .get_camelCaseName(), destinationPackage);
+            mWalker.newSpecifiedPackage(globalIndex.getLanguage()
+                    .get_camelCaseName(), destinationPackage);
         }
 
         packageDirectory.mkdirs();
@@ -512,6 +517,10 @@ public class SableCC {
                     mNode.newNodeTypeEnumEntry(nameToken.get_CamelCaseName());
                     mNode.newNodeInternalTypeEnumEntry(nameToken
                             .get_CamelCaseName());
+
+                    mWalker.newWalkerIn(nameToken.get_CamelCaseName());
+                    mWalker.newWalkerCase(nameToken.get_CamelCaseName());
+                    mWalker.newWalkerOut(nameToken.get_CamelCaseName());
 
                     MCustomToken mCustomToken = new MCustomToken(nameToken
                             .get_CamelCaseName());
@@ -780,6 +789,16 @@ public class SableCC {
                 MAlternative mAlternative = new MAlternative(
                         alt_CamelCaseFullName);
 
+                if (altIsPublic) {
+                    mWalker.newWalkerIn(alt_CamelCaseFullName);
+                    mWalker.newWalkerCase(alt_CamelCaseFullName);
+                    mWalker.newWalkerOut(alt_CamelCaseFullName);
+                    mAlternative.newAltNormalApply();
+                }
+                else {
+                    mAlternative.newAltAnonymousApply();
+                }
+
                 if (destinationPackage.equals("")) {
                     mAlternative.newDefaultPackage(globalIndex.getLanguage()
                             .get_camelCaseName());
@@ -867,6 +886,8 @@ public class SableCC {
 
                         mAlternative.newEndElementDeclaration();
                         mAlternative.newEndElementAccessor();
+
+                        mAlternative.newEndChildApply();
                     }
                     else {
                         mAlternative.newNormalConstructorParameter(
@@ -878,6 +899,8 @@ public class SableCC {
                                 element_CamelCaseType, element_CamelCaseName);
                         mAlternative.newNormalElementAccessor(
                                 element_CamelCaseType, element_CamelCaseName);
+
+                        mAlternative.newNormalChildApply(element_CamelCaseName);
 
                         if (elementIsPublicReadable) {
                             MPublicElementAccessor publicElementAccessor = mAlternative
@@ -1020,6 +1043,17 @@ public class SableCC {
         }
         catch (IOException e) {
             throw CompilerException.outputError("End.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "Walker.java")));
+
+            bw.write(mWalker.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            throw CompilerException.outputError("Walker.java", e);
         }
     }
 

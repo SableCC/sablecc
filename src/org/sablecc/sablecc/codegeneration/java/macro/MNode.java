@@ -86,6 +86,10 @@ public class MNode {
         sb.append(System.getProperty("line.separator"));
         sb.append("  public abstract int getPos();");
         sb.append(System.getProperty("line.separator"));
+        sb.append("  public abstract void apply(Walker walker);");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  public abstract void applyOnChildren(Walker walker);");
+        sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("  @Override");
         sb.append(System.getProperty("line.separator"));
