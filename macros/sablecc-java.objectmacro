@@ -54,6 +54,8 @@ $end: node_type_enum_entry $
   public abstract String getText();
   public abstract int getLine();
   public abstract int getPos();
+  public abstract void apply(Walker walker);
+  public abstract void applyOnChildren(Walker walker);
 
   @Override
   public String toString() {
@@ -104,6 +106,17 @@ public abstract class Token
   public int getPos() {
     return this.pos;
   }
+
+  @Override
+  public void apply(Walker walker) {
+    walker.defaultIn(this);
+    walker.defaultCase(this);
+    walker.defaultOut(this);
+  }
+
+  @Override
+  public void applyOnChildren(Walker walker) {
+  }
 }
 $end: token $
 
@@ -128,6 +141,13 @@ public class N$name
   @Override
   InternalType getInternalType() {
     return Node.InternalType.T_$name;
+  }
+
+  @Override
+  public void apply(Walker walker) {
+    walker.in$name(this);
+    walker.case$name(this);
+    walker.out$name(this);
   }
 }
 $end: custom_token $
@@ -666,6 +686,30 @@ $expand: normal_element_declaration, end_element_declaration $
     return null;
   }
 
+  @Override
+  public void apply(Walker walker) {
+$macro: alt_normal_apply $
+    walker.in$name(this);
+    walker.case$name(this);
+    walker.out$name(this);
+$end: alt_normal_apply $
+$macro: alt_anonymous_apply $
+    walker.defaultIn(this);
+    walker.defaultCase(this);
+    walker.defaultOut(this);
+$end: alt_anonymous_apply $
+  }
+
+  @Override
+  public void applyOnChildren(Walker walker) {
+$macro: normal_child_apply(element_name) $
+    this.e$element_name.apply(walker);
+$end: normal_child_apply $
+$macro: end_child_apply $
+    this.e\$end.apply(walker);
+$end: end_child_apply $
+  }
+
   $expand: public_constructor $
 $macro: public_constructor $
 public $no_eol$
@@ -732,3 +776,41 @@ $macro: end_element_accessor $
 $end: end_element_accessor$
 }
 $end: alternative $
+
+$comment: ========== walker ========== $
+
+$macro: walker $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+public class Walker {
+
+$macro: walker_in(type_name) $
+  public void in$type_name(N$type_name node) {
+    defaultIn(node);
+  }
+
+$end: walker_in $
+  public void defaultIn(Node node) {
+  }
+
+$macro: walker_case(type_name) $
+  public void case$type_name(N$type_name node) {
+    defaultCase(node);
+  }
+
+$end: walker_case $
+  public void defaultCase(Node node) {
+    node.applyOnChildren(this);
+  }
+
+$macro: walker_out(type_name) $
+  public void out$type_name(N$type_name node) {
+    defaultOut(node);
+  }
+
+$end: walker_out $
+  public void defaultOut(Node node) {
+  }
+}
+$end: walker $
