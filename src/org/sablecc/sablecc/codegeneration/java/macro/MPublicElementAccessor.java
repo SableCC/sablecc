@@ -55,7 +55,7 @@ public class MPublicElementAccessor {
         for (Object oPublicElementType_TokenElementType : this.ePublicElementType_TokenElementType) {
             sb.append(oPublicElementType_TokenElementType.toString());
         }
-        sb.append(" get");
+        sb.append(" get_");
         sb.append(rElementName());
         sb.append("() {");
         sb.append(System.getProperty("line.separator"));
