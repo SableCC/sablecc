@@ -40,6 +40,8 @@ public class MAlternative {
 
     private final List<Object> eAnonymousAltType = new LinkedList<Object>();
 
+    private final List<Object> eAltProdType = new LinkedList<Object>();
+
     public MAlternative(
             String pName) {
 
@@ -92,6 +94,14 @@ public class MAlternative {
         MAnonymousAltType lAnonymousAltType = new MAnonymousAltType();
         this.eAnonymousAltType.add(lAnonymousAltType);
         return lAnonymousAltType;
+    }
+
+    public MAltProdType newAltProdType(
+            String pProdName) {
+
+        MAltProdType lAltProdType = new MAltProdType(pProdName);
+        this.eAltProdType.add(lAltProdType);
+        return lAltProdType;
     }
 
     public MDefaultPackage newDefaultPackage(
@@ -372,9 +382,19 @@ public class MAlternative {
         sb.append(System.getProperty("line.separator"));
         sb.append("  @Override");
         sb.append(System.getProperty("line.separator"));
+        sb.append("  public ProductionType getProductionType() {");
+        sb.append(System.getProperty("line.separator"));
+        for (Object oAltProdType : this.eAltProdType) {
+            sb.append(oAltProdType.toString());
+        }
+        sb.append("  }");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  @Override");
+        sb.append(System.getProperty("line.separator"));
         sb.append("  InternalType getInternalType() {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    return Node.InternalType.T_");
+        sb.append("    return InternalType.T_");
         sb.append(rName());
         sb.append(";");
         sb.append(System.getProperty("line.separator"));

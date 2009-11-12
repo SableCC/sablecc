@@ -24,7 +24,7 @@ public class MNamedAltType {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("    return Node.Type.T_");
+        sb.append("    return Type.T_");
         sb.append(rName());
         sb.append(";");
         sb.append(System.getProperty("line.separator"));

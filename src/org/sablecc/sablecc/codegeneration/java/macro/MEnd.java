@@ -58,7 +58,7 @@ public class MEnd {
         sb.append(System.getProperty("line.separator"));
         sb.append("  public Type getType() {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    return Node.Type.TEnd;");
+        sb.append("    return Type.TEnd;");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
@@ -67,7 +67,7 @@ public class MEnd {
         sb.append(System.getProperty("line.separator"));
         sb.append("  InternalType getInternalType() {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    return Node.InternalType.TEnd;");
+        sb.append("    return InternalType.TEnd;");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));

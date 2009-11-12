@@ -67,6 +67,15 @@ public class MToken {
         sb.append(System.getProperty("line.separator"));
         sb.append("  @Override");
         sb.append(System.getProperty("line.separator"));
+        sb.append("  public ProductionType getProductionType() {");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    return ProductionType.TNotAProduction;");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  }");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  @Override");
+        sb.append(System.getProperty("line.separator"));
         sb.append("  public String getText() {");
         sb.append(System.getProperty("line.separator"));
         sb.append("    return this.text;");

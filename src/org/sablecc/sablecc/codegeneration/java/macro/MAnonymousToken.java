@@ -80,7 +80,7 @@ public class MAnonymousToken {
         sb.append(System.getProperty("line.separator"));
         sb.append("  public Type getType() {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    return Node.Type.TAnonymous;");
+        sb.append("    return Type.TAnonymous;");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
@@ -89,7 +89,7 @@ public class MAnonymousToken {
         sb.append(System.getProperty("line.separator"));
         sb.append("  InternalType getInternalType() {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    return Node.InternalType.T_");
+        sb.append("    return InternalType.T_");
         sb.append(rName());
         sb.append(";");
         sb.append(System.getProperty("line.separator"));

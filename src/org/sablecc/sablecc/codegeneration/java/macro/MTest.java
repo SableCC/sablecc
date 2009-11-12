@@ -70,6 +70,8 @@ public class MTest {
         sb.append(System.getProperty("line.separator"));
         sb.append("    Node syntaxTree = new Parser(in).parse();");
         sb.append(System.getProperty("line.separator"));
+        sb.append("    System.out.println();");
+        sb.append(System.getProperty("line.separator"));
         sb.append("    syntaxTree.apply(new Walker() {");
         sb.append(System.getProperty("line.separator"));
         sb.append("      @Override");
@@ -78,7 +80,8 @@ public class MTest {
         sb.append(System.getProperty("line.separator"));
         sb.append("        if(node instanceof Token) {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("          System.out.println(node.getText());");
+        sb
+                .append("          System.out.println(node.getType() + \":\\\"\" + node.getText() + \"\\\"@(\" + node.getLine() + \",\" + node.getPos() + \")\");");
         sb.append(System.getProperty("line.separator"));
         sb.append("        }");
         sb.append(System.getProperty("line.separator"));
