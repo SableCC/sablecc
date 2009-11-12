@@ -14,9 +14,11 @@ public class MLrStateSingleton {
 
     private final List<Object> eLr1OrMore = new LinkedList<Object>();
 
-    private final List<Object> eNormalLrTransitionTarget = new LinkedList<Object>();
+    private final List<Object> eProductionLrTransitionTarget = new LinkedList<Object>();
 
-    private final List<Object> eEndLrTransitionTarget = new LinkedList<Object>();
+    private final List<Object> eNormalTokenLrTransitionTarget = new LinkedList<Object>();
+
+    private final List<Object> eEndTokenLrTransitionTarget = new LinkedList<Object>();
 
     MLrStateSingleton(
             String pNumber) {
@@ -42,23 +44,33 @@ public class MLrStateSingleton {
         return lLr1OrMore;
     }
 
-    public MNormalLrTransitionTarget newNormalLrTransitionTarget(
+    public MProductionLrTransitionTarget newProductionLrTransitionTarget(
             String pNodeType,
             String pTarget) {
 
-        MNormalLrTransitionTarget lNormalLrTransitionTarget = new MNormalLrTransitionTarget(
+        MProductionLrTransitionTarget lProductionLrTransitionTarget = new MProductionLrTransitionTarget(
                 pNodeType, pTarget);
-        this.eNormalLrTransitionTarget.add(lNormalLrTransitionTarget);
-        return lNormalLrTransitionTarget;
+        this.eProductionLrTransitionTarget.add(lProductionLrTransitionTarget);
+        return lProductionLrTransitionTarget;
     }
 
-    public MEndLrTransitionTarget newEndLrTransitionTarget(
+    public MNormalTokenLrTransitionTarget newNormalTokenLrTransitionTarget(
+            String pNodeType,
             String pTarget) {
 
-        MEndLrTransitionTarget lEndLrTransitionTarget = new MEndLrTransitionTarget(
+        MNormalTokenLrTransitionTarget lNormalTokenLrTransitionTarget = new MNormalTokenLrTransitionTarget(
+                pNodeType, pTarget);
+        this.eNormalTokenLrTransitionTarget.add(lNormalTokenLrTransitionTarget);
+        return lNormalTokenLrTransitionTarget;
+    }
+
+    public MEndTokenLrTransitionTarget newEndTokenLrTransitionTarget(
+            String pTarget) {
+
+        MEndTokenLrTransitionTarget lEndTokenLrTransitionTarget = new MEndTokenLrTransitionTarget(
                 pTarget);
-        this.eEndLrTransitionTarget.add(lEndLrTransitionTarget);
-        return lEndLrTransitionTarget;
+        this.eEndTokenLrTransitionTarget.add(lEndTokenLrTransitionTarget);
+        return lEndTokenLrTransitionTarget;
     }
 
     String pNumber() {
@@ -120,17 +132,27 @@ public class MLrStateSingleton {
         sb
                 .append("      throws ParserException, LexerException, IOException {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    switch(node.getInternalType()) {");
         sb.append(System.getProperty("line.separator"));
-        for (Object oNormalLrTransitionTarget : this.eNormalLrTransitionTarget) {
-            sb.append(oNormalLrTransitionTarget.toString());
-        }
-        for (Object oEndLrTransitionTarget : this.eEndLrTransitionTarget) {
-            sb.append(oEndLrTransitionTarget.toString());
+        sb.append("    switch(node.getProductionType()) {");
+        sb.append(System.getProperty("line.separator"));
+        for (Object oProductionLrTransitionTarget : this.eProductionLrTransitionTarget) {
+            sb.append(oProductionLrTransitionTarget.toString());
         }
         sb.append("    default:");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      throw new ParserException((Token) node);");
+        sb.append("      switch(node.getInternalType()) {");
+        sb.append(System.getProperty("line.separator"));
+        for (Object oNormalTokenLrTransitionTarget : this.eNormalTokenLrTransitionTarget) {
+            sb.append(oNormalTokenLrTransitionTarget.toString());
+        }
+        for (Object oEndTokenLrTransitionTarget : this.eEndTokenLrTransitionTarget) {
+            sb.append(oEndTokenLrTransitionTarget.toString());
+        }
+        sb.append("        default:");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("          throw new ParserException((Token) node);");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("      }");
         sb.append(System.getProperty("line.separator"));
         sb.append("    }");
         sb.append(System.getProperty("line.separator"));

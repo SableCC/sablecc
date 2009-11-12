@@ -2,13 +2,13 @@
 
 package org.sablecc.sablecc.codegeneration.java.macro;
 
-public class MEndLrTransitionTarget {
+public class MEndTokenLrTransitionTarget {
 
     private final String pTarget;
 
-    private final MEndLrTransitionTarget mEndLrTransitionTarget = this;
+    private final MEndTokenLrTransitionTarget mEndTokenLrTransitionTarget = this;
 
-    MEndLrTransitionTarget(
+    MEndTokenLrTransitionTarget(
             String pTarget) {
 
         if (pTarget == null) {
@@ -24,16 +24,16 @@ public class MEndLrTransitionTarget {
 
     private String rTarget() {
 
-        return this.mEndLrTransitionTarget.pTarget();
+        return this.mEndTokenLrTransitionTarget.pTarget();
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("    case TEnd:");
+        sb.append("        case TEnd:");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      return L_");
+        sb.append("          return L_");
         sb.append(rTarget());
         sb.append(".instance;");
         sb.append(System.getProperty("line.separator"));

@@ -749,6 +749,8 @@ public class SableCC {
 
             String production_CamelCaseName = to_CamelCase(production.getName());
 
+            mNode.newNodeProductionTypeEnumEntry(production_CamelCaseName);
+
             // if production is not a single anonymous alternative
             if (production.getAlternatives().size() > 1
                     || !production.getAlternatives().iterator().next()
@@ -797,6 +799,8 @@ public class SableCC {
 
                 MAlternative mAlternative = new MAlternative(
                         alt_CamelCaseFullName);
+
+                mAlternative.newAltProdType(production_CamelCaseName);
 
                 if (altIsPublic) {
                     mWalker.newWalkerIn(alt_CamelCaseFullName);
@@ -954,8 +958,8 @@ public class SableCC {
                 LRState target = entry.getValue();
 
                 if (token.getName().equals("$end")) {
-                    mLrStateSingleton
-                            .newEndLrTransitionTarget(target.getName());
+                    mLrStateSingleton.newEndTokenLrTransitionTarget(target
+                            .getName());
                 }
                 else {
                     MatchedToken matchedToken = context.getMatchedToken(token
@@ -972,7 +976,7 @@ public class SableCC {
                                 + anonymousToken.get_CamelCaseName();
                     }
 
-                    mLrStateSingleton.newNormalLrTransitionTarget(
+                    mLrStateSingleton.newNormalTokenLrTransitionTarget(
                             element_CamelCaseType, target.getName());
                 }
             }
@@ -984,16 +988,8 @@ public class SableCC {
 
                 String production_CamelCaseName = to_CamelCase(production
                         .getName());
-                for (Alternative alternative : production.getAlternatives()) {
-                    String alt_CamelCaseName = to_CamelCase(alternative
-                            .getName());
-                    String alt_CamelCaseFullName = production_CamelCaseName
-                            + (alt_CamelCaseName.equals("") ? "" : "_"
-                                    + alt_CamelCaseName);
-
-                    mLrStateSingleton.newNormalLrTransitionTarget(
-                            alt_CamelCaseFullName, target.getName());
-                }
+                mLrStateSingleton.newProductionLrTransitionTarget(
+                        production_CamelCaseName, target.getName());
             }
 
             Map<Integer, MDistance> distanceMap = new LinkedHashMap<Integer, MDistance>();

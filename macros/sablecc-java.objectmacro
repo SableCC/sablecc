@@ -42,6 +42,8 @@ $expand: default_package, specified_package, before_first="\n" $
 
 public abstract class Node {
 
+  public abstract Type getType();
+
   public static enum Type {
 $macro: node_type_enum_entry(name) $
     T_$name,
@@ -50,7 +52,15 @@ $end: node_type_enum_entry $
     TAnonymous;
   }
 
-  public abstract Type getType();
+  public abstract ProductionType getProductionType();
+
+  public static enum ProductionType {
+$macro: node_production_type_enum_entry(name) $
+    T_$name,
+$end: node_production_type_enum_entry $
+    TNotAProduction;
+  }
+
   public abstract String getText();
   public abstract int getLine();
   public abstract int getPos();
@@ -103,6 +113,11 @@ public abstract class Token
   }
 
   @Override
+  public ProductionType getProductionType() {
+    return ProductionType.TNotAProduction;
+  }
+
+  @Override
   public String getText() {
     return this.text;
   }
@@ -145,12 +160,12 @@ public class N$name
 
   @Override
   public Type getType() {
-    return Node.Type.T_$name;
+    return Type.T_$name;
   }
 
   @Override
   InternalType getInternalType() {
-    return Node.InternalType.T_$name;
+    return InternalType.T_$name;
   }
 
   @Override
@@ -177,12 +192,12 @@ class N$name
 
   @Override
   public Type getType() {
-    return Node.Type.TAnonymous;
+    return Type.TAnonymous;
   }
 
   @Override
   InternalType getInternalType() {
-    return Node.InternalType.T_$name;
+    return InternalType.T_$name;
   }
 }
 $end: anonymous_token $
@@ -629,11 +644,12 @@ public class Test {
     }
 
     Node syntaxTree = new Parser(in).parse();
+    System.out.println();
     syntaxTree.apply(new Walker() {
       @Override
       public void defaultOut(Node node) {
         if(node instanceof Token) {
-          System.out.println(node.getText());
+          System.out.println(node.getType() + ":\\"" + node.getText() + "\\"@(" + node.getLine() + "," + node.getPos() + ")");
         }
       }
     });
@@ -656,12 +672,12 @@ public class End
 
   @Override
   public Type getType() {
-    return Node.Type.TEnd;
+    return Type.TEnd;
   }
 
   @Override
   InternalType getInternalType() {
-    return Node.InternalType.TEnd;
+    return InternalType.TEnd;
   }
 }
 $end: end $
@@ -773,16 +789,23 @@ $end: end_contructor_initialization $
   @Override
   public Type getType() {
 $macro: named_alt_type $
-    return Node.Type.T_$name;
+    return Type.T_$name;
 $end: named_alt_type $
 $macro: anonymous_alt_type $
-    return Node.Type.TAnonymous;
+    return Type.TAnonymous;
 $end: anonymous_alt_type $
   }
 
   @Override
+  public ProductionType getProductionType() {
+$macro: alt_prod_type(prod_name) $
+    return ProductionType.T_$prod_name;
+$end: alt_prod_type $
+  }
+
+  @Override
   InternalType getInternalType() {
-    return Node.InternalType.T_$name;
+    return InternalType.T_$name;
   }
 $expand: public_element_accessor, before_first="\n", separator="\n" $
 $expand: normal_element_accessor, end_element_accessor, before_first="\n", separator="\n" $
@@ -1044,17 +1067,25 @@ $end: lr1_or_more $
   @Override
   LRState getTarget(Node node)
       throws ParserException, LexerException, IOException {
-    switch(node.getInternalType()) {
-$macro: normal_lr_transition_target(node_type, target) $
+
+    switch(node.getProductionType()) {
+$macro: production_lr_transition_target(node_type, target) $
     case T_$(node_type):
       return L_$target.instance;
-$end: normal_lr_transition_target $
-$macro: end_lr_transition_target(target) $
-    case TEnd:
-      return L_$target.instance;
-$end: end_lr_transition_target $
+$end: production_lr_transition_target $
     default:
-      throw new ParserException((Token) node);
+      switch(node.getInternalType()) {
+$macro: normal_token_lr_transition_target(node_type, target) $
+        case T_$(node_type):
+          return L_$target.instance;
+$end: normal_token_lr_transition_target $
+$macro: end_token_lr_transition_target(target) $
+        case TEnd:
+          return L_$target.instance;
+$end: end_token_lr_transition_target $
+        default:
+          throw new ParserException((Token) node);
+      }
     }
   }
 }

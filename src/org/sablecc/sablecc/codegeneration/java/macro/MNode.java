@@ -10,6 +10,8 @@ public class MNode {
 
     private final List<Object> eNodeTypeEnumEntry = new LinkedList<Object>();
 
+    private final List<Object> eNodeProductionTypeEnumEntry = new LinkedList<Object>();
+
     private final List<Object> eNodeInternalTypeEnumEntry = new LinkedList<Object>();
 
     public MNode() {
@@ -22,6 +24,15 @@ public class MNode {
         MNodeTypeEnumEntry lNodeTypeEnumEntry = new MNodeTypeEnumEntry(pName);
         this.eNodeTypeEnumEntry.add(lNodeTypeEnumEntry);
         return lNodeTypeEnumEntry;
+    }
+
+    public MNodeProductionTypeEnumEntry newNodeProductionTypeEnumEntry(
+            String pName) {
+
+        MNodeProductionTypeEnumEntry lNodeProductionTypeEnumEntry = new MNodeProductionTypeEnumEntry(
+                pName);
+        this.eNodeProductionTypeEnumEntry.add(lNodeProductionTypeEnumEntry);
+        return lNodeProductionTypeEnumEntry;
     }
 
     public MNodeInternalTypeEnumEntry newNodeInternalTypeEnumEntry(
@@ -66,6 +77,9 @@ public class MNode {
         sb.append("public abstract class Node {");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
+        sb.append("  public abstract Type getType();");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
         sb.append("  public static enum Type {");
         sb.append(System.getProperty("line.separator"));
         for (Object oNodeTypeEnumEntry : this.eNodeTypeEnumEntry) {
@@ -78,7 +92,18 @@ public class MNode {
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("  public abstract Type getType();");
+        sb.append("  public abstract ProductionType getProductionType();");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  public static enum ProductionType {");
+        sb.append(System.getProperty("line.separator"));
+        for (Object oNodeProductionTypeEnumEntry : this.eNodeProductionTypeEnumEntry) {
+            sb.append(oNodeProductionTypeEnumEntry.toString());
+        }
+        sb.append("    TNotAProduction;");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  }");
+        sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("  public abstract String getText();");
         sb.append(System.getProperty("line.separator"));

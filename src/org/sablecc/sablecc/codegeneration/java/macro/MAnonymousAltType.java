@@ -12,7 +12,7 @@ public class MAnonymousAltType {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("    return Node.Type.TAnonymous;");
+        sb.append("    return Type.TAnonymous;");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

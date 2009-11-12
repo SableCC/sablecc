@@ -2,15 +2,15 @@
 
 package org.sablecc.sablecc.codegeneration.java.macro;
 
-public class MNormalLrTransitionTarget {
+public class MProductionLrTransitionTarget {
 
     private final String pNodeType;
 
     private final String pTarget;
 
-    private final MNormalLrTransitionTarget mNormalLrTransitionTarget = this;
+    private final MProductionLrTransitionTarget mProductionLrTransitionTarget = this;
 
-    MNormalLrTransitionTarget(
+    MProductionLrTransitionTarget(
             String pNodeType,
             String pTarget) {
 
@@ -36,12 +36,12 @@ public class MNormalLrTransitionTarget {
 
     private String rNodeType() {
 
-        return this.mNormalLrTransitionTarget.pNodeType();
+        return this.mProductionLrTransitionTarget.pNodeType();
     }
 
     private String rTarget() {
 
-        return this.mNormalLrTransitionTarget.pTarget();
+        return this.mProductionLrTransitionTarget.pTarget();
     }
 
     @Override
