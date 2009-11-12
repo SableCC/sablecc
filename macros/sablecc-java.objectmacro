@@ -1004,6 +1004,7 @@ false$no_eol$
 $end: false_group $
 $macro: shift $
       parser.shift();
+      return null;
 $end: shift $
 $macro: reduce(alternative) $
       ParseStack stack = parser.getStack();
@@ -1016,7 +1017,6 @@ $macro: reduce_end_pop $
       End l\$end = (End) stack.pop();
 $end: reduce_end_pop $
 
-      N$alternative l$alternative = new N$alternative(-1, -1, $expand: normal_parameter, end_parameter, separator=", " $);
 $macro: normal_parameter(element_name) $
 l$(element_name)$no_eol$
 $end: normal_parameter $
@@ -1024,19 +1024,21 @@ $macro: end_parameter $
 l\$end$no_eol$
 $end: end_parameter $
 $macro: reduce_decision $
+      N$alternative l$alternative = new N$alternative(-1, -1, $expand: normal_parameter, end_parameter, separator=", " $);
       stack.push(l$alternative, stack.getState().getTarget(l$alternative));
+      return null;
 $end: reduce_decision $
 $macro: accept_decision(element_name) $
-      // dummy test to fool the Java compiler
-      if(l$element_name != null) {
-        return l$element_name;
-      }
+      return l$element_name;
 $end: accept_decision $
 $end: reduce $
     }
 $end: action $
 $end: distance $
+$macro: lr1_or_more $
+    parser.shift();
     return null;
+$end: lr1_or_more $
   }
 
   @Override
