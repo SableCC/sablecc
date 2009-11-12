@@ -70,6 +70,11 @@ public class LRAutomaton {
         }
     }
 
+    public Collection<LRState> getStates() {
+
+        return this.coreItemSetToLRStateMap.values();
+    }
+
     LRState getState(
             Set<Item> itemSet) {
 

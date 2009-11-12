@@ -24,6 +24,10 @@ import org.sablecc.util.*;
 
 public class LRState {
 
+    private static int nextId = 0;
+
+    private final int id;
+
     private final LRAutomaton automaton;
 
     private final Set<Item> coreItemSet = new LinkedHashSet<Item>();
@@ -50,6 +54,7 @@ public class LRState {
             LRAutomaton automaton,
             Set<Item> coreItemSet) {
 
+        this.id = nextId++;
         this.automaton = automaton;
         this.coreItemSet.addAll(coreItemSet);
 
@@ -707,4 +712,25 @@ public class LRState {
 
         lookahead.put(distance, items);
     }
+
+    public String getName() {
+
+        return "" + this.id;
+    }
+
+    public Map<Token, LRState> getTokenTransitions() {
+
+        return this.tokenTransitions;
+    }
+
+    public Map<Production, LRState> getProductionTransitions() {
+
+        return this.productionTransitions;
+    }
+
+    public Set<Action> getActions() {
+
+        return this.actions;
+    }
+
 }

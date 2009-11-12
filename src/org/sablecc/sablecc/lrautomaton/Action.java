@@ -28,4 +28,20 @@ public abstract class Action {
 
         this.distanceToItemSetMap = distanceToItemSetMap;
     }
+
+    public int getMaxLookahead() {
+
+        if (this.distanceToItemSetMap == null) {
+            return 0;
+        }
+
+        return this.distanceToItemSetMap.size();
+    }
+
+    public Map<Integer, Set<Item>> getDistanceToItemSetMap() {
+
+        return this.distanceToItemSetMap;
+    }
+
+    public abstract ActionType getType();
 }
