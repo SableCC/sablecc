@@ -18,6 +18,8 @@ public class MAlternative {
 
     private final List<Object> eNormalElementDeclaration_EndElementDeclaration = new LinkedList<Object>();
 
+    private final List<Object> eNormalChildApply_EndChildApply = new LinkedList<Object>();
+
     private final List<Object> ePublicConstructor = new LinkedList<Object>();
 
     private final List<Object> eNormalConstructorParameter_EndConstructorParameter = new LinkedList<Object>();
@@ -29,10 +31,6 @@ public class MAlternative {
     private final List<Object> eAltNormalApply = new LinkedList<Object>();
 
     private final List<Object> eAltAnonymousApply = new LinkedList<Object>();
-
-    private final List<Object> eNormalChildApply = new LinkedList<Object>();
-
-    private final List<Object> eEndChildApply = new LinkedList<Object>();
 
     private final List<Object> eNormalContructorInitialization = new LinkedList<Object>();
 
@@ -63,22 +61,6 @@ public class MAlternative {
         MAltAnonymousApply lAltAnonymousApply = new MAltAnonymousApply();
         this.eAltAnonymousApply.add(lAltAnonymousApply);
         return lAltAnonymousApply;
-    }
-
-    public MNormalChildApply newNormalChildApply(
-            String pElementName) {
-
-        MNormalChildApply lNormalChildApply = new MNormalChildApply(
-                pElementName);
-        this.eNormalChildApply.add(lNormalChildApply);
-        return lNormalChildApply;
-    }
-
-    public MEndChildApply newEndChildApply() {
-
-        MEndChildApply lEndChildApply = new MEndChildApply();
-        this.eEndChildApply.add(lEndChildApply);
-        return lEndChildApply;
     }
 
     public MNormalContructorInitialization newNormalContructorInitialization(
@@ -172,6 +154,22 @@ public class MAlternative {
         this.eNormalElementDeclaration_EndElementDeclaration
                 .add(lEndElementDeclaration);
         return lEndElementDeclaration;
+    }
+
+    public MNormalChildApply newNormalChildApply(
+            String pElementName) {
+
+        MNormalChildApply lNormalChildApply = new MNormalChildApply(
+                pElementName);
+        this.eNormalChildApply_EndChildApply.add(lNormalChildApply);
+        return lNormalChildApply;
+    }
+
+    public MEndChildApply newEndChildApply() {
+
+        MEndChildApply lEndChildApply = new MEndChildApply();
+        this.eNormalChildApply_EndChildApply.add(lEndChildApply);
+        return lEndChildApply;
     }
 
     public MPublicConstructor newPublicConstructor() {
@@ -315,11 +313,8 @@ public class MAlternative {
         sb.append(System.getProperty("line.separator"));
         sb.append("  public void applyOnChildren(Walker walker) {");
         sb.append(System.getProperty("line.separator"));
-        for (Object oNormalChildApply : this.eNormalChildApply) {
-            sb.append(oNormalChildApply.toString());
-        }
-        for (Object oEndChildApply : this.eEndChildApply) {
-            sb.append(oEndChildApply.toString());
+        for (Object oNormalChildApply_EndChildApply : this.eNormalChildApply_EndChildApply) {
+            sb.append(oNormalChildApply_EndChildApply.toString());
         }
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));

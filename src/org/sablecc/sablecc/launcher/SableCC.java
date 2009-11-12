@@ -35,6 +35,7 @@ import org.sablecc.sablecc.lrautomaton.*;
 import org.sablecc.sablecc.lrautomaton.Alternative;
 import org.sablecc.sablecc.lrautomaton.Element;
 import org.sablecc.sablecc.lrautomaton.Production;
+import org.sablecc.sablecc.lrautomaton.Token;
 import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.node.*;
@@ -447,9 +448,11 @@ public class SableCC {
         MSymbol mSymbol = new MSymbol();
         MLexer mLexer = new MLexer();
         MLexerException mLexerException = new MLexerException();
+        MParserException mParserException = new MParserException();
         MTest mTest = new MTest();
         MEnd mEnd = new MEnd();
         MWalker mWalker = new MWalker();
+        MParser mParser = new MParser();
 
         if (destinationPackage.equals("")) {
             packageDirectory = new File(destinationDirectory,
@@ -470,11 +473,15 @@ public class SableCC {
                     .get_camelCaseName());
             mLexerException.newDefaultPackage(globalIndex.getLanguage()
                     .get_camelCaseName());
+            mParserException.newDefaultPackage(globalIndex.getLanguage()
+                    .get_camelCaseName());
             mTest.newDefaultPackage(globalIndex.getLanguage()
                     .get_camelCaseName());
             mEnd.newDefaultPackage(globalIndex.getLanguage()
                     .get_camelCaseName());
             mWalker.newDefaultPackage(globalIndex.getLanguage()
+                    .get_camelCaseName());
+            mParser.newDefaultPackage(globalIndex.getLanguage()
                     .get_camelCaseName());
         }
         else {
@@ -497,11 +504,15 @@ public class SableCC {
                     .get_camelCaseName(), destinationPackage);
             mLexerException.newSpecifiedPackage(globalIndex.getLanguage()
                     .get_camelCaseName(), destinationPackage);
+            mParserException.newSpecifiedPackage(globalIndex.getLanguage()
+                    .get_camelCaseName(), destinationPackage);
             mTest.newSpecifiedPackage(globalIndex.getLanguage()
                     .get_camelCaseName(), destinationPackage);
             mEnd.newSpecifiedPackage(globalIndex.getLanguage()
                     .get_camelCaseName(), destinationPackage);
             mWalker.newSpecifiedPackage(globalIndex.getLanguage()
+                    .get_camelCaseName(), destinationPackage);
+            mParser.newSpecifiedPackage(globalIndex.getLanguage()
                     .get_camelCaseName(), destinationPackage);
         }
 
@@ -755,9 +766,7 @@ public class SableCC {
                             .get_camelCaseName(), destinationPackage);
                 }
 
-                mNode.newNodeInternalTypeEnumEntry(production_CamelCaseName);
                 if (production_CamelCaseName.indexOf('$') == -1) {
-                    mNode.newNodeTypeEnumEntry(production_CamelCaseName);
                     mProduction.newNamedProductionHeader();
                 }
                 else {
@@ -935,6 +944,219 @@ public class SableCC {
             }
         }
 
+        for (LRState state : parser.getStates()) {
+            MLrStateSingleton mLrStateSingleton = mParser
+                    .newLrStateSingleton(state.getName());
+
+            for (Entry<Token, LRState> entry : state.getTokenTransitions()
+                    .entrySet()) {
+                Token token = entry.getKey();
+                LRState target = entry.getValue();
+
+                if (token.getName().equals("$end")) {
+                    mLrStateSingleton
+                            .newEndLrTransitionTarget(target.getName());
+                }
+                else {
+                    MatchedToken matchedToken = context.getMatchedToken(token
+                            .getName());
+                    String element_CamelCaseType;
+                    if (matchedToken instanceof NameToken) {
+                        NameToken nameToken = (NameToken) matchedToken;
+                        element_CamelCaseType = nameToken.get_CamelCaseName();
+                    }
+                    else {
+                        AnonymousToken anonymousToken = (AnonymousToken) matchedToken;
+
+                        element_CamelCaseType = ""
+                                + anonymousToken.get_CamelCaseName();
+                    }
+
+                    mLrStateSingleton.newNormalLrTransitionTarget(
+                            element_CamelCaseType, target.getName());
+                }
+            }
+
+            for (Entry<Production, LRState> entry : state
+                    .getProductionTransitions().entrySet()) {
+                Production production = entry.getKey();
+                LRState target = entry.getValue();
+
+                String production_CamelCaseName = to_CamelCase(production
+                        .getName());
+                for (Alternative alternative : production.getAlternatives()) {
+                    String alt_CamelCaseName = to_CamelCase(alternative
+                            .getName());
+                    String alt_CamelCaseFullName = production_CamelCaseName
+                            + (alt_CamelCaseName.equals("") ? "" : "_"
+                                    + alt_CamelCaseName);
+
+                    mLrStateSingleton.newNormalLrTransitionTarget(
+                            alt_CamelCaseFullName, target.getName());
+                }
+            }
+
+            Map<Integer, MDistance> distanceMap = new LinkedHashMap<Integer, MDistance>();
+            for (Action action : state.getActions()) {
+                int maxLookahead = action.getMaxLookahead();
+                while (maxLookahead > distanceMap.size() - 1) {
+                    int distance = distanceMap.size();
+                    distanceMap.put(distance, mLrStateSingleton.newDistance(""
+                            + distance));
+                }
+
+                MDistance mDistance = distanceMap.get(maxLookahead);
+                MAction mAction = mDistance.newAction();
+                if (maxLookahead > 0) {
+                    for (Entry<Integer, Set<Item>> entry : action
+                            .getDistanceToItemSetMap().entrySet()) {
+                        String ahead = "" + entry.getKey();
+                        Set<Item> items = entry.getValue();
+                        Set<Token> tokens = new LinkedHashSet<Token>();
+                        for (Item item : items) {
+                            tokens.add(item.getTokenElement().getToken());
+                        }
+
+                        if (tokens.size() == 0) {
+                            mAction.newFalseGroup();
+                        }
+                        else {
+                            MNormalGroup mNormalGroup = mAction
+                                    .newNormalGroup();
+
+                            for (Token token : tokens) {
+                                if (token.getName().equals("$end")) {
+                                    mNormalGroup.newEndCondition(ahead);
+                                }
+                                else {
+                                    MatchedToken matchedToken = context
+                                            .getMatchedToken(token.getName());
+                                    String element_CamelCaseType;
+                                    if (matchedToken instanceof NameToken) {
+                                        NameToken nameToken = (NameToken) matchedToken;
+                                        element_CamelCaseType = nameToken
+                                                .get_CamelCaseName();
+                                    }
+                                    else {
+                                        AnonymousToken anonymousToken = (AnonymousToken) matchedToken;
+
+                                        element_CamelCaseType = ""
+                                                + anonymousToken
+                                                        .get_CamelCaseName();
+                                    }
+
+                                    mNormalGroup.newNormalCondition(ahead,
+                                            element_CamelCaseType);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (action.getType() == ActionType.SHIFT) {
+                    mAction.newShift();
+                }
+                else {
+                    ReduceAction reduceAction = (ReduceAction) action;
+                    Alternative alternative = reduceAction.getAlternative();
+                    Production production = alternative.getProduction();
+                    String production_CamelCaseName = to_CamelCase(production
+                            .getName());
+                    String alt_CamelCaseName = to_CamelCase(alternative
+                            .getName());
+                    String alt_CamelCaseFullName = production_CamelCaseName
+                            + (alt_CamelCaseName.equals("") ? "" : "_"
+                                    + alt_CamelCaseName);
+
+                    MReduce mReduce = mAction.newReduce(alt_CamelCaseFullName);
+
+                    ArrayList<Element> elements = alternative.getElements();
+                    int elementCount = elements.size();
+                    for (int i = elementCount - 1; i >= 0; i--) {
+                        Element element = elements.get(i);
+                        String element_CamelCaseName = to_CamelCase(element
+                                .getName());
+                        String element_CamelCaseType = null;
+                        boolean elementIsEndToken;
+                        if (element instanceof TokenElement) {
+                            TokenElement tokenElement = (TokenElement) element;
+                            if (tokenElement.getToken().getName()
+                                    .equals("$end")) {
+                                elementIsEndToken = true;
+                            }
+                            else {
+                                MatchedToken matchedToken = context
+                                        .getMatchedToken(tokenElement
+                                                .getToken().getName());
+                                if (matchedToken instanceof NameToken) {
+                                    NameToken nameToken = (NameToken) matchedToken;
+                                    element_CamelCaseType = nameToken
+                                            .get_CamelCaseName();
+                                }
+                                else {
+                                    AnonymousToken anonymousToken = (AnonymousToken) matchedToken;
+
+                                    element_CamelCaseType = ""
+                                            + anonymousToken
+                                                    .get_CamelCaseName();
+                                }
+
+                                elementIsEndToken = false;
+                            }
+                        }
+                        else {
+                            ProductionElement productionElement = (ProductionElement) element;
+                            element_CamelCaseType = to_CamelCase(productionElement
+                                    .getProduction().getName());
+
+                            elementIsEndToken = false;
+                        }
+
+                        if (elementIsEndToken) {
+                            mReduce.newReduceEndPop();
+                        }
+                        else {
+                            mReduce.newReduceNormalPop(element_CamelCaseType,
+                                    element_CamelCaseName);
+                        }
+                    }
+
+                    for (Element element : elements) {
+                        String element_CamelCaseName = to_CamelCase(element
+                                .getName());
+                        boolean elementIsEndToken;
+                        if (element instanceof TokenElement) {
+                            TokenElement tokenElement = (TokenElement) element;
+                            if (tokenElement.getToken().getName()
+                                    .equals("$end")) {
+                                elementIsEndToken = true;
+                            }
+                            else {
+                                elementIsEndToken = false;
+                            }
+                        }
+                        else {
+                            elementIsEndToken = false;
+                        }
+                        if (elementIsEndToken) {
+                            mReduce.newEndParameter();
+                        }
+                        else {
+                            mReduce.newNormalParameter(element_CamelCaseName);
+                        }
+                    }
+
+                    if (alt_CamelCaseFullName.equals("$Start")) {
+                        mReduce.newAcceptDecision(to_CamelCase(elements.get(0)
+                                .getName()));
+                    }
+                    else {
+                        mReduce.newReduceDecision();
+                    }
+                }
+            }
+        }
+
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
                     packageDirectory, "Node.java")));
@@ -1025,6 +1247,17 @@ public class SableCC {
 
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "ParserException.java")));
+
+            bw.write(mParserException.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            throw CompilerException.outputError("ParserException.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
                     packageDirectory, "Test.java")));
 
             bw.write(mTest.toString());
@@ -1055,6 +1288,16 @@ public class SableCC {
         catch (IOException e) {
             throw CompilerException.outputError("Walker.java", e);
         }
-    }
 
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "Parser.java")));
+
+            bw.write(mParser.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            throw CompilerException.outputError("Parser.java", e);
+        }
+    }
 }

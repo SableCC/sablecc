@@ -31,4 +31,15 @@ public class ReduceAction
         super(distanceToItemSetMap);
         this.alternative = alternative;
     }
+
+    @Override
+    public ActionType getType() {
+
+        return ActionType.REDUCE;
+    }
+
+    public Alternative getAlternative() {
+
+        return this.alternative;
+    }
 }

@@ -4,11 +4,11 @@ package org.sablecc.sablecc.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MTest {
+public class MParserException {
 
     private final List<Object> eDefaultPackage_SpecifiedPackage = new LinkedList<Object>();
 
-    public MTest() {
+    public MParserException() {
 
     }
 
@@ -42,49 +42,32 @@ public class MTest {
             sb.append(oDefaultPackage_SpecifiedPackage.toString());
         }
         sb.append(System.getProperty("line.separator"));
-        sb.append("import java.io.*;");
+        sb.append("public class ParserException");
         sb.append(System.getProperty("line.separator"));
-        sb.append("public class Test {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  public static void main(String[] args)");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    throws Exception {");
+        sb.append("    extends Exception {");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("    Reader in;");
+        sb.append("  private Token token;");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("    if(args.length > 0) {");
+        sb.append("  public ParserException(Token token) {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      in = new FileReader(args[0]);");
+        sb.append("    this.token = token;");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    else {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      in = new InputStreamReader(System.in);");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    }");
+        sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("    Node syntaxTree = new Parser(in).parse();");
+        sb.append("  public Token getToken() {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    syntaxTree.apply(new Walker() {");
+        sb.append("    return this.token;");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      @Override");
+        sb.append("  }");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      public void defaultOut(Node node) {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("        if(node instanceof Token) {");
+        sb.append("  public String getMessage() {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("          System.out.println(node.getText());");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("        }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    });");
+        sb
+                .append("    return \"unexpected token '\" + this.token.getText() + \"' on line \" + this.token.getLine() + \", pos \" + this.token.getPos();");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));

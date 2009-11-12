@@ -582,6 +582,31 @@ public class LexerException
 }
 $end: lexer_exception $
 
+$comment: ========== parser_exception ========== $
+
+$macro: parser_exception $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+public class ParserException
+    extends Exception {
+
+  private Token token;
+
+  public ParserException(Token token) {
+    this.token = token;
+  }
+
+  public Token getToken() {
+    return this.token;
+  }
+
+  public String getMessage() {
+    return "unexpected token '" + this.token.getText() + "' on line " + this.token.getLine() + ", pos " + this.token.getPos();
+  }
+}
+$end: parser_exception $
+
 $comment: ========== test ========== $
 
 $macro: test $
@@ -603,12 +628,15 @@ public class Test {
       in = new InputStreamReader(System.in);
     }
 
-    Lexer lexer = new Lexer(in);
-    Token token;
-    do {
-      token = lexer.next();
-      System.out.println(token);
-    } while (token.getType() != Node.Type.TEnd);
+    Node syntaxTree = new Parser(in).parse();
+    syntaxTree.apply(new Walker() {
+      @Override
+      public void defaultOut(Node node) {
+        if(node instanceof Token) {
+          System.out.println(node.getText());
+        }
+      }
+    });
   }
 }
 $end: test $
@@ -712,6 +740,7 @@ $end: alt_anonymous_apply $
 
   @Override
   public void applyOnChildren(Walker walker) {
+$expand: normal_child_apply, end_child_apply $
 $macro: normal_child_apply(element_name) $
     this.e$element_name.apply(walker);
 $end: normal_child_apply $
@@ -824,3 +853,208 @@ $end: walker_out $
   }
 }
 $end: walker $
+
+$comment: ========== parser ========== $
+
+$macro: parser $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+import java.io.*;
+import java.util.*;
+
+public class Parser {
+
+  private final Lexer lexer;
+  private final ParseStack stack = new ParseStack();
+
+  public Parser(Reader reader) {
+    this.lexer = new Lexer(reader);
+  }
+
+  public Node parse()
+      throws ParserException, LexerException, IOException {
+
+    Node tree = null;
+    while(tree == null) {
+      tree = stack.getState().apply(this);
+    }
+
+    return tree;
+  }
+
+  ParseStack getStack() {
+    return this.stack;
+  }
+
+  private LinkedList<Token> lookList = new LinkedList<Token>();
+
+  Token look(int distance)
+      throws LexerException, IOException {
+    while(lookList.size() < distance) {
+      lookList.addLast(lexer.next());
+    }
+    return lookList.get(distance - 1);
+  }
+
+  void shift()
+      throws ParserException, LexerException, IOException {
+    Token token;
+    if(lookList.size() > 0) {
+      token = lookList.removeFirst();
+    }
+    else {
+      token = lexer.next();
+    }
+    stack.push(token, stack.getState().getTarget(token));
+  }
+}
+
+class ParseStack {
+  private ParseStackEntry stack = new ParseStackEntry(null, null, L_0.instance);
+  private ParseStackEntry freeList;
+
+  void push(Node node, LRState state) {
+    ParseStackEntry entry;
+    if(freeList != null) {
+      entry = freeList;
+      freeList = freeList.previous;
+      entry.set(stack, node, state);
+    }
+    else {
+      entry = new ParseStackEntry(stack, node, state);
+    }
+    stack = entry;
+  }
+
+  LRState getState() {
+    return stack.state;
+  }
+
+  Node pop() {
+    Node node = stack.node;
+    ParseStackEntry entry = stack;
+    stack = stack.previous;
+    entry.set(freeList, null, null);
+    freeList = entry;
+    return node;
+  }
+
+  private static class ParseStackEntry {
+    ParseStackEntry previous;
+    Node node;
+    LRState state;
+
+    ParseStackEntry(
+        ParseStackEntry previous,
+        Node node,
+        LRState state) {
+     this.previous = previous;
+     this.node = node;
+     this.state = state;
+    }
+
+    void set(
+        ParseStackEntry previous,
+        Node node,
+        LRState state) {
+     this.previous = previous;
+     this.node = node;
+     this.state = state;
+   }
+  }
+}
+
+abstract class LRState {
+
+  abstract Node apply(Parser parser)
+      throws ParserException, LexerException, IOException;
+  abstract LRState getTarget(Node node)
+      throws ParserException, LexerException, IOException;
+}
+$macro: lr_state_singleton(number) $
+
+class L_$number
+    extends LRState {
+
+  static final L_$number instance = new L_$number();
+
+  private L_$number() {
+  }
+
+  @Override
+  Node apply(Parser parser)
+      throws ParserException, LexerException, IOException {
+
+$macro: distance(distance) $
+    // LR($distance) decisions
+$macro: action $
+    $expand: normal_group, false_group, before_first="if (", separator=" && ", after_last=") " ${
+$macro: normal_group$
+$expand: normal_condition, end_condition, before_many="(", separator=" || ", after_many=")" $
+$end: normal_group $
+$macro: normal_condition(ahead,token_type) $
+parser.look($ahead).getInternalType() == Node.InternalType.T_$(token_type)$no_eol$
+$end: normal_condition $
+$macro: end_condition(ahead) $
+look($ahead).getInternalType() == Node.InternalType.TEnd$no_eol$
+$end: end_condition $
+$macro: false_group $
+false$no_eol$
+$end: false_group $
+$macro: shift $
+      parser.shift();
+$end: shift $
+$macro: reduce(alternative) $
+      ParseStack stack = parser.getStack();
+
+$expand: reduce_normal_pop, reduce_end_pop $
+$macro: reduce_normal_pop(element_type, element_name) $
+      N$element_type l$element_name = (N$element_type) stack.pop();
+$end: reduce_normal_pop $
+$macro: reduce_end_pop $
+      End l\$end = (End) stack.pop();
+$end: reduce_end_pop $
+
+      N$alternative l$alternative = new N$alternative(-1, -1, $expand: normal_parameter, end_parameter, separator=", " $);
+$macro: normal_parameter(element_name) $
+l$(element_name)$no_eol$
+$end: normal_parameter $
+$macro: end_parameter $
+l\$end$no_eol$
+$end: end_parameter $
+$macro: reduce_decision $
+      stack.push(l$alternative, stack.getState().getTarget(l$alternative));
+$end: reduce_decision $
+$macro: accept_decision(element_name) $
+      // dummy test to fool the Java compiler
+      if(l$element_name != null) {
+        return l$element_name;
+      }
+$end: accept_decision $
+$end: reduce $
+    }
+$end: action $
+$end: distance $
+    return null;
+  }
+
+  @Override
+  LRState getTarget(Node node)
+      throws ParserException, LexerException, IOException {
+    switch(node.getInternalType()) {
+$macro: normal_lr_transition_target(node_type, target) $
+    case T_$(node_type):
+      return L_$target.instance;
+$end: normal_lr_transition_target $
+$macro: end_lr_transition_target(target) $
+    case TEnd:
+      return L_$target.instance;
+$end: end_lr_transition_target $
+    default:
+      throw new ParserException((Token) node);
+    }
+  }
+}
+$end: lr_state_singleton $
+$end: parser $

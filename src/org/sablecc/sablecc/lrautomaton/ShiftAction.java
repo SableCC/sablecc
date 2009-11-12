@@ -27,4 +27,10 @@ public class ShiftAction
 
         super(distanceToItemSetMap);
     }
+
+    @Override
+    public ActionType getType() {
+
+        return ActionType.SHIFT;
+    }
 }
