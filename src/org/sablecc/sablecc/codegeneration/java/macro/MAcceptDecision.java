@@ -31,17 +31,9 @@ public class MAcceptDecision {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("      // dummy test to fool the Java compiler");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      if(l");
-        sb.append(rElementName());
-        sb.append(" != null) {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("        return l");
+        sb.append("      return l");
         sb.append(rElementName());
         sb.append(";");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      }");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

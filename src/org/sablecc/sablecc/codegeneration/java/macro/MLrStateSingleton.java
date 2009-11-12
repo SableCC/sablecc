@@ -12,6 +12,8 @@ public class MLrStateSingleton {
 
     private final List<Object> eDistance = new LinkedList<Object>();
 
+    private final List<Object> eLr1OrMore = new LinkedList<Object>();
+
     private final List<Object> eNormalLrTransitionTarget = new LinkedList<Object>();
 
     private final List<Object> eEndLrTransitionTarget = new LinkedList<Object>();
@@ -31,6 +33,13 @@ public class MLrStateSingleton {
         MDistance lDistance = new MDistance(pDistance);
         this.eDistance.add(lDistance);
         return lDistance;
+    }
+
+    public MLr1OrMore newLr1OrMore() {
+
+        MLr1OrMore lLr1OrMore = new MLr1OrMore();
+        this.eLr1OrMore.add(lLr1OrMore);
+        return lLr1OrMore;
     }
 
     public MNormalLrTransitionTarget newNormalLrTransitionTarget(
@@ -98,8 +107,9 @@ public class MLrStateSingleton {
         for (Object oDistance : this.eDistance) {
             sb.append(oDistance.toString());
         }
-        sb.append("    return null;");
-        sb.append(System.getProperty("line.separator"));
+        for (Object oLr1OrMore : this.eLr1OrMore) {
+            sb.append(oLr1OrMore.toString());
+        }
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));

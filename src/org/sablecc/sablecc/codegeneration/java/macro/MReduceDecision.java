@@ -2,9 +2,13 @@
 
 package org.sablecc.sablecc.codegeneration.java.macro;
 
+import java.util.*;
+
 public class MReduceDecision {
 
     private final MReduce mReduce;
+
+    private final List<Object> eNormalParameter_EndParameter = new LinkedList<Object>();
 
     MReduceDecision(
             MReduce mReduce) {
@@ -13,6 +17,21 @@ public class MReduceDecision {
             throw new NullPointerException();
         }
         this.mReduce = mReduce;
+    }
+
+    public MNormalParameter newNormalParameter(
+            String pElementName) {
+
+        MNormalParameter lNormalParameter = new MNormalParameter(pElementName);
+        this.eNormalParameter_EndParameter.add(lNormalParameter);
+        return lNormalParameter;
+    }
+
+    public MEndParameter newEndParameter() {
+
+        MEndParameter lEndParameter = new MEndParameter();
+        this.eNormalParameter_EndParameter.add(lEndParameter);
+        return lEndParameter;
     }
 
     private String rAlternative() {
@@ -24,11 +43,34 @@ public class MReduceDecision {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
+        sb.append("      N");
+        sb.append(rAlternative());
+        sb.append(" l");
+        sb.append(rAlternative());
+        sb.append(" = new N");
+        sb.append(rAlternative());
+        sb.append("(-1, -1, ");
+        {
+            boolean first = true;
+            for (Object oNormalParameter_EndParameter : this.eNormalParameter_EndParameter) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    sb.append(", ");
+                }
+                sb.append(oNormalParameter_EndParameter.toString());
+            }
+        }
+        sb.append(");");
+        sb.append(System.getProperty("line.separator"));
         sb.append("      stack.push(l");
         sb.append(rAlternative());
         sb.append(", stack.getState().getTarget(l");
         sb.append(rAlternative());
         sb.append("));");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("      return null;");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

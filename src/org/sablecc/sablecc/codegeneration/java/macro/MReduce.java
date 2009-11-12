@@ -12,7 +12,9 @@ public class MReduce {
 
     private final List<Object> eReduceNormalPop_ReduceEndPop = new LinkedList<Object>();
 
-    private final List<Object> eNormalParameter_EndParameter = new LinkedList<Object>();
+    private final List<Object> eNormalParameter = new LinkedList<Object>();
+
+    private final List<Object> eEndParameter = new LinkedList<Object>();
 
     private final List<Object> eReduceDecision = new LinkedList<Object>();
 
@@ -25,6 +27,21 @@ public class MReduce {
             throw new NullPointerException();
         }
         this.pAlternative = pAlternative;
+    }
+
+    public MNormalParameter newNormalParameter(
+            String pElementName) {
+
+        MNormalParameter lNormalParameter = new MNormalParameter(pElementName);
+        this.eNormalParameter.add(lNormalParameter);
+        return lNormalParameter;
+    }
+
+    public MEndParameter newEndParameter() {
+
+        MEndParameter lEndParameter = new MEndParameter();
+        this.eEndParameter.add(lEndParameter);
+        return lEndParameter;
     }
 
     public MReduceDecision newReduceDecision() {
@@ -59,29 +76,9 @@ public class MReduce {
         return lReduceEndPop;
     }
 
-    public MNormalParameter newNormalParameter(
-            String pElementName) {
-
-        MNormalParameter lNormalParameter = new MNormalParameter(pElementName);
-        this.eNormalParameter_EndParameter.add(lNormalParameter);
-        return lNormalParameter;
-    }
-
-    public MEndParameter newEndParameter() {
-
-        MEndParameter lEndParameter = new MEndParameter();
-        this.eNormalParameter_EndParameter.add(lEndParameter);
-        return lEndParameter;
-    }
-
     String pAlternative() {
 
         return this.pAlternative;
-    }
-
-    private String rAlternative() {
-
-        return this.mReduce.pAlternative();
     }
 
     @Override
@@ -95,27 +92,12 @@ public class MReduce {
             sb.append(oReduceNormalPop_ReduceEndPop.toString());
         }
         sb.append(System.getProperty("line.separator"));
-        sb.append("      N");
-        sb.append(rAlternative());
-        sb.append(" l");
-        sb.append(rAlternative());
-        sb.append(" = new N");
-        sb.append(rAlternative());
-        sb.append("(-1, -1, ");
-        {
-            boolean first = true;
-            for (Object oNormalParameter_EndParameter : this.eNormalParameter_EndParameter) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    sb.append(", ");
-                }
-                sb.append(oNormalParameter_EndParameter.toString());
-            }
+        for (Object oNormalParameter : this.eNormalParameter) {
+            sb.append(oNormalParameter.toString());
         }
-        sb.append(");");
-        sb.append(System.getProperty("line.separator"));
+        for (Object oEndParameter : this.eEndParameter) {
+            sb.append(oEndParameter.toString());
+        }
         for (Object oReduceDecision : this.eReduceDecision) {
             sb.append(oReduceDecision.toString());
         }

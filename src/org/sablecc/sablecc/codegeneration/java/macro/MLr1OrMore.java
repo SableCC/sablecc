@@ -2,9 +2,9 @@
 
 package org.sablecc.sablecc.codegeneration.java.macro;
 
-public class MShift {
+public class MLr1OrMore {
 
-    MShift() {
+    MLr1OrMore() {
 
     }
 
@@ -12,9 +12,9 @@ public class MShift {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("      parser.shift();");
+        sb.append("    parser.shift();");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      return null;");
+        sb.append("    return null;");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

@@ -997,6 +997,7 @@ public class SableCC {
             }
 
             Map<Integer, MDistance> distanceMap = new LinkedHashMap<Integer, MDistance>();
+            boolean isLr1OrMore = false;
             for (Action action : state.getActions()) {
                 int maxLookahead = action.getMaxLookahead();
                 while (maxLookahead > distanceMap.size() - 1) {
@@ -1008,6 +1009,7 @@ public class SableCC {
                 MDistance mDistance = distanceMap.get(maxLookahead);
                 MAction mAction = mDistance.newAction();
                 if (maxLookahead > 0) {
+                    isLr1OrMore = true;
                     for (Entry<Integer, Set<Item>> entry : action
                             .getDistanceToItemSetMap().entrySet()) {
                         String ahead = "" + entry.getKey();
@@ -1121,39 +1123,45 @@ public class SableCC {
                         }
                     }
 
-                    for (Element element : elements) {
-                        String element_CamelCaseName = to_CamelCase(element
-                                .getName());
-                        boolean elementIsEndToken;
-                        if (element instanceof TokenElement) {
-                            TokenElement tokenElement = (TokenElement) element;
-                            if (tokenElement.getToken().getName()
-                                    .equals("$end")) {
-                                elementIsEndToken = true;
-                            }
-                            else {
-                                elementIsEndToken = false;
-                            }
-                        }
-                        else {
-                            elementIsEndToken = false;
-                        }
-                        if (elementIsEndToken) {
-                            mReduce.newEndParameter();
-                        }
-                        else {
-                            mReduce.newNormalParameter(element_CamelCaseName);
-                        }
-                    }
-
                     if (alt_CamelCaseFullName.equals("$Start")) {
                         mReduce.newAcceptDecision(to_CamelCase(elements.get(0)
                                 .getName()));
                     }
                     else {
-                        mReduce.newReduceDecision();
+                        MReduceDecision mReduceDecision = mReduce
+                                .newReduceDecision();
+
+                        for (Element element : elements) {
+                            String element_CamelCaseName = to_CamelCase(element
+                                    .getName());
+                            boolean elementIsEndToken;
+                            if (element instanceof TokenElement) {
+                                TokenElement tokenElement = (TokenElement) element;
+                                if (tokenElement.getToken().getName().equals(
+                                        "$end")) {
+                                    elementIsEndToken = true;
+                                }
+                                else {
+                                    elementIsEndToken = false;
+                                }
+                            }
+                            else {
+                                elementIsEndToken = false;
+                            }
+                            if (elementIsEndToken) {
+                                mReduceDecision.newEndParameter();
+                            }
+                            else {
+                                mReduceDecision
+                                        .newNormalParameter(element_CamelCaseName);
+                            }
+                        }
                     }
                 }
+            }
+
+            if (isLr1OrMore) {
+                mLrStateSingleton.newLr1OrMore();
             }
         }
 
