@@ -49,7 +49,10 @@ public class MReduceDecision {
         sb.append(rAlternative());
         sb.append(" = new N");
         sb.append(rAlternative());
-        sb.append("(-1, -1, ");
+        sb.append("(-1, -1");
+        if (this.eNormalParameter_EndParameter.size() > 0) {
+            sb.append(", ");
+        }
         {
             boolean first = true;
             for (Object oNormalParameter_EndParameter : this.eNormalParameter_EndParameter) {

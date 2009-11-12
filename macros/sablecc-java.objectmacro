@@ -1047,7 +1047,7 @@ $macro: end_parameter $
 l\$end$no_eol$
 $end: end_parameter $
 $macro: reduce_decision $
-      N$alternative l$alternative = new N$alternative(-1, -1, $expand: normal_parameter, end_parameter, separator=", " $);
+      N$alternative l$alternative = new N$alternative(-1, -1$expand: normal_parameter, end_parameter, before_first=", ", separator=", " $);
       stack.push(l$alternative, stack.getState().getTarget(l$alternative));
       return null;
 $end: reduce_decision $
