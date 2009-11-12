@@ -31,7 +31,7 @@ public class MEndCondition {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("look(");
+        sb.append("parser.look(");
         sb.append(rAhead());
         sb.append(").getInternalType() == Node.InternalType.TEnd");
         return sb.toString();
