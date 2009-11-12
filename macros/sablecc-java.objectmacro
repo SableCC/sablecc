@@ -997,7 +997,7 @@ $macro: normal_condition(ahead,token_type) $
 parser.look($ahead).getInternalType() == Node.InternalType.T_$(token_type)$no_eol$
 $end: normal_condition $
 $macro: end_condition(ahead) $
-look($ahead).getInternalType() == Node.InternalType.TEnd$no_eol$
+parser.look($ahead).getInternalType() == Node.InternalType.TEnd$no_eol$
 $end: end_condition $
 $macro: false_group $
 false$no_eol$
