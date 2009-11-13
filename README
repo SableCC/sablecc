@@ -9,13 +9,12 @@ If you are are looking for a stable SableCC version, please visit:
 Welcome to SableCC 4!
 =====================
 
-This beta version of SableCC 4 is able to generate lexers and tokens.
-It also includes a stable version of the ObjectMacro system, a text
-generator. The lexer specification supports many new operators,
-including some purely "lexical" operators: "Look" for looking ahead
-beyond the end of a token, and "-" for providing the intuitively
-desired subtraction behavior. You will find the executable jar files
-of SableCC and ObjectMacro in the lib/ directory.
+This beta version of SableCC 4 contains a preliminary version of the
+lexer, parser, and syntax tree generator. It generates
+linear-approximate LALR(K) parsers and supports safe priority
+specification for disambiguating expressions (i.e. left and right
+recursive productions). You will find the executable jar files of
+SableCC and ObjectMacro in the lib/ directory.
 
 Package Content
 ===============
@@ -70,7 +69,11 @@ For more information on ObjectMacro, please visit:
 
     http://sablecc.org/wiki/ObjectMacro
 
-What's New in SableCC [version]
-===============================
+What's New in SableCC 4-beta.2
+==============================
 
-[Milestone text]
+This beta version brings the following new features:
+
+* Linear-approximate LALR(K) automaton computation.
+* Safe ambiguity resolution for expressions.
+* Parser and syntax-tree generation (in the Java target).
