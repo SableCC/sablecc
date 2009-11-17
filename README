@@ -69,11 +69,7 @@ For more information on ObjectMacro, please visit:
 
     http://sablecc.org/wiki/ObjectMacro
 
-What's New in SableCC 4-beta.2
-==============================
+What's New in SableCC [version]
+===============================
 
-This beta version brings the following new features:
-
-* Linear-approximate LALR(K) automaton computation.
-* Safe ambiguity resolution for expressions.
-* Parser and syntax-tree generation (in the Java target).
+[Milestone text]
