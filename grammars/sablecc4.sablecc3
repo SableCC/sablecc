@@ -99,8 +99,8 @@ Tokens
   any_keyword = 'Any';
   context_keyword = 'Context';
   dangling_keyword = 'Dangling';
-  diff_keyword = 'Diff';
   end_keyword = 'End';
+  except_keyword = 'Except';
   group_keyword = 'Group';
   ignored_keyword = 'Ignored';
   inlined_keyword = 'Inlined';
@@ -254,8 +254,8 @@ Productions
       {subtraction} [left]:concatenation minus [right]:concatenation
         {-> New expression.subtraction(left.expression, minus, right.expression) }
     |
-      {difference} [left]:concatenation diff_keyword [right]:concatenation
-        {-> New expression.difference(left.expression, diff_keyword, right.expression) }
+      {difference} [left]:concatenation except_keyword [right]:concatenation
+        {-> New expression.difference(left.expression, except_keyword, right.expression) }
     |
       {and} [left]:concatenation and_keyword [right]:concatenation
         {-> New expression.and(left.expression, and_keyword, right.expression) }
@@ -733,7 +733,7 @@ Abstract Syntax Tree
     {shortest} shortest_keyword expression |
     {longest} longest_keyword expression |
     {subtraction} [left]:expression minus [right]:expression |
-    {difference} [left]:expression diff_keyword [right]:expression |
+    {difference} [left]:expression except_keyword [right]:expression |
     {and} [left]:expression and_keyword [right]:expression |
     {zero_or_one} expression q_mark |
     {zero_or_more} expression star |
