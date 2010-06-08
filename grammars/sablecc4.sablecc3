@@ -114,7 +114,7 @@ Tokens
   new_keyword = 'New';
   null_keyword = 'Null';
   parser_keyword = 'Parser';
-  priority_keyword = 'Priority';
+  precedence_keyword = 'Precedence';
   production_keyword = 'Production';
   restartable_keyword = 'Restartable';
   right_keyword = 'Right';
@@ -460,7 +460,7 @@ Productions
   lexer_priorities
         {-> [lexer_priorities]:lexer_priority* }
     =
-      priority_keyword [lexer_priorities]:lexer_priority*
+      precedence_keyword [lexer_priorities]:lexer_priority*
         {-> [lexer_priorities] }
     ;
 
@@ -594,7 +594,7 @@ Productions
   parser_priorities
         {-> [parser_priorities]:parser_priority*}
     =
-      priority_keyword [parser_priorities]:parser_priority*
+      precedence_keyword [parser_priorities]:parser_priority*
         {-> [parser_priorities.parser_priority] }
     ;
 
