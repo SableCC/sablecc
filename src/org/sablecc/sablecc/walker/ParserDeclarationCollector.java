@@ -196,26 +196,6 @@ public class ParserDeclarationCollector
     }
 
     @Override
-    public void caseAEpsilonUnit(
-            AEpsilonUnit node) {
-
-        MatchedToken matchedToken = this.currentContext
-                .getMatchedTokenOrNull(node);
-        if (matchedToken == null) {
-            this.currentContext.addMatchedToken(node, false);
-            matchedToken = this.currentContext.getMatchedToken(node);
-        }
-
-        String elementName = this.currentElementName;
-        if (elementName == null) {
-            elementName = "$" + ((AnonymousToken) matchedToken).getId();
-        }
-
-        this.currentAlternative.addTokenElement(elementName,
-                this.currentGrammar.getToken(matchedToken.getName()));
-    }
-
-    @Override
     public void caseAEndUnit(
             AEndUnit node) {
 

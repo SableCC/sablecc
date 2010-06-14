@@ -83,13 +83,6 @@ public class LexerDeclarationCollector
     }
 
     @Override
-    public void outAEpsilonUnit(
-            AEpsilonUnit node) {
-
-        this.currentContext.addMatchedToken(node, this.isIgnored);
-    }
-
-    @Override
     public void outAEndUnit(
             AEndUnit node) {
 

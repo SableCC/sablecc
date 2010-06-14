@@ -138,25 +138,6 @@ public class Context {
     }
 
     public void addMatchedToken(
-            AEpsilonUnit unit,
-            boolean isIgnored) {
-
-        Token nameToken = unit.getEpsilon();
-        String name = nameToken.getText();
-
-        if (this.nameToMatchedTokenMap.containsKey(name)) {
-            MatchedToken firstMatchedToken = this.nameToMatchedTokenMap
-                    .get(name);
-            throw CompilerException.duplicateDeclaration(nameToken,
-                    firstMatchedToken.getNameToken());
-        }
-
-        MatchedToken matchedToken = new EpsilonToken(unit, isIgnored);
-        this.nameToMatchedTokenMap.put(name, matchedToken);
-        this.matchedTokens.add(matchedToken);
-    }
-
-    public void addMatchedToken(
             AEndUnit unit,
             boolean isIgnored) {
 
@@ -276,29 +257,6 @@ public class Context {
 
         if (matchedToken == null) {
             Token nameToken = node.getString();
-            throw CompilerException.notAToken(nameToken);
-        }
-
-        return matchedToken;
-    }
-
-    public MatchedToken getMatchedTokenOrNull(
-            AEpsilonUnit node) {
-
-        Token nameToken = node.getEpsilon();
-        MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
-                .getText());
-
-        return matchedToken;
-    }
-
-    public MatchedToken getMatchedToken(
-            AEpsilonUnit node) {
-
-        MatchedToken matchedToken = getMatchedTokenOrNull(node);
-
-        if (matchedToken == null) {
-            Token nameToken = node.getEpsilon();
             throw CompilerException.notAToken(nameToken);
         }
 

@@ -357,8 +357,6 @@ Productions
     |
       {hex} hex_char
     |
-      {epsilon} epsilon
-    |
       {end} end_keyword
     ;
 
@@ -769,7 +767,6 @@ Abstract Syntax Tree
     {char} char |
     {dec} dec_char |
     {hex} hex_char |
-    {epsilon} epsilon |
     {end} end_keyword;
 
   lexer_context =
