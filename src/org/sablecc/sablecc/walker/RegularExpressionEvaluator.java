@@ -313,8 +313,8 @@ public class RegularExpressionEvaluator
     }
 
     @Override
-    public void outAAndExpression(
-            AAndExpression node) {
+    public void outAIntersectionExpression(
+            AIntersectionExpression node) {
 
         Automaton left = retrieve(node.getLeft());
         Automaton right = retrieve(node.getRight());
