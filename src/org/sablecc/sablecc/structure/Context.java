@@ -176,7 +176,7 @@ public class Context {
     }
 
     public void addMatchedToken(
-            ACharCharacter character,
+            ACharUnit character,
             boolean isIgnored) {
 
         Token nameToken = character.getChar();
@@ -195,7 +195,7 @@ public class Context {
     }
 
     public void addMatchedToken(
-            ADecCharacter character,
+            ADecUnit character,
             boolean isIgnored) {
 
         Token nameToken = character.getDecChar();
@@ -214,7 +214,7 @@ public class Context {
     }
 
     public void addMatchedToken(
-            AHexCharacter character,
+            AHexUnit character,
             boolean isIgnored) {
 
         Token nameToken = character.getHexChar();
@@ -329,7 +329,7 @@ public class Context {
     }
 
     public MatchedToken getMatchedTokenOrNull(
-            ACharCharacter node) {
+            ACharUnit node) {
 
         Token nameToken = node.getChar();
         MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
@@ -339,7 +339,7 @@ public class Context {
     }
 
     public MatchedToken getMatchedToken(
-            ACharCharacter node) {
+            ACharUnit node) {
 
         MatchedToken matchedToken = getMatchedTokenOrNull(node);
 
@@ -352,7 +352,7 @@ public class Context {
     }
 
     public MatchedToken getMatchedTokenOrNull(
-            ADecCharacter node) {
+            ADecUnit node) {
 
         Token nameToken = node.getDecChar();
         MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
@@ -362,7 +362,7 @@ public class Context {
     }
 
     public MatchedToken getMatchedToken(
-            ADecCharacter node) {
+            ADecUnit node) {
 
         MatchedToken matchedToken = getMatchedTokenOrNull(node);
 
@@ -375,7 +375,7 @@ public class Context {
     }
 
     public MatchedToken getMatchedTokenOrNull(
-            AHexCharacter node) {
+            AHexUnit node) {
 
         Token nameToken = node.getHexChar();
         MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
@@ -385,7 +385,7 @@ public class Context {
     }
 
     public MatchedToken getMatchedToken(
-            AHexCharacter node) {
+            AHexUnit node) {
 
         MatchedToken matchedToken = getMatchedTokenOrNull(node);
 

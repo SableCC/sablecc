@@ -29,11 +29,11 @@ public class CharToken
     private Automaton automaton;
 
     CharToken(
-            ACharCharacter charCharacter,
+            ACharUnit charUnit,
             boolean isIgnored) {
 
         super(isIgnored);
-        this.declaration = charCharacter.getChar();
+        this.declaration = charUnit.getChar();
     }
 
     @Override

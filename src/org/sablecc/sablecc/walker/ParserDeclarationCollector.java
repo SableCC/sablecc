@@ -236,8 +236,8 @@ public class ParserDeclarationCollector
     }
 
     @Override
-    public void caseACharCharacter(
-            ACharCharacter node) {
+    public void caseACharUnit(
+            ACharUnit node) {
 
         MatchedToken matchedToken = this.currentContext
                 .getMatchedTokenOrNull(node);
@@ -256,8 +256,8 @@ public class ParserDeclarationCollector
     }
 
     @Override
-    public void caseADecCharacter(
-            ADecCharacter node) {
+    public void caseADecUnit(
+            ADecUnit node) {
 
         MatchedToken matchedToken = this.currentContext
                 .getMatchedTokenOrNull(node);
@@ -276,8 +276,8 @@ public class ParserDeclarationCollector
     }
 
     @Override
-    public void caseAHexCharacter(
-            AHexCharacter node) {
+    public void caseAHexUnit(
+            AHexUnit node) {
 
         MatchedToken matchedToken = this.currentContext
                 .getMatchedTokenOrNull(node);
