@@ -157,10 +157,10 @@ public class Context {
     }
 
     public void addMatchedToken(
-            AAnyUnit unit,
+            AEndUnit unit,
             boolean isIgnored) {
 
-        Token nameToken = unit.getAnyKeyword();
+        Token nameToken = unit.getEndKeyword();
         String name = nameToken.getText();
 
         if (this.nameToMatchedTokenMap.containsKey(name)) {
@@ -170,7 +170,7 @@ public class Context {
                     firstMatchedToken.getNameToken());
         }
 
-        MatchedToken matchedToken = new AnyToken(unit, isIgnored);
+        MatchedToken matchedToken = new EndToken(unit, isIgnored);
         this.nameToMatchedTokenMap.put(name, matchedToken);
         this.matchedTokens.add(matchedToken);
     }
@@ -306,9 +306,9 @@ public class Context {
     }
 
     public MatchedToken getMatchedTokenOrNull(
-            AAnyUnit node) {
+            AEndUnit node) {
 
-        Token nameToken = node.getAnyKeyword();
+        Token nameToken = node.getEndKeyword();
         MatchedToken matchedToken = this.nameToMatchedTokenMap.get(nameToken
                 .getText());
 
@@ -316,12 +316,12 @@ public class Context {
     }
 
     public MatchedToken getMatchedToken(
-            AAnyUnit node) {
+            AEndUnit node) {
 
         MatchedToken matchedToken = getMatchedTokenOrNull(node);
 
         if (matchedToken == null) {
-            Token nameToken = node.getAnyKeyword();
+            Token nameToken = node.getEndKeyword();
             throw CompilerException.notAToken(nameToken);
         }
 

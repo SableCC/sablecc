@@ -216,8 +216,8 @@ public class ParserDeclarationCollector
     }
 
     @Override
-    public void caseAAnyUnit(
-            AAnyUnit node) {
+    public void caseAEndUnit(
+            AEndUnit node) {
 
         MatchedToken matchedToken = this.currentContext
                 .getMatchedTokenOrNull(node);
