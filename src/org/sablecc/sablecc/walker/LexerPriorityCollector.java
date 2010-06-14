@@ -115,22 +115,22 @@ public class LexerPriorityCollector
     }
 
     @Override
-    public void outACharCharacter(
-            ACharCharacter node) {
+    public void outACharUnit(
+            ACharUnit node) {
 
         this.matchedToken = this.currentContext.getMatchedToken(node);
     }
 
     @Override
-    public void outADecCharacter(
-            ADecCharacter node) {
+    public void outADecUnit(
+            ADecUnit node) {
 
         this.matchedToken = this.currentContext.getMatchedToken(node);
     }
 
     @Override
-    public void outAHexCharacter(
-            AHexCharacter node) {
+    public void outAHexUnit(
+            AHexUnit node) {
 
         this.matchedToken = this.currentContext.getMatchedToken(node);
     }

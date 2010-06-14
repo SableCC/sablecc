@@ -97,22 +97,22 @@ public class LexerDeclarationCollector
     }
 
     @Override
-    public void outACharCharacter(
-            ACharCharacter node) {
+    public void outACharUnit(
+            ACharUnit node) {
 
         this.currentContext.addMatchedToken(node, this.isIgnored);
     }
 
     @Override
-    public void outADecCharacter(
-            ADecCharacter node) {
+    public void outADecUnit(
+            ADecUnit node) {
 
         this.currentContext.addMatchedToken(node, this.isIgnored);
     }
 
     @Override
-    public void outAHexCharacter(
-            AHexCharacter node) {
+    public void outAHexUnit(
+            AHexUnit node) {
 
         this.currentContext.addMatchedToken(node, this.isIgnored);
     }

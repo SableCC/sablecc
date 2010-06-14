@@ -29,11 +29,11 @@ public class DecToken
     private Automaton automaton;
 
     DecToken(
-            ADecCharacter decCharacter,
+            ADecUnit decUnit,
             boolean isIgnored) {
 
         super(isIgnored);
-        this.declaration = decCharacter.getDecChar();
+        this.declaration = decUnit.getDecChar();
     }
 
     @Override

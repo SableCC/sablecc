@@ -29,11 +29,11 @@ public class HexToken
     private Automaton automaton;
 
     HexToken(
-            AHexCharacter hexCharacter,
+            AHexUnit hexUnit,
             boolean isIgnored) {
 
         super(isIgnored);
-        this.declaration = hexCharacter.getHexChar();
+        this.declaration = hexUnit.getHexChar();
     }
 
     @Override

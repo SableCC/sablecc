@@ -361,7 +361,11 @@ Productions
     |
       {string} string
     |
-      {character} character
+      {char} char
+    |
+      {dec} dec_char
+    |
+      {hex} hex_char
     |
       {epsilon} epsilon
     |
@@ -772,7 +776,9 @@ Abstract Syntax Tree
   unit =
     {name} identifier |
     {string} string |
-    {character} character |
+    {char} char |
+    {dec} dec_char |
+    {hex} hex_char |
     {epsilon} epsilon |
     {any} any_keyword;
 
