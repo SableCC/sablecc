@@ -17,23 +17,22 @@
 
 package org.sablecc.sablecc.structure;
 
-import org.sablecc.sablecc.alphabet.*;
 import org.sablecc.sablecc.automaton.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class AnyToken
+public class EndToken
         extends AnonymousToken {
 
-    private final TAnyKeyword declaration;
+    private final TEndKeyword declaration;
 
     private Automaton automaton;
 
-    AnyToken(
-            AAnyUnit anyUnit,
+    EndToken(
+            AEndUnit endUnit,
             boolean isIgnored) {
 
         super(isIgnored);
-        this.declaration = anyUnit.getAnyKeyword();
+        this.declaration = endUnit.getEndKeyword();
     }
 
     @Override
@@ -48,8 +47,7 @@ public class AnyToken
         Automaton automaton = this.automaton;
 
         if (automaton == null) {
-            automaton = Automaton.getSymbolLookAnyStarEnd(new Symbol(
-                    new Interval(Bound.MIN, Bound.MAX)));
+            automaton = Automaton.getEpsilonLookEnd();
             automaton = automaton.accept(getAcceptation()).minimal();
             this.automaton = automaton;
         }

@@ -109,7 +109,7 @@ Tokens
   left_keyword = 'Left';
   lexer_keyword = 'Lexer';
   longest_keyword = 'Longest';
-  look_keyword = 'Look';
+  lookahead_keyword = 'Lookahead';
   not_keyword = 'Not';
   new_keyword = 'New';
   null_keyword = 'Null';
@@ -239,11 +239,11 @@ Productions
       {simple} concatenation
         {-> concatenation.expression }
     |
-      {look} concatenation look_keyword look_expression
-        {-> New expression.look(concatenation.expression, look_keyword, look_expression.expression) }
+      {lookahead} [left]:concatenation lookahead_keyword [right]:concatenation
+        {-> New expression.lookahead(left.expression, lookahead_keyword, right.expression) }
     |
-      {look_not} concatenation look_keyword not_keyword look_expression
-        {-> New expression.look_not(concatenation.expression, look_keyword, not_keyword, look_expression.expression) }
+      {lookahead_not} [left]:concatenation lookahead_keyword not_keyword [right]:concatenation
+        {-> New expression.lookahead_not(left.expression, lookahead_keyword, not_keyword, right.expression) }
     |
       {shortest} shortest_keyword concatenation
         {-> New expression.shortest(shortest_keyword, concatenation.expression) }
@@ -262,19 +262,6 @@ Productions
     |
       {interval} [from]:character two_dots [to]:character
         {-> New expression.interval(from, two_dots, to) }
-    ;
-
-  look_expression
-        {-> expression }
-    =
-      {simple} concatenation
-        {-> concatenation.expression }
-    |
-      {complete} concatenation end_keyword
-        {-> New expression.concatenation(concatenation.expression, New expression.end(end_keyword)) }
-    |
-      {end} end_keyword
-        {-> New expression.end(end_keyword) }
     ;
 
   concatenation
@@ -351,6 +338,9 @@ Productions
       {any} any_keyword
         {-> New expression.any(any_keyword) }
     |
+      {end} end_keyword
+        {-> New expression.end(end_keyword) }
+    |
       {par} l_par expression r_par
         {-> expression }
     ;
@@ -369,7 +359,7 @@ Productions
     |
       {epsilon} epsilon
     |
-      {any} any_keyword
+      {end} end_keyword
     ;
 
   character
@@ -732,8 +722,8 @@ Abstract Syntax Tree
   expression =
     {or} [left]:expression bar [right]:expression |
     {concatenation} [left]:expression [right]:expression |
-    {look} [left]:expression look_keyword [right]:expression |
-    {look_not} [left]:expression look_keyword not_keyword [right]:expression |
+    {lookahead} [left]:expression lookahead_keyword [right]:expression |
+    {lookahead_not} [left]:expression lookahead_keyword not_keyword [right]:expression |
     {shortest} shortest_keyword expression |
     {longest} longest_keyword expression |
     {subtraction} [left]:expression minus [right]:expression |
@@ -780,7 +770,7 @@ Abstract Syntax Tree
     {dec} dec_char |
     {hex} hex_char |
     {epsilon} epsilon |
-    {any} any_keyword;
+    {end} end_keyword;
 
   lexer_context =
     [name]:identifier? tokens? ignored? [lexer_priorities]:lexer_priority*;

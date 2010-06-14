@@ -108,8 +108,8 @@ public class LexerPriorityCollector
     }
 
     @Override
-    public void outAAnyUnit(
-            AAnyUnit node) {
+    public void outAEndUnit(
+            AEndUnit node) {
 
         this.matchedToken = this.currentContext.getMatchedToken(node);
     }

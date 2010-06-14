@@ -356,8 +356,8 @@ public class RegularExpressionEvaluator
     }
 
     @Override
-    public void outALookNotExpression(
-            ALookNotExpression node) {
+    public void outALookaheadNotExpression(
+            ALookaheadNotExpression node) {
 
         Automaton left = retrieve(node.getLeft());
         Automaton right = retrieve(node.getRight());
@@ -365,8 +365,8 @@ public class RegularExpressionEvaluator
     }
 
     @Override
-    public void outALookExpression(
-            ALookExpression node) {
+    public void outALookaheadExpression(
+            ALookaheadExpression node) {
 
         Automaton left = retrieve(node.getLeft());
         Automaton right = retrieve(node.getRight());
