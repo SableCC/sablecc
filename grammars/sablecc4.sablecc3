@@ -257,8 +257,8 @@ Productions
       {difference} [left]:concatenation except_keyword [right]:concatenation
         {-> New expression.difference(left.expression, except_keyword, right.expression) }
     |
-      {and} [left]:concatenation and_keyword [right]:concatenation
-        {-> New expression.and(left.expression, and_keyword, right.expression) }
+      {intersection} [left]:concatenation and_keyword [right]:concatenation
+        {-> New expression.intersection(left.expression, and_keyword, right.expression) }
     |
       {interval} [from]:character two_dots [to]:character
         {-> New expression.interval(from, two_dots, to) }
@@ -734,7 +734,7 @@ Abstract Syntax Tree
     {longest} longest_keyword expression |
     {subtraction} [left]:expression minus [right]:expression |
     {difference} [left]:expression except_keyword [right]:expression |
-    {and} [left]:expression and_keyword [right]:expression |
+    {intersection} [left]:expression and_keyword [right]:expression |
     {zero_or_one} expression q_mark |
     {zero_or_more} expression star |
     {separated_zero_or_more} [base]:expression separator_keyword
