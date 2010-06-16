@@ -99,6 +99,7 @@ Tokens
   any_keyword = 'Any';
   context_keyword = 'Context';
   dangling_keyword = 'Dangling';
+  empty_keyword = 'Empty';
   end_keyword = 'End';
   except_keyword = 'Except';
   group_keyword = 'Group';
@@ -108,6 +109,7 @@ Tokens
   language_keyword = 'Language';
   left_keyword = 'Left';
   lexer_keyword = 'Lexer';
+  list_keyword = 'List';
   longest_keyword = 'Longest';
   lookahead_keyword = 'Lookahead';
   not_keyword = 'Not';
@@ -116,14 +118,14 @@ Tokens
   parser_keyword = 'Parser';
   precedence_keyword = 'Precedence';
   production_keyword = 'Production';
-  restartable_keyword = 'Restartable';
   right_keyword = 'Right';
+  root_keyword = 'Root';
   separator_keyword = 'Separator';
   shortest_keyword = 'Shortest';
-  start_keyword = 'Start';
   token_keyword = 'Token';
   transformation_keyword = 'Transformation';
   tree_keyword = 'Tree';
+  unary_keyword = 'Unary';
 
   identifier = normal_identifier | rich_identifier;
 
@@ -477,20 +479,14 @@ Productions
 
   parser
     =
-      parser_keyword start? restartable? parser_contexts inlined?
-        {-> New parser(parser_keyword, start, restartable, [parser_contexts.parser_contexts], inlined) }
+      parser_keyword root? parser_contexts inlined?
+        {-> New parser(parser_keyword, root, [parser_contexts.parser_contexts], inlined) }
     ;
 
-  start
+  root
     =
-      start_keyword identifier_list? semicolon
-        {-> New start(start_keyword, [identifier_list.identifiers] ) }
-    ;
-
-  restartable
-    =
-      restartable_keyword identifier_list? semicolon
-        {-> New restartable(restartable_keyword, [identifier_list.identifiers] ) }
+      root_keyword identifier_list? semicolon
+        {-> New root(root_keyword, [identifier_list.identifiers] ) }
     ;
 
   identifier_list
@@ -567,7 +563,9 @@ Productions
 
   parser_alternative
     =
-      alternative_name? [elements]:element* dangling_element?
+      {normal} alternative_name? [elements]:element* dangling_element?
+    |
+      {empty} alternative_name? empty_keyword
     ;
 
   element
@@ -592,11 +590,14 @@ Productions
 
   parser_priority
     =
-      {left} left_keyword identifier_list semicolon
+      {left} left_keyword identifier_list? semicolon
         {-> New parser_priority.left(left_keyword, [identifier_list.identifiers]) }
     |
-      {right} right_keyword identifier_list semicolon
+      {right} right_keyword identifier_list? semicolon
         {-> New parser_priority.right(right_keyword, [identifier_list.identifiers]) }
+    |
+      {unary} unary_keyword identifier_list? semicolon
+        {-> New parser_priority.unary(unary_keyword, [identifier_list.identifiers]) }
     ;
 
   parser_investigator
@@ -653,7 +654,7 @@ Productions
     |
       {new} new_keyword alternative_reference l_par [transformation_elements]:transformation_element* r_par
     |
-      {list} l_par [list_elements]:list_element* r_par
+      {list} list_keyword l_par [list_elements]:list_element* r_par
     ;
 
   list_element
@@ -699,7 +700,9 @@ Productions
 
   tree_alternative
     =
-      alternative_name? [elements]:element*
+      {normal} alternative_name? [elements]:element*
+    |
+      {empty} alternative_name? empty_keyword
     ;
 
 Abstract Syntax Tree
@@ -785,14 +788,10 @@ Abstract Syntax Tree
     [name]:identifier [parameter]:identifier;
 
   parser =
-    parser_keyword start? restartable? [parser_contexts]:parser_context+
-    inlined?;
+    parser_keyword root? [parser_contexts]:parser_context+ inlined?;
 
-  start =
-    start_keyword [identifiers]:identifier*;
-
-  restartable =
-    restartable_keyword [identifiers]:identifier*;
+  root =
+    root_keyword [identifiers]:identifier*;
 
   parser_context =
     [name]:identifier? [parser_productions]:parser_production*;
@@ -809,7 +808,8 @@ Abstract Syntax Tree
     {token} token_keyword;
 
   parser_alternative =
-    alternative_name? [elements]:element* dangling_element?;
+    {normal} alternative_name? [elements]:element* dangling_element? |
+    {empty} alternative_name? empty_keyword;
 
   element =
     {unit} element_name? unit unary_operator? |
@@ -831,8 +831,9 @@ Abstract Syntax Tree
     dangling_keyword element_name? identifier q_mark;
 
   parser_priority =
-    {left} left_keyword [identifiers]:identifier+ |
-    {right} right_keyword [identifiers]:identifier+;
+    {left} left_keyword [identifiers]:identifier* |
+    {right} right_keyword [identifiers]:identifier* |
+    {unary} unary_keyword [identifiers]:identifier*;
 
   parser_investigator =
     investigator_keyword [name]:identifier [parameters]:identifier*;
@@ -867,7 +868,7 @@ Abstract Syntax Tree
     {reference} element_reference |
     {new} new_keyword alternative_reference l_par
       [transformation_elements]:transformation_element* r_par |
-    {list} l_par [list_elements]:list_element* r_par;
+    {list} list_keyword l_par [list_elements]:list_element* r_par;
 
   list_element =
     {reference} element_reference |
@@ -886,4 +887,5 @@ Abstract Syntax Tree
     [name]:identifier assign [tree_alternatives]:tree_alternative+;
 
   tree_alternative =
-    alternative_name? [elements]:element*;
+    {normal} alternative_name? [elements]:element* |
+    {empty} alternative_name? empty_keyword;
