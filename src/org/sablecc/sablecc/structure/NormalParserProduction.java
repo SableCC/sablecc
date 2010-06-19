@@ -48,7 +48,7 @@ public class NormalParserProduction
 
         for (PParserAlternative pParserAlternative : node
                 .getParserAlternatives()) {
-            AParserAlternative parserAlternative = (AParserAlternative) pParserAlternative;
+            ANormalParserAlternative parserAlternative = (ANormalParserAlternative) pParserAlternative;
 
             Alternative alternative = new ParserAlternative(parserAlternative);
             namedItems.add(alternative);
@@ -100,7 +100,7 @@ public class NormalParserProduction
     }
 
     public ParserAlternative getAlternative(
-            AParserAlternative node) {
+            ANormalParserAlternative node) {
 
         return (ParserAlternative) this.nodeToAlternativeMap.get(node);
     }

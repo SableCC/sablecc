@@ -106,8 +106,8 @@ public class ParserDeclarationCollector
     }
 
     @Override
-    public void inAParserAlternative(
-            AParserAlternative node) {
+    public void inANormalParserAlternative(
+            ANormalParserAlternative node) {
 
         String name;
         if (node.getAlternativeName() == null) {
@@ -124,8 +124,8 @@ public class ParserDeclarationCollector
     }
 
     @Override
-    public void outAParserAlternative(
-            AParserAlternative node) {
+    public void outANormalParserAlternative(
+            ANormalParserAlternative node) {
 
         this.currentAlternative = null;
     }

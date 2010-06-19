@@ -57,19 +57,11 @@ public class SimpleLexerAndParserRestricter
     }
 
     @Override
-    public void inAStart(
-            AStart node) {
+    public void inARoot(
+            ARoot node) {
 
-        throw CompilerException.notImplemented(node.getStartKeyword(),
-                "parser start");
-    }
-
-    @Override
-    public void inARestartable(
-            ARestartable node) {
-
-        throw CompilerException.notImplemented(node.getRestartableKeyword(),
-                "parser restartable");
+        throw CompilerException.notImplemented(node.getRootKeyword(),
+                "parser root");
     }
 
     @Override
@@ -104,6 +96,14 @@ public class SimpleLexerAndParserRestricter
 
         throw CompilerException.notImplemented(node.getTokenKeyword(),
                 "parser token production");
+    }
+
+    @Override
+    public void inAEmptyParserAlternative(
+            AEmptyParserAlternative node) {
+
+        throw CompilerException.notImplemented(node.getEmptyKeyword(),
+                "parser empty alternative");
     }
 
     @Override

@@ -24,14 +24,14 @@ import org.sablecc.sablecc.syntax3.node.*;
 public class ParserAlternative
         extends org.sablecc.sablecc.structure.Alternative {
 
-    private final AParserAlternative parserAlternative;
+    private final ANormalParserAlternative parserAlternative;
 
     private final String publicName;
 
     private Alternative grammarAlternative;
 
     public ParserAlternative(
-            AParserAlternative parserAlternative) {
+            ANormalParserAlternative parserAlternative) {
 
         if (parserAlternative == null) {
             throw new InternalException("parserAlternative may not be null");
