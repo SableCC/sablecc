@@ -36,11 +36,11 @@ import org.sablecc.sablecc.lrautomaton.Alternative;
 import org.sablecc.sablecc.lrautomaton.Element;
 import org.sablecc.sablecc.lrautomaton.Production;
 import org.sablecc.sablecc.lrautomaton.Token;
+import org.sablecc.sablecc.oldwalker.*;
 import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.sablecc.syntax3.parser.*;
-import org.sablecc.sablecc.walker.*;
 import org.sablecc.util.*;
 
 /**

@@ -15,31 +15,22 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.walker;
+package org.sablecc.sablecc.oldwalker;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class LexerPriorityCollector
+public class LexerDeclarationCollector
         extends TreeWalker {
 
     private final GlobalIndex globalIndex;
 
     private Context currentContext;
 
-    private MatchedToken matchedToken;
+    private boolean isIgnored;
 
-    private MatchedToken getMatchedToken(
-            PUnit node) {
-
-        visit(node);
-        MatchedToken matchedToken = this.matchedToken;
-        this.matchedToken = null;
-        return matchedToken;
-    }
-
-    public LexerPriorityCollector(
+    public LexerDeclarationCollector(
             GlobalIndex globalIndex) {
 
         if (globalIndex == null) {
@@ -70,61 +61,52 @@ public class LexerPriorityCollector
             ALexerContext node) {
 
         this.currentContext = this.globalIndex.getContext(node);
-        for (PLexerPriority lexerPriority : node.getLexerPriorities()) {
-            visit(lexerPriority);
-        }
+        this.isIgnored = false;
+        visit(node.getTokens());
+        this.isIgnored = true;
+        visit(node.getIgnored());
         this.currentContext = null;
-    }
-
-    @Override
-    public void caseALexerPriority(
-            ALexerPriority node) {
-
-        MatchedToken high = getMatchedToken(node.getHigh());
-        MatchedToken low = getMatchedToken(node.getLow());
-
-        this.currentContext.addPriority(node, high, low);
     }
 
     @Override
     public void outANameUnit(
             ANameUnit node) {
 
-        this.matchedToken = this.currentContext.getMatchedToken(node);
+        this.currentContext.addMatchedToken(node, this.isIgnored);
     }
 
     @Override
     public void outAStringUnit(
             AStringUnit node) {
 
-        this.matchedToken = this.currentContext.getMatchedToken(node);
+        this.currentContext.addMatchedToken(node, this.isIgnored);
     }
 
     @Override
     public void outAEndUnit(
             AEndUnit node) {
 
-        this.matchedToken = this.currentContext.getMatchedToken(node);
+        this.currentContext.addMatchedToken(node, this.isIgnored);
     }
 
     @Override
     public void outACharUnit(
             ACharUnit node) {
 
-        this.matchedToken = this.currentContext.getMatchedToken(node);
+        this.currentContext.addMatchedToken(node, this.isIgnored);
     }
 
     @Override
     public void outADecUnit(
             ADecUnit node) {
 
-        this.matchedToken = this.currentContext.getMatchedToken(node);
+        this.currentContext.addMatchedToken(node, this.isIgnored);
     }
 
     @Override
     public void outAHexUnit(
             AHexUnit node) {
 
-        this.matchedToken = this.currentContext.getMatchedToken(node);
+        this.currentContext.addMatchedToken(node, this.isIgnored);
     }
 }
