@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.walker;
+package org.sablecc.sablecc.oldwalker;
 
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;

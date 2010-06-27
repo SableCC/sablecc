@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.walker;
+package org.sablecc.sablecc.oldwalker;
 
 import java.math.*;
 import java.util.*;
