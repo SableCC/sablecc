@@ -19,7 +19,7 @@ package org.sablecc.sablecc.exception;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.errormessage.*;
-import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.oldstructure.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 @SuppressWarnings("serial")
