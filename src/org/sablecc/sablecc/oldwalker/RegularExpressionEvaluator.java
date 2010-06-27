@@ -23,7 +23,7 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
 import org.sablecc.sablecc.automaton.*;
-import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.oldstructure.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class RegularExpressionEvaluator

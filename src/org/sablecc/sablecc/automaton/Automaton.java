@@ -27,7 +27,7 @@ import java.util.Map.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
 import org.sablecc.sablecc.exception.*;
-import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.oldstructure.*;
 import org.sablecc.util.*;
 
 /**

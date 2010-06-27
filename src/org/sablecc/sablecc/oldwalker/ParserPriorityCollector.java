@@ -23,7 +23,7 @@ import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.lrautomaton.*;
 import org.sablecc.sablecc.lrautomaton.Alternative;
 import org.sablecc.sablecc.lrautomaton.Element;
-import org.sablecc.sablecc.structure.*;
+import org.sablecc.sablecc.oldstructure.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class ParserPriorityCollector
