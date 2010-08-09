@@ -102,11 +102,11 @@ Tokens
   empty_keyword = 'Empty';
   end_keyword = 'End';
   except_keyword = 'Except';
+  grammar_keyword = 'Grammar';
   group_keyword = 'Group';
   ignored_keyword = 'Ignored';
   inlined_keyword = 'Inlined';
   investigator_keyword = 'Investigator';
-  language_keyword = 'Language';
   left_keyword = 'Left';
   lexer_keyword = 'Lexer';
   list_keyword = 'List';
@@ -186,15 +186,8 @@ Productions
 
   grammar
     =
-      language_name lexer? parser? transformation? tree? ctrl_z?
-        {-> New grammar(language_name.language_keyword, language_name.identifier, lexer, parser, transformation, tree) }
-    ;
-
-  language_name
-        {-> language_keyword identifier }
-    =
-      language_keyword identifier semicolon
-        {-> language_keyword identifier }
+      grammar_keyword identifier colon lexer? parser? transformation? tree? ctrl_z?
+        {-> New grammar(grammar_keyword, identifier, lexer, parser, transformation, tree) }
     ;
 
   lexer
@@ -708,7 +701,7 @@ Productions
 Abstract Syntax Tree
 
   grammar =
-    language_keyword [language_name]:identifier lexer? parser? transformation?
+    grammar_keyword [name]:identifier lexer? parser? transformation?
     tree?;
 
   lexer =

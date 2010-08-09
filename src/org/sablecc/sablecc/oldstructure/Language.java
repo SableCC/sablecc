@@ -37,7 +37,7 @@ public class Language {
 
     public TIdentifier getNameToken() {
 
-        return this.declaration.getLanguageName();
+        return this.declaration.getName();
     }
 
     public String get_CamelCaseName() {
