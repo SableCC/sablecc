@@ -70,9 +70,10 @@ public class LexerPriorityCollector
             ALexerContext node) {
 
         this.currentContext = this.globalIndex.getContext(node);
-        for (PLexerPriority lexerPriority : node.getLexerPriorities()) {
-            visit(lexerPriority);
-        }
+        // ** BROKEN: lexer priorities are now context-insensitive **
+        // for (PLexerPriority lexerPriority : node.getLexerPriorities()) {
+        // visit(lexerPriority);
+        // }
         this.currentContext = null;
     }
 
