@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-Language lexer_features;
+Grammar lexer_features:
 
 Lexer
 
@@ -23,7 +23,7 @@ Lexer
 
   eol = #13 | #10 | #13 #10;
 
-  line_comment = '//' (Shortest (Any* Look (eol | '' Look End))) (eol | '' Look End);
+  line_comment = '//' (Shortest (Any* Lookahead (eol | '' Lookahead End))) (eol | '' Lookahead End);
 
   letter = upper_case | lower_case;
   upper_case = 'A'..'Z';
@@ -49,6 +49,6 @@ Lexer
   Ignored
     c_comment, line_comment, ' ', #10, #xD;
 
-  Priority
+  Precedence
     zero > identifier;
     zero > number;
