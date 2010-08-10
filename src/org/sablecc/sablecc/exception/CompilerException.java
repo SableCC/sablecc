@@ -139,16 +139,16 @@ public class CompilerException
 
     public static CompilerException duplicateDeclaration(
             Token duplicateName,
-            Token firstName) {
+            Token olderName) {
 
         String name = duplicateName.getText();
-        if (!name.equals(firstName.getText())) {
+        if (!name.equals(olderName.getText())) {
             throw new InternalException("names must be identical");
         }
 
         return new CompilerException(new MDuplicateDeclaration(name,
                 duplicateName.getLine() + "", duplicateName.getPos() + "",
-                firstName.getLine() + "", firstName.getPos() + "").toString());
+                olderName.getLine() + "", olderName.getPos() + "").toString());
     }
 
     public static CompilerException unknownTarget(
