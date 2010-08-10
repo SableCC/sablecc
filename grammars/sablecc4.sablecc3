@@ -192,8 +192,8 @@ Productions
 
   lexer
     =
-      lexer_keyword [named_expressions]:named_expression* [groups]:group* lexer_contexts lexer_investigators?
-        {-> New lexer(lexer_keyword, [named_expressions], [groups], [lexer_contexts.lexer_contexts], [lexer_investigators.lexer_investigators]) }
+      lexer_keyword [named_expressions]:named_expression* [groups]:group*  lexer_priorities? lexer_investigators? lexer_contexts
+        {-> New lexer(lexer_keyword, [named_expressions], [groups], [lexer_priorities.lexer_priorities], [lexer_investigators.lexer_investigators], [lexer_contexts.lexer_contexts]) }
     ;
 
   named_expression
@@ -401,21 +401,21 @@ Productions
         {-> lexer_context }
     =
       lexer_context_body
-        {-> New lexer_context(Null, lexer_context_body.tokens, lexer_context_body.ignored, [lexer_context_body.lexer_priorities]) }
+        {-> New lexer_context(Null, lexer_context_body.tokens, lexer_context_body.ignored) }
     ;
 
   lexer_named_context
         {-> lexer_context }
     =
       context_keyword identifier colon lexer_context_body
-        {-> New lexer_context(identifier, lexer_context_body.tokens, lexer_context_body.ignored, [lexer_context_body.lexer_priorities]) }
+        {-> New lexer_context(identifier, lexer_context_body.tokens, lexer_context_body.ignored) }
     ;
 
   lexer_context_body
-        {-> tokens? ignored? [lexer_priorities]:lexer_priority* }
+        {-> tokens? ignored? }
     =
-      tokens? ignored? lexer_priorities?
-        {-> tokens ignored [lexer_priorities.lexer_priorities] }
+      tokens? ignored?
+        {-> tokens ignored }
     ;
 
   tokens
@@ -472,8 +472,8 @@ Productions
 
   parser
     =
-      parser_keyword root? parser_contexts inlined?
-        {-> New parser(parser_keyword, root, [parser_contexts.parser_contexts], inlined) }
+      parser_keyword root? inlined? parser_contexts
+        {-> New parser(parser_keyword, root, inlined, [parser_contexts.parser_contexts]) }
     ;
 
   root
@@ -519,8 +519,8 @@ Productions
 
   parser_production
     =
-      {normal} qualifier? parser_production_body parser_priorities? parser_investigator?
-        {-> New parser_production.normal(qualifier, parser_production_body.identifier, parser_production_body.assign, [parser_production_body.parser_alternatives], [parser_priorities.parser_priorities], parser_investigator) }
+      {normal} qualifier? parser_production_body
+        {-> New parser_production.normal(qualifier, parser_production_body.identifier, parser_production_body.assign, [parser_production_body.parser_priorities], parser_production_body.parser_investigator, [parser_production_body.parser_alternatives]) }
     |
       {selection} selection assign identifier l_par [parameter]:identifier r_par
         {-> New parser_production.selection([selection.identifiers], assign, identifier, parameter) }
@@ -534,10 +534,10 @@ Productions
     ;
 
   parser_production_body
-        {-> identifier assign [parser_alternatives]:parser_alternative+ }
+        {-> identifier assign [parser_priorities]:parser_priority* parser_investigator? [parser_alternatives]:parser_alternative+ }
     =
-      identifier assign parser_alternatives semicolon
-        {-> identifier assign [parser_alternatives.parser_alternatives] }
+      identifier assign parser_priorities? parser_investigator? parser_alternatives semicolon
+        {-> identifier assign [parser_priorities.parser_priorities] parser_investigator [parser_alternatives.parser_alternatives] }
     ;
 
   parser_alternatives
@@ -706,7 +706,8 @@ Abstract Syntax Tree
 
   lexer =
     lexer_keyword [named_expressions]:named_expression* [groups]:group*
-    [lexer_contexts]:lexer_context+ [lexer_investigators]:lexer_investigator*;
+    [lexer_priorities]:lexer_priority*
+    [lexer_investigators]:lexer_investigator* [lexer_contexts]:lexer_context+;
 
   named_expression =
     {normal} [name]:identifier assign expression |
@@ -766,7 +767,7 @@ Abstract Syntax Tree
     {end} end_keyword;
 
   lexer_context =
-    [name]:identifier? tokens? ignored? [lexer_priorities]:lexer_priority*;
+    [name]:identifier? tokens? ignored?;
 
   tokens =
     token_keyword unit*;
@@ -781,7 +782,7 @@ Abstract Syntax Tree
     [name]:identifier [parameter]:identifier;
 
   parser =
-    parser_keyword root? [parser_contexts]:parser_context+ inlined?;
+    parser_keyword root? inlined? [parser_contexts]:parser_context+;
 
   root =
     root_keyword [identifiers]:identifier*;
@@ -791,8 +792,8 @@ Abstract Syntax Tree
 
   parser_production =
     {normal} qualifier? [name]:identifier assign
-      [parser_alternatives]:parser_alternative+
-      [parser_priorities]:parser_priority* parser_investigator? |
+      [parser_priorities]:parser_priority* parser_investigator?
+      [parser_alternatives]:parser_alternative+ |
     {selection} [names]:identifier+ assign [selector_name]:identifier
       [parameter]:identifier;
 

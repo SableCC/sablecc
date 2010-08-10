@@ -30,10 +30,11 @@ Parser
     exp ';';
 
   exp =
-    {add:} exp [op:]'+' exp |
-    {mul:} exp [op:]'*' exp |
-    {num:} num;
 
     Precedence
       Left mul;
       Left add;
+
+    {mul:} exp [op:]'*' exp |
+    {add:} exp [op:]'+' exp |
+    {num:} num;

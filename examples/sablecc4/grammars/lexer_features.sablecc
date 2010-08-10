@@ -43,12 +43,12 @@ Lexer
 
   zero = '0'+ | 'zero';
 
+  Precedence
+    zero > identifier;
+    zero > number;
+
   Token
     zero, if_keyword, 'else', while_keyword, identifier, number, ip_address, hex;
 
   Ignored
     c_comment, line_comment, ' ', #10, #xD;
-
-  Precedence
-    zero > identifier;
-    zero > number;
