@@ -24,6 +24,7 @@ import java.io.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.errormessage.*;
 import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.sablecc.syntax3.parser.*;
@@ -290,6 +291,8 @@ public class SableCC {
             System.out.println(" Verifying semantics");
             break;
         }
+
+        new Grammar(ast);
 
         throw new InternalException("not implemented");
     }
