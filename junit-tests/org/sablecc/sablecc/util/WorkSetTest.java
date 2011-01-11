@@ -68,8 +68,8 @@ public class WorkSetTest {
         this.workSet.add(25);
         this.workSet.add(50);
 
-        assertFalse("the WorkSet should still be empty.", this.workSet
-                .hasNext());
+        assertFalse("the WorkSet should still be empty.",
+                this.workSet.hasNext());
     }
 
     @Test

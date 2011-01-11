@@ -74,8 +74,7 @@ public class MParser {
         sb.append(System.getProperty("line.separator"));
         sb.append("  public Node parse()");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("      throws ParserException, LexerException, IOException {");
+        sb.append("      throws ParserException, LexerException, IOException {");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("    Node tree = null;");
@@ -99,8 +98,7 @@ public class MParser {
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("  private LinkedList<Token> lookList = new LinkedList<Token>();");
+        sb.append("  private LinkedList<Token> lookList = new LinkedList<Token>();");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("  Token look(int distance)");
@@ -120,8 +118,7 @@ public class MParser {
         sb.append(System.getProperty("line.separator"));
         sb.append("  void shift()");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("      throws ParserException, LexerException, IOException {");
+        sb.append("      throws ParserException, LexerException, IOException {");
         sb.append(System.getProperty("line.separator"));
         sb.append("    Token token;");
         sb.append(System.getProperty("line.separator"));
@@ -146,8 +143,7 @@ public class MParser {
         sb.append(System.getProperty("line.separator"));
         sb.append("class ParseStack {");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("  private ParseStackEntry stack = new ParseStackEntry(null, null, L_0.instance);");
+        sb.append("  private ParseStackEntry stack = new ParseStackEntry(null, null, L_0.instance);");
         sb.append(System.getProperty("line.separator"));
         sb.append("  private ParseStackEntry freeList;");
         sb.append(System.getProperty("line.separator"));

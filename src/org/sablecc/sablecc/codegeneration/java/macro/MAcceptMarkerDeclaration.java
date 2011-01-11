@@ -43,13 +43,11 @@ public class MAcceptMarkerDeclaration {
         sb.append(System.getProperty("line.separator"));
         sb.append("    }");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("    String text = this.sb.toString().substring(0, this.marker");
+        sb.append("    String text = this.sb.toString().substring(0, this.marker");
         sb.append(rName());
         sb.append(" - backCount);");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("    String leftover = this.sb.toString().substring(this.marker");
+        sb.append("    String leftover = this.sb.toString().substring(this.marker");
         sb.append(rName());
         sb.append(" - backCount, this.sb.length());");
         sb.append(System.getProperty("line.separator"));

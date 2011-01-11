@@ -152,9 +152,7 @@ public class MMacroH {
         sb.append("  void (*free)(void*);");
         sb.append(System.getProperty("line.separator"));
         for (Object oParamField_SelfRefH_AncestorField_ExpandField : this.eParamField_SelfRefH_AncestorField_ExpandField) {
-            sb
-                    .append(oParamField_SelfRefH_AncestorField_ExpandField
-                            .toString());
+            sb.append(oParamField_SelfRefH_AncestorField_ExpandField.toString());
         }
         sb.append("}M");
         sb.append(rFileName());

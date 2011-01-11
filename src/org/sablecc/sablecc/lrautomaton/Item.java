@@ -176,4 +176,5 @@ public class Item
 
         return this.alternative.isRightAssociative();
     }
-*/}
+*/
+}

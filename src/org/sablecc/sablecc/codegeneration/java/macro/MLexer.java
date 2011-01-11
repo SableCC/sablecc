@@ -82,8 +82,7 @@ public class MLexer {
         sb.append(System.getProperty("line.separator"));
         sb.append("  private final BufferedReader br;");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("  private final StringBuilder buffer = new StringBuilder();");
+        sb.append("  private final StringBuilder buffer = new StringBuilder();");
         sb.append(System.getProperty("line.separator"));
         sb.append("  private boolean eof;");
         sb.append(System.getProperty("line.separator"));
@@ -149,11 +148,9 @@ public class MLexer {
         sb.append("    State state = S_0.instance;");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("    while(state.getStateType() == State.StateType.TRANSITION) {");
+        sb.append("    while(state.getStateType() == State.StateType.TRANSITION) {");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("      TransitionState transitionState = (TransitionState) state;");
+        sb.append("      TransitionState transitionState = (TransitionState) state;");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("      this.current_sb_length = sb.length();");
@@ -229,8 +226,7 @@ public class MLexer {
         sb.append(System.getProperty("line.separator"));
         sb.append("      if(symbol == null) {");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("        throw new LexerException(sb.charAt(0), this.line, this.pos);");
+        sb.append("        throw new LexerException(sb.charAt(0), this.line, this.pos);");
         sb.append(System.getProperty("line.separator"));
         sb.append("      }");
         sb.append(System.getProperty("line.separator"));
@@ -240,8 +236,7 @@ public class MLexer {
         sb.append(System.getProperty("line.separator"));
         sb.append("      if(state == null) {");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("        throw new LexerException(sb.charAt(0), this.line, this.pos);");
+        sb.append("        throw new LexerException(sb.charAt(0), this.line, this.pos);");
         sb.append(System.getProperty("line.separator"));
         sb.append("      }");
         sb.append(System.getProperty("line.separator"));
@@ -362,11 +357,9 @@ public class MLexer {
         sb.append(System.getProperty("line.separator"));
         sb.append("    }");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("    String text = this.sb.toString().substring(0, this.sb.length() - backCount);");
+        sb.append("    String text = this.sb.toString().substring(0, this.sb.length() - backCount);");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("    String leftover = this.sb.toString().substring(this.sb.length() - backCount, this.sb.length());");
+        sb.append("    String leftover = this.sb.toString().substring(this.sb.length() - backCount, this.sb.length());");
         sb.append(System.getProperty("line.separator"));
         sb.append("    this.buffer.insert(0, leftover);");
         sb.append(System.getProperty("line.separator"));

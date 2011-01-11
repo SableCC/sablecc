@@ -287,4 +287,5 @@ public class Alternative {
 
         return this.priorityLevel.getType() == PriorityType.RIGHT;
     }
-*/}
+*/
+}

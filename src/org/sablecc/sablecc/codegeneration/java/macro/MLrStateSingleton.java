@@ -112,8 +112,7 @@ public class MLrStateSingleton {
         sb.append(System.getProperty("line.separator"));
         sb.append("  Node apply(Parser parser)");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("      throws ParserException, LexerException, IOException {");
+        sb.append("      throws ParserException, LexerException, IOException {");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         for (Object oDistance : this.eDistance) {
@@ -129,8 +128,7 @@ public class MLrStateSingleton {
         sb.append(System.getProperty("line.separator"));
         sb.append("  LRState getTarget(Node node)");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("      throws ParserException, LexerException, IOException {");
+        sb.append("      throws ParserException, LexerException, IOException {");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("    switch(node.getProductionType()) {");

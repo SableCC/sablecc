@@ -137,8 +137,7 @@ public class MNode {
         sb.append(System.getProperty("line.separator"));
         sb.append("  public String toString() {");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("    return \"\\\"\" + getText() + \"\\\"@(\" + getLine() + \",\" + getPos() + \")\";");
+        sb.append("    return \"\\\"\" + getText() + \"\\\"@(\" + getLine() + \",\" + getPos() + \")\";");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));

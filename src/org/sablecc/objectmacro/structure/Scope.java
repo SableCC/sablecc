@@ -111,8 +111,8 @@ public abstract class Scope {
 
         Param firstParam = getParamOrNull(name);
         if (firstParam != null) {
-            throw CompilerException.duplicateDeclaration(nameId, firstParam
-                    .getNameDeclaration());
+            throw CompilerException.duplicateDeclaration(nameId,
+                    firstParam.getNameDeclaration());
         }
 
         Param param = new Param(declaration, this);

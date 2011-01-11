@@ -18,7 +18,7 @@
 package org.sablecc.sablecc.lrautomaton;
 
 import java.util.*;
-import java.util.Map.*;
+import java.util.Map.Entry;
 
 import org.sablecc.util.*;
 
@@ -68,7 +68,7 @@ public class LRAutomaton {
 /*        for (LRState state : this.coreItemSetToLRStateMap.values()) {
             state.computeActions(verbosity);
         }
-*/    }
+*/  }
 
     public Collection<LRState> getStates() {
 

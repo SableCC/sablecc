@@ -18,7 +18,7 @@
 package org.sablecc.sablecc.automaton;
 
 import java.util.*;
-import java.util.Map.*;
+import java.util.Map.Entry;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
@@ -94,13 +94,13 @@ class WithMarkersOperation {
                                 .getAcceptations()) {
                             Acceptation markedAcceptation;
                             if (accept == null) {
-                                markedAcceptation = new Acceptation(acceptation
-                                        .getName(), 0, null);
+                                markedAcceptation = new Acceptation(
+                                        acceptation.getName(), 0, null);
                             }
                             else {
-                                markedAcceptation = new Acceptation(acceptation
-                                        .getName(), accept.getLeft(), accept
-                                        .getRight());
+                                markedAcceptation = new Acceptation(
+                                        acceptation.getName(),
+                                        accept.getLeft(), accept.getRight());
                             }
 
                             if (!this.newAutomaton.getUnstableAcceptations()

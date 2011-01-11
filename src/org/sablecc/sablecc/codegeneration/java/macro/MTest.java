@@ -80,8 +80,7 @@ public class MTest {
         sb.append(System.getProperty("line.separator"));
         sb.append("        if(node instanceof Token) {");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("          System.out.println(node.getType() + \":\\\"\" + node.getText() + \"\\\"@(\" + node.getLine() + \",\" + node.getPos() + \")\");");
+        sb.append("          System.out.println(node.getType() + \":\\\"\" + node.getText() + \"\\\"@(\" + node.getLine() + \",\" + node.getPos() + \")\");");
         sb.append(System.getProperty("line.separator"));
         sb.append("        }");
         sb.append(System.getProperty("line.separator"));

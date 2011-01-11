@@ -56,8 +56,8 @@ public class CompilerException
             String argumentText,
             Throwable cause) {
 
-        return new CompilerException(new MInvalidArgument(argumentText)
-                .toString(), cause);
+        return new CompilerException(
+                new MInvalidArgument(argumentText).toString(), cause);
     }
 
     public static CompilerException missingLongOptionOperand(
@@ -79,8 +79,8 @@ public class CompilerException
     public static CompilerException invalidLongOption(
             String optionName) {
 
-        return new CompilerException(new MInvalidLongOption(optionName)
-                .toString());
+        return new CompilerException(
+                new MInvalidLongOption(optionName).toString());
     }
 
     public static CompilerException spuriousLongOptionOperand(
@@ -94,8 +94,8 @@ public class CompilerException
     public static CompilerException invalidShortOption(
             String optionName) {
 
-        return new CompilerException(new MInvalidShortOption(optionName)
-                .toString());
+        return new CompilerException(
+                new MInvalidShortOption(optionName).toString());
     }
 
     public static CompilerException spuriousShortOptionOperand(
@@ -109,8 +109,8 @@ public class CompilerException
     public static CompilerException unknownTarget(
             String targetLanguage) {
 
-        return new CompilerException(new MUnknownTarget(targetLanguage)
-                .toString());
+        return new CompilerException(
+                new MUnknownTarget(targetLanguage).toString());
     }
 
     public static CompilerException invalidArgumentCount() {
@@ -140,16 +140,16 @@ public class CompilerException
             String fileName,
             Throwable cause) {
 
-        return new CompilerException(new MInputError(fileName, cause
-                .getMessage()).toString(), cause);
+        return new CompilerException(new MInputError(fileName,
+                cause.getMessage()).toString(), cause);
     }
 
     public static CompilerException outputError(
             String fileName,
             Throwable cause) {
 
-        return new CompilerException(new MOutputError(fileName, cause
-                .getMessage()).toString(), cause);
+        return new CompilerException(new MOutputError(fileName,
+                cause.getMessage()).toString(), cause);
     }
 
     public static CompilerException unknownMacro(
@@ -163,9 +163,8 @@ public class CompilerException
             TIdentifier identifier) {
 
         return new CompilerException(new MUnknownTextBlock(
-                identifier.getText(), identifier.getLine() + "", identifier
-                        .getPos()
-                        + "").toString());
+                identifier.getText(), identifier.getLine() + "",
+                identifier.getPos() + "").toString());
     }
 
     public static CompilerException duplicateDeclaration(
@@ -178,11 +177,9 @@ public class CompilerException
         }
 
         return new CompilerException(new MDuplicateDeclaration(name,
-                duplicateDeclaration.getLine() + "", duplicateDeclaration
-                        .getPos()
-                        + "", firstDeclaration.getLine() + "", firstDeclaration
-                        .getPos()
-                        + "").toString());
+                duplicateDeclaration.getLine() + "",
+                duplicateDeclaration.getPos() + "", firstDeclaration.getLine()
+                        + "", firstDeclaration.getPos() + "").toString());
     }
 
     public static CompilerException duplicateOption(
@@ -195,10 +192,9 @@ public class CompilerException
         }
 
         return new CompilerException(new MDuplicateOption(name, duplicateOption
-                .getName().getLine()
-                + "", duplicateOption.getName().getPos() + "", firstOption
-                .getName().getLine()
-                + "", firstOption.getName().getPos() + "").toString());
+                .getName().getLine() + "", duplicateOption.getName().getPos()
+                + "", firstOption.getName().getLine() + "", firstOption
+                .getName().getPos() + "").toString());
     }
 
     public static CompilerException conflictingOption(
@@ -210,9 +206,9 @@ public class CompilerException
 
         return new CompilerException(new MConflictingOption(conflictingName,
                 conflictingOption.getName().getLine() + "", conflictingOption
-                        .getName().getPos()
-                        + "", firstName, firstOption.getName().getLine() + "",
-                firstOption.getName().getPos() + "").toString());
+                        .getName().getPos() + "", firstName, firstOption
+                        .getName().getLine() + "", firstOption.getName()
+                        .getPos() + "").toString());
     }
 
     public static CompilerException unknownOption(
@@ -229,10 +225,9 @@ public class CompilerException
             TIdentifier name,
             TIdentifier refName) {
 
-        return new CompilerException(new MEndMismatch(name.getText(), name
-                .getLine()
-                + "", name.getPos() + "", refName.getText(), refName.getLine()
-                + "", refName.getPos() + "").toString());
+        return new CompilerException(new MEndMismatch(name.getText(),
+                name.getLine() + "", name.getPos() + "", refName.getText(),
+                refName.getLine() + "", refName.getPos() + "").toString());
     }
 
     public static CompilerException unknownParam(
@@ -249,8 +244,8 @@ public class CompilerException
             TIdentifier context) {
 
         return new CompilerException(new MCyclicReference(reference.getText(),
-                reference.getLine() + "", reference.getPos() + "", context
-                        .getText(), context.getLine() + "", context.getPos()
+                reference.getLine() + "", reference.getPos() + "",
+                context.getText(), context.getLine() + "", context.getPos()
                         + "").toString());
     }
 
@@ -259,9 +254,8 @@ public class CompilerException
 
         TIdentifier name = textBlock.getNameDeclaration();
 
-        return new CompilerException(new MUnusedTextBlock(name.getText(), name
-                .getLine()
-                + "", name.getPos() + "").toString());
+        return new CompilerException(new MUnusedTextBlock(name.getText(),
+                name.getLine() + "", name.getPos() + "").toString());
     }
 
     public static CompilerException unusedParam(
@@ -269,9 +263,8 @@ public class CompilerException
 
         TIdentifier name = param.getNameDeclaration();
 
-        return new CompilerException(new MUnusedParam(name.getText(), name
-                .getLine()
-                + "", name.getPos() + "").toString());
+        return new CompilerException(new MUnusedParam(name.getText(),
+                name.getLine() + "", name.getPos() + "").toString());
     }
 
     public static CompilerException incorrectArgumentCount(
@@ -284,18 +277,18 @@ public class CompilerException
         int paramCount = textInsert.getInsertedTextBlock().getDeclaration()
                 .getParams().size();
 
-        return new CompilerException(new MIncorrectArgumentCount(insertName
-                .getLine()
-                + "", insertName.getPos() + "", argCount + "", textBlockName
-                .getText(), textBlockName.getLine() + "", +textBlockName
-                .getPos()
-                + "", paramCount + "").toString());
+        return new CompilerException(
+                new MIncorrectArgumentCount(insertName.getLine() + "",
+                        insertName.getPos() + "", argCount + "", textBlockName
+                                .getText(), textBlockName.getLine() + "",
+                        +textBlockName.getPos() + "", paramCount + "")
+                        .toString());
     }
 
     public static CompilerException cannotCreateDirectory(
             String location) {
 
-        return new CompilerException(new MCannotCreateDirectory(location)
-                .toString());
+        return new CompilerException(
+                new MCannotCreateDirectory(location).toString());
     }
 }

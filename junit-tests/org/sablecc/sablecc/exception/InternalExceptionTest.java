@@ -103,8 +103,8 @@ public class InternalExceptionTest {
                 goodInternalException.getMessage());
 
         // Verifying validity provided message is taken correctly.
-        assertEquals("Invalid exception cause", cause, goodInternalException
-                .getCause());
+        assertEquals("Invalid exception cause", cause,
+                goodInternalException.getCause());
 
     }
 

@@ -225,9 +225,8 @@ public class MMacro {
             sb.append(System.getProperty("line.separator"));
         }
         for (Object oSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField : this.eSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField) {
-            sb
-                    .append(oSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField
-                            .toString());
+            sb.append(oSelfRefMacro_CheckParamNotNull_CheckAncestorParamNotNull_ExpandField
+                    .toString());
         }
         sb.append(System.getProperty("line.separator"));
         if (this.eMacroCreator.size() > 0) {
@@ -274,9 +273,8 @@ public class MMacro {
                 else {
                     sb.append(System.getProperty("line.separator"));
                 }
-                sb
-                        .append(oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                                .toString());
+                sb.append(oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
+                        .toString());
             }
         }
         sb.append("    sb toString");

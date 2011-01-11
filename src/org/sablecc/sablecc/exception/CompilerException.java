@@ -54,8 +54,8 @@ public class CompilerException
             String argument_text,
             Throwable cause) {
 
-        return new CompilerException(new MInvalidArgument(argument_text)
-                .toString(), cause);
+        return new CompilerException(
+                new MInvalidArgument(argument_text).toString(), cause);
     }
 
     public static CompilerException missingLongOptionOperand(
@@ -77,15 +77,15 @@ public class CompilerException
     public static CompilerException invalidLongOption(
             String optionName) {
 
-        return new CompilerException(new MInvalidLongOption(optionName)
-                .toString());
+        return new CompilerException(
+                new MInvalidLongOption(optionName).toString());
     }
 
     public static CompilerException invalidShortOption(
             String optionName) {
 
-        return new CompilerException(new MInvalidShortOption(optionName)
-                .toString());
+        return new CompilerException(
+                new MInvalidShortOption(optionName).toString());
     }
 
     public static CompilerException spuriousLongOptionOperand(
@@ -108,8 +108,8 @@ public class CompilerException
             String fileName,
             Throwable cause) {
 
-        return new CompilerException(new MInputError(fileName, cause
-                .getMessage()).toString(), cause);
+        return new CompilerException(new MInputError(fileName,
+                cause.getMessage()).toString(), cause);
     }
 
     public static CompilerException invalidArgumentCount() {
@@ -126,8 +126,8 @@ public class CompilerException
     public static CompilerException missingGrammarFile(
             String fileName) {
 
-        return new CompilerException(new MMissingGrammarFile(fileName)
-                .toString());
+        return new CompilerException(
+                new MMissingGrammarFile(fileName).toString());
     }
 
     public static CompilerException grammarNotFile(
@@ -153,8 +153,8 @@ public class CompilerException
     public static CompilerException unknownTarget(
             String targetLanguage) {
 
-        return new CompilerException(new MUnknownTarget(targetLanguage)
-                .toString());
+        return new CompilerException(
+                new MUnknownTarget(targetLanguage).toString());
     }
 
     public static CompilerException invalidInterval(
@@ -162,18 +162,17 @@ public class CompilerException
             Token from,
             Token to) {
 
-        return new CompilerException(new MInvalidInterval(twoDots.getLine()
-                + "", twoDots.getPos() + "", from.getText(), to.getText())
-                .toString());
+        return new CompilerException(
+                new MInvalidInterval(twoDots.getLine() + "", twoDots.getPos()
+                        + "", from.getText(), to.getText()).toString());
     }
 
     public static CompilerException undefinedReference(
             TIdentifier identifier) {
 
-        return new CompilerException(
-                new MUndefinedReference(identifier.getText(), identifier
-                        .getLine()
-                        + "", identifier.getPos() + "").toString());
+        return new CompilerException(new MUndefinedReference(
+                identifier.getText(), identifier.getLine() + "",
+                identifier.getPos() + "").toString());
     }
 
     public static CompilerException invalidReference(
@@ -188,8 +187,8 @@ public class CompilerException
             TIdentifier context) {
 
         return new CompilerException(new MCyclicReference(reference.getText(),
-                reference.getLine() + "", reference.getPos() + "", context
-                        .getText(), context.getLine() + "", context.getPos()
+                reference.getLine() + "", reference.getPos() + "",
+                context.getText(), context.getLine() + "", context.getPos()
                         + "").toString());
     }
 
@@ -217,9 +216,8 @@ public class CompilerException
     public static CompilerException notAToken(
             Token token) {
 
-        return new CompilerException(new MNotAToken(token.getLine() + "", token
-                .getPos()
-                + "", token.getText()).toString());
+        return new CompilerException(new MNotAToken(token.getLine() + "",
+                token.getPos() + "", token.getText()).toString());
     }
 
 /*    public static CompilerException lexerConflict(
@@ -233,26 +231,24 @@ public class CompilerException
     public static CompilerException parserUselessProduction(
             String name) {
 
-        return new CompilerException(new MParserUselessProduction(name)
-                .toString());
+        return new CompilerException(
+                new MParserUselessProduction(name).toString());
     }
 
     public static CompilerException parserSpuriousPriority(
             TIdentifier identifier) {
 
-        return new CompilerException(
-                new MParserSpuriousPriority(identifier.getText(), ""
-                        + identifier.getLine(), "" + identifier.getPos())
-                        .toString());
+        return new CompilerException(new MParserSpuriousPriority(
+                identifier.getText(), "" + identifier.getLine(), ""
+                        + identifier.getPos()).toString());
     }
 
     public static CompilerException alternativeNotRecursive(
             TIdentifier identifier) {
 
-        return new CompilerException(
-                new MAlternativeNotRecursive(identifier.getText(), ""
-                        + identifier.getLine(), "" + identifier.getPos())
-                        .toString());
+        return new CompilerException(new MAlternativeNotRecursive(
+                identifier.getText(), "" + identifier.getLine(), ""
+                        + identifier.getPos()).toString());
     }
 
     public static CompilerException recursionNotFollowedByToken(
@@ -267,17 +263,16 @@ public class CompilerException
             Token token,
             String feature) {
 
-        return new CompilerException(new MNotImplemented(feature, token
-                .getLine()
-                + "", token.getPos() + "").toString());
+        return new CompilerException(new MNotImplemented(feature,
+                token.getLine() + "", token.getPos() + "").toString());
     }
 
     public static CompilerException outputError(
             String fileName,
             Throwable cause) {
 
-        return new CompilerException(new MOutputError(fileName, cause
-                .getMessage()).toString(), cause);
+        return new CompilerException(new MOutputError(fileName,
+                cause.getMessage()).toString(), cause);
     }
 
 }

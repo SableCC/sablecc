@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="org/sablecc/sablecc/oldstructure/|org/sablecc/sablecc/oldwalker/|org/sablecc/sablecc/launcher/OldSableCC.java" kind="src" path="src"/>
-	<classpathentry kind="src" output="test-classes" path="regression-tests"/>
-	<classpathentry kind="src" output="test-classes" path="junit-tests"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="JUNIT4_HOME"/>
-	<classpathentry kind="output" path="classes"/>
+        <classpathentry excluding="org/sablecc/sablecc/oldstructure/|org/sablecc/sablecc/oldwalker/|org/sablecc/sablecc/launcher/OldSableCC.java" kind="src" path="src"/>
+        <classpathentry kind="src" output="test-classes" path="regression-tests"/>
+        <classpathentry kind="src" output="test-classes" path="junit-tests"/>
+        <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+        <classpathentry kind="var" path="JUNIT4_HOME"/>
+        <classpathentry kind="output" path="classes"/>
 </classpath>
