@@ -20,9 +20,6 @@ package org.sablecc.sablecc.lrautomaton;
 import java.util.*;
 
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.exception.*;
-import org.sablecc.sablecc.oldstructure.*;
-import org.sablecc.sablecc.syntax3.node.*;
 
 public class Alternative {
 
@@ -40,8 +37,8 @@ public class Alternative {
 
     private ArrayList<Item> items;
 
-    private ParserPriorityLevel priorityLevel;
-
+/*    private ParserPriorityLevel priorityLevel;
+*/
     Alternative(
             Production production,
             String shortName) {
@@ -227,7 +224,7 @@ public class Alternative {
         return this.production;
     }
 
-    public void setPriorityLevel(
+/*    public void setPriorityLevel(
             ParserPriorityLevel priorityLevel,
             TIdentifier identifier) {
 
@@ -237,13 +234,13 @@ public class Alternative {
 
         this.priorityLevel = priorityLevel;
     }
-
-    public ParserPriorityLevel getPriorityLevel() {
+*/
+/*    public ParserPriorityLevel getPriorityLevel() {
 
         return this.priorityLevel;
     }
-
-    public boolean hasPriorityOver(
+*/
+/*    public boolean hasPriorityOver(
             Alternative alternative) {
 
         if (this.priorityLevel == null) {
@@ -272,8 +269,8 @@ public class Alternative {
 
         return false;
     }
-
-    public boolean isLeftAssociative() {
+*/
+/*    public boolean isLeftAssociative() {
 
         if (this.priorityLevel == null) {
             return false;
@@ -281,8 +278,8 @@ public class Alternative {
 
         return this.priorityLevel.getType() == PriorityType.LEFT;
     }
-
-    public boolean isRightAssociative() {
+*/
+/*    public boolean isRightAssociative() {
 
         if (this.priorityLevel == null) {
             return false;
@@ -290,4 +287,4 @@ public class Alternative {
 
         return this.priorityLevel.getType() == PriorityType.RIGHT;
     }
-}
+*/}

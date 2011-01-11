@@ -26,8 +26,6 @@ import java.util.Map.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
-import org.sablecc.sablecc.exception.*;
-import org.sablecc.sablecc.oldstructure.*;
 import org.sablecc.util.*;
 
 /**
@@ -1246,7 +1244,7 @@ public final class Automaton {
         }
     }
 
-    public Automaton withPriorities(
+/*    public Automaton withPriorities(
             Context context) {
 
         if (!this.isStable) {
@@ -1407,4 +1405,4 @@ public final class Automaton {
         return newAutomaton;
 
     }
-}
+*/}
