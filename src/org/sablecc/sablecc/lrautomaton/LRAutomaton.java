@@ -65,10 +65,10 @@ public class LRAutomaton {
             state.computeOrigins();
         }
 
-        for (LRState state : this.coreItemSetToLRStateMap.values()) {
+/*        for (LRState state : this.coreItemSetToLRStateMap.values()) {
             state.computeActions(verbosity);
         }
-    }
+*/    }
 
     public Collection<LRState> getStates() {
 

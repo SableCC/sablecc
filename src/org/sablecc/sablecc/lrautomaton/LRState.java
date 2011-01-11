@@ -263,7 +263,7 @@ public class LRState {
         return this.origins.get(item);
     }
 
-    void computeActions(
+/*    void computeActions(
             Verbosity verbosity) {
 
         // LR(0) shift state
@@ -567,7 +567,7 @@ public class LRState {
                     .getAlternative()));
         }
     }
-
+*/
     private Set<Item> lookBeyond(
             Item item,
             int distance) {

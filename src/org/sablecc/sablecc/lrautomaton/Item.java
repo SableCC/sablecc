@@ -162,7 +162,7 @@ public class Item
         return result;
     }
 
-    public boolean hasPriorityOver(
+/*    public boolean hasPriorityOver(
             Item rightItem) {
 
         if (this.alternative.getPriorityLevel() != rightItem.alternative
@@ -176,4 +176,4 @@ public class Item
 
         return this.alternative.isRightAssociative();
     }
-}
+*/}

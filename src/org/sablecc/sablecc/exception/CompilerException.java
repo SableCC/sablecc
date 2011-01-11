@@ -19,7 +19,6 @@ package org.sablecc.sablecc.exception;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.errormessage.*;
-import org.sablecc.sablecc.oldstructure.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 @SuppressWarnings("serial")
@@ -194,7 +193,7 @@ public class CompilerException
                         + "").toString());
     }
 
-    public static CompilerException invalidPriority(
+/*    public static CompilerException invalidPriority(
             TGt gt,
             MatchedToken matchedToken) {
 
@@ -202,8 +201,8 @@ public class CompilerException
                 .getPos()
                 + "", matchedToken.getName()).toString());
     }
-
-    public static CompilerException conflictingPriorities(
+*/
+/*    public static CompilerException conflictingPriorities(
             TGt gt,
             MatchedToken high,
             MatchedToken low,
@@ -214,7 +213,7 @@ public class CompilerException
                 .getLine()
                 + "", prior_gt.getPos() + "").toString());
     }
-
+*/
     public static CompilerException notAToken(
             Token token) {
 
@@ -223,14 +222,14 @@ public class CompilerException
                 + "", token.getText()).toString());
     }
 
-    public static CompilerException lexerConflict(
+/*    public static CompilerException lexerConflict(
             MatchedToken matchedToken1,
             MatchedToken matchedToken2) {
 
         return new CompilerException(new MLexerConflict(
                 matchedToken1.getName(), matchedToken2.getName()).toString());
     }
-
+*/
     public static CompilerException parserUselessProduction(
             String name) {
 
