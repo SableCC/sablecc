@@ -575,8 +575,8 @@ public class LRState {
         Set<Item> items = new LinkedHashSet<Item>();
 
         if (this.origins.get(item).size() == 0) {
-            if (!item.getAlternative().getProduction().getName().equals(
-                    "$Start")) {
+            if (!item.getAlternative().getProduction().getName()
+                    .equals("$Start")) {
                 throw new InternalException("invalid item");
             }
             items.add(item.getAlternative().getItem(1));

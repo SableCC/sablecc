@@ -22,7 +22,7 @@ import static org.sablecc.sablecc.util.UsefulStaticImports.*;
 
 import java.math.*;
 import java.util.*;
-import java.util.Map.*;
+import java.util.Map.Entry;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
@@ -453,8 +453,8 @@ public final class Automaton {
             throw new InternalException("invalid operation");
         }
 
-        Automaton newAutomaton = new Automaton(alphabetMergeResult
-                .getNewAlphabet());
+        Automaton newAutomaton = new Automaton(
+                alphabetMergeResult.getNewAlphabet());
 
         for (Acceptation acceptation : getAcceptations()) {
             newAutomaton.addAcceptation(acceptation);
@@ -999,14 +999,13 @@ public final class Automaton {
 
         for (State oldState : combinedAutomaton.getStates()) {
             State newState = oldState == combinedAutomaton.getStartState() ? newAutomaton
-                    .getStartState()
-                    : new State(newAutomaton);
+                    .getStartState() : new State(newAutomaton);
 
             oldStatetoNewStateMap.put(oldState, newState);
 
             if (oldState.getAcceptations().size() == 1
-                    && oldState.getAcceptations().first().equals(
-                            leftAcceptation)) {
+                    && oldState.getAcceptations().first()
+                            .equals(leftAcceptation)) {
                 newState.addAcceptation(Acceptation.ACCEPT);
             }
         }
@@ -1059,8 +1058,7 @@ public final class Automaton {
 
         for (State oldState : combinedAutomaton.getStates()) {
             State newState = oldState == combinedAutomaton.getStartState() ? newAutomaton
-                    .getStartState()
-                    : new State(newAutomaton);
+                    .getStartState() : new State(newAutomaton);
 
             oldStatetoNewStateMap.put(oldState, newState);
 
@@ -1405,4 +1403,5 @@ public final class Automaton {
         return newAutomaton;
 
     }
-*/}
+*/
+}

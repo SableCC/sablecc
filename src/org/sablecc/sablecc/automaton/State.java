@@ -97,8 +97,8 @@ public final class State
         this.id = automaton.getNextStateId();
         automaton.addState(this);
 
-        this.transitions = new TreeMap<RichSymbol, SortedSet<State>>(Automaton
-                .getRichSymbolComparator());
+        this.transitions = new TreeMap<RichSymbol, SortedSet<State>>(
+                Automaton.getRichSymbolComparator());
 
         this.isStable = false;
     }
@@ -144,8 +144,8 @@ public final class State
 
         if (richSymbol != null
                 && richSymbol != RichSymbol.END
-                && !this.automaton.getAlphabet().getSymbols().contains(
-                        richSymbol.getSymbol())) {
+                && !this.automaton.getAlphabet().getSymbols()
+                        .contains(richSymbol.getSymbol())) {
             throw new InternalException("invalid symbol");
         }
 
@@ -175,8 +175,8 @@ public final class State
 
         if (richSymbol != null
                 && richSymbol != RichSymbol.END
-                && !this.automaton.getAlphabet().getSymbols().contains(
-                        richSymbol.getSymbol())) {
+                && !this.automaton.getAlphabet().getSymbols()
+                        .contains(richSymbol.getSymbol())) {
             throw new InternalException("invalid symbol");
         }
 
@@ -326,8 +326,8 @@ public final class State
 
         if (richSymbol != null
                 && richSymbol != RichSymbol.END
-                && !this.automaton.getAlphabet().getSymbols().contains(
-                        richSymbol.getSymbol())) {
+                && !this.automaton.getAlphabet().getSymbols()
+                        .contains(richSymbol.getSymbol())) {
             throw new InternalException("invalid symbol");
         }
 

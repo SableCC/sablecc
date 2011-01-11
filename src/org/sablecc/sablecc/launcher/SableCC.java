@@ -56,9 +56,9 @@ public class SableCC {
         catch (ParserException e) {
             int start = e.getMessage().indexOf(' ');
             System.err.print(new MSyntaxError(e.getToken().getLine() + "", e
-                    .getToken().getPos()
-                    + "", e.getToken().getClass().getSimpleName().substring(1),
-                    e.getToken().getText(), e.getMessage().substring(start)));
+                    .getToken().getPos() + "", e.getToken().getClass()
+                    .getSimpleName().substring(1), e.getToken().getText(), e
+                    .getMessage().substring(start)));
             System.err.flush();
             System.exit(1);
         }

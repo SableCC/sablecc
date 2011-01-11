@@ -18,7 +18,7 @@
 package org.sablecc.sablecc.automaton;
 
 import java.util.*;
-import java.util.Map.*;
+import java.util.Map.Entry;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
@@ -62,8 +62,8 @@ class LookOperation {
     private Automaton getLookaheadAutomation(
             Automaton normalAutomaton) {
 
-        Automaton lookaheadAutomaton = new Automaton(normalAutomaton
-                .getAlphabet());
+        Automaton lookaheadAutomaton = new Automaton(
+                normalAutomaton.getAlphabet());
         lookaheadAutomaton.addAcceptation(Acceptation.ACCEPT);
 
         Map<State, State> normalStateToLookaheadStateMap = new HashMap<State, State>();

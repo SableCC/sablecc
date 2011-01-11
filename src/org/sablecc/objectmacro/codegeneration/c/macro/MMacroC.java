@@ -222,9 +222,8 @@ public class MMacroC {
         sb.append("_free;");
         sb.append(System.getProperty("line.separator"));
         for (Object oParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit : this.eParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit) {
-            sb
-                    .append(oParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit
-                            .toString());
+            sb.append(oParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit
+                    .toString());
         }
         sb.append("  return m");
         sb.append(rFileName());
@@ -311,9 +310,8 @@ public class MMacroC {
         sb.append("  List* listString = List_init();");
         sb.append(System.getProperty("line.separator"));
         for (Object oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart : this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart) {
-            sb
-                    .append(oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                            .toString());
+            sb.append(oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
+                    .toString());
         }
         sb.append(System.getProperty("line.separator"));
         sb.append("  char* str = (char*)calloc(sizeString, sizeof(char));");

@@ -37,21 +37,21 @@ public class OptionTest {
     @Test
     public void testGetShortOption() {
 
-        assertEquals("incompatible option", this.checkOnly, Option
-                .getShortOption(this.checkOnly.getShortName()));
+        assertEquals("incompatible option", this.checkOnly,
+                Option.getShortOption(this.checkOnly.getShortName()));
 
-        assertEquals("incompatible option", this.destination, Option
-                .getShortOption(this.destination.getShortName()));
+        assertEquals("incompatible option", this.destination,
+                Option.getShortOption(this.destination.getShortName()));
     }
 
     @Test
     public void testGetLongOption() {
 
-        assertEquals("incompatible option", this.checkOnly, Option
-                .getLongOption(this.checkOnly.getLongName()));
+        assertEquals("incompatible option", this.checkOnly,
+                Option.getLongOption(this.checkOnly.getLongName()));
 
-        assertEquals("incompatible option", this.destination, Option
-                .getLongOption(this.destination.getLongName()));
+        assertEquals("incompatible option", this.destination,
+                Option.getLongOption(this.destination.getLongName()));
     }
 
 }

@@ -35,8 +35,7 @@ public class MParserUselessProduction {
         sb.append(System.getProperty("line.separator"));
         sb.append("The \"");
         sb.append(rName());
-        sb
-                .append("\" production is useless; it cannot match any finite sentence.");
+        sb.append("\" production is useless; it cannot match any finite sentence.");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

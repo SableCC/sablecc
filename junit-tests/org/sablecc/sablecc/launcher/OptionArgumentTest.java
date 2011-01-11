@@ -53,9 +53,9 @@ public class OptionArgumentTest
             // Expected
         }
 
-        assertEquals("invalid option", this.option, this.optionArgument
-                .getOption());
-        assertEquals("invalid operand", this.operand, this.optionArgument
-                .getOperand());
+        assertEquals("invalid option", this.option,
+                this.optionArgument.getOption());
+        assertEquals("invalid operand", this.operand,
+                this.optionArgument.getOperand());
     }
 }

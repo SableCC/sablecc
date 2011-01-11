@@ -88,8 +88,7 @@ public class MLexerException {
         sb.append(System.getProperty("line.separator"));
         sb.append("  public String getMessage() {");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("    return \"unrecognized char '\" + getChar() + \"' on line \" + getLine() + \", pos \" + getPos();");
+        sb.append("    return \"unrecognized char '\" + getChar() + \"' on line \" + getLine() + \", pos \" + getPos();");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));

@@ -17,8 +17,8 @@
 
 package org.sablecc.sablecc.alphabet;
 
+import java.util.Map.Entry;
 import java.util.*;
-import java.util.Map.*;
 
 import org.sablecc.exception.*;
 

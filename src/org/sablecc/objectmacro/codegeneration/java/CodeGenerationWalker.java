@@ -237,12 +237,12 @@ public class CodeGenerationWalker
             AParamRef node) {
 
         if (this.currentText != null) {
-            this.currentText.newParamRef(string(node.getName()), string(node
-                    .getContext()));
+            this.currentText.newParamRef(string(node.getName()),
+                    string(node.getContext()));
         }
         else if (this.currentMacro != null) {
-            this.currentMacro.newParamRef(string(node.getName()), string(node
-                    .getContext()));
+            this.currentMacro.newParamRef(string(node.getName()),
+                    string(node.getContext()));
         }
         else {
             throw new InternalException("unhandled case");

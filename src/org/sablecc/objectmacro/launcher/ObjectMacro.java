@@ -70,10 +70,9 @@ public class ObjectMacro {
         catch (ParserException e) {
             int start = e.getMessage().indexOf(' ');
             System.err.print(new MSyntaxError(e.getToken().getLine() + "", e
-                    .getToken().getPos()
-                    + "", e.getToken().getClass().getSimpleName().substring(1)
-                    .toLowerCase(), e.getToken().getText(), e.getMessage()
-                    .substring(start)));
+                    .getToken().getPos() + "", e.getToken().getClass()
+                    .getSimpleName().substring(1).toLowerCase(), e.getToken()
+                    .getText(), e.getMessage().substring(start)));
             System.err.flush();
             System.exit(1);
         }
@@ -652,8 +651,8 @@ public class ObjectMacro {
         else if (pStaticValue instanceof AStringStaticValue) {
             AStringStaticValue staticValue = (AStringStaticValue) pStaticValue;
 
-            return new AInlineTextValue(createInlineText(staticValue
-                    .getString()));
+            return new AInlineTextValue(
+                    createInlineText(staticValue.getString()));
         }
         else {
             throw new InternalException("unhandled case");

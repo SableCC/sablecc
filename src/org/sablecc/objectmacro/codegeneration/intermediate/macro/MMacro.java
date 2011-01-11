@@ -196,9 +196,8 @@ public class MMacro {
             sb.append(oExpandedMacro.toString());
         }
         for (Object oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart : this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart) {
-            sb
-                    .append(oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                            .toString());
+            sb.append(oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
+                    .toString());
         }
         sb.append("}");
         sb.append(System.getProperty("line.separator"));

@@ -18,7 +18,7 @@
 package org.sablecc.sablecc.lrautomaton;
 
 import java.util.*;
-import java.util.Map.*;
+import java.util.Map.Entry;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.exception.*;
@@ -149,8 +149,8 @@ public class Grammar {
             Production production = productionEntry.getKey();
             for (Entry<Integer, Set<Ahead>> distanceEntry : productionEntry
                     .getValue().entrySet()) {
-                production.setLook(distanceEntry.getKey(), distanceEntry
-                        .getValue());
+                production.setLook(distanceEntry.getKey(),
+                        distanceEntry.getValue());
             }
         }
         this.previousLookComputationData = null;

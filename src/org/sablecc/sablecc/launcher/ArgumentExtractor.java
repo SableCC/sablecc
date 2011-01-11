@@ -133,8 +133,8 @@ class ArgumentExtractor
 
         if (this.incompleteOption != null) {
             throw CompilerException.missingShortOptionOperand(
-                    this.incompleteOption.getShortName(), this.incompleteOption
-                            .getOperandName());
+                    this.incompleteOption.getShortName(),
+                    this.incompleteOption.getOperandName());
         }
 
         String shortName = node.getShortName().getText();

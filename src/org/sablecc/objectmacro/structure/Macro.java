@@ -62,8 +62,8 @@ public class Macro
         this.declaration = declaration;
         this.parent = parent;
 
-        if (!declaration.getRepeatName().getText().equals(
-                declaration.getName().getText())) {
+        if (!declaration.getRepeatName().getText()
+                .equals(declaration.getName().getText())) {
             throw CompilerException.endMismatch(declaration.getRepeatName(),
                     declaration.getName());
         }

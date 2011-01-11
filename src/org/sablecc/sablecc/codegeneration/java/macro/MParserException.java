@@ -66,8 +66,7 @@ public class MParserException {
         sb.append(System.getProperty("line.separator"));
         sb.append("  public String getMessage() {");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("    return \"unexpected token '\" + this.token.getText() + \"' on line \" + this.token.getLine() + \", pos \" + this.token.getPos();");
+        sb.append("    return \"unexpected token '\" + this.token.getText() + \"' on line \" + this.token.getLine() + \", pos \" + this.token.getPos();");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
