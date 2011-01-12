@@ -18,8 +18,11 @@
 package org.sablecc.sablecc.launcher;
 
 import static org.sablecc.sablecc.launcher.Version.*;
+import static org.sablecc.util.Strictness.*;
+import static org.sablecc.util.Verbosity.*;
 
 import java.io.*;
+import java.util.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.errormessage.*;
@@ -110,7 +113,7 @@ public class SableCC {
             throws ParserException, LexerException {
 
         // default target is java
-        String targetLanguage = "java";
+        final String defaultTarget = "java";
 
         // default destination directory is current working directory
         File destinationDirectory = new File(System.getProperty("user.dir"));
@@ -119,9 +122,14 @@ public class SableCC {
         String destinationPackage = "";
 
         // default option values
+        String targetLanguage = defaultTarget;
         boolean generateCode = true;
-        Verbosity verbosity = Verbosity.INFORMATIVE;
-        Strictness strictness = Strictness.STRICT;
+        Verbosity verbosity = INFORMATIVE;
+        Strictness strictness = STRICT;
+
+        // supported targets
+        SortedSet<String> supportedTargets = new TreeSet<String>();
+        supportedTargets.add("java");
 
         // parse command line arguments
         ArgumentCollection argumentCollection = new ArgumentCollection(
@@ -135,15 +143,34 @@ public class SableCC {
 
             case LIST_TARGETS:
                 System.out.println("Available targets:");
-                System.out.println(" java (default)");
+                for (String target : supportedTargets) {
+                    System.out.print(" " + target);
+                    if (target.equals(defaultTarget)) {
+                        System.out.print(" (default)");
+                    }
+                    System.out.println();
+                }
                 return;
 
             case TARGET:
                 targetLanguage = optionArgument.getOperand();
+
+                // check that the target language is supported
+                if (!supportedTargets.contains(targetLanguage)) {
+                    throw CompilerException.unknownTarget(targetLanguage);
+                }
                 break;
 
             case DESTINATION:
-                destinationDirectory = new File(optionArgument.getOperand());
+                String destination = optionArgument.getOperand();
+                destinationDirectory = new File(destination);
+
+                // if the destination exists, check that it is a directory
+                if (destinationDirectory.exists()
+                        && !destinationDirectory.isDirectory()) {
+                    throw CompilerException
+                            .invalidDesinationDirectory(destination);
+                }
                 break;
 
             case PACKAGE:
@@ -159,23 +186,23 @@ public class SableCC {
                 break;
 
             case LENIENT:
-                strictness = Strictness.LENIENT;
+                strictness = LENIENT;
                 break;
 
             case STRICT:
-                strictness = Strictness.STRICT;
+                strictness = STRICT;
                 break;
 
             case QUIET:
-                verbosity = Verbosity.QUIET;
+                verbosity = QUIET;
                 break;
 
             case INFORMATIVE:
-                verbosity = Verbosity.INFORMATIVE;
+                verbosity = INFORMATIVE;
                 break;
 
             case VERBOSE:
-                verbosity = Verbosity.VERBOSE;
+                verbosity = VERBOSE;
                 break;
 
             case VERSION:
@@ -195,17 +222,6 @@ public class SableCC {
             }
         }
 
-        switch (verbosity) {
-        case INFORMATIVE:
-        case VERBOSE:
-            System.out.println();
-            System.out.println("SableCC version " + VERSION);
-            System.out
-                    .println("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
-            System.out.println();
-            break;
-        }
-
         // handle text arguments
         if (argumentCollection.getTextArguments().size() == 0) {
             System.out.println("Usage: sablecc " + Option.getShortHelpMessage()
@@ -214,11 +230,6 @@ public class SableCC {
         }
         else if (argumentCollection.getTextArguments().size() > 1) {
             throw CompilerException.invalidArgumentCount();
-        }
-
-        // check target
-        if (!targetLanguage.equals("java")) {
-            throw CompilerException.unknownTarget(targetLanguage);
         }
 
         // check argument
@@ -237,6 +248,17 @@ public class SableCC {
 
         if (!grammarFile.isFile()) {
             throw CompilerException.grammarNotFile(textArgument.getText());
+        }
+
+        switch (verbosity) {
+        case INFORMATIVE:
+        case VERBOSE:
+            System.out.println();
+            System.out.println("SableCC version " + VERSION);
+            System.out
+                    .println("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
+            System.out.println();
+            break;
         }
 
         compile(grammarFile, targetLanguage, destinationDirectory,

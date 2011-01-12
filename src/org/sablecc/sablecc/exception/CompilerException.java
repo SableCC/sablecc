@@ -157,6 +157,13 @@ public class CompilerException
                 new MUnknownTarget(targetLanguage).toString());
     }
 
+    public static CompilerException invalidDesinationDirectory(
+            String destination) {
+
+        return new CompilerException(new MInvalidDesinationDirectory(
+                destination).toString());
+    }
+
     public static CompilerException invalidInterval(
             TTwoDots twoDots,
             Token from,
