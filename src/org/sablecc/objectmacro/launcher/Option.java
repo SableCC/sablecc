@@ -34,7 +34,7 @@ enum Option {
 
     /** List available target languages and exit. */
     LIST_TARGETS(null, "list-targets", null,
-            "list available target languages and exit"),
+            "display target languages and exit"),
 
     /** Set target language. */
     TARGET("t", "target", "language", "set target language (default=java)"),
