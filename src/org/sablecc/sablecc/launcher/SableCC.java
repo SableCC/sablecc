@@ -27,9 +27,7 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.errormessage.*;
 import org.sablecc.sablecc.exception.*;
-import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
-import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.sablecc.syntax3.parser.*;
 import org.sablecc.util.*;
 
@@ -251,72 +249,11 @@ public class SableCC {
             throw CompilerException.grammarNotFile(fileNameArgument.getText());
         }
 
-        switch (verbosity) {
-        case INFORMATIVE:
-        case VERBOSE:
-            System.out.println();
-            System.out.println("SableCC version " + VERSION);
-            System.out
-                    .println("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
-            System.out.println();
-            break;
-        }
+        Trace trace = new Trace(verbosity);
+        CompilationTask compilationTask = new CompilationTask(grammarFile,
+                targetLanguage, destinationDirectory, destinationPackage,
+                generateCode, strictness, trace);
 
-        compile(grammarFile, targetLanguage, destinationDirectory,
-                destinationPackage, generateCode, strictness, verbosity);
-    }
-
-    /**
-     * Compiles the provided grammar file.
-     */
-    private static void compile(
-            File grammarFile,
-            String targetLanguage,
-            File destinationDirectory,
-            String destinationPackage,
-            boolean generateCode,
-            Strictness strictness,
-            Verbosity verbosity)
-            throws ParserException, LexerException {
-
-        switch (verbosity) {
-        case INFORMATIVE:
-        case VERBOSE:
-            System.out.println("Compiling \"" + grammarFile + "\"");
-            break;
-        }
-
-        Start ast;
-
-        try {
-            FileReader fr = new FileReader(grammarFile);
-            BufferedReader br = new BufferedReader(fr);
-            PushbackReader pbr = new PushbackReader(br, 1024);
-
-            switch (verbosity) {
-            case VERBOSE:
-                System.out.println(" Parsing");
-                break;
-            }
-
-            ast = new Parser(new Lexer(pbr)).parse();
-
-            pbr.close();
-            br.close();
-            fr.close();
-        }
-        catch (IOException e) {
-            throw CompilerException.inputError(grammarFile.toString(), e);
-        }
-
-        switch (verbosity) {
-        case VERBOSE:
-            System.out.println(" Verifying semantics");
-            break;
-        }
-
-        new Grammar(ast);
-
-        throw new InternalException("not implemented");
+        compilationTask.run();
     }
 }
