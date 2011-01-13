@@ -40,7 +40,6 @@ public class Trace {
             String message) {
 
         switch (this.verbosity) {
-        case INFORMATIVE:
         case VERBOSE:
             System.out.print(message);
         }
@@ -50,7 +49,6 @@ public class Trace {
             String message) {
 
         switch (this.verbosity) {
-        case INFORMATIVE:
         case VERBOSE:
             System.out.println(message);
         }
@@ -59,7 +57,6 @@ public class Trace {
     public void verboseln() {
 
         switch (this.verbosity) {
-        case INFORMATIVE:
         case VERBOSE:
             System.out.println();
         }
@@ -70,6 +67,7 @@ public class Trace {
 
         switch (this.verbosity) {
         case INFORMATIVE:
+        case VERBOSE:
             System.out.print(message);
         }
     }
@@ -79,6 +77,7 @@ public class Trace {
 
         switch (this.verbosity) {
         case INFORMATIVE:
+        case VERBOSE:
             System.out.println(message);
         }
     }
@@ -87,6 +86,7 @@ public class Trace {
 
         switch (this.verbosity) {
         case INFORMATIVE:
+        case VERBOSE:
             System.out.println();
         }
     }
