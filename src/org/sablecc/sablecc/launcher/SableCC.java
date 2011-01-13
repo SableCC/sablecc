@@ -49,7 +49,7 @@ public class SableCC {
             String[] args) {
 
         try {
-            compile(args);
+            processCommandLine(args);
         }
         catch (CompilerException e) {
             System.err.print(e.getMessage());
@@ -108,7 +108,7 @@ public class SableCC {
     /**
      * Parses the provided arguments and launches grammar compilation.
      */
-    public static void compile(
+    public static void processCommandLine(
             String[] arguments)
             throws ParserException, LexerException {
 
@@ -233,21 +233,22 @@ public class SableCC {
         }
 
         // check argument
-        TextArgument textArgument = argumentCollection.getTextArguments()
+        TextArgument fileNameArgument = argumentCollection.getTextArguments()
                 .get(0);
 
-        if (!textArgument.getText().endsWith(".sablecc")) {
-            throw CompilerException.invalidSuffix(textArgument.getText());
+        if (!fileNameArgument.getText().endsWith(".sablecc")) {
+            throw CompilerException.invalidSuffix(fileNameArgument.getText());
         }
 
-        File grammarFile = new File(textArgument.getText());
+        File grammarFile = new File(fileNameArgument.getText());
 
         if (!grammarFile.exists()) {
-            throw CompilerException.missingGrammarFile(textArgument.getText());
+            throw CompilerException.missingGrammarFile(fileNameArgument
+                    .getText());
         }
 
         if (!grammarFile.isFile()) {
-            throw CompilerException.grammarNotFile(textArgument.getText());
+            throw CompilerException.grammarNotFile(fileNameArgument.getText());
         }
 
         switch (verbosity) {
