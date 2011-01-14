@@ -17,61 +17,36 @@
 
 package org.sablecc.sablecc.core;
 
-import java.util.*;
-
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.exception.*;
-import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Grammar
-        implements NamedItem {
-
-    private Start ast;
+        implements Named {
 
     private AGrammar declaration;
 
-    // global name space : contains the grammar, expressions, groups, selectors,
-    // investigators, contexts, and productions.
-    private Map<String, NamedItem> globalNameMap = new LinkedHashMap<String, NamedItem>();
-
     public Grammar(
-            Start ast) {
+            AGrammar declaration) {
 
-        if (ast == null) {
-            throw new InternalException("ast may not be null");
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
         }
 
-        this.ast = ast;
-        this.declaration = (AGrammar) this.ast.getPGrammar();
-
-        initialize();
+        this.declaration = declaration;
     }
 
-    private void initialize() {
-
-        // add grammar to global name space
-        addGlobalName(this);
-
-        throw new InternalException("not implemented");
-    }
-
-    public TIdentifier getName() {
+    public TIdentifier getNameIdentifier() {
 
         return this.declaration.getName();
     }
 
-    private void addGlobalName(
-            NamedItem namedItem) {
+    public String getName() {
 
-        String nameString = namedItem.getName().getText();
+        return getNameIdentifier().getText();
+    }
 
-        NamedItem olderNamedItem = this.globalNameMap.get(nameString);
-        if (olderNamedItem != null) {
-            throw CompilerException.duplicateDeclaration(namedItem.getName(),
-                    olderNamedItem.getName());
-        }
+    public String getNameType() {
 
-        this.globalNameMap.put(nameString, namedItem);
+        return "grammar";
     }
 }

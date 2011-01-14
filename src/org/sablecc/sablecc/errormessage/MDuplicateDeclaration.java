@@ -6,9 +6,13 @@ public class MDuplicateDeclaration {
 
     private final String pName;
 
+    private final String pType;
+
     private final String pLine;
 
     private final String pChar;
+
+    private final String pRefType;
 
     private final String pRefLine;
 
@@ -18,8 +22,10 @@ public class MDuplicateDeclaration {
 
     public MDuplicateDeclaration(
             String pName,
+            String pType,
             String pLine,
             String pChar,
+            String pRefType,
             String pRefLine,
             String pRefChar) {
 
@@ -27,6 +33,10 @@ public class MDuplicateDeclaration {
             throw new NullPointerException();
         }
         this.pName = pName;
+        if (pType == null) {
+            throw new NullPointerException();
+        }
+        this.pType = pType;
         if (pLine == null) {
             throw new NullPointerException();
         }
@@ -35,6 +45,10 @@ public class MDuplicateDeclaration {
             throw new NullPointerException();
         }
         this.pChar = pChar;
+        if (pRefType == null) {
+            throw new NullPointerException();
+        }
+        this.pRefType = pRefType;
         if (pRefLine == null) {
             throw new NullPointerException();
         }
@@ -50,6 +64,11 @@ public class MDuplicateDeclaration {
         return this.pName;
     }
 
+    String pType() {
+
+        return this.pType;
+    }
+
     String pLine() {
 
         return this.pLine;
@@ -58,6 +77,11 @@ public class MDuplicateDeclaration {
     String pChar() {
 
         return this.pChar;
+    }
+
+    String pRefType() {
+
+        return this.pRefType;
     }
 
     String pRefLine() {
@@ -85,6 +109,16 @@ public class MDuplicateDeclaration {
         return this.mDuplicateDeclaration.pName();
     }
 
+    private String rType() {
+
+        return this.mDuplicateDeclaration.pType();
+    }
+
+    private String rRefType() {
+
+        return this.mDuplicateDeclaration.pRefType();
+    }
+
     private String rRefLine() {
 
         return this.mDuplicateDeclaration.pRefLine();
@@ -107,11 +141,17 @@ public class MDuplicateDeclaration {
         sb.append("Char: ");
         sb.append(rChar());
         sb.append(System.getProperty("line.separator"));
-        sb.append("Duplicate declaration of \"");
+        sb.append("The \"");
         sb.append(rName());
-        sb.append("\".");
+        sb.append("\" ");
+        sb.append(rType());
+        sb.append(" declaration reuses an existing name.");
         sb.append(System.getProperty("line.separator"));
-        sb.append("It was already declared at line ");
+        sb.append("A \"");
+        sb.append(rName());
+        sb.append("\" ");
+        sb.append(rRefType());
+        sb.append(" is already declared at line ");
         sb.append(rRefLine());
         sb.append(", char ");
         sb.append(rRefChar());

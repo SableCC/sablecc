@@ -19,8 +19,11 @@ package org.sablecc.sablecc.core;
 
 import org.sablecc.sablecc.syntax3.node.*;
 
-public interface NamedItem {
+public interface Named {
 
-    public TIdentifier getName();
+    public TIdentifier getNameIdentifier();
 
+    public String getName();
+
+    public String getNameType();
 }
