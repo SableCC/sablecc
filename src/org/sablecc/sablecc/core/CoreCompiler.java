@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.launcher;
+package org.sablecc.sablecc.core;
 
 import java.io.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.launcher.*;
 import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.node.*;

@@ -19,6 +19,7 @@ package org.sablecc.sablecc.launcher;
 
 import java.io.*;
 
+import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.parser.*;
