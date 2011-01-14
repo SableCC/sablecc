@@ -21,7 +21,6 @@ import java.io.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.launcher.*;
-import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.sablecc.syntax3.parser.*;
@@ -53,7 +52,8 @@ public class GrammarCompiler {
 
         this.trace.verboseln(" Verifying semantics");
 
-        new Grammar(ast);
+        GlobalNameSpace globalNameSpace = new GlobalNameSpace();
+        globalNameSpace.fillFrom(ast);
 
         throw new InternalException("not implemented");
     }

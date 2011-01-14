@@ -229,13 +229,13 @@ $end: semantic_error_head $
 
 $comment: ========== duplicate_declaration ========== $
 
-$macro: duplicate_declaration(name, line, char, ref_line, ref_char) $
+$macro: duplicate_declaration(name, type, line, char, ref_type, ref_line, ref_char) $
 $insert: semantic_error_head $
 
 Line: $line
 Char: $char
-Duplicate declaration of "$name".
-It was already declared at line $ref_line, char $ref_char.
+The "$name" $type declaration reuses an existing name.
+A "$name" $ref_type is already declared at line $ref_line, char $ref_char.
 $end: duplicate_declaration $
 
 $comment: ========== invalid_interval ========== $

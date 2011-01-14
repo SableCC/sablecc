@@ -18,6 +18,7 @@
 package org.sablecc.sablecc.exception;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.errormessage.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
@@ -137,17 +138,22 @@ public class CompilerException
     }
 
     public static CompilerException duplicateDeclaration(
-            Token duplicateName,
-            Token olderName) {
+            Named duplicateNamed,
+            Named olderNamed) {
 
-        String name = duplicateName.getText();
-        if (!name.equals(olderName.getText())) {
+        String name = duplicateNamed.getName();
+        if (!name.equals(olderNamed.getName())) {
             throw new InternalException("names must be identical");
         }
 
+        TIdentifier duplicateIdentifier = duplicateNamed.getNameIdentifier();
+        TIdentifier olderIdentifier = olderNamed.getNameIdentifier();
+
         return new CompilerException(new MDuplicateDeclaration(name,
-                duplicateName.getLine() + "", duplicateName.getPos() + "",
-                olderName.getLine() + "", olderName.getPos() + "").toString());
+                duplicateNamed.getNameType(), duplicateIdentifier.getLine()
+                        + "", duplicateIdentifier.getPos() + "",
+                olderNamed.getNameType(), olderIdentifier.getLine() + "",
+                olderIdentifier.getPos() + "").toString());
     }
 
     public static CompilerException unknownTarget(
