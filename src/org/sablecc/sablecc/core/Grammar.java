@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.structure;
+package org.sablecc.sablecc.core;
 
 import java.util.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.structure.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Grammar
