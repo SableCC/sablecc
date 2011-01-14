@@ -27,7 +27,7 @@ import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.sablecc.syntax3.parser.*;
 import org.sablecc.util.*;
 
-public class CoreCompiler {
+public class GrammarCompiler {
 
     final private String grammar;
 
@@ -35,7 +35,7 @@ public class CoreCompiler {
 
     final private Trace trace;
 
-    public CoreCompiler(
+    public GrammarCompiler(
             String grammar,
             Strictness strictness,
             Trace trace) {

@@ -78,9 +78,9 @@ public class CompilationTask {
             br.close();
             fr.close();
 
-            CoreCompiler coreCompiler = new CoreCompiler(sb.toString(),
-                    this.strictness, this.trace);
-            coreCompiler.compileGrammar();
+            GrammarCompiler grammarCompiler = new GrammarCompiler(
+                    sb.toString(), this.strictness, this.trace);
+            grammarCompiler.compileGrammar();
         }
         catch (IOException e) {
             throw CompilerException.inputError(this.grammarFile.toString(), e);
