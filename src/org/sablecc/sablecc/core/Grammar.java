@@ -31,7 +31,7 @@ public class Grammar
 
     private NameSpace nameSpace;
 
-    public Grammar(
+    Grammar(
             Start ast) {
 
         if (ast == null) {
@@ -76,6 +76,13 @@ public class Grammar
 
                 this.grammar.declaration = node;
                 this.nameSpace.add(this.grammar);
+            }
+
+            @Override
+            public void outANormalNamedExpression(
+                    ANormalNamedExpression node) {
+
+                this.nameSpace.add(new NamedExpression(node, this.grammar));
             }
         });
 

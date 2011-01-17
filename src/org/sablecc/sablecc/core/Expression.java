@@ -15,8 +15,25 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.structure;
+package org.sablecc.sablecc.core;
 
-public class Expression {
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
+public abstract class Expression {
+
+    private final Grammar grammar;
+
+    private Expression(
+            Grammar grammar) {
+
+        this.grammar = grammar;
+    }
+
+    public static Expression newExpression(
+            PExpression declaration,
+            Grammar grammar) {
+
+        throw new InternalException("not implemented");
+    }
 }
