@@ -52,8 +52,7 @@ public class GrammarCompiler {
 
         this.trace.verboseln(" Verifying semantics");
 
-        GlobalNameSpace globalNameSpace = new GlobalNameSpace();
-        globalNameSpace.fillFrom(ast);
+        Grammar grammar = new Grammar(ast);
 
         throw new InternalException("not implemented");
     }

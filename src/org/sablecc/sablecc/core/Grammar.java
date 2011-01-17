@@ -17,7 +17,11 @@
 
 package org.sablecc.sablecc.core;
 
+import java.util.*;
+
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Grammar
@@ -25,14 +29,16 @@ public class Grammar
 
     private AGrammar declaration;
 
-    public Grammar(
-            AGrammar declaration) {
+    private NameSpace nameSpace;
 
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
+    public Grammar(
+            Start ast) {
+
+        if (ast == null) {
+            throw new InternalException("ast may not be null");
         }
 
-        this.declaration = declaration;
+        initializeFrom(ast);
     }
 
     public TIdentifier getNameIdentifier() {
@@ -49,4 +55,47 @@ public class Grammar
 
         return "grammar";
     }
+
+    private void initializeFrom(
+            Start ast) {
+
+        this.nameSpace = new NameSpace();
+
+        // the global name space includes all top-level names, excluding AST
+        // names.
+
+        ast.apply(new DepthFirstAdapter() {
+
+            private final Grammar grammar = Grammar.this;
+
+            private final NameSpace nameSpace = this.grammar.nameSpace;
+
+            @Override
+            public void outAGrammar(
+                    AGrammar node) {
+
+                this.grammar.declaration = node;
+                this.nameSpace.add(this.grammar);
+            }
+        });
+
+        throw new InternalException("not implemented");
+    }
+
+    private static class NameSpace {
+
+        private Map<String, Named> nameMap = new HashMap<String, Named>();
+
+        private void add(
+                Named named) {
+
+            String name = named.getName();
+            if (this.nameMap.containsKey(name)) {
+                throw CompilerException.duplicateDeclaration(named,
+                        this.nameMap.get(name));
+            }
+            this.nameMap.put(name, named);
+        }
+    }
+
 }
