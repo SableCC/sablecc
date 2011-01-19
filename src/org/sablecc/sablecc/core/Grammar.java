@@ -20,6 +20,8 @@ package org.sablecc.sablecc.core;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.Expression.Lookahead;
+import org.sablecc.sablecc.core.Expression.Lookback;
 import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
@@ -30,6 +32,14 @@ public class Grammar
     private AGrammar declaration;
 
     private NameSpace nameSpace;
+
+    private final Map<Node, Named> nodeToNamedMap = new HashMap<Node, Named>();
+
+    private final Map<Node, Expression> nodeToExpressionMap = new HashMap<Node, Expression>();
+
+    private final Map<Node, Lookback> nodeToLookbackMap = new HashMap<Node, Lookback>();
+
+    private final Map<Node, Lookahead> nodeToLookaheadMap = new HashMap<Node, Lookahead>();
 
     Grammar(
             Start ast) {
@@ -89,6 +99,80 @@ public class Grammar
         throw new InternalException("not implemented");
     }
 
+    void addMapping(
+            Node declaration,
+            Named named) {
+
+        if (this.nodeToNamedMap.containsKey(declaration)) {
+            throw new InternalException("multiple mappings for a single node");
+        }
+
+        this.nodeToNamedMap.put(declaration, named);
+    }
+
+    void addMapping(
+            Node declaration,
+            Expression expression) {
+
+        if (this.nodeToExpressionMap.containsKey(declaration)) {
+            throw new InternalException("multiple mappings for a single node");
+        }
+
+        this.nodeToExpressionMap.put(declaration, expression);
+    }
+
+    void addMapping(
+            Node declaration,
+            Lookback lookback) {
+
+        if (this.nodeToLookbackMap.containsKey(declaration)) {
+            throw new InternalException("multiple mappings for a single node");
+        }
+
+        this.nodeToLookbackMap.put(declaration, lookback);
+    }
+
+    void addMapping(
+            Node declaration,
+            Lookahead lookahead) {
+
+        if (this.nodeToLookaheadMap.containsKey(declaration)) {
+            throw new InternalException("multiple mappings for a single node");
+        }
+
+        this.nodeToLookaheadMap.put(declaration, lookahead);
+    }
+
+    public Expression getExpressionMapping(
+            Node node) {
+
+        if (!this.nodeToExpressionMap.containsKey(node)) {
+            throw new InternalException("missing mapping");
+        }
+
+        return this.nodeToExpressionMap.get(node);
+    }
+
+    public Lookback getLookbackMapping(
+            Node node) {
+
+        if (!this.nodeToLookbackMap.containsKey(node)) {
+            throw new InternalException("missing mapping");
+        }
+
+        return this.nodeToLookbackMap.get(node);
+    }
+
+    public Lookahead getLookaheadMapping(
+            Node node) {
+
+        if (!this.nodeToLookaheadMap.containsKey(node)) {
+            throw new InternalException("missing mapping");
+        }
+
+        return this.nodeToLookaheadMap.get(node);
+    }
+
     private static class NameSpace {
 
         private Map<String, Named> nameMap = new HashMap<String, Named>();
@@ -104,5 +188,4 @@ public class Grammar
             this.nameMap.put(name, named);
         }
     }
-
 }
