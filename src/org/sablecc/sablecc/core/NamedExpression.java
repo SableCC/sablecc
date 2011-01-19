@@ -36,6 +36,8 @@ public class NamedExpression
         this.grammar = grammar;
         this.expression = Expression.newExpression(declaration.getExpression(),
                 grammar);
+
+        grammar.addMapping(declaration, this);
     }
 
     public TIdentifier getNameIdentifier() {
