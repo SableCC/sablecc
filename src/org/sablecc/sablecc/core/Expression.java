@@ -18,6 +18,7 @@
 package org.sablecc.sablecc.core;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public abstract class Expression {
@@ -346,6 +347,218 @@ public abstract class Expression {
         public Expression getRight() {
 
             return this.right;
+        }
+    }
+
+    public static class Unary
+            extends Expression {
+
+        private final AUnaryOperatorExpression declaration;
+
+        private final Expression expression;
+
+        private final UnaryOperator operator;
+
+        private Unary(
+                AUnaryOperatorExpression declaration,
+                Grammar grammar) {
+
+            super(grammar);
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+
+            this.expression = grammar.getExpressionMapping(declaration
+                    .getExpression());
+            this.operator = UnaryOperator.newUnaryOperator(
+                    declaration.getUnaryOperator(), grammar);
+        }
+
+        public Expression getExpression() {
+
+            return this.expression;
+        }
+    }
+
+    public static abstract class UnaryOperator {
+
+        private final Grammar grammar;
+
+        private UnaryOperator(
+                Grammar grammar) {
+
+            this.grammar = grammar;
+        }
+
+        private static UnaryOperator newUnaryOperator(
+                PUnaryOperator unaryOperator,
+                Grammar grammar) {
+
+            if (unaryOperator instanceof AZeroOrOneUnaryOperator) {
+                return new ZeroOrOne((AZeroOrOneUnaryOperator) unaryOperator,
+                        grammar);
+            }
+
+            return ManyOperator.newManyOperator(
+                    ((AManyUnaryOperator) unaryOperator).getManyOperator(),
+                    grammar);
+        }
+    }
+
+    public static class ZeroOrOne
+            extends UnaryOperator {
+
+        private final AZeroOrOneUnaryOperator declaration;
+
+        private ZeroOrOne(
+                AZeroOrOneUnaryOperator declaration,
+                Grammar grammar) {
+
+            super(grammar);
+            this.declaration = declaration;
+        }
+
+    }
+
+    public static abstract class ManyOperator
+            extends UnaryOperator {
+
+        private ManyOperator(
+                Grammar grammar) {
+
+            super(grammar);
+        }
+
+        public static ManyOperator newManyOperator(
+                PManyOperator manyOperator,
+                final Grammar grammar) {
+
+            class Result {
+
+                ManyOperator manyOperator;
+            }
+
+            final Result result = new Result();
+
+            manyOperator.apply(new AnalysisAdapter() {
+
+                @Override
+                public void caseAZeroOrMoreManyOperator(
+                        AZeroOrMoreManyOperator node) {
+
+                    result.manyOperator = new ZeroOrMore(node, grammar);
+                }
+
+                @Override
+                public void caseAOneOrMoreManyOperator(
+                        AOneOrMoreManyOperator node) {
+
+                    result.manyOperator = new OneOrMore(node, grammar);
+                }
+
+                @Override
+                public void caseANumberManyOperator(
+                        ANumberManyOperator node) {
+
+                    result.manyOperator = new NumberExponent(node, grammar);
+                }
+
+                @Override
+                public void caseAIntervalManyOperator(
+                        AIntervalManyOperator node) {
+
+                    result.manyOperator = new IntervalExponent(node, grammar);
+                }
+
+                @Override
+                public void caseAAtLeastManyOperator(
+                        AAtLeastManyOperator node) {
+
+                    result.manyOperator = new AtLeast(node, grammar);
+                }
+
+                @Override
+                public void defaultCase(
+                        Node node) {
+
+                    throw new InternalException("missing case");
+                }
+            });
+
+            if (result.manyOperator == null) {
+                throw new InternalException("missing case");
+            }
+
+            return result.manyOperator;
+        }
+    }
+
+    public static class ZeroOrMore
+            extends ManyOperator {
+
+        private final AZeroOrMoreManyOperator declaration;
+
+        private ZeroOrMore(
+                AZeroOrMoreManyOperator declaration,
+                Grammar grammar) {
+
+            super(grammar);
+            this.declaration = declaration;
+        }
+    }
+
+    public static class OneOrMore
+            extends ManyOperator {
+
+        private final AOneOrMoreManyOperator declaration;
+
+        private OneOrMore(
+                AOneOrMoreManyOperator declaration,
+                Grammar grammar) {
+
+            super(grammar);
+            this.declaration = declaration;
+        }
+    }
+
+    public static class NumberExponent
+            extends ManyOperator {
+
+        private final ANumberManyOperator declaration;
+
+        private NumberExponent(
+                ANumberManyOperator declaration,
+                Grammar grammar) {
+
+            super(grammar);
+            this.declaration = declaration;
+        }
+    }
+
+    public static class IntervalExponent
+            extends ManyOperator {
+
+        private final AIntervalManyOperator declaration;
+
+        private IntervalExponent(
+                AIntervalManyOperator declaration,
+                Grammar grammar) {
+
+            super(grammar);
+            this.declaration = declaration;
+        }
+    }
+
+    public static class AtLeast
+            extends ManyOperator {
+
+        private final AAtLeastManyOperator declaration;
+
+        private AtLeast(
+                AAtLeastManyOperator declaration,
+                Grammar grammar) {
+
+            super(grammar);
+            this.declaration = declaration;
         }
     }
 }
