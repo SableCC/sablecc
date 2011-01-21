@@ -252,4 +252,100 @@ public abstract class Expression {
             return this.expression;
         }
     }
+
+    public static class Subtraction
+            extends Expression {
+
+        private final ASubtractionExpression declaration;
+
+        private final Expression left;
+
+        private final Expression right;
+
+        public Subtraction(
+                ASubtractionExpression declaration,
+                Grammar grammar) {
+
+            super(grammar);
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+
+            this.left = grammar.getExpressionMapping(declaration.getLeft());
+            this.right = grammar.getExpressionMapping(declaration.getRight());
+        }
+
+        public Expression getLeft() {
+
+            return this.left;
+        }
+
+        public Expression getRight() {
+
+            return this.right;
+        }
+    }
+
+    public static class Except
+            extends Expression {
+
+        private final AExceptExpression declaration;
+
+        private final Expression left;
+
+        private final Expression right;
+
+        public Except(
+                AExceptExpression declaration,
+                Grammar grammar) {
+
+            super(grammar);
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+
+            this.left = grammar.getExpressionMapping(declaration.getLeft());
+            this.right = grammar.getExpressionMapping(declaration.getRight());
+        }
+
+        public Expression getLeft() {
+
+            return this.left;
+        }
+
+        public Expression getRight() {
+
+            return this.right;
+        }
+    }
+
+    public static class Intersection
+            extends Expression {
+
+        private final AIntersectionExpression declaration;
+
+        private final Expression left;
+
+        private final Expression right;
+
+        public Intersection(
+                AIntersectionExpression declaration,
+                Grammar grammar) {
+
+            super(grammar);
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+
+            this.left = grammar.getExpressionMapping(declaration.getLeft());
+            this.right = grammar.getExpressionMapping(declaration.getRight());
+        }
+
+        public Expression getLeft() {
+
+            return this.left;
+        }
+
+        public Expression getRight() {
+
+            return this.right;
+        }
+    }
 }
