@@ -46,7 +46,7 @@ public abstract class Expression {
 
         private final Expression right;
 
-        public Or(
+        private Or(
                 AOrExpression declaration,
                 Grammar grammar) {
 
@@ -78,7 +78,7 @@ public abstract class Expression {
 
         private final Expression right;
 
-        public Concatenation(
+        private Concatenation(
                 AConcatenationExpression declaration,
                 Grammar grammar) {
 
@@ -112,7 +112,7 @@ public abstract class Expression {
 
         private final Lookahead lookahead;
 
-        public Look(
+        private Look(
                 ALookExpression declaration,
                 Grammar grammar) {
 
@@ -166,7 +166,7 @@ public abstract class Expression {
 
         private final Expression expression;
 
-        public Lookback(
+        private Lookback(
                 ALookback declaration,
                 Grammar grammar) {
 
@@ -190,7 +190,7 @@ public abstract class Expression {
 
         private final Expression expression;
 
-        public Lookahead(
+        private Lookahead(
                 ALookahead declaration,
                 Grammar grammar) {
 
@@ -210,7 +210,7 @@ public abstract class Expression {
 
         private final Expression expression;
 
-        public Shortest(
+        private Shortest(
                 AShortestExpression declaration,
                 Grammar grammar) {
 
@@ -235,7 +235,7 @@ public abstract class Expression {
 
         private final Expression expression;
 
-        public Longest(
+        private Longest(
                 ALongestExpression declaration,
                 Grammar grammar) {
 
@@ -262,7 +262,7 @@ public abstract class Expression {
 
         private final Expression right;
 
-        public Subtraction(
+        private Subtraction(
                 ASubtractionExpression declaration,
                 Grammar grammar) {
 
@@ -294,7 +294,7 @@ public abstract class Expression {
 
         private final Expression right;
 
-        public Except(
+        private Except(
                 AExceptExpression declaration,
                 Grammar grammar) {
 
@@ -326,7 +326,7 @@ public abstract class Expression {
 
         private final Expression right;
 
-        public Intersection(
+        private Intersection(
                 AIntersectionExpression declaration,
                 Grammar grammar) {
 
