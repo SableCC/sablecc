@@ -27,13 +27,13 @@ import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Grammar
-        implements Named {
+        implements NameDeclaration {
 
     private AGrammar declaration;
 
     private NameSpace nameSpace;
 
-    private final Map<Node, Named> nodeToNamedMap = new HashMap<Node, Named>();
+    private final Map<Node, NameDeclaration> nodeToNameDeclarationMap = new HashMap<Node, NameDeclaration>();
 
     private final Map<Node, Expression> nodeToExpressionMap = new HashMap<Node, Expression>();
 
@@ -101,13 +101,13 @@ public class Grammar
 
     void addMapping(
             Node declaration,
-            Named named) {
+            NameDeclaration nameDeclaration) {
 
-        if (this.nodeToNamedMap.containsKey(declaration)) {
+        if (this.nodeToNameDeclarationMap.containsKey(declaration)) {
             throw new InternalException("multiple mappings for a single node");
         }
 
-        this.nodeToNamedMap.put(declaration, named);
+        this.nodeToNameDeclarationMap.put(declaration, nameDeclaration);
     }
 
     void addMapping(
@@ -175,17 +175,17 @@ public class Grammar
 
     private static class NameSpace {
 
-        private Map<String, Named> nameMap = new HashMap<String, Named>();
+        private Map<String, NameDeclaration> nameMap = new HashMap<String, NameDeclaration>();
 
         private void add(
-                Named named) {
+                NameDeclaration nameDeclaration) {
 
-            String name = named.getName();
+            String name = nameDeclaration.getName();
             if (this.nameMap.containsKey(name)) {
-                throw CompilerException.duplicateDeclaration(named,
+                throw CompilerException.duplicateDeclaration(nameDeclaration,
                         this.nameMap.get(name));
             }
-            this.nameMap.put(name, named);
+            this.nameMap.put(name, nameDeclaration);
         }
     }
 }

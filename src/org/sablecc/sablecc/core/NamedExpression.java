@@ -21,7 +21,7 @@ import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class NamedExpression
-        implements Named {
+        implements NameDeclaration {
 
     private final ANormalNamedExpression declaration;
 
