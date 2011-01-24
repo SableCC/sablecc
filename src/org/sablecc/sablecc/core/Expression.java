@@ -379,6 +379,43 @@ public abstract class Expression {
         }
     }
 
+    public static class Separated
+            extends Expression {
+
+        private final ASeparatedExpression declaration;
+
+        private final Expression base;
+
+        private final Expression separator;
+
+        private final ManyOperator operator;
+
+        private Separated(
+                ASeparatedExpression declaration,
+                Grammar grammar) {
+
+            super(grammar);
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+
+            this.base = grammar.getExpressionMapping(declaration.getBase());
+            this.separator = grammar.getExpressionMapping(declaration
+                    .getSeparator());
+            this.operator = ManyOperator.newManyOperator(
+                    declaration.getManyOperator(), grammar);
+        }
+
+        public Expression getBase() {
+
+            return this.base;
+        }
+
+        public Expression getSeparator() {
+
+            return this.separator;
+        }
+    }
+
     public static abstract class UnaryOperator {
 
         private final Grammar grammar;
