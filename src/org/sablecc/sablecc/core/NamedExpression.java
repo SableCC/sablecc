@@ -17,6 +17,7 @@
 
 package org.sablecc.sablecc.core;
 
+import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class NamedExpression
@@ -31,6 +32,14 @@ public class NamedExpression
     NamedExpression(
             ANormalNamedExpression declaration,
             Grammar grammar) {
+
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
+        }
+
+        if (grammar == null) {
+            throw new InternalException("grammar may not be null");
+        }
 
         this.declaration = declaration;
         this.grammar = grammar;
@@ -55,4 +64,8 @@ public class NamedExpression
         return "regular expression";
     }
 
+    public Expression getExpression() {
+
+        return this.expression;
+    }
 }

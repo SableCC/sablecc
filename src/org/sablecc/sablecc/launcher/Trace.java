@@ -25,7 +25,7 @@ public class Trace {
 
     private final Verbosity verbosity;
 
-    public Trace(
+    Trace(
             Verbosity verbosity) {
 
         this.verbosity = verbosity;

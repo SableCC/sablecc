@@ -28,12 +28,24 @@ public abstract class Expression {
     private Expression(
             Grammar grammar) {
 
+        if (grammar == null) {
+            throw new InternalException("grammar may not be null");
+        }
+
         this.grammar = grammar;
     }
 
-    public static Expression newExpression(
+    static Expression newExpression(
             PExpression declaration,
             Grammar grammar) {
+
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
+        }
+
+        if (grammar == null) {
+            throw new InternalException("grammar may not be null");
+        }
 
         throw new InternalException("not implemented");
     }
@@ -52,6 +64,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
 
@@ -84,6 +101,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
 
@@ -118,6 +140,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
 
@@ -176,6 +203,14 @@ public abstract class Expression {
                 ALookback declaration,
                 Grammar grammar) {
 
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            if (grammar == null) {
+                throw new InternalException("grammar may not be null");
+            }
+
             this.grammar = grammar;
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
@@ -183,6 +218,16 @@ public abstract class Expression {
             this.not = declaration.getNotKeyword() != null;
             this.expression = grammar.getExpressionMapping(declaration
                     .getExpression());
+        }
+
+        public boolean getNot() {
+
+            return this.not;
+        }
+
+        public Expression getExpression() {
+
+            return this.expression;
         }
     }
 
@@ -200,12 +245,30 @@ public abstract class Expression {
                 ALookahead declaration,
                 Grammar grammar) {
 
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            if (grammar == null) {
+                throw new InternalException("grammar may not be null");
+            }
+
             this.grammar = grammar;
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
             this.not = declaration.getNotKeyword() != null;
             this.expression = grammar.getExpressionMapping(declaration
                     .getExpression());
+        }
+
+        public boolean getNot() {
+
+            return this.not;
+        }
+
+        public Expression getExpression() {
+
+            return this.expression;
         }
     }
 
@@ -221,6 +284,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
 
@@ -246,6 +314,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
 
@@ -273,6 +346,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
 
@@ -305,6 +383,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
 
@@ -337,6 +420,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
 
@@ -369,6 +457,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
 
@@ -381,6 +474,11 @@ public abstract class Expression {
         public Expression getExpression() {
 
             return this.expression;
+        }
+
+        public UnaryOperator getOperator() {
+
+            return this.operator;
         }
     }
 
@@ -400,6 +498,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
 
@@ -419,6 +522,11 @@ public abstract class Expression {
 
             return this.separator;
         }
+
+        public ManyOperator getOperator() {
+
+            return this.operator;
+        }
     }
 
     public static abstract class UnaryOperator {
@@ -428,12 +536,24 @@ public abstract class Expression {
         private UnaryOperator(
                 Grammar grammar) {
 
+            if (grammar == null) {
+                throw new InternalException("grammar may not be null");
+            }
+
             this.grammar = grammar;
         }
 
         private static UnaryOperator newUnaryOperator(
                 PUnaryOperator unaryOperator,
                 Grammar grammar) {
+
+            if (unaryOperator == null) {
+                throw new InternalException("unaryOperator may not be null");
+            }
+
+            if (grammar == null) {
+                throw new InternalException("grammar may not be null");
+            }
 
             if (unaryOperator instanceof AZeroOrOneUnaryOperator) {
                 return new ZeroOrOneOperator(
@@ -456,6 +576,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
         }
 
@@ -470,9 +595,17 @@ public abstract class Expression {
             super(grammar);
         }
 
-        public static ManyOperator newManyOperator(
+        private static ManyOperator newManyOperator(
                 PManyOperator manyOperator,
                 final Grammar grammar) {
+
+            if (manyOperator == null) {
+                throw new InternalException("manyOperator may not be null");
+            }
+
+            if (grammar == null) {
+                throw new InternalException("grammar may not be null");
+            }
 
             class Result {
 
@@ -546,6 +679,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
         }
     }
@@ -560,6 +698,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
         }
     }
@@ -574,6 +717,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
         }
     }
@@ -588,6 +736,11 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
         }
     }
@@ -602,7 +755,32 @@ public abstract class Expression {
                 Grammar grammar) {
 
             super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
             this.declaration = declaration;
+        }
+    }
+
+    public static class Name
+            extends Expression {
+
+        private final ANameUnit declaration;
+
+        private Name(
+                ANameUnit declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
         }
     }
 }

@@ -19,6 +19,7 @@ package org.sablecc.sablecc.launcher;
 
 import java.io.*;
 
+import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
@@ -41,6 +42,8 @@ public class CompilationTask {
 
     final private Trace trace;
 
+    private boolean hasRun;
+
     public CompilationTask(
             File grammarFile,
             String targetLanguage,
@@ -49,6 +52,30 @@ public class CompilationTask {
             boolean generateCode,
             Strictness strictness,
             Trace trace) {
+
+        if (grammarFile == null) {
+            throw new InternalException("grammarFile may not be null");
+        }
+
+        if (targetLanguage == null) {
+            throw new InternalException("targetLanguage may not be null");
+        }
+
+        if (destinationDirectory == null) {
+            throw new InternalException("destinationDirectory may not be null");
+        }
+
+        if (destinationPackage == null) {
+            throw new InternalException("destinationPackage may not be null");
+        }
+
+        if (strictness == null) {
+            throw new InternalException("strictness may not be null");
+        }
+
+        if (trace == null) {
+            throw new InternalException("trace may not be null");
+        }
 
         this.grammarFile = grammarFile;
         this.targetLanguage = targetLanguage;
@@ -61,6 +88,13 @@ public class CompilationTask {
 
     public void run()
             throws ParserException, LexerException {
+
+        if (this.hasRun) {
+            throw new InternalException("compilation task may only run once");
+        }
+        else {
+            this.hasRun = true;
+        }
 
         this.trace.informativeln("Compiling \"" + this.grammarFile.toString()
                 + "\"");

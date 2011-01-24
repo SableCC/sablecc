@@ -34,10 +34,24 @@ public class GrammarCompiler {
 
     final private Trace trace;
 
+    private boolean hasRun;
+
     public GrammarCompiler(
             String grammar,
             Strictness strictness,
             Trace trace) {
+
+        if (grammar == null) {
+            throw new InternalException("grammar may not be null");
+        }
+
+        if (strictness == null) {
+            throw new InternalException("strictness may not be null");
+        }
+
+        if (trace == null) {
+            throw new InternalException("trace may not be null");
+        }
 
         this.grammar = grammar;
         this.strictness = strictness;
@@ -46,6 +60,13 @@ public class GrammarCompiler {
 
     public void compileGrammar()
             throws ParserException, LexerException, IOException {
+
+        if (this.hasRun) {
+            throw new InternalException("grammar may only be compiled once");
+        }
+        else {
+            this.hasRun = true;
+        }
 
         Start ast = new Parser(new Lexer(new PushbackReader(new StringReader(
                 this.grammar), 1024))).parse();
