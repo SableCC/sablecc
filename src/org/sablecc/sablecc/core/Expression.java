@@ -764,12 +764,12 @@ public abstract class Expression {
         }
     }
 
-    public static class Name
+    public static class NameUnit
             extends Expression {
 
         private final ANameUnit declaration;
 
-        private Name(
+        private NameUnit(
                 ANameUnit declaration,
                 Grammar grammar) {
 
@@ -791,6 +791,42 @@ public abstract class Expression {
         public String getName() {
 
             return getNameIdentifier().getText();
+        }
+    }
+
+    public static class StringUnit
+            extends Expression {
+
+        private final AStringUnit declaration;
+
+        private StringUnit(
+                AStringUnit declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+
+        public TString getStringToken() {
+
+            return this.declaration.getString();
+        }
+
+        public String getString() {
+
+            String text = getStringToken().getText();
+            // remove enclosing double-quotes
+            text = text.substring(1, text.length() - 1);
+            // replace escape chars
+            text = text.replace("\\\\", "\\");
+            text = text.replace("\\'", "'");
+            return text;
         }
     }
 }
