@@ -138,22 +138,24 @@ public class CompilerException
     }
 
     public static CompilerException duplicateDeclaration(
-            Named duplicateNamed,
-            Named olderNamed) {
+            NameDeclaration duplicateNameDeclaration,
+            NameDeclaration olderNameDeclaration) {
 
-        String name = duplicateNamed.getName();
-        if (!name.equals(olderNamed.getName())) {
+        String name = duplicateNameDeclaration.getName();
+        if (!name.equals(olderNameDeclaration.getName())) {
             throw new InternalException("names must be identical");
         }
 
-        TIdentifier duplicateIdentifier = duplicateNamed.getNameIdentifier();
-        TIdentifier olderIdentifier = olderNamed.getNameIdentifier();
+        TIdentifier duplicateIdentifier = duplicateNameDeclaration
+                .getNameIdentifier();
+        TIdentifier olderIdentifier = olderNameDeclaration.getNameIdentifier();
 
         return new CompilerException(new MDuplicateDeclaration(name,
-                duplicateNamed.getNameType(), duplicateIdentifier.getLine()
-                        + "", duplicateIdentifier.getPos() + "",
-                olderNamed.getNameType(), olderIdentifier.getLine() + "",
-                olderIdentifier.getPos() + "").toString());
+                duplicateNameDeclaration.getNameType(),
+                duplicateIdentifier.getLine() + "",
+                duplicateIdentifier.getPos() + "",
+                olderNameDeclaration.getNameType(), olderIdentifier.getLine()
+                        + "", olderIdentifier.getPos() + "").toString());
     }
 
     public static CompilerException unknownTarget(

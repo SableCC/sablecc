@@ -782,5 +782,15 @@ public abstract class Expression {
             this.declaration = declaration;
             grammar.addMapping(declaration, this);
         }
+
+        public TIdentifier getNameIdentifier() {
+
+            return this.declaration.getIdentifier();
+        }
+
+        public String getName() {
+
+            return getNameIdentifier().getText();
+        }
     }
 }
