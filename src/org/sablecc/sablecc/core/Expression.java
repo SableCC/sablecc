@@ -431,8 +431,8 @@ public abstract class Expression {
                 Grammar grammar) {
 
             if (unaryOperator instanceof AZeroOrOneUnaryOperator) {
-                return new ZeroOrOne((AZeroOrOneUnaryOperator) unaryOperator,
-                        grammar);
+                return new ZeroOrOneOperator(
+                        (AZeroOrOneUnaryOperator) unaryOperator, grammar);
             }
 
             return ManyOperator.newManyOperator(
@@ -441,12 +441,12 @@ public abstract class Expression {
         }
     }
 
-    public static class ZeroOrOne
+    public static class ZeroOrOneOperator
             extends UnaryOperator {
 
         private final AZeroOrOneUnaryOperator declaration;
 
-        private ZeroOrOne(
+        private ZeroOrOneOperator(
                 AZeroOrOneUnaryOperator declaration,
                 Grammar grammar) {
 
@@ -482,35 +482,37 @@ public abstract class Expression {
                 public void caseAZeroOrMoreManyOperator(
                         AZeroOrMoreManyOperator node) {
 
-                    result.manyOperator = new ZeroOrMore(node, grammar);
+                    result.manyOperator = new ZeroOrMoreOperator(node, grammar);
                 }
 
                 @Override
                 public void caseAOneOrMoreManyOperator(
                         AOneOrMoreManyOperator node) {
 
-                    result.manyOperator = new OneOrMore(node, grammar);
+                    result.manyOperator = new OneOrMoreOperator(node, grammar);
                 }
 
                 @Override
                 public void caseANumberManyOperator(
                         ANumberManyOperator node) {
 
-                    result.manyOperator = new NumberExponent(node, grammar);
+                    result.manyOperator = new NumberExponentOperator(node,
+                            grammar);
                 }
 
                 @Override
                 public void caseAIntervalManyOperator(
                         AIntervalManyOperator node) {
 
-                    result.manyOperator = new IntervalExponent(node, grammar);
+                    result.manyOperator = new IntervalExponentOperator(node,
+                            grammar);
                 }
 
                 @Override
                 public void caseAAtLeastManyOperator(
                         AAtLeastManyOperator node) {
 
-                    result.manyOperator = new AtLeast(node, grammar);
+                    result.manyOperator = new AtLeastOperator(node, grammar);
                 }
 
                 @Override
@@ -529,12 +531,12 @@ public abstract class Expression {
         }
     }
 
-    public static class ZeroOrMore
+    public static class ZeroOrMoreOperator
             extends ManyOperator {
 
         private final AZeroOrMoreManyOperator declaration;
 
-        private ZeroOrMore(
+        private ZeroOrMoreOperator(
                 AZeroOrMoreManyOperator declaration,
                 Grammar grammar) {
 
@@ -543,12 +545,12 @@ public abstract class Expression {
         }
     }
 
-    public static class OneOrMore
+    public static class OneOrMoreOperator
             extends ManyOperator {
 
         private final AOneOrMoreManyOperator declaration;
 
-        private OneOrMore(
+        private OneOrMoreOperator(
                 AOneOrMoreManyOperator declaration,
                 Grammar grammar) {
 
@@ -557,12 +559,12 @@ public abstract class Expression {
         }
     }
 
-    public static class NumberExponent
+    public static class NumberExponentOperator
             extends ManyOperator {
 
         private final ANumberManyOperator declaration;
 
-        private NumberExponent(
+        private NumberExponentOperator(
                 ANumberManyOperator declaration,
                 Grammar grammar) {
 
@@ -571,12 +573,12 @@ public abstract class Expression {
         }
     }
 
-    public static class IntervalExponent
+    public static class IntervalExponentOperator
             extends ManyOperator {
 
         private final AIntervalManyOperator declaration;
 
-        private IntervalExponent(
+        private IntervalExponentOperator(
                 AIntervalManyOperator declaration,
                 Grammar grammar) {
 
@@ -585,12 +587,12 @@ public abstract class Expression {
         }
     }
 
-    public static class AtLeast
+    public static class AtLeastOperator
             extends ManyOperator {
 
         private final AAtLeastManyOperator declaration;
 
-        private AtLeast(
+        private AtLeastOperator(
                 AAtLeastManyOperator declaration,
                 Grammar grammar) {
 
