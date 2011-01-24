@@ -139,6 +139,11 @@ public abstract class Expression {
             else {
                 this.lookahead = null;
             }
+
+            if (this.lookahead == null && this.lookback == null) {
+                throw new InternalException(
+                        "lookahead and lookback may not be both null");
+            }
         }
 
         public Expression getExpression() {
