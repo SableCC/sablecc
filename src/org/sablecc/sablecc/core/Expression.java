@@ -815,14 +815,9 @@ public abstract class Expression {
             grammar.addMapping(declaration, this);
         }
 
-        public TString getStringToken() {
-
-            return this.declaration.getString();
-        }
-
         public String getString() {
 
-            String text = getStringToken().getText();
+            String text = this.declaration.getString().getText();
             // remove enclosing quotes
             text = text.substring(1, text.length() - 1);
             // replace escape chars
@@ -840,8 +835,6 @@ public abstract class Expression {
 
             super(grammar);
         }
-
-        public abstract BigInteger getValue();
     }
 
     public static class CharUnit
@@ -863,15 +856,9 @@ public abstract class Expression {
             grammar.addMapping(declaration, this);
         }
 
-        public TChar getCharToken() {
+        public char getChar() {
 
-            return this.declaration.getChar();
-        }
-
-        @Override
-        public BigInteger getValue() {
-
-            String text = getCharToken().getText();
+            String text = this.declaration.getChar().getText();
             // remove enclosing quotes
             text = text.substring(1, text.length() - 1);
             // replace escape chars
@@ -880,7 +867,133 @@ public abstract class Expression {
             if (text.length() != 1) {
                 throw new InternalException("unhandled character escape");
             }
-            return new BigInteger((int) text.charAt(0) + "");
+            return text.charAt(0);
+        }
+    }
+
+    public static class DecCharUnit
+            extends CharacterUnit {
+
+        private final ADecCharacter declaration;
+
+        private DecCharUnit(
+                ADecCharacter declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+
+        public BigInteger getValue() {
+
+            String text = this.declaration.getDecChar().getText();
+            // remove '#' prefix
+            text = text.substring(1);
+            // remove leading '+' if there is one
+            if (text.charAt(0) == '+') {
+                text = text.substring(1);
+            }
+
+            return new BigInteger(text);
+        }
+    }
+
+    public static class HexCharUnit
+            extends CharacterUnit {
+
+        private final AHexCharacter declaration;
+
+        private HexCharUnit(
+                AHexCharacter declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+
+        public BigInteger getValue() {
+
+            String text = this.declaration.getHexChar().getText();
+            // remove '#x' prefix
+            text = text.substring(2);
+            // remove leading '+' if there is one
+            if (text.charAt(0) == '+') {
+                text = text.substring(1);
+            }
+
+            return new BigInteger(text, 16);
+        }
+    }
+
+    public static class StartUnit
+            extends Expression {
+
+        private final AStartUnit declaration;
+
+        private StartUnit(
+                AStartUnit declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+    }
+
+    public static class EndUnit
+            extends Expression {
+
+        private final AEndUnit declaration;
+
+        private EndUnit(
+                AEndUnit declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+    }
+
+    public static class Epsilon
+            extends Expression {
+
+        private final AEpsilonExpression declaration;
+
+        private Epsilon(
+                AEpsilonExpression declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
         }
     }
 }
