@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.core;
 
+import java.math.*;
+
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
@@ -821,12 +823,64 @@ public abstract class Expression {
         public String getString() {
 
             String text = getStringToken().getText();
-            // remove enclosing double-quotes
+            // remove enclosing quotes
             text = text.substring(1, text.length() - 1);
             // replace escape chars
             text = text.replace("\\\\", "\\");
             text = text.replace("\\'", "'");
             return text;
+        }
+    }
+
+    public static abstract class CharacterUnit
+            extends Expression {
+
+        private CharacterUnit(
+                Grammar grammar) {
+
+            super(grammar);
+        }
+
+        public abstract BigInteger getValue();
+    }
+
+    public static class CharUnit
+            extends CharacterUnit {
+
+        private final ACharCharacter declaration;
+
+        private CharUnit(
+                ACharCharacter declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+
+        public TChar getCharToken() {
+
+            return this.declaration.getChar();
+        }
+
+        @Override
+        public BigInteger getValue() {
+
+            String text = getCharToken().getText();
+            // remove enclosing quotes
+            text = text.substring(1, text.length() - 1);
+            // replace escape chars
+            text = text.replace("\\\\", "\\");
+            text = text.replace("\\'", "'");
+            if (text.length() != 1) {
+                throw new InternalException("unhandled character escape");
+            }
+            return new BigInteger((int) text.charAt(0) + "");
         }
     }
 }
