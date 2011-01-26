@@ -835,6 +835,8 @@ public abstract class Expression {
 
             super(grammar);
         }
+
+        public abstract BigInteger getValue();
     }
 
     public static class CharUnit
@@ -856,7 +858,8 @@ public abstract class Expression {
             grammar.addMapping(declaration, this);
         }
 
-        public char getChar() {
+        @Override
+        public BigInteger getValue() {
 
             String text = this.declaration.getChar().getText();
             // remove enclosing quotes
@@ -867,7 +870,7 @@ public abstract class Expression {
             if (text.length() != 1) {
                 throw new InternalException("unhandled character escape");
             }
-            return text.charAt(0);
+            return new BigInteger("" + (int) text.charAt(0));
         }
     }
 
@@ -890,6 +893,7 @@ public abstract class Expression {
             grammar.addMapping(declaration, this);
         }
 
+        @Override
         public BigInteger getValue() {
 
             String text = this.declaration.getDecChar().getText();
@@ -923,6 +927,7 @@ public abstract class Expression {
             grammar.addMapping(declaration, this);
         }
 
+        @Override
         public BigInteger getValue() {
 
             String text = this.declaration.getHexChar().getText();
@@ -984,6 +989,60 @@ public abstract class Expression {
 
         private Epsilon(
                 AEpsilonExpression declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+    }
+
+    public static class Interval
+            extends Expression {
+
+        private final AIntervalExpression declaration;
+
+        private final CharacterUnit from;
+
+        private final CharacterUnit to;
+
+        private Interval(
+                AIntervalExpression declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+
+            try {
+                this.from = (CharacterUnit) grammar
+                        .getExpressionMapping(declaration.getFrom());
+                this.to = (CharacterUnit) grammar
+                        .getExpressionMapping(declaration.getTo());
+            }
+            catch (ClassCastException e) {
+                throw new InternalError("inappropriate expression type");
+            }
+        }
+    }
+
+    public static class Any
+            extends Expression {
+
+        private final AAnyExpression declaration;
+
+        private Any(
+                AAnyExpression declaration,
                 Grammar grammar) {
 
             super(grammar);
