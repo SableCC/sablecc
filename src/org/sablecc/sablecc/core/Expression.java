@@ -39,7 +39,7 @@ public abstract class Expression {
 
     static Expression newExpression(
             PExpression declaration,
-            Grammar grammar) {
+            final Grammar grammar) {
 
         if (declaration == null) {
             throw new InternalException("declaration may not be null");
@@ -49,7 +49,109 @@ public abstract class Expression {
             throw new InternalException("grammar may not be null");
         }
 
-        throw new InternalException("not implemented");
+        declaration.apply(new DepthFirstAdapter() {
+
+            @Override
+            public void outAOrExpression(
+                    AOrExpression node) {
+
+                new Or(node, grammar);
+            }
+
+            @Override
+            public void outAConcatenationExpression(
+                    AConcatenationExpression node) {
+
+                new Concatenation(node, grammar);
+            }
+
+            @Override
+            public void outALookExpression(
+                    ALookExpression node) {
+
+                new Look(node, grammar);
+            }
+
+            @Override
+            public void outAShortestExpression(
+                    AShortestExpression node) {
+
+                new Shortest(node, grammar);
+            }
+
+            @Override
+            public void outALongestExpression(
+                    ALongestExpression node) {
+
+                new Longest(node, grammar);
+            }
+
+            @Override
+            public void outASubtractionExpression(
+                    ASubtractionExpression node) {
+
+                new Subtraction(node, grammar);
+            }
+
+            @Override
+            public void outAExceptExpression(
+                    AExceptExpression node) {
+
+                new Except(node, grammar);
+            }
+
+            @Override
+            public void outAIntersectionExpression(
+                    AIntersectionExpression node) {
+
+                new Intersection(node, grammar);
+            }
+
+            @Override
+            public void outAUnaryOperatorExpression(
+                    AUnaryOperatorExpression node) {
+
+                new Unary(node, grammar);
+            }
+
+            @Override
+            public void outASeparatedExpression(
+                    ASeparatedExpression node) {
+
+                new Separated(node, grammar);
+            }
+
+            @Override
+            public void outAUnitExpression(
+                    AUnitExpression node) {
+
+                grammar.addMapping(node,
+                        grammar.getExpressionMapping(node.getUnit()));
+            }
+
+            @Override
+            public void outAEpsilonExpression(
+                    AEpsilonExpression node) {
+
+                new Epsilon(node, grammar);
+            }
+
+            @Override
+            public void outAIntervalExpression(
+                    AIntervalExpression node) {
+
+                new Interval(node, grammar);
+            }
+
+            @Override
+            public void outAAnyExpression(
+                    AAnyExpression node) {
+
+                new Any(node, grammar);
+            }
+        });
+
+        return grammar.getExpressionMapping(declaration);
     }
 
     public static class Or
