@@ -149,6 +149,77 @@ public abstract class Expression {
 
                 new Any(node, grammar);
             }
+
+            @Override
+            public void outALookback(
+                    ALookback node) {
+
+                new Lookback(node, grammar);
+            }
+
+            @Override
+            public void outALookahead(
+                    ALookahead node) {
+
+                new Lookahead(node, grammar);
+            }
+
+            @Override
+            public void outACharCharacter(
+                    ACharCharacter node) {
+
+                new CharUnit(node, grammar);
+            }
+
+            @Override
+            public void outADecCharacter(
+                    ADecCharacter node) {
+
+                new DecCharUnit(node, grammar);
+            }
+
+            @Override
+            public void outAHexCharacter(
+                    AHexCharacter node) {
+
+                new HexCharUnit(node, grammar);
+            }
+
+            @Override
+            public void outANameUnit(
+                    ANameUnit node) {
+
+                new NameUnit(node, grammar);
+            }
+
+            @Override
+            public void outAStringUnit(
+                    AStringUnit node) {
+
+                new StringUnit(node, grammar);
+            }
+
+            @Override
+            public void outACharacterUnit(
+                    ACharacterUnit node) {
+
+                grammar.addMapping(node,
+                        grammar.getExpressionMapping(node.getCharacter()));
+            }
+
+            @Override
+            public void outAStartUnit(
+                    AStartUnit node) {
+
+                new StartUnit(node, grammar);
+            }
+
+            @Override
+            public void outAEndUnit(
+                    AEndUnit node) {
+
+                new EndUnit(node, grammar);
+            }
         });
 
         return grammar.getExpressionMapping(declaration);
