@@ -1,0 +1,375 @@
+$comment$
+This file is part of SableCC ( http://sablecc.org ).
+
+See the NOTICE file distributed with this work for copyright information.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+$end$
+
+$comment: ========== command_line_error_head ========== $
+
+$text: command_line_error_head $
+*** COMMAND ERROR ***
+$end: command_line_error_head $
+
+$comment: ========== command_line_error_tail ========== $
+
+$text: command_line_error_tail $
+The following command provides usage information:
+ sablecc --help
+$end: command_line_error_tail $
+
+$comment: ========== invalid_long_option ========== $
+
+$macro: invalid_long_option(option_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ --$option_name
+It is not a valid option.
+
+$insert: command_line_error_tail $
+$end: invalid_long_option $
+
+$comment: ========== spurious_long_option_operand ========== $
+
+$macro: spurious_long_option_operand(option_name, operand_text) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ --$option_name=$operand_text
+This option does not accept an operand.
+
+$insert: command_line_error_tail $
+$end: spurious_long_option_operand $
+
+$comment: ========== missing_long_option_operand ========== $
+
+$macro: missing_long_option_operand(option_name, operand_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ --$option_name
+This option expects an operand:
+ --$option_name=$operand_name
+
+$insert: command_line_error_tail $
+$end: missing_long_option_operand $
+
+$comment: ========== invalid_short_option ========== $
+
+$macro: invalid_short_option(option_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ -$option_name
+It is not a valid option.
+
+$insert: command_line_error_tail $
+$end: invalid_short_option $
+
+$comment: ========== spurious_short_option_operand ========== $
+
+$macro: spurious_short_option_operand(option_name, operand_text) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ -$option_name=$operand_text
+This option does not accept an operand.
+
+$insert: command_line_error_tail $
+$end: spurious_short_option_operand $
+
+$comment: ========== missing_short_option_operand ========== $
+
+$macro: missing_short_option_operand(option_name, operand_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ -$option_name
+This option expects an operand:
+ -$option_name=$operand_name
+
+$insert: command_line_error_tail $
+$end: missing_short_option_operand $
+
+$comment: ========== invalid_argument ========== $
+
+$macro: invalid_argument(argument_text) $
+$insert: command_line_error_head $
+
+The following argument is rejected:
+ $argument_text
+It is invalid.
+
+$insert: command_line_error_tail $
+$end: invalid_argument $
+
+$comment: ========== unknown_target ========== $
+
+$macro: unknown_target(target) $
+$insert: command_line_error_head $
+
+The "$target" target is not supported.
+
+The following command lists available target languages:
+ sablecc --list-targets
+
+$insert: command_line_error_tail $
+$end: unknown_target $
+
+$comment: ========== invalid_desination_directory ========== $
+
+$macro: invalid_desination_directory(destination) $
+$insert: command_line_error_head $
+
+The "$destination" destination is not a directory.
+
+$insert: command_line_error_tail $
+$end: invalid_desination_directory $
+
+$comment: ========== invalid_argument_count ========== $
+
+$macro: invalid_argument_count $
+$insert: command_line_error_head $
+
+A single grammar file must be provided.
+
+$insert: command_line_error_tail $
+$end: invalid_argument_count $
+
+$comment: ========== invalid_suffix ========== $
+
+$macro: invalid_suffix(file_name) $
+$insert: command_line_error_head $
+
+The grammar file, "$file_name", does not have a .sablecc suffix.
+
+$insert: command_line_error_tail $
+$end: invalid_suffix $
+
+$comment: ========== missing_grammar_file ========== $
+
+$macro: missing_grammar_file(file_name) $
+$insert: command_line_error_head $
+
+The grammar file, "$file_name", does not exist.
+
+$insert: command_line_error_tail $
+$end: missing_grammar_file $
+
+$comment: ========== grammar_not_file ========== $
+
+$macro: grammar_not_file(file_name) $
+$insert: command_line_error_head $
+
+The grammar argument, "$file_name", is not a file.
+
+$insert: command_line_error_tail $
+$end: grammar_not_file $
+
+$comment: ========== input_error ========== $
+
+$macro: input_error(file_name, message) $
+*** I/O ERROR ***
+
+The following system error happened while reading "$file_name":
+ $message
+$end: input_error $
+
+$comment: ========== syntax_error ========== $
+
+$macro: syntax_error(line, char, token_type, token_text, message) $
+*** SYNTAX ERROR ***
+
+Line: $line
+Char: $char
+Syntax error on unexpected $token_type token "$token_text":
+$message.
+$end: syntax_error $
+
+$comment: ========== lexical_error ========== $
+
+$macro: lexical_error(line, char, message) $
+*** LEXICAL ERROR ***
+
+Line: $line
+Char: $char
+$message.
+$end: lexical_error $
+
+$comment: ========== internal_error ========== $
+
+$macro: internal_error(stack_trace, message) $
+*** INTERNAL ERROR ***
+
+$stack_trace
+An internal error was raised with the following message:
+ $message.
+
+Please submit a defect ticket with the full error trace above on:
+ http://sablecc.org/
+$end: internal_error $
+
+$comment: ========== semantic_error_head ========== $
+
+$text: semantic_error_head $
+*** SEMANTIC ERROR ***
+$end: semantic_error_head $
+
+$comment: ========== duplicate_declaration ========== $
+
+$macro: duplicate_declaration(name, type, line, char, ref_type, ref_line, ref_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The "$name" $type declaration reuses an existing name.
+A "$name" $ref_type is already declared at line $ref_line, char $ref_char.
+$end: duplicate_declaration $
+
+$comment: ========== invalid_interval ========== $
+
+$macro: invalid_interval(line, char, from, to) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The interval is invalid as $from is bigger than $to.
+$end: invalid_interval $
+
+$comment: ========== undefined_reference ========== $
+
+$macro: undefined_reference(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$name" is not defined.
+$end: undefined_reference $
+
+$comment: ========== invalid_reference ========== $
+
+$macro: invalid_reference(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$name" is an invalid reference.
+$end: invalid_reference $
+
+$comment: ========== cyclic_reference ========== $
+
+$macro: cyclic_reference(reference, line, char, context, context_line, context_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$reference" is a cyclic reference to "$context" of line $context_line, char $context_char.
+$end: cyclic_reference $
+
+$comment: ========== invalid_priority ========== $
+
+$macro: invalid_priority(line, char, token) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The priority is invalid, as "$token" appears on both sides.
+$end: invalid_priority $
+
+$comment: ========== conflicting_priorities ========== $
+
+$macro: conflicting_priorities(line, char, high_token, low_token, context_line, context_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The priority of "$high_token" over "$low_token" conflicts with the reverse priority of line $context_line, char $context_char.
+$end: conflicting_priorities $
+
+$comment: ========== not_a_token ========== $
+
+$macro: not_a_token(line, char, token) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$token" is not a token.
+$end: not_a_token $
+
+$comment: ========== lexer_conflict ========== $
+
+$macro: lexer_conflict(token1, token2) $
+$insert: semantic_error_head $
+
+A conflict has been detected between the "$token1" and "$token2" tokens.
+An explicit priority must be added between these tokens.
+$end: lexer_conflict $
+
+$comment: ========== parser_useless_production ========== $
+
+$macro: parser_useless_production(name) $
+$insert: semantic_error_head $
+
+The "$name" production is useless; it cannot match any finite sentence.
+$end: parser_useless_production $
+
+$comment: ========== parser_spurious_priority ========== $
+
+$macro: parser_spurious_priority(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The priority of "$name" is already set.
+$end: parser_spurious_priority $
+
+$comment: ========== alternative_not_recursive ========== $
+
+$macro: alternative_not_recursive(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The "$name" alternative is not left or right recursive.
+$end: alternative_not_recursive $
+
+$comment: ========== recursion_not_followed_by_token ========== $
+
+$macro: recursion_not_followed_by_token(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The operator of the "$name" alternative is not a token.
+$end: recursion_not_followed_by_token $
+
+$comment: ========== not_implemented ========== $
+
+$macro: not_implemented(feature, line, char) $
+*** IMPLEMENTATION ERROR ***
+
+Line: $line
+Char: $char
+The $feature feature is not yet implemented.
+$end: not_implemented $
+
+$comment: ========== output_error ========== $
+
+$macro: output_error(file_name, message) $
+*** I/O ERROR ***
+
+The following system error happened while writing "$file_name":
+ $message
+$end: output_error $
