@@ -69,8 +69,8 @@ class ArgumentCollection {
                         arguments[currentArgIndex]), 1024))).parse();
             }
             catch (Exception e) {
-                throw CompilerException.invalidArgument(
-                        arguments[currentArgIndex]);
+                throw CompilerException
+                        .invalidArgument(arguments[currentArgIndex]);
             }
 
             Option incompleteOption = ArgumentExtractor.extractArguments(ast,
