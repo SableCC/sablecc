@@ -36,27 +36,11 @@ public class CompilerException
         }
     }
 
-    private CompilerException(
-            String message,
-            Throwable cause) {
-
-        super(message, cause);
-
-        if (message == null) {
-            throw new InternalException("message may not be null");
-        }
-
-        if (cause == null) {
-            throw new InternalException("cause may not be null");
-        }
-    }
-
     public static CompilerException invalidArgument(
-            String argument_text,
-            Throwable cause) {
+            String argument_text) {
 
         return new CompilerException(
-                new MInvalidArgument(argument_text).toString(), cause);
+                new MInvalidArgument(argument_text).toString());
     }
 
     public static CompilerException missingLongOptionOperand(
@@ -110,7 +94,7 @@ public class CompilerException
             Throwable cause) {
 
         return new CompilerException(new MInputError(fileName,
-                cause.getMessage()).toString(), cause);
+                cause.getMessage()).toString());
     }
 
     public static CompilerException invalidArgumentCount() {
@@ -287,7 +271,7 @@ public class CompilerException
             Throwable cause) {
 
         return new CompilerException(new MOutputError(fileName,
-                cause.getMessage()).toString(), cause);
+                cause.getMessage()).toString());
     }
 
 }

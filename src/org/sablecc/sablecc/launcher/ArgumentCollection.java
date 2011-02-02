@@ -70,7 +70,7 @@ class ArgumentCollection {
             }
             catch (Exception e) {
                 throw CompilerException.invalidArgument(
-                        arguments[currentArgIndex], e);
+                        arguments[currentArgIndex]);
             }
 
             Option incompleteOption = ArgumentExtractor.extractArguments(ast,
