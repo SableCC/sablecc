@@ -29,6 +29,19 @@ The following command provides usage information:
  sablecc --help
 $end: command_line_error_tail $
 
+$comment: ========== unknown_target ========== $
+
+$macro: unknown_target(target) $
+$insert: command_line_error_head $
+
+The "$target" target is not supported.
+
+The following command lists available target languages:
+ sablecc --list-targets
+
+$insert: command_line_error_tail $
+$end: unknown_target $
+
 $comment$
 
 -------------------------------------------------------------------------------
@@ -120,19 +133,6 @@ It is invalid.
 
 $insert: command_line_error_tail $
 $end: invalid_argument $
-
-$comment: ========== unknown_target ========== $
-
-$macro: unknown_target(target) $
-$insert: command_line_error_head $
-
-The "$target" target is not supported.
-
-The following command lists available target languages:
- sablecc --list-targets
-
-$insert: command_line_error_tail $
-$end: unknown_target $
 
 $comment: ========== invalid_desination_directory ========== $
 
