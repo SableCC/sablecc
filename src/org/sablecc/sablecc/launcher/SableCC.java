@@ -155,7 +155,7 @@ public class SableCC {
 
                 // check that the target language is supported
                 if (!supportedTargets.contains(targetLanguage)) {
-                    throw CompilerException.unknownTarget(targetLanguage);
+                    throw LauncherException.unknownTarget(targetLanguage);
                 }
                 break;
 

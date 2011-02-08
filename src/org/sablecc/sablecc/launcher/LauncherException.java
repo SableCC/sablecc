@@ -18,6 +18,7 @@
 package org.sablecc.sablecc.launcher;
 
 import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.launcher.errormessage.*;
 
 public class LauncherException
         extends CompilerException {
@@ -27,4 +28,12 @@ public class LauncherException
 
         super(message);
     }
+
+    public static CompilerException unknownTarget(
+            String targetLanguage) {
+
+        return new LauncherException(
+                new MUnknownTarget(targetLanguage).toString());
+    }
+
 }
