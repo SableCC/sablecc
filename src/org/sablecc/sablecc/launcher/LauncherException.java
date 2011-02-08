@@ -36,4 +36,35 @@ public class LauncherException
                 new MUnknownTarget(targetLanguage).toString());
     }
 
+    public static LauncherException invalidDesinationDirectory(
+            String destination) {
+
+        return new LauncherException(new MInvalidDesinationDirectory(
+                destination).toString());
+    }
+
+    public static LauncherException invalidArgumentCount() {
+
+        return new LauncherException(new MInvalidArgumentCount().toString());
+    }
+
+    public static LauncherException invalidSuffix(
+            String fileName) {
+
+        return new LauncherException(new MInvalidSuffix(fileName).toString());
+    }
+
+    public static LauncherException missingGrammarFile(
+            String fileName) {
+
+        return new LauncherException(
+                new MMissingGrammarFile(fileName).toString());
+    }
+
+    public static LauncherException grammarNotFile(
+            String fileName) {
+
+        return new LauncherException(new MGrammarNotFile(fileName).toString());
+    }
+
 }

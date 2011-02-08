@@ -16,6 +16,40 @@ See the License for the specific language governing permissions and
 limitations under the License.
 $end$
 
+$comment: ========== syntax_error ========== $
+
+$macro: syntax_error(line, char, token_type, token_text, message) $
+*** SYNTAX ERROR ***
+
+Line: $line
+Char: $char
+Syntax error on unexpected $token_type token "$token_text":
+$message.
+$end: syntax_error $
+
+$comment: ========== lexical_error ========== $
+
+$macro: lexical_error(line, char, message) $
+*** LEXICAL ERROR ***
+
+Line: $line
+Char: $char
+$message.
+$end: lexical_error $
+
+$comment: ========== internal_error ========== $
+
+$macro: internal_error(stack_trace, message) $
+*** INTERNAL ERROR ***
+
+$stack_trace
+An internal error was raised with the following message:
+ $message.
+
+Please submit a defect ticket with the above error trace on:
+ http://sablecc.org/
+$end: internal_error $
+
 $comment: ========== command_line_error_head ========== $
 
 $text: command_line_error_head $
@@ -41,6 +75,58 @@ The following command lists available target languages:
 
 $insert: command_line_error_tail $
 $end: unknown_target $
+
+$comment: ========== invalid_desination_directory ========== $
+
+$macro: invalid_desination_directory(destination) $
+$insert: command_line_error_head $
+
+The "$destination" destination is not a directory.
+
+$insert: command_line_error_tail $
+$end: invalid_desination_directory $
+
+$comment: ========== invalid_argument_count ========== $
+
+$macro: invalid_argument_count $
+$insert: command_line_error_head $
+
+Many arguments were provided.
+
+A single grammar file must be provided as argument.
+
+$insert: command_line_error_tail $
+$end: invalid_argument_count $
+
+$comment: ========== invalid_suffix ========== $
+
+$macro: invalid_suffix(file_name) $
+$insert: command_line_error_head $
+
+The grammar file "$file_name" does not have a .sablecc suffix.
+
+$insert: command_line_error_tail $
+$end: invalid_suffix $
+
+$comment: ========== missing_grammar_file ========== $
+
+$macro: missing_grammar_file(file_name) $
+$insert: command_line_error_head $
+
+The grammar file "$file_name" does not exist.
+
+$insert: command_line_error_tail $
+$end: missing_grammar_file $
+
+$comment: ========== grammar_not_file ========== $
+
+$macro: grammar_not_file(file_name) $
+$insert: command_line_error_head $
+
+The grammar argument "$file_name" is not a file.
+
+$insert: command_line_error_tail $
+$end: grammar_not_file $
 
 $comment$
 
@@ -134,56 +220,6 @@ It is invalid.
 $insert: command_line_error_tail $
 $end: invalid_argument $
 
-$comment: ========== invalid_desination_directory ========== $
-
-$macro: invalid_desination_directory(destination) $
-$insert: command_line_error_head $
-
-The "$destination" destination is not a directory.
-
-$insert: command_line_error_tail $
-$end: invalid_desination_directory $
-
-$comment: ========== invalid_argument_count ========== $
-
-$macro: invalid_argument_count $
-$insert: command_line_error_head $
-
-A single grammar file must be provided.
-
-$insert: command_line_error_tail $
-$end: invalid_argument_count $
-
-$comment: ========== invalid_suffix ========== $
-
-$macro: invalid_suffix(file_name) $
-$insert: command_line_error_head $
-
-The grammar file, "$file_name", does not have a .sablecc suffix.
-
-$insert: command_line_error_tail $
-$end: invalid_suffix $
-
-$comment: ========== missing_grammar_file ========== $
-
-$macro: missing_grammar_file(file_name) $
-$insert: command_line_error_head $
-
-The grammar file, "$file_name", does not exist.
-
-$insert: command_line_error_tail $
-$end: missing_grammar_file $
-
-$comment: ========== grammar_not_file ========== $
-
-$macro: grammar_not_file(file_name) $
-$insert: command_line_error_head $
-
-The grammar argument, "$file_name", is not a file.
-
-$insert: command_line_error_tail $
-$end: grammar_not_file $
-
 $comment: ========== input_error ========== $
 
 $macro: input_error(file_name, message) $
@@ -192,40 +228,6 @@ $macro: input_error(file_name, message) $
 The following system error happened while reading "$file_name":
  $message
 $end: input_error $
-
-$comment: ========== syntax_error ========== $
-
-$macro: syntax_error(line, char, token_type, token_text, message) $
-*** SYNTAX ERROR ***
-
-Line: $line
-Char: $char
-Syntax error on unexpected $token_type token "$token_text":
-$message.
-$end: syntax_error $
-
-$comment: ========== lexical_error ========== $
-
-$macro: lexical_error(line, char, message) $
-*** LEXICAL ERROR ***
-
-Line: $line
-Char: $char
-$message.
-$end: lexical_error $
-
-$comment: ========== internal_error ========== $
-
-$macro: internal_error(stack_trace, message) $
-*** INTERNAL ERROR ***
-
-$stack_trace
-An internal error was raised with the following message:
- $message.
-
-Please submit a defect ticket with the full error trace above on:
- http://sablecc.org/
-$end: internal_error $
 
 $comment: ========== semantic_error_head ========== $
 
