@@ -29,7 +29,7 @@ public class LauncherException
         super(message);
     }
 
-    public static CompilerException unknownTarget(
+    public static LauncherException unknownTarget(
             String targetLanguage) {
 
         return new LauncherException(
