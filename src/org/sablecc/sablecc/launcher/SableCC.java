@@ -25,8 +25,8 @@ import java.io.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.errormessage.*;
 import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.launcher.errormessage.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.parser.*;
 import org.sablecc.util.*;
@@ -166,7 +166,7 @@ public class SableCC {
                 // if the destination exists, check that it is a directory
                 if (destinationDirectory.exists()
                         && !destinationDirectory.isDirectory()) {
-                    throw CompilerException
+                    throw LauncherException
                             .invalidDesinationDirectory(destination);
                 }
                 break;
@@ -227,7 +227,7 @@ public class SableCC {
             return;
         }
         else if (argumentCollection.getTextArguments().size() > 1) {
-            throw CompilerException.invalidArgumentCount();
+            throw LauncherException.invalidArgumentCount();
         }
 
         // check argument
@@ -235,18 +235,18 @@ public class SableCC {
                 .get(0);
 
         if (!fileNameArgument.getText().endsWith(".sablecc")) {
-            throw CompilerException.invalidSuffix(fileNameArgument.getText());
+            throw LauncherException.invalidSuffix(fileNameArgument.getText());
         }
 
         File grammarFile = new File(fileNameArgument.getText());
 
         if (!grammarFile.exists()) {
-            throw CompilerException.missingGrammarFile(fileNameArgument
+            throw LauncherException.missingGrammarFile(fileNameArgument
                     .getText());
         }
 
         if (!grammarFile.isFile()) {
-            throw CompilerException.grammarNotFile(fileNameArgument.getText());
+            throw LauncherException.grammarNotFile(fileNameArgument.getText());
         }
 
         Trace trace = new Trace(verbosity);
