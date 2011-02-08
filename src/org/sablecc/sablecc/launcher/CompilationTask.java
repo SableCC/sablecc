@@ -21,7 +21,6 @@ import java.io.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.*;
-import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.parser.*;
 import org.sablecc.util.*;
@@ -117,7 +116,7 @@ public class CompilationTask {
             grammarCompiler.compileGrammar();
         }
         catch (IOException e) {
-            throw CompilerException.inputError(this.grammarFile.toString(), e);
+            throw LauncherException.inputError(this.grammarFile.toString(), e);
         }
     }
 }

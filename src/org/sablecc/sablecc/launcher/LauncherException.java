@@ -29,6 +29,14 @@ public class LauncherException
         super(message);
     }
 
+    public static LauncherException inputError(
+            String fileName,
+            Throwable cause) {
+
+        return new LauncherException(new MInputError(fileName,
+                cause.getMessage()).toString());
+    }
+
     public static LauncherException unknownTarget(
             String targetLanguage) {
 
@@ -65,6 +73,59 @@ public class LauncherException
             String fileName) {
 
         return new LauncherException(new MGrammarNotFile(fileName).toString());
+    }
+
+    public static LauncherException invalidArgument(
+            String argument_text) {
+
+        return new LauncherException(
+                new MInvalidArgument(argument_text).toString());
+    }
+
+    public static LauncherException missingLongOptionOperand(
+            String optionName,
+            String operandName) {
+
+        return new LauncherException(new MMissingLongOptionOperand(optionName,
+                operandName).toString());
+    }
+
+    public static LauncherException missingShortOptionOperand(
+            String optionName,
+            String operandName) {
+
+        return new LauncherException(new MMissingShortOptionOperand(optionName,
+                operandName).toString());
+    }
+
+    public static LauncherException invalidLongOption(
+            String optionName) {
+
+        return new LauncherException(
+                new MInvalidLongOption(optionName).toString());
+    }
+
+    public static LauncherException spuriousLongOptionOperand(
+            String optionName,
+            String operand_text) {
+
+        return new LauncherException(new MSpuriousLongOptionOperand(optionName,
+                operand_text).toString());
+    }
+
+    public static LauncherException invalidShortOption(
+            String optionName) {
+
+        return new LauncherException(
+                new MInvalidShortOption(optionName).toString());
+    }
+
+    public static LauncherException spuriousShortOptionOperand(
+            String optionName,
+            String operand_text) {
+
+        return new LauncherException(new MSpuriousShortOptionOperand(
+                optionName, operand_text).toString());
     }
 
 }
