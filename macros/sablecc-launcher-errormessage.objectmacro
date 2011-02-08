@@ -29,6 +29,12 @@ The following command provides usage information:
  sablecc --help
 $end: command_line_error_tail $
 
+$comment$
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
 $comment: ========== invalid_long_option ========== $
 
 $macro: invalid_long_option(option_name) $
@@ -373,3 +379,5 @@ $macro: output_error(file_name, message) $
 The following system error happened while writing "$file_name":
  $message
 $end: output_error $
+
+$end$
