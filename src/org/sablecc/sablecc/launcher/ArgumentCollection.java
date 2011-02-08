@@ -20,7 +20,6 @@ package org.sablecc.sablecc.launcher;
 import java.io.*;
 import java.util.*;
 
-import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.launcher.syntax3.lexer.*;
 import org.sablecc.sablecc.launcher.syntax3.node.*;
 import org.sablecc.sablecc.launcher.syntax3.parser.*;
@@ -69,7 +68,7 @@ class ArgumentCollection {
                         arguments[currentArgIndex]), 1024))).parse();
             }
             catch (Exception e) {
-                throw CompilerException
+                throw LauncherException
                         .invalidArgument(arguments[currentArgIndex]);
             }
 
@@ -81,12 +80,12 @@ class ArgumentCollection {
                 if (currentArgIndex + 1 >= arguments.length) {
 
                     if (arguments[currentArgIndex].startsWith("--")) {
-                        throw CompilerException.missingLongOptionOperand(
+                        throw LauncherException.missingLongOptionOperand(
                                 incompleteOption.getLongName(),
                                 incompleteOption.getOperandName());
                     }
                     else {
-                        throw CompilerException.missingShortOptionOperand(
+                        throw LauncherException.missingShortOptionOperand(
                                 incompleteOption.getShortName(),
                                 incompleteOption.getOperandName());
                     }

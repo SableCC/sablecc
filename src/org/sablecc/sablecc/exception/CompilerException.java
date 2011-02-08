@@ -18,12 +18,9 @@
 package org.sablecc.sablecc.exception;
 
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.core.*;
-import org.sablecc.sablecc.errormessage.*;
-import org.sablecc.sablecc.syntax3.node.*;
 
 @SuppressWarnings("serial")
-public class CompilerException
+public abstract class CompilerException
         extends RuntimeException {
 
     protected CompilerException(
@@ -35,92 +32,7 @@ public class CompilerException
             throw new InternalException("message may not be null");
         }
     }
-
-    public static CompilerException invalidArgument(
-            String argument_text) {
-
-        return new CompilerException(
-                new MInvalidArgument(argument_text).toString());
-    }
-
-    public static CompilerException missingLongOptionOperand(
-            String optionName,
-            String operandName) {
-
-        return new CompilerException(new MMissingLongOptionOperand(optionName,
-                operandName).toString());
-    }
-
-    public static CompilerException missingShortOptionOperand(
-            String optionName,
-            String operandName) {
-
-        return new CompilerException(new MMissingShortOptionOperand(optionName,
-                operandName).toString());
-    }
-
-    public static CompilerException invalidLongOption(
-            String optionName) {
-
-        return new CompilerException(
-                new MInvalidLongOption(optionName).toString());
-    }
-
-    public static CompilerException invalidShortOption(
-            String optionName) {
-
-        return new CompilerException(
-                new MInvalidShortOption(optionName).toString());
-    }
-
-    public static CompilerException spuriousLongOptionOperand(
-            String optionName,
-            String operand_text) {
-
-        return new CompilerException(new MSpuriousLongOptionOperand(optionName,
-                operand_text).toString());
-    }
-
-    public static CompilerException spuriousShortOptionOperand(
-            String optionName,
-            String operand_text) {
-
-        return new CompilerException(new MSpuriousShortOptionOperand(
-                optionName, operand_text).toString());
-    }
-
-    public static CompilerException inputError(
-            String fileName,
-            Throwable cause) {
-
-        return new CompilerException(new MInputError(fileName,
-                cause.getMessage()).toString());
-    }
-
-    public static CompilerException invalidArgumentCount() {
-
-        return new CompilerException(new MInvalidArgumentCount().toString());
-    }
-
-    public static CompilerException invalidSuffix(
-            String fileName) {
-
-        return new CompilerException(new MInvalidSuffix(fileName).toString());
-    }
-
-    public static CompilerException missingGrammarFile(
-            String fileName) {
-
-        return new CompilerException(
-                new MMissingGrammarFile(fileName).toString());
-    }
-
-    public static CompilerException grammarNotFile(
-            String fileName) {
-
-        return new CompilerException(new MGrammarNotFile(fileName).toString());
-    }
-
+/*
     public static CompilerException duplicateDeclaration(
             NameDeclaration duplicateNameDeclaration,
             NameDeclaration olderNameDeclaration) {
@@ -140,20 +52,6 @@ public class CompilerException
                 duplicateIdentifier.getPos() + "",
                 olderNameDeclaration.getNameType(), olderIdentifier.getLine()
                         + "", olderIdentifier.getPos() + "").toString());
-    }
-
-    public static CompilerException unknownTarget(
-            String targetLanguage) {
-
-        return new CompilerException(
-                new MUnknownTarget(targetLanguage).toString());
-    }
-
-    public static CompilerException invalidDesinationDirectory(
-            String destination) {
-
-        return new CompilerException(new MInvalidDesinationDirectory(
-                destination).toString());
     }
 
     public static CompilerException invalidInterval(
@@ -191,7 +89,7 @@ public class CompilerException
                         + "").toString());
     }
 
-/*    public static CompilerException invalidPriority(
+    public static CompilerException invalidPriority(
             TGt gt,
             MatchedToken matchedToken) {
 
@@ -199,8 +97,8 @@ public class CompilerException
                 .getPos()
                 + "", matchedToken.getName()).toString());
     }
-*/
-/*    public static CompilerException conflictingPriorities(
+
+    public static CompilerException conflictingPriorities(
             TGt gt,
             MatchedToken high,
             MatchedToken low,
@@ -211,7 +109,7 @@ public class CompilerException
                 .getLine()
                 + "", prior_gt.getPos() + "").toString());
     }
-*/
+
     public static CompilerException notAToken(
             Token token) {
 
@@ -219,14 +117,14 @@ public class CompilerException
                 token.getPos() + "", token.getText()).toString());
     }
 
-/*    public static CompilerException lexerConflict(
+    public static CompilerException lexerConflict(
             MatchedToken matchedToken1,
             MatchedToken matchedToken2) {
 
         return new CompilerException(new MLexerConflict(
                 matchedToken1.getName(), matchedToken2.getName()).toString());
     }
-*/
+
     public static CompilerException parserUselessProduction(
             String name) {
 
@@ -273,5 +171,5 @@ public class CompilerException
         return new CompilerException(new MOutputError(fileName,
                 cause.getMessage()).toString());
     }
-
+*/
 }

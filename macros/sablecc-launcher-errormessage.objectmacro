@@ -50,6 +50,15 @@ Please submit a defect ticket with the above error trace on:
  http://sablecc.org/
 $end: internal_error $
 
+$comment: ========== input_error ========== $
+
+$macro: input_error(file_name, message) $
+*** I/O ERROR ***
+
+The following system error happened while reading "$file_name":
+ $message
+$end: input_error $
+
 $comment: ========== command_line_error_head ========== $
 
 $text: command_line_error_head $
@@ -128,11 +137,42 @@ The grammar argument "$file_name" is not a file.
 $insert: command_line_error_tail $
 $end: grammar_not_file $
 
-$comment$
+$comment: ========== invalid_argument ========== $
 
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
+$macro: invalid_argument(argument_text) $
+$insert: command_line_error_head $
+
+The following argument is invalid:
+ $argument_text
+
+$insert: command_line_error_tail $
+$end: invalid_argument $
+
+$comment: ========== missing_long_option_operand ========== $
+
+$macro: missing_long_option_operand(option_name, operand_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ --$option_name
+This option expects an operand:
+ --$option_name=$operand_name
+
+$insert: command_line_error_tail $
+$end: missing_long_option_operand $
+
+$comment: ========== missing_short_option_operand ========== $
+
+$macro: missing_short_option_operand(option_name, operand_name) $
+$insert: command_line_error_head $
+
+The following option is rejected:
+ -$option_name
+This option expects an operand:
+ -$option_name=$operand_name
+
+$insert: command_line_error_tail $
+$end: missing_short_option_operand $
 
 $comment: ========== invalid_long_option ========== $
 
@@ -158,19 +198,6 @@ This option does not accept an operand.
 $insert: command_line_error_tail $
 $end: spurious_long_option_operand $
 
-$comment: ========== missing_long_option_operand ========== $
-
-$macro: missing_long_option_operand(option_name, operand_name) $
-$insert: command_line_error_head $
-
-The following option is rejected:
- --$option_name
-This option expects an operand:
- --$option_name=$operand_name
-
-$insert: command_line_error_tail $
-$end: missing_long_option_operand $
-
 $comment: ========== invalid_short_option ========== $
 
 $macro: invalid_short_option(option_name) $
@@ -194,192 +221,3 @@ This option does not accept an operand.
 
 $insert: command_line_error_tail $
 $end: spurious_short_option_operand $
-
-$comment: ========== missing_short_option_operand ========== $
-
-$macro: missing_short_option_operand(option_name, operand_name) $
-$insert: command_line_error_head $
-
-The following option is rejected:
- -$option_name
-This option expects an operand:
- -$option_name=$operand_name
-
-$insert: command_line_error_tail $
-$end: missing_short_option_operand $
-
-$comment: ========== invalid_argument ========== $
-
-$macro: invalid_argument(argument_text) $
-$insert: command_line_error_head $
-
-The following argument is rejected:
- $argument_text
-It is invalid.
-
-$insert: command_line_error_tail $
-$end: invalid_argument $
-
-$comment: ========== input_error ========== $
-
-$macro: input_error(file_name, message) $
-*** I/O ERROR ***
-
-The following system error happened while reading "$file_name":
- $message
-$end: input_error $
-
-$comment: ========== semantic_error_head ========== $
-
-$text: semantic_error_head $
-*** SEMANTIC ERROR ***
-$end: semantic_error_head $
-
-$comment: ========== duplicate_declaration ========== $
-
-$macro: duplicate_declaration(name, type, line, char, ref_type, ref_line, ref_char) $
-$insert: semantic_error_head $
-
-Line: $line
-Char: $char
-The "$name" $type declaration reuses an existing name.
-A "$name" $ref_type is already declared at line $ref_line, char $ref_char.
-$end: duplicate_declaration $
-
-$comment: ========== invalid_interval ========== $
-
-$macro: invalid_interval(line, char, from, to) $
-$insert: semantic_error_head $
-
-Line: $line
-Char: $char
-The interval is invalid as $from is bigger than $to.
-$end: invalid_interval $
-
-$comment: ========== undefined_reference ========== $
-
-$macro: undefined_reference(name, line, char) $
-$insert: semantic_error_head $
-
-Line: $line
-Char: $char
-"$name" is not defined.
-$end: undefined_reference $
-
-$comment: ========== invalid_reference ========== $
-
-$macro: invalid_reference(name, line, char) $
-$insert: semantic_error_head $
-
-Line: $line
-Char: $char
-"$name" is an invalid reference.
-$end: invalid_reference $
-
-$comment: ========== cyclic_reference ========== $
-
-$macro: cyclic_reference(reference, line, char, context, context_line, context_char) $
-$insert: semantic_error_head $
-
-Line: $line
-Char: $char
-"$reference" is a cyclic reference to "$context" of line $context_line, char $context_char.
-$end: cyclic_reference $
-
-$comment: ========== invalid_priority ========== $
-
-$macro: invalid_priority(line, char, token) $
-$insert: semantic_error_head $
-
-Line: $line
-Char: $char
-The priority is invalid, as "$token" appears on both sides.
-$end: invalid_priority $
-
-$comment: ========== conflicting_priorities ========== $
-
-$macro: conflicting_priorities(line, char, high_token, low_token, context_line, context_char) $
-$insert: semantic_error_head $
-
-Line: $line
-Char: $char
-The priority of "$high_token" over "$low_token" conflicts with the reverse priority of line $context_line, char $context_char.
-$end: conflicting_priorities $
-
-$comment: ========== not_a_token ========== $
-
-$macro: not_a_token(line, char, token) $
-$insert: semantic_error_head $
-
-Line: $line
-Char: $char
-"$token" is not a token.
-$end: not_a_token $
-
-$comment: ========== lexer_conflict ========== $
-
-$macro: lexer_conflict(token1, token2) $
-$insert: semantic_error_head $
-
-A conflict has been detected between the "$token1" and "$token2" tokens.
-An explicit priority must be added between these tokens.
-$end: lexer_conflict $
-
-$comment: ========== parser_useless_production ========== $
-
-$macro: parser_useless_production(name) $
-$insert: semantic_error_head $
-
-The "$name" production is useless; it cannot match any finite sentence.
-$end: parser_useless_production $
-
-$comment: ========== parser_spurious_priority ========== $
-
-$macro: parser_spurious_priority(name, line, char) $
-$insert: semantic_error_head $
-
-Line: $line
-Char: $char
-The priority of "$name" is already set.
-$end: parser_spurious_priority $
-
-$comment: ========== alternative_not_recursive ========== $
-
-$macro: alternative_not_recursive(name, line, char) $
-$insert: semantic_error_head $
-
-Line: $line
-Char: $char
-The "$name" alternative is not left or right recursive.
-$end: alternative_not_recursive $
-
-$comment: ========== recursion_not_followed_by_token ========== $
-
-$macro: recursion_not_followed_by_token(name, line, char) $
-$insert: semantic_error_head $
-
-Line: $line
-Char: $char
-The operator of the "$name" alternative is not a token.
-$end: recursion_not_followed_by_token $
-
-$comment: ========== not_implemented ========== $
-
-$macro: not_implemented(feature, line, char) $
-*** IMPLEMENTATION ERROR ***
-
-Line: $line
-Char: $char
-The $feature feature is not yet implemented.
-$end: not_implemented $
-
-$comment: ========== output_error ========== $
-
-$macro: output_error(file_name, message) $
-*** I/O ERROR ***
-
-The following system error happened while writing "$file_name":
- $message
-$end: output_error $
-
-$end$

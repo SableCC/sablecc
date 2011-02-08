@@ -20,7 +20,6 @@ package org.sablecc.sablecc.launcher;
 import java.util.*;
 
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.launcher.syntax3.analysis.*;
 import org.sablecc.sablecc.launcher.syntax3.node.*;
 
@@ -83,7 +82,7 @@ class ArgumentExtractor
         Option option = Option.getLongOption(longName);
 
         if (option == null) {
-            throw CompilerException.invalidLongOption(longName);
+            throw LauncherException.invalidLongOption(longName);
         }
 
         // expects an operand?
@@ -115,7 +114,7 @@ class ArgumentExtractor
             if (node.getOperand() != null) {
                 AOperand operand = (AOperand) node.getOperand();
 
-                throw CompilerException.spuriousLongOptionOperand(longName,
+                throw LauncherException.spuriousLongOptionOperand(longName,
                         operand.getOperandText().getText());
             }
 
@@ -132,7 +131,7 @@ class ArgumentExtractor
             AShortOption node) {
 
         if (this.incompleteOption != null) {
-            throw CompilerException.missingShortOptionOperand(
+            throw LauncherException.missingShortOptionOperand(
                     this.incompleteOption.getShortName(),
                     this.incompleteOption.getOperandName());
         }
@@ -143,7 +142,7 @@ class ArgumentExtractor
         Option option = Option.getShortOption(shortName);
 
         if (option == null) {
-            throw CompilerException.invalidShortOption(shortName);
+            throw LauncherException.invalidShortOption(shortName);
         }
 
         // expects an operand?
@@ -175,7 +174,7 @@ class ArgumentExtractor
             if (node.getOperand() != null) {
                 AOperand operand = (AOperand) node.getOperand();
 
-                throw CompilerException.spuriousShortOptionOperand(shortName,
+                throw LauncherException.spuriousShortOptionOperand(shortName,
                         operand.getOperandText().getText());
             }
 
