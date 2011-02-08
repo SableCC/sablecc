@@ -26,7 +26,7 @@ import org.sablecc.sablecc.syntax3.node.*;
 public class CompilerException
         extends RuntimeException {
 
-    private CompilerException(
+    protected CompilerException(
             String message) {
 
         super(message);
