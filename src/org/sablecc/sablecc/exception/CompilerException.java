@@ -33,27 +33,6 @@ public abstract class CompilerException
         }
     }
 /*
-    public static CompilerException duplicateDeclaration(
-            NameDeclaration duplicateNameDeclaration,
-            NameDeclaration olderNameDeclaration) {
-
-        String name = duplicateNameDeclaration.getName();
-        if (!name.equals(olderNameDeclaration.getName())) {
-            throw new InternalException("names must be identical");
-        }
-
-        TIdentifier duplicateIdentifier = duplicateNameDeclaration
-                .getNameIdentifier();
-        TIdentifier olderIdentifier = olderNameDeclaration.getNameIdentifier();
-
-        return new CompilerException(new MDuplicateDeclaration(name,
-                duplicateNameDeclaration.getNameType(),
-                duplicateIdentifier.getLine() + "",
-                duplicateIdentifier.getPos() + "",
-                olderNameDeclaration.getNameType(), olderIdentifier.getLine()
-                        + "", olderIdentifier.getPos() + "").toString());
-    }
-
     public static CompilerException invalidInterval(
             TTwoDots twoDots,
             Token from,

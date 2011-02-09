@@ -17,14 +17,49 @@
 
 package org.sablecc.sablecc.core;
 
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.errormessage.*;
 import org.sablecc.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
 
 public class SemanticException
         extends CompilerException {
 
+    private Token location;
+
     private SemanticException(
-            String message) {
+            String message,
+            Token location) {
 
         super(message);
+
+        if (location == null) {
+            throw new InternalException("location may not be null");
+        }
+
+        this.location = location;
     }
+
+    public static SemanticException duplicateDeclaration(
+            NameDeclaration duplicateNameDeclaration,
+            NameDeclaration olderNameDeclaration) {
+
+        String name = duplicateNameDeclaration.getName();
+        if (!name.equals(olderNameDeclaration.getName())) {
+            throw new InternalException("names must be identical");
+        }
+
+        TIdentifier duplicateIdentifier = duplicateNameDeclaration
+                .getNameIdentifier();
+        TIdentifier olderIdentifier = olderNameDeclaration.getNameIdentifier();
+
+        return new SemanticException(new MDuplicateDeclaration(name,
+                duplicateNameDeclaration.getNameType(),
+                duplicateIdentifier.getLine() + "",
+                duplicateIdentifier.getPos() + "",
+                olderNameDeclaration.getNameType(), olderIdentifier.getLine()
+                        + "", olderIdentifier.getPos() + "").toString(),
+                duplicateIdentifier);
+    }
+
 }

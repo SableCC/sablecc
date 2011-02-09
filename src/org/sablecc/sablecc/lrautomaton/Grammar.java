@@ -21,7 +21,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.exception.*;
 
 public class Grammar {
 
@@ -105,6 +104,7 @@ public class Grammar {
         return sb.toString();
     }
 
+/*
     public void computeShortestLengthAndDetectUselessProductions() {
 
         boolean modified = true;
@@ -124,7 +124,7 @@ public class Grammar {
         }
 
     }
-
+*/
     void resetLookComputationData() {
 
         this.lookComputationDataHasChanged = false;
