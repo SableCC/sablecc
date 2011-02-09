@@ -23,13 +23,15 @@ import org.sablecc.exception.*;
 
 public class ComponentFinder<T> {
 
-    private Map<T, T> representativeMap = new HashMap<T, T>();
+    private final Map<T, T> representativeMap = new HashMap<T, T>();
 
-    private Map<T, Set<T>> memberMap = new LinkedHashMap<T, Set<T>>();
+    private final Map<T, Set<T>> memberMap = new LinkedHashMap<T, Set<T>>();
 
     private Set<T> linearization = new LinkedHashSet<T>();
 
-    private Map<T, Set<T>> reachMap = new LinkedHashMap<T, Set<T>>();
+    private final Map<T, Set<T>> reachMap = new LinkedHashMap<T, Set<T>>();
+
+    private final Progeny<T> progeny;
 
     public ComponentFinder(
             final Collection<T> nodes,
@@ -42,6 +44,8 @@ public class ComponentFinder<T> {
         if (progeny == null) {
             throw new InternalException("progeny may not be null");
         }
+
+        this.progeny = progeny;
 
         new Runnable() {
 
@@ -70,37 +74,6 @@ public class ComponentFinder<T> {
 
                 ComponentFinder.this.linearization = Collections
                         .unmodifiableSet(ComponentFinder.this.linearization);
-
-                for (T node : ComponentFinder.this.linearization) {
-                    Set<T> members = ComponentFinder.this.memberMap.get(node);
-                    Set<T> nodeReach = new LinkedHashSet<T>();
-                    boolean recursive = false;
-
-                    for (T member : members) {
-                        for (T child : progeny.getChildren(member)) {
-                            nodeReach.add(child);
-
-                            T childRepresentative = ComponentFinder.this.representativeMap
-                                    .get(child);
-                            Set<T> childReach = ComponentFinder.this.reachMap
-                                    .get(childRepresentative);
-
-                            if (childReach != null) {
-                                nodeReach.addAll(childReach);
-                            }
-                            else {
-                                recursive = true;
-                            }
-                        }
-                    }
-
-                    if (recursive) {
-                        nodeReach.addAll(members);
-                    }
-
-                    nodeReach = Collections.unmodifiableSet(nodeReach);
-                    ComponentFinder.this.reachMap.put(node, nodeReach);
-                }
             }
 
             private void tarjan(
@@ -146,7 +119,7 @@ public class ComponentFinder<T> {
                                 .put(member, node);
                         members.add(member);
                     }
-                    while (!member.equals(node));
+                    while (member != node);
 
                     members = Collections.unmodifiableSet(members);
                     ComponentFinder.this.memberMap.put(node, members);
@@ -176,8 +149,8 @@ public class ComponentFinder<T> {
             throw new InternalException("node may not be null");
         }
 
-        if (!this.memberMap.containsKey(node)) {
-            throw new InternalException("node is not valid");
+        if (node != getRepresentative(node)) {
+            throw new InternalException("node is not a representative");
         }
 
         return this.memberMap.get(node);
@@ -195,10 +168,48 @@ public class ComponentFinder<T> {
             throw new InternalException("node may not be null");
         }
 
-        if (!this.memberMap.containsKey(node)) {
-            throw new InternalException("node is not valid");
+        if (node != getRepresentative(node)) {
+            throw new InternalException("node is not a representative");
         }
 
-        return this.reachMap.get(node);
+        Set<T> reach = this.reachMap.get(node);
+        if (reach == null) {
+            computeReach();
+            reach = this.reachMap.get(node);
+        }
+
+        return reach;
+    }
+
+    private void computeReach() {
+
+        for (T node : this.linearization) {
+            Set<T> members = this.memberMap.get(node);
+            Set<T> reach = new LinkedHashSet<T>();
+            boolean recursive = false;
+
+            for (T member : members) {
+                for (T child : this.progeny.getChildren(member)) {
+                    reach.add(child);
+
+                    T childRepresentative = this.representativeMap.get(child);
+                    Set<T> childReach = this.reachMap.get(childRepresentative);
+
+                    if (childReach != null) {
+                        reach.addAll(childReach);
+                    }
+                    else {
+                        recursive = true;
+                    }
+                }
+            }
+
+            if (recursive) {
+                reach.addAll(members);
+            }
+
+            reach = Collections.unmodifiableSet(reach);
+            ComponentFinder.this.reachMap.put(node, reach);
+        }
     }
 }
