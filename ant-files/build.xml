@@ -146,7 +146,7 @@ public class Version {
 }
 </echo>
 
-    <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true" excludes="org/sablecc/sablecc/oldstructure/**,org/sablecc/sablecc/oldwalker/**,org/sablecc/sablecc/launcher/OldSableCC.java" />
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true" />
 
     <copy todir="${classes.dir}">
       <fileset dir="${src.dir}">
