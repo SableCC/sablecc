@@ -22,7 +22,6 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.Expression.Lookahead;
 import org.sablecc.sablecc.core.Expression.Lookback;
-import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
@@ -182,7 +181,7 @@ public class Grammar
 
             String name = nameDeclaration.getName();
             if (this.nameMap.containsKey(name)) {
-                throw CompilerException.duplicateDeclaration(nameDeclaration,
+                throw SemanticException.duplicateDeclaration(nameDeclaration,
                         this.nameMap.get(name));
             }
             this.nameMap.put(name, nameDeclaration);
