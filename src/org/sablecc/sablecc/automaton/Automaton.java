@@ -58,7 +58,8 @@ public final class Automaton {
 
     private static final Progeny<State> lookaheadProgeny = new Progeny<State>() {
 
-        public Set<State> getChildren(
+        @Override
+        protected Set<State> getChildrenNoCache(
                 State sourceState) {
 
             Set<State> children = new LinkedHashSet<State>();
@@ -71,7 +72,7 @@ public final class Automaton {
                 children.add(targetState);
             }
 
-            return Collections.unmodifiableSet(children);
+            return children;
         }
     };
 

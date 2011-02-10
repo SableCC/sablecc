@@ -253,12 +253,13 @@ public class GlobalIndex {
 
         Progeny<Scope> referencedTextBlockProgeny = new Progeny<Scope>() {
 
-            public Set<Scope> getChildren(
+            @Override
+            protected Set<Scope> getChildrenNoCache(
                     Scope scope) {
 
                 Set<Scope> children = new LinkedHashSet<Scope>();
                 children.addAll(scope.getDirectlyReferencedTextBlocks());
-                return Collections.unmodifiableSet(children);
+                return children;
             }
         };
 
