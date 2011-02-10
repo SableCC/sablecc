@@ -19,8 +19,28 @@ package org.sablecc.util;
 
 import java.util.*;
 
-public interface Progeny<T> {
+import org.sablecc.exception.*;
 
-    public abstract Set<T> getChildren(
+public abstract class Progeny<T> {
+
+    private final Map<T, Set<T>> childrenMap = new HashMap<T, Set<T>>();
+
+    public Set<T> getChildren(
+            T node) {
+
+        if (node == null) {
+            throw new InternalException("node may not be null");
+        }
+
+        Set<T> children = this.childrenMap.get(node);
+        if (children == null) {
+            children = Collections.unmodifiableSet(getChildrenNoCache(node));
+            this.childrenMap.put(node, children);
+        }
+
+        return children;
+    }
+
+    protected abstract Set<T> getChildrenNoCache(
             T node);
 }

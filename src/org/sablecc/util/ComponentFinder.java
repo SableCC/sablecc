@@ -31,7 +31,7 @@ public class ComponentFinder<T> {
 
     private final Map<T, Set<T>> reachMap = new LinkedHashMap<T, Set<T>>();
 
-    private final Progeny<T> progeny;
+    private Progeny<T> progeny;
 
     public ComponentFinder(
             final Collection<T> nodes,
@@ -211,5 +211,7 @@ public class ComponentFinder<T> {
             reach = Collections.unmodifiableSet(reach);
             ComponentFinder.this.reachMap.put(node, reach);
         }
+
+        this.progeny = null;
     }
 }
