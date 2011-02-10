@@ -80,7 +80,7 @@ public class Grammar
             private final NameSpace nameSpace = this.grammar.nameSpace;
 
             @Override
-            public void outAGrammar(
+            public void inAGrammar(
                     AGrammar node) {
 
                 this.grammar.declaration = node;
@@ -88,7 +88,7 @@ public class Grammar
             }
 
             @Override
-            public void outANormalNamedExpression(
+            public void inANormalNamedExpression(
                     ANormalNamedExpression node) {
 
                 this.nameSpace.add(new NamedExpression(node, this.grammar));
