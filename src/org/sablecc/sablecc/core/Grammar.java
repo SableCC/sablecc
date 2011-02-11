@@ -93,6 +93,20 @@ public class Grammar
 
                 this.nameSpace.add(new NamedExpression(node, this.grammar));
             }
+
+            @Override
+            public void inASelectionNamedExpression(
+                    ASelectionNamedExpression node) {
+
+                LexerSelector lexerSelector = new LexerSelector(node,
+                        this.grammar);
+                this.nameSpace.add(lexerSelector);
+
+                for (LexerSelector.LexerSelection lexerSelection : lexerSelector
+                        .getLexerSelections()) {
+                    this.nameSpace.add(lexerSelection);
+                }
+            }
         });
 
         throw new InternalException("not implemented");

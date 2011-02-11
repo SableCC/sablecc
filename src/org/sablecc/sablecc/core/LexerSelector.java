@@ -17,20 +17,22 @@
 
 package org.sablecc.sablecc.core;
 
+import java.util.*;
+
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class NamedExpression
+public class LexerSelector
         implements NameDeclaration {
 
-    private final ANormalNamedExpression declaration;
+    private final ASelectionNamedExpression declaration;
 
     private final Grammar grammar;
 
-    private final Expression expression;
+    private final List<LexerSelection> lexerSelections;
 
-    NamedExpression(
-            ANormalNamedExpression declaration,
+    LexerSelector(
+            ASelectionNamedExpression declaration,
             Grammar grammar) {
 
         if (declaration == null) {
@@ -44,13 +46,19 @@ public class NamedExpression
         this.declaration = declaration;
         grammar.addMapping(declaration, this);
         this.grammar = grammar;
-        this.expression = Expression.newExpression(declaration.getExpression(),
-                grammar);
+
+        List<LexerSelection> lexerSelections = new LinkedList<LexerSelector.LexerSelection>();
+
+        for (TIdentifier name : declaration.getNames()) {
+            lexerSelections.add(new LexerSelection(name));
+        }
+
+        this.lexerSelections = Collections.unmodifiableList(lexerSelections);
     }
 
     public TIdentifier getNameIdentifier() {
 
-        return this.declaration.getName();
+        return this.declaration.getSelectorName();
     }
 
     public String getName() {
@@ -60,11 +68,43 @@ public class NamedExpression
 
     public String getNameType() {
 
-        return "regular expression";
+        return "lexer selector";
     }
 
-    public Expression getExpression() {
+    public List<LexerSelection> getLexerSelections() {
 
-        return this.expression;
+        return this.lexerSelections;
+    }
+
+    public class LexerSelection
+            implements NameDeclaration {
+
+        private final TIdentifier declaration;
+
+        private LexerSelection(
+                TIdentifier declaration) {
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            LexerSelector.this.grammar.addMapping(declaration, this);
+        }
+
+        public TIdentifier getNameIdentifier() {
+
+            return this.declaration;
+        }
+
+        public String getName() {
+
+            return getNameIdentifier().getText();
+        }
+
+        public String getNameType() {
+
+            return "lexer selection";
+        }
     }
 }
