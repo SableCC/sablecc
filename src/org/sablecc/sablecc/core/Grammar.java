@@ -106,6 +106,13 @@ public class Grammar
                 }
                 this.nameSpace.add(lexerSelector);
             }
+
+            @Override
+            public void inAGroup(
+                    AGroup node) {
+
+                this.nameSpace.add(new Group(node, this.grammar));
+            }
         });
 
         throw new InternalException("not implemented");
