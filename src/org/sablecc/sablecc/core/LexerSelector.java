@@ -29,7 +29,7 @@ public class LexerSelector
 
     private final Grammar grammar;
 
-    private final List<LexerSelection> lexerSelections;
+    private final List<Selection> selections;
 
     LexerSelector(
             ASelectionNamedExpression declaration,
@@ -47,13 +47,13 @@ public class LexerSelector
         grammar.addMapping(declaration, this);
         this.grammar = grammar;
 
-        List<LexerSelection> lexerSelections = new LinkedList<LexerSelector.LexerSelection>();
+        List<Selection> selections = new LinkedList<LexerSelector.Selection>();
 
         for (TIdentifier name : declaration.getNames()) {
-            lexerSelections.add(new LexerSelection(name));
+            selections.add(new Selection(name));
         }
 
-        this.lexerSelections = Collections.unmodifiableList(lexerSelections);
+        this.selections = Collections.unmodifiableList(selections);
     }
 
     public TIdentifier getNameIdentifier() {
@@ -71,17 +71,17 @@ public class LexerSelector
         return "lexer selector";
     }
 
-    public List<LexerSelection> getLexerSelections() {
+    public List<Selection> getSelections() {
 
-        return this.lexerSelections;
+        return this.selections;
     }
 
-    public class LexerSelection
+    public class Selection
             implements NameDeclaration {
 
         private final TIdentifier declaration;
 
-        private LexerSelection(
+        private Selection(
                 TIdentifier declaration) {
 
             if (declaration == null) {
