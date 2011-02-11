@@ -100,12 +100,11 @@ public class Grammar
 
                 LexerSelector lexerSelector = new LexerSelector(node,
                         this.grammar);
-                this.nameSpace.add(lexerSelector);
-
                 for (LexerSelector.LexerSelection lexerSelection : lexerSelector
                         .getLexerSelections()) {
                     this.nameSpace.add(lexerSelection);
                 }
+                this.nameSpace.add(lexerSelector);
             }
         });
 
