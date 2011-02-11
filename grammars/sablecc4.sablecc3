@@ -500,7 +500,7 @@ Productions
   parser_production
     =
       {normal} qualifier? parser_production_body
-        {-> New parser_production.normal(qualifier, parser_production_body.identifier, parser_production_body.assign, [parser_production_body.parser_alternatives], [parser_production_body.parser_priorities], parser_production_body.parser_investigator) }
+        {-> New parser_production.normal(qualifier, parser_production_body.identifier, parser_production_body.assign, [parser_production_body.parser_alternatives], [parser_production_body.parser_priorities], [parser_production_body.parser_investigators]) }
     |
       {selection} selection assign identifier l_par [parameter]:identifier r_par
         {-> New parser_production.selection([selection.identifiers], assign, identifier, parameter) }
@@ -514,10 +514,10 @@ Productions
     ;
 
   parser_production_body
-        {-> identifier assign [parser_alternatives]:parser_alternative+ [parser_priorities]:parser_priority* parser_investigator? }
+        {-> identifier assign [parser_alternatives]:parser_alternative+ [parser_priorities]:parser_priority* [parser_investigators]:parser_investigator* }
     =
       identifier assign parser_alternatives semicolon parser_priorities? parser_investigator?
-        {-> identifier assign [parser_alternatives.parser_alternatives] [parser_priorities.parser_priorities] parser_investigator }
+        {-> identifier assign [parser_alternatives.parser_alternatives] [parser_priorities.parser_priorities] [parser_investigator] }
     ;
 
   parser_alternatives
@@ -576,7 +576,7 @@ Productions
   parser_investigator
     =
       investigator_keyword [name]:identifier l_par identifier_list? r_par semicolon
-        {-> New parser_investigator(investigator_keyword, name, [identifier_list.identifiers]) }
+        {-> New parser_investigator(name, [identifier_list.identifiers]) }
     ;
 
   inlined
@@ -783,7 +783,8 @@ Abstract Syntax Tree
   parser_production =
     {normal} qualifier? [name]:identifier assign
       [parser_alternatives]:parser_alternative+
-      [parser_priorities]:parser_priority* parser_investigator? |
+      [parser_priorities]:parser_priority*
+      [parser_investigators]:parser_investigator* |
     {selection} [names]:identifier+ assign [selector_name]:identifier
       [parameter]:identifier;
 
@@ -820,7 +821,7 @@ Abstract Syntax Tree
     {unary} unary_keyword [identifiers]:identifier+;
 
   parser_investigator =
-    investigator_keyword [name]:identifier [parameters]:identifier*;
+    [name]:identifier [parameters]:identifier*;
 
   inlined =
     inlined_keyword [inlined_elements]:inlined_element*;
