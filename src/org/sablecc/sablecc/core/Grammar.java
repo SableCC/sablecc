@@ -30,7 +30,7 @@ public class Grammar
 
     private AGrammar declaration;
 
-    private NameSpace nameSpace;
+    private final NameSpace nameSpace = new NameSpace();
 
     private final Map<Node, NameDeclaration> nodeToNameDeclarationMap = new HashMap<Node, NameDeclaration>();
 
@@ -47,7 +47,7 @@ public class Grammar
             throw new InternalException("ast may not be null");
         }
 
-        initializeFrom(ast);
+        fillGlobalNameSpace(ast);
     }
 
     public TIdentifier getNameIdentifier() {
@@ -65,13 +65,10 @@ public class Grammar
         return "grammar";
     }
 
-    private void initializeFrom(
+    private void fillGlobalNameSpace(
             Start ast) {
 
-        this.nameSpace = new NameSpace();
-
-        // the global name space includes all top-level names, excluding AST
-        // names.
+        // add all top-level names, excluding AST names
 
         ast.apply(new DepthFirstAdapter() {
 
