@@ -27,8 +27,6 @@ public class NamedExpression
 
     private final Grammar grammar;
 
-    private final Expression expression;
-
     NamedExpression(
             ANormalNamedExpression declaration,
             Grammar grammar) {
@@ -44,8 +42,6 @@ public class NamedExpression
         this.declaration = declaration;
         grammar.addMapping(declaration, this);
         this.grammar = grammar;
-        this.expression = Expression.newExpression(declaration.getExpression(),
-                grammar);
     }
 
     public TIdentifier getNameIdentifier() {
@@ -63,8 +59,4 @@ public class NamedExpression
         return "regular expression";
     }
 
-    public Expression getExpression() {
-
-        return this.expression;
-    }
 }
