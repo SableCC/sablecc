@@ -117,6 +117,16 @@ public class Grammar
 
                 this.nameSpace.add(new LexerInvestigator(node, this.grammar));
             }
+
+            @Override
+            public void inALexerContext(
+                    ALexerContext node) {
+
+                if (node.getName() != null) {
+                    this.nameSpace.add(new Context.NamedContext(node,
+                            this.grammar));
+                }
+            }
         });
 
         throw new InternalException("not implemented");
