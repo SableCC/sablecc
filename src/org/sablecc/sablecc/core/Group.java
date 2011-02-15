@@ -27,7 +27,7 @@ public class Group
 
     private final Grammar grammar;
 
-    public Group(
+    Group(
             AGroup declaration,
             Grammar grammar) {
 

@@ -34,6 +34,8 @@ public class Grammar
 
     private final Map<Node, NameDeclaration> nodeToNameDeclarationMap = new HashMap<Node, NameDeclaration>();
 
+    private final Map<Node, Context.AnonymousContext> nodeToAnonymousContextMap = new HashMap<Node, Context.AnonymousContext>();
+
     private final Map<Node, Expression> nodeToExpressionMap = new HashMap<Node, Expression>();
 
     private final Map<Node, Lookback> nodeToLookbackMap = new HashMap<Node, Lookback>();
@@ -127,6 +129,31 @@ public class Grammar
                             this.grammar));
                 }
             }
+
+            @Override
+            public void inAParserContext(
+                    AParserContext node) {
+
+                if (node.getName() != null) {
+                    String name = node.getName().getText();
+                    NameDeclaration nameDeclaration = this.nameSpace.get(name);
+                    if (nameDeclaration != null
+                            && nameDeclaration instanceof Context.NamedContext) {
+                        Context.NamedContext namedContext = (Context.NamedContext) nameDeclaration;
+                        if (namedContext.canAddDeclaration()) {
+                            namedContext.addDeclaration(node);
+                        }
+                        else {
+                            this.nameSpace.add(new Context.NamedContext(node,
+                                    this.grammar));
+                        }
+                    }
+                    else {
+                        this.nameSpace.add(new Context.NamedContext(node,
+                                this.grammar));
+                    }
+                }
+            }
         });
 
         throw new InternalException("not implemented");
@@ -141,6 +168,17 @@ public class Grammar
         }
 
         this.nodeToNameDeclarationMap.put(declaration, nameDeclaration);
+    }
+
+    void addMapping(
+            Node declaration,
+            Context.AnonymousContext anonymousContext) {
+
+        if (this.nodeToAnonymousContextMap.containsKey(declaration)) {
+            throw new InternalException("multiple mappings for a single node");
+        }
+
+        this.nodeToAnonymousContextMap.put(declaration, anonymousContext);
     }
 
     void addMapping(
@@ -219,6 +257,16 @@ public class Grammar
                         this.nameMap.get(name));
             }
             this.nameMap.put(name, nameDeclaration);
+        }
+
+        private NameDeclaration get(
+                String name) {
+
+            if (name == null) {
+                throw new InternalException("name may not be null");
+            }
+
+            return this.nameMap.get(name);
         }
     }
 }
