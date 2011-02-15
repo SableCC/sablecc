@@ -34,13 +34,20 @@ public abstract class Context {
         this.grammar = grammar;
     }
 
+    protected Grammar getGrammar() {
+
+        return this.grammar;
+    }
+
     public static class NamedContext
             extends Context
             implements NameDeclaration {
 
-        private final ALexerContext declaration;
+        private ALexerContext lexerDeclaration;
 
-        public NamedContext(
+        private AParserContext parserDeclaration;
+
+        NamedContext(
                 ALexerContext declaration,
                 Grammar grammar) {
 
@@ -55,12 +62,58 @@ public abstract class Context {
                         "anonymous contexts are not allowed");
             }
 
-            this.declaration = declaration;
+            this.lexerDeclaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+
+        NamedContext(
+                AParserContext declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            if (declaration.getName() == null) {
+                throw new InternalException(
+                        "anonymous contexts are not allowed");
+            }
+
+            this.parserDeclaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+
+        boolean canAddDeclaration() {
+
+            return this.parserDeclaration == null;
+        }
+
+        void addDeclaration(
+                AParserContext declaration) {
+
+            if (!canAddDeclaration()) {
+                throw new InternalException(
+                        "context may not have two parser declarations");
+            }
+
+            if (declaration.getName() == null
+                    || !declaration.getName().getText().equals(getName())) {
+                throw new InternalException("invalid context declaration");
+            }
+
+            this.parserDeclaration = declaration;
+            getGrammar().addMapping(declaration, this);
         }
 
         public TIdentifier getNameIdentifier() {
 
-            return this.declaration.getName();
+            if (this.lexerDeclaration != null) {
+                return this.lexerDeclaration.getName();
+            }
+
+            return this.parserDeclaration.getName();
         }
 
         public String getName() {
@@ -78,9 +131,11 @@ public abstract class Context {
     public static class AnonymousContext
             extends Context {
 
-        private final ALexerContext declaration;
+        private ALexerContext lexerDeclaration;
 
-        public AnonymousContext(
+        private AParserContext parserDeclaration;
+
+        AnonymousContext(
                 ALexerContext declaration,
                 Grammar grammar) {
 
@@ -94,7 +149,47 @@ public abstract class Context {
                 throw new InternalException("named contexts are not allowed");
             }
 
-            this.declaration = declaration;
+            this.lexerDeclaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+
+        AnonymousContext(
+                AParserContext declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            if (declaration.getName() != null) {
+                throw new InternalException("named contexts are not allowed");
+            }
+
+            this.parserDeclaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+
+        boolean canAddDeclaration() {
+
+            return this.parserDeclaration == null;
+        }
+
+        void addDeclaration(
+                AParserContext declaration) {
+
+            if (!canAddDeclaration()) {
+                throw new InternalException(
+                        "context may not have two parser declarations");
+            }
+
+            if (declaration.getName() != null) {
+                throw new InternalException("invalid context declaration");
+            }
+
+            this.parserDeclaration = declaration;
+            getGrammar().addMapping(declaration, this);
         }
     }
 
