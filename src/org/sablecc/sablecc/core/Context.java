@@ -85,17 +85,12 @@ public abstract class Context {
             grammar.addMapping(declaration, this);
         }
 
-        boolean canAddDeclaration() {
-
-            return this.parserDeclaration == null;
-        }
-
         void addDeclaration(
                 AParserContext declaration) {
 
-            if (!canAddDeclaration()) {
-                throw new InternalException(
-                        "context may not have two parser declarations");
+            if (this.parserDeclaration != null) {
+                throw SemanticException.spuriousParserNamedContextDeclaration(
+                        declaration, this);
             }
 
             if (declaration.getName() == null
@@ -124,6 +119,11 @@ public abstract class Context {
         public String getNameType() {
 
             return "context";
+        }
+
+        public AParserContext getParserDeclaration() {
+
+            return this.parserDeclaration;
         }
 
     }
@@ -171,17 +171,12 @@ public abstract class Context {
             grammar.addMapping(declaration, this);
         }
 
-        boolean canAddDeclaration() {
-
-            return this.parserDeclaration == null;
-        }
-
         void addDeclaration(
                 AParserContext declaration) {
 
-            if (!canAddDeclaration()) {
+            if (this.parserDeclaration != null) {
                 throw new InternalException(
-                        "context may not have two parser declarations");
+                        "the anonymous context may not have two parser declarations");
             }
 
             if (declaration.getName() != null) {

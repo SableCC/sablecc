@@ -140,13 +140,7 @@ public class Grammar
                     if (nameDeclaration != null
                             && nameDeclaration instanceof Context.NamedContext) {
                         Context.NamedContext namedContext = (Context.NamedContext) nameDeclaration;
-                        if (namedContext.canAddDeclaration()) {
-                            namedContext.addDeclaration(node);
-                        }
-                        else {
-                            this.nameSpace.add(new Context.NamedContext(node,
-                                    this.grammar));
-                        }
+                        namedContext.addDeclaration(node);
                     }
                     else {
                         this.nameSpace.add(new Context.NamedContext(node,

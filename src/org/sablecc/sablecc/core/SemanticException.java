@@ -62,4 +62,26 @@ public class SemanticException
                 duplicateIdentifier);
     }
 
+    public static SemanticException spuriousParserNamedContextDeclaration(
+            AParserContext declaration,
+            Context.NamedContext namedContext) {
+
+        String name = declaration.getName().getText();
+        if (!name.equals(namedContext.getName())) {
+            throw new InternalException("names must be identical");
+        }
+
+        TIdentifier duplicateIdentifier = declaration.getName();
+        TIdentifier olderIdentifier = namedContext.getParserDeclaration()
+                .getName();
+
+        return new SemanticException(
+                new MDuplicateDeclaration(name, "context",
+                        duplicateIdentifier.getLine() + "",
+                        duplicateIdentifier.getPos() + "", "context",
+                        olderIdentifier.getLine() + "",
+                        olderIdentifier.getPos() + "").toString(),
+                duplicateIdentifier);
+    }
+
 }
