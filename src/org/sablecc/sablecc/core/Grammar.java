@@ -148,6 +148,33 @@ public class Grammar
                     }
                 }
             }
+
+            @Override
+            public void inANormalParserProduction(
+                    ANormalParserProduction node) {
+
+                this.nameSpace.add(new NormalProduction(node, this.grammar));
+            }
+
+            @Override
+            public void inASelectionParserProduction(
+                    ASelectionParserProduction node) {
+
+                ParserSelector parserSelector = new ParserSelector(node,
+                        this.grammar);
+                for (ParserSelector.Selection selection : parserSelector
+                        .getSelections()) {
+                    this.nameSpace.add(selection);
+                }
+                this.nameSpace.add(parserSelector);
+            }
+
+            @Override
+            public void inAParserInvestigator(
+                    AParserInvestigator node) {
+
+                this.nameSpace.add(new ParserInvestigator(node, this.grammar));
+            }
         });
 
         throw new InternalException("not implemented");
