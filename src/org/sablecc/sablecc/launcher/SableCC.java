@@ -47,7 +47,12 @@ public class SableCC {
             String[] args) {
 
         try {
-            processCommandLine(args);
+            try {
+                processCommandLine(args);
+            }
+            finally {
+                System.out.flush();
+            }
         }
         catch (CompilerException e) {
             System.err.print(e.getMessage());
