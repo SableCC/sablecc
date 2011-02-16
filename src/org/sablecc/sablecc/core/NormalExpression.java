@@ -20,14 +20,14 @@ package org.sablecc.sablecc.core;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class NamedExpression
+public class NormalExpression
         implements NameDeclaration {
 
     private final ANormalNamedExpression declaration;
 
     private final Grammar grammar;
 
-    NamedExpression(
+    NormalExpression(
             ANormalNamedExpression declaration,
             Grammar grammar) {
 
