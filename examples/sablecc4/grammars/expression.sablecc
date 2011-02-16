@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-Grammar exp:
+Grammar expression:
 
 Lexer
   num = digit+;
