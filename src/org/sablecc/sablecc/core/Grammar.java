@@ -90,7 +90,7 @@ public class Grammar
             public void inANormalNamedExpression(
                     ANormalNamedExpression node) {
 
-                this.nameSpace.add(new NamedExpression(node, this.grammar));
+                this.nameSpace.add(new NormalExpression(node, this.grammar));
             }
 
             @Override
