@@ -1,0 +1,110 @@
+/* This file is part of SableCC ( http://sablecc.org ).
+ *
+ * See the NOTICE file distributed with this work for copyright information.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.sablecc.sablecc.core;
+
+import java.util.*;
+
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
+
+public class ParserSelector
+        implements NameDeclaration {
+
+    private final ASelectionParserProduction declaration;
+
+    private final Grammar grammar;
+
+    private final List<Selection> selections;
+
+    ParserSelector(
+            ASelectionParserProduction declaration,
+            Grammar grammar) {
+
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
+        }
+
+        if (grammar == null) {
+            throw new InternalException("grammar may not be null");
+        }
+
+        this.declaration = declaration;
+        grammar.addMapping(declaration, this);
+        this.grammar = grammar;
+
+        List<Selection> selections = new LinkedList<ParserSelector.Selection>();
+
+        for (TIdentifier name : declaration.getNames()) {
+            selections.add(new Selection(name));
+        }
+
+        this.selections = Collections.unmodifiableList(selections);
+    }
+
+    public TIdentifier getNameIdentifier() {
+
+        return this.declaration.getSelectorName();
+    }
+
+    public String getName() {
+
+        return getNameIdentifier().getText();
+    }
+
+    public String getNameType() {
+
+        return "parser selector";
+    }
+
+    public List<Selection> getSelections() {
+
+        return this.selections;
+    }
+
+    public class Selection
+            implements NameDeclaration {
+
+        private final TIdentifier declaration;
+
+        private Selection(
+                TIdentifier declaration) {
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            ParserSelector.this.grammar.addMapping(declaration, this);
+        }
+
+        public TIdentifier getNameIdentifier() {
+
+            return this.declaration;
+        }
+
+        public String getName() {
+
+            return getNameIdentifier().getText();
+        }
+
+        public String getNameType() {
+
+            return "parser selection";
+        }
+    }
+}
