@@ -30,7 +30,7 @@ public class Grammar
 
     private AGrammar declaration;
 
-    private final NameSpace nameSpace = new NameSpace();
+    private final NameSpace globalNameSpace = new NameSpace();
 
     private final Map<Node, NameDeclaration> nodeToNameDeclarationMap = new HashMap<Node, NameDeclaration>();
 
@@ -50,6 +50,8 @@ public class Grammar
         }
 
         fillGlobalNameSpace(ast);
+
+        throw new InternalException("not implemented");
     }
 
     public TIdentifier getNameIdentifier() {
@@ -76,21 +78,22 @@ public class Grammar
 
             private final Grammar grammar = Grammar.this;
 
-            private final NameSpace nameSpace = this.grammar.nameSpace;
+            private final NameSpace globalNameSpace = this.grammar.globalNameSpace;
 
             @Override
             public void inAGrammar(
                     AGrammar node) {
 
                 this.grammar.declaration = node;
-                this.nameSpace.add(this.grammar);
+                this.globalNameSpace.add(this.grammar);
             }
 
             @Override
             public void inANormalNamedExpression(
                     ANormalNamedExpression node) {
 
-                this.nameSpace.add(new NormalExpression(node, this.grammar));
+                this.globalNameSpace.add(new NormalExpression(node,
+                        this.grammar));
             }
 
             @Override
@@ -101,23 +104,24 @@ public class Grammar
                         this.grammar);
                 for (LexerSelector.Selection selection : lexerSelector
                         .getSelections()) {
-                    this.nameSpace.add(selection);
+                    this.globalNameSpace.add(selection);
                 }
-                this.nameSpace.add(lexerSelector);
+                this.globalNameSpace.add(lexerSelector);
             }
 
             @Override
             public void inAGroup(
                     AGroup node) {
 
-                this.nameSpace.add(new Group(node, this.grammar));
+                this.globalNameSpace.add(new Group(node, this.grammar));
             }
 
             @Override
             public void inALexerInvestigator(
                     ALexerInvestigator node) {
 
-                this.nameSpace.add(new LexerInvestigator(node, this.grammar));
+                this.globalNameSpace.add(new LexerInvestigator(node,
+                        this.grammar));
             }
 
             @Override
@@ -125,7 +129,7 @@ public class Grammar
                     ALexerContext node) {
 
                 if (node.getName() != null) {
-                    this.nameSpace.add(new Context.NamedContext(node,
+                    this.globalNameSpace.add(new Context.NamedContext(node,
                             this.grammar));
                 }
             }
@@ -136,14 +140,15 @@ public class Grammar
 
                 if (node.getName() != null) {
                     String name = node.getName().getText();
-                    NameDeclaration nameDeclaration = this.nameSpace.get(name);
+                    NameDeclaration nameDeclaration = this.globalNameSpace
+                            .get(name);
                     if (nameDeclaration != null
                             && nameDeclaration instanceof Context.NamedContext) {
                         Context.NamedContext namedContext = (Context.NamedContext) nameDeclaration;
                         namedContext.addDeclaration(node);
                     }
                     else {
-                        this.nameSpace.add(new Context.NamedContext(node,
+                        this.globalNameSpace.add(new Context.NamedContext(node,
                                 this.grammar));
                     }
                 }
@@ -153,7 +158,8 @@ public class Grammar
             public void inANormalParserProduction(
                     ANormalParserProduction node) {
 
-                this.nameSpace.add(new NormalProduction(node, this.grammar));
+                this.globalNameSpace.add(new NormalProduction(node,
+                        this.grammar));
             }
 
             @Override
@@ -164,20 +170,19 @@ public class Grammar
                         this.grammar);
                 for (ParserSelector.Selection selection : parserSelector
                         .getSelections()) {
-                    this.nameSpace.add(selection);
+                    this.globalNameSpace.add(selection);
                 }
-                this.nameSpace.add(parserSelector);
+                this.globalNameSpace.add(parserSelector);
             }
 
             @Override
             public void inAParserInvestigator(
                     AParserInvestigator node) {
 
-                this.nameSpace.add(new ParserInvestigator(node, this.grammar));
+                this.globalNameSpace.add(new ParserInvestigator(node,
+                        this.grammar));
             }
         });
-
-        throw new InternalException("not implemented");
     }
 
     void addMapping(
