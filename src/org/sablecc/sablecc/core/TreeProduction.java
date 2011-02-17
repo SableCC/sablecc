@@ -20,15 +20,15 @@ package org.sablecc.sablecc.core;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class NormalProduction
+public class TreeProduction
         implements NameDeclaration {
 
-    private final ANormalParserProduction declaration;
+    private final ATreeProduction declaration;
 
     private final Grammar grammar;
 
-    NormalProduction(
-            ANormalParserProduction declaration,
+    public TreeProduction(
+            ATreeProduction declaration,
             Grammar grammar) {
 
         if (declaration == null) {
@@ -56,7 +56,7 @@ public class NormalProduction
 
     public String getNameType() {
 
-        return "parser production";
+        return "tree production";
     }
 
 }

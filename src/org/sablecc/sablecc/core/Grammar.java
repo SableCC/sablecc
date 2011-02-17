@@ -32,6 +32,9 @@ public class Grammar
 
     private final NameSpace globalNameSpace = new NameSpace();
 
+    private final TreeNameSpace treeNameSpace = new TreeNameSpace(
+            this.globalNameSpace);
+
     private final Map<Node, NameDeclaration> nodeToNameDeclarationMap = new HashMap<Node, NameDeclaration>();
 
     private final Map<Node, Context.AnonymousContext> nodeToAnonymousContextMap = new HashMap<Node, Context.AnonymousContext>();
@@ -50,6 +53,7 @@ public class Grammar
         }
 
         fillGlobalNameSpace(ast);
+        fillTreeNameSpace(ast);
 
         throw new InternalException("not implemented");
     }
@@ -72,7 +76,7 @@ public class Grammar
     private void fillGlobalNameSpace(
             Start ast) {
 
-        // add all top-level names, excluding AST names
+        // add all top-level names, excluding tree names
 
         ast.apply(new DepthFirstAdapter() {
 
@@ -185,6 +189,24 @@ public class Grammar
         });
     }
 
+    private void fillTreeNameSpace(
+            Start ast) {
+
+        ast.apply(new DepthFirstAdapter() {
+
+            private final Grammar grammar = Grammar.this;
+
+            private final TreeNameSpace treeNameSpace = this.grammar.treeNameSpace;
+
+            @Override
+            public void inATreeProduction(
+                    ATreeProduction node) {
+
+                this.treeNameSpace.add(new TreeProduction(node, this.grammar));
+            }
+        });
+    }
+
     void addMapping(
             Node declaration,
             NameDeclaration nameDeclaration) {
@@ -272,10 +294,14 @@ public class Grammar
 
     private static class NameSpace {
 
-        private Map<String, NameDeclaration> nameMap = new HashMap<String, NameDeclaration>();
+        private final Map<String, NameDeclaration> nameMap = new HashMap<String, NameDeclaration>();
 
         private void add(
                 NameDeclaration nameDeclaration) {
+
+            if (nameDeclaration == null) {
+                throw new InternalException("nameDeclaration may not be null");
+            }
 
             String name = nameDeclaration.getName();
             if (this.nameMap.containsKey(name)) {
@@ -293,6 +319,60 @@ public class Grammar
             }
 
             return this.nameMap.get(name);
+        }
+    }
+
+    private static class TreeNameSpace {
+
+        private final NameSpace globalNameSpace;
+
+        private final Map<String, TreeProduction> nameMap = new HashMap<String, TreeProduction>();
+
+        private TreeNameSpace(
+                NameSpace globalNameSpace) {
+
+            if (globalNameSpace == null) {
+                throw new InternalException("globalNameSpace may not be null");
+            }
+
+            this.globalNameSpace = globalNameSpace;
+        }
+
+        private void add(
+                TreeProduction treeProduction) {
+
+            if (treeProduction == null) {
+                throw new InternalException("astProduction may not be null");
+            }
+
+            String name = treeProduction.getName();
+            NameDeclaration nameDeclaration = this.globalNameSpace.get(name);
+            if (nameDeclaration == null
+                    || nameDeclaration instanceof NormalProduction
+                    || nameDeclaration instanceof ParserSelector.Selection) {
+                this.nameMap.put(name, treeProduction);
+            }
+            else {
+                throw SemanticException.duplicateDeclaration(treeProduction,
+                        this.nameMap.get(name));
+            }
+        }
+
+        private NameDeclaration get(
+                String name) {
+
+            if (name == null) {
+                throw new InternalException("name may not be null");
+            }
+
+            NameDeclaration nameDeclaration = this.globalNameSpace.get(name);
+            if (nameDeclaration == null
+                    || nameDeclaration instanceof NormalProduction
+                    || nameDeclaration instanceof ParserSelector.Selection) {
+                nameDeclaration = this.nameMap.get(name);
+            }
+
+            return nameDeclaration;
         }
     }
 }
