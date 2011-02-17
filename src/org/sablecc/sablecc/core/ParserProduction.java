@@ -20,14 +20,14 @@ package org.sablecc.sablecc.core;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class NormalProduction
+public class ParserProduction
         implements NameDeclaration {
 
     private final ANormalParserProduction declaration;
 
     private final Grammar grammar;
 
-    NormalProduction(
+    ParserProduction(
             ANormalParserProduction declaration,
             Grammar grammar) {
 
