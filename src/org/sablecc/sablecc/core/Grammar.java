@@ -96,8 +96,8 @@ public class Grammar
             public void inANormalNamedExpression(
                     ANormalNamedExpression node) {
 
-                this.globalNameSpace.add(new NormalExpression(node,
-                        this.grammar));
+                this.globalNameSpace
+                        .add(new LexerExpression(node, this.grammar));
             }
 
             @Override
@@ -162,7 +162,7 @@ public class Grammar
             public void inANormalParserProduction(
                     ANormalParserProduction node) {
 
-                this.globalNameSpace.add(new NormalProduction(node,
+                this.globalNameSpace.add(new ParserProduction(node,
                         this.grammar));
             }
 
@@ -342,13 +342,13 @@ public class Grammar
                 TreeProduction treeProduction) {
 
             if (treeProduction == null) {
-                throw new InternalException("astProduction may not be null");
+                throw new InternalException("treeProduction may not be null");
             }
 
             String name = treeProduction.getName();
             NameDeclaration nameDeclaration = this.globalNameSpace.get(name);
             if (nameDeclaration == null
-                    || nameDeclaration instanceof NormalProduction
+                    || nameDeclaration instanceof ParserProduction
                     || nameDeclaration instanceof ParserSelector.Selection) {
                 this.nameMap.put(name, treeProduction);
             }
@@ -367,7 +367,7 @@ public class Grammar
 
             NameDeclaration nameDeclaration = this.globalNameSpace.get(name);
             if (nameDeclaration == null
-                    || nameDeclaration instanceof NormalProduction
+                    || nameDeclaration instanceof ParserProduction
                     || nameDeclaration instanceof ParserSelector.Selection) {
                 nameDeclaration = this.nameMap.get(name);
             }
