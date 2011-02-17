@@ -45,6 +45,8 @@ public class Grammar
 
     private final Map<Node, Lookahead> nodeToLookaheadMap = new HashMap<Node, Lookahead>();
 
+    private Context.AnonymousContext anonymousContext;
+
     Grammar(
             Start ast) {
 
@@ -54,6 +56,7 @@ public class Grammar
 
         fillGlobalNameSpace(ast);
         fillTreeNameSpace(ast);
+        fillContexts(ast);
 
         throw new InternalException("not implemented");
     }
@@ -207,6 +210,80 @@ public class Grammar
         });
     }
 
+    private void fillContexts(
+            Start ast) {
+
+        ast.apply(new DepthFirstAdapter() {
+
+            private final Grammar grammar = Grammar.this;
+
+            private final NameSpace globalNameSpace = this.grammar.globalNameSpace;
+
+            private Context currentContext;
+
+            @Override
+            public void inALexerContext(
+                    ALexerContext node) {
+
+                if (node.getName() == null) {
+                    if (Grammar.this.anonymousContext != null) {
+                        throw new InternalException(
+                                "anonymousContext should not have been created yet");
+                    }
+                    Grammar.this.anonymousContext = new Context.AnonymousContext(
+                            node, this.grammar);
+                    this.currentContext = Grammar.this.anonymousContext;
+                }
+                else {
+                    this.currentContext = (Context) getNameDeclarationMapping(node);
+
+                    if (this.currentContext == null) {
+                        throw new InternalException("missing mapping");
+                    }
+                }
+            }
+
+            @Override
+            public void outALexerContext(
+                    ALexerContext node) {
+
+                this.currentContext = null;
+            }
+
+            @Override
+            public void inAParserContext(
+                    AParserContext node) {
+
+                if (node.getName() == null) {
+                    this.currentContext = Grammar.this.anonymousContext;
+                    if (this.currentContext == null) {
+                        Grammar.this.anonymousContext = new Context.AnonymousContext(
+                                node, this.grammar);
+                        this.grammar.addMapping(node,
+                                Grammar.this.anonymousContext);
+                        this.currentContext = Grammar.this.anonymousContext;
+                    }
+                }
+                else {
+                    this.currentContext = (Context) getNameDeclarationMapping(node);
+
+                    if (this.currentContext == null) {
+                        throw new InternalException("missing mapping");
+                    }
+                }
+            }
+
+            @Override
+            public void outAParserContext(
+                    AParserContext node) {
+
+                this.currentContext = null;
+            }
+        });
+
+        throw new InternalException("not implemented");
+    }
+
     void addMapping(
             Node declaration,
             NameDeclaration nameDeclaration) {
@@ -260,6 +337,26 @@ public class Grammar
         }
 
         this.nodeToLookaheadMap.put(declaration, lookahead);
+    }
+
+    public NameDeclaration getNameDeclarationMapping(
+            Node node) {
+
+        if (!this.nodeToNameDeclarationMap.containsKey(node)) {
+            throw new InternalException("missing mapping");
+        }
+
+        return this.nodeToNameDeclarationMap.get(node);
+    }
+
+    public Context.AnonymousContext getAnonymousContextMapping(
+            Node node) {
+
+        if (!this.nodeToAnonymousContextMap.containsKey(node)) {
+            throw new InternalException("missing mapping");
+        }
+
+        return this.nodeToAnonymousContextMap.get(node);
     }
 
     public Expression getExpressionMapping(
