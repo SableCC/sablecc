@@ -22,7 +22,7 @@ import org.sablecc.sablecc.syntax3.node.*;
 
 public abstract class Context {
 
-    private final Grammar grammar;
+    protected final Grammar grammar;
 
     private Context(
             Grammar grammar) {
@@ -32,11 +32,6 @@ public abstract class Context {
         }
 
         this.grammar = grammar;
-    }
-
-    protected Grammar getGrammar() {
-
-        return this.grammar;
     }
 
     public static class NamedContext
@@ -99,7 +94,7 @@ public abstract class Context {
             }
 
             this.parserDeclaration = declaration;
-            getGrammar().addMapping(declaration, this);
+            this.grammar.addMapping(declaration, this);
         }
 
         public TIdentifier getNameIdentifier() {
@@ -184,7 +179,7 @@ public abstract class Context {
             }
 
             this.parserDeclaration = declaration;
-            getGrammar().addMapping(declaration, this);
+            this.grammar.addMapping(declaration, this);
         }
     }
 
