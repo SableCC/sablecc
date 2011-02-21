@@ -99,8 +99,8 @@ public class Grammar
             public void inANormalNamedExpression(
                     ANormalNamedExpression node) {
 
-                this.globalNameSpace
-                        .add(new LexerExpression(node, this.grammar));
+                this.globalNameSpace.add(new LexerExpression.NamedExpression(
+                        node, this.grammar));
             }
 
             @Override
