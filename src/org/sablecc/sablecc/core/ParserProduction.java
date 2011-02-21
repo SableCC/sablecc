@@ -21,7 +21,7 @@ import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class ParserProduction
-        implements NameDeclaration {
+        implements INameDeclaration {
 
     private final ANormalParserProduction declaration;
 

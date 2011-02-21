@@ -19,7 +19,7 @@ package org.sablecc.sablecc.core;
 
 import org.sablecc.sablecc.syntax3.node.*;
 
-public interface NameDeclaration {
+public interface INameDeclaration {
 
     public TIdentifier getNameIdentifier();
 

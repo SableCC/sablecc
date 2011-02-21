@@ -41,8 +41,8 @@ public class SemanticException
     }
 
     public static SemanticException duplicateDeclaration(
-            NameDeclaration duplicateNameDeclaration,
-            NameDeclaration olderNameDeclaration) {
+            INameDeclaration duplicateNameDeclaration,
+            INameDeclaration olderNameDeclaration) {
 
         String name = duplicateNameDeclaration.getName();
         if (!name.equals(olderNameDeclaration.getName())) {

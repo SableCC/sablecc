@@ -21,7 +21,7 @@ import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class ParserInvestigator
-        implements NameDeclaration {
+        implements INameDeclaration {
 
     private final AParserInvestigator declaration;
 

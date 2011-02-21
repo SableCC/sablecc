@@ -26,7 +26,7 @@ import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Grammar
-        implements NameDeclaration {
+        implements INameDeclaration {
 
     private AGrammar declaration;
 
@@ -35,7 +35,7 @@ public class Grammar
     private final TreeNameSpace treeNameSpace = new TreeNameSpace(
             this.globalNameSpace);
 
-    private final Map<Node, NameDeclaration> nodeToNameDeclarationMap = new HashMap<Node, NameDeclaration>();
+    private final Map<Node, INameDeclaration> nodeToNameDeclarationMap = new HashMap<Node, INameDeclaration>();
 
     private final Map<Node, Context.AnonymousContext> nodeToAnonymousContextMap = new HashMap<Node, Context.AnonymousContext>();
 
@@ -147,7 +147,7 @@ public class Grammar
 
                 if (node.getName() != null) {
                     String name = node.getName().getText();
-                    NameDeclaration nameDeclaration = this.globalNameSpace
+                    INameDeclaration nameDeclaration = this.globalNameSpace
                             .get(name);
                     if (nameDeclaration != null
                             && nameDeclaration instanceof Context.NamedContext) {
@@ -286,7 +286,7 @@ public class Grammar
 
     void addMapping(
             Node declaration,
-            NameDeclaration nameDeclaration) {
+            INameDeclaration nameDeclaration) {
 
         if (this.nodeToNameDeclarationMap.containsKey(declaration)) {
             throw new InternalException("multiple mappings for a single node");
@@ -339,7 +339,7 @@ public class Grammar
         this.nodeToLookaheadMap.put(declaration, lookahead);
     }
 
-    public NameDeclaration getNameDeclarationMapping(
+    public INameDeclaration getNameDeclarationMapping(
             Node node) {
 
         if (!this.nodeToNameDeclarationMap.containsKey(node)) {
@@ -391,10 +391,10 @@ public class Grammar
 
     private static class NameSpace {
 
-        private final Map<String, NameDeclaration> nameMap = new HashMap<String, NameDeclaration>();
+        private final Map<String, INameDeclaration> nameMap = new HashMap<String, INameDeclaration>();
 
         private void add(
-                NameDeclaration nameDeclaration) {
+                INameDeclaration nameDeclaration) {
 
             if (nameDeclaration == null) {
                 throw new InternalException("nameDeclaration may not be null");
@@ -408,7 +408,7 @@ public class Grammar
             this.nameMap.put(name, nameDeclaration);
         }
 
-        private NameDeclaration get(
+        private INameDeclaration get(
                 String name) {
 
             if (name == null) {
@@ -443,7 +443,7 @@ public class Grammar
             }
 
             String name = treeProduction.getName();
-            NameDeclaration nameDeclaration = this.globalNameSpace.get(name);
+            INameDeclaration nameDeclaration = this.globalNameSpace.get(name);
             if (nameDeclaration == null
                     || nameDeclaration instanceof ParserProduction
                     || nameDeclaration instanceof ParserSelector.Selection) {
@@ -455,14 +455,14 @@ public class Grammar
             }
         }
 
-        private NameDeclaration get(
+        private INameDeclaration get(
                 String name) {
 
             if (name == null) {
                 throw new InternalException("name may not be null");
             }
 
-            NameDeclaration nameDeclaration = this.globalNameSpace.get(name);
+            INameDeclaration nameDeclaration = this.globalNameSpace.get(name);
             if (nameDeclaration == null
                     || nameDeclaration instanceof ParserProduction
                     || nameDeclaration instanceof ParserSelector.Selection) {

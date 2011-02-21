@@ -21,7 +21,7 @@ import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class TreeProduction
-        implements NameDeclaration {
+        implements INameDeclaration {
 
     private final ATreeProduction declaration;
 
