@@ -22,7 +22,7 @@ import org.sablecc.sablecc.syntax3.node.*;
 
 public abstract class Context {
 
-    protected final Grammar grammar;
+    final Grammar grammar;
 
     private Context(
             Grammar grammar) {
