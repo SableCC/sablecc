@@ -36,7 +36,7 @@ public abstract class Context {
 
     public static class NamedContext
             extends Context
-            implements NameDeclaration {
+            implements INameDeclaration {
 
         private ALexerContext lexerDeclaration;
 

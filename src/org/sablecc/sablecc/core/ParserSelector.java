@@ -23,7 +23,7 @@ import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class ParserSelector
-        implements NameDeclaration {
+        implements INameDeclaration {
 
     private final ASelectionParserProduction declaration;
 
@@ -77,7 +77,7 @@ public class ParserSelector
     }
 
     public class Selection
-            implements NameDeclaration {
+            implements INameDeclaration {
 
         private final TIdentifier declaration;
 
