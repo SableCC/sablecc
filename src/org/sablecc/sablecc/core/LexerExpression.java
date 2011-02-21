@@ -20,43 +20,54 @@ package org.sablecc.sablecc.core;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class LexerExpression
-        implements INameDeclaration {
-
-    private final ANormalNamedExpression declaration;
+public class LexerExpression {
 
     private final Grammar grammar;
 
     LexerExpression(
-            ANormalNamedExpression declaration,
             Grammar grammar) {
-
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
-        }
 
         if (grammar == null) {
             throw new InternalException("grammar may not be null");
         }
 
-        this.declaration = declaration;
-        grammar.addMapping(declaration, this);
         this.grammar = grammar;
     }
 
-    public TIdentifier getNameIdentifier() {
+    public static class NamedExpression
+            extends LexerExpression
+            implements INameDeclaration {
 
-        return this.declaration.getName();
+        private final ANormalNamedExpression declaration;
+
+        NamedExpression(
+                ANormalNamedExpression declaration,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+            grammar.addMapping(declaration, this);
+        }
+
+        public TIdentifier getNameIdentifier() {
+
+            return this.declaration.getName();
+        }
+
+        public String getName() {
+
+            return getNameIdentifier().getText();
+        }
+
+        public String getNameType() {
+
+            return "regular expression";
+        }
+
     }
-
-    public String getName() {
-
-        return getNameIdentifier().getText();
-    }
-
-    public String getNameType() {
-
-        return "regular expression";
-    }
-
 }
