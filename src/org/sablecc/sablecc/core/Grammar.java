@@ -45,7 +45,7 @@ public class Grammar
 
     private final Map<Node, Lookahead> nodeToLookaheadMap = new HashMap<Node, Lookahead>();
 
-    private Context.AnonymousContext anonymousContext;
+    private Context.AnonymousContext globalAnonymousContext;
 
     Grammar(
             Start ast) {
@@ -226,13 +226,13 @@ public class Grammar
                     ALexerContext node) {
 
                 if (node.getName() == null) {
-                    if (Grammar.this.anonymousContext != null) {
+                    if (Grammar.this.globalAnonymousContext != null) {
                         throw new InternalException(
-                                "anonymousContext should not have been created yet");
+                                "globalAnonymousContext should not have been created yet");
                     }
-                    Grammar.this.anonymousContext = new Context.AnonymousContext(
+                    Grammar.this.globalAnonymousContext = new Context.AnonymousContext(
                             node, this.grammar);
-                    this.currentContext = Grammar.this.anonymousContext;
+                    this.currentContext = Grammar.this.globalAnonymousContext;
                 }
                 else {
                     this.currentContext = (Context) getNameDeclarationMapping(node);
@@ -255,13 +255,13 @@ public class Grammar
                     AParserContext node) {
 
                 if (node.getName() == null) {
-                    this.currentContext = Grammar.this.anonymousContext;
+                    this.currentContext = Grammar.this.globalAnonymousContext;
                     if (this.currentContext == null) {
-                        Grammar.this.anonymousContext = new Context.AnonymousContext(
+                        Grammar.this.globalAnonymousContext = new Context.AnonymousContext(
                                 node, this.grammar);
                         this.grammar.addMapping(node,
-                                Grammar.this.anonymousContext);
-                        this.currentContext = Grammar.this.anonymousContext;
+                                Grammar.this.globalAnonymousContext);
+                        this.currentContext = Grammar.this.globalAnonymousContext;
                     }
                 }
                 else {
