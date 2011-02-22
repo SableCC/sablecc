@@ -39,6 +39,8 @@ public class Grammar
 
     private final Map<Node, Context.AnonymousContext> nodeToAnonymousContextMap = new HashMap<Node, Context.AnonymousContext>();
 
+    private final Map<Node, LexerExpression.InlineExpression> nodeToInlineExpressionMap = new HashMap<Node, LexerExpression.InlineExpression>();
+
     private final Map<Node, Expression> nodeToExpressionMap = new HashMap<Node, Expression>();
 
     private final Map<Node, Lookback> nodeToLookbackMap = new HashMap<Node, Lookback>();
@@ -46,6 +48,18 @@ public class Grammar
     private final Map<Node, Lookahead> nodeToLookaheadMap = new HashMap<Node, Lookahead>();
 
     private Context.AnonymousContext globalAnonymousContext;
+
+    private final Map<String, LexerExpression.StringExpression> stringToStringExpression = new HashMap<String, LexerExpression.StringExpression>();
+
+    private final Map<String, LexerExpression.CharExpression> stringToCharExpression = new HashMap<String, LexerExpression.CharExpression>();
+
+    private final Map<String, LexerExpression.DecExpression> stringToDecExpression = new HashMap<String, LexerExpression.DecExpression>();
+
+    private final Map<String, LexerExpression.HexExpression> stringToHexExpression = new HashMap<String, LexerExpression.HexExpression>();
+
+    private LexerExpression.StartExpression globalStartExpression;
+
+    private LexerExpression.EndExpression globalEndExpression;
 
     Grammar(
             Start ast) {
@@ -308,6 +322,17 @@ public class Grammar
 
     void addMapping(
             Node declaration,
+            LexerExpression.InlineExpression inlineExpression) {
+
+        if (this.nodeToInlineExpressionMap.containsKey(declaration)) {
+            throw new InternalException("multiple mappings for a single node");
+        }
+
+        this.nodeToInlineExpressionMap.put(declaration, inlineExpression);
+    }
+
+    void addMapping(
+            Node declaration,
             Expression expression) {
 
         if (this.nodeToExpressionMap.containsKey(declaration)) {
@@ -359,6 +384,16 @@ public class Grammar
         return this.nodeToAnonymousContextMap.get(node);
     }
 
+    public LexerExpression.InlineExpression getInlineExpressionMapping(
+            Node node) {
+
+        if (!this.nodeToInlineExpressionMap.containsKey(node)) {
+            throw new InternalException("missing mapping");
+        }
+
+        return this.nodeToInlineExpressionMap.get(node);
+    }
+
     public Expression getExpressionMapping(
             Node node) {
 
@@ -387,6 +422,108 @@ public class Grammar
         }
 
         return this.nodeToLookaheadMap.get(node);
+    }
+
+    void addStringExpression(
+            LexerExpression.StringExpression stringExpression) {
+
+        String text = stringExpression.getText();
+
+        if (this.stringToStringExpression.containsKey(text)) {
+            throw new InternalException("multiple mappings for " + text);
+        }
+
+        this.stringToStringExpression.put(text, stringExpression);
+    }
+
+    void addCharExpression(
+            LexerExpression.CharExpression charExpression) {
+
+        String text = charExpression.getText();
+
+        if (this.stringToCharExpression.containsKey(text)) {
+            throw new InternalException("multiple mappings for " + text);
+        }
+
+        this.stringToCharExpression.put(text, charExpression);
+    }
+
+    void addDecExpression(
+            LexerExpression.DecExpression decExpression) {
+
+        String text = decExpression.getText();
+
+        if (this.stringToDecExpression.containsKey(text)) {
+            throw new InternalException("multiple mappings for " + text);
+        }
+
+        this.stringToDecExpression.put(text, decExpression);
+    }
+
+    void addHexExpression(
+            LexerExpression.HexExpression hexExpression) {
+
+        String text = hexExpression.getText();
+
+        if (this.stringToHexExpression.containsKey(text)) {
+            throw new InternalException("multiple mappings for " + text);
+        }
+
+        this.stringToHexExpression.put(text, hexExpression);
+    }
+
+    void addStartExpression(
+            LexerExpression.StartExpression startExpression) {
+
+        if (this.globalStartExpression != null) {
+            throw new InternalException("multiple starts");
+        }
+
+        this.globalStartExpression = startExpression;
+    }
+
+    void addEndExpression(
+            LexerExpression.EndExpression endExpression) {
+
+        if (this.globalEndExpression != null) {
+            throw new InternalException("multiple ends");
+        }
+
+        this.globalEndExpression = endExpression;
+    }
+
+    LexerExpression.StringExpression getStringExpression(
+            String text) {
+
+        return this.stringToStringExpression.get(text);
+    }
+
+    LexerExpression.CharExpression getCharExpression(
+            String text) {
+
+        return this.stringToCharExpression.get(text);
+    }
+
+    LexerExpression.DecExpression getDecExpression(
+            String text) {
+
+        return this.stringToDecExpression.get(text);
+    }
+
+    LexerExpression.HexExpression getHexExpression(
+            String text) {
+
+        return this.stringToHexExpression.get(text);
+    }
+
+    LexerExpression.StartExpression getStartExpression() {
+
+        return this.globalStartExpression;
+    }
+
+    LexerExpression.EndExpression getEndExpression() {
+
+        return this.globalEndExpression;
     }
 
     private static class NameSpace {
