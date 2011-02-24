@@ -105,7 +105,6 @@ Tokens
   grammar_keyword = 'Grammar';
   group_keyword = 'Group';
   ignored_keyword = 'Ignored';
-  inlined_keyword = 'Inlined';
   investigator_keyword = 'Investigator';
   left_keyword = 'Left';
   lexer_keyword = 'Lexer';
@@ -121,6 +120,7 @@ Tokens
   production_keyword = 'Production';
   right_keyword = 'Right';
   root_keyword = 'Root';
+  selector_keyword = 'Selector';
   separator_keyword = 'Separator';
   shortest_keyword = 'Shortest';
   start_keyword = 'Start';
@@ -196,31 +196,14 @@ Productions
 
   lexer
     =
-      lexer_keyword [named_expressions]:named_expression* groups? lexer_priorities? lexer_investigators? lexer_contexts
-        {-> New lexer(lexer_keyword, [named_expressions], [groups.groups], [lexer_priorities.lexer_priorities], [lexer_investigators.lexer_investigators], [lexer_contexts.lexer_contexts]) }
+      lexer_keyword [named_expressions]:named_expression* groups? lexer_priorities? lexer_contexts investigators? selectors?
+        {-> New lexer(lexer_keyword, [named_expressions], [groups.groups], [lexer_priorities.lexer_priorities], [lexer_contexts.lexer_contexts], [investigators.investigators], [selectors.selectors]) }
     ;
 
   named_expression
     =
-      {normal} identifier assign expression semicolon
-        {-> New named_expression.normal(identifier, assign, expression) }
-    |
-      {selection} selection assign [selector_name]:identifier l_par [parameter]:identifier r_par semicolon
-        {-> New named_expression.selection([selection.identifiers], assign, selector_name, parameter) }
-    ;
-
-  selection
-        {-> [identifiers]:identifier+ }
-    =
-      l_par identifier [selection_additional_identifiers]:selection_additional_identifier+ r_par
-        {-> [identifier, selection_additional_identifiers.identifier]}
-    ;
-
-  selection_additional_identifier
-        {-> identifier }
-    =
-      bar identifier
-        {-> identifier }
+      identifier assign expression semicolon
+        {-> New named_expression(identifier, assign, expression) }
     ;
 
   expression
@@ -370,6 +353,19 @@ Productions
         {-> New group (identifier, assign, [unit_list.units]) }
     ;
 
+  lexer_priorities
+        {-> [lexer_priorities]:lexer_priority* }
+    =
+      precedence_keyword [lexer_priorities]:lexer_priority*
+        {-> [lexer_priorities] }
+    ;
+
+  lexer_priority
+    =
+      [high]:unit gt [low]:unit semicolon
+        {-> New lexer_priority(high, gt, low) }
+    ;
+
   lexer_contexts
         {-> [lexer_contexts]:lexer_context+ }
     =
@@ -400,20 +396,34 @@ Productions
 
   tokens
     =
-      token_keyword unit_list? semicolon
-        {-> New tokens(token_keyword, [unit_list.units]) }
+      token_keyword tokens_body?
+        {-> New tokens(token_keyword, [tokens_body.units]) }
+    ;
+
+  tokens_body
+        {-> [units]:unit* }
+    =
+      unit_list? semicolon
+        {-> [unit_list.units] }
     ;
 
   ignored
     =
-      ignored_keyword unit_list? semicolon
-        {-> New ignored(ignored_keyword, [unit_list.units]) }
+      ignored_keyword ignored_body?
+        {-> New ignored(ignored_keyword, [ignored_body.units]) }
+    ;
+
+  ignored_body
+        {-> [units]:unit* }
+    =
+      unit_list? semicolon
+        {-> [unit_list.units] }
     ;
 
   unit_list
         {-> [units]:unit+ }
     =
-      unit [additional_units]:additional_unit*
+      unit [additional_units]:additional_unit* comma?
         {-> [unit, additional_units.unit] }
     ;
 
@@ -424,48 +434,62 @@ Productions
         {-> unit }
     ;
 
-  lexer_priorities
-        {-> [lexer_priorities]:lexer_priority* }
+  investigators
+        {-> [investigators]:investigator* }
     =
-      precedence_keyword [lexer_priorities]:lexer_priority*
-        {-> [lexer_priorities] }
+      investigator_keyword [investigators]:investigator*
+        {-> [investigators] }
     ;
 
-  lexer_priority
-    =
-      [high]:unit gt [low]:unit semicolon
-        {-> New lexer_priority(high, gt, low) }
-    ;
-
-  lexer_investigators
-        {-> [lexer_investigators]:lexer_investigator* }
-    =
-      investigator_keyword [lexer_investigators]:lexer_investigator*
-        {-> [lexer_investigators] }
-    ;
-
-  lexer_investigator
+  investigator
     =
       [name]:identifier l_par identifier r_par semicolon
-        {-> New lexer_investigator(name, identifier) }
+        {-> New investigator(name, identifier) }
+    ;
+
+  selectors
+        {-> [selectors]:selector* }
+    =
+      selector_keyword [selectors]:selector*
+        {-> [selectors] }
+    ;
+
+  selector
+    =
+      {selection} selection assign [selector_name]:identifier l_par [parameter]:identifier r_par semicolon
+        {-> New selector([selection.identifiers], assign, selector_name, parameter) }
+    ;
+
+  selection
+        {-> [identifiers]:identifier+ }
+    =
+      l_par identifier [additional_identifiers]:additional_identifier+ r_par
+        {-> [identifier, additional_identifiers.identifier]}
     ;
 
   parser
     =
-      parser_keyword root? parser_contexts inlined?
-        {-> New parser(parser_keyword, root, [parser_contexts.parser_contexts], inlined) }
+      parser_keyword root? parser_contexts investigators? selectors?
+        {-> New parser(parser_keyword, root, [parser_contexts.parser_contexts], [investigators.investigators], [selectors.selectors]) }
     ;
 
   root
     =
-      root_keyword identifier_list? semicolon
-        {-> New root(root_keyword, [identifier_list.identifiers] ) }
+      root_keyword root_body?
+        {-> New root(root_keyword, [root_body.identifiers]) }
+    ;
+
+  root_body
+        {-> [identifiers]:identifier* }
+    =
+      identifier_list? semicolon
+        {-> [identifier_list.identifiers] }
     ;
 
   identifier_list
         {-> [identifiers]:identifier+ }
     =
-      identifier [additional_identifiers]:additional_identifier*
+      identifier [additional_identifiers]:additional_identifier* comma?
         {-> [identifier, additional_identifiers.identifier] }
     ;
 
@@ -499,11 +523,8 @@ Productions
 
   parser_production
     =
-      {normal} qualifier? parser_production_body
-        {-> New parser_production.normal(qualifier, parser_production_body.identifier, parser_production_body.assign, [parser_production_body.parser_alternatives], [parser_production_body.parser_priorities], [parser_production_body.parser_investigators]) }
-    |
-      {selection} selection assign identifier l_par [parameter]:identifier r_par
-        {-> New parser_production.selection([selection.identifiers], assign, identifier, parameter) }
+      qualifier? parser_production_body
+        {-> New parser_production(qualifier, parser_production_body.identifier, parser_production_body.assign, [parser_production_body.parser_alternatives], [parser_production_body.parser_priorities]) }
     ;
 
   qualifier
@@ -514,10 +535,10 @@ Productions
     ;
 
   parser_production_body
-        {-> identifier assign [parser_alternatives]:parser_alternative+ [parser_priorities]:parser_priority* [parser_investigators]:parser_investigator* }
+        {-> identifier assign [parser_alternatives]:parser_alternative+ [parser_priorities]:parser_priority* }
     =
-      identifier assign parser_alternatives semicolon parser_priorities? parser_investigator?
-        {-> identifier assign [parser_alternatives.parser_alternatives] [parser_priorities.parser_priorities] [parser_investigator] }
+      identifier assign parser_alternatives semicolon parser_priorities?
+        {-> identifier assign [parser_alternatives.parser_alternatives] [parser_priorities.parser_priorities] }
     ;
 
   parser_alternatives
@@ -571,41 +592,6 @@ Productions
     |
       {unary} unary_keyword identifier_list semicolon
         {-> New parser_priority.unary(unary_keyword, [identifier_list.identifiers]) }
-    ;
-
-  parser_investigator
-    =
-      investigator_keyword [name]:identifier l_par identifier_list? r_par semicolon
-        {-> New parser_investigator(name, [identifier_list.identifiers]) }
-    ;
-
-  inlined
-    =
-      inlined_keyword inlined_element_list? semicolon
-        {-> New inlined(inlined_keyword, [inlined_element_list.inlined_elements]) }
-    ;
-
-  inlined_element_list
-        {-> [inlined_elements]:inlined_element+ }
-    =
-      inlined_element [additional_inlined_elements]:additional_inlined_element*
-        {-> [inlined_element, additional_inlined_elements.inlined_element] }
-    ;
-
-  additional_inlined_element
-        {-> inlined_element }
-    =
-      comma inlined_element
-        {-> inlined_element }
-    ;
-
-  inlined_element
-    =
-      {two_parts} [production_name]:identifier dot [element_name]:identifier
-        {-> New inlined_element(production_name, Null, element_name) }
-    |
-      {three_parts} [production_name]:identifier [left_dot]:dot [alternative_name]:identifier [right_dot]:dot [element_name]:identifier
-        {-> New inlined_element(production_name, alternative_name, element_name) }
     ;
 
   transformation
