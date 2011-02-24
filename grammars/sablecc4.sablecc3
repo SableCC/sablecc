@@ -704,19 +704,15 @@ Productions
 Abstract Syntax Tree
 
   grammar =
-    grammar_keyword [name]:identifier lexer? parser? transformation?
-      tree?;
+    grammar_keyword [name]:identifier lexer? parser? transformation? tree?;
 
   lexer =
     lexer_keyword [named_expressions]:named_expression* [groups]:group*
-      [lexer_priorities]:lexer_priority*
-      [lexer_investigators]:lexer_investigator*
-      [lexer_contexts]:lexer_context+;
+      [lexer_priorities]:lexer_priority* [lexer_contexts]:lexer_context+
+      [investigators]:investigator* [selectors]:selector*;
 
   named_expression =
-    {normal} [name]:identifier assign expression |
-    {selection} [names]:identifier+ assign [selector_name]:identifier
-      [parameter]:identifier;
+    [name]:identifier assign expression;
 
   expression =
     {or} [left]:expression bar [right]:expression |
@@ -756,6 +752,9 @@ Abstract Syntax Tree
     {start} start_keyword |
     {end} end_keyword;
 
+  lexer_priority =
+    [high]:unit gt [low]:unit;
+
   lexer_context =
     [name]:identifier? tokens? ignored?;
 
@@ -765,14 +764,16 @@ Abstract Syntax Tree
   ignored =
     ignored_keyword unit*;
 
-  lexer_priority =
-    [high]:unit gt [low]:unit;
-
-  lexer_investigator =
+  investigator =
     [name]:identifier [parameter]:identifier;
 
+  selector =
+    [names]:identifier+ assign [selector_name]:identifier
+    [parameter]:identifier;
+
   parser =
-    parser_keyword root? [parser_contexts]:parser_context+ inlined?;
+    parser_keyword root? [parser_contexts]:parser_context+
+      [investigators]:investigator* [selectors]:selector*;
 
   root =
     root_keyword [identifiers]:identifier*;
@@ -781,12 +782,9 @@ Abstract Syntax Tree
     [name]:identifier? [parser_productions]:parser_production*;
 
   parser_production =
-    {normal} qualifier? [name]:identifier assign
+    qualifier? [name]:identifier assign
       [parser_alternatives]:parser_alternative+
-      [parser_priorities]:parser_priority*
-      [parser_investigators]:parser_investigator* |
-    {selection} [names]:identifier+ assign [selector_name]:identifier
-      [parameter]:identifier;
+      [parser_priorities]:parser_priority*;
 
   qualifier =
     {dangling} dangling_keyword |
@@ -819,16 +817,6 @@ Abstract Syntax Tree
     {left} left_keyword [identifiers]:identifier+ |
     {right} right_keyword [identifiers]:identifier+ |
     {unary} unary_keyword [identifiers]:identifier+;
-
-  parser_investigator =
-    [name]:identifier [parameters]:identifier*;
-
-  inlined =
-    inlined_keyword [inlined_elements]:inlined_element*;
-
-  inlined_element =
-    [production_name]:identifier [alternative_name]:identifier?
-      [element_name]:identifier;
 
   transformation =
     transformation_keyword production_transformations?
