@@ -22,6 +22,10 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.Expression.Lookahead;
 import org.sablecc.sablecc.core.Expression.Lookback;
+import org.sablecc.sablecc.core.Investigator.LexerInvestigator;
+import org.sablecc.sablecc.core.Investigator.ParserInvestigator;
+import org.sablecc.sablecc.core.Selector.LexerSelector;
+import org.sablecc.sablecc.core.Selector.ParserSelector;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
@@ -101,6 +105,8 @@ public class Grammar
 
             private final NameSpace globalNameSpace = this.grammar.globalNameSpace;
 
+            private boolean inLexer;
+
             @Override
             public void inAGrammar(
                     AGrammar node) {
@@ -110,24 +116,11 @@ public class Grammar
             }
 
             @Override
-            public void inANormalNamedExpression(
-                    ANormalNamedExpression node) {
+            public void inANamedExpression(
+                    ANamedExpression node) {
 
                 this.globalNameSpace.add(new LexerExpression.NamedExpression(
                         node, this.grammar));
-            }
-
-            @Override
-            public void inASelectionNamedExpression(
-                    ASelectionNamedExpression node) {
-
-                LexerSelector lexerSelector = new LexerSelector(node,
-                        this.grammar);
-                for (LexerSelector.Selection selection : lexerSelector
-                        .getSelections()) {
-                    this.globalNameSpace.add(selection);
-                }
-                this.globalNameSpace.add(lexerSelector);
             }
 
             @Override
@@ -135,14 +128,6 @@ public class Grammar
                     AGroup node) {
 
                 this.globalNameSpace.add(new Group(node, this.grammar));
-            }
-
-            @Override
-            public void inALexerInvestigator(
-                    ALexerInvestigator node) {
-
-                this.globalNameSpace.add(new LexerInvestigator(node,
-                        this.grammar));
             }
 
             @Override
@@ -176,33 +161,60 @@ public class Grammar
             }
 
             @Override
-            public void inANormalParserProduction(
-                    ANormalParserProduction node) {
+            public void inAParserProduction(
+                    AParserProduction node) {
 
                 this.globalNameSpace.add(new ParserProduction(node,
                         this.grammar));
             }
 
             @Override
-            public void inASelectionParserProduction(
-                    ASelectionParserProduction node) {
+            public void inALexer(
+                    ALexer node) {
 
-                ParserSelector parserSelector = new ParserSelector(node,
-                        this.grammar);
-                for (ParserSelector.Selection selection : parserSelector
-                        .getSelections()) {
-                    this.globalNameSpace.add(selection);
-                }
-                this.globalNameSpace.add(parserSelector);
+                this.inLexer = true;
             }
 
             @Override
-            public void inAParserInvestigator(
-                    AParserInvestigator node) {
+            public void outALexer(
+                    ALexer node) {
 
-                this.globalNameSpace.add(new ParserInvestigator(node,
-                        this.grammar));
+                this.inLexer = false;
             }
+
+            @Override
+            public void inASelector(
+                    ASelector node) {
+
+                Selector selector;
+
+                if (this.inLexer) {
+                    selector = new LexerSelector(node, this.grammar);
+                }
+                else {
+                    selector = new ParserSelector(node, this.grammar);
+                }
+
+                for (Selector.Selection selection : selector.getSelections()) {
+                    this.globalNameSpace.add(selection);
+                }
+                this.globalNameSpace.add(selector);
+            }
+
+            @Override
+            public void inAInvestigator(
+                    AInvestigator node) {
+
+                if (this.inLexer) {
+                    this.globalNameSpace.add(new LexerInvestigator(node,
+                            this.grammar));
+                }
+                else {
+                    this.globalNameSpace.add(new ParserInvestigator(node,
+                            this.grammar));
+                }
+            }
+
         });
     }
 
