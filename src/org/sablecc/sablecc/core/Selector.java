@@ -22,17 +22,17 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class LexerSelector
+public abstract class Selector
         implements INameDeclaration {
 
-    private final ASelectionNamedExpression declaration;
+    private final ASelector declaration;
 
     private final Grammar grammar;
 
     private final List<Selection> selections;
 
-    LexerSelector(
-            ASelectionNamedExpression declaration,
+    Selector(
+            ASelector declaration,
             Grammar grammar) {
 
         if (declaration == null) {
@@ -47,14 +47,17 @@ public class LexerSelector
         grammar.addMapping(declaration, this);
         this.grammar = grammar;
 
-        List<Selection> selections = new LinkedList<LexerSelector.Selection>();
+        List<Selection> selections = new LinkedList<Selector.Selection>();
 
         for (TIdentifier name : declaration.getNames()) {
-            selections.add(new Selection(name));
+            selections.add(newSelection(name));
         }
 
         this.selections = Collections.unmodifiableList(selections);
     }
+
+    abstract Selection newSelection(
+            TIdentifier name);
 
     public TIdentifier getNameIdentifier() {
 
@@ -76,7 +79,7 @@ public class LexerSelector
         return this.selections;
     }
 
-    public class Selection
+    public abstract class Selection
             implements INameDeclaration {
 
         private final TIdentifier declaration;
@@ -89,7 +92,7 @@ public class LexerSelector
             }
 
             this.declaration = declaration;
-            LexerSelector.this.grammar.addMapping(declaration, this);
+            Selector.this.grammar.addMapping(declaration, this);
         }
 
         public TIdentifier getNameIdentifier() {
@@ -105,6 +108,64 @@ public class LexerSelector
         public String getNameType() {
 
             return "lexer selection";
+        }
+    }
+
+    public static class LexerSelector
+            extends Selector {
+
+        LexerSelector(
+                ASelector declaration,
+                Grammar grammar) {
+
+            super(declaration, grammar);
+        }
+
+        @Override
+        Selector.Selection newSelection(
+                TIdentifier name) {
+
+            return new Selection(name);
+        }
+
+        public class Selection
+                extends Selector.Selection {
+
+            private Selection(
+                    TIdentifier declaration) {
+
+                super(declaration);
+            }
+
+        }
+    }
+
+    public static class ParserSelector
+            extends Selector {
+
+        ParserSelector(
+                ASelector declaration,
+                Grammar grammar) {
+
+            super(declaration, grammar);
+        }
+
+        @Override
+        Selector.Selection newSelection(
+                TIdentifier name) {
+
+            return new Selection(name);
+        }
+
+        public class Selection
+                extends Selector.Selection {
+
+            private Selection(
+                    TIdentifier declaration) {
+
+                super(declaration);
+            }
+
         }
     }
 }

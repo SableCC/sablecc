@@ -23,12 +23,12 @@ import org.sablecc.sablecc.syntax3.node.*;
 public class ParserProduction
         implements INameDeclaration {
 
-    private final ANormalParserProduction declaration;
+    private final AParserProduction declaration;
 
     private final Grammar grammar;
 
     ParserProduction(
-            ANormalParserProduction declaration,
+            AParserProduction declaration,
             Grammar grammar) {
 
         if (declaration == null) {

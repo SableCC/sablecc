@@ -123,10 +123,10 @@ public abstract class LexerExpression {
             extends LexerExpression
             implements INameDeclaration {
 
-        private final ANormalNamedExpression declaration;
+        private final ANamedExpression declaration;
 
         NamedExpression(
-                ANormalNamedExpression declaration,
+                ANamedExpression declaration,
                 Grammar grammar) {
 
             super(grammar);

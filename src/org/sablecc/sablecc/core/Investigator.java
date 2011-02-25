@@ -20,15 +20,15 @@ package org.sablecc.sablecc.core;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class ParserInvestigator
+public abstract class Investigator
         implements INameDeclaration {
 
-    private final AParserInvestigator declaration;
+    private final AInvestigator declaration;
 
     private final Grammar grammar;
 
-    ParserInvestigator(
-            AParserInvestigator declaration,
+    Investigator(
+            AInvestigator declaration,
             Grammar grammar) {
 
         if (declaration == null) {
@@ -56,7 +56,28 @@ public class ParserInvestigator
 
     public String getNameType() {
 
-        return "parser investigator";
+        return "lexer investigator";
     }
 
+    public static class LexerInvestigator
+            extends Investigator {
+
+        LexerInvestigator(
+                AInvestigator declaration,
+                Grammar grammar) {
+
+            super(declaration, grammar);
+        }
+    }
+
+    public static class ParserInvestigator
+            extends Investigator {
+
+        ParserInvestigator(
+                AInvestigator declaration,
+                Grammar grammar) {
+
+            super(declaration, grammar);
+        }
+    }
 }
