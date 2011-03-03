@@ -21,7 +21,7 @@ import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Group
-        implements INameDeclaration {
+        implements INameDeclaration, LexerToken {
 
     private final AGroup declaration;
 

@@ -22,7 +22,8 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public abstract class LexerExpression {
+public abstract class LexerExpression
+        implements LexerToken {
 
     private final Grammar grammar;
 
