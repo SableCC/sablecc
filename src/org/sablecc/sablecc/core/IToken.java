@@ -17,6 +17,6 @@
 
 package org.sablecc.sablecc.core;
 
-public interface LexerToken {
+public interface IToken {
 
 }

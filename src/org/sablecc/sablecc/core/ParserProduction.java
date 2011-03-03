@@ -112,7 +112,7 @@ public abstract class ParserProduction
 
     public static class TokenProduction
             extends ParserProduction
-            implements LexerToken {
+            implements INamedToken {
 
         private TokenProduction(
                 AParserProduction declaration,
