@@ -164,8 +164,8 @@ public class Grammar
             public void inAParserProduction(
                     AParserProduction node) {
 
-                this.globalNameSpace.add(new ParserProduction(node,
-                        this.grammar));
+                this.globalNameSpace.add(ParserProduction.newParserProduction(
+                        node, this.grammar));
             }
 
             @Override
