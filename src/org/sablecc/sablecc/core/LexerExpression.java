@@ -23,7 +23,7 @@ import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public abstract class LexerExpression
-        implements LexerToken {
+        implements IToken {
 
     private final Grammar grammar;
 
@@ -122,7 +122,7 @@ public abstract class LexerExpression
 
     public static class NamedExpression
             extends LexerExpression
-            implements INameDeclaration {
+            implements INamedToken {
 
         private final ANamedExpression declaration;
 
