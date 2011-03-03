@@ -20,14 +20,14 @@ package org.sablecc.sablecc.core;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class ParserProduction
+public abstract class ParserProduction
         implements INameDeclaration {
 
     private final AParserProduction declaration;
 
     private final Grammar grammar;
 
-    ParserProduction(
+    private ParserProduction(
             AParserProduction declaration,
             Grammar grammar) {
 
@@ -59,4 +59,66 @@ public class ParserProduction
         return "parser production";
     }
 
+    static ParserProduction newParserProduction(
+            AParserProduction declaration,
+            Grammar grammar) {
+
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
+        }
+
+        if (grammar == null) {
+            throw new InternalException("grammar may not be null");
+        }
+
+        if (declaration.getQualifier() == null) {
+            return new NormalProduction(declaration, grammar);
+        }
+
+        if (declaration.getQualifier() instanceof ADanglingQualifier) {
+            return new DanglingProduction(declaration, grammar);
+        }
+
+        if (declaration.getQualifier() instanceof ATokenQualifier) {
+            return new TokenProduction(declaration, grammar);
+        }
+
+        throw new InternalException("unhandled case");
+    }
+
+    public static class NormalProduction
+            extends ParserProduction {
+
+        private NormalProduction(
+                AParserProduction declaration,
+                Grammar grammar) {
+
+            super(declaration, grammar);
+        }
+
+    }
+
+    public static class DanglingProduction
+            extends ParserProduction {
+
+        private DanglingProduction(
+                AParserProduction declaration,
+                Grammar grammar) {
+
+            super(declaration, grammar);
+        }
+
+    }
+
+    public static class TokenProduction
+            extends ParserProduction {
+
+        private TokenProduction(
+                AParserProduction declaration,
+                Grammar grammar) {
+
+            super(declaration, grammar);
+        }
+
+    }
 }
