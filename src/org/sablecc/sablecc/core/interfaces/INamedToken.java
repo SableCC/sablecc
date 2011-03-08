@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.core;
+package org.sablecc.sablecc.core.interfaces;
 
-public interface IToken {
+public interface INamedToken
+        extends IToken, INameDeclaration {
 
 }

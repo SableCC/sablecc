@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.core;
+package org.sablecc.sablecc.core.interfaces;
 
 import org.sablecc.sablecc.syntax3.node.*;
 

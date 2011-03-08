@@ -20,6 +20,7 @@ package org.sablecc.sablecc.core;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public abstract class Selector
