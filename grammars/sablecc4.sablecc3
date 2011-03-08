@@ -566,8 +566,11 @@ Productions
     =
       {unit} element_name? unit unary_operator?
     |
-      {separated} element_name? l_par [unit]:unit separator_keyword [separator]:unit r_par many_operator
-        {-> New element.separated(element_name, unit, separator_keyword, separator, many_operator) }
+      {separated} element_name? l_par [left]:unit separator_keyword [right]:unit r_par many_operator
+        {-> New element.separated(element_name, left, right, many_operator) }
+    |
+      {alternated} element_name? l_par [left]:unit [right]:unit r_par many_operator
+        {-> New element.alternated(element_name, left, right, many_operator) }
     ;
 
   dangling_element
@@ -644,6 +647,12 @@ Productions
       {reference} element_reference
     |
       {list_reference} element_reference three_dots
+    |
+      {left_list_reference} element_reference dot left_keyword three_dots
+        {-> New list_element.left_list_reference(element_reference, left_keyword) }
+    |
+      {right_list_reference} element_reference dot right_keyword three_dots
+        {-> New list_element.right_list_reference(element_reference, right_keyword) }
     |
       {new} new_keyword alternative_reference l_par [transformation_elements]:transformation_element* r_par
     ;
@@ -782,8 +791,8 @@ Abstract Syntax Tree
 
   element =
     {unit} element_name? unit unary_operator? |
-    {separated} element_name? [unit]:unit separator_keyword [separator]:unit
-      many_operator;
+    {separated} element_name? [left]:unit [right]:unit many_operator |
+    {alternated} element_name? [left]:unit [right]:unit many_operator;
 
   unary_operator =
     {zero_or_one} q_mark |
@@ -836,6 +845,8 @@ Abstract Syntax Tree
   list_element =
     {reference} element_reference |
     {list_reference} element_reference three_dots |
+    {left_list_reference} element_reference left_keyword |
+    {right_list_reference} element_reference right_keyword |
     {new} new_keyword alternative_reference l_par
       [transformation_elements]:transformation_element* r_par;
 
