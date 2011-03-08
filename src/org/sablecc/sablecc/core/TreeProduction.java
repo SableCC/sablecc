@@ -18,6 +18,7 @@
 package org.sablecc.sablecc.core;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class TreeProduction

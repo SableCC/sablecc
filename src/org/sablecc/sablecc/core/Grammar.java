@@ -26,6 +26,7 @@ import org.sablecc.sablecc.core.Investigator.LexerInvestigator;
 import org.sablecc.sablecc.core.Investigator.ParserInvestigator;
 import org.sablecc.sablecc.core.Selector.LexerSelector;
 import org.sablecc.sablecc.core.Selector.ParserSelector;
+import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
