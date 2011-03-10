@@ -38,14 +38,14 @@ public abstract class LexerExpression
         this.grammar = grammar;
     }
 
-    StringExpression declareInlineExpression(
-            AStringUnit declaration) {
+    static StringExpression declareInlineExpression(
+            AStringUnit declaration,
+            Grammar grammar) {
 
         String text = declaration.getString().getText();
-        StringExpression stringExpression = this.grammar
-                .getStringExpression(text);
+        StringExpression stringExpression = grammar.getStringExpression(text);
         if (stringExpression == null) {
-            stringExpression = new StringExpression(declaration, this.grammar);
+            stringExpression = new StringExpression(declaration, grammar);
         }
         else {
             stringExpression.addDeclaration(declaration);
@@ -53,13 +53,14 @@ public abstract class LexerExpression
         return stringExpression;
     }
 
-    CharExpression declareInlineExpression(
-            ACharCharacter declaration) {
+    static CharExpression declareInlineExpression(
+            ACharCharacter declaration,
+            Grammar grammar) {
 
         String text = declaration.getChar().getText();
-        CharExpression charExpression = this.grammar.getCharExpression(text);
+        CharExpression charExpression = grammar.getCharExpression(text);
         if (charExpression == null) {
-            charExpression = new CharExpression(declaration, this.grammar);
+            charExpression = new CharExpression(declaration, grammar);
         }
         else {
             charExpression.addDeclaration(declaration);
@@ -67,13 +68,14 @@ public abstract class LexerExpression
         return charExpression;
     }
 
-    DecExpression declareInlineExpression(
-            ADecCharacter declaration) {
+    static DecExpression declareInlineExpression(
+            ADecCharacter declaration,
+            Grammar grammar) {
 
         String text = declaration.getDecChar().getText();
-        DecExpression decExpression = this.grammar.getDecExpression(text);
+        DecExpression decExpression = grammar.getDecExpression(text);
         if (decExpression == null) {
-            decExpression = new DecExpression(declaration, this.grammar);
+            decExpression = new DecExpression(declaration, grammar);
         }
         else {
             decExpression.addDeclaration(declaration);
@@ -81,13 +83,14 @@ public abstract class LexerExpression
         return decExpression;
     }
 
-    HexExpression declareInlineExpression(
-            AHexCharacter declaration) {
+    static HexExpression declareInlineExpression(
+            AHexCharacter declaration,
+            Grammar grammar) {
 
         String text = declaration.getHexChar().getText();
-        HexExpression hexExpression = this.grammar.getHexExpression(text);
+        HexExpression hexExpression = grammar.getHexExpression(text);
         if (hexExpression == null) {
-            hexExpression = new HexExpression(declaration, this.grammar);
+            hexExpression = new HexExpression(declaration, grammar);
         }
         else {
             hexExpression.addDeclaration(declaration);
@@ -95,12 +98,13 @@ public abstract class LexerExpression
         return hexExpression;
     }
 
-    StartExpression declareInlineExpression(
-            AStartUnit declaration) {
+    static StartExpression declareInlineExpression(
+            AStartUnit declaration,
+            Grammar grammar) {
 
-        StartExpression startExpression = this.grammar.getStartExpression();
+        StartExpression startExpression = grammar.getStartExpression();
         if (startExpression == null) {
-            startExpression = new StartExpression(declaration, this.grammar);
+            startExpression = new StartExpression(declaration, grammar);
         }
         else {
             startExpression.addDeclaration(declaration);
@@ -108,12 +112,13 @@ public abstract class LexerExpression
         return startExpression;
     }
 
-    EndExpression declareInlineExpression(
-            AEndUnit declaration) {
+    static EndExpression declareInlineExpression(
+            AEndUnit declaration,
+            Grammar grammar) {
 
-        EndExpression endExpression = this.grammar.getEndExpression();
+        EndExpression endExpression = grammar.getEndExpression();
         if (endExpression == null) {
-            endExpression = new EndExpression(declaration, this.grammar);
+            endExpression = new EndExpression(declaration, grammar);
         }
         else {
             endExpression.addDeclaration(declaration);
