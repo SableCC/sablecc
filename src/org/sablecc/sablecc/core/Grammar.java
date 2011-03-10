@@ -75,7 +75,7 @@ public class Grammar
 
         fillGlobalNameSpace(ast);
         fillTreeNameSpace(ast);
-        fillContexts(ast);
+        findAnonymousContexts(ast);
 
         throw new InternalException("not implemented");
     }
@@ -237,16 +237,12 @@ public class Grammar
         });
     }
 
-    private void fillContexts(
+    private void findAnonymousContexts(
             Start ast) {
 
         ast.apply(new DepthFirstAdapter() {
 
             private final Grammar grammar = Grammar.this;
-
-            private final NameSpace globalNameSpace = this.grammar.globalNameSpace;
-
-            private Context currentContext;
 
             @Override
             public void inALexerContext(
@@ -259,22 +255,7 @@ public class Grammar
                     }
                     Grammar.this.globalAnonymousContext = new Context.AnonymousContext(
                             node, this.grammar);
-                    this.currentContext = Grammar.this.globalAnonymousContext;
                 }
-                else {
-                    this.currentContext = (Context) getNameDeclarationMapping(node);
-
-                    if (this.currentContext == null) {
-                        throw new InternalException("missing mapping");
-                    }
-                }
-            }
-
-            @Override
-            public void outALexerContext(
-                    ALexerContext node) {
-
-                this.currentContext = null;
             }
 
             @Override
@@ -282,33 +263,16 @@ public class Grammar
                     AParserContext node) {
 
                 if (node.getName() == null) {
-                    this.currentContext = Grammar.this.globalAnonymousContext;
-                    if (this.currentContext == null) {
+                    if (Grammar.this.globalAnonymousContext == null) {
                         Grammar.this.globalAnonymousContext = new Context.AnonymousContext(
                                 node, this.grammar);
                         this.grammar.addMapping(node,
                                 Grammar.this.globalAnonymousContext);
-                        this.currentContext = Grammar.this.globalAnonymousContext;
                     }
                 }
-                else {
-                    this.currentContext = (Context) getNameDeclarationMapping(node);
-
-                    if (this.currentContext == null) {
-                        throw new InternalException("missing mapping");
-                    }
-                }
-            }
-
-            @Override
-            public void outAParserContext(
-                    AParserContext node) {
-
-                this.currentContext = null;
             }
         });
 
-        throw new InternalException("not implemented");
     }
 
     void addMapping(
