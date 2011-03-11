@@ -38,7 +38,7 @@ public abstract class LexerExpression
         this.grammar = grammar;
     }
 
-    static StringExpression declareInlineExpression(
+    static void declareInlineExpression(
             AStringUnit declaration,
             Grammar grammar) {
 
@@ -50,10 +50,9 @@ public abstract class LexerExpression
         else {
             stringExpression.addDeclaration(declaration);
         }
-        return stringExpression;
     }
 
-    static CharExpression declareInlineExpression(
+    static void declareInlineExpression(
             ACharCharacter declaration,
             Grammar grammar) {
 
@@ -65,10 +64,9 @@ public abstract class LexerExpression
         else {
             charExpression.addDeclaration(declaration);
         }
-        return charExpression;
     }
 
-    static DecExpression declareInlineExpression(
+    static void declareInlineExpression(
             ADecCharacter declaration,
             Grammar grammar) {
 
@@ -80,10 +78,9 @@ public abstract class LexerExpression
         else {
             decExpression.addDeclaration(declaration);
         }
-        return decExpression;
     }
 
-    static HexExpression declareInlineExpression(
+    static void declareInlineExpression(
             AHexCharacter declaration,
             Grammar grammar) {
 
@@ -95,10 +92,9 @@ public abstract class LexerExpression
         else {
             hexExpression.addDeclaration(declaration);
         }
-        return hexExpression;
     }
 
-    static StartExpression declareInlineExpression(
+    static void declareInlineExpression(
             AStartUnit declaration,
             Grammar grammar) {
 
@@ -109,10 +105,9 @@ public abstract class LexerExpression
         else {
             startExpression.addDeclaration(declaration);
         }
-        return startExpression;
     }
 
-    static EndExpression declareInlineExpression(
+    static void declareInlineExpression(
             AEndUnit declaration,
             Grammar grammar) {
 
@@ -123,7 +118,6 @@ public abstract class LexerExpression
         else {
             endExpression.addDeclaration(declaration);
         }
-        return endExpression;
     }
 
     public static class NamedExpression

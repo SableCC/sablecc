@@ -75,6 +75,7 @@ public class Grammar
 
         fillGlobalNameSpace(ast);
         fillTreeNameSpace(ast);
+        findInlineExpressions(ast);
         findAnonymousContexts(ast);
 
         throw new InternalException("not implemented");
@@ -237,6 +238,64 @@ public class Grammar
         });
     }
 
+    private void findInlineExpressions(
+            Start ast) {
+
+        ast.apply(new DepthFirstAdapter() {
+
+            private final Grammar grammar = Grammar.this;
+
+            @Override
+            public void caseANamedExpression(
+                    ANamedExpression node) {
+
+                // Do not visit subtree
+            }
+
+            @Override
+            public void inAStringUnit(
+                    AStringUnit node) {
+
+                LexerExpression.declareInlineExpression(node, this.grammar);
+            }
+
+            @Override
+            public void inACharCharacter(
+                    ACharCharacter node) {
+
+                LexerExpression.declareInlineExpression(node, this.grammar);
+            }
+
+            @Override
+            public void inADecCharacter(
+                    ADecCharacter node) {
+
+                LexerExpression.declareInlineExpression(node, this.grammar);
+            }
+
+            @Override
+            public void inAHexCharacter(
+                    AHexCharacter node) {
+
+                LexerExpression.declareInlineExpression(node, this.grammar);
+            }
+
+            @Override
+            public void inAStartUnit(
+                    AStartUnit node) {
+
+                LexerExpression.declareInlineExpression(node, this.grammar);
+            }
+
+            @Override
+            public void inAEndUnit(
+                    AEndUnit node) {
+
+                LexerExpression.declareInlineExpression(node, this.grammar);
+            }
+        });
+    }
+
     private void findAnonymousContexts(
             Start ast) {
 
@@ -272,7 +331,6 @@ public class Grammar
                 }
             }
         });
-
     }
 
     void addMapping(
