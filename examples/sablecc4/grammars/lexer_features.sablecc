@@ -19,36 +19,31 @@ Grammar lexer_features:
 
 Lexer
 
-  c_comment = Shortest '/*' Any* '*/';
-
-  eol = #13 | #10 | #13 #10;
-
-  line_comment = '//' (Shortest (Any* Lookahead (eol | '' Lookahead End))) (eol | '' Lookahead End);
+  identifier = letter (letter | digit)*;
+  decimal = digit+;
+  hex = '0x' hex_digit+;
+  zero = '0'+ | 'zero';
 
   letter = upper_case | lower_case;
   upper_case = 'A'..'Z';
   lower_case = 'a'..'z';
   digit = '0'..'9';
-
-  if_keyword = 'if';
-  while_keyword = 'while';
-
-  identifier = letter (letter | digit)*;
-  number = digit+;
+  hex_digit = 'a'..'f' | 'A'..'F' | digit;
 
   ip_address = (number Separator '.')^4;
 
-  hex_digit = 'a'..'f' | upper_case - ('G'..'Z') | digit;
-  hex = '0x' hex_digit+;
+  c_comment = Shortest '/*' Any* '*/';
+  c_line_comment = Shortest '//' Any* (eol | End);
 
-  zero = '0'+ | 'zero';
+  tab = #9;
+  eol = #xD | #xA | #xD #xA;
 
   Precedence
     zero > identifier;
     zero > number;
 
   Token
-    zero, if_keyword, 'else', while_keyword, identifier, number, ip_address, hex;
+    zero, 'if', 'else', 'while', identifier, number, ip_address, hex;
 
   Ignored
-    c_comment, line_comment, ' ', #10, #xD;
+    c_comment, c_line_comment, ' ', tab, eol;
