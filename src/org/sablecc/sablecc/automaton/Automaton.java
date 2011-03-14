@@ -18,7 +18,7 @@
 package org.sablecc.sablecc.automaton;
 
 import static java.math.BigInteger.*;
-import static org.sablecc.sablecc.util.UsefulStaticImports.*;
+import static org.sablecc.util.UsefulStaticImports.*;
 
 import java.math.*;
 import java.util.*;

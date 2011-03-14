@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import static org.sablecc.sablecc.util.UsefulStaticImports.*;
+import static org.sablecc.util.UsefulStaticImports.*;
 
 import java.math.*;
 

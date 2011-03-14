@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.util;
+package org.sablecc.util;
 
 import java.math.*;
 
