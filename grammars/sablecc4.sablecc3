@@ -557,9 +557,11 @@ Productions
 
   parser_alternative
     =
-      {normal} alternative_name? [elements]:element* dangling_element?
+      {normal} alternative_name? [elements]:element+ dangling_element?
+        {-> New parser_alternative(alternative_name, [elements], dangling_element) }
     |
-      {empty} alternative_name? empty_keyword
+      {empty} alternative_name? empty_keyword dangling_element?
+        {-> New parser_alternative(alternative_name, [], dangling_element) }
     ;
 
   element
@@ -691,9 +693,11 @@ Productions
 
   tree_alternative
     =
-      {normal} alternative_name? [elements]:element*
+      {normal} alternative_name? [elements]:element+
+        {-> New tree_alternative(alternative_name, [elements]) }
     |
       {empty} alternative_name? empty_keyword
+        {-> New tree_alternative(alternative_name, []) }
     ;
 
 Abstract Syntax Tree
@@ -786,8 +790,7 @@ Abstract Syntax Tree
     {token} token_keyword;
 
   parser_alternative =
-    {normal} alternative_name? [elements]:element* dangling_element? |
-    {empty} alternative_name? empty_keyword;
+    alternative_name? [elements]:element* dangling_element?;
 
   element =
     {unit} element_name? unit unary_operator? |
@@ -861,5 +864,4 @@ Abstract Syntax Tree
     [name]:identifier assign [tree_alternatives]:tree_alternative+;
 
   tree_alternative =
-    {normal} alternative_name? [elements]:element* |
-    {empty} alternative_name? empty_keyword;
+    alternative_name? [elements]:element*;
