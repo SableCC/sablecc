@@ -566,7 +566,7 @@ Productions
 
   element
     =
-      {unit} element_name? unit unary_operator?
+      {normal} element_name? unit unary_operator?
     |
       {separated} element_name? l_par [left]:unit separator_keyword [right]:unit r_par many_operator
         {-> New element.separated(element_name, left, right, many_operator) }
@@ -793,7 +793,7 @@ Abstract Syntax Tree
     alternative_name? [elements]:element* dangling_element?;
 
   element =
-    {unit} element_name? unit unary_operator? |
+    {normal} element_name? unit unary_operator? |
     {separated} element_name? [left]:unit [right]:unit many_operator |
     {alternated} element_name? [left]:unit [right]:unit many_operator;
 
