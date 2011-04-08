@@ -28,7 +28,7 @@ import org.sablecc.util.*;
 
 public class GrammarCompiler {
 
-    final private String grammar;
+    final private String text;
 
     final private Strictness strictness;
 
@@ -37,12 +37,12 @@ public class GrammarCompiler {
     private boolean hasRun;
 
     public GrammarCompiler(
-            String grammar,
+            String text,
             Strictness strictness,
             Trace trace) {
 
-        if (grammar == null) {
-            throw new InternalException("grammar may not be null");
+        if (text == null) {
+            throw new InternalException("text may not be null");
         }
 
         if (strictness == null) {
@@ -53,7 +53,7 @@ public class GrammarCompiler {
             throw new InternalException("trace may not be null");
         }
 
-        this.grammar = grammar;
+        this.text = text;
         this.strictness = strictness;
         this.trace = trace;
     }
@@ -68,8 +68,10 @@ public class GrammarCompiler {
             this.hasRun = true;
         }
 
+        this.trace.verboseln(" Parsing");
+
         Start ast = new Parser(new Lexer(new PushbackReader(new StringReader(
-                this.grammar), 1024))).parse();
+                this.text), 1024))).parse();
 
         this.trace.verboseln(" Verifying semantics");
 
