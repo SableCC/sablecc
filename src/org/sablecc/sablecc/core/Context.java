@@ -98,6 +98,7 @@ public abstract class Context {
             this.grammar.addMapping(declaration, this);
         }
 
+        @Override
         public TIdentifier getNameIdentifier() {
 
             if (this.lexerDeclaration != null) {
@@ -107,11 +108,13 @@ public abstract class Context {
             return this.parserDeclaration.getName();
         }
 
+        @Override
         public String getName() {
 
             return getNameIdentifier().getText();
         }
 
+        @Override
         public String getNameType() {
 
             return "context";

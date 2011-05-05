@@ -45,16 +45,19 @@ public abstract class Investigator
         this.grammar = grammar;
     }
 
+    @Override
     public TIdentifier getNameIdentifier() {
 
         return this.declaration.getName();
     }
 
+    @Override
     public String getName() {
 
         return getNameIdentifier().getText();
     }
 
+    @Override
     public String getNameType() {
 
         return "lexer investigator";

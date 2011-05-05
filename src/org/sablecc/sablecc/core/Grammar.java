@@ -81,16 +81,19 @@ public class Grammar
         throw new InternalException("not implemented");
     }
 
+    @Override
     public TIdentifier getNameIdentifier() {
 
         return this.declaration.getName();
     }
 
+    @Override
     public String getName() {
 
         return getNameIdentifier().getText();
     }
 
+    @Override
     public String getNameType() {
 
         return "grammar";

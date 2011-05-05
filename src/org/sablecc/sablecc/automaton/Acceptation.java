@@ -257,6 +257,7 @@ public class Acceptation
     /**
      * Compares this acceptation to the provided acceptation.
      */
+    @Override
     public int compareTo(
             Acceptation acceptation) {
 

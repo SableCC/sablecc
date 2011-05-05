@@ -271,6 +271,7 @@ public final class State
     /**
      * Compares this state to the provided state.
      */
+    @Override
     public int compareTo(
             State state) {
 
