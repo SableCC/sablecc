@@ -315,6 +315,7 @@ public class Grammar
                         throw new InternalException(
                                 "globalAnonymousContext should not have been created yet");
                     }
+
                     Grammar.this.globalAnonymousContext = new Context.AnonymousContext(
                             node, this.grammar);
                 }
@@ -328,9 +329,14 @@ public class Grammar
                     if (Grammar.this.globalAnonymousContext == null) {
                         Grammar.this.globalAnonymousContext = new Context.AnonymousContext(
                                 node, this.grammar);
-                        this.grammar.addMapping(node,
-                                Grammar.this.globalAnonymousContext);
                     }
+                    else {
+                        Grammar.this.globalAnonymousContext
+                                .addDeclaration(node);
+                    }
+
+                    this.grammar.addMapping(node,
+                            Grammar.this.globalAnonymousContext);
                 }
             }
         });
