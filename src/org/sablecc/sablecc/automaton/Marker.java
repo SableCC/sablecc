@@ -123,6 +123,7 @@ public class Marker
     /**
      * Compares this marker to the provided marker.
      */
+    @Override
     public int compareTo(
             Marker marker) {
 

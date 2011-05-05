@@ -201,6 +201,7 @@ public class Interval
      * <code>lowerBound</code> is equal and its <code>upperBound</code> is
      * smaller.
      */
+    @Override
     public int compareTo(
             Interval interval) {
 

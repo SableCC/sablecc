@@ -222,6 +222,7 @@ public class Bound
     /**
      * Compares this bound to the provided bound.
      */
+    @Override
     public int compareTo(
             Bound bound) {
 

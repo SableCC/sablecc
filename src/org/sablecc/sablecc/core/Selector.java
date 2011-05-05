@@ -60,16 +60,19 @@ public abstract class Selector
     abstract Selection newSelection(
             TIdentifier name);
 
+    @Override
     public TIdentifier getNameIdentifier() {
 
         return this.declaration.getSelectorName();
     }
 
+    @Override
     public String getName() {
 
         return getNameIdentifier().getText();
     }
 
+    @Override
     public String getNameType() {
 
         return "lexer selector";
@@ -96,16 +99,19 @@ public abstract class Selector
             Selector.this.grammar.addMapping(declaration, this);
         }
 
+        @Override
         public TIdentifier getNameIdentifier() {
 
             return this.declaration;
         }
 
+        @Override
         public String getName() {
 
             return getNameIdentifier().getText();
         }
 
+        @Override
         public String getNameType() {
 
             return "lexer selection";

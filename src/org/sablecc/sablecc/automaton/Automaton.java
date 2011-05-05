@@ -40,6 +40,7 @@ public final class Automaton {
     private static final Comparator<RichSymbol> richSymbolComparator = new Comparator<RichSymbol>() {
 
         // allows comparison of null symbols
+        @Override
         public int compare(
                 RichSymbol richSymbol1,
                 RichSymbol richSymbol2) {

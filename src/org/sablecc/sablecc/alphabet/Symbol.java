@@ -285,6 +285,7 @@ public class Symbol
     /**
      * Compares this symbol to the provided one.
      */
+    @Override
     public int compareTo(
             Symbol symbol) {
 

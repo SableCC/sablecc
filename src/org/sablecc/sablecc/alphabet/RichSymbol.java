@@ -170,6 +170,7 @@ public class RichSymbol
     /**
      * Compares this rich symbol to the provided one.
      */
+    @Override
     public int compareTo(
             RichSymbol richSymbol) {
 
