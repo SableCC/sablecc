@@ -41,7 +41,6 @@ public abstract class ParserProduction
         }
 
         this.declaration = declaration;
-        grammar.addMapping(declaration, this);
         this.grammar = grammar;
     }
 

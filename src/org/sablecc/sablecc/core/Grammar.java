@@ -40,10 +40,6 @@ public class Grammar
     private final TreeNameSpace treeNameSpace = new TreeNameSpace(
             this.globalNameSpace);
 
-    private final Map<Node, INameDeclaration> nodeToNameDeclarationMap = new HashMap<Node, INameDeclaration>();
-
-    private final Map<Node, Context.AnonymousContext> nodeToAnonymousContextMap = new HashMap<Node, Context.AnonymousContext>();
-
     private final Map<Node, LexerExpression.InlineExpression> nodeToInlineExpressionMap = new HashMap<Node, LexerExpression.InlineExpression>();
 
     private final Map<Node, Expression> nodeToExpressionMap = new HashMap<Node, Expression>();
@@ -334,34 +330,9 @@ public class Grammar
                         Grammar.this.globalAnonymousContext
                                 .addDeclaration(node);
                     }
-
-                    this.grammar.addMapping(node,
-                            Grammar.this.globalAnonymousContext);
                 }
             }
         });
-    }
-
-    void addMapping(
-            Node declaration,
-            INameDeclaration nameDeclaration) {
-
-        if (this.nodeToNameDeclarationMap.containsKey(declaration)) {
-            throw new InternalException("multiple mappings for a single node");
-        }
-
-        this.nodeToNameDeclarationMap.put(declaration, nameDeclaration);
-    }
-
-    void addMapping(
-            Node declaration,
-            Context.AnonymousContext anonymousContext) {
-
-        if (this.nodeToAnonymousContextMap.containsKey(declaration)) {
-            throw new InternalException("multiple mappings for a single node");
-        }
-
-        this.nodeToAnonymousContextMap.put(declaration, anonymousContext);
     }
 
     void addMapping(
@@ -406,26 +377,6 @@ public class Grammar
         }
 
         this.nodeToLookaheadMap.put(declaration, lookahead);
-    }
-
-    public INameDeclaration getNameDeclarationMapping(
-            Node node) {
-
-        if (!this.nodeToNameDeclarationMap.containsKey(node)) {
-            throw new InternalException("missing mapping");
-        }
-
-        return this.nodeToNameDeclarationMap.get(node);
-    }
-
-    public Context.AnonymousContext getAnonymousContextMapping(
-            Node node) {
-
-        if (!this.nodeToAnonymousContextMap.containsKey(node)) {
-            throw new InternalException("missing mapping");
-        }
-
-        return this.nodeToAnonymousContextMap.get(node);
     }
 
     public LexerExpression.InlineExpression getInlineExpressionMapping(

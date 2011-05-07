@@ -45,7 +45,6 @@ public abstract class Selector
         }
 
         this.declaration = declaration;
-        grammar.addMapping(declaration, this);
         this.grammar = grammar;
 
         List<Selection> selections = new LinkedList<Selector.Selection>();
@@ -96,7 +95,6 @@ public abstract class Selector
             }
 
             this.declaration = declaration;
-            Selector.this.grammar.addMapping(declaration, this);
         }
 
         @Override
