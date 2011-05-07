@@ -59,7 +59,6 @@ public abstract class Context {
             }
 
             this.lexerDeclaration = declaration;
-            grammar.addMapping(declaration, this);
         }
 
         NamedContext(
@@ -78,7 +77,6 @@ public abstract class Context {
             }
 
             this.parserDeclaration = declaration;
-            grammar.addMapping(declaration, this);
         }
 
         void addDeclaration(
@@ -95,7 +93,6 @@ public abstract class Context {
             }
 
             this.parserDeclaration = declaration;
-            this.grammar.addMapping(declaration, this);
         }
 
         @Override
@@ -149,7 +146,6 @@ public abstract class Context {
             }
 
             this.lexerDeclaration = declaration;
-            grammar.addMapping(declaration, this);
         }
 
         AnonymousContext(
@@ -167,7 +163,6 @@ public abstract class Context {
             }
 
             this.parserDeclaration = declaration;
-            grammar.addMapping(declaration, this);
         }
 
         void addDeclaration(
@@ -183,7 +178,6 @@ public abstract class Context {
             }
 
             this.parserDeclaration = declaration;
-            this.grammar.addMapping(declaration, this);
         }
     }
 

@@ -137,7 +137,6 @@ public abstract class LexerExpression
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
         }
 
         @Override

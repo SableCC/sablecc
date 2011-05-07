@@ -41,7 +41,6 @@ public abstract class Investigator
         }
 
         this.declaration = declaration;
-        grammar.addMapping(declaration, this);
         this.grammar = grammar;
     }
 

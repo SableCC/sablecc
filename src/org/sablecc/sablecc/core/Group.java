@@ -41,7 +41,6 @@ public class Group
         }
 
         this.declaration = declaration;
-        grammar.addMapping(declaration, this);
         this.grammar = grammar;
     }
 
