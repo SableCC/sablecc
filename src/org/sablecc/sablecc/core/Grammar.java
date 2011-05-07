@@ -147,11 +147,9 @@ public class Grammar
 
                 if (node.getName() != null) {
                     String name = node.getName().getText();
-                    INameDeclaration nameDeclaration = this.globalNameSpace
-                            .get(name);
-                    if (nameDeclaration != null
-                            && nameDeclaration instanceof Context.NamedContext) {
-                        Context.NamedContext namedContext = (Context.NamedContext) nameDeclaration;
+                    Context.NamedContext namedContext = this.globalNameSpace
+                            .getNamedContext(name);
+                    if (namedContext != null) {
                         namedContext.addDeclaration(node);
                     }
                     else {
@@ -525,6 +523,31 @@ public class Grammar
 
         private final Map<String, INameDeclaration> nameMap = new HashMap<String, INameDeclaration>();
 
+        private void internalAdd(
+                INameDeclaration nameDeclaration) {
+
+            if (nameDeclaration == null) {
+                throw new InternalException("nameDeclaration may not be null");
+            }
+
+            String name = nameDeclaration.getName();
+            if (this.nameMap.containsKey(name)) {
+                throw SemanticException.duplicateDeclaration(nameDeclaration,
+                        this.nameMap.get(name));
+            }
+            this.nameMap.put(name, nameDeclaration);
+        }
+
+        private INameDeclaration getNameDeclaration(
+                String name) {
+
+            if (name == null) {
+                throw new InternalException("name may not be null");
+            }
+
+            return this.nameMap.get(name);
+        }
+
         private void add(
                 Grammar grammar) {
 
@@ -573,29 +596,114 @@ public class Grammar
             internalAdd(investigator);
         }
 
-        private void internalAdd(
-                INameDeclaration nameDeclaration) {
-
-            if (nameDeclaration == null) {
-                throw new InternalException("nameDeclaration may not be null");
-            }
-
-            String name = nameDeclaration.getName();
-            if (this.nameMap.containsKey(name)) {
-                throw SemanticException.duplicateDeclaration(nameDeclaration,
-                        this.nameMap.get(name));
-            }
-            this.nameMap.put(name, nameDeclaration);
-        }
-
-        private INameDeclaration get(
+        private Grammar getGrammar(
                 String name) {
 
-            if (name == null) {
-                throw new InternalException("name may not be null");
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof Grammar) {
+                return (Grammar) nameDeclaration;
             }
+            return null;
+        }
 
-            return this.nameMap.get(name);
+        private LexerExpression.NamedExpression getNamedExpression(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof LexerExpression.NamedExpression) {
+                return (LexerExpression.NamedExpression) nameDeclaration;
+            }
+            return null;
+        }
+
+        private Group getGroup(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof Group) {
+                return (Group) nameDeclaration;
+            }
+            return null;
+        }
+
+        private Context.NamedContext getNamedContext(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof Context.NamedContext) {
+                return (Context.NamedContext) nameDeclaration;
+            }
+            return null;
+        }
+
+        private ParserProduction getParserProduction(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof ParserProduction) {
+                return (ParserProduction) nameDeclaration;
+            }
+            return null;
+        }
+
+        private Selector.LexerSelector getLexerSelector(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof Selector.LexerSelector) {
+                return (Selector.LexerSelector) nameDeclaration;
+            }
+            return null;
+        }
+
+        private Selector.ParserSelector getParserSelector(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof Selector.ParserSelector) {
+                return (Selector.ParserSelector) nameDeclaration;
+            }
+            return null;
+        }
+
+        private Selector.LexerSelector.Selection getLexerSelection(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof Selector.LexerSelector.Selection) {
+                return (Selector.LexerSelector.Selection) nameDeclaration;
+            }
+            return null;
+        }
+
+        private Selector.ParserSelector.Selection getParserSelection(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof Selector.ParserSelector.Selection) {
+                return (Selector.ParserSelector.Selection) nameDeclaration;
+            }
+            return null;
+        }
+
+        private Investigator.LexerInvestigator getLexerInvestigator(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof Investigator.LexerInvestigator) {
+                return (Investigator.LexerInvestigator) nameDeclaration;
+            }
+            return null;
+        }
+
+        private Investigator.ParserInvestigator getParserInvestigator(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof Investigator.ParserInvestigator) {
+                return (Investigator.ParserInvestigator) nameDeclaration;
+            }
+            return null;
         }
     }
 
@@ -623,33 +731,45 @@ public class Grammar
             }
 
             String name = treeProduction.getName();
-            INameDeclaration nameDeclaration = this.globalNameSpace.get(name);
+            INameDeclaration nameDeclaration = this.globalNameSpace
+                    .getNameDeclaration(name);
             if (nameDeclaration == null
                     || nameDeclaration instanceof ParserProduction
-                    || nameDeclaration instanceof ParserSelector.Selection) {
+                    || nameDeclaration instanceof Selector.ParserSelector.Selection) {
                 this.nameMap.put(name, treeProduction);
             }
             else {
                 throw SemanticException.duplicateDeclaration(treeProduction,
-                        this.nameMap.get(name));
+                        nameDeclaration);
             }
         }
 
-        private INameDeclaration get(
+        private INameDeclaration getNameDeclaration(
                 String name) {
 
             if (name == null) {
                 throw new InternalException("name may not be null");
             }
 
-            INameDeclaration nameDeclaration = this.globalNameSpace.get(name);
+            INameDeclaration nameDeclaration = this.globalNameSpace
+                    .getNameDeclaration(name);
             if (nameDeclaration == null
                     || nameDeclaration instanceof ParserProduction
-                    || nameDeclaration instanceof ParserSelector.Selection) {
+                    || nameDeclaration instanceof Selector.ParserSelector.Selection) {
                 nameDeclaration = this.nameMap.get(name);
             }
 
             return nameDeclaration;
+        }
+
+        private TreeProduction getTreeProduction(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof TreeProduction) {
+                return (TreeProduction) nameDeclaration;
+            }
+            return null;
         }
     }
 }
