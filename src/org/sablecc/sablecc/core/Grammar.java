@@ -526,6 +526,54 @@ public class Grammar
         private final Map<String, INameDeclaration> nameMap = new HashMap<String, INameDeclaration>();
 
         private void add(
+                Grammar grammar) {
+
+            internalAdd(grammar);
+        }
+
+        private void add(
+                LexerExpression.NamedExpression namedExpression) {
+
+            internalAdd(namedExpression);
+        }
+
+        private void add(
+                Group group) {
+
+            internalAdd(group);
+        }
+
+        private void add(
+                Context.NamedContext namedContext) {
+
+            internalAdd(namedContext);
+        }
+
+        private void add(
+                ParserProduction parserProduction) {
+
+            internalAdd(parserProduction);
+        }
+
+        private void add(
+                Selector selector) {
+
+            internalAdd(selector);
+        }
+
+        private void add(
+                Selector.Selection selection) {
+
+            internalAdd(selection);
+        }
+
+        private void add(
+                Investigator investigator) {
+
+            internalAdd(investigator);
+        }
+
+        private void internalAdd(
                 INameDeclaration nameDeclaration) {
 
             if (nameDeclaration == null) {
