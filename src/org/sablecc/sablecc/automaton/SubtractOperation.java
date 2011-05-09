@@ -18,7 +18,6 @@
 package org.sablecc.sablecc.automaton;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
@@ -87,7 +86,7 @@ class SubtractOperation {
         for (State baseSourceState : baseAutomaton.getStates()) {
             State rejectSourceState = baseStateToRejectStateMap
                     .get(baseSourceState);
-            for (Entry<RichSymbol, SortedSet<State>> entry : baseSourceState
+            for (Map.Entry<RichSymbol, SortedSet<State>> entry : baseSourceState
                     .getTransitions().entrySet()) {
                 RichSymbol richSymbol = entry.getKey();
 

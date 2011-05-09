@@ -22,7 +22,6 @@ import static org.sablecc.util.UsefulStaticImports.*;
 
 import java.math.*;
 import java.util.*;
-import java.util.Map.Entry;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
@@ -484,7 +483,7 @@ public final class Automaton {
         for (State oldSourceState : getStates()) {
             State newSourceState = oldStateToNewStateMap.get(oldSourceState);
 
-            for (Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
+            for (Map.Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
                     .getTransitions().entrySet()) {
                 RichSymbol oldRichSymbol = entry.getKey();
                 SortedSet<State> oldTargetStates = entry.getValue();
@@ -552,7 +551,7 @@ public final class Automaton {
                 usefulAcceptations.add(usefulAcceptation);
             }
 
-            for (Entry<RichSymbol, SortedSet<State>> entry : reachableState
+            for (Map.Entry<RichSymbol, SortedSet<State>> entry : reachableState
                     .getTransitions().entrySet()) {
                 for (State targetState : entry.getValue()) {
                     workSet.add(targetState);
@@ -566,7 +565,7 @@ public final class Automaton {
 
         for (State oldSourceState : reachableStates) {
             State newSourceState = oldStatetoNewStateMap.get(oldSourceState);
-            for (Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
+            for (Map.Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
                     .getTransitions().entrySet()) {
                 SortedSet<State> oldTargetStates = entry.getValue();
                 for (State oldTargetState : oldTargetStates) {
@@ -628,7 +627,7 @@ public final class Automaton {
 
         for (State oldSourceState : getStates()) {
             State newSourceState = oldStatetoNewStateMap.get(oldSourceState);
-            for (Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
+            for (Map.Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
                     .getTransitions().entrySet()) {
                 RichSymbol richSymbol = entry.getKey();
                 for (State oldTargetState : entry.getValue()) {
@@ -1014,7 +1013,7 @@ public final class Automaton {
 
         for (State oldSourceState : combinedAutomaton.getStates()) {
             State newSourceState = oldStatetoNewStateMap.get(oldSourceState);
-            for (Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
+            for (Map.Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
                     .getTransitions().entrySet()) {
                 RichSymbol richSymbol = entry.getKey();
                 for (State oldTargetState : entry.getValue()) {
@@ -1071,7 +1070,7 @@ public final class Automaton {
 
         for (State oldSourceState : combinedAutomaton.getStates()) {
             State newSourceState = oldStatetoNewStateMap.get(oldSourceState);
-            for (Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
+            for (Map.Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
                     .getTransitions().entrySet()) {
                 RichSymbol richSymbol = entry.getKey();
                 for (State oldTargetState : entry.getValue()) {
