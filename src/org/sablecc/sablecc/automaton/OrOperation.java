@@ -18,7 +18,6 @@
 package org.sablecc.sablecc.automaton;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
@@ -105,7 +104,7 @@ class OrOperation {
         for (State oldSourceState : automaton.getStates()) {
             State newSourceState = this.oldStateToNewStateMap
                     .get(oldSourceState);
-            for (Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
+            for (Map.Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
                     .getTransitions().entrySet()) {
                 RichSymbol richSymbol = entry.getKey();
                 for (State oldTargetState : entry.getValue()) {

@@ -18,7 +18,6 @@
 package org.sablecc.sablecc.automaton;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
@@ -87,7 +86,7 @@ class LookOperation {
         for (State normalSourceState : normalAutomaton.getStates()) {
             State lookaheadSourceState = normalStateToLookaheadStateMap
                     .get(normalSourceState);
-            for (Entry<RichSymbol, SortedSet<State>> entry : normalSourceState
+            for (Map.Entry<RichSymbol, SortedSet<State>> entry : normalSourceState
                     .getTransitions().entrySet()) {
                 RichSymbol richSymbol = entry.getKey();
 

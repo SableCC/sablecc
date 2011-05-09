@@ -17,7 +17,6 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import java.util.Map.Entry;
 import java.util.*;
 
 import org.sablecc.exception.*;
@@ -96,7 +95,7 @@ public final class AlphabetMergeResult {
 
     private void initMergedAlphabetRichSymbolMap() {
 
-        for (Entry<Symbol, SortedSet<Symbol>> entry : this.mergedAlphabetSymbolMap
+        for (Map.Entry<Symbol, SortedSet<Symbol>> entry : this.mergedAlphabetSymbolMap
                 .entrySet()) {
             Symbol oldSymbol = entry.getKey();
             SortedSet<Symbol> newSymbols = entry.getValue();

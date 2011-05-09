@@ -18,7 +18,6 @@
 package org.sablecc.sablecc.automaton;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
@@ -67,7 +66,7 @@ class DeterministicOperation {
             SortedMap<RichSymbol, SortedSet<State>> newTransitions = new TreeMap<RichSymbol, SortedSet<State>>();
 
             for (State oldFromState : oldFromStates) {
-                for (Entry<RichSymbol, SortedSet<State>> entry : oldFromState
+                for (Map.Entry<RichSymbol, SortedSet<State>> entry : oldFromState
                         .getTransitions().entrySet()) {
                     RichSymbol richSymbol = entry.getKey();
 
@@ -86,7 +85,7 @@ class DeterministicOperation {
                 }
             }
 
-            for (Entry<RichSymbol, SortedSet<State>> entry : newTransitions
+            for (Map.Entry<RichSymbol, SortedSet<State>> entry : newTransitions
                     .entrySet()) {
                 State newToState = getNewState(entry.getValue());
                 newFromState.addTransition(entry.getKey(), newToState);

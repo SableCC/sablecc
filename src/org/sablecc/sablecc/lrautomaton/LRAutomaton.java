@@ -18,7 +18,6 @@
 package org.sablecc.sablecc.lrautomaton;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import org.sablecc.util.*;
 
@@ -116,13 +115,13 @@ public class LRAutomaton {
 
     void storeLookComputationResults() {
 
-        for (Entry<LRState, Map<Production, Map<Integer, Set<Item>>>> stateEntry : this.currentLookComputationData
+        for (Map.Entry<LRState, Map<Production, Map<Integer, Set<Item>>>> stateEntry : this.currentLookComputationData
                 .entrySet()) {
             LRState state = stateEntry.getKey();
-            for (Entry<Production, Map<Integer, Set<Item>>> productionEntry : stateEntry
+            for (Map.Entry<Production, Map<Integer, Set<Item>>> productionEntry : stateEntry
                     .getValue().entrySet()) {
                 Production production = productionEntry.getKey();
-                for (Entry<Integer, Set<Item>> distanceEntry : productionEntry
+                for (Map.Entry<Integer, Set<Item>> distanceEntry : productionEntry
                         .getValue().entrySet()) {
                     state.setLook(production, distanceEntry.getKey(),
                             distanceEntry.getValue());
