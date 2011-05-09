@@ -49,180 +49,257 @@ public abstract class Expression {
             throw new InternalException("grammar may not be null");
         }
 
-        declaration.apply(new DepthFirstAdapter() {
+        class ExpressionBuilder
+                extends DepthFirstAdapter {
+
+            private Expression expression;
+
+            private Lookahead lookahead;
+
+            private Lookback lookback;
+
+            private void visit(
+                    Node node) {
+
+                if (node != null) {
+                    node.apply(this);
+                }
+            }
+
+            public Expression getExpression(
+                    PExpression node) {
+
+                this.expression = null;
+                visit(node);
+                Expression expression = this.expression;
+                this.expression = null;
+                return expression;
+            }
+
+            public Expression getExpression(
+                    PUnit node) {
+
+                this.expression = null;
+                visit(node);
+                Expression expression = this.expression;
+                this.expression = null;
+                return expression;
+            }
+
+            public CharacterUnit getExpression(
+                    PCharacter node) {
+
+                this.expression = null;
+                visit(node);
+                Expression expression = this.expression;
+                this.expression = null;
+                return (CharacterUnit) expression;
+            }
+
+            public Lookback getLookback(
+                    PLookback node) {
+
+                this.lookback = null;
+                visit(node);
+                Lookback lookback = this.lookback;
+                this.lookback = null;
+                return lookback;
+            }
+
+            public Lookahead getLookahead(
+                    PLookahead node) {
+
+                this.lookahead = null;
+                visit(node);
+                Lookahead lookahead = this.lookahead;
+                this.lookahead = null;
+                return lookahead;
+            }
 
             @Override
-            public void outAOrExpression(
+            public void caseAOrExpression(
                     AOrExpression node) {
 
-                new Or(node, grammar);
+                Expression left = getExpression(node.getLeft());
+                Expression right = getExpression(node.getRight());
+                this.expression = new Or(node, grammar, left, right);
             }
 
             @Override
-            public void outAConcatenationExpression(
+            public void caseAConcatenationExpression(
                     AConcatenationExpression node) {
 
-                new Concatenation(node, grammar);
+                Expression left = getExpression(node.getLeft());
+                Expression right = getExpression(node.getRight());
+                this.expression = new Concatenation(node, grammar, left, right);
             }
 
             @Override
-            public void outALookExpression(
+            public void caseALookExpression(
                     ALookExpression node) {
 
-                new Look(node, grammar);
+                Expression expression = getExpression(node.getExpression());
+                Lookback lookback = getLookback(node.getLookback());
+                Lookahead lookahead = getLookahead(node.getLookahead());
+                this.expression = new Look(node, grammar, expression, lookback,
+                        lookahead);
             }
 
             @Override
-            public void outAShortestExpression(
+            public void caseAShortestExpression(
                     AShortestExpression node) {
 
-                new Shortest(node, grammar);
+                Expression expression = getExpression(node.getExpression());
+                this.expression = new Shortest(node, grammar, expression);
             }
 
             @Override
-            public void outALongestExpression(
+            public void caseALongestExpression(
                     ALongestExpression node) {
 
-                new Longest(node, grammar);
+                Expression expression = getExpression(node.getExpression());
+                this.expression = new Longest(node, grammar, expression);
             }
 
             @Override
-            public void outASubtractionExpression(
+            public void caseASubtractionExpression(
                     ASubtractionExpression node) {
 
-                new Subtraction(node, grammar);
+                Expression left = getExpression(node.getLeft());
+                Expression right = getExpression(node.getRight());
+                this.expression = new Subtraction(node, grammar, left, right);
             }
 
             @Override
-            public void outAExceptExpression(
+            public void caseAExceptExpression(
                     AExceptExpression node) {
 
-                new Except(node, grammar);
+                Expression left = getExpression(node.getLeft());
+                Expression right = getExpression(node.getRight());
+                this.expression = new Except(node, grammar, left, right);
             }
 
             @Override
-            public void outAIntersectionExpression(
+            public void caseAIntersectionExpression(
                     AIntersectionExpression node) {
 
-                new Intersection(node, grammar);
+                Expression left = getExpression(node.getLeft());
+                Expression right = getExpression(node.getRight());
+                this.expression = new Intersection(node, grammar, left, right);
             }
 
             @Override
-            public void outAUnaryOperatorExpression(
+            public void caseAUnaryOperatorExpression(
                     AUnaryOperatorExpression node) {
 
-                new Unary(node, grammar);
+                Expression expression = getExpression(node.getExpression());
+                UnaryOperator operator = UnaryOperator.newUnaryOperator(
+                        node.getUnaryOperator(), grammar);
+                this.expression = new Unary(node, grammar, expression, operator);
             }
 
             @Override
-            public void outASeparatedExpression(
+            public void caseASeparatedExpression(
                     ASeparatedExpression node) {
 
-                new Separated(node, grammar);
+                Expression base = getExpression(node.getBase());
+                Expression separator = getExpression(node.getSeparator());
+                ManyOperator operator = ManyOperator.newManyOperator(
+                        node.getManyOperator(), grammar);
+                this.expression = new Separated(node, grammar, base, separator,
+                        operator);
             }
 
             @Override
-            public void outAUnitExpression(
-                    AUnitExpression node) {
-
-                grammar.addMapping(node,
-                        grammar.getExpressionMapping(node.getUnit()));
-            }
-
-            @Override
-            public void outAEpsilonExpression(
+            public void caseAEpsilonExpression(
                     AEpsilonExpression node) {
 
-                new Epsilon(node, grammar);
+                this.expression = new Epsilon(node, grammar);
             }
 
             @Override
-            public void outAIntervalExpression(
+            public void caseAIntervalExpression(
                     AIntervalExpression node) {
 
-                new Interval(node, grammar);
+                CharacterUnit from = getExpression(node.getFrom());
+                CharacterUnit to = getExpression(node.getTo());
+                this.expression = new Interval(node, grammar, from, to);
             }
 
             @Override
-            public void outAAnyExpression(
+            public void caseAAnyExpression(
                     AAnyExpression node) {
 
-                new Any(node, grammar);
+                this.expression = new Any(node, grammar);
             }
 
             @Override
-            public void outALookback(
+            public void caseALookback(
                     ALookback node) {
 
-                new Lookback(node, grammar);
+                Expression expression = getExpression(node.getExpression());
+                this.lookback = new Lookback(node, grammar, expression);
             }
 
             @Override
-            public void outALookahead(
+            public void caseALookahead(
                     ALookahead node) {
 
-                new Lookahead(node, grammar);
+                Expression expression = getExpression(node.getExpression());
+                this.lookahead = new Lookahead(node, grammar, expression);
             }
 
             @Override
-            public void outACharCharacter(
+            public void caseACharCharacter(
                     ACharCharacter node) {
 
-                new CharUnit(node, grammar);
+                this.expression = new CharUnit(node, grammar);
             }
 
             @Override
-            public void outADecCharacter(
+            public void caseADecCharacter(
                     ADecCharacter node) {
 
-                new DecCharUnit(node, grammar);
+                this.expression = new DecCharUnit(node, grammar);
             }
 
             @Override
-            public void outAHexCharacter(
+            public void caseAHexCharacter(
                     AHexCharacter node) {
 
-                new HexCharUnit(node, grammar);
+                this.expression = new HexCharUnit(node, grammar);
             }
 
             @Override
-            public void outANameUnit(
+            public void caseANameUnit(
                     ANameUnit node) {
 
-                new NameUnit(node, grammar);
+                this.expression = new NameUnit(node, grammar);
             }
 
             @Override
-            public void outAStringUnit(
+            public void caseAStringUnit(
                     AStringUnit node) {
 
-                new StringUnit(node, grammar);
+                this.expression = new StringUnit(node, grammar);
             }
 
             @Override
-            public void outACharacterUnit(
-                    ACharacterUnit node) {
-
-                grammar.addMapping(node,
-                        grammar.getExpressionMapping(node.getCharacter()));
-            }
-
-            @Override
-            public void outAStartUnit(
+            public void caseAStartUnit(
                     AStartUnit node) {
 
-                new StartUnit(node, grammar);
+                this.expression = new StartUnit(node, grammar);
             }
 
             @Override
-            public void outAEndUnit(
+            public void caseAEndUnit(
                     AEndUnit node) {
 
-                new EndUnit(node, grammar);
+                this.expression = new EndUnit(node, grammar);
             }
-        });
+        }
 
-        return grammar.getExpressionMapping(declaration);
+        return new ExpressionBuilder().getExpression(declaration);
     }
 
     public static class Or
@@ -236,7 +313,9 @@ public abstract class Expression {
 
         private Or(
                 AOrExpression declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression left,
+                Expression right) {
 
             super(grammar);
 
@@ -245,10 +324,8 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
-            this.left = grammar.getExpressionMapping(declaration.getLeft());
-            this.right = grammar.getExpressionMapping(declaration.getRight());
+            this.left = left;
+            this.right = right;
         }
 
         public Expression getLeft() {
@@ -273,7 +350,9 @@ public abstract class Expression {
 
         private Concatenation(
                 AConcatenationExpression declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression left,
+                Expression right) {
 
             super(grammar);
 
@@ -282,10 +361,8 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
-            this.left = grammar.getExpressionMapping(declaration.getLeft());
-            this.right = grammar.getExpressionMapping(declaration.getRight());
+            this.left = left;
+            this.right = right;
         }
 
         public Expression getLeft() {
@@ -312,7 +389,10 @@ public abstract class Expression {
 
         private Look(
                 ALookExpression declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression expression,
+                Lookback lookback,
+                Lookahead lookahead) {
 
             super(grammar);
 
@@ -321,31 +401,9 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
-            this.expression = grammar.getExpressionMapping(declaration
-                    .getExpression());
-
-            if (declaration.getLookback() != null) {
-                this.lookback = grammar.getLookbackMapping(declaration
-                        .getLookback());
-            }
-            else {
-                this.lookback = null;
-            }
-
-            if (declaration.getLookahead() != null) {
-                this.lookahead = grammar.getLookaheadMapping(declaration
-                        .getLookahead());
-            }
-            else {
-                this.lookahead = null;
-            }
-
-            if (this.lookahead == null && this.lookback == null) {
-                throw new InternalException(
-                        "lookahead and lookback may not be both null");
-            }
+            this.expression = expression;
+            this.lookback = lookback;
+            this.lookahead = lookahead;
         }
 
         public Expression getExpression() {
@@ -376,7 +434,8 @@ public abstract class Expression {
 
         private Lookback(
                 ALookback declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression expression) {
 
             if (declaration == null) {
                 throw new InternalException("declaration may not be null");
@@ -388,11 +447,8 @@ public abstract class Expression {
 
             this.grammar = grammar;
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
             this.not = declaration.getNotKeyword() != null;
-            this.expression = grammar.getExpressionMapping(declaration
-                    .getExpression());
+            this.expression = expression;
         }
 
         public boolean getNot() {
@@ -418,7 +474,8 @@ public abstract class Expression {
 
         private Lookahead(
                 ALookahead declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression expression) {
 
             if (declaration == null) {
                 throw new InternalException("declaration may not be null");
@@ -430,10 +487,8 @@ public abstract class Expression {
 
             this.grammar = grammar;
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
             this.not = declaration.getNotKeyword() != null;
-            this.expression = grammar.getExpressionMapping(declaration
-                    .getExpression());
+            this.expression = expression;
         }
 
         public boolean getNot() {
@@ -456,7 +511,8 @@ public abstract class Expression {
 
         private Shortest(
                 AShortestExpression declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression expression) {
 
             super(grammar);
 
@@ -465,10 +521,7 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
-            this.expression = grammar.getExpressionMapping(declaration
-                    .getExpression());
+            this.expression = expression;
         }
 
         public Expression getExpression() {
@@ -486,7 +539,8 @@ public abstract class Expression {
 
         private Longest(
                 ALongestExpression declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression expression) {
 
             super(grammar);
 
@@ -495,10 +549,7 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
-            this.expression = grammar.getExpressionMapping(declaration
-                    .getExpression());
+            this.expression = expression;
         }
 
         public Expression getExpression() {
@@ -518,7 +569,9 @@ public abstract class Expression {
 
         private Subtraction(
                 ASubtractionExpression declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression left,
+                Expression right) {
 
             super(grammar);
 
@@ -527,10 +580,8 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
-            this.left = grammar.getExpressionMapping(declaration.getLeft());
-            this.right = grammar.getExpressionMapping(declaration.getRight());
+            this.left = left;
+            this.right = right;
         }
 
         public Expression getLeft() {
@@ -555,7 +606,9 @@ public abstract class Expression {
 
         private Except(
                 AExceptExpression declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression left,
+                Expression right) {
 
             super(grammar);
 
@@ -564,10 +617,8 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
-            this.left = grammar.getExpressionMapping(declaration.getLeft());
-            this.right = grammar.getExpressionMapping(declaration.getRight());
+            this.left = left;
+            this.right = right;
         }
 
         public Expression getLeft() {
@@ -592,7 +643,9 @@ public abstract class Expression {
 
         private Intersection(
                 AIntersectionExpression declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression left,
+                Expression right) {
 
             super(grammar);
 
@@ -601,10 +654,8 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
-            this.left = grammar.getExpressionMapping(declaration.getLeft());
-            this.right = grammar.getExpressionMapping(declaration.getRight());
+            this.left = left;
+            this.right = right;
         }
 
         public Expression getLeft() {
@@ -629,7 +680,9 @@ public abstract class Expression {
 
         private Unary(
                 AUnaryOperatorExpression declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression expression,
+                UnaryOperator operator) {
 
             super(grammar);
 
@@ -638,12 +691,8 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
-            this.expression = grammar.getExpressionMapping(declaration
-                    .getExpression());
-            this.operator = UnaryOperator.newUnaryOperator(
-                    declaration.getUnaryOperator(), grammar);
+            this.expression = expression;
+            this.operator = operator;
         }
 
         public Expression getExpression() {
@@ -670,7 +719,10 @@ public abstract class Expression {
 
         private Separated(
                 ASeparatedExpression declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                Expression base,
+                Expression separator,
+                ManyOperator operator) {
 
             super(grammar);
 
@@ -679,13 +731,9 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
-            this.base = grammar.getExpressionMapping(declaration.getBase());
-            this.separator = grammar.getExpressionMapping(declaration
-                    .getSeparator());
-            this.operator = ManyOperator.newManyOperator(
-                    declaration.getManyOperator(), grammar);
+            this.base = base;
+            this.separator = separator;
+            this.operator = operator;
         }
 
         public Expression getBase() {
@@ -955,7 +1003,6 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
         }
 
         public TIdentifier getNameIdentifier() {
@@ -985,7 +1032,6 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
         }
 
         public String getString() {
@@ -1028,7 +1074,6 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
         }
 
         @Override
@@ -1063,7 +1108,6 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
         }
 
         @Override
@@ -1097,7 +1141,6 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
         }
 
         @Override
@@ -1131,7 +1174,6 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
         }
     }
 
@@ -1151,7 +1193,6 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
         }
     }
 
@@ -1171,7 +1212,6 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
         }
     }
 
@@ -1186,7 +1226,9 @@ public abstract class Expression {
 
         private Interval(
                 AIntervalExpression declaration,
-                Grammar grammar) {
+                Grammar grammar,
+                CharacterUnit from,
+                CharacterUnit to) {
 
             super(grammar);
 
@@ -1195,17 +1237,8 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
-
-            try {
-                this.from = (CharacterUnit) grammar
-                        .getExpressionMapping(declaration.getFrom());
-                this.to = (CharacterUnit) grammar
-                        .getExpressionMapping(declaration.getTo());
-            }
-            catch (ClassCastException e) {
-                throw new InternalError("inappropriate expression type");
-            }
+            this.from = from;
+            this.to = to;
         }
     }
 
@@ -1225,7 +1258,6 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
-            grammar.addMapping(declaration, this);
         }
     }
 }

@@ -20,12 +20,6 @@ package org.sablecc.sablecc.core;
 import java.util.*;
 
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.core.Expression.Lookahead;
-import org.sablecc.sablecc.core.Expression.Lookback;
-import org.sablecc.sablecc.core.Investigator.LexerInvestigator;
-import org.sablecc.sablecc.core.Investigator.ParserInvestigator;
-import org.sablecc.sablecc.core.Selector.LexerSelector;
-import org.sablecc.sablecc.core.Selector.ParserSelector;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
@@ -40,16 +34,6 @@ public class Grammar
     private final TreeNameSpace treeNameSpace = new TreeNameSpace(
             this.globalNameSpace);
 
-    private final Map<Node, LexerExpression.InlineExpression> nodeToInlineExpressionMap = new HashMap<Node, LexerExpression.InlineExpression>();
-
-    private final Map<Node, Expression> nodeToExpressionMap = new HashMap<Node, Expression>();
-
-    private final Map<Node, Lookback> nodeToLookbackMap = new HashMap<Node, Lookback>();
-
-    private final Map<Node, Lookahead> nodeToLookaheadMap = new HashMap<Node, Lookahead>();
-
-    private Context.AnonymousContext globalAnonymousContext;
-
     private final Map<String, LexerExpression.StringExpression> stringToStringExpression = new HashMap<String, LexerExpression.StringExpression>();
 
     private final Map<String, LexerExpression.CharExpression> stringToCharExpression = new HashMap<String, LexerExpression.CharExpression>();
@@ -57,6 +41,8 @@ public class Grammar
     private final Map<String, LexerExpression.DecExpression> stringToDecExpression = new HashMap<String, LexerExpression.DecExpression>();
 
     private final Map<String, LexerExpression.HexExpression> stringToHexExpression = new HashMap<String, LexerExpression.HexExpression>();
+
+    private Context.AnonymousContext globalAnonymousContext;
 
     private LexerExpression.StartExpression globalStartExpression;
 
@@ -188,10 +174,10 @@ public class Grammar
                 Selector selector;
 
                 if (this.inLexer) {
-                    selector = new LexerSelector(node, this.grammar);
+                    selector = new Selector.LexerSelector(node, this.grammar);
                 }
                 else {
-                    selector = new ParserSelector(node, this.grammar);
+                    selector = new Selector.ParserSelector(node, this.grammar);
                 }
 
                 for (Selector.Selection selection : selector.getSelections()) {
@@ -205,12 +191,14 @@ public class Grammar
                     AInvestigator node) {
 
                 if (this.inLexer) {
-                    this.globalNameSpace.add(new LexerInvestigator(node,
-                            this.grammar));
+                    this.globalNameSpace
+                            .add(new Investigator.LexerInvestigator(node,
+                                    this.grammar));
                 }
                 else {
-                    this.globalNameSpace.add(new ParserInvestigator(node,
-                            this.grammar));
+                    this.globalNameSpace
+                            .add(new Investigator.ParserInvestigator(node,
+                                    this.grammar));
                 }
             }
 
@@ -333,90 +321,6 @@ public class Grammar
         });
     }
 
-    void addMapping(
-            Node declaration,
-            LexerExpression.InlineExpression inlineExpression) {
-
-        if (this.nodeToInlineExpressionMap.containsKey(declaration)) {
-            throw new InternalException("multiple mappings for a single node");
-        }
-
-        this.nodeToInlineExpressionMap.put(declaration, inlineExpression);
-    }
-
-    void addMapping(
-            Node declaration,
-            Expression expression) {
-
-        if (this.nodeToExpressionMap.containsKey(declaration)) {
-            throw new InternalException("multiple mappings for a single node");
-        }
-
-        this.nodeToExpressionMap.put(declaration, expression);
-    }
-
-    void addMapping(
-            Node declaration,
-            Lookback lookback) {
-
-        if (this.nodeToLookbackMap.containsKey(declaration)) {
-            throw new InternalException("multiple mappings for a single node");
-        }
-
-        this.nodeToLookbackMap.put(declaration, lookback);
-    }
-
-    void addMapping(
-            Node declaration,
-            Lookahead lookahead) {
-
-        if (this.nodeToLookaheadMap.containsKey(declaration)) {
-            throw new InternalException("multiple mappings for a single node");
-        }
-
-        this.nodeToLookaheadMap.put(declaration, lookahead);
-    }
-
-    public LexerExpression.InlineExpression getInlineExpressionMapping(
-            Node node) {
-
-        if (!this.nodeToInlineExpressionMap.containsKey(node)) {
-            throw new InternalException("missing mapping");
-        }
-
-        return this.nodeToInlineExpressionMap.get(node);
-    }
-
-    public Expression getExpressionMapping(
-            Node node) {
-
-        if (!this.nodeToExpressionMap.containsKey(node)) {
-            throw new InternalException("missing mapping");
-        }
-
-        return this.nodeToExpressionMap.get(node);
-    }
-
-    public Lookback getLookbackMapping(
-            Node node) {
-
-        if (!this.nodeToLookbackMap.containsKey(node)) {
-            throw new InternalException("missing mapping");
-        }
-
-        return this.nodeToLookbackMap.get(node);
-    }
-
-    public Lookahead getLookaheadMapping(
-            Node node) {
-
-        if (!this.nodeToLookaheadMap.containsKey(node)) {
-            throw new InternalException("missing mapping");
-        }
-
-        return this.nodeToLookaheadMap.get(node);
-    }
-
     void addStringExpression(
             LexerExpression.StringExpression stringExpression) {
 
@@ -485,36 +389,36 @@ public class Grammar
         this.globalEndExpression = endExpression;
     }
 
-    LexerExpression.StringExpression getStringExpression(
+    public LexerExpression.StringExpression getStringExpression(
             String text) {
 
         return this.stringToStringExpression.get(text);
     }
 
-    LexerExpression.CharExpression getCharExpression(
+    public LexerExpression.CharExpression getCharExpression(
             String text) {
 
         return this.stringToCharExpression.get(text);
     }
 
-    LexerExpression.DecExpression getDecExpression(
+    public LexerExpression.DecExpression getDecExpression(
             String text) {
 
         return this.stringToDecExpression.get(text);
     }
 
-    LexerExpression.HexExpression getHexExpression(
+    public LexerExpression.HexExpression getHexExpression(
             String text) {
 
         return this.stringToHexExpression.get(text);
     }
 
-    LexerExpression.StartExpression getStartExpression() {
+    public LexerExpression.StartExpression getStartExpression() {
 
         return this.globalStartExpression;
     }
 
-    LexerExpression.EndExpression getEndExpression() {
+    public LexerExpression.EndExpression getEndExpression() {
 
         return this.globalEndExpression;
     }
@@ -751,14 +655,10 @@ public class Grammar
                 throw new InternalException("name may not be null");
             }
 
-            INameDeclaration nameDeclaration = this.globalNameSpace
-                    .getNameDeclaration(name);
-            if (nameDeclaration == null
-                    || nameDeclaration instanceof ParserProduction
-                    || nameDeclaration instanceof Selector.ParserSelector.Selection) {
-                nameDeclaration = this.nameMap.get(name);
+            INameDeclaration nameDeclaration = this.nameMap.get(name);
+            if (nameDeclaration == null) {
+                nameDeclaration = this.globalNameSpace.getNameDeclaration(name);
             }
-
             return nameDeclaration;
         }
 
