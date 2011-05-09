@@ -196,7 +196,6 @@ public abstract class LexerExpression
             super(declaration.getString().getText(), grammar);
 
             this.declarations.add(declaration);
-            grammar.addMapping(declaration, this);
             grammar.addStringExpression(this);
         }
 
@@ -228,7 +227,6 @@ public abstract class LexerExpression
             super(declaration.getChar().getText(), grammar);
 
             this.declarations.add(declaration);
-            grammar.addMapping(declaration, this);
             grammar.addCharExpression(this);
         }
 
@@ -259,7 +257,6 @@ public abstract class LexerExpression
             super(declaration.getDecChar().getText(), grammar);
 
             this.declarations.add(declaration);
-            grammar.addMapping(declaration, this);
             grammar.addDecExpression(this);
         }
 
@@ -290,7 +287,6 @@ public abstract class LexerExpression
             super(declaration.getHexChar().getText(), grammar);
 
             this.declarations.add(declaration);
-            grammar.addMapping(declaration, this);
             grammar.addHexExpression(this);
         }
 
@@ -321,7 +317,6 @@ public abstract class LexerExpression
             super(declaration.getStartKeyword().getText(), grammar);
 
             this.declarations.add(declaration);
-            grammar.addMapping(declaration, this);
             grammar.addStartExpression(this);
         }
 
@@ -352,7 +347,6 @@ public abstract class LexerExpression
             super(declaration.getEndKeyword().getText(), grammar);
 
             this.declarations.add(declaration);
-            grammar.addMapping(declaration, this);
             grammar.addEndExpression(this);
         }
 
