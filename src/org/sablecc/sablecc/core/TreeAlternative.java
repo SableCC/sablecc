@@ -17,6 +17,104 @@
 
 package org.sablecc.sablecc.core;
 
-public class TreeAlternative {
+import java.math.*;
+
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
+
+public abstract class TreeAlternative {
+
+    private final Grammar grammar;
+
+    private final TreeProduction production;
+
+    private BigInteger index;
+
+    private TreeAlternative(
+            Grammar grammar,
+            TreeProduction production,
+            BigInteger index) {
+
+        if (grammar == null) {
+            throw new InternalException("grammar may not be null");
+        }
+
+        if (production == null) {
+            throw new InternalException("production may not be null");
+        }
+
+        if (index == null) {
+            throw new InternalException("index may not be null");
+        }
+
+        this.grammar = grammar;
+        this.production = production;
+        this.index = index;
+    }
+
+    public TreeProduction getProduction() {
+
+        return this.production;
+    }
+
+    public static class NamedTreeAlternative
+            extends TreeAlternative {
+
+        private final ATreeAlternative declaration;
+
+        private String name;
+
+        public NamedTreeAlternative(
+                ATreeAlternative declaration,
+                Grammar grammar,
+                TreeProduction production,
+                BigInteger index) {
+
+            super(grammar, production, index);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+        }
+
+        public TAlternativeName getNameToken() {
+
+            return this.declaration.getAlternativeName();
+        }
+
+        public String getName() {
+
+            if (this.name == null) {
+                String name = getNameToken().getText();
+                name = name.substring(1, name.length() - 2);
+                this.name = name;
+            }
+
+            return this.name;
+        }
+    }
+
+    public static class AnonymousTreeAlternative
+            extends TreeAlternative {
+
+        private final ATreeAlternative declaration;
+
+        public AnonymousTreeAlternative(
+                ATreeAlternative declaration,
+                Grammar grammar,
+                TreeProduction production,
+                BigInteger index) {
+
+            super(grammar, production, index);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+        }
+    }
 
 }

@@ -63,6 +63,26 @@ public class SemanticException
                 duplicateIdentifier);
     }
 
+    public static SemanticException duplicateAlternativeName(
+            TreeAlternative.NamedTreeAlternative duplicateAlternative,
+            TreeAlternative.NamedTreeAlternative olderAlternative) {
+
+        String name = duplicateAlternative.getName();
+        if (!name.equals(olderAlternative.getName())) {
+            throw new InternalException("names must be identical");
+        }
+
+        TAlternativeName duplicateToken = duplicateAlternative.getNameToken();
+        TAlternativeName olderToken = olderAlternative.getNameToken();
+
+        return new SemanticException(
+                new MDuplicateAlternativeName(name, duplicateAlternative
+                        .getProduction().getName(), duplicateToken.getLine()
+                        + "", duplicateToken.getPos() + "", olderToken
+                        .getLine() + "", olderToken.getPos() + "").toString(),
+                duplicateToken);
+    }
+
     public static SemanticException spuriousParserNamedContextDeclaration(
             AParserContext declaration,
             Context.NamedContext namedContext) {

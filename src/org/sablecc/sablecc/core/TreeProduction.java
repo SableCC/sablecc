@@ -17,8 +17,12 @@
 
 package org.sablecc.sablecc.core;
 
+import java.math.*;
+import java.util.*;
+
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.interfaces.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class TreeProduction
@@ -27,6 +31,10 @@ public class TreeProduction
     private final ATreeProduction declaration;
 
     private final Grammar grammar;
+
+    private final LocalNamespace namespace = new LocalNamespace();
+
+    private final List<TreeAlternative> alternatives = new LinkedList<TreeAlternative>();
 
     public TreeProduction(
             ATreeProduction declaration,
@@ -42,6 +50,8 @@ public class TreeProduction
 
         this.declaration = declaration;
         this.grammar = grammar;
+
+        findAlternatives(declaration);
     }
 
     @Override
@@ -60,6 +70,65 @@ public class TreeProduction
     public String getNameType() {
 
         return "tree production";
+    }
+
+    private void findAlternatives(
+            Node ast) {
+
+        ast.apply(new DepthFirstAdapter() {
+
+            private final TreeProduction treeProduction = TreeProduction.this;
+
+            private BigInteger nextIndex = BigInteger.ZERO;
+
+            @Override
+            public void inATreeAlternative(
+                    ATreeAlternative node) {
+
+                if (node.getAlternativeName() != null) {
+                    TreeAlternative.NamedTreeAlternative alternative = new TreeAlternative.NamedTreeAlternative(
+                            node, TreeProduction.this.grammar,
+                            this.treeProduction, this.nextIndex);
+                    this.nextIndex = this.nextIndex.add(BigInteger.ONE);
+
+                    this.treeProduction.namespace.addAlternative(alternative);
+                    this.treeProduction.alternatives.add(alternative);
+                }
+                else {
+                    TreeAlternative.AnonymousTreeAlternative alternative = new TreeAlternative.AnonymousTreeAlternative(
+                            node, TreeProduction.this.grammar,
+                            this.treeProduction, this.nextIndex);
+                    this.nextIndex = this.nextIndex.add(BigInteger.ONE);
+
+                    this.treeProduction.alternatives.add(alternative);
+                }
+            }
+
+        });
+
+    }
+
+    public static class LocalNamespace {
+
+        private final Map<String, TreeAlternative.NamedTreeAlternative> nameMap = new HashMap<String, TreeAlternative.NamedTreeAlternative>();
+
+        private void addAlternative(
+                TreeAlternative.NamedTreeAlternative alternative) {
+
+            if (alternative == null) {
+                throw new InternalException("alternative may not be null");
+            }
+
+            String name = alternative.getName();
+
+            if (this.nameMap.containsKey(name)) {
+                throw SemanticException.duplicateAlternativeName(alternative,
+                        this.nameMap.get(name));
+            }
+
+            this.nameMap.put(name, alternative);
+        }
+
     }
 
 }
