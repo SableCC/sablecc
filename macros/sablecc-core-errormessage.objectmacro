@@ -33,6 +33,17 @@ The "$name" $type declaration reuses an existing name.
 A "$name" $ref_type is already declared at line $ref_line, char $ref_char.
 $end: duplicate_declaration $
 
+$comment: ========== duplicate_alternative_name ========== $
+
+$macro: duplicate_alternative_name(name, prod_name, line, char, ref_line, ref_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The "$name" alternative reuses an existing name in production "$prod_name".
+A "$name" alternative is already declared at line $ref_line, char $ref_char.
+$end: duplicate_alternative_name $
+
 $comment$
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
