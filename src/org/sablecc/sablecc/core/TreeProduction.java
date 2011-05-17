@@ -17,7 +17,6 @@
 
 package org.sablecc.sablecc.core;
 
-import java.math.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
@@ -79,7 +78,7 @@ public class TreeProduction
 
             private final TreeProduction treeProduction = TreeProduction.this;
 
-            private BigInteger nextIndex = BigInteger.ZERO;
+            private int nextIndex = 1;
 
             @Override
             public void inATreeAlternative(
@@ -88,8 +87,7 @@ public class TreeProduction
                 if (node.getAlternativeName() != null) {
                     TreeAlternative.NamedTreeAlternative alternative = new TreeAlternative.NamedTreeAlternative(
                             node, TreeProduction.this.grammar,
-                            this.treeProduction, this.nextIndex);
-                    this.nextIndex = this.nextIndex.add(BigInteger.ONE);
+                            this.treeProduction, this.nextIndex++);
 
                     this.treeProduction.namespace.addAlternative(alternative);
                     this.treeProduction.alternatives.add(alternative);
@@ -97,8 +95,7 @@ public class TreeProduction
                 else {
                     TreeAlternative.AnonymousTreeAlternative alternative = new TreeAlternative.AnonymousTreeAlternative(
                             node, TreeProduction.this.grammar,
-                            this.treeProduction, this.nextIndex);
-                    this.nextIndex = this.nextIndex.add(BigInteger.ONE);
+                            this.treeProduction, this.nextIndex++);
 
                     this.treeProduction.alternatives.add(alternative);
                 }

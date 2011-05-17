@@ -17,8 +17,6 @@
 
 package org.sablecc.sablecc.core;
 
-import java.math.*;
-
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
@@ -28,12 +26,12 @@ public abstract class TreeAlternative {
 
     private final TreeProduction production;
 
-    private BigInteger index;
+    private int index;
 
     private TreeAlternative(
             Grammar grammar,
             TreeProduction production,
-            BigInteger index) {
+            int index) {
 
         if (grammar == null) {
             throw new InternalException("grammar may not be null");
@@ -41,10 +39,6 @@ public abstract class TreeAlternative {
 
         if (production == null) {
             throw new InternalException("production may not be null");
-        }
-
-        if (index == null) {
-            throw new InternalException("index may not be null");
         }
 
         this.grammar = grammar;
@@ -68,7 +62,7 @@ public abstract class TreeAlternative {
                 ATreeAlternative declaration,
                 Grammar grammar,
                 TreeProduction production,
-                BigInteger index) {
+                int index) {
 
             super(grammar, production, index);
 
@@ -105,7 +99,7 @@ public abstract class TreeAlternative {
                 ATreeAlternative declaration,
                 Grammar grammar,
                 TreeProduction production,
-                BigInteger index) {
+                int index) {
 
             super(grammar, production, index);
 
