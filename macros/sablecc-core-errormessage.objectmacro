@@ -44,6 +44,17 @@ The "$name" alternative reuses an existing name in production "$prod_name".
 A "$name" alternative is already declared at line $ref_line, char $ref_char.
 $end: duplicate_alternative_name $
 
+$comment: ========== duplicate_element_name ========== $
+
+$macro: duplicate_element_name(name, prod_name, alt_name, line, char, ref_line, ref_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The "$name" element reuses an existing name in alternative "$alt_name" of production "$prod_name".
+A "$name" element is already declared at line $ref_line, char $ref_char.
+$end: duplicate_element_name $
+
 $comment$
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------

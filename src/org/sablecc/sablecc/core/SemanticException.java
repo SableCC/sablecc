@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.core;
 
+import java.math.*;
+
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.errormessage.*;
 import org.sablecc.sablecc.core.interfaces.*;
@@ -81,6 +83,27 @@ public class SemanticException
                         + "", duplicateToken.getPos() + "", olderToken
                         .getLine() + "", olderToken.getPos() + "").toString(),
                 duplicateToken);
+    }
+
+    public static SemanticException duplicateElementName(
+            TreeElement.Named duplicateElement,
+            TreeElement.Named olderElement) {
+
+        String name = duplicateElement.getName();
+        if (!name.equals(olderElement.getName())) {
+            throw new InternalException("names must be identical");
+        }
+
+        Token duplicateToken = duplicateElement.getNameToken();
+        Token olderToken = olderElement.getNameToken();
+
+        return new SemanticException(
+                new MDuplicateElementName(name, duplicateElement
+                        .getAlternative().getProduction().getName(),
+                        duplicateElement.getAlternative().getIndex() + "",
+                        duplicateToken.getLine() + "", duplicateToken.getPos()
+                                + "", olderToken.getLine() + "",
+                        olderToken.getPos() + "").toString(), duplicateToken);
     }
 
     public static SemanticException spuriousParserNamedContextDeclaration(
