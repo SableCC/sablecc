@@ -17,8 +17,6 @@
 
 package org.sablecc.sablecc.core;
 
-import java.math.*;
-
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.errormessage.*;
 import org.sablecc.sablecc.core.interfaces.*;
