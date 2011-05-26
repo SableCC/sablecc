@@ -23,6 +23,7 @@ import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.util.*;
 
 public class TreeProduction
         implements INameDeclaration {
@@ -31,9 +32,9 @@ public class TreeProduction
 
     private final Grammar grammar;
 
-    private final LocalNamespace namespace = new LocalNamespace();
+    private final LocalNamespace namespace;
 
-    private final List<TreeAlternative> alternatives = new LinkedList<TreeAlternative>();
+    private final LinkedList<TreeAlternative> alternatives = new LinkedList<TreeAlternative>();
 
     public TreeProduction(
             ATreeProduction declaration,
@@ -50,7 +51,19 @@ public class TreeProduction
         this.declaration = declaration;
         this.grammar = grammar;
 
-        findAlternatives(declaration);
+        findAlternatives();
+
+        // When there is only one alternative, it doesn't require an implicit
+        // name
+        if (this.alternatives.size() == 1) {
+            this.alternatives.get(0).setName(
+                    this.alternatives.get(0).getExplicitName());
+            this.namespace = null;
+        }
+        else {
+            this.namespace = new LocalNamespace(this.alternatives);
+        }
+
     }
 
     @Override
@@ -71,10 +84,9 @@ public class TreeProduction
         return "tree production";
     }
 
-    private void findAlternatives(
-            Node ast) {
+    private void findAlternatives() {
 
-        ast.apply(new DepthFirstAdapter() {
+        this.declaration.apply(new DepthFirstAdapter() {
 
             private final TreeProduction treeProduction = TreeProduction.this;
 
@@ -84,46 +96,35 @@ public class TreeProduction
             public void inATreeAlternative(
                     ATreeAlternative node) {
 
-                if (node.getAlternativeName() != null) {
-                    TreeAlternative.NamedTreeAlternative alternative = new TreeAlternative.NamedTreeAlternative(
-                            node, TreeProduction.this.grammar,
-                            this.treeProduction, this.nextIndex++);
+                TreeAlternative alternative = new TreeAlternative(node,
+                        TreeProduction.this.grammar, this.treeProduction,
+                        this.nextIndex);
 
-                    this.treeProduction.namespace.addAlternative(alternative);
-                    this.treeProduction.alternatives.add(alternative);
-                }
-                else {
-                    TreeAlternative.AnonymousTreeAlternative alternative = new TreeAlternative.AnonymousTreeAlternative(
-                            node, TreeProduction.this.grammar,
-                            this.treeProduction, this.nextIndex++);
+                this.nextIndex += 1;
 
-                    this.treeProduction.alternatives.add(alternative);
-                }
+                this.treeProduction.alternatives.add(alternative);
             }
-
         });
 
     }
 
-    public static class LocalNamespace {
+    private static class LocalNamespace
+            extends ImplicitExplicitNamespace<TreeAlternative> {
 
-        private final Map<String, TreeAlternative.NamedTreeAlternative> nameMap = new HashMap<String, TreeAlternative.NamedTreeAlternative>();
+        public LocalNamespace(
+                final LinkedList<TreeAlternative> declarations) {
 
-        private void addAlternative(
-                TreeAlternative.NamedTreeAlternative alternative) {
+            super(declarations);
+        }
 
-            if (alternative == null) {
-                throw new InternalException("alternative may not be null");
-            }
+        @Override
+        protected void raiseDuplicateError(
+                TreeAlternative declaration,
+                TreeAlternative previousDeclaration) {
 
-            String name = alternative.getName();
+            throw SemanticException.duplicateAlternativeName(declaration,
+                    previousDeclaration);
 
-            if (this.nameMap.containsKey(name)) {
-                throw SemanticException.duplicateAlternativeName(alternative,
-                        this.nameMap.get(name));
-            }
-
-            this.nameMap.put(name, alternative);
         }
 
     }

@@ -64,16 +64,36 @@ public class SemanticException
     }
 
     public static SemanticException duplicateAlternativeName(
-            TreeAlternative.NamedTreeAlternative duplicateAlternative,
-            TreeAlternative.NamedTreeAlternative olderAlternative) {
+            TreeAlternative duplicateAlternative,
+            TreeAlternative olderAlternative) {
 
         String name = duplicateAlternative.getName();
         if (!name.equals(olderAlternative.getName())) {
             throw new InternalException("names must be identical");
         }
 
-        TAlternativeName duplicateToken = duplicateAlternative.getNameToken();
-        TAlternativeName olderToken = olderAlternative.getNameToken();
+        Token duplicateToken = duplicateAlternative.getNameToken();
+        Token olderToken = olderAlternative.getNameToken();
+
+        return new SemanticException(
+                new MDuplicateAlternativeName(name, duplicateAlternative
+                        .getProduction().getName(), duplicateToken.getLine()
+                        + "", duplicateToken.getPos() + "", olderToken
+                        .getLine() + "", olderToken.getPos() + "").toString(),
+                duplicateToken);
+    }
+
+    public static SemanticException duplicateAlternativeName(
+            ParserAlternative duplicateAlternative,
+            ParserAlternative olderAlternative) {
+
+        String name = duplicateAlternative.getName();
+        if (!name.equals(olderAlternative.getName())) {
+            throw new InternalException("names must be identical");
+        }
+
+        Token duplicateToken = duplicateAlternative.getNameToken();
+        Token olderToken = olderAlternative.getNameToken();
 
         return new SemanticException(
                 new MDuplicateAlternativeName(name, duplicateAlternative
@@ -84,10 +104,33 @@ public class SemanticException
     }
 
     public static SemanticException duplicateElementName(
-            TreeElement.Named duplicateElement,
-            TreeElement.Named olderElement) {
+            TreeElement duplicateElement,
+            TreeElement olderElement) {
 
         String name = duplicateElement.getName();
+
+        if (!name.equals(olderElement.getName())) {
+            throw new InternalException("names must be identical");
+        }
+
+        Token duplicateToken = duplicateElement.getNameToken();
+        Token olderToken = olderElement.getNameToken();
+
+        return new SemanticException(
+                new MDuplicateElementName(name, duplicateElement
+                        .getAlternative().getProduction().getName(),
+                        duplicateElement.getAlternative().getIndex() + "",
+                        duplicateToken.getLine() + "", duplicateToken.getPos()
+                                + "", olderToken.getLine() + "",
+                        olderToken.getPos() + "").toString(), duplicateToken);
+    }
+
+    public static SemanticException duplicateElementName(
+            ParserElement duplicateElement,
+            ParserElement olderElement) {
+
+        String name = duplicateElement.getName();
+
         if (!name.equals(olderElement.getName())) {
             throw new InternalException("names must be identical");
         }
