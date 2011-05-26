@@ -19,8 +19,10 @@ package org.sablecc.sablecc.core;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.util.interfaces.*;
 
-public abstract class TreeElement {
+public abstract class TreeElement
+        implements ImplicitExplicit {
 
     private final Grammar grammar;
 
@@ -47,268 +49,225 @@ public abstract class TreeElement {
         return this.alternative;
     }
 
-    public abstract static class Anonymous
+    public abstract String getName();
+
+    public abstract Token getNameToken();
+
+    public static class Normal
             extends TreeElement {
 
-        public Anonymous(
+        private ANormalElement declaration;
+
+        private String name;
+
+        private Token token;
+
+        public Normal(
+                ANormalElement declaration,
                 Grammar grammar,
                 TreeAlternative alternative) {
 
             super(grammar, alternative);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
         }
 
-        public static class Normal
-                extends Anonymous {
+        @Override
+        public String getImplicitName() {
 
-            private ANormalElement declaration;
+            String implicitName = null;
 
-            public Normal(
-                    ANormalElement declaration,
-                    Grammar grammar,
-                    TreeAlternative alternative) {
+            if (this.declaration.getUnit() instanceof ANameUnit
+                    && (this.declaration.getUnaryOperator() == null || this.declaration
+                            .getUnaryOperator() instanceof AZeroOrOneUnaryOperator)) {
 
-                super(grammar, alternative);
-
-                if (declaration == null) {
-                    throw new InternalException("declaration may not be null");
-                }
-
-                this.declaration = declaration;
+                implicitName = ((ANameUnit) this.declaration.getUnit())
+                        .getIdentifier().getText();
             }
+
+            return implicitName;
         }
 
-        public static class Separated
-                extends Anonymous {
+        @Override
+        public String getExplicitName() {
 
-            private ASeparatedElement declaration;
+            String explicitName = null;
 
-            public Separated(
-                    ASeparatedElement declaration,
-                    Grammar grammar,
-                    TreeAlternative alternative) {
-
-                super(grammar, alternative);
-
-                if (declaration == null) {
-                    throw new InternalException("declaration may not be null");
-                }
-
-                this.declaration = declaration;
+            if (this.declaration.getElementName() != null) {
+                explicitName = this.declaration.getElementName().getText();
+                explicitName = explicitName.substring(1,
+                        explicitName.length() - 2);
             }
+
+            return explicitName;
         }
 
-        public static class Alternated
-                extends Anonymous {
+        @Override
+        public void setName(
+                String name) {
 
-            private AAlternatedElement declaration;
+            this.name = name;
+        }
 
-            public Alternated(
-                    AAlternatedElement declaration,
-                    Grammar grammar,
-                    TreeAlternative alternative) {
+        @Override
+        public String getName() {
 
-                super(grammar, alternative);
+            // TODO Null ok ?
+            return this.name;
+        }
 
-                if (declaration == null) {
-                    throw new InternalException("declaration may not be null");
+        @Override
+        public Token getNameToken() {
+
+            if (this.token == null) {
+                if (getExplicitName() != null
+                        && getExplicitName().equals(this.name)) {
+                    this.token = this.declaration.getElementName();
                 }
-
-                this.declaration = declaration;
+                else if (getImplicitName().equals(this.name)) {
+                    if (!(this.declaration.getUnit() instanceof ANameUnit)) {
+                        throw new InternalException("unit may not be a "
+                                + this.declaration.getUnit().getClass());
+                    }
+                    this.token = ((ANameUnit) this.declaration.getUnit())
+                            .getIdentifier();
+                }
             }
+
+            return this.token;
         }
 
     }
 
-    public abstract static class Named
+    public static class Separated
             extends TreeElement {
 
-        public abstract String getName();
+        private ASeparatedElement declaration;
 
-        public abstract Token getNameToken();
+        private String name;
 
-        public Named(
+        public Separated(
+                ASeparatedElement declaration,
                 Grammar grammar,
                 TreeAlternative alternative) {
 
             super(grammar, alternative);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
         }
 
-        public static abstract class Normal
-                extends Named {
+        @Override
+        public String getImplicitName() {
 
-            private ANormalElement declaration;
-
-            public Normal(
-                    ANormalElement declaration,
-                    Grammar grammar,
-                    TreeAlternative alternative) {
-
-                super(grammar, alternative);
-
-                if (declaration == null) {
-                    throw new InternalException("declaration may not be null");
-                }
-
-                this.declaration = declaration;
-            }
-
-            public ANormalElement getDeclaration() {
-
-                return this.declaration;
-            }
-
+            return null;
         }
 
-        public static class ImplicitNormal
-                extends Normal {
+        @Override
+        public String getExplicitName() {
 
-            private String name;
+            String explicitName = null;
 
-            private TIdentifier token;
-
-            public ImplicitNormal(
-                    ANormalElement declaration,
-                    Grammar grammar,
-                    TreeAlternative alternative) {
-
-                super(declaration, grammar, alternative);
+            if (this.declaration.getElementName() != null) {
+                explicitName = this.declaration.getElementName().getText();
+                explicitName = explicitName.substring(1,
+                        explicitName.length() - 2);
             }
 
-            @Override
-            public String getName() {
+            return explicitName;
+        }
 
-                return getNameToken().getText();
-            }
+        @Override
+        public void setName(
+                String name) {
 
-            @Override
-            public TIdentifier getNameToken() {
-
-                if (this.token == null) {
-                    if (!(getDeclaration().getUnit() instanceof ANameUnit)) {
-                        throw new InternalException("unit may not be a "
-                                + getDeclaration().getUnit().getClass());
-                    }
-                    this.token = ((ANameUnit) getDeclaration().getUnit())
-                            .getIdentifier();
-                }
-
-                return this.token;
-
-            }
+            this.name = name;
 
         }
 
-        public static class ExplicitNormal
-                extends Normal {
+        @Override
+        public String getName() {
 
-            private String name;
-
-            public ExplicitNormal(
-                    ANormalElement declaration,
-                    Grammar grammar,
-                    TreeAlternative alternative) {
-
-                super(declaration, grammar, alternative);
-            }
-
-            @Override
-            public TElementName getNameToken() {
-
-                return getDeclaration().getElementName();
-            }
-
-            @Override
-            public String getName() {
-
-                if (this.name == null) {
-                    String name = getNameToken().getText();
-                    name = name.substring(1, name.length() - 2);
-                    this.name = name.trim();
-                }
-
-                return this.name;
-            }
+            // TODO Null ok ?
+            return this.name;
         }
 
-        public static class Separated
-                extends Named {
+        @Override
+        public Token getNameToken() {
 
-            private ASeparatedElement declaration;
-
-            private String name;
-
-            public Separated(
-                    ASeparatedElement declaration,
-                    Grammar grammar,
-                    TreeAlternative alternative) {
-
-                super(grammar, alternative);
-
-                if (declaration == null) {
-                    throw new InternalException("declaration may not be null");
-                }
-
-                this.declaration = declaration;
-            }
-
-            @Override
-            public TElementName getNameToken() {
-
-                return this.declaration.getElementName();
-            }
-
-            @Override
-            public String getName() {
-
-                if (this.name == null) {
-                    String name = getNameToken().getText();
-                    name = name.substring(1, name.length() - 2);
-                    this.name = name;
-                }
-
-                return this.name;
-            }
+            return this.declaration.getElementName();
         }
 
-        public static class Alternated
-                extends Named {
+    }
 
-            private AAlternatedElement declaration;
+    public static class Alternated
+            extends TreeElement {
 
-            private String name;
+        private AAlternatedElement declaration;
 
-            public Alternated(
-                    AAlternatedElement declaration,
-                    Grammar grammar,
-                    TreeAlternative alternative) {
+        private String name;
 
-                super(grammar, alternative);
+        public Alternated(
+                AAlternatedElement declaration,
+                Grammar grammar,
+                TreeAlternative alternative) {
 
-                if (declaration == null) {
-                    throw new InternalException("declaration may not be null");
-                }
+            super(grammar, alternative);
 
-                this.declaration = declaration;
-
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
             }
 
-            @Override
-            public TElementName getNameToken() {
+            this.declaration = declaration;
 
-                return this.declaration.getElementName();
-            }
-
-            @Override
-            public String getName() {
-
-                if (this.name == null) {
-                    String name = getNameToken().getText();
-                    name = name.substring(1, name.length() - 2);
-                    this.name = name;
-                }
-
-                return this.name;
-            }
         }
+
+        @Override
+        public String getImplicitName() {
+
+            return null;
+        }
+
+        @Override
+        public String getExplicitName() {
+
+            String explicitName = null;
+
+            if (this.declaration.getElementName() != null) {
+                explicitName = this.declaration.getElementName().getText();
+                explicitName = explicitName.substring(1,
+                        explicitName.length() - 2);
+            }
+
+            return explicitName;
+        }
+
+        @Override
+        public void setName(
+                String name) {
+
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+
+            // TODO Null ok ?
+            return this.name;
+        }
+
+        @Override
+        public Token getNameToken() {
+
+            return this.declaration.getElementName();
+        }
+
     }
 }

@@ -22,23 +22,37 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.util.*;
+import org.sablecc.util.interfaces.*;
 
-public abstract class TreeAlternative {
+public class TreeAlternative
+        implements ImplicitExplicit {
 
     private final Grammar grammar;
 
     private final TreeProduction production;
 
+    private final ATreeAlternative declaration;
+
     private int index;
 
-    private final LocalNamespace namespace = new LocalNamespace();
+    private String name;
 
-    private final List<TreeElement> elements = new LinkedList<TreeElement>();
+    private Token token;
 
-    private TreeAlternative(
+    private final LocalNamespace namespace;
+
+    private final LinkedList<TreeElement> elements = new LinkedList<TreeElement>();
+
+    public TreeAlternative(
+            ATreeAlternative declaration,
             Grammar grammar,
             TreeProduction production,
             int index) {
+
+        if (declaration == null) {
+            throw new InternalException("grammar may not be null");
+        }
 
         if (grammar == null) {
             throw new InternalException("grammar may not be null");
@@ -48,9 +62,14 @@ public abstract class TreeAlternative {
             throw new InternalException("production may not be null");
         }
 
+        this.declaration = declaration;
         this.grammar = grammar;
         this.production = production;
         this.index = index;
+
+        findElements();
+
+        this.namespace = new LocalNamespace(this.elements);
     }
 
     public TreeProduction getProduction() {
@@ -58,348 +77,166 @@ public abstract class TreeAlternative {
         return this.production;
     }
 
-    public LocalNamespace getNamespace() {
-
-        return this.namespace;
-    }
-
-    public Grammar getGrammar() {
-
-        return this.grammar;
-    }
-
-    public List<TreeElement> getElements() {
-
-        return this.elements;
-    }
-
     public int getIndex() {
 
         return this.index;
     }
 
-    public static class NamedTreeAlternative
-            extends TreeAlternative {
+    public ATreeAlternative getDeclaration() {
 
-        private final ATreeAlternative declaration;
-
-        private String name;
-
-        private final LocalNamespace namespace;
-
-        public NamedTreeAlternative(
-                ATreeAlternative declaration,
-                Grammar grammar,
-                TreeProduction production,
-                int index) {
-
-            super(grammar, production, index);
-
-            if (declaration == null) {
-                throw new InternalException("declaration may not be null");
-            }
-
-            this.declaration = declaration;
-
-            this.namespace = getNamespace();
-
-            findNamedElement(this.declaration, this.namespace, getElements(),
-                    getGrammar(), this);
-        }
-
-        public TAlternativeName getNameToken() {
-
-            return this.declaration.getAlternativeName();
-        }
-
-        public String getName() {
-
-            if (this.name == null) {
-                String name = getNameToken().getText();
-                name = name.substring(1, name.length() - 2);
-                this.name = name;
-            }
-
-            return this.name;
-        }
+        return this.declaration;
     }
 
-    public static class AnonymousTreeAlternative
-            extends TreeAlternative {
+    @Override
+    public String getImplicitName() {
 
-        private final ATreeAlternative declaration;
+        String implicitName = null;
 
-        private final LocalNamespace namespace;
+        if (this.declaration.getElements().getFirst() instanceof ANormalElement) {
+            ANormalElement firstElement = (ANormalElement) this.declaration
+                    .getElements().getFirst();
 
-        public AnonymousTreeAlternative(
-                ATreeAlternative declaration,
-                Grammar grammar,
-                TreeProduction production,
-                int index) {
-
-            super(grammar, production, index);
-
-            if (declaration == null) {
-                throw new InternalException("declaration may not be null");
+            if (firstElement.getElementName() != null) {
+                implicitName = firstElement.getElementName().getText();
+                implicitName = implicitName.substring(1,
+                        implicitName.length() - 2);
+            }
+            else if (firstElement.getUnit() instanceof ANameUnit
+                    && (firstElement.getUnaryOperator() == null || firstElement
+                            .getUnaryOperator() instanceof AZeroOrOneUnaryOperator)) {
+                implicitName = ((ANameUnit) firstElement.getUnit())
+                        .getIdentifier().getText();
             }
 
-            this.declaration = declaration;
-
-            this.namespace = getNamespace();
-
-            findNamedElement(this.declaration, this.namespace, getElements(),
-                    getGrammar(), this);
         }
+        else if (this.declaration.getElements().getFirst() instanceof ASeparatedElement) {
+            ASeparatedElement firstElement = (ASeparatedElement) this.declaration
+                    .getElements().getFirst();
+
+            if (firstElement.getElementName() != null) {
+                implicitName = firstElement.getElementName().getText();
+                implicitName = implicitName.substring(1,
+                        implicitName.length() - 2);
+            }// else : separated element can't have an implicit name
+        }
+        else if (this.declaration.getElements().getFirst() instanceof AAlternatedElement) {
+            AAlternatedElement firstElement = (AAlternatedElement) this.declaration
+                    .getElements().getFirst();
+
+            if (firstElement.getElementName() != null) {
+                implicitName = firstElement.getElementName().getText();
+                implicitName = implicitName.substring(1,
+                        implicitName.length() - 2);
+            }// else : alternated element can't have an implicit name
+        }
+
+        return implicitName;
     }
 
-    private static void findNamedElement(
-            Node ast,
-            final LocalNamespace namespace,
-            final List<TreeElement> elements,
-            final Grammar grammar,
-            final TreeAlternative alternative) {
+    @Override
+    public String getExplicitName() {
 
-        final OccurrenceNameCounter occurenceNameCounter = new OccurrenceNameCounter();
+        String explicitName = null;
 
-        fillOccurrencesTable(occurenceNameCounter, ast);
+        if (this.declaration.getAlternativeName() != null) {
+            explicitName = this.declaration.getAlternativeName().getText();
+            explicitName = explicitName.substring(1, explicitName.length() - 2);
+            return explicitName;
+        }
 
-        ast.apply(new DepthFirstAdapter() {
+        return explicitName;
+
+    }
+
+    @Override
+    public void setName(
+            String name) {
+
+        this.name = name;
+
+    }
+
+    public String getName() {
+
+        // TODO Null ok ?
+        return this.name;
+    }
+
+    public Token getNameToken() {
+
+        if (this.token == null) {
+            if (getExplicitName() != null
+                    && getExplicitName().equals(this.name)) {
+                this.token = this.declaration.getAlternativeName();
+            }
+            else if (getImplicitName().equals(this.name)) {
+                ANormalElement firstElement = (ANormalElement) this.declaration
+                        .getElements().getFirst();
+
+                this.token = ((ANameUnit) firstElement.getUnit())
+                        .getIdentifier();
+            }
+        }
+
+        return this.token;
+    }
+
+    protected void findElements() {
+
+        this.declaration.apply(new DepthFirstAdapter() {
 
             @Override
-            public void inAAlternatedElement(
-                    AAlternatedElement node) {
+            public void inANormalElement(
+                    ANormalElement node) {
 
-                if (node.getElementName() != null) {
-                    TreeElement.Named.Alternated alternatedElement = new TreeElement.Named.Alternated(
-                            node, grammar, alternative);
-                    namespace.addElement(alternatedElement);
-                    elements.add(alternatedElement);
-                }
-                else {
-                    TreeElement.Anonymous.Alternated alternatedElement = new TreeElement.Anonymous.Alternated(
-                            node, grammar, alternative);
-                    elements.add(alternatedElement);
+                TreeElement.Normal element = new TreeElement.Normal(node,
+                        TreeAlternative.this.grammar, TreeAlternative.this);
 
-                }
-
+                TreeAlternative.this.elements.add(element);
             }
 
             @Override
             public void inASeparatedElement(
                     ASeparatedElement node) {
 
-                if (node.getElementName() != null) {
-                    TreeElement.Named.Separated separatedElement = new TreeElement.Named.Separated(
-                            node, grammar, alternative);
-                    namespace.addElement(separatedElement);
-                    elements.add(separatedElement);
-                }
-                else {
-                    TreeElement.Anonymous.Separated separatedElement = new TreeElement.Anonymous.Separated(
-                            node, grammar, alternative);
-                    elements.add(separatedElement);
+                TreeElement.Separated element = new TreeElement.Separated(node,
+                        TreeAlternative.this.grammar, TreeAlternative.this);
 
-                }
+                TreeAlternative.this.elements.add(element);
 
             }
-
-            @Override
-            public void inANormalElement(
-                    ANormalElement node) {
-
-                if (node.getElementName() != null) {
-                    TreeElement.Named.ExplicitNormal normalElement = new TreeElement.Named.ExplicitNormal(
-                            node, grammar, alternative);
-                    namespace.addElement(normalElement);
-                    elements.add(normalElement);
-                }
-                else {
-                    if (node.getUnit() instanceof ANameUnit
-                            && (node.getUnaryOperator() == null || node
-                                    .getUnaryOperator() instanceof AZeroOrOneUnaryOperator)) {
-
-                        String name = ((ANameUnit) node.getUnit())
-                                .getIdentifier().getText();
-
-                        if (occurenceNameCounter.getImplicitCount(name) > 0
-                                && occurenceNameCounter.getExplicitCount(name) > 0) {
-                            TreeElement element = namespace.getElement(name);
-
-                            if (element == null
-                                    || !(element instanceof TreeElement.Named.ImplicitNormal)) {
-                                TreeElement.Named.ImplicitNormal normalElement = new TreeElement.Named.ImplicitNormal(
-                                        node, grammar, alternative);
-                                namespace.addElement(normalElement);
-                                elements.add(normalElement);
-                            }
-                        }
-                        else if (occurenceNameCounter.getImplicitCount(name) == 1
-                                && occurenceNameCounter.getExplicitCount(name) == 0) {
-                            TreeElement.Named.ImplicitNormal normalElement = new TreeElement.Named.ImplicitNormal(
-                                    node, grammar, alternative);
-                            namespace.addElement(normalElement);
-                            elements.add(normalElement);
-
-                        }
-                        else if (occurenceNameCounter.getImplicitCount(name) > 1
-                                && occurenceNameCounter.getExplicitCount(name) == 0) {
-                            TreeElement.Anonymous.Normal normalElement = new TreeElement.Anonymous.Normal(
-                                    node, grammar, alternative);
-                            elements.add(normalElement);
-                        }
-                    }
-                    else {
-                        TreeElement.Anonymous.Normal normalElement = new TreeElement.Anonymous.Normal(
-                                node, grammar, alternative);
-                        elements.add(normalElement);
-                    }
-                }
-
-            }
-        });
-
-    }
-
-    private static void fillOccurrencesTable(
-            final OccurrenceNameCounter occurenceNameCounter,
-            Node ast) {
-
-        ast.apply(new DepthFirstAdapter() {
 
             @Override
             public void inAAlternatedElement(
                     AAlternatedElement node) {
 
-                if (node.getElementName() != null) {
-                    String name = node.getElementName().getText();
-                    name = name.substring(1, name.length() - 2);
-                    occurenceNameCounter.addExplicitOccurrence(name);
-                }
-            }
+                TreeElement.Alternated element = new TreeElement.Alternated(
+                        node, TreeAlternative.this.grammar,
+                        TreeAlternative.this);
 
-            @Override
-            public void inASeparatedElement(
-                    ASeparatedElement node) {
-
-                if (node.getElementName() != null) {
-                    String name = node.getElementName().getText();
-                    name = name.substring(1, name.length() - 2);
-                    occurenceNameCounter.addExplicitOccurrence(name);
-                }
-
-            }
-
-            @Override
-            public void inANormalElement(
-                    ANormalElement node) {
-
-                if (node.getElementName() != null) {
-                    String name = node.getElementName().getText();
-                    name = name.substring(1, name.length() - 2);
-                    occurenceNameCounter.addExplicitOccurrence(name);
-                }
-                else {
-
-                    if (node.getUnit() instanceof ANameUnit
-                            && (node.getUnaryOperator() == null || node
-                                    .getUnaryOperator() instanceof AZeroOrOneUnaryOperator)) {
-
-                        String occurrenceName = ((ANameUnit) node.getUnit())
-                                .getIdentifier().getText();
-                        occurenceNameCounter
-                                .addImplicitOccurrence(occurrenceName);
-                    }
-                }
-
+                TreeAlternative.this.elements.add(element);
             }
         });
-    }
-
-    private static class OccurrenceNameCounter {
-
-        final Map<String, Integer> implicitOccurrenceCounter = new HashMap<String, Integer>();
-
-        final Map<String, Integer> explicitOccurrenceCounter = new HashMap<String, Integer>();
-
-        public OccurrenceNameCounter() {
-
-        }
-
-        public void addImplicitOccurrence(
-                String text) {
-
-            Integer nbOccurences = this.implicitOccurrenceCounter.get(text);
-            if (nbOccurences == null) {
-                nbOccurences = 1;
-            }
-            else {
-                nbOccurences++;
-            }
-            this.implicitOccurrenceCounter.put(text, nbOccurences);
-        }
-
-        public void addExplicitOccurrence(
-                String text) {
-
-            Integer nbOccurences = this.explicitOccurrenceCounter.get(text);
-            if (nbOccurences == null) {
-                nbOccurences = 1;
-            }
-            else {
-                nbOccurences++;
-            }
-            this.explicitOccurrenceCounter.put(text, nbOccurences);
-        }
-
-        public int getImplicitCount(
-                String text) {
-
-            if (this.implicitOccurrenceCounter.get(text) == null) {
-                return 0;
-            }
-            else {
-                return this.implicitOccurrenceCounter.get(text);
-            }
-        }
-
-        public int getExplicitCount(
-                String text) {
-
-            if (this.explicitOccurrenceCounter.get(text) == null) {
-                return 0;
-            }
-            else {
-                return this.explicitOccurrenceCounter.get(text);
-            }
-        }
 
     }
 
-    public static class LocalNamespace {
+    private static class LocalNamespace
+            extends ImplicitExplicitNamespace<TreeElement> {
 
-        private final Map<String, TreeElement.Named> nameMap = new HashMap<String, TreeElement.Named>();
+        public LocalNamespace(
+                final LinkedList<TreeElement> declarations) {
 
-        private void addElement(
-                TreeElement.Named element) {
-
-            if (element == null) {
-                throw new InternalException("element may not be null");
-            }
-
-            String name = element.getName();
-
-            if (this.nameMap.containsKey(name)) {
-                throw SemanticException.duplicateElementName(element,
-                        this.nameMap.get(name));
-            }
-
-            this.nameMap.put(name, element);
+            super(declarations);
         }
 
-        public TreeElement getElement(
-                String name) {
+        @Override
+        protected void raiseDuplicateError(
+                TreeElement declaration,
+                TreeElement previousDeclaration) {
 
-            return this.nameMap.get(name);
+            throw SemanticException.duplicateElementName(declaration,
+                    previousDeclaration);
+
         }
 
     }

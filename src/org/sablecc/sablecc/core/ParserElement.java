@@ -17,25 +17,331 @@
 
 package org.sablecc.sablecc.core;
 
-public abstract class ParserElement {
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.util.interfaces.*;
+
+public abstract class ParserElement
+        implements ImplicitExplicit {
+
+    private final Grammar grammar;
+
+    private final ParserAlternative alternative;
+
+    public ParserElement(
+            Grammar grammar,
+            ParserAlternative alternative) {
+
+        if (grammar == null) {
+            throw new InternalException("grammar may not be null");
+        }
+
+        if (alternative == null) {
+            throw new InternalException("alternative may not be null");
+        }
+
+        this.grammar = grammar;
+        this.alternative = alternative;
+    }
+
+    public ParserAlternative getAlternative() {
+
+        return this.alternative;
+    }
+
+    public abstract String getName();
+
+    public abstract Token getNameToken();
 
     public static class NormalElement
             extends ParserElement {
+
+        private ANormalElement declaration;
+
+        private String name;
+
+        private Token token;
+
+        public NormalElement(
+                ANormalElement declaration,
+                Grammar grammar,
+                ParserAlternative alternative) {
+
+            super(grammar, alternative);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+        }
+
+        @Override
+        public String getImplicitName() {
+
+            String implicitName = null;
+
+            if (this.declaration.getUnit() instanceof ANameUnit
+                    && (this.declaration.getUnaryOperator() == null || this.declaration
+                            .getUnaryOperator() instanceof AZeroOrOneUnaryOperator)) {
+
+                implicitName = ((ANameUnit) this.declaration.getUnit())
+                        .getIdentifier().getText();
+            }
+
+            return implicitName;
+        }
+
+        @Override
+        public String getExplicitName() {
+
+            String explicitName = null;
+
+            if (this.declaration.getElementName() != null) {
+                explicitName = this.declaration.getElementName().getText();
+                explicitName = explicitName.substring(1,
+                        explicitName.length() - 2);
+            }
+
+            return explicitName;
+        }
+
+        @Override
+        public void setName(
+                String name) {
+
+            this.name = name;
+
+        }
+
+        @Override
+        public String getName() {
+
+            return this.name;
+        }
+
+        @Override
+        public Token getNameToken() {
+
+            if (this.token == null) {
+                if (getExplicitName() != null
+                        && getExplicitName().equals(this.name)) {
+                    this.token = this.declaration.getElementName();
+                }
+                else if (getImplicitName().equals(this.name)) {
+                    if (!(this.declaration.getUnit() instanceof ANameUnit)) {
+                        throw new InternalException("unit may not be a "
+                                + this.declaration.getUnit().getClass());
+                    }
+                    this.token = ((ANameUnit) this.declaration.getUnit())
+                            .getIdentifier();
+                }
+            }
+
+            return this.token;
+        }
 
     }
 
     public static class SeparatedElement
             extends ParserElement {
 
+        private ASeparatedElement declaration;
+
+        private String name;
+
+        public SeparatedElement(
+                ASeparatedElement declaration,
+                Grammar grammar,
+                ParserAlternative alternative) {
+
+            super(grammar, alternative);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+        }
+
+        @Override
+        public String getImplicitName() {
+
+            return null;
+        }
+
+        @Override
+        public String getExplicitName() {
+
+            String explicitName = null;
+
+            if (this.declaration.getElementName() != null) {
+                explicitName = this.declaration.getElementName().getText();
+                explicitName = explicitName.substring(1,
+                        explicitName.length() - 2);
+            }
+
+            return explicitName;
+        }
+
+        @Override
+        public void setName(
+                String name) {
+
+            this.name = name;
+
+        }
+
+        @Override
+        public String getName() {
+
+            // TODO Null ok ?
+            return this.name;
+        }
+
+        @Override
+        public Token getNameToken() {
+
+            return this.declaration.getElementName();
+        }
+
     }
 
     public static class AlternatedElement
             extends ParserElement {
 
+        private AAlternatedElement declaration;
+
+        private String name;
+
+        public AlternatedElement(
+                AAlternatedElement declaration,
+                Grammar grammar,
+                ParserAlternative alternative) {
+
+            super(grammar, alternative);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+        }
+
+        @Override
+        public String getImplicitName() {
+
+            return null;
+        }
+
+        @Override
+        public String getExplicitName() {
+
+            String explicitName = null;
+
+            if (this.declaration.getElementName() != null) {
+                explicitName = this.declaration.getElementName().getText();
+                explicitName = explicitName.substring(1,
+                        explicitName.length() - 2);
+            }
+
+            return explicitName;
+        }
+
+        @Override
+        public void setName(
+                String name) {
+
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+
+            // TODO Null ok ?
+            return this.name;
+        }
+
+        @Override
+        public Token getNameToken() {
+
+            return this.declaration.getElementName();
+        }
+
     }
 
     public static class DanglingElement
             extends ParserElement {
+
+        private ADanglingElement declaration;
+
+        private String name;
+
+        private Token token;
+
+        public DanglingElement(
+                ADanglingElement declaration,
+                Grammar grammar,
+                ParserAlternative alternative) {
+
+            super(grammar, alternative);
+
+            if (declaration == null) {
+                throw new InternalException("declaration may not be null");
+            }
+
+            this.declaration = declaration;
+        }
+
+        @Override
+        public String getImplicitName() {
+
+            return this.declaration.getIdentifier().getText();
+        }
+
+        @Override
+        public String getExplicitName() {
+
+            String explicitName = null;
+
+            if (this.declaration.getElementName() != null) {
+                explicitName = this.declaration.getElementName().getText();
+                explicitName = explicitName.substring(1,
+                        explicitName.length() - 2);
+            }
+
+            return explicitName;
+        }
+
+        @Override
+        public void setName(
+                String name) {
+
+            this.name = name;
+
+        }
+
+        @Override
+        public String getName() {
+
+            return this.name;
+        }
+
+        @Override
+        public Token getNameToken() {
+
+            if (this.token == null) {
+                if (getExplicitName() != null
+                        && getExplicitName().equals(this.name)) {
+                    this.token = this.declaration.getElementName();
+                }
+                else if (getImplicitName().equals(this.name)) {
+                    this.token = this.declaration.getIdentifier();
+                }
+            }
+
+            return this.token;
+        }
 
     }
 }

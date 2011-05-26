@@ -17,9 +17,13 @@
 
 package org.sablecc.sablecc.core;
 
+import java.util.*;
+
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.interfaces.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.util.*;
 
 public abstract class ParserProduction
         implements INameDeclaration {
@@ -27,6 +31,10 @@ public abstract class ParserProduction
     private final AParserProduction declaration;
 
     private final Grammar grammar;
+
+    private final LocalNamespace namespace;
+
+    private final LinkedList<ParserAlternative> alternatives = new LinkedList<ParserAlternative>();
 
     private ParserProduction(
             AParserProduction declaration,
@@ -42,6 +50,11 @@ public abstract class ParserProduction
 
         this.declaration = declaration;
         this.grammar = grammar;
+
+        findAlternatives();
+
+        this.namespace = new LocalNamespace(this.alternatives);
+
     }
 
     @Override
@@ -122,6 +135,53 @@ public abstract class ParserProduction
                 Grammar grammar) {
 
             super(declaration, grammar);
+        }
+
+    }
+
+    private void findAlternatives() {
+
+        this.declaration.apply(new DepthFirstAdapter() {
+
+            private final ParserProduction parserProduction = ParserProduction.this;
+
+            private int nextIndex = 1;
+
+            @Override
+            public void inAParserAlternative(
+                    AParserAlternative node) {
+
+                ParserAlternative alternative = ParserAlternative
+                        .newParserAlternative(node,
+                                ParserProduction.this.grammar,
+                                this.parserProduction, this.nextIndex);
+
+                this.nextIndex += 1;
+
+                this.parserProduction.alternatives.add(alternative);
+
+            }
+        });
+
+    }
+
+    private static class LocalNamespace
+            extends ImplicitExplicitNamespace<ParserAlternative> {
+
+        public LocalNamespace(
+                final LinkedList<ParserAlternative> declarations) {
+
+            super(declarations);
+        }
+
+        @Override
+        protected void raiseDuplicateError(
+                ParserAlternative declaration,
+                ParserAlternative previousDeclaration) {
+
+            throw SemanticException.duplicateAlternativeName(declaration,
+                    previousDeclaration);
+
         }
 
     }
