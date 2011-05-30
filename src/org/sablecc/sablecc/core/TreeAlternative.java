@@ -189,8 +189,9 @@ public class TreeAlternative
             public void inANormalElement(
                     ANormalElement node) {
 
-                TreeElement.Normal element = new TreeElement.Normal(node,
-                        TreeAlternative.this.grammar, TreeAlternative.this);
+                TreeElement.NormalElement element = new TreeElement.NormalElement(
+                        node, TreeAlternative.this.grammar,
+                        TreeAlternative.this);
 
                 TreeAlternative.this.elements.add(element);
             }
@@ -199,8 +200,9 @@ public class TreeAlternative
             public void inASeparatedElement(
                     ASeparatedElement node) {
 
-                TreeElement.Separated element = new TreeElement.Separated(node,
-                        TreeAlternative.this.grammar, TreeAlternative.this);
+                TreeElement.SeparatedElement element = new TreeElement.SeparatedElement(
+                        node, TreeAlternative.this.grammar,
+                        TreeAlternative.this);
 
                 TreeAlternative.this.elements.add(element);
 
@@ -210,7 +212,7 @@ public class TreeAlternative
             public void inAAlternatedElement(
                     AAlternatedElement node) {
 
-                TreeElement.Alternated element = new TreeElement.Alternated(
+                TreeElement.AlternatedElement element = new TreeElement.AlternatedElement(
                         node, TreeAlternative.this.grammar,
                         TreeAlternative.this);
 
