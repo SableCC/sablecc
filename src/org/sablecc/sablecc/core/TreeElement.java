@@ -53,7 +53,7 @@ public abstract class TreeElement
 
     public abstract Token getNameToken();
 
-    public static class Normal
+    public static class NormalElement
             extends TreeElement {
 
         private ANormalElement declaration;
@@ -62,7 +62,7 @@ public abstract class TreeElement
 
         private Token token;
 
-        public Normal(
+        public NormalElement(
                 ANormalElement declaration,
                 Grammar grammar,
                 TreeAlternative alternative) {
@@ -143,14 +143,14 @@ public abstract class TreeElement
 
     }
 
-    public static class Separated
+    public static class SeparatedElement
             extends TreeElement {
 
         private ASeparatedElement declaration;
 
         private String name;
 
-        public Separated(
+        public SeparatedElement(
                 ASeparatedElement declaration,
                 Grammar grammar,
                 TreeAlternative alternative) {
@@ -207,14 +207,14 @@ public abstract class TreeElement
 
     }
 
-    public static class Alternated
+    public static class AlternatedElement
             extends TreeElement {
 
         private AAlternatedElement declaration;
 
         private String name;
 
-        public Alternated(
+        public AlternatedElement(
                 AAlternatedElement declaration,
                 Grammar grammar,
                 TreeAlternative alternative) {
