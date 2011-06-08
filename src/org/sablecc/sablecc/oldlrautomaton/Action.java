@@ -15,8 +15,33 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.lrautomaton;
+package org.sablecc.sablecc.oldlrautomaton;
 
-public interface Ahead {
+import java.util.*;
 
+public abstract class Action {
+
+    private final Map<Integer, Set<Item>> distanceToItemSetMap;
+
+    Action(
+            Map<Integer, Set<Item>> distanceToItemSetMap) {
+
+        this.distanceToItemSetMap = distanceToItemSetMap;
+    }
+
+    public int getMaxLookahead() {
+
+        if (this.distanceToItemSetMap == null) {
+            return 0;
+        }
+
+        return this.distanceToItemSetMap.size();
+    }
+
+    public Map<Integer, Set<Item>> getDistanceToItemSetMap() {
+
+        return this.distanceToItemSetMap;
+    }
+
+    public abstract ActionType getType();
 }

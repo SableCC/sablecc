@@ -15,22 +15,8 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.lrautomaton;
+package org.sablecc.sablecc.oldlrautomaton;
 
-import java.util.*;
+public interface Ahead {
 
-public class ShiftAction
-        extends Action {
-
-    ShiftAction(
-            Map<Integer, Set<Item>> distanceToItemSetMap) {
-
-        super(distanceToItemSetMap);
-    }
-
-    @Override
-    public ActionType getType() {
-
-        return ActionType.SHIFT;
-    }
 }

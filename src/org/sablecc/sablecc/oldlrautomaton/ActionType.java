@@ -15,31 +15,9 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.lrautomaton;
+package org.sablecc.sablecc.oldlrautomaton;
 
-import java.util.*;
-
-public class ReduceAction
-        extends Action {
-
-    private final Alternative alternative;
-
-    ReduceAction(
-            Map<Integer, Set<Item>> distanceToItemSetMap,
-            Alternative alternative) {
-
-        super(distanceToItemSetMap);
-        this.alternative = alternative;
-    }
-
-    @Override
-    public ActionType getType() {
-
-        return ActionType.REDUCE;
-    }
-
-    public Alternative getAlternative() {
-
-        return this.alternative;
-    }
+public enum ActionType {
+    SHIFT,
+    REDUCE;
 }
