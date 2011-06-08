@@ -48,6 +48,8 @@ public class Grammar
 
     private LexerExpression.EndExpression globalEndExpression;
 
+    private List<Transformation> transformations = new LinkedList<Transformation>();
+
     Grammar(
             Start ast) {
 
@@ -59,6 +61,7 @@ public class Grammar
         fillTreeNameSpace(ast);
         findInlineExpressions(ast);
         findAnonymousContexts(ast);
+        findTransformations(ast);
 
         throw new InternalException("not implemented");
     }
@@ -317,6 +320,31 @@ public class Grammar
                                 .addDeclaration(node);
                     }
                 }
+            }
+        });
+    }
+
+    private void findTransformations(
+            Node ast) {
+
+        ast.apply(new DepthFirstAdapter() {
+
+            @Override
+            public void inAProductionTransformation(
+                    AProductionTransformation node) {
+
+                Grammar.this.transformations
+                        .add(new Transformation.ProductionTransformation(node,
+                                Grammar.this));
+            }
+
+            @Override
+            public void inAAlternativeTransformation(
+                    AAlternativeTransformation node) {
+
+                Grammar.this.transformations
+                        .add(new Transformation.AlternativeTransformation(node,
+                                Grammar.this));
             }
         });
     }
