@@ -15,9 +15,30 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.lrautomaton;
+package org.sablecc.sablecc.oldlrautomaton;
 
-public enum ActionType {
-    SHIFT,
-    REDUCE;
+public class Token {
+
+    private final Grammar grammar;
+
+    private final String name;
+
+    Token(
+            Grammar grammar,
+            String name) {
+
+        this.grammar = grammar;
+        this.name = name;
+    }
+
+    public String getName() {
+
+        return this.name;
+    }
+
+    @Override
+    public String toString() {
+
+        return this.name;
+    }
 }

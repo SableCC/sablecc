@@ -15,31 +15,10 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.lrautomaton;
+package org.sablecc.sablecc.oldlrautomaton;
 
-public class TokenElement
-        extends Element {
-
-    private final Token token;
-
-    TokenElement(
-            Alternative alternative,
-            int position,
-            String shortName,
-            Token token) {
-
-        super(alternative, position, shortName);
-        this.token = token;
-    }
-
-    public Token getToken() {
-
-        return this.token;
-    }
-
-    @Override
-    public String toString() {
-
-        return "[" + getName() + ":]" + this.token.getName();
-    }
+public enum ItemType {
+    BEFORE_TOKEN,
+    BEFORE_PRODUCTION,
+    END;
 }

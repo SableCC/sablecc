@@ -15,31 +15,22 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.lrautomaton;
+package org.sablecc.sablecc.oldlrautomaton;
 
-public class ProductionElement
-        extends Element {
+import java.util.*;
 
-    private final Production production;
+public class ShiftAction
+        extends Action {
 
-    ProductionElement(
-            Alternative alternative,
-            int position,
-            String shortName,
-            Production production) {
+    ShiftAction(
+            Map<Integer, Set<Item>> distanceToItemSetMap) {
 
-        super(alternative, position, shortName);
-        this.production = production;
-    }
-
-    public Production getProduction() {
-
-        return this.production;
+        super(distanceToItemSetMap);
     }
 
     @Override
-    public String toString() {
+    public ActionType getType() {
 
-        return "[" + getName() + ":]" + this.production.getName();
+        return ActionType.SHIFT;
     }
 }

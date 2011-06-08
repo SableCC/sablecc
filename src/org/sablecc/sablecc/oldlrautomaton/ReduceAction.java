@@ -15,33 +15,31 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.lrautomaton;
+package org.sablecc.sablecc.oldlrautomaton;
 
 import java.util.*;
 
-public abstract class Action {
+public class ReduceAction
+        extends Action {
 
-    private final Map<Integer, Set<Item>> distanceToItemSetMap;
+    private final Alternative alternative;
 
-    Action(
-            Map<Integer, Set<Item>> distanceToItemSetMap) {
+    ReduceAction(
+            Map<Integer, Set<Item>> distanceToItemSetMap,
+            Alternative alternative) {
 
-        this.distanceToItemSetMap = distanceToItemSetMap;
+        super(distanceToItemSetMap);
+        this.alternative = alternative;
     }
 
-    public int getMaxLookahead() {
+    @Override
+    public ActionType getType() {
 
-        if (this.distanceToItemSetMap == null) {
-            return 0;
-        }
-
-        return this.distanceToItemSetMap.size();
+        return ActionType.REDUCE;
     }
 
-    public Map<Integer, Set<Item>> getDistanceToItemSetMap() {
+    public Alternative getAlternative() {
 
-        return this.distanceToItemSetMap;
+        return this.alternative;
     }
-
-    public abstract ActionType getType();
 }
