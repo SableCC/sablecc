@@ -20,17 +20,19 @@ Grammar test6:
 Parser
   Root p, r;
 
-  p = 'x' q;
   q = 'y';
+  p = 'x' q;
   r = 'x' s;
   s = 'y';
 
 // implicit
 // p -> p;
 // q -> ;
-// r -> r;
+// r -> ;
 // s -> ;
+
+// rejected because a root must be subject to simple transformation
+// such as r -> r or r -> s
 
 Tree
   p = 'x';
-  r = 'x';
