@@ -28,7 +28,7 @@ Parser
 
   p = 'x' t;
 
- Context t_context:
+  Context t_context:
 
   Token t = 'z' q;
   q = 'y';

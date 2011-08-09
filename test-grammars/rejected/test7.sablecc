@@ -15,31 +15,12 @@
  * limitations under the License.
  */
 
-Grammar test3:
-
-Lexer
-  blank = (' ' | #9 | #10 | #13)+;
-
-  Ignored
-    blank;
+Grammar test7:
 
 Parser
-  Root p;
+  Root p, q;
 
-  p = 'x' t;
+  p = 'x' Dangling q?;
+  Dangling q = 'y';
 
-  Context t_context:
-
-  Token t = 'z' q;
-  q = 'y';
-
-// implicit
-// p -> p;
-// t -> ;
-// q -> ;
-
-// rejected because a syntactic token must be subject to simple transformation
-// such as t -> t or t -> q
-
-Tree
-  p = 'x';
+// rejected because a dangling production cannot be root
