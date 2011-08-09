@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-Grammar test3:
+Grammar test8:
 
 Lexer
   blank = (' ' | #9 | #10 | #13)+;
@@ -24,7 +24,7 @@ Lexer
     blank;
 
 Parser
-  Root p;
+  Root p, t;
 
   p = 'x' t;
 
@@ -33,13 +33,4 @@ Parser
   Token t = 'z' q;
   q = 'y';
 
-// implicit
-// p -> p;
-// t -> ;
-// q -> ;
-
-// rejected because a syntactic token must be subject to simple transformation
-// such as t -> t or t -> q
-
-Tree
-  p = 'x';
+// rejected because a syntactic token cannot be root
