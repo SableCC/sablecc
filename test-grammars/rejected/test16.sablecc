@@ -36,7 +36,7 @@ Transformation
 // implicit q -> q;
 
   Alternative
-    p -> New p(q);
+    p -> New p(List(q));
     q -> New q(y r.x);
     r -> x;
 
