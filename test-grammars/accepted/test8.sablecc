@@ -27,4 +27,4 @@ Transformation
     p -> q;
 
 Tree
-  q = 'x';
+  q = x;
