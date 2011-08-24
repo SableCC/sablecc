@@ -22,7 +22,7 @@ Lexer
   y = 'y';
 
 Parser
-  p = x q*;
+  p = x [many_q:]q*;
   q = y r;
   r = x;
 
@@ -36,7 +36,7 @@ Transformation
 // implicit p -> p;
 
   Alternative
-    p -> New p(List(q.q...));
+    p -> New p(List(many_q.q...));
     q -> New q(y r.x);
     r -> x;
 
