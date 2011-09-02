@@ -157,7 +157,7 @@ public abstract class Type {
                     SimpleType.SeparatedType aSeparated = (SimpleType.SeparatedType) aType;
 
                     if (this.name.equals(aSeparated.getRightElementName())
-                            && (aSeparated.getCardinality().isASingleton() || aSeparated
+                            && (aSeparated.getCardinality().isANumber() || aSeparated
                                     .getCardinality().equals(
                                             CardinalityInterval.ONE_OR_MORE))) {
                         // x ^n..m + (x Sep x)^p =
@@ -889,7 +889,7 @@ public abstract class Type {
                         }
                     }
                     else if (aSimpleType instanceof Type.SimpleType.HomogeneousType
-                            && aSimpleType.getCardinality().isASingleton()) {
+                            && aSimpleType.getCardinality().isANumber()) {
                         Type.SimpleType.HomogeneousType homogeneousType = (Type.SimpleType.HomogeneousType) aSimpleType;
 
                         if (this.leftElementName.equals(homogeneousType

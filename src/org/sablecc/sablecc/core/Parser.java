@@ -940,6 +940,11 @@ public class Parser
             return this.alternative;
         }
 
+        public int index() {
+
+            return this.alternative.getElements().indexOf(this);
+        }
+
         public abstract String getName();
 
         public abstract Token getNameToken();

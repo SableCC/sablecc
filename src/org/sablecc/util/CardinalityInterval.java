@@ -137,7 +137,7 @@ public final class CardinalityInterval
         return false;
     }
 
-    public boolean isASingleton() {
+    public boolean isANumber() {
 
         return this.lowerBound.equals(this.upperBound);
     }
