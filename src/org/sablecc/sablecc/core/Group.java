@@ -18,15 +18,18 @@
 package org.sablecc.sablecc.core;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Group
-        implements INamedToken {
+        implements INamedToken, IToken, IReferencable, IVisitableGrammarPart {
 
     private final AGroup declaration;
 
     private final Grammar grammar;
+
+    private String element;
 
     Group(
             AGroup declaration,
@@ -60,6 +63,25 @@ public class Group
     public String getNameType() {
 
         return "group";
+    }
+
+    @Override
+    public void apply(
+            IGrammarVisitor visitor) {
+
+        visitor.visitGroup(this);
+
+    }
+
+    @Override
+    public Token getLocation() {
+
+        return this.declaration.getName();
+    }
+
+    public AGroup getDeclaration() {
+
+        return this.declaration;
     }
 
 }

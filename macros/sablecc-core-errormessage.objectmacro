@@ -55,6 +55,289 @@ The "$name" element reuses an existing name in alternative "$alt_name" of produc
 A "$name" element is already declared at line $ref_line, char $ref_char.
 $end: duplicate_element_name $
 
+$comment: ========== duplicate_transformation_declaration ========== $
+
+$macro: duplicate_transformation_declaration(transf_name, line, char,ref_line, ref_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The transformation  for "$transf_name" has multiple declaration.
+A transformation for "$transf_name" is already declared at line $ref_line, char $ref_char.
+$end: duplicate_transformation_declaration $
+
+$comment: ========== duplicate_production_transformation_element_name ========== $
+
+$macro: duplicate_production_transformation_element_name(name, transf_name,line, char, ref_line, ref_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The "$name" element reuses an existing name in transformation of production "$transf_name".
+A "$name" element is already declared at line $ref_line, char $ref_char.
+$end: duplicate_production_transformation_element_name $
+
+$comment: ========== undefined_reference ========== $
+
+$macro: undefined_reference(name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$name" is not defined.
+$end: undefined_reference $
+
+
+$comment: ========== undefined_alternative_reference ========== $
+
+$macro: undefined_alternative_reference(name,prod_name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$name" is not defined in production "$prod_name".
+$end: undefined_alternative_reference $
+
+$comment: ========== undefined_element_reference ========== $
+
+$macro: undefined_element_reference(name,prod_name,alt_name,line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$name" is not defined in alternative "$alt_name" of production "$prod_name".
+$end: undefined_element_reference $
+
+$comment: ========== undefined_alternative_transformation_reference ========== $
+
+$macro: undefined_alternative_transformation_reference(name,prod_name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$name" is not defined in production transformation of "$prod_name".
+$end: undefined_alternative_transformation_reference $
+
+$comment: ========== bad_reference ========== $
+
+$macro: bad_reference(name_found, name_proposition, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+An element of type "$name_found" has been found.
+Expected $name_proposition.
+$end: bad_reference $
+
+$comment: ========== bad_production_reference ========== $
+
+$macro: bad_production_reference(name,prod_name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$name" refers to a Token in production "$prod_name", expected parser production.
+$end: bad_production_reference $
+
+$comment: ========== bad_alternative_reference ========== $
+
+$macro: bad_alternative_reference(name,prod_name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$name" doesn't refer to any alternative in production "$prod_name".
+The named alternative syntax must be used : [production].[alternative]
+$end: bad_alternative_reference $
+
+$comment: ========== bad_tree_alternative_reference ========== $
+
+$macro: bad_tree_alternative_reference(name,prod_name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$name" doesn't refer to any alternative in tree production "$prod_name".
+The named alternative syntax must be used : [production].[alternative]
+$end: bad_tree_alternative_reference $
+
+$comment: ========== bad_alternative_transformation_reference ========== $
+
+$macro: bad_alternative_transformation_reference(reference_text,prod_name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$reference_text" refers ton an element of the production transformation of "$prod_name".
+But this transformation is not defined. You can use those 2 syntax :
+        [production].[element] refers to an element of the production transformation.
+        [element] refers to an element of the parser production.
+$end: bad_alternative_transformation_reference $
+
+$comment: ========== impossible_natural_reference ========== $
+
+$macro: impossible_natural_reference(ref_name,ref_line,ref_char,transf_line,transf_char) $
+$insert: semantic_error_head $
+
+Line: $ref_line
+Char: $ref_char
+Element "$ref_name" defined at line $ref_line, char $ref_char refers to a transformed production at line "$transf_line", char "$transf_char".
+The transformed reference syntax must be used : [production].[element].
+
+$end: impossible_natural_reference $
+
+$comment: ========== unmatched_alternative ========== $
+
+$macro: unmatched_alternative(alt_name,parser_prod_name,tree_prod_name,line,char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Cannot match the alternative "$alt_name" of production "$parser_prod_name" to any alternative of the tree production "$tree_prod_name".
+You must define an alternative transformation for "$alt_name".
+$end: unmatched_alternative $
+
+$comment: ========== non_trivial_production_transformation ========== $
+
+$macro: non_trivial_production_transformation(prod_name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The production transformation for "$prod_name" is not trivial.
+You must define an alternative transformation for each alternative of "$prod_name".
+$end: non_trivial_production_transformation $
+
+$comment: ========== unmatched_element ========== $
+
+$macro: unmatched_element(elem_name,tree_alt_name,tree_prod_name,parser_alt_name,parser_prod_name, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The element "$elem_name" of alternative "$tree_alt_name" of tree production "$tree_prod_name"
+cannot be matched to any element of the alternative "$parser_alt_name" of parser production "$parser_prod_name".
+You must define an alternative transformation for alternative "$parser_alt_name" of production "$parser_prod_name".
+$end: unmatched_element $
+
+$comment: ========== ambiguous_alternative_transformation ========== $
+
+$macro: ambiguous_alternative_transformation(elem_name,parser_alt_name,parser_prod_name,tree_line,tree_char,parser_line,first_parser_char,second_parser_char) $
+$insert: semantic_error_head $
+
+Line: $tree_line
+Char: $tree_char
+The transformation for alternative "$parser_alt_name" of production "$parser_prod_name" is ambiguous.
+The element "$elem_name" at line $tree_line, char $tree_char match 2 candidate elements at line $parser_line, char $first_parser_char and char  $second_parser_char.
+You must define an alternative transformation for alternative "$parser_alt_name" of production "$parser_prod_name".
+$end: ambiguous_alternative_transformation $
+
+
+$comment: ========== element_assignement_error ========== $
+
+$macro: element_assignation_error(elem_from,elem_to,card_from,card_to,from_line,from_char,to_line,to_char) $
+$insert: semantic_error_head $
+
+Line: $to_line
+Char: $to_char
+"$elem_from" $card_from defined at line $from_line,char $from_char canno't be assigned to "$elem_to" $card_to defined at line $to_line,char $to_char.
+
+$end: element_assignation_error $
+
+$comment: ========== element_reordered ========== $
+
+$macro: element_reordered(alt_name,prod_name,line,char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Element of alternative "$alt_name" of production "$prod_name" have been reordered in its target tree definition at line $line, char $char.
+$end: element_reordered $
+
+$comment: ========== list_expansion_missing ========== $
+
+$macro: list_expansion_missing(elem_name,line,char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The element "$elem_name" is a list and have to appear with an expansion.
+$end: list_expansion_missing $
+
+$comment: ========== transformation_element_reordered ========== $
+
+$macro: transformation_element_reordered(transf_name,alt_name,prod_name,line,char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Element of production transformation "$transf_name" have been reordered in the transformation of alternative "$alt_name" of production "$prod_name" at line $line, char $char.
+$end: transformation_element_reordered $
+
+$comment: ========== bad_new_signature ========== $
+
+$macro: bad_new_signature(alt_name,new_nb_elem,alt_nb_elem,new_line,new_char,alt_line,alt_char) $
+$insert: semantic_error_head $
+
+Line: $new_line
+Char: $new_char
+"New $alt_name" defined at line $new_line, char $new_char has $new_nb_elem element(s) whereas the definition of $alt_name
+at line $alt_line, char $alt_char has $alt_nb_elem element(s).
+The New element must have as much parameter as its tree definition.
+$end: bad_new_signature $
+
+$comment: ========== bad_alternative_transformation_signature ========== $
+
+$macro: bad_alternative_transformation_signature(alt_name,nb_alt_transf_elem,nb_prod_transf_elem,alt_transf_line,alt_transf_char,prod_transf_line,prod_transf_char) $
+$insert: semantic_error_head $
+
+Line: $alt_transf_line
+Char: $alt_transf_char
+The transformation for alternative "$alt_name" defined at line $alt_transf_line, char $alt_transf_char has $nb_alt_transf_elem element(s)
+whereas the production transformation defined at line $prod_transf_line, char $prod_transf_char specify $nb_prod_transf_elem element(s).
+$end: bad_alternative_transformation_signature $
+
+$comment: ========== uncompatible_list_element ========== $
+
+$macro: uncompatible_list_element(first_elem,second_elem,first_line,first_char,second_line,second_char) $
+$insert: semantic_error_head $
+
+Line: $second_line
+Char: $second_char
+List element "$first_elem" defined at line $first_line, char $first_char is not compatible with "$second_elem" defined at line $second_char, char $second_char.
+$end: uncompatible_list_element $
+
+$comment: ========== bad_root_element_transformation ========== $
+
+$macro: bad_root_element_transformation(prod_name,line,char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Root element "$prod_name" must have a simple transformation p -> q or p -> p.
+$end: bad_root_element_transformation $
+
+$comment: ========== bad_syntactic_token_transformation ========== $
+
+$macro: bad_syntactic_token_transformation(prod_name,line,char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Syntactic token "$prod_name" must have a simple transformation p -> q or p -> p.
+$end: bad_syntactic_token_transformation $
+
+$comment: ========== multiple_list_expansion ========== $
+
+$macro: multiple_list_expansion(list_name,first_line,first_char,second_line,second_char) $
+$insert: semantic_error_head $
+
+Line: $second_line
+Char: $second_char
+The list element "$list_name" is expanded twice at line $first_line, char $first_char and at line $second_line,$second_char.
+A list can only be expanded once.
+$end: multiple_list_expansion $
+
 $comment$
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------

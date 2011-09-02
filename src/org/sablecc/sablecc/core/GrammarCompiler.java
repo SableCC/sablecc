@@ -21,9 +21,7 @@ import java.io.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.launcher.*;
-import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.node.*;
-import org.sablecc.sablecc.syntax3.parser.*;
 import org.sablecc.util.*;
 
 public class GrammarCompiler {
@@ -59,7 +57,8 @@ public class GrammarCompiler {
     }
 
     public void compileGrammar()
-            throws ParserException, LexerException, IOException {
+            throws org.sablecc.sablecc.syntax3.parser.ParserException,
+            org.sablecc.sablecc.syntax3.lexer.LexerException, IOException {
 
         if (this.hasRun) {
             throw new InternalException("grammar may only be compiled once");
@@ -70,8 +69,9 @@ public class GrammarCompiler {
 
         this.trace.verboseln(" Parsing");
 
-        Start ast = new Parser(new Lexer(new PushbackReader(new StringReader(
-                this.text), 1024))).parse();
+        Start ast = new org.sablecc.sablecc.syntax3.parser.Parser(
+                new org.sablecc.sablecc.syntax3.lexer.Lexer(new PushbackReader(
+                        new StringReader(this.text), 1024))).parse();
 
         this.trace.verboseln(" Verifying semantics");
 

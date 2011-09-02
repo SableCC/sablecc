@@ -20,10 +20,13 @@ package org.sablecc.sablecc.core;
 import java.math.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.analysis.*;
+import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public abstract class Expression {
+public abstract class Expression
+        implements IVisitableGrammarPart {
 
     private final Grammar grammar;
 
@@ -328,6 +331,11 @@ public abstract class Expression {
             this.right = right;
         }
 
+        public AOrExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
         public Expression getLeft() {
 
             return this.left;
@@ -336,6 +344,13 @@ public abstract class Expression {
         public Expression getRight() {
 
             return this.right;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitOrExpression(this);
         }
     }
 
@@ -365,6 +380,11 @@ public abstract class Expression {
             this.right = right;
         }
 
+        public AConcatenationExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
         public Expression getLeft() {
 
             return this.left;
@@ -373,6 +393,13 @@ public abstract class Expression {
         public Expression getRight() {
 
             return this.right;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitConcatenationExpression(this);
         }
     }
 
@@ -406,6 +433,11 @@ public abstract class Expression {
             this.lookahead = lookahead;
         }
 
+        public ALookExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
         public Expression getExpression() {
 
             return this.expression;
@@ -419,6 +451,13 @@ public abstract class Expression {
         public Lookahead getLookahead() {
 
             return this.lookahead;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitLookExpression(this);
         }
     }
 
@@ -451,6 +490,11 @@ public abstract class Expression {
             this.expression = expression;
         }
 
+        public ALookback getDeclaration() {
+
+            return this.declaration;
+        }
+
         public boolean getNot() {
 
             return this.not;
@@ -460,6 +504,7 @@ public abstract class Expression {
 
             return this.expression;
         }
+
     }
 
     public static class Lookahead {
@@ -491,6 +536,11 @@ public abstract class Expression {
             this.expression = expression;
         }
 
+        public ALookahead getDeclaration() {
+
+            return this.declaration;
+        }
+
         public boolean getNot() {
 
             return this.not;
@@ -500,6 +550,7 @@ public abstract class Expression {
 
             return this.expression;
         }
+
     }
 
     public static class Shortest
@@ -524,9 +575,21 @@ public abstract class Expression {
             this.expression = expression;
         }
 
+        public AShortestExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
         public Expression getExpression() {
 
             return this.expression;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitShortestExpression(this);
         }
     }
 
@@ -552,9 +615,21 @@ public abstract class Expression {
             this.expression = expression;
         }
 
+        public ALongestExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
         public Expression getExpression() {
 
             return this.expression;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitLongestExpression(this);
         }
     }
 
@@ -584,6 +659,11 @@ public abstract class Expression {
             this.right = right;
         }
 
+        public ASubtractionExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
         public Expression getLeft() {
 
             return this.left;
@@ -592,6 +672,13 @@ public abstract class Expression {
         public Expression getRight() {
 
             return this.right;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitSubtractionExpression(this);
         }
     }
 
@@ -621,6 +708,11 @@ public abstract class Expression {
             this.right = right;
         }
 
+        public AExceptExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
         public Expression getLeft() {
 
             return this.left;
@@ -629,6 +721,13 @@ public abstract class Expression {
         public Expression getRight() {
 
             return this.right;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitExceptExpression(this);
         }
     }
 
@@ -658,6 +757,11 @@ public abstract class Expression {
             this.right = right;
         }
 
+        public AIntersectionExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
         public Expression getLeft() {
 
             return this.left;
@@ -666,6 +770,13 @@ public abstract class Expression {
         public Expression getRight() {
 
             return this.right;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitIntersectionExpression(this);
         }
     }
 
@@ -695,6 +806,11 @@ public abstract class Expression {
             this.operator = operator;
         }
 
+        public AUnaryOperatorExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
         public Expression getExpression() {
 
             return this.expression;
@@ -703,6 +819,13 @@ public abstract class Expression {
         public UnaryOperator getOperator() {
 
             return this.operator;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitUnaryExpression(this);
         }
     }
 
@@ -736,6 +859,11 @@ public abstract class Expression {
             this.operator = operator;
         }
 
+        public ASeparatedExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
         public Expression getBase() {
 
             return this.base;
@@ -749,6 +877,13 @@ public abstract class Expression {
         public ManyOperator getOperator() {
 
             return this.operator;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitSeparatedExpression(this);
         }
     }
 
@@ -805,6 +940,11 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
+        }
+
+        public AZeroOrOneUnaryOperator getDeclaration() {
+
+            return this.declaration;
         }
 
     }
@@ -909,6 +1049,12 @@ public abstract class Expression {
 
             this.declaration = declaration;
         }
+
+        public AZeroOrMoreManyOperator getDeclaration() {
+
+            return this.declaration;
+        }
+
     }
 
     public static class OneOrMoreOperator
@@ -928,6 +1074,12 @@ public abstract class Expression {
 
             this.declaration = declaration;
         }
+
+        public AOneOrMoreManyOperator getDeclaration() {
+
+            return this.declaration;
+        }
+
     }
 
     public static class NumberExponentOperator
@@ -947,6 +1099,12 @@ public abstract class Expression {
 
             this.declaration = declaration;
         }
+
+        public ANumberManyOperator getDeclaration() {
+
+            return this.declaration;
+        }
+
     }
 
     public static class IntervalExponentOperator
@@ -966,6 +1124,12 @@ public abstract class Expression {
 
             this.declaration = declaration;
         }
+
+        public AIntervalManyOperator getDeclaration() {
+
+            return this.declaration;
+        }
+
     }
 
     public static class AtLeastOperator
@@ -985,6 +1149,12 @@ public abstract class Expression {
 
             this.declaration = declaration;
         }
+
+        public AAtLeastManyOperator getDeclaration() {
+
+            return this.declaration;
+        }
+
     }
 
     public static class NameUnit
@@ -1014,6 +1184,19 @@ public abstract class Expression {
 
             return getNameIdentifier().getText();
         }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitNameUnitExpression(this);
+        }
+
+        public ANameUnit getDeclaration() {
+
+            return this.declaration;
+        }
+
     }
 
     public static class StringUnit
@@ -1044,6 +1227,19 @@ public abstract class Expression {
             text = text.replace("\\'", "'");
             return text;
         }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitStringUnitExpression(this);
+        }
+
+        public AStringUnit getDeclaration() {
+
+            return this.declaration;
+        }
+
     }
 
     public static abstract class CharacterUnit
@@ -1076,6 +1272,11 @@ public abstract class Expression {
             this.declaration = declaration;
         }
 
+        public ACharCharacter getDeclaration() {
+
+            return this.declaration;
+        }
+
         @Override
         public BigInteger getValue() {
 
@@ -1089,6 +1290,13 @@ public abstract class Expression {
                 throw new InternalException("unhandled character escape");
             }
             return new BigInteger("" + (int) text.charAt(0));
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitCharUnitExpression(this);
         }
     }
 
@@ -1110,6 +1318,11 @@ public abstract class Expression {
             this.declaration = declaration;
         }
 
+        public ADecCharacter getDeclaration() {
+
+            return this.declaration;
+        }
+
         @Override
         public BigInteger getValue() {
 
@@ -1122,6 +1335,13 @@ public abstract class Expression {
             }
 
             return new BigInteger(text);
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitDecCharUnitExpression(this);
         }
     }
 
@@ -1143,6 +1363,11 @@ public abstract class Expression {
             this.declaration = declaration;
         }
 
+        public AHexCharacter getDeclaration() {
+
+            return this.declaration;
+        }
+
         @Override
         public BigInteger getValue() {
 
@@ -1155,6 +1380,13 @@ public abstract class Expression {
             }
 
             return new BigInteger(text, 16);
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitHexCharUnitExpression(this);
         }
     }
 
@@ -1175,6 +1407,18 @@ public abstract class Expression {
 
             this.declaration = declaration;
         }
+
+        public AStartUnit getDeclaration() {
+
+            return this.declaration;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitStartUnitExpression(this);
+        }
     }
 
     public static class EndUnit
@@ -1194,6 +1438,18 @@ public abstract class Expression {
 
             this.declaration = declaration;
         }
+
+        public AEndUnit getDeclaration() {
+
+            return this.declaration;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitEndUnitExpression(this);
+        }
     }
 
     public static class Epsilon
@@ -1212,6 +1468,18 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
+        }
+
+        public AEpsilonExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitEpsilonExpression(this);
         }
     }
 
@@ -1240,6 +1508,28 @@ public abstract class Expression {
             this.from = from;
             this.to = to;
         }
+
+        public CharacterUnit getFrom() {
+
+            return this.from;
+        }
+
+        public CharacterUnit getTo() {
+
+            return this.to;
+        }
+
+        public AIntervalExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitIntervalExpression(this);
+        }
     }
 
     public static class Any
@@ -1258,6 +1548,18 @@ public abstract class Expression {
             }
 
             this.declaration = declaration;
+        }
+
+        public AAnyExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitAnyExpression(this);
         }
     }
 }

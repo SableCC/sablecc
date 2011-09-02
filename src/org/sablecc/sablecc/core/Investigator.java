@@ -18,11 +18,12 @@
 package org.sablecc.sablecc.core;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public abstract class Investigator
-        implements INameDeclaration {
+        implements INameDeclaration, IReferencable, IVisitableGrammarPart {
 
     private final AInvestigator declaration;
 
@@ -44,6 +45,11 @@ public abstract class Investigator
         this.grammar = grammar;
     }
 
+    public AInvestigator getDeclaration() {
+
+        return this.declaration;
+    }
+
     @Override
     public TIdentifier getNameIdentifier() {
 
@@ -62,6 +68,12 @@ public abstract class Investigator
         return "lexer investigator";
     }
 
+    @Override
+    public Token getLocation() {
+
+        return this.declaration.getName();
+    }
+
     public static class LexerInvestigator
             extends Investigator {
 
@@ -71,6 +83,14 @@ public abstract class Investigator
 
             super(declaration, grammar);
         }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitLexerInvestigator(this);
+        }
+
     }
 
     public static class ParserInvestigator
@@ -82,5 +102,14 @@ public abstract class Investigator
 
             super(declaration, grammar);
         }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitParserInvestigator(this);
+
+        }
+
     }
 }
