@@ -52,6 +52,11 @@ public abstract class ProductionTransformationElement
         this.productionTransformation = productionTransformation;
     }
 
+    public int index() {
+
+        return this.productionTransformation.getElements().indexOf(this);
+    }
+
     public abstract String getName();
 
     public abstract Token getNameToken();
