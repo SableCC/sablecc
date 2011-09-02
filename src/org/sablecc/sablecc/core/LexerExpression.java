@@ -20,6 +20,7 @@ package org.sablecc.sablecc.core;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
@@ -38,7 +39,7 @@ public abstract class LexerExpression
         this.grammar = grammar;
     }
 
-    static void declareInlineExpression(
+    public static void declareInlineExpression(
             AStringUnit declaration,
             Grammar grammar) {
 
@@ -52,7 +53,7 @@ public abstract class LexerExpression
         }
     }
 
-    static void declareInlineExpression(
+    public static void declareInlineExpression(
             ACharCharacter declaration,
             Grammar grammar) {
 
@@ -66,7 +67,7 @@ public abstract class LexerExpression
         }
     }
 
-    static void declareInlineExpression(
+    public static void declareInlineExpression(
             ADecCharacter declaration,
             Grammar grammar) {
 
@@ -80,7 +81,7 @@ public abstract class LexerExpression
         }
     }
 
-    static void declareInlineExpression(
+    public static void declareInlineExpression(
             AHexCharacter declaration,
             Grammar grammar) {
 
@@ -94,7 +95,7 @@ public abstract class LexerExpression
         }
     }
 
-    static void declareInlineExpression(
+    public static void declareInlineExpression(
             AStartUnit declaration,
             Grammar grammar) {
 
@@ -107,7 +108,7 @@ public abstract class LexerExpression
         }
     }
 
-    static void declareInlineExpression(
+    public static void declareInlineExpression(
             AEndUnit declaration,
             Grammar grammar) {
 
@@ -122,9 +123,11 @@ public abstract class LexerExpression
 
     public static class NamedExpression
             extends LexerExpression
-            implements INamedToken {
+            implements INamedToken, IReferencable, IVisitableGrammarPart {
 
         private final ANamedExpression declaration;
+
+        private final Expression expression;
 
         NamedExpression(
                 ANamedExpression declaration,
@@ -137,6 +140,27 @@ public abstract class LexerExpression
             }
 
             this.declaration = declaration;
+
+            this.expression = Expression.newExpression(
+                    declaration.getExpression(), grammar);
+        }
+
+        public ANamedExpression getDeclaration() {
+
+            return this.declaration;
+        }
+
+        public Expression getExpression() {
+
+            return this.expression;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitNamedExpression(this);
+
         }
 
         @Override
@@ -155,6 +179,12 @@ public abstract class LexerExpression
         public String getNameType() {
 
             return "regular expression";
+        }
+
+        @Override
+        public Token getLocation() {
+
+            return this.declaration.getName();
         }
 
     }

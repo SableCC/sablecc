@@ -25,6 +25,7 @@ import java.util.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.sablecc.alphabet.Bound;
 import org.sablecc.util.*;
 
 /**

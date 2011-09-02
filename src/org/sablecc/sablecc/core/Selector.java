@@ -20,11 +20,12 @@ package org.sablecc.sablecc.core;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public abstract class Selector
-        implements INameDeclaration {
+        implements INameDeclaration, IVisitableGrammarPart {
 
     private final ASelector declaration;
 
@@ -59,6 +60,11 @@ public abstract class Selector
     abstract Selection newSelection(
             TIdentifier name);
 
+    public ASelector getDeclaration() {
+
+        return this.declaration;
+    }
+
     @Override
     public TIdentifier getNameIdentifier() {
 
@@ -83,7 +89,7 @@ public abstract class Selector
     }
 
     public abstract class Selection
-            implements INameDeclaration {
+            implements INameDeclaration, IVisitableGrammarPart {
 
         private final TIdentifier declaration;
 
@@ -133,8 +139,17 @@ public abstract class Selector
             return new Selection(name);
         }
 
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitLexerSelector(this);
+
+        }
+
         public class Selection
-                extends Selector.Selection {
+                extends Selector.Selection
+                implements IToken, IReferencable {
 
             private Selection(
                     TIdentifier declaration) {
@@ -142,6 +157,19 @@ public abstract class Selector
                 super(declaration);
             }
 
+            @Override
+            public void apply(
+                    IGrammarVisitor visitor) {
+
+                visitor.visitLexerSelectorSelection(this);
+
+            }
+
+            @Override
+            public Token getLocation() {
+
+                return getDeclaration().getSelectorName();
+            }
         }
     }
 
@@ -162,6 +190,14 @@ public abstract class Selector
             return new Selection(name);
         }
 
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitParserSelector(this);
+
+        }
+
         public class Selection
                 extends Selector.Selection {
 
@@ -169,6 +205,14 @@ public abstract class Selector
                     TIdentifier declaration) {
 
                 super(declaration);
+            }
+
+            @Override
+            public void apply(
+                    IGrammarVisitor visitor) {
+
+                visitor.visitParserSelectorSelection(this);
+
             }
 
         }

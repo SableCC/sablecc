@@ -18,12 +18,19 @@
 package org.sablecc.sablecc.core;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public abstract class Context {
+public abstract class Context
+        implements IVisitableGrammarPart {
 
     final Grammar grammar;
+
+    private ATokens tokensDeclaration;
+
+    private AIgnored ignoredeDeclaration;
 
     private Context(
             Grammar grammar) {
@@ -33,6 +40,50 @@ public abstract class Context {
         }
 
         this.grammar = grammar;
+    }
+
+    public void addTokensDeclaration(
+            ATokens tokensDeclaration) {
+
+        this.tokensDeclaration = tokensDeclaration;
+    }
+
+    public void addIgnoredDeclaration(
+            AIgnored ignoredDeclaration) {
+
+        this.ignoredeDeclaration = ignoredDeclaration;
+    }
+
+    public ATokens getTokensDeclaration() {
+
+        return this.tokensDeclaration;
+    }
+
+    public AIgnored getIgnoredeDeclaration() {
+
+        return this.ignoredeDeclaration;
+    }
+
+    private static void findTokensAndIgnored(
+            final Context context,
+            Node contextDeclaration) {
+
+        contextDeclaration.apply(new DepthFirstAdapter() {
+
+            @Override
+            public void inATokens(
+                    ATokens node) {
+
+                context.addTokensDeclaration(node);
+            }
+
+            @Override
+            public void inAIgnored(
+                    AIgnored node) {
+
+                context.addIgnoredDeclaration(node);
+            }
+        });
     }
 
     public static class NamedContext
@@ -59,6 +110,8 @@ public abstract class Context {
             }
 
             this.lexerDeclaration = declaration;
+
+            findTokensAndIgnored(this, this.lexerDeclaration);
         }
 
         NamedContext(
@@ -117,6 +170,14 @@ public abstract class Context {
             return "context";
         }
 
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitNamedContext(this);
+
+        }
+
         public AParserContext getParserDeclaration() {
 
             return this.parserDeclaration;
@@ -146,6 +207,8 @@ public abstract class Context {
             }
 
             this.lexerDeclaration = declaration;
+
+            findTokensAndIgnored(this, this.lexerDeclaration);
         }
 
         AnonymousContext(
@@ -178,6 +241,14 @@ public abstract class Context {
             }
 
             this.parserDeclaration = declaration;
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            visitor.visitAnonymousContext(this);
+
         }
     }
 

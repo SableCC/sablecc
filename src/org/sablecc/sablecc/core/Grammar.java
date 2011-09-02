@@ -20,12 +20,15 @@ package org.sablecc.sablecc.core;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
+import org.sablecc.sablecc.core.transformation.*;
+import org.sablecc.sablecc.core.walker.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Grammar
-        implements INameDeclaration {
+        implements INameDeclaration, IVisitableGrammarPart {
 
     private AGrammar declaration;
 
@@ -48,7 +51,15 @@ public class Grammar
 
     private LexerExpression.EndExpression globalEndExpression;
 
-    private List<Transformation> transformations = new LinkedList<Transformation>();
+    private final List<Context.NamedContext> namedContexts = new LinkedList<Context.NamedContext>();
+
+    private final Lexer lexer = new Lexer();
+
+    private final Parser parser = new Parser();
+
+    private final Transformation transformation = new Transformation();
+
+    private final Tree tree = new Tree();
 
     Grammar(
             Start ast) {
@@ -56,12 +67,19 @@ public class Grammar
         if (ast == null) {
             throw new InternalException("ast may not be null");
         }
-
+        findAnonymousContexts(ast);
         fillGlobalNameSpace(ast);
         fillTreeNameSpace(ast);
         findInlineExpressions(ast);
-        findAnonymousContexts(ast);
         findTransformations(ast);
+        findLexerPriorities(ast);
+
+        verifyReferences();
+        buildImplicitTransformations();
+        resolveUnknowTypes();
+        verifyAssignability();
+
+        apply(new GrammarVisitor());
 
         throw new InternalException("not implemented");
     }
@@ -84,6 +102,66 @@ public class Grammar
         return "grammar";
     }
 
+    public List<Context.NamedContext> getNamedContexts() {
+
+        return this.namedContexts;
+    }
+
+    public Context.AnonymousContext getGlobalAnonymousContext() {
+
+        return this.globalAnonymousContext;
+    }
+
+    public Lexer getLexer() {
+
+        return this.lexer;
+    }
+
+    public Parser getParser() {
+
+        return this.parser;
+    }
+
+    public Transformation getTransformation() {
+
+        return this.transformation;
+    }
+
+    public Tree getTree() {
+
+        return this.tree;
+    }
+
+    @Override
+    public void apply(
+            IGrammarVisitor visitor) {
+
+        visitor.visitGrammar(this);
+
+    }
+
+    public INameDeclaration getTreeReference(
+            String reference) {
+
+        if (this.treeNameSpace.contains(reference)) {
+            return this.treeNameSpace.getNameDeclaration(reference);
+        }
+        else {
+            return this.globalNameSpace.getNameDeclaration(reference);
+        }
+    }
+
+    public INameDeclaration getGlobalReference(
+            String reference) {
+
+        if (this.globalNameSpace.contains(reference)) {
+            return this.globalNameSpace.getNameDeclaration(reference);
+        }
+        else {
+            return this.treeNameSpace.getNameDeclaration(reference);
+        }
+    }
+
     private void fillGlobalNameSpace(
             Start ast) {
 
@@ -97,6 +175,8 @@ public class Grammar
 
             private boolean inLexer;
 
+            private Context currentContext = Grammar.this.globalAnonymousContext;
+
             @Override
             public void inAGrammar(
                     AGrammar node) {
@@ -109,15 +189,21 @@ public class Grammar
             public void inANamedExpression(
                     ANamedExpression node) {
 
-                this.globalNameSpace.add(new LexerExpression.NamedExpression(
-                        node, this.grammar));
+                LexerExpression.NamedExpression namedExpression = new LexerExpression.NamedExpression(
+                        node, this.grammar);
+
+                this.globalNameSpace.add(namedExpression);
+                Grammar.this.lexer.addNamedExpression(namedExpression);
             }
 
             @Override
             public void inAGroup(
                     AGroup node) {
 
-                this.globalNameSpace.add(new Group(node, this.grammar));
+                Group group = new Group(node, this.grammar);
+
+                this.globalNameSpace.add(group);
+                Grammar.this.lexer.addGroup(group);
             }
 
             @Override
@@ -125,9 +211,18 @@ public class Grammar
                     ALexerContext node) {
 
                 if (node.getName() != null) {
-                    this.globalNameSpace.add(new Context.NamedContext(node,
-                            this.grammar));
+                    Context.NamedContext namedContext = new Context.NamedContext(
+                            node, this.grammar);
+                    this.globalNameSpace.add(namedContext);
+                    Grammar.this.namedContexts.add(namedContext);
                 }
+            }
+
+            @Override
+            public void inARoot(
+                    ARoot node) {
+
+                Grammar.this.parser.addRootDeclaration(node);
             }
 
             @Override
@@ -138,22 +233,38 @@ public class Grammar
                     String name = node.getName().getText();
                     Context.NamedContext namedContext = this.globalNameSpace
                             .getNamedContext(name);
+
                     if (namedContext != null) {
                         namedContext.addDeclaration(node);
                     }
                     else {
-                        this.globalNameSpace.add(new Context.NamedContext(node,
-                                this.grammar));
+                        namedContext = new Context.NamedContext(node,
+                                this.grammar);
+                        this.globalNameSpace.add(namedContext);
+                        Grammar.this.namedContexts.add(namedContext);
                     }
+
+                    this.currentContext = namedContext;
                 }
+            }
+
+            @Override
+            public void outAParserContext(
+                    AParserContext node) {
+
+                this.currentContext = Grammar.this.globalAnonymousContext;
             }
 
             @Override
             public void inAParserProduction(
                     AParserProduction node) {
 
-                this.globalNameSpace.add(ParserProduction.newParserProduction(
-                        node, this.grammar));
+                Parser.ParserProduction parserProduction = Parser.ParserProduction
+                        .newParserProduction(node, this.currentContext,
+                                this.grammar);
+
+                this.globalNameSpace.add(parserProduction);
+                Grammar.this.parser.addProduction(parserProduction);
             }
 
             @Override
@@ -178,14 +289,19 @@ public class Grammar
 
                 if (this.inLexer) {
                     selector = new Selector.LexerSelector(node, this.grammar);
+                    Grammar.this.lexer
+                            .addSelector((Selector.LexerSelector) selector);
                 }
                 else {
                     selector = new Selector.ParserSelector(node, this.grammar);
+                    Grammar.this.parser
+                            .addSelector((Selector.ParserSelector) selector);
                 }
 
                 for (Selector.Selection selection : selector.getSelections()) {
                     this.globalNameSpace.add(selection);
                 }
+
                 this.globalNameSpace.add(selector);
             }
 
@@ -194,14 +310,18 @@ public class Grammar
                     AInvestigator node) {
 
                 if (this.inLexer) {
-                    this.globalNameSpace
-                            .add(new Investigator.LexerInvestigator(node,
-                                    this.grammar));
+                    Investigator.LexerInvestigator investigator = new Investigator.LexerInvestigator(
+                            node, this.grammar);
+                    this.globalNameSpace.add(investigator);
+
+                    Grammar.this.lexer.addInvestigator(investigator);
                 }
                 else {
-                    this.globalNameSpace
-                            .add(new Investigator.ParserInvestigator(node,
-                                    this.grammar));
+                    Investigator.ParserInvestigator investigator = new Investigator.ParserInvestigator(
+                            node, this.grammar);
+
+                    this.globalNameSpace.add(investigator);
+                    Grammar.this.parser.addInvestigator(investigator);
                 }
             }
 
@@ -221,7 +341,11 @@ public class Grammar
             public void inATreeProduction(
                     ATreeProduction node) {
 
-                this.treeNameSpace.add(new TreeProduction(node, this.grammar));
+                Tree.TreeProduction treeProduction = new Tree.TreeProduction(
+                        node, this.grammar);
+
+                this.treeNameSpace.add(treeProduction);
+                Grammar.this.tree.addProduction(treeProduction);
             }
         });
     }
@@ -229,59 +353,7 @@ public class Grammar
     private void findInlineExpressions(
             Start ast) {
 
-        ast.apply(new DepthFirstAdapter() {
-
-            private final Grammar grammar = Grammar.this;
-
-            @Override
-            public void caseANamedExpression(
-                    ANamedExpression node) {
-
-                // Do not visit subtree
-            }
-
-            @Override
-            public void inAStringUnit(
-                    AStringUnit node) {
-
-                LexerExpression.declareInlineExpression(node, this.grammar);
-            }
-
-            @Override
-            public void inACharCharacter(
-                    ACharCharacter node) {
-
-                LexerExpression.declareInlineExpression(node, this.grammar);
-            }
-
-            @Override
-            public void inADecCharacter(
-                    ADecCharacter node) {
-
-                LexerExpression.declareInlineExpression(node, this.grammar);
-            }
-
-            @Override
-            public void inAHexCharacter(
-                    AHexCharacter node) {
-
-                LexerExpression.declareInlineExpression(node, this.grammar);
-            }
-
-            @Override
-            public void inAStartUnit(
-                    AStartUnit node) {
-
-                LexerExpression.declareInlineExpression(node, this.grammar);
-            }
-
-            @Override
-            public void inAEndUnit(
-                    AEndUnit node) {
-
-                LexerExpression.declareInlineExpression(node, this.grammar);
-            }
-        });
+        ast.apply(new DeclarationFinder.InlineExpressionsFinder(this));
     }
 
     private void findAnonymousContexts(
@@ -327,24 +399,70 @@ public class Grammar
     private void findTransformations(
             Node ast) {
 
-        ast.apply(new DepthFirstAdapter() {
+        ast.apply(new DeclarationFinder.TransformationsFinder(this));
+    }
+
+    public void findLexerPriorities(
+            Node ast) {
+
+        ast.apply(new DeclarationFinder.LexerPrioritiesFinder(this));
+    }
+
+    private void verifyReferences() {
+
+        apply(new ReferenceVerifier.LexerReferenceVerifier(this));
+        apply(new ReferenceVerifier.ParserReferenceVerifier(this));
+        apply(new ReferenceVerifier.TreeReferenceVerifier(this));
+        apply(new ReferenceVerifier.TransformationReferenceVerifier(this));
+        apply(new ReferenceVerifier.RootVerifier(this));
+    }
+
+    private void verifyAssignability() {
+
+        apply(new AssignabilityVerifier());
+    }
+
+    private void buildImplicitTransformations() {
+
+        apply(new ImplicitProductionTransformationBuilder(this));
+        apply(new ImplicitAlternativeTransformationBuilder(this));
+
+        this.parser.apply(new TokenOrderVerifier(this));
+
+    }
+
+    private void resolveUnknowTypes() {
+
+        this.transformation.apply(new GrammarVisitor() {
+
+            private boolean inANewElement = false;
 
             @Override
-            public void inAProductionTransformation(
-                    AProductionTransformation node) {
+            public void visitAlternativeTransformationElement(
+                    AlternativeTransformationElement node) {
 
-                Grammar.this.transformations
-                        .add(new Transformation.ProductionTransformation(node,
-                                Grammar.this));
+                node.constructType();
+
             }
 
             @Override
-            public void inAAlternativeTransformation(
-                    AAlternativeTransformation node) {
+            public void visitAlternativeTransformationNewElement(
+                    AlternativeTransformationElement.NewElement node) {
 
-                Grammar.this.transformations
-                        .add(new Transformation.AlternativeTransformation(node,
-                                Grammar.this));
+                this.inANewElement = true;
+                node.constructType();
+                this.inANewElement = false;
+                // Do not visit elements
+            }
+
+            @Override
+            public void visitAlternativeTransformationListElement(
+                    AlternativeTransformationElement.ListElement node) {
+
+                if (!this.inANewElement) {
+                    node.constructType();
+                }
+                // Do not visit elements
             }
         });
     }
@@ -505,7 +623,7 @@ public class Grammar
         }
 
         private void add(
-                ParserProduction parserProduction) {
+                Parser.ParserProduction parserProduction) {
 
             internalAdd(parserProduction);
         }
@@ -568,12 +686,12 @@ public class Grammar
             return null;
         }
 
-        private ParserProduction getParserProduction(
+        private Parser.ParserProduction getParserProduction(
                 String name) {
 
             INameDeclaration nameDeclaration = getNameDeclaration(name);
-            if (nameDeclaration instanceof ParserProduction) {
-                return (ParserProduction) nameDeclaration;
+            if (nameDeclaration instanceof Parser.ParserProduction) {
+                return (Parser.ParserProduction) nameDeclaration;
             }
             return null;
         }
@@ -637,13 +755,19 @@ public class Grammar
             }
             return null;
         }
+
+        public boolean contains(
+                String name) {
+
+            return this.nameMap.containsKey(name);
+        }
     }
 
     private static class TreeNameSpace {
 
         private final NameSpace globalNameSpace;
 
-        private final Map<String, TreeProduction> nameMap = new HashMap<String, TreeProduction>();
+        private final Map<String, Tree.TreeProduction> nameMap = new HashMap<String, Tree.TreeProduction>();
 
         private TreeNameSpace(
                 NameSpace globalNameSpace) {
@@ -656,7 +780,7 @@ public class Grammar
         }
 
         private void add(
-                TreeProduction treeProduction) {
+                Tree.TreeProduction treeProduction) {
 
             if (treeProduction == null) {
                 throw new InternalException("treeProduction may not be null");
@@ -666,7 +790,7 @@ public class Grammar
             INameDeclaration nameDeclaration = this.globalNameSpace
                     .getNameDeclaration(name);
             if (nameDeclaration == null
-                    || nameDeclaration instanceof ParserProduction
+                    || nameDeclaration instanceof Parser.ParserProduction
                     || nameDeclaration instanceof Selector.ParserSelector.Selection) {
                 this.nameMap.put(name, treeProduction);
             }
@@ -690,14 +814,21 @@ public class Grammar
             return nameDeclaration;
         }
 
-        private TreeProduction getTreeProduction(
+        private Tree.TreeProduction getTreeProduction(
                 String name) {
 
             INameDeclaration nameDeclaration = getNameDeclaration(name);
-            if (nameDeclaration instanceof TreeProduction) {
-                return (TreeProduction) nameDeclaration;
+            if (nameDeclaration instanceof Tree.TreeProduction) {
+                return (Tree.TreeProduction) nameDeclaration;
             }
             return null;
+        }
+
+        public boolean contains(
+                String name) {
+
+            boolean result = this.nameMap.containsKey(name);
+            return this.nameMap.containsKey(name);
         }
     }
 }
