@@ -21,6 +21,7 @@ import java.io.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.launcher.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.util.*;
 
@@ -75,8 +76,103 @@ public class GrammarCompiler {
 
         this.trace.verboseln(" Verifying semantics");
 
+        restrictSyntax(ast);
+
         Grammar grammar = new Grammar(ast);
 
         throw new InternalException("not implemented");
+    }
+
+    /** restrict accepted syntax to desired subset */
+    private void restrictSyntax(
+            Start ast) {
+
+        ast.apply(new DepthFirstAdapter() {
+
+            @Override
+            public void caseAGroup(
+                    AGroup node) {
+
+                throw SemanticException.notImplemented(node.getName());
+            }
+
+            @Override
+            public void caseAInvestigator(
+                    AInvestigator node) {
+
+                throw SemanticException.notImplemented(node.getName());
+            }
+
+            @Override
+            public void caseASelector(
+                    ASelector node) {
+
+                throw SemanticException.notImplemented(node.getSelectorName());
+            }
+
+            @Override
+            public void inALexerContext(
+                    ALexerContext node) {
+
+                // reject named contexts
+                if (node.getName() != null) {
+                    throw SemanticException.notImplemented(node.getName());
+                }
+            }
+
+            @Override
+            public void caseAIgnored(
+                    AIgnored node) {
+
+                throw SemanticException.notImplemented(node.getIgnoredKeyword());
+            }
+
+            @Override
+            public void caseALookback(
+                    ALookback node) {
+
+                throw SemanticException.notImplemented(node
+                        .getLookbackKeyword());
+            }
+
+            @Override
+            public void caseAStartUnit(
+                    AStartUnit node) {
+
+                throw SemanticException.notImplemented(node.getStartKeyword());
+            }
+
+            @Override
+            public void caseAParser(
+                    AParser node) {
+
+                throw SemanticException.notImplemented(node.getParserKeyword());
+            }
+
+            @Override
+            public void caseATransformation(
+                    ATransformation node) {
+
+                throw SemanticException.notImplemented(node
+                        .getTransformationKeyword());
+            }
+
+            @Override
+            public void caseATree(
+                    ATree node) {
+
+                throw SemanticException.notImplemented(node.getTreeKeyword());
+            }
+
+            @Override
+            public void caseTIdentifier(
+                    TIdentifier node) {
+
+                // reject rich identifiers
+                if (node.getText().charAt(0) == '<') {
+                    throw SemanticException.notImplemented(node);
+                }
+            }
+        });
     }
 }
