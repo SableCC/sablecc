@@ -1,0 +1,109 @@
+Grammar mini_language:
+
+  Lexer
+    id = letter (letter | digit)*;
+    number = digit+;
+
+    letter = 'a'..'z';
+    digit = '0'..'9';
+
+    string_text = string_char+;
+    string_char = (#32..#126) - ('"' | '\\');
+
+    blank = (' ' | tab | vtab | eol)+;
+    tab = #9;
+    vtab = #11;
+    eol = cr | lf | cr lf;
+    cr = #13;
+    lf = #10;
+
+    ctrl_z = #26;
+
+    line_comment = Shortest '//' Any* (eol | End);
+
+    comment_text = Any+ - ('/*' | '*/');
+
+    Context normal_context:
+
+      Ignored
+        blank, comment, line_comment;
+
+  Parser
+
+    Context normal_context:
+
+      program =
+        statement? ctrl_z?;
+
+      statement =
+        {block:} '{' declaration* statement* '}' |
+        {assign:} id '=' expression ';' |
+        {if:} 'if' '(' expression ')' statement Dangling else? |
+        {while:} 'while' '(' expression ')' statement |
+        {print:} 'print' '(' (expression Separator ',')* ')' ';';
+
+      Dangling else =
+        'else' statement;
+
+      declaration =
+        type (id Separator ',')+ ';';
+
+      type =
+        {int:} 'int' |
+        {bool:} 'bool' |
+        {string:} 'string';
+
+      expression =
+        {eq:} [left:]sub_expression '==' [right:]sub_expression |
+        {neq:} [left:]sub_expression '!=' [right:]sub_expression |
+        {lt:} [left:]sub_expression '<' [right:]sub_expression |
+        {gt:} [left:]sub_expression '>' [right:]sub_expression |
+        {lteq:} [left:]sub_expression '<=' [right:]sub_expression |
+        {gteq:} [left:]sub_expression '>=' [right:]sub_expression |
+        {simple:} expression;
+
+      sub_expression =
+        {add:} [left:]sub_expression '+' [right:] sub_expression |
+        {sub:} [left:]sub_expression '-' [right:] sub_expression |
+        {mul:} [left:]sub_expression '*' [right:] sub_expression |
+        {div:} [left:]sub_expression '/' [right:] sub_expression |
+        {mod:} [left:]sub_expression '%' [right:] sub_expression |
+        {not:} '!' sub_expression |
+        {par:} '(' expression ')' |
+        {number:} number |
+        {true:} 'true' |
+        {false:} 'false' |
+        {string:} string |
+        {read:} 'read' '(' ')' |
+        {str2int:} 'str2int' '(' expression ')';
+
+        Precedence
+          Unary not;
+          Left mul, div, mod;
+          Left add, sub;
+
+      Context string_context:
+
+        Token string =
+          '"' string_part* '"';
+
+        string_part =
+          {string_text:} string_text |
+          {string_escape:} string_escape;
+
+      Context string_escape_context:
+
+        string_escape =
+          {back_slash:} '\\' '\\' |
+          {double_quote:} '\\' '"' |
+          {new_line:} '\\' 'n' |
+          {tab:} '\\' 't';
+
+      Context comment_context:
+
+        Token comment =
+          '/*' comment_part* '*/';
+
+        comment_part =
+          {comment_text:} comment_text |
+          {nested_comment:} comment;
