@@ -67,21 +67,27 @@ public class Grammar
         if (ast == null) {
             throw new InternalException("ast may not be null");
         }
-        findAnonymousContexts(ast);
-        fillGlobalNameSpace(ast);
-        fillTreeNameSpace(ast);
-        findInlineExpressions(ast);
-        findTransformations(ast);
-        findLexerPriorities(ast);
 
-        verifyReferences();
-        buildImplicitTransformations();
-        resolveUnknowTypes();
-        verifyAssignability();
+        if (GrammarCompiler.RESTRICTED_SYNTAX) {
 
-        apply(new GrammarVisitor());
+        }
+        else {
+            findAnonymousContexts(ast);
+            fillGlobalNameSpace(ast);
+            fillTreeNameSpace(ast);
+            findInlineExpressions(ast);
+            findTransformations(ast);
+            findLexerPriorities(ast);
 
-        throw new InternalException("not implemented");
+            verifyReferences();
+            buildImplicitTransformations();
+            resolveUnknowTypes();
+            verifyAssignability();
+
+            apply(new GrammarVisitor());
+
+            throw new InternalException("not implemented");
+        }
     }
 
     @Override

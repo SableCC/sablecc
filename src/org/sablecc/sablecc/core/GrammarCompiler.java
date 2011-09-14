@@ -27,6 +27,8 @@ import org.sablecc.util.*;
 
 public class GrammarCompiler {
 
+    public static final boolean RESTRICTED_SYNTAX = true;
+
     final private String text;
 
     final private Strictness strictness;
@@ -76,9 +78,18 @@ public class GrammarCompiler {
 
         this.trace.verboseln(" Verifying semantics");
 
-        restrictSyntax(ast);
+        if (RESTRICTED_SYNTAX) {
+            restrictSyntax(ast);
+        }
 
         Grammar grammar = new Grammar(ast);
+
+        if (RESTRICTED_SYNTAX) {
+            this.trace.informativeln();
+            this.trace
+                    .informativeln("The syntax of this grammar specification is clean.");
+            return;
+        }
 
         throw new InternalException("not implemented");
     }
