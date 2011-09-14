@@ -121,13 +121,6 @@ public class GrammarCompiler {
             }
 
             @Override
-            public void caseAIgnored(
-                    AIgnored node) {
-
-                throw SemanticException.notImplemented(node.getIgnoredKeyword());
-            }
-
-            @Override
             public void caseALookback(
                     ALookback node) {
 
