@@ -43,6 +43,13 @@ public class SemanticException
         this.location = location;
     }
 
+    public static SemanticException notImplemented(
+            Token token) {
+
+        return new SemanticException(new MNotImplemented(token.getLine() + "",
+                token.getPos() + "").toString(), token);
+    }
+
     public static SemanticException duplicateDeclaration(
             INameDeclaration duplicateNameDeclaration,
             INameDeclaration olderNameDeclaration) {

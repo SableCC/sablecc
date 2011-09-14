@@ -16,6 +16,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 $end$
 
+$comment: ========== not_implemented ========== $
+
+$macro: not_implemented(line, char) $
+*** NOT IMPLEMENTED ***
+
+Line: $line
+Char: $char
+This feature is not yet implemented.
+$end: not_implemented $
+
 $comment: ========== semantic_error_head ========== $
 
 $text: semantic_error_head $
