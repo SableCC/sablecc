@@ -43,5 +43,7 @@ Lexer
     zero > decimal;
 
   Token
-    zero, 'if', 'else', 'while', identifier, decimal, ip_address, hex,
+    zero, 'if', 'else', 'while', identifier, decimal, ip_address, hex;
+
+  Ignored
     c_comment, c_line_comment, ' ', tab, eol;
