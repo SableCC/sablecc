@@ -30,7 +30,7 @@ Lexer
   digit = '0'..'9';
   hex_digit = 'a'..'f' | 'A'..'F' | digit;
 
-  ip_address = (number Separator '.')^4;
+  ip_address = (decimal Separator '.')^4;
 
   c_comment = Shortest '/*' Any* '*/';
   c_line_comment = Shortest '//' Any* (eol | End);
@@ -40,10 +40,8 @@ Lexer
 
   Precedence
     zero > identifier;
-    zero > number;
+    zero > decimal;
 
   Token
-    zero, 'if', 'else', 'while', identifier, number, ip_address, hex;
-
-  Ignored
+    zero, 'if', 'else', 'while', identifier, decimal, ip_address, hex,
     c_comment, c_line_comment, ' ', tab, eol;
