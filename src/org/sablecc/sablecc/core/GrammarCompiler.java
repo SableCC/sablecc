@@ -101,13 +101,6 @@ public class GrammarCompiler {
         ast.apply(new DepthFirstAdapter() {
 
             @Override
-            public void caseAGroup(
-                    AGroup node) {
-
-                throw SemanticException.notImplemented(node.getName());
-            }
-
-            @Override
             public void caseAInvestigator(
                     AInvestigator node) {
 

@@ -29,8 +29,6 @@ public class Lexer
 
     private final List<LexerExpression.NamedExpression> namedExpressions = new LinkedList<LexerExpression.NamedExpression>();
 
-    private final List<Group> groups = new LinkedList<Group>();
-
     private final List<Investigator.LexerInvestigator> investigators = new LinkedList<Investigator.LexerInvestigator>();
 
     private final List<Selector.LexerSelector> selectors = new LinkedList<Selector.LexerSelector>();
@@ -45,12 +43,6 @@ public class Lexer
             LexerExpression.NamedExpression namedExpression) {
 
         this.namedExpressions.add(namedExpression);
-    }
-
-    public void addGroup(
-            Group group) {
-
-        this.groups.add(group);
     }
 
     public void addInvestigator(
@@ -74,11 +66,6 @@ public class Lexer
     public List<LexerExpression.NamedExpression> getNamedExpressions() {
 
         return this.namedExpressions;
-    }
-
-    public List<Group> getGroups() {
-
-        return this.groups;
     }
 
     public List<Investigator.LexerInvestigator> getInvestigators() {

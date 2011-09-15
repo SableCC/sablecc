@@ -73,10 +73,6 @@ public class GrammarVisitor
             namedExpression.apply(this);
         }
 
-        for (Group group : node.getGroups()) {
-            group.apply(this);
-        }
-
         for (Lexer.LexerPriority priority : node.getPriorities()) {
             priority.apply(this);
         }
@@ -255,13 +251,6 @@ public class GrammarVisitor
 
         node.getExpression().apply(this);
 
-    }
-
-    @Override
-    public void visitGroup(
-            Group node) {
-
-        // Leaf
     }
 
     @Override

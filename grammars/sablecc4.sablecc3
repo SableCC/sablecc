@@ -196,8 +196,8 @@ Productions
 
   lexer
     =
-      lexer_keyword [named_expressions]:named_expression* groups? lexer_priorities? lexer_contexts investigators? selectors?
-        {-> New lexer(lexer_keyword, [named_expressions], [groups.groups], [lexer_priorities.lexer_priorities], [lexer_contexts.lexer_contexts], [investigators.investigators], [selectors.selectors]) }
+      lexer_keyword [named_expressions]:named_expression* lexer_contexts lexer_priorities? investigators? selectors?
+        {-> New lexer(lexer_keyword, [named_expressions], [lexer_contexts.lexer_contexts], [lexer_priorities.lexer_priorities], [investigators.investigators], [selectors.selectors]) }
     ;
 
   named_expression
@@ -338,19 +338,6 @@ Productions
       {interval} caret l_par [from]:number two_dots [to]:number r_par
     |
       {at_least} caret l_par number three_dots r_par
-    ;
-
-  groups
-        {-> [groups]:group* }
-    =
-      group_keyword [groups]:group*
-        {-> [groups.group] }
-    ;
-
-  group
-    =
-      identifier assign unit_list semicolon
-        {-> New group (identifier, assign, [unit_list.units]) }
     ;
 
   lexer_priorities
@@ -706,8 +693,8 @@ Abstract Syntax Tree
     grammar_keyword [name]:identifier lexer? parser? transformation? tree?;
 
   lexer =
-    lexer_keyword [named_expressions]:named_expression* [groups]:group*
-      [lexer_priorities]:lexer_priority* [lexer_contexts]:lexer_context+
+    lexer_keyword [named_expressions]:named_expression*
+      [lexer_contexts]:lexer_context+ [lexer_priorities]:lexer_priority*
       [investigators]:investigator* [selectors]:selector*;
 
   named_expression =
@@ -740,9 +727,6 @@ Abstract Syntax Tree
     {char} char |
     {dec} dec_char |
     {hex} hex_char;
-
-  group =
-    [name]:identifier assign unit+;
 
   unit =
     {name} identifier |

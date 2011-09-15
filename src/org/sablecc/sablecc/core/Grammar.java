@@ -203,16 +203,6 @@ public class Grammar
             }
 
             @Override
-            public void inAGroup(
-                    AGroup node) {
-
-                Group group = new Group(node, this.grammar);
-
-                this.globalNameSpace.add(group);
-                Grammar.this.lexer.addGroup(group);
-            }
-
-            @Override
             public void inALexerContext(
                     ALexerContext node) {
 
@@ -617,12 +607,6 @@ public class Grammar
         }
 
         private void add(
-                Group group) {
-
-            internalAdd(group);
-        }
-
-        private void add(
                 Context.NamedContext namedContext) {
 
             internalAdd(namedContext);
@@ -668,16 +652,6 @@ public class Grammar
             INameDeclaration nameDeclaration = getNameDeclaration(name);
             if (nameDeclaration instanceof LexerExpression.NamedExpression) {
                 return (LexerExpression.NamedExpression) nameDeclaration;
-            }
-            return null;
-        }
-
-        private Group getGroup(
-                String name) {
-
-            INameDeclaration nameDeclaration = getNameDeclaration(name);
-            if (nameDeclaration instanceof Group) {
-                return (Group) nameDeclaration;
             }
             return null;
         }

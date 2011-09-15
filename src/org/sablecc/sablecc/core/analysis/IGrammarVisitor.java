@@ -100,9 +100,6 @@ public interface IGrammarVisitor {
     void visitLexerPriority(
             Lexer.LexerPriority node);
 
-    void visitGroup(
-            Group node);
-
     void visitLexerInvestigator(
             Investigator.LexerInvestigator node);
 
