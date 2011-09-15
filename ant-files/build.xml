@@ -37,14 +37,6 @@
     </condition>
   </fail>
 
-  <fail message="You must add the JUnit 4 jar library in the $ANT_HOME/lib directory.">
-    <condition>
-      <not>
-        <available classname="org.junit.Test" />
-      </not>
-    </condition>
-  </fail>
-
   <!-- Tasks -->
 
   <taskdef name="sablecc3" classname="org.sablecc.ant.taskdef.Sablecc" />
@@ -57,15 +49,11 @@
   <property name="src.dir" value="src" />
   <property name="grammars.dir" value="grammars" />
   <property name="macros.dir" value="macros" />
-  <property name="junit-tests.dir" value="junit-tests" />
-  <property name="regression-tests.dir" value="regression-tests" />
   <property name="manifest.dir" value="manifest" />
 
   <property name="examples.dir" value="examples" />
-  <property name="tests.dir" value="tests" />
 
   <property name="classes.dir" value="classes" />
-  <property name="test-classes.dir" value="test-classes" />
   <property name="lib.dir" value="lib" />
 
   <property name="dist.dir" value="${package.name}-${package.version}" />
@@ -156,51 +144,6 @@ public class Version {
 
   </target>
 
-  <!-- Test Compilation -->
-
-  <target name="compile-tests"
-          depends="compile-sources"
-          description="Compile JUnit and regression tests.">
-
-    <delete dir="${test-classes.dir}" />
-
-    <mkdir dir="${test-classes.dir}" />
-
-    <javac srcdir="${junit-tests.dir}"
-           classpath="${classes.dir}"
-           destdir="${test-classes.dir}"
-           debug="true" />
-
-    <javac srcdir="${regression-tests.dir}"
-           classpath="${classes.dir}"
-           destdir="${test-classes.dir}"
-           debug="true" />
-
-  </target>
-
-  <!-- Test Execution -->
-
-  <target name="run-tests"
-          depends="compile-tests"
-          description="Run JUnit and regression tests.">
-
-    <junit haltonfailure="yes">
-      <formatter type="brief" usefile="false" />
-
-      <classpath>
-        <pathelement location="${classes.dir}" />
-        <pathelement location="${test-classes.dir}" />
-      </classpath>
-
-      <batchtest>
-        <fileset dir="${test-classes.dir}" includes="**/*Test.class" />
-        <fileset dir="${test-classes.dir}" includes="**/*Bug.class" />
-      </batchtest>
-
-    </junit>
-
-  </target>
-
   <!-- Jar Library Creation -->
 
   <target name="create-jar"
@@ -235,7 +178,7 @@ public class Version {
 
   <!-- Distribution Zip File Creation -->
   <target name="create-zip"
-          depends="run-tests, create-jar"
+          depends="create-jar"
           description="Create distribution zip file.">
 
     <delete dir="${dist.dir}" />
@@ -254,12 +197,9 @@ public class Version {
       <fileset dir="." includes="${src.dir}/**" />
       <fileset dir="." includes="${grammars.dir}/**" />
       <fileset dir="." includes="${macros.dir}/**" />
-      <fileset dir="." includes="${junit-tests.dir}/**" />
-      <fileset dir="." includes="${regression-tests.dir}/**" />
       <fileset dir="." includes="${manifest.dir}/**" />
 
       <fileset dir="." includes="${examples.dir}/**" />
-      <fileset dir="." includes="${tests.dir}/**" />
 
       <fileset dir="." includes="${doc.dir}/**" />
       <fileset dir="." includes="${lib.dir}/**" />
@@ -278,7 +218,6 @@ public class Version {
     <delete dir="${dist.dir}" />
     <delete dir="${lib.dir}" />
 
-    <delete dir="${test-classes.dir}" />
     <delete dir="${classes.dir}" />
     <delete dir="${src.dir}/org/sablecc/sablecc/syntax3" />
     <delete dir="${src.dir}/org/sablecc/sablecc/launcher/syntax3" />
@@ -295,7 +234,7 @@ public class Version {
   <!-- Development -->
 
   <target name="development"
-          depends="run-tests, create-jar"
+          depends="create-jar"
           description="Run tests and create executable jar." />
 
 </project>
