@@ -65,19 +65,6 @@ public abstract class ReferenceVerifier
         }
 
         @Override
-        public void visitGroup(
-                Group node) {
-
-            for (PUnit unit : node.getDeclaration().getUnit()) {
-                if (unit instanceof ANameUnit) {
-
-                    tokenExpected(this.grammar,
-                            ((ANameUnit) unit).getIdentifier());
-                }
-            }
-        }
-
-        @Override
         public void visitLexerPriority(
                 Lexer.LexerPriority node) {
 
@@ -1201,7 +1188,6 @@ public abstract class ReferenceVerifier
             INameDeclaration declaration) {
 
         if (declaration instanceof LexerExpression.NamedExpression
-                || declaration instanceof Group
                 || declaration instanceof Selector.LexerSelector.Selection
                 || declaration instanceof Parser.ParserProduction.TokenProduction) {
             return true;
