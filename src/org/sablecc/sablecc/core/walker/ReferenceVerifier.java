@@ -50,18 +50,7 @@ public abstract class ReferenceVerifier
         public void visitNameUnitExpression(
                 Expression.NameUnit node) {
 
-            TIdentifier referenceIdentifier = node.getDeclaration()
-                    .getIdentifier();
-
-            INameDeclaration declaration = findGlobalDeclaration(this.grammar,
-                    referenceIdentifier);
-
-            if (!(declaration instanceof LexerExpression)) {
-                String[] expectedNames = { "Expression" };
-                throw SemanticException.badReference(referenceIdentifier,
-                        declaration.getNameType(), expectedNames);
-            }
-
+            node.getReference();
         }
 
         @Override
@@ -103,48 +92,14 @@ public abstract class ReferenceVerifier
         public void visitNamedContext(
                 Context.NamedContext node) {
 
-            if (node.getTokensDeclaration() != null) {
-                for (PUnit unit : node.getTokensDeclaration().getUnit()) {
-                    if (unit instanceof ANameUnit) {
-
-                        tokenExpected(this.grammar,
-                                ((ANameUnit) unit).getIdentifier());
-                    }
-                }
-            }
-
-            if (node.getIgnoredeDeclaration() != null) {
-                for (PUnit unit : node.getIgnoredeDeclaration().getUnit()) {
-                    if (unit instanceof ANameUnit) {
-                        tokenExpected(this.grammar,
-                                ((ANameUnit) unit).getIdentifier());
-                    }
-                }
-            }
-
+            node.resolveTokensAndIgnored();
         }
 
         @Override
         public void visitAnonymousContext(
                 Context.AnonymousContext node) {
 
-            if (node.getTokensDeclaration() != null) {
-                for (PUnit unit : node.getTokensDeclaration().getUnit()) {
-                    if (unit instanceof ANameUnit) {
-                        tokenExpected(this.grammar,
-                                ((ANameUnit) unit).getIdentifier());
-                    }
-                }
-            }
-
-            if (node.getIgnoredeDeclaration() != null) {
-                for (PUnit unit : node.getIgnoredeDeclaration().getUnit()) {
-                    if (unit instanceof ANameUnit) {
-                        tokenExpected(this.grammar,
-                                ((ANameUnit) unit).getIdentifier());
-                    }
-                }
-            }
+            node.resolveTokensAndIgnored();
         }
     }
 

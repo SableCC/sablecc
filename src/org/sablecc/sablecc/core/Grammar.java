@@ -20,6 +20,7 @@ package org.sablecc.sablecc.core;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.Context.NamedContext;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.core.transformation.*;
@@ -69,7 +70,11 @@ public class Grammar
         }
 
         if (GrammarCompiler.RESTRICTED_SYNTAX) {
-
+            findAnonymousContexts(ast);
+            fillGlobalNameSpace(ast);
+            findInlineExpressions(ast);
+            findLexerPriorities(ast);
+            verifyReferences();
         }
         else {
             findAnonymousContexts(ast);
@@ -406,11 +411,16 @@ public class Grammar
 
     private void verifyReferences() {
 
-        apply(new ReferenceVerifier.LexerReferenceVerifier(this));
-        apply(new ReferenceVerifier.ParserReferenceVerifier(this));
-        apply(new ReferenceVerifier.TreeReferenceVerifier(this));
-        apply(new ReferenceVerifier.TransformationReferenceVerifier(this));
-        apply(new ReferenceVerifier.RootVerifier(this));
+        if (GrammarCompiler.RESTRICTED_SYNTAX) {
+            apply(new ReferenceVerifier.LexerReferenceVerifier(this));
+        }
+        else {
+            apply(new ReferenceVerifier.LexerReferenceVerifier(this));
+            apply(new ReferenceVerifier.ParserReferenceVerifier(this));
+            apply(new ReferenceVerifier.TreeReferenceVerifier(this));
+            apply(new ReferenceVerifier.TransformationReferenceVerifier(this));
+            apply(new ReferenceVerifier.RootVerifier(this));
+        }
     }
 
     private void verifyAssignability() {
@@ -563,6 +573,17 @@ public class Grammar
     public LexerExpression.EndExpression getEndExpression() {
 
         return this.globalEndExpression;
+    }
+
+    public void compileLexer() {
+
+        if (this.globalAnonymousContext != null) {
+            this.globalAnonymousContext.computeAutomaton();
+        }
+
+        for (NamedContext context : this.namedContexts) {
+            context.computeAutomaton();
+        }
     }
 
     private static class NameSpace {

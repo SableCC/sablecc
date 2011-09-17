@@ -20,6 +20,8 @@ package org.sablecc.sablecc.core;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.sablecc.automaton.*;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.node.*;
@@ -28,6 +30,8 @@ public abstract class LexerExpression
         implements IToken {
 
     private final Grammar grammar;
+
+    private Automaton savedAutomaton;
 
     LexerExpression(
             Grammar grammar) {
@@ -121,6 +125,29 @@ public abstract class LexerExpression
         }
     }
 
+    public abstract Automaton getAutomaton();
+
+    void saveAutomaton(
+            Automaton automaton) {
+
+        if (automaton == null) {
+            throw new InternalException("automaton may not be null");
+        }
+
+        if (this.savedAutomaton != null) {
+            throw new InternalException("automaton is already saved");
+        }
+
+        this.savedAutomaton = automaton.minimal();
+
+        System.out.println(automaton);
+    }
+
+    Automaton getSavedAutomaton() {
+
+        return this.savedAutomaton;
+    }
+
     public static class NamedExpression
             extends LexerExpression
             implements INamedToken, IReferencable, IVisitableGrammarPart {
@@ -128,6 +155,8 @@ public abstract class LexerExpression
         private final ANamedExpression declaration;
 
         private final Expression expression;
+
+        private boolean recursionGuard;
 
         NamedExpression(
                 ANamedExpression declaration,
@@ -187,6 +216,29 @@ public abstract class LexerExpression
             return this.declaration.getName();
         }
 
+        @Override
+        public Automaton getAutomaton() {
+
+            Automaton automaton = getSavedAutomaton();
+
+            if (automaton == null) {
+                if (this.recursionGuard) {
+                    throw new InternalException(
+                            "TODO: raise recursive dependence semantic error");
+                }
+                else {
+                    this.recursionGuard = true;
+                }
+
+                automaton = this.expression.getAutomaton();
+                saveAutomaton(automaton);
+
+                this.recursionGuard = false;
+            }
+
+            return automaton;
+        }
+
     }
 
     public static abstract class InlineExpression
@@ -243,6 +295,50 @@ public abstract class LexerExpression
             this.declarations.add(declaration);
         }
 
+        @Override
+        public Automaton getAutomaton() {
+
+            Automaton automaton = getSavedAutomaton();
+
+            if (automaton == null) {
+
+                String text = getText();
+
+                // remove enclosing quotes
+                {
+                    int length = text.length();
+                    text = text.substring(1, length - 1);
+                }
+
+                do {
+                    char c = text.charAt(0);
+                    Automaton appendedAutomaton;
+                    if (c != '\\') {
+                        appendedAutomaton = Automaton
+                                .getSymbolLookAnyStarEnd(new Symbol(c));
+                        text = text.substring(1);
+                    }
+                    else {
+                        c = text.charAt(1);
+                        appendedAutomaton = Automaton
+                                .getSymbolLookAnyStarEnd(new Symbol(c));
+                        text = text.substring(2);
+                    }
+                    if (automaton == null) {
+                        automaton = appendedAutomaton;
+                    }
+                    else {
+                        automaton = automaton.concat(appendedAutomaton);
+                    }
+                }
+                while (text.length() > 0);
+
+                saveAutomaton(automaton);
+            }
+
+            return automaton;
+        }
+
     }
 
     public static class CharExpression
@@ -272,6 +368,36 @@ public abstract class LexerExpression
             }
 
             this.declarations.add(declaration);
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            Automaton automaton = getSavedAutomaton();
+
+            if (automaton == null) {
+                String text = getText();
+
+                // remove enclosing quotes
+                {
+                    int length = text.length();
+                    text = text.substring(1, length - 1);
+                }
+
+                char c = text.charAt(0);
+                if (c != '\\') {
+                    automaton = Automaton
+                            .getSymbolLookAnyStarEnd(new Symbol(c));
+                    saveAutomaton(automaton);
+                }
+                else {
+                    c = text.charAt(1);
+                    automaton = Automaton
+                            .getSymbolLookAnyStarEnd(new Symbol(c));
+                    saveAutomaton(automaton);
+                }
+            }
+            return automaton;
         }
     }
 
@@ -303,6 +429,21 @@ public abstract class LexerExpression
 
             this.declarations.add(declaration);
         }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            Automaton automaton = getSavedAutomaton();
+
+            if (automaton == null) {
+                String text = getText().substring(1);
+
+                automaton = Automaton.getSymbolLookAnyStarEnd(new Symbol(text));
+                saveAutomaton(automaton);
+            }
+
+            return automaton;
+        }
     }
 
     public static class HexExpression
@@ -332,6 +473,22 @@ public abstract class LexerExpression
             }
 
             this.declarations.add(declaration);
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            Automaton automaton = getSavedAutomaton();
+
+            if (automaton == null) {
+                String text = getText().substring(2);
+
+                automaton = Automaton.getSymbolLookAnyStarEnd(new Symbol(text,
+                        16));
+                saveAutomaton(automaton);
+            }
+
+            return automaton;
         }
     }
 
@@ -363,6 +520,13 @@ public abstract class LexerExpression
 
             this.declarations.add(declaration);
         }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            throw new InternalException("not implemented");
+
+        }
     }
 
     public static class EndExpression
@@ -393,6 +557,18 @@ public abstract class LexerExpression
 
             this.declarations.add(declaration);
         }
-    }
 
+        @Override
+        public Automaton getAutomaton() {
+
+            Automaton automaton = getSavedAutomaton();
+
+            if (automaton == null) {
+                automaton = Automaton.getEpsilonLookEnd();
+                saveAutomaton(automaton);
+            }
+
+            return automaton;
+        }
+    }
 }

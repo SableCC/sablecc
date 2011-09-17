@@ -20,6 +20,8 @@ package org.sablecc.sablecc.core;
 import java.math.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.sablecc.automaton.*;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
@@ -28,7 +30,7 @@ import org.sablecc.sablecc.syntax3.node.*;
 public abstract class Expression
         implements IVisitableGrammarPart {
 
-    private final Grammar grammar;
+    final Grammar grammar;
 
     private Expression(
             Grammar grammar) {
@@ -305,6 +307,8 @@ public abstract class Expression
         return new ExpressionBuilder().getExpression(declaration);
     }
 
+    public abstract Automaton getAutomaton();
+
     public static class Or
             extends Expression {
 
@@ -351,6 +355,13 @@ public abstract class Expression
                 IGrammarVisitor visitor) {
 
             visitor.visitOrExpression(this);
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 
@@ -400,6 +411,13 @@ public abstract class Expression
                 IGrammarVisitor visitor) {
 
             visitor.visitConcatenationExpression(this);
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 
@@ -458,6 +476,13 @@ public abstract class Expression
                 IGrammarVisitor visitor) {
 
             visitor.visitLookExpression(this);
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 
@@ -591,6 +616,13 @@ public abstract class Expression
 
             visitor.visitShortestExpression(this);
         }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     public static class Longest
@@ -630,6 +662,13 @@ public abstract class Expression
                 IGrammarVisitor visitor) {
 
             visitor.visitLongestExpression(this);
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 
@@ -680,6 +719,13 @@ public abstract class Expression
 
             visitor.visitSubtractionExpression(this);
         }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     public static class Except
@@ -728,6 +774,13 @@ public abstract class Expression
                 IGrammarVisitor visitor) {
 
             visitor.visitExceptExpression(this);
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 
@@ -778,6 +831,13 @@ public abstract class Expression
 
             visitor.visitIntersectionExpression(this);
         }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     public static class Unary
@@ -826,6 +886,13 @@ public abstract class Expression
                 IGrammarVisitor visitor) {
 
             visitor.visitUnaryExpression(this);
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 
@@ -884,6 +951,13 @@ public abstract class Expression
                 IGrammarVisitor visitor) {
 
             visitor.visitSeparatedExpression(this);
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 
@@ -1162,6 +1236,8 @@ public abstract class Expression
 
         private final ANameUnit declaration;
 
+        private LexerExpression reference;
+
         private NameUnit(
                 ANameUnit declaration,
                 Grammar grammar) {
@@ -1195,6 +1271,41 @@ public abstract class Expression
         public ANameUnit getDeclaration() {
 
             return this.declaration;
+        }
+
+        public LexerExpression getReference() {
+
+            LexerExpression reference = this.reference;
+
+            if (reference == null) {
+                TIdentifier referenceIdentifier = getDeclaration()
+                        .getIdentifier();
+
+                INameDeclaration declaration = this.grammar
+                        .getGlobalReference(referenceIdentifier.getText());
+
+                if (declaration == null) {
+                    throw SemanticException
+                            .undefinedReference(referenceIdentifier);
+                }
+
+                if (!(declaration instanceof LexerExpression)) {
+                    String[] expectedNames = { "Expression" };
+                    throw SemanticException.badReference(referenceIdentifier,
+                            declaration.getNameType(), expectedNames);
+                }
+
+                reference = (LexerExpression) declaration;
+                this.reference = reference;
+            }
+
+            return reference;
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            return getReference().getAutomaton();
         }
 
     }
@@ -1240,6 +1351,23 @@ public abstract class Expression
             return this.declaration;
         }
 
+        @Override
+        public Automaton getAutomaton() {
+
+            String string = getString();
+            Automaton automaton = Automaton.getSymbolLookAnyStarEnd(new Symbol(
+                    string.charAt(0)));
+            string = string.substring(1);
+
+            while (string.length() > 0) {
+                automaton = automaton.concat(Automaton
+                        .getSymbolLookAnyStarEnd(new Symbol(string.charAt(0))));
+                string = string.substring(1);
+            }
+
+            return automaton;
+        }
+
     }
 
     public static abstract class CharacterUnit
@@ -1252,6 +1380,13 @@ public abstract class Expression
         }
 
         public abstract BigInteger getValue();
+
+        @Override
+        public Automaton getAutomaton() {
+
+            return Automaton.getSymbolLookAnyStarEnd(new Symbol(new Bound(
+                    getValue())));
+        }
     }
 
     public static class CharUnit
@@ -1419,6 +1554,12 @@ public abstract class Expression
 
             visitor.visitStartUnitExpression(this);
         }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            throw new InternalException("not implemented");
+        }
     }
 
     public static class EndUnit
@@ -1450,6 +1591,12 @@ public abstract class Expression
 
             visitor.visitEndUnitExpression(this);
         }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            return Automaton.getEpsilonLookEnd();
+        }
     }
 
     public static class Epsilon
@@ -1480,6 +1627,12 @@ public abstract class Expression
                 IGrammarVisitor visitor) {
 
             visitor.visitEpsilonExpression(this);
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            return Automaton.getEpsilonLookAnyStarEnd();
         }
     }
 
@@ -1530,6 +1683,15 @@ public abstract class Expression
 
             visitor.visitIntervalExpression(this);
         }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            return Automaton.getSymbolLookAnyStarEnd(new Symbol(
+                    new org.sablecc.sablecc.alphabet.Interval(new Bound(
+                            this.from.getValue()),
+                            new Bound(this.to.getValue()))));
+        }
     }
 
     public static class Any
@@ -1560,6 +1722,14 @@ public abstract class Expression
                 IGrammarVisitor visitor) {
 
             visitor.visitAnyExpression(this);
+        }
+
+        @Override
+        public Automaton getAutomaton() {
+
+            return Automaton.getSymbolLookAnyStarEnd(new Symbol(
+                    new org.sablecc.sablecc.alphabet.Interval(Bound.MIN,
+                            Bound.MAX)));
         }
     }
 }

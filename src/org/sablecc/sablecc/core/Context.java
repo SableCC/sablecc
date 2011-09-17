@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.core;
 
+import java.util.*;
+
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
@@ -30,7 +32,11 @@ public abstract class Context
 
     private ATokens tokensDeclaration;
 
-    private AIgnored ignoredeDeclaration;
+    private AIgnored ignoredDeclaration;
+
+    private Set<IToken> tokenSet = new HashSet<IToken>();
+
+    private Set<IToken> ignoredSet = new HashSet<IToken>();
 
     private Context(
             Grammar grammar) {
@@ -42,26 +48,124 @@ public abstract class Context
         this.grammar = grammar;
     }
 
-    public void addTokensDeclaration(
+    private void addTokensDeclaration(
             ATokens tokensDeclaration) {
 
         this.tokensDeclaration = tokensDeclaration;
     }
 
-    public void addIgnoredDeclaration(
+    private void addIgnoredDeclaration(
             AIgnored ignoredDeclaration) {
 
-        this.ignoredeDeclaration = ignoredDeclaration;
+        this.ignoredDeclaration = ignoredDeclaration;
     }
 
-    public ATokens getTokensDeclaration() {
+    private void resolveUnitsAndAddToSet(
+            List<PUnit> units,
+            Set<IToken> set) {
 
-        return this.tokensDeclaration;
+        for (PUnit pUnit : units) {
+
+            if (pUnit instanceof ANameUnit) {
+                ANameUnit unit = (ANameUnit) pUnit;
+
+                INameDeclaration nameDeclaration = this.grammar
+                        .getGlobalReference(unit.getIdentifier().getText());
+                if (nameDeclaration instanceof IToken) {
+                    set.add((IToken) nameDeclaration);
+                }
+                else {
+                    throw SemanticException.badReference(
+                            nameDeclaration.getNameIdentifier(),
+                            nameDeclaration.getNameType(),
+                            new String[] { "token" });
+                }
+            }
+            else if (pUnit instanceof AStringUnit) {
+                AStringUnit unit = (AStringUnit) pUnit;
+
+                set.add(this.grammar.getStringExpression(unit.getString()
+                        .getText()));
+            }
+            else if (pUnit instanceof ACharacterUnit) {
+                ACharacterUnit unit = (ACharacterUnit) pUnit;
+                PCharacter pCharacter = unit.getCharacter();
+
+                if (pCharacter instanceof ACharCharacter) {
+                    ACharCharacter character = (ACharCharacter) pCharacter;
+
+                    set.add(this.grammar.getCharExpression(character.getChar()
+                            .getText()));
+                }
+                else if (pCharacter instanceof ADecCharacter) {
+                    ADecCharacter character = (ADecCharacter) pCharacter;
+
+                    set.add(this.grammar.getDecExpression(character
+                            .getDecChar().getText()));
+                }
+                else if (pCharacter instanceof AHexCharacter) {
+                    AHexCharacter character = (AHexCharacter) pCharacter;
+
+                    set.add(this.grammar.getHexExpression(character
+                            .getHexChar().getText()));
+                }
+                else {
+                    throw new InternalException("unhandled character type");
+                }
+            }
+            else if (pUnit instanceof AStartUnit) {
+                set.add(this.grammar.getStartExpression());
+            }
+            else if (pUnit instanceof AEndUnit) {
+                set.add(this.grammar.getEndExpression());
+            }
+            else {
+                throw new InternalException("unhandled unit type");
+            }
+        }
     }
 
-    public AIgnored getIgnoredeDeclaration() {
+    public void resolveTokensAndIgnored() {
 
-        return this.ignoredeDeclaration;
+        if (this.tokensDeclaration != null) {
+            resolveUnitsAndAddToSet(this.tokensDeclaration.getUnits(),
+                    this.tokenSet);
+        }
+
+        if (this.ignoredDeclaration != null) {
+            resolveUnitsAndAddToSet(this.ignoredDeclaration.getUnits(),
+                    this.ignoredSet);
+        }
+
+        Set<IToken> intersection = new HashSet<IToken>();
+        intersection.addAll(this.tokenSet);
+        intersection.retainAll(this.ignoredSet);
+        if (intersection.size() > 0) {
+            throw new InternalException("TODO: raise semantic exception");
+        }
+    }
+
+    void computeAutomaton() {
+
+        if (GrammarCompiler.RESTRICTED_SYNTAX) {
+
+            for (IToken iToken : this.tokenSet) {
+                if (iToken instanceof LexerExpression) {
+                    LexerExpression token = (LexerExpression) iToken;
+                    token.getAutomaton();
+                }
+            }
+
+            for (IToken iToken : this.ignoredSet) {
+                if (iToken instanceof LexerExpression) {
+                    LexerExpression token = (LexerExpression) iToken;
+                    token.getAutomaton();
+                }
+            }
+        }
+        else {
+            throw new InternalException("not implemented");
+        }
     }
 
     private static void findTokensAndIgnored(
