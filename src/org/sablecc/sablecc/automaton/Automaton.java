@@ -966,12 +966,12 @@ public final class Automaton {
             throw new InternalException("automaton is not yet stable");
         }
 
-        Automaton lookAutomaton = getEpsilonLookAnyStarEnd().diff(
+        Automaton lookAutomaton = getEpsilonLookAnyStarEnd().except(
                 getEpsilonLookAnyStarEnd().look(automaton));
         return look(lookAutomaton);
     }
 
-    public Automaton diff(
+    public Automaton except(
             Automaton automaton) {
 
         if (!this.isStable) {

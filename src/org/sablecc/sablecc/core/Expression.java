@@ -360,8 +360,7 @@ public abstract class Expression
         @Override
         public Automaton getAutomaton() {
 
-            // TODO Auto-generated method stub
-            return null;
+            return this.left.getAutomaton().or(this.right.getAutomaton());
         }
     }
 
@@ -416,8 +415,7 @@ public abstract class Expression
         @Override
         public Automaton getAutomaton() {
 
-            // TODO Auto-generated method stub
-            return null;
+            return this.left.getAutomaton().concat(this.right.getAutomaton());
         }
     }
 
@@ -481,8 +479,24 @@ public abstract class Expression
         @Override
         public Automaton getAutomaton() {
 
-            // TODO Auto-generated method stub
-            return null;
+            Automaton automaton = this.expression.getAutomaton();
+
+            if (this.lookback != null) {
+                throw new InternalException("not implemented");
+            }
+
+            if (this.lookahead != null) {
+                if (this.lookahead.getNot()) {
+                    automaton = automaton.lookNot(this.lookahead
+                            .getExpression().getAutomaton());
+                }
+                else {
+                    automaton = automaton.look(this.lookahead.getExpression()
+                            .getAutomaton());
+                }
+            }
+
+            return automaton;
         }
     }
 
@@ -620,8 +634,7 @@ public abstract class Expression
         @Override
         public Automaton getAutomaton() {
 
-            // TODO Auto-generated method stub
-            return null;
+            return this.expression.getAutomaton().shortest();
         }
     }
 
@@ -667,8 +680,7 @@ public abstract class Expression
         @Override
         public Automaton getAutomaton() {
 
-            // TODO Auto-generated method stub
-            return null;
+            return this.expression.getAutomaton().longest();
         }
     }
 
@@ -723,8 +735,7 @@ public abstract class Expression
         @Override
         public Automaton getAutomaton() {
 
-            // TODO Auto-generated method stub
-            return null;
+            return this.left.getAutomaton().subtract(this.right.getAutomaton());
         }
     }
 
@@ -779,8 +790,7 @@ public abstract class Expression
         @Override
         public Automaton getAutomaton() {
 
-            // TODO Auto-generated method stub
-            return null;
+            return this.left.getAutomaton().except(this.right.getAutomaton());
         }
     }
 
@@ -835,8 +845,7 @@ public abstract class Expression
         @Override
         public Automaton getAutomaton() {
 
-            // TODO Auto-generated method stub
-            return null;
+            return this.left.getAutomaton().and(this.right.getAutomaton());
         }
     }
 
