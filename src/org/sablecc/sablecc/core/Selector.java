@@ -149,7 +149,7 @@ public abstract class Selector
 
         public class Selection
                 extends Selector.Selection
-                implements IToken, IReferencable {
+                implements INamedToken, IReferencable {
 
             private Selection(
                     TIdentifier declaration) {

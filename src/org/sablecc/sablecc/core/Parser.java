@@ -319,7 +319,7 @@ public class Parser
 
         public static class TokenProduction
                 extends ParserProduction
-                implements INamedToken, IToken {
+                implements INamedToken {
 
             private TokenProduction(
                     AParserProduction declaration,

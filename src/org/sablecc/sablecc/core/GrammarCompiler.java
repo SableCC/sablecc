@@ -84,6 +84,10 @@ public class GrammarCompiler {
 
         Grammar grammar = new Grammar(ast);
 
+        this.trace.verboseln(" Compiling lexer");
+
+        grammar.compileLexer();
+
         if (RESTRICTED_SYNTAX) {
             this.trace.informativeln();
             this.trace
