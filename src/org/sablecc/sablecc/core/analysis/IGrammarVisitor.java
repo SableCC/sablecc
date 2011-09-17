@@ -18,9 +18,13 @@
 package org.sablecc.sablecc.core.analysis;
 
 import org.sablecc.sablecc.core.*;
+import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.core.transformation.*;
 
 public interface IGrammarVisitor {
+
+    void visit(
+            IVisitableGrammarPart node);
 
     void visitGrammar(
             Grammar node);
