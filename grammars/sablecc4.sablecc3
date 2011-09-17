@@ -742,10 +742,10 @@ Abstract Syntax Tree
     [name]:identifier? tokens? ignored?;
 
   tokens =
-    token_keyword unit*;
+    token_keyword [units]:unit*;
 
   ignored =
-    ignored_keyword unit*;
+    ignored_keyword [units]:unit*;
 
   investigator =
     [name]:identifier [parameter]:identifier;
