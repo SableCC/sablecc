@@ -38,12 +38,12 @@ Lexer
   tab = #9;
   eol = #xD | #xA | #xD #xA;
 
-  Precedence
-    zero > identifier;
-    zero > decimal;
-
   Token
     zero, 'if', 'else', 'while', identifier, decimal, ip_address, hex;
 
   Ignored
     c_comment, c_line_comment, ' ', tab, eol;
+
+  Precedence
+    zero > identifier;
+    zero > decimal;
