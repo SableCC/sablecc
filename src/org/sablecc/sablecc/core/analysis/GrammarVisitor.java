@@ -18,10 +18,20 @@
 package org.sablecc.sablecc.core.analysis;
 
 import org.sablecc.sablecc.core.*;
+import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.core.transformation.*;
 
 public class GrammarVisitor
         implements IGrammarVisitor {
+
+    @Override
+    public void visit(
+            IVisitableGrammarPart node) {
+
+        if (node != null) {
+            node.apply(this);
+        }
+    }
 
     @Override
     public void visitGrammar(
