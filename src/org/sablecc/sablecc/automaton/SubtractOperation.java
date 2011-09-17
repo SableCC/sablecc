@@ -55,7 +55,7 @@ class SubtractOperation {
         }
 
         this.newAutomaton = leftAutomaton
-                .diff(getRejectAutomaton(rightAutomaton.minimal()));
+                .except(getRejectAutomaton(rightAutomaton.minimal()));
     }
 
     private Automaton getRejectAutomaton(
