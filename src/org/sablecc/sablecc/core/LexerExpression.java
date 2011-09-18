@@ -302,34 +302,21 @@ public abstract class LexerExpression
 
             if (automaton == null) {
 
+                automaton = Automaton.getEpsilonLookAnyStarEnd();
+
                 String text = getText();
 
                 // remove enclosing quotes
-                {
-                    int length = text.length();
-                    text = text.substring(1, length - 1);
-                }
+                text = text.substring(1, text.length() - 1);
+                // replace escape chars
+                text = text.replace("\\\\", "\\");
+                text = text.replace("\\'", "'");
 
                 do {
                     char c = text.charAt(0);
-                    Automaton appendedAutomaton;
-                    if (c != '\\') {
-                        appendedAutomaton = Automaton
-                                .getSymbolLookAnyStarEnd(new Symbol(c));
-                        text = text.substring(1);
-                    }
-                    else {
-                        c = text.charAt(1);
-                        appendedAutomaton = Automaton
-                                .getSymbolLookAnyStarEnd(new Symbol(c));
-                        text = text.substring(2);
-                    }
-                    if (automaton == null) {
-                        automaton = appendedAutomaton;
-                    }
-                    else {
-                        automaton = automaton.concat(appendedAutomaton);
-                    }
+                    text = text.substring(1);
+                    automaton = automaton.concat(Automaton
+                            .getSymbolLookAnyStarEnd(new Symbol(c)));
                 }
                 while (text.length() > 0);
 
@@ -379,23 +366,14 @@ public abstract class LexerExpression
                 String text = getText();
 
                 // remove enclosing quotes
-                {
-                    int length = text.length();
-                    text = text.substring(1, length - 1);
-                }
+                text = text.substring(1, text.length() - 1);
+                // replace escape chars
+                text = text.replace("\\\\", "\\");
+                text = text.replace("\\'", "'");
 
                 char c = text.charAt(0);
-                if (c != '\\') {
-                    automaton = Automaton
-                            .getSymbolLookAnyStarEnd(new Symbol(c));
-                    saveAutomaton(automaton);
-                }
-                else {
-                    c = text.charAt(1);
-                    automaton = Automaton
-                            .getSymbolLookAnyStarEnd(new Symbol(c));
-                    saveAutomaton(automaton);
-                }
+                automaton = Automaton.getSymbolLookAnyStarEnd(new Symbol(c));
+                saveAutomaton(automaton);
             }
             return automaton;
         }
