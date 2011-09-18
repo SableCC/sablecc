@@ -900,8 +900,7 @@ public abstract class Expression
         @Override
         public Automaton getAutomaton() {
 
-            // TODO Auto-generated method stub
-            return null;
+            return this.operator.getAutomaton(this.expression.getAutomaton());
         }
     }
 
@@ -965,8 +964,8 @@ public abstract class Expression
         @Override
         public Automaton getAutomaton() {
 
-            // TODO Auto-generated method stub
-            return null;
+            return this.operator.getAutomaton(this.base.getAutomaton(),
+                    this.separator.getAutomaton());
         }
     }
 
@@ -1005,6 +1004,9 @@ public abstract class Expression
                     ((AManyUnaryOperator) unaryOperator).getManyOperator(),
                     grammar);
         }
+
+        public abstract Automaton getAutomaton(
+                Automaton automaton);
     }
 
     public static class ZeroOrOneOperator
@@ -1028,6 +1030,13 @@ public abstract class Expression
         public AZeroOrOneUnaryOperator getDeclaration() {
 
             return this.declaration;
+        }
+
+        @Override
+        public Automaton getAutomaton(
+                Automaton automaton) {
+
+            return automaton.zeroOrOne();
         }
 
     }
@@ -1113,6 +1122,10 @@ public abstract class Expression
 
             return result.manyOperator;
         }
+
+        public abstract Automaton getAutomaton(
+                Automaton base,
+                Automaton separator);
     }
 
     public static class ZeroOrMoreOperator
@@ -1136,6 +1149,21 @@ public abstract class Expression
         public AZeroOrMoreManyOperator getDeclaration() {
 
             return this.declaration;
+        }
+
+        @Override
+        public Automaton getAutomaton(
+                Automaton automaton) {
+
+            return automaton.zeroOrMore();
+        }
+
+        @Override
+        public Automaton getAutomaton(
+                Automaton base,
+                Automaton separator) {
+
+            return base.zeroOrMoreWithSeparator(separator);
         }
 
     }
@@ -1163,6 +1191,21 @@ public abstract class Expression
             return this.declaration;
         }
 
+        @Override
+        public Automaton getAutomaton(
+                Automaton automaton) {
+
+            return automaton.oneOrMore();
+        }
+
+        @Override
+        public Automaton getAutomaton(
+                Automaton base,
+                Automaton separator) {
+
+            return base.oneOrMoreWithSeparator(separator);
+        }
+
     }
 
     public static class NumberExponentOperator
@@ -1186,6 +1229,23 @@ public abstract class Expression
         public ANumberManyOperator getDeclaration() {
 
             return this.declaration;
+        }
+
+        @Override
+        public Automaton getAutomaton(
+                Automaton automaton) {
+
+            return automaton.nTimes(new BigInteger(this.declaration.getNumber()
+                    .getText()));
+        }
+
+        @Override
+        public Automaton getAutomaton(
+                Automaton base,
+                Automaton separator) {
+
+            return base.nTimesWithSeparator(separator, new BigInteger(
+                    this.declaration.getNumber().getText()));
         }
 
     }
@@ -1213,6 +1273,25 @@ public abstract class Expression
             return this.declaration;
         }
 
+        @Override
+        public Automaton getAutomaton(
+                Automaton automaton) {
+
+            return automaton.nToM(new BigInteger(this.declaration.getFrom()
+                    .getText()), new BigInteger(this.declaration.getTo()
+                    .getText()));
+        }
+
+        @Override
+        public Automaton getAutomaton(
+                Automaton base,
+                Automaton separator) {
+
+            return base.nToMWithSeparator(separator, new BigInteger(
+                    this.declaration.getFrom().getText()), new BigInteger(
+                    this.declaration.getTo().getText()));
+        }
+
     }
 
     public static class AtLeastOperator
@@ -1236,6 +1315,23 @@ public abstract class Expression
         public AAtLeastManyOperator getDeclaration() {
 
             return this.declaration;
+        }
+
+        @Override
+        public Automaton getAutomaton(
+                Automaton automaton) {
+
+            return automaton.nOrMore(new BigInteger(this.declaration
+                    .getNumber().getText()));
+        }
+
+        @Override
+        public Automaton getAutomaton(
+                Automaton base,
+                Automaton separator) {
+
+            return base.nOrMoreWithSeparator(separator, new BigInteger(
+                    this.declaration.getNumber().getText()));
         }
 
     }
