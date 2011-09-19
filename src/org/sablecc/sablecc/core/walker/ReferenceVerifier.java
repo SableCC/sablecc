@@ -57,20 +57,7 @@ public abstract class ReferenceVerifier
         public void visitLexerPriority(
                 Lexer.LexerPriority node) {
 
-            PUnit highUnit = node.getDeclaration().getHigh();
-
-            if (highUnit instanceof ANameUnit) {
-                tokenExpected(this.grammar,
-                        ((ANameUnit) highUnit).getIdentifier());
-            }
-
-            PUnit lowUnit = node.getDeclaration().getLow();
-
-            if (highUnit instanceof ANameUnit) {
-                tokenExpected(this.grammar,
-                        ((ANameUnit) lowUnit).getIdentifier());
-            }
-
+            node.resolveReferences();
         }
 
         @Override
