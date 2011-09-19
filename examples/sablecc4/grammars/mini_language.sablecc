@@ -36,7 +36,7 @@ Grammar mini_language:
 
     ctrl_z = #26;
 
-    line_comment = Shortest '//' Any* (eol | End);
+    line_comment = Shortest '//' Any* (Longest eol | End);
 
     comment_text = Any+ - ('/*' | '*/');
 
