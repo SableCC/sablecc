@@ -349,7 +349,7 @@ Productions
 
   lexer_priority
     =
-      [high]:unit gt [low]:unit semicolon
+      [high]:identifier gt [low]:identifier semicolon
         {-> New lexer_priority(high, gt, low) }
     ;
 
@@ -736,7 +736,7 @@ Abstract Syntax Tree
     {end} end_keyword;
 
   lexer_priority =
-    [high]:unit gt [low]:unit;
+    [high]:identifier gt [low]:identifier;
 
   lexer_context =
     [name]:identifier? tokens? ignored?;
