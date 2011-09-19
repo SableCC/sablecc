@@ -34,9 +34,9 @@ public abstract class Context
 
     private AIgnored ignoredDeclaration;
 
-    private Set<IToken> tokenSet = new HashSet<IToken>();
+    private Set<IToken> tokenSet = new LinkedHashSet<IToken>();
 
-    private Set<IToken> ignoredSet = new HashSet<IToken>();
+    private Set<IToken> ignoredSet = new LinkedHashSet<IToken>();
 
     private Context(
             Grammar grammar) {
