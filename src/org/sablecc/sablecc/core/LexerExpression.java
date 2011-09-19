@@ -139,8 +139,6 @@ public abstract class LexerExpression
         }
 
         this.savedAutomaton = automaton.minimal();
-
-        System.out.println(automaton);
     }
 
     Automaton getSavedAutomaton() {
