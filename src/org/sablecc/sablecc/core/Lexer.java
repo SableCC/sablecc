@@ -132,70 +132,24 @@ public class Lexer
 
         public void resolveReferences() {
 
-            this.high = resolveUnit(this.declaration.getHigh());
-            this.low = resolveUnit(this.declaration.getLow());
+            this.high = resolveIdentifier(this.declaration.getHigh());
+            this.low = resolveIdentifier(this.declaration.getLow());
         }
 
-        private LexerExpression resolveUnit(
-                PUnit pUnit) {
+        private LexerExpression resolveIdentifier(
+                TIdentifier identifier) {
 
-            if (pUnit instanceof ANameUnit) {
-                ANameUnit unit = (ANameUnit) pUnit;
-
-                INameDeclaration nameDeclaration = this.grammar
-                        .getGlobalReference(unit.getIdentifier().getText());
-                if (nameDeclaration instanceof LexerExpression) {
-                    return (LexerExpression) nameDeclaration;
-                }
-                else {
-                    throw SemanticException.badReference(
-                            nameDeclaration.getNameIdentifier(),
-                            nameDeclaration.getNameType(),
-                            new String[] { "token" });
-                }
-            }
-            else if (pUnit instanceof AStringUnit) {
-                AStringUnit unit = (AStringUnit) pUnit;
-
-                return this.grammar.getStringExpression(unit.getString()
-                        .getText());
-            }
-            else if (pUnit instanceof ACharacterUnit) {
-                ACharacterUnit unit = (ACharacterUnit) pUnit;
-                PCharacter pCharacter = unit.getCharacter();
-
-                if (pCharacter instanceof ACharCharacter) {
-                    ACharCharacter character = (ACharCharacter) pCharacter;
-
-                    return this.grammar.getCharExpression(character.getChar()
-                            .getText());
-                }
-                else if (pCharacter instanceof ADecCharacter) {
-                    ADecCharacter character = (ADecCharacter) pCharacter;
-
-                    return this.grammar.getDecExpression(character.getDecChar()
-                            .getText());
-                }
-                else if (pCharacter instanceof AHexCharacter) {
-                    AHexCharacter character = (AHexCharacter) pCharacter;
-
-                    return this.grammar.getHexExpression(character.getHexChar()
-                            .getText());
-                }
-                else {
-                    throw new InternalException("unhandled character type");
-                }
-            }
-            else if (pUnit instanceof AStartUnit) {
-                return this.grammar.getStartExpression();
-            }
-            else if (pUnit instanceof AEndUnit) {
-                return this.grammar.getEndExpression();
+            INameDeclaration nameDeclaration = this.grammar
+                    .getGlobalReference(identifier.getText());
+            if (nameDeclaration instanceof LexerExpression) {
+                return (LexerExpression) nameDeclaration;
             }
             else {
-                throw new InternalException("unhandled unit type");
+                throw SemanticException.badReference(
+                        nameDeclaration.getNameIdentifier(),
+                        nameDeclaration.getNameType(),
+                        new String[] { "named lexer expression" });
             }
         }
-
     }
 }
