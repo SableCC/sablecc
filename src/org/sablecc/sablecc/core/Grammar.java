@@ -46,6 +46,8 @@ public class Grammar
 
     private final Map<String, LexerExpression.HexExpression> stringToHexExpression = new HashMap<String, LexerExpression.HexExpression>();
 
+    private final Map<String, LexerExpression> stringToLexerExpression = new HashMap<String, LexerExpression>();
+
     private Context.AnonymousContext globalAnonymousContext;
 
     private LexerExpression.StartExpression globalStartExpression;
@@ -205,6 +207,8 @@ public class Grammar
 
                 this.globalNameSpace.add(namedExpression);
                 Grammar.this.lexer.addNamedExpression(namedExpression);
+                Grammar.this.stringToLexerExpression.put(
+                        namedExpression.getExpressionName(), namedExpression);
             }
 
             @Override
@@ -483,6 +487,8 @@ public class Grammar
         }
 
         this.stringToStringExpression.put(text, stringExpression);
+        this.stringToLexerExpression.put(stringExpression.getExpressionName(),
+                stringExpression);
     }
 
     void addCharExpression(
@@ -495,6 +501,8 @@ public class Grammar
         }
 
         this.stringToCharExpression.put(text, charExpression);
+        this.stringToLexerExpression.put(charExpression.getExpressionName(),
+                charExpression);
     }
 
     void addDecExpression(
@@ -507,6 +515,8 @@ public class Grammar
         }
 
         this.stringToDecExpression.put(text, decExpression);
+        this.stringToLexerExpression.put(decExpression.getExpressionName(),
+                decExpression);
     }
 
     void addHexExpression(
@@ -519,6 +529,8 @@ public class Grammar
         }
 
         this.stringToHexExpression.put(text, hexExpression);
+        this.stringToLexerExpression.put(hexExpression.getExpressionName(),
+                hexExpression);
     }
 
     void addStartExpression(
@@ -529,6 +541,8 @@ public class Grammar
         }
 
         this.globalStartExpression = startExpression;
+        this.stringToLexerExpression.put(startExpression.getExpressionName(),
+                startExpression);
     }
 
     void addEndExpression(
@@ -539,6 +553,8 @@ public class Grammar
         }
 
         this.globalEndExpression = endExpression;
+        this.stringToLexerExpression.put(endExpression.getExpressionName(),
+                endExpression);
     }
 
     public LexerExpression.StringExpression getStringExpression(
@@ -573,6 +589,12 @@ public class Grammar
     public LexerExpression.EndExpression getEndExpression() {
 
         return this.globalEndExpression;
+    }
+
+    public LexerExpression getLexerExpression(
+            String expressionName) {
+
+        return this.stringToLexerExpression.get(expressionName);
     }
 
     public void compileLexer() {

@@ -20,6 +20,7 @@ package org.sablecc.sablecc.core;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.automaton.*;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
@@ -37,6 +38,8 @@ public abstract class Context
     private Set<IToken> tokenSet = new LinkedHashSet<IToken>();
 
     private Set<IToken> ignoredSet = new LinkedHashSet<IToken>();
+
+    private Automaton automaton;
 
     private Context(
             Grammar grammar) {
@@ -147,21 +150,27 @@ public abstract class Context
 
     void computeAutomaton() {
 
+        Automaton automaton = Automaton.getEmptyAutomaton();
+
         if (GrammarCompiler.RESTRICTED_SYNTAX) {
 
             for (IToken iToken : this.tokenSet) {
                 if (iToken instanceof LexerExpression) {
                     LexerExpression token = (LexerExpression) iToken;
-                    token.getAutomaton();
+                    automaton = automaton.or(token.getAutomaton().accept(
+                            new Acceptation(token.getExpressionName())));
                 }
             }
 
             for (IToken iToken : this.ignoredSet) {
                 if (iToken instanceof LexerExpression) {
                     LexerExpression token = (LexerExpression) iToken;
-                    token.getAutomaton();
+                    automaton = automaton.or(token.getAutomaton().accept(
+                            new Acceptation(token.getExpressionName())));
                 }
             }
+
+            this.automaton = automaton.withMarkers().minimal();
         }
         else {
             throw new InternalException("not implemented");
