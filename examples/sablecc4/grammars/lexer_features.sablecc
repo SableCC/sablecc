@@ -33,7 +33,7 @@ Lexer
   ip_address = (decimal Separator '.')^4;
 
   c_comment = Shortest '/*' Any* '*/';
-  c_line_comment = Shortest '//' Any* (eol | End);
+  c_line_comment = Shortest '//' Any* (Longest eol | End);
 
   tab = #9;
   eol = #xD | #xA | #xD #xA;
