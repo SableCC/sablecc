@@ -127,6 +127,8 @@ public abstract class LexerExpression
 
     public abstract Automaton getAutomaton();
 
+    public abstract String getExpressionName();
+
     void saveAutomaton(
             Automaton automaton) {
 
@@ -237,6 +239,12 @@ public abstract class LexerExpression
             return automaton;
         }
 
+        @Override
+        public String getExpressionName() {
+
+            return getName();
+        }
+
     }
 
     public static abstract class InlineExpression
@@ -262,6 +270,11 @@ public abstract class LexerExpression
             return this.text;
         }
 
+        @Override
+        public String getExpressionName() {
+
+            return this.text;
+        }
     }
 
     public static class StringExpression
@@ -323,7 +336,6 @@ public abstract class LexerExpression
 
             return automaton;
         }
-
     }
 
     public static class CharExpression
