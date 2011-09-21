@@ -101,6 +101,16 @@ public class Lexer
 
         private LexerExpression low;
 
+        public LexerExpression getHigh() {
+
+            return high;
+        }
+
+        public LexerExpression getLow() {
+
+            return low;
+        }
+
         public LexerPriority(
                 ALexerPriority declaration,
                 Grammar grammar) {
