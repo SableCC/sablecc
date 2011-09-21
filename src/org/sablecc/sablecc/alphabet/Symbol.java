@@ -17,6 +17,9 @@
 
 package org.sablecc.sablecc.alphabet;
 
+import static org.sablecc.util.UsefulStaticImports.*;
+
+import java.math.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
@@ -280,6 +283,39 @@ public class Symbol
     public String getSimpleName() {
 
         return this.intervals.first().getSimpleName();
+    }
+
+    /**
+     * Return an example of a character symbolized. Prefer printable character.
+     * If a printable character is available, then the returned string contains
+     * only one printable character. If a printable character is non available,
+     * then the returned string contains the two character "\x" followed by the
+     * hexadecimal value of a symbolized character. Note. You can check the
+     * size() of the returned string to know.
+     * */
+    public String getExample() {
+
+        for (Interval interval : this.intervals) {
+            Bound b = interval.getLowerBound();
+            if (b == Bound.MIN) {
+                continue;
+            }
+            BigInteger i = b.getValue();
+            if (i.compareTo(BI_32) > 0 || i.compareTo(BI_126) < 0) {
+                return String.valueOf((char) i.intValue());
+            }
+        }
+        for (Interval interval : this.intervals) {
+            BigInteger i = interval.getLowerBound().getValue();
+            if (i.compareTo(BI_32) >= 0 || i.compareTo(BI_126) < 0) {
+                return String.valueOf((char) i.intValue());
+            }
+        }
+        Interval interval = this.intervals.first();
+        if (interval.getLowerBound() == Bound.MIN) {
+            return "\\xNaN"; // FIXME Eh! What to do?
+        }
+        return "\\x" + interval.getLowerBound().getValue().toString(16);
     }
 
     /**
