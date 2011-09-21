@@ -1215,6 +1215,49 @@ public final class Automaton {
         return automaton;
     }
 
+    /** Find an example of a shortest word for each state of the automaton. */
+    public Map<State, String> collectShortestWords() {
+
+        WorkSet<State> todo = new WorkSet<State>();
+        Map<State, State> prev = new HashMap<State, State>();
+        Map<State, String> result = new HashMap<State, String>();
+        Set<State> inlook = new HashSet<State>();
+        State start = getStartState();
+        prev.put(start, null);
+        result.put(start, "");
+        todo.add(start);
+        while (todo.hasNext()) {
+            State s = todo.next();
+            SortedMap<RichSymbol, SortedSet<State>> map = s.getTransitions();
+            for (RichSymbol rsym : map.keySet()) {
+                if (rsym == null) {
+                    continue;
+                }
+                for (State s2 : map.get(rsym)) {
+                    if (result.get(s2) != null) {
+                        continue;
+                    }
+                    Symbol sym = rsym.getSymbol();
+                    prev.put(s2, s);
+                    String w = result.get(s);
+                    if (sym != null) {
+                        if (inlook.contains(s)) {
+                            inlook.add(s2);
+                        }
+                        else if (rsym.isLookahead()) {
+                            w += "' Lookahead '";
+                            inlook.add(s2);
+                        }
+                        w += sym.getExample();
+                    }
+                    result.put(s2, w);
+                    todo.add(s2);
+                }
+            }
+        }
+        return result;
+    }
+
     /**
      * Returns a comparator for rich symbols which can handle epsilon (null)
      * comparisons.
