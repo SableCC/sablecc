@@ -1215,6 +1215,26 @@ public final class Automaton {
         return automaton;
     }
 
+    /** Collect all states associated with each acceptation. */
+    public Map<Acceptation, Set<State>> collectAcceptationStates() {
+
+        Map<Acceptation, Set<State>> result = new HashMap<Acceptation, Set<State>>();
+        for (State state : getStates()) {
+            for (Acceptation acceptation : state.getAcceptations()) {
+                if (acceptation == Acceptation.ACCEPT) {
+                    continue;
+                }
+                Set<State> set = result.get(acceptation);
+                if (set == null) {
+                    set = new TreeSet<State>();
+                    result.put(acceptation, set);
+                }
+                set.add(state);
+            }
+        }
+        return result;
+    }
+
     /** Find an example of a shortest word for each state of the automaton. */
     public Map<State, String> collectShortestWords() {
 
