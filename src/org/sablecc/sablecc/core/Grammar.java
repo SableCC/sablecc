@@ -22,7 +22,9 @@ import static org.sablecc.util.CamelCase.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.core.Context.NamedContext;
+import org.sablecc.sablecc.automaton.*;
+import org.sablecc.sablecc.core.Context.*;
+import org.sablecc.sablecc.core.Lexer.*;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.core.transformation.*;
@@ -614,12 +616,192 @@ public class Grammar
     public void compileLexer() {
 
         if (this.globalAnonymousContext != null) {
-            this.globalAnonymousContext.computeAutomaton();
+            Automaton automaton = this.globalAnonymousContext
+                    .computeAutomaton();
+            automaton = checkAndApplyLexerPrecedence(automaton);
+        }
+        else {
+            throw new InternalException("not implemented");
         }
 
         for (NamedContext context : this.namedContexts) {
             context.computeAutomaton();
         }
+    }
+
+    /**
+     * Add a priority between high and low. Helper function for
+     * checkAndApplyLexerPrecedence.
+     */
+    static private void addPriority(
+            Map<Acceptation, Set<Acceptation>> priorities,
+            Acceptation high,
+            Acceptation low) {
+
+        Set<Acceptation> set;
+        set = priorities.get(high);
+        if (set == null) {
+            set = new HashSet<Acceptation>();
+            priorities.put(high, set);
+        }
+        set.add(low);
+    }
+
+    /**
+     * Is there a priority between high and low? Helper function for
+     * checkAndApplyLexerPrecedence.
+     */
+    static private boolean hasPriority(
+            Map<Acceptation, Set<Acceptation>> priorities,
+            Acceptation high,
+            Acceptation low) {
+
+        Set<Acceptation> set;
+        set = priorities.get(high);
+        return set != null && set.contains(low);
+    }
+
+    /**
+     * Check and apply implicit and explicit lexical precedence rules. Display
+     * errors and infos for the human user during the process.
+     *
+     * @param automaton
+     *            is the automaton to check. In order to have the explicit
+     *            priorities applied, it is required that the automaton is
+     *            tagged with the acceptation of the LexerExpression.
+     * @return a new automaton where only the right acceptation tags remains.
+     *         FIXME: improve error messages (remove System.out.println).
+     */
+    public Automaton checkAndApplyLexerPrecedence(
+            Automaton automaton) {
+
+        automaton = automaton.minimal();
+        Map<State, String> words = automaton.collectShortestWords();
+        Map<Acceptation, Set<State>> accepts = automaton
+                .collectAcceptationStates();
+
+        // Associate each acceptation with the ones it share at least a common
+        // state.
+        Map<Acceptation, Set<Acceptation>> conflicts = new HashMap<Acceptation, Set<Acceptation>>();
+
+        // Associate each acceptation with the ones it supersedes.
+        Map<Acceptation, Set<Acceptation>> priorities = new HashMap<Acceptation, Set<Acceptation>>();
+
+        // Fill the priorities structure with the implicit inclusion rule
+        for (Acceptation acc1 : automaton.getAcceptations()) {
+            if (acc1 == Acceptation.ACCEPT) {
+                continue;
+            }
+
+            // FIXME: empty LexerExpressions are not detected here since
+            // their acceptation tag is not in the automaton.
+
+            // Collect all the conflicts
+            Set<State> set1 = accepts.get(acc1);
+            Set<Acceptation> confs = new TreeSet<Acceptation>();
+            for (State s : set1) {
+                confs.addAll(s.getAcceptations());
+            }
+            conflicts.put(acc1, confs);
+
+            // Check for implicit priority for each conflict
+            for (Acceptation acc2 : confs) {
+                if (acc2 == Acceptation.ACCEPT) {
+                    continue;
+                }
+                if (acc1 == acc2) {
+                    continue;
+                }
+                Set<State> set2 = accepts.get(acc2);
+                if (set2.equals(set1)) {
+                    if (!conflicts.containsKey(acc2)) {
+                        System.out.println("Error: " + acc1.getName() + " and "
+                                + acc2.getName() + " are equivalent.");
+                    }
+                }
+                else if (set2.containsAll(set1)) {
+                    addPriority(priorities, acc1, acc2);
+                    State example = null;
+                    for (State s : set2) {
+                        if (!set1.contains(s)) {
+                            example = s;
+                            break;
+                        }
+                    }
+                    // Note: Since set1 is strictly included in set2, example
+                    // cannot be null
+                    System.out.println("Info: " + acc1.getName()
+                            + " is included in " + acc2.getName()
+                            + ". Example of divergence: '" + words.get(example)
+                            + "'.");
+                }
+            }
+        }
+
+        // Enhance the priorities structure with explicit priorities
+        for (LexerPriority p : getLexer().getPriorities()) {
+            LexerExpression high = p.getHigh();
+            LexerExpression low = p.getLow();
+            Acceptation highA = high.getAcceptation();
+            Acceptation lowA = low.getAcceptation();
+
+            /* FIXME: Correctly detect redundancy of explicit priorities and
+             *  contradiction of explicit priorities.
+             */
+            if (hasPriority(priorities, highA, lowA)) {
+                System.out.println("Error line "
+                        + p.getDeclaration().getGt().getLine()
+                        + ": useless priority since " + low.getExpressionName()
+                        + " is included in " + high.getExpressionName());
+            }
+            else if (hasPriority(priorities, lowA, highA)) {
+                System.out.println("Error line "
+                        + p.getDeclaration().getGt().getLine()
+                        + ": inconsistant priority since "
+                        + high.getExpressionName() + " is included in "
+                        + low.getExpressionName());
+            }
+            else if (conflicts.get(highA).contains(lowA)) {
+                addPriority(priorities, highA, lowA);
+            }
+            else {
+                System.out.println("Error line "
+                        + p.getDeclaration().getGt().getLine()
+                        + ": illegal priority since "
+                        + high.getExpressionName() + " and "
+                        + low.getExpressionName() + " are disjoint.");
+            }
+        }
+
+        // Collect new acceptation states and see if a conflict still exists
+        Map<State, Acceptation> newAccepts = new HashMap<State, Acceptation>();
+        for (State s : automaton.getStates()) {
+            if (s.getAcceptations().isEmpty()) {
+                continue;
+            }
+            Acceptation candidate = s.getAcceptations().first();
+            for (Acceptation challenger : s.getAcceptations()) {
+                if (candidate == challenger) {
+                    continue;
+                }
+                if (hasPriority(priorities, candidate, challenger)) {
+                    // nothing. keep the candidate
+                }
+                else if (hasPriority(priorities, challenger, candidate)) {
+                    candidate = challenger;
+                }
+                else {
+                    System.out.println("Error: conflict between "
+                            + candidate.getName() + " and "
+                            + challenger.getName() + " on the string '"
+                            + words.get(s) + "'. Maybe add a precedence rule.");
+                }
+            }
+            newAccepts.put(s, candidate);
+        }
+
+        // Ask for a new automaton with the correct acceptation states.
+        return automaton.resetAcceptations(newAccepts);
     }
 
     private static class NameSpace {
