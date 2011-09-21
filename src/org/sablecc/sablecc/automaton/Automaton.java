@@ -1307,8 +1307,15 @@ public final class Automaton {
         }
     }
 
-/*    public Automaton withPriorities(
-            Context context) {
+    /**
+     * Return a new automaton with a new set of acceptation states. Existing
+     * acceptation states are not preserved. Note that: 1) the states of the
+     * result are new objects (the states of newAccepts refers to the one in the
+     * current automaton). 2) the acceptation objects of newAccepts are reused
+     * in the new automaton.
+     * */
+    public Automaton resetAcceptations(
+            Map<State, Acceptation> newAccepts) {
 
         if (!this.isStable) {
             throw new InternalException("this automaton is not yet stable");
@@ -1323,150 +1330,59 @@ public final class Automaton {
             throw new InternalException("invalid operation");
         }
 
-        if (context == null) {
-            throw new InternalException("context may not be null");
+        if (newAccepts == null) {
+            throw new InternalException("newAccepts may not be null");
         }
 
-        Automaton oldAutomaton = minimal();
+        Automaton oldAutomaton = this;
         Automaton newAutomaton = new Automaton(oldAutomaton.getAlphabet());
 
-        Map<Acceptation, MatchedToken> acceptationToMatchedTokenMap = new LinkedHashMap<Acceptation, MatchedToken>();
-
-        for (Acceptation acceptation : oldAutomaton.acceptations) {
-            newAutomaton.addAcceptation(acceptation);
-
-            MatchedToken matchedToken = context.getMatchedToken(acceptation
-                    .getName());
-            acceptationToMatchedTokenMap.put(acceptation, matchedToken);
-        }
-
         SortedMap<State, State> oldStatetoNewStateMap = new TreeMap<State, State>();
-        Map<Acceptation, Set<State>> acceptationToStateSetMap = new LinkedHashMap<Acceptation, Set<State>>();
 
+        // Duplicate all states
         for (State oldState : oldAutomaton.getStates()) {
-            State newState = oldState == oldAutomaton.getStartState() ? newAutomaton
-                    .getStartState()
-                    : new State(newAutomaton);
-
+            State newState;
+            if (oldState == oldAutomaton.getStartState()) {
+                newState = newAutomaton.getStartState();
+            }
+            else {
+                newState = new State(newAutomaton);
+            }
             oldStatetoNewStateMap.put(oldState, newState);
 
-            for (Acceptation acceptation : oldState.getAcceptations()) {
-                Set<State> stateSet = acceptationToStateSetMap.get(acceptation);
-
-                if (stateSet == null) {
-                    stateSet = new LinkedHashSet<State>();
-                    acceptationToStateSetMap.put(acceptation, stateSet);
-                }
-
-                stateSet.add(oldState);
-            }
         }
 
+        // Duplicate all transitions
         for (State oldSourceState : oldAutomaton.getStates()) {
             State newSourceState = oldStatetoNewStateMap.get(oldSourceState);
-            for (Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
-                    .getTransitions().entrySet()) {
-                RichSymbol richSymbol = entry.getKey();
-                for (State oldTargetState : entry.getValue()) {
+            SortedMap<RichSymbol, SortedSet<State>> map = oldSourceState
+                    .getTransitions();
+            for (RichSymbol rsym : map.keySet()) {
+                for (State oldTargetState : map.get(rsym)) {
                     State newTargetState = oldStatetoNewStateMap
                             .get(oldTargetState);
-                    newSourceState.addTransition(richSymbol, newTargetState);
+                    newSourceState.addTransition(rsym, newTargetState);
                 }
             }
         }
 
-        // set acceptations
-
+        // Set new acceptations
         for (State oldState : oldAutomaton.getStates()) {
+            Acceptation acceptation = newAccepts.get(oldState);
+            if (acceptation == null) {
+                continue;
+            }
             State newState = oldStatetoNewStateMap.get(oldState);
-
-            // no acceptation
-            if (oldState.getAcceptations().size() == 0) {
-                continue;
+            // NOTE: why is Node.addAcceptation so picky? and why
+            // adding an acceptation in an automaton so dirty?
+            if (!newAutomaton.acceptations.contains(acceptation)) {
+                newAutomaton.addAcceptation(acceptation);
             }
-
-            // one acceptation
-            if (oldState.getAcceptations().size() == 1) {
-                newState.addAcceptation(oldState.getAcceptations().first());
-                continue;
-            }
-
-            // more acceptations
-
-            PairExtractor<Acceptation> pairExtractor = new PairExtractor<Acceptation>(
-                    oldState.getAcceptations());
-
-            // check for a total order between matched tokens
-            for (Pair<Acceptation, Acceptation> pair : pairExtractor.getPairs()) {
-
-                Acceptation leftAcceptation = pair.getLeft();
-                Acceptation rightAcceptation = pair.getRight();
-                MatchedToken leftMatchedToken = acceptationToMatchedTokenMap
-                        .get(leftAcceptation);
-                MatchedToken rightMatchedToken = acceptationToMatchedTokenMap
-                        .get(rightAcceptation);
-
-                if (leftMatchedToken.hasPriorityOver(rightMatchedToken)
-                        || rightMatchedToken.hasPriorityOver(leftMatchedToken)) {
-                    continue;
-                }
-
-                Set<State> leftStateSet = acceptationToStateSetMap
-                        .get(leftAcceptation);
-                Set<State> rightStateSet = acceptationToStateSetMap
-                        .get(rightAcceptation);
-
-                if (leftStateSet.size() == rightStateSet.size()) {
-                    throw CompilerException.lexerConflict(leftMatchedToken,
-                            rightMatchedToken);
-                }
-
-                if (leftStateSet.size() < rightStateSet.size()) {
-                    if (rightStateSet.containsAll(leftStateSet)) {
-                        leftMatchedToken
-                                .addNaturalPriorityOver(rightMatchedToken);
-                    }
-                    else {
-                        throw CompilerException.lexerConflict(leftMatchedToken,
-                                rightMatchedToken);
-                    }
-                }
-                else {
-                    if (leftStateSet.containsAll(rightStateSet)) {
-                        rightMatchedToken
-                                .addNaturalPriorityOver(leftMatchedToken);
-                    }
-                    else {
-                        throw CompilerException.lexerConflict(leftMatchedToken,
-                                rightMatchedToken);
-                    }
-                }
-            }
-
-            // select highest priority acceptation
-            Acceptation winningAcceptation = null;
-            MatchedToken winningMatchedToken = null;
-            for (Acceptation acceptation : oldState.getAcceptations()) {
-                MatchedToken matchedToken = acceptationToMatchedTokenMap
-                        .get(acceptation);
-
-                if (winningAcceptation == null) {
-                    winningAcceptation = acceptation;
-                    winningMatchedToken = matchedToken;
-                }
-                else if (matchedToken.hasPriorityOver(winningMatchedToken)) {
-                    winningAcceptation = acceptation;
-                    winningMatchedToken = matchedToken;
-                }
-            }
-
-            newState.addAcceptation(winningAcceptation);
+            newState.addAcceptation(acceptation);
         }
 
         newAutomaton.stabilize();
 
         return newAutomaton;
-
     }
-*/
 }
