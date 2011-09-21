@@ -204,7 +204,7 @@ public class CodeGenerator {
             }
         }
 
-        Automaton lexer = context.getAutomaton();
+        Automaton lexer = this.grammar.getLexer().getAutomaton();
 
         for (Symbol symbol : lexer.getAlphabet().getSymbols()) {
             mSymbol.newSymbolDeclaration(symbol.getSimpleName());

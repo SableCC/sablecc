@@ -20,6 +20,7 @@ package org.sablecc.sablecc.core;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.automaton.*;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.node.*;
@@ -34,6 +35,19 @@ public class Lexer
     private final List<Selector.LexerSelector> selectors = new LinkedList<Selector.LexerSelector>();
 
     private final List<Lexer.LexerPriority> priorities = new LinkedList<Lexer.LexerPriority>();
+
+    private Automaton automaton;
+
+    public Automaton getAutomaton() {
+
+        return this.automaton;
+    }
+
+    public void setAutomaton(
+            Automaton automaton) {
+
+        this.automaton = automaton;
+    }
 
     public Lexer() {
 

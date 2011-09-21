@@ -39,8 +39,6 @@ public abstract class Context
 
     private Set<IToken> ignoredSet = new LinkedHashSet<IToken>();
 
-    private Automaton automaton;
-
     private Context(
             Grammar grammar) {
 
@@ -169,8 +167,7 @@ public abstract class Context
                 }
             }
 
-            this.automaton = automaton; // .withMarkers().minimal();
-            return this.automaton;
+            return automaton;
         }
         else {
             throw new InternalException("not implemented");
@@ -210,11 +207,6 @@ public abstract class Context
             }
         }
         return set;
-    }
-
-    public Automaton getAutomaton() {
-
-        return this.automaton;
     }
 
     public static class NamedContext
