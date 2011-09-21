@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.core;
 
+import static org.sablecc.util.CamelCase.*;
+
 import java.util.*;
 
 import org.sablecc.exception.*;
@@ -29,7 +31,7 @@ import org.sablecc.sablecc.syntax3.node.*;
 public abstract class LexerExpression
         implements IToken {
 
-    private final Grammar grammar;
+    final Grammar grammar;
 
     private Automaton savedAutomaton;
 
@@ -204,6 +206,16 @@ public abstract class LexerExpression
             return getNameIdentifier().getText();
         }
 
+        public String getName_camelCase() {
+
+            return to_camelCase(getName());
+        }
+
+        public String getName_CamelCase() {
+
+            return to_CamelCase(getName());
+        }
+
         @Override
         public String getNameType() {
 
@@ -252,6 +264,8 @@ public abstract class LexerExpression
 
         private final String text;
 
+        private String internalName;
+
         private InlineExpression(
                 String text,
                 Grammar grammar) {
@@ -274,6 +288,26 @@ public abstract class LexerExpression
         public String getExpressionName() {
 
             return this.text;
+        }
+
+        public String getInternalName() {
+
+            String internalName = this.internalName;
+            if (internalName == null) {
+                internalName = this.grammar.getNextAnonymousTokenName();
+                this.internalName = internalName;
+            }
+            return internalName;
+        }
+
+        public String getInternalName_camelCase() {
+
+            return to_camelCase(getInternalName());
+        }
+
+        public String getInternalName_CamelCase() {
+
+            return to_CamelCase(getInternalName());
         }
     }
 

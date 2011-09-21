@@ -20,6 +20,7 @@ package org.sablecc.sablecc.launcher;
 import java.io.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.codegeneration.*;
 import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
 import org.sablecc.sablecc.syntax3.parser.*;
@@ -113,7 +114,14 @@ public class CompilationTask {
 
             GrammarCompiler grammarCompiler = new GrammarCompiler(
                     sb.toString(), this.strictness, this.trace);
-            grammarCompiler.compileGrammar();
+            Grammar grammar = grammarCompiler.compileGrammar();
+
+            if (this.generateCode) {
+                CodeGenerator codeGenerator = new CodeGenerator(grammar,
+                        this.destinationDirectory, this.destinationPackage,
+                        this.trace);
+                codeGenerator.run();
+            }
         }
         catch (IOException e) {
             throw LauncherException.inputError(this.grammarFile.toString(), e);

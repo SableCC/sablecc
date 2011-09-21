@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.core;
 
+import static org.sablecc.util.CamelCase.*;
+
 import java.util.*;
 
 import org.sablecc.exception.*;
@@ -64,6 +66,8 @@ public class Grammar
 
     private final Tree tree = new Tree();
 
+    private int nextAnonymousTokenId;
+
     Grammar(
             Start ast) {
 
@@ -107,6 +111,16 @@ public class Grammar
     public String getName() {
 
         return getNameIdentifier().getText();
+    }
+
+    public String getName_camelCase() {
+
+        return to_camelCase(getName());
+    }
+
+    public String getName_CamelCase() {
+
+        return to_CamelCase(getName());
     }
 
     @Override
@@ -853,5 +867,10 @@ public class Grammar
             boolean result = this.nameMap.containsKey(name);
             return this.nameMap.containsKey(name);
         }
+    }
+
+    public String getNextAnonymousTokenName() {
+
+        return "t$" + this.nextAnonymousTokenId++;
     }
 }

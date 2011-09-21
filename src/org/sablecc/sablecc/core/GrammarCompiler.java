@@ -59,7 +59,7 @@ public class GrammarCompiler {
         this.trace = trace;
     }
 
-    public void compileGrammar()
+    public Grammar compileGrammar()
             throws org.sablecc.sablecc.syntax3.parser.ParserException,
             org.sablecc.sablecc.syntax3.lexer.LexerException, IOException {
 
@@ -88,14 +88,7 @@ public class GrammarCompiler {
 
         grammar.compileLexer();
 
-        if (RESTRICTED_SYNTAX) {
-            this.trace.informativeln();
-            this.trace
-                    .informativeln("The syntax of this grammar specification is clean.");
-            return;
-        }
-
-        throw new InternalException("not implemented");
+        return grammar;
     }
 
     /** restrict accepted syntax to desired subset */

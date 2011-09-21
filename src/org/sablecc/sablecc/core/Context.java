@@ -199,6 +199,24 @@ public abstract class Context
         });
     }
 
+    public Set<LexerExpression> getLexerExpressionTokens() {
+
+        Set<LexerExpression> set = new LinkedHashSet<LexerExpression>();
+
+        for (IToken iToken : this.tokenSet) {
+            if (iToken instanceof LexerExpression) {
+                LexerExpression token = (LexerExpression) iToken;
+                set.add(token);
+            }
+        }
+        return set;
+    }
+
+    public Automaton getAutomaton() {
+
+        return this.automaton;
+    }
+
     public static class NamedContext
             extends Context
             implements INameDeclaration {
@@ -363,6 +381,12 @@ public abstract class Context
             visitor.visitAnonymousContext(this);
 
         }
+    }
+
+    public boolean isIgnored(
+            LexerExpression lexerExpression) {
+
+        return this.ignoredSet.contains(lexerExpression);
     }
 
 }
