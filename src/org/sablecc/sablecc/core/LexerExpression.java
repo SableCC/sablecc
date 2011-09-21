@@ -158,8 +158,9 @@ public abstract class LexerExpression
      */
     public Acceptation getAcceptation() {
 
-        if (this.acceptation == null)
+        if (this.acceptation == null) {
             this.acceptation = new Acceptation(getExpressionName());
+        }
         return this.acceptation;
     }
 

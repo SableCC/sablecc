@@ -103,12 +103,12 @@ public class Lexer
 
         public LexerExpression getHigh() {
 
-            return high;
+            return this.high;
         }
 
         public LexerExpression getLow() {
 
-            return low;
+            return this.low;
         }
 
         public LexerPriority(

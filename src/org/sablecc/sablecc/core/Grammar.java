@@ -23,8 +23,6 @@ import java.util.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.automaton.*;
-import org.sablecc.sablecc.core.Context.*;
-import org.sablecc.sablecc.core.Lexer.*;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.core.transformation.*;
@@ -624,7 +622,7 @@ public class Grammar
             throw new InternalException("not implemented");
         }
 
-        for (NamedContext context : this.namedContexts) {
+        for (Context.NamedContext context : this.namedContexts) {
             context.computeAutomaton();
         }
     }
@@ -661,7 +659,7 @@ public class Grammar
         return set != null && set.contains(low);
     }
 
-    /**
+    /*
      * Check and apply implicit and explicit lexical precedence rules. Display
      * errors and infos for the human user during the process.
      *
@@ -739,7 +737,7 @@ public class Grammar
         }
 
         // Enhance the priorities structure with explicit priorities
-        for (LexerPriority p : getLexer().getPriorities()) {
+        for (Lexer.LexerPriority p : getLexer().getPriorities()) {
             LexerExpression high = p.getHigh();
             LexerExpression low = p.getLow();
             Acceptation highA = high.getAcceptation();
