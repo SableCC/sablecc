@@ -148,17 +148,16 @@ public abstract class Context
         }
     }
 
-    void computeAutomaton() {
+    Automaton computeAutomaton() {
 
         Automaton automaton = Automaton.getEmptyAutomaton();
 
         if (GrammarCompiler.RESTRICTED_SYNTAX) {
-
             for (IToken iToken : this.tokenSet) {
                 if (iToken instanceof LexerExpression) {
                     LexerExpression token = (LexerExpression) iToken;
                     automaton = automaton.or(token.getAutomaton().accept(
-                            new Acceptation(token.getExpressionName())));
+                            token.getAcceptation()));
                 }
             }
 
@@ -166,11 +165,12 @@ public abstract class Context
                 if (iToken instanceof LexerExpression) {
                     LexerExpression token = (LexerExpression) iToken;
                     automaton = automaton.or(token.getAutomaton().accept(
-                            new Acceptation(token.getExpressionName())));
+                            token.getAcceptation()));
                 }
             }
 
-            this.automaton = automaton.withMarkers().minimal();
+            this.automaton = automaton; // .withMarkers().minimal();
+            return this.automaton;
         }
         else {
             throw new InternalException("not implemented");

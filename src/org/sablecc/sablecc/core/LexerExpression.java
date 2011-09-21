@@ -33,6 +33,8 @@ public abstract class LexerExpression
 
     private Automaton savedAutomaton;
 
+    private Acceptation acceptation;
+
     LexerExpression(
             Grammar grammar) {
 
@@ -146,6 +148,17 @@ public abstract class LexerExpression
     Automaton getSavedAutomaton() {
 
         return this.savedAutomaton;
+    }
+
+    /**
+     * The associated Acceptation object. Each LexerExpression is associated
+     * with a Acceptation object used to refer itself in an automaton.
+     */
+    public Acceptation getAcceptation() {
+
+        if (this.acceptation == null)
+            this.acceptation = new Acceptation(getExpressionName());
+        return this.acceptation;
     }
 
     public static class NamedExpression
