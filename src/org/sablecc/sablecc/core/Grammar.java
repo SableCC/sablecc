@@ -613,9 +613,10 @@ public class Grammar
 
     public void compileLexer() {
 
+        Automaton automaton;
         if (this.globalAnonymousContext != null) {
-            Automaton automaton = this.globalAnonymousContext
-                    .computeAutomaton();
+            automaton = this.globalAnonymousContext.computeAutomaton()
+                    .minimal();
             this.lexer.setAutomaton(checkAndApplyLexerPrecedence(automaton)
                     .withMarkers().minimal());
         }
@@ -643,6 +644,18 @@ public class Grammar
             // Note: getting the automaton forces the validation of the semantic
             // validity of (eg. cirularity or use of undefined unit names)
             Automaton lexerAutomaton = lexerExpression.getAutomaton();
+        }
+
+        for (LexerExpression lexerExpression : this.globalAnonymousContext
+                .getLexerExpressionTokensAndIgnored()) {
+            // Note: The big automaton has to be minimal (thus with the unused
+            // acceptations removed)
+            if (!automaton.getAcceptations().contains(
+                    lexerExpression.getAcceptation())) {
+                System.out.println("Error: "
+                        + lexerExpression.getExpressionName()
+                        + " does not recognize anything.");
+            }
         }
     }
 
