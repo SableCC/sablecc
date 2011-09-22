@@ -626,6 +626,13 @@ public class Grammar
         for (Context.NamedContext context : this.namedContexts) {
             context.computeAutomaton();
         }
+
+        for (LexerExpression lexerExpression : this.stringToLexerExpression
+                .values()) {
+            // Note: getting the automaton forces the validation of the semantic
+            // validity of (eg. cirularity or use of undefined unit names)
+            Automaton lexerAutomaton = lexerExpression.getAutomaton();
+        }
     }
 
     /**
