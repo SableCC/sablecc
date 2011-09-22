@@ -76,8 +76,8 @@ public abstract class Context
                     set.add((IToken) nameDeclaration);
                 }
                 else if (nameDeclaration == null) {
-                    throw SemanticException.undefinedReference(
-                            unit.getIdentifier());
+                    throw SemanticException.undefinedReference(unit
+                            .getIdentifier());
                 }
                 else {
                     throw SemanticException.badReference(
