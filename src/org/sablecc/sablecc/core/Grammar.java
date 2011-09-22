@@ -627,6 +627,17 @@ public class Grammar
             context.computeAutomaton();
         }
 
+        // Look for useless LexerExpression
+        for (LexerExpression lexerExpression : this.stringToLexerExpression
+                .values()) {
+            // If their is no automaton saved it means that the LexerExpression
+            // was not used to build the big automaton.
+            if (lexerExpression.getSavedAutomaton() == null) {
+                System.out.println("Info: "
+                        + lexerExpression.getExpressionName() + " is useless.");
+            }
+        }
+
         for (LexerExpression lexerExpression : this.stringToLexerExpression
                 .values()) {
             // Note: getting the automaton forces the validation of the semantic
