@@ -22,6 +22,7 @@ import static org.sablecc.util.CamelCase.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.alphabet.*;
 import org.sablecc.sablecc.automaton.*;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
@@ -655,6 +656,20 @@ public class Grammar
                 System.out.println("Error: "
                         + lexerExpression.getExpressionName()
                         + " does not recognize anything.");
+            }
+
+            Automaton expressionAutomaton = lexerExpression.getAutomaton();
+            for (RichSymbol richSymbol : expressionAutomaton.getStartState()
+                    .getTransitions().keySet()) {
+                if (richSymbol.isLookahead()) {
+                    // We have a lookahead transition from the start state.
+                    // Note: this works since the result of getAutomaton() is
+                    // minimized.
+                    System.out.println("Error: "
+                            + lexerExpression.getExpressionName()
+                            + " does recognize the empty string.");
+                    break; // Avoid printing the same error.
+                }
             }
         }
     }
