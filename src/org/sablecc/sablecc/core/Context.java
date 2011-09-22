@@ -213,6 +213,19 @@ public abstract class Context
         return set;
     }
 
+    public Set<LexerExpression> getLexerExpressionTokensAndIgnored() {
+
+        Set<LexerExpression> set = getLexerExpressionTokens();
+
+        for (IToken iToken : this.ignoredSet) {
+            if (iToken instanceof LexerExpression) {
+                LexerExpression token = (LexerExpression) iToken;
+                set.add(token);
+            }
+        }
+        return set;
+    }
+
     public static class NamedContext
             extends Context
             implements INameDeclaration {
