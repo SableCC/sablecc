@@ -149,7 +149,7 @@ public abstract class Context
             if (GrammarCompiler.RESTRICTED_SYNTAX) {
                 LexerExpression token = (LexerExpression) intersection
                         .iterator().next();
-                SemanticException.genericError("The "
+                throw SemanticException.genericError("The "
                         + token.getExpressionName()
                         + " token is both ignored and not.");
             }
