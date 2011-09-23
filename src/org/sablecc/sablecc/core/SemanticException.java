@@ -36,10 +36,6 @@ public class SemanticException
 
         super(message);
 
-        if (location == null) {
-            throw new InternalException("location may not be null");
-        }
-
         this.location = location;
     }
 
@@ -750,4 +746,17 @@ public class SemanticException
                 duplicateIdentifier);
     }
 
+    public static SemanticException genericError(
+            String text) {
+
+        return new SemanticException(new MGenericError(text).toString(), null);
+    }
+
+    public static SemanticException genericLocatedError(
+            String text,
+            Token token) {
+
+        return new SemanticException(new MGenericLocatedError(text, ""
+                + token.getLine(), "" + token.getPos()).toString(), token);
+    }
 }

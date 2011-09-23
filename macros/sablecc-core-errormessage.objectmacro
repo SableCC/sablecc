@@ -348,6 +348,25 @@ The list element "$list_name" is expanded twice at line $first_line, char $first
 A list can only be expanded once.
 $end: multiple_list_expansion $
 
+$comment: ========== generic_located_error ========== $
+
+$macro: generic_located_error(text,line,char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+
+$text
+$end: generic_located_error $
+
+$comment: ========== generic_error ========== $
+
+$macro: generic_error(text) $
+$insert: semantic_error_head $
+
+$text
+$end: generic_error $
+
 $comment$
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------

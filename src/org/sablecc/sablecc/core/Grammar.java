@@ -28,8 +28,10 @@ import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.core.transformation.*;
 import org.sablecc.sablecc.core.walker.*;
+import org.sablecc.sablecc.launcher.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.util.*;
 
 public class Grammar
         implements INameDeclaration, IVisitableGrammarPart {
@@ -612,14 +614,16 @@ public class Grammar
         return this.stringToLexerExpression.get(expressionName);
     }
 
-    public void compileLexer() {
+    public void compileLexer(
+            Trace trace,
+            Strictness strictness) {
 
         Automaton automaton;
         if (this.globalAnonymousContext != null) {
             automaton = this.globalAnonymousContext.computeAutomaton()
                     .minimal();
-            this.lexer.setAutomaton(checkAndApplyLexerPrecedence(automaton)
-                    .withMarkers().minimal());
+            this.lexer.setAutomaton(checkAndApplyLexerPrecedence(automaton,
+                    trace, strictness).withMarkers().minimal());
         }
         else {
             throw new InternalException("not implemented");
@@ -635,15 +639,23 @@ public class Grammar
             // If their is no automaton saved it means that the LexerExpression
             // was not used to build the big automaton.
             if (lexerExpression.getSavedAutomaton() == null) {
-                System.out.println("Info: "
-                        + lexerExpression.getExpressionName() + " is useless.");
+                if (strictness == Strictness.STRICT) {
+                    throw SemanticException.genericError("The "
+                            + lexerExpression.getExpressionName()
+                            + " token is useless.");
+                }
+                else {
+                    trace.verboseln("    The "
+                            + lexerExpression.getExpressionName()
+                            + " token is useless.");
+                }
             }
         }
 
         for (LexerExpression lexerExpression : this.stringToLexerExpression
                 .values()) {
             // Note: getting the automaton forces the validation of the semantic
-            // validity of (eg. cirularity or use of undefined unit names)
+            // validity of (eg. cirularity)
             Automaton lexerAutomaton = lexerExpression.getAutomaton();
         }
 
@@ -653,9 +665,16 @@ public class Grammar
             // acceptations removed)
             if (!automaton.getAcceptations().contains(
                     lexerExpression.getAcceptation())) {
-                System.out.println("Error: "
-                        + lexerExpression.getExpressionName()
-                        + " does not recognize anything.");
+                if (strictness == Strictness.STRICT) {
+                    throw SemanticException.genericError("The "
+                            + lexerExpression.getExpressionName()
+                            + " token does not match anything.");
+                }
+                else {
+                    trace.verboseln("    The "
+                            + lexerExpression.getExpressionName()
+                            + " token does not match anything.");
+                }
             }
 
             Automaton expressionAutomaton = lexerExpression.getAutomaton();
@@ -665,10 +684,9 @@ public class Grammar
                     // We have a lookahead transition from the start state.
                     // Note: this works since the result of getAutomaton() is
                     // minimized.
-                    System.out.println("Error: "
+                    throw SemanticException.genericError("The "
                             + lexerExpression.getExpressionName()
-                            + " does recognize the empty string.");
-                    break; // Avoid printing the same error.
+                            + " token matches the empty string.");
                 }
             }
         }
@@ -715,10 +733,11 @@ public class Grammar
      *            priorities applied, it is required that the automaton is
      *            tagged with the acceptation of the LexerExpression.
      * @return a new automaton where only the right acceptation tags remains.
-     *         FIXME: improve error messages (remove System.out.println).
      */
     public Automaton checkAndApplyLexerPrecedence(
-            Automaton automaton) {
+            Automaton automaton,
+            Trace trace,
+            Strictness strictness) {
 
         automaton = automaton.minimal();
         Map<State, String> words = automaton.collectShortestWords();
@@ -760,8 +779,9 @@ public class Grammar
                 Set<State> set2 = accepts.get(acc2);
                 if (set2.equals(set1)) {
                     if (!conflicts.containsKey(acc2)) {
-                        System.out.println("Error: " + acc1.getName() + " and "
-                                + acc2.getName() + " are equivalent.");
+                        throw SemanticException.genericError("The "
+                                + acc1.getName() + " and " + acc2.getName()
+                                + " tokens are equivalent.");
                     }
                 }
                 else if (set2.containsAll(set1)) {
@@ -775,10 +795,10 @@ public class Grammar
                     }
                     // Note: Since set1 is strictly included in set2, example
                     // cannot be null
-                    System.out.println("Info: " + acc1.getName()
-                            + " is included in " + acc2.getName()
-                            + ". Example of divergence: '" + words.get(example)
-                            + "'.");
+                    trace.verboseln("    The " + acc1.getName()
+                            + " token is included in the " + acc2.getName()
+                            + " token. (Example of divergence: '"
+                            + words.get(example) + "'.)");
                 }
             }
         }
@@ -794,27 +814,48 @@ public class Grammar
              *  contradiction of explicit priorities.
              */
             if (hasPriority(priorities, highA, lowA)) {
-                System.out.println("Error line "
-                        + p.getDeclaration().getGt().getLine()
-                        + ": useless priority since " + low.getExpressionName()
-                        + " is included in " + high.getExpressionName());
+                if (strictness == Strictness.STRICT) {
+                    throw SemanticException.genericLocatedError(
+                            "The precedence is useless as the "
+                                    + low.getExpressionName()
+                                    + " token is included in the "
+                                    + high.getExpressionName() + " token.", p
+                                    .getDeclaration().getGt());
+                }
+                else {
+                    trace.verboseln("    The precedence is useless as the "
+                            + low.getExpressionName()
+                            + " token is included in the "
+                            + high.getExpressionName() + " token.");
+                }
             }
             else if (hasPriority(priorities, lowA, highA)) {
-                System.out.println("Error line "
-                        + p.getDeclaration().getGt().getLine()
-                        + ": inconsistant priority since "
-                        + high.getExpressionName() + " is included in "
-                        + low.getExpressionName());
+                throw SemanticException.genericLocatedError(
+                        "The precedence is invalid as the "
+                                + high.getExpressionName()
+                                + " token is included in the "
+                                + low.getExpressionName() + " token.", p
+                                .getDeclaration().getGt());
             }
             else if (conflicts.get(highA).contains(lowA)) {
                 addPriority(priorities, highA, lowA);
             }
             else {
-                System.out.println("Error line "
-                        + p.getDeclaration().getGt().getLine()
-                        + ": illegal priority since "
-                        + high.getExpressionName() + " and "
-                        + low.getExpressionName() + " are disjoint.");
+                if (strictness == Strictness.STRICT) {
+                    throw SemanticException.genericLocatedError(
+                            "The precedence is useless as the "
+                                    + high.getExpressionName()
+                                    + " token and the "
+                                    + low.getExpressionName()
+                                    + " token have no conflicts.", p
+                                    .getDeclaration().getGt());
+                }
+                else {
+                    trace.verboseln("The precedence is useless as the "
+                            + high.getExpressionName() + " token and the "
+                            + low.getExpressionName()
+                            + " token have no conflicts.");
+                }
             }
         }
 
@@ -836,10 +877,14 @@ public class Grammar
                     candidate = challenger;
                 }
                 else {
-                    System.out.println("Error: conflict between "
-                            + candidate.getName() + " and "
-                            + challenger.getName() + " on the string '"
-                            + words.get(s) + "'. Maybe add a precedence rule.");
+                    throw SemanticException
+                            .genericError("The "
+                                    + candidate.getName()
+                                    + " token and the "
+                                    + challenger.getName()
+                                    + " token conflict on the string '"
+                                    + words.get(s)
+                                    + "'. You should specify a precedence between them.");
                 }
             }
             newAccepts.put(s, candidate);

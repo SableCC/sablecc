@@ -249,8 +249,10 @@ public abstract class LexerExpression
 
             if (automaton == null) {
                 if (this.recursionGuard) {
-                    throw new InternalException(
-                            "TODO: raise recursive dependence semantic error");
+                    throw SemanticException.genericLocatedError("The "
+                            + getExpressionName()
+                            + " token definition is recursive.",
+                            getNameIdentifier());
                 }
                 else {
                     this.recursionGuard = true;

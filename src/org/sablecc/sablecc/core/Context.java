@@ -146,7 +146,16 @@ public abstract class Context
         intersection.addAll(this.tokenSet);
         intersection.retainAll(this.ignoredSet);
         if (intersection.size() > 0) {
-            throw new InternalException("TODO: raise semantic exception");
+            if (GrammarCompiler.RESTRICTED_SYNTAX) {
+                LexerExpression token = (LexerExpression) intersection
+                        .iterator().next();
+                SemanticException.genericError("The "
+                        + token.getExpressionName()
+                        + " token is both ignored and not.");
+            }
+            else {
+                // TODO
+            }
         }
     }
 

@@ -86,7 +86,7 @@ public class GrammarCompiler {
 
         this.trace.verboseln(" Compiling lexer");
 
-        grammar.compileLexer();
+        grammar.compileLexer(this.trace, this.strictness);
 
         return grammar;
     }
