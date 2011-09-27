@@ -818,24 +818,24 @@ public class Grammar
                 if (strictness == Strictness.STRICT) {
                     throw SemanticException.genericLocatedError(
                             "The precedence is useless as the "
-                                    + low.getExpressionName()
+                                    + high.getExpressionName()
                                     + " token is included in the "
-                                    + high.getExpressionName() + " token.", p
+                                    + low.getExpressionName() + " token.", p
                                     .getDeclaration().getGt());
                 }
                 else {
                     trace.verboseln("    The precedence is useless as the "
-                            + low.getExpressionName()
+                            + high.getExpressionName()
                             + " token is included in the "
-                            + high.getExpressionName() + " token.");
+                            + low.getExpressionName() + " token.");
                 }
             }
             else if (hasPriority(priorities, lowA, highA)) {
                 throw SemanticException.genericLocatedError(
                         "The precedence is invalid as the "
-                                + high.getExpressionName()
+                                + low.getExpressionName()
                                 + " token is included in the "
-                                + low.getExpressionName() + " token.", p
+                                + high.getExpressionName() + " token.", p
                                 .getDeclaration().getGt());
             }
             else if (conflicts.get(highA).contains(lowA)) {
