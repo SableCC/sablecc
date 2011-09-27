@@ -30,3 +30,5 @@
 /src/org/sablecc/sablecc/launcher/syntax3/
 /src/org/sablecc/sablecc/syntax3/
 /test-classes/
+/t/out/
+/t/alt/
