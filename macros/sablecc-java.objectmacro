@@ -576,3 +576,33 @@ public class End
   }
 }
 $end: end $
+
+$comment: ========== tester ========== $
+
+$macro: tester $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+import java.io.*;
+
+public class Tester {
+
+        static public void main(String[] args) {
+                try {
+                        Reader reader = new FileReader(args[0]);
+                        Lexer lexer = new Lexer(reader);
+                        Token token;
+                        do {
+                                token = lexer.next();
+                                System.out.println(token.getType() + "@" + token.getLine() + "," + token.getPos() + ":" + token.getText());
+                        } while (token.getType() != Node.Type.TEnd);
+                } catch (LexerException e) {
+                        System.out.println(e.getLine() + "," + e.getPos()
+                                        + ". Syntax error: Unexpected character '" + e.getChar()
+                                        + "'.");
+                } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                }
+        }
+}
+$end: tester $

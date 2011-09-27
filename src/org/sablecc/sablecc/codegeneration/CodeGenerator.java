@@ -88,6 +88,7 @@ public class CodeGenerator {
         MLexer mLexer = new MLexer();
         MLexerException mLexerException = new MLexerException();
         MEnd mEnd = new MEnd();
+        MTester mTester = new MTester();
 
         if (this.destinationPackage.equals("")) {
             packageDirectory = new File(this.destinationDirectory,
@@ -102,6 +103,7 @@ public class CodeGenerator {
             mLexer.newDefaultPackage(this.grammar.getName_camelCase());
             mLexerException.newDefaultPackage(this.grammar.getName_camelCase());
             mEnd.newDefaultPackage(this.grammar.getName_camelCase());
+            mTester.newDefaultPackage(this.grammar.getName_camelCase());
         }
         else {
             packageDirectory = new File(this.destinationDirectory,
@@ -113,17 +115,19 @@ public class CodeGenerator {
                     this.destinationPackage);
             mState.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
-            mTransitionState.newSpecifiedPackage(
-                    this.grammar.getName_camelCase(), this.destinationPackage);
+            mTransitionState.newSpecifiedPackage(this.grammar
+                    .getName_camelCase(), this.destinationPackage);
             mFinalState.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
             mSymbol.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
             mLexer.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
-            mLexerException.newSpecifiedPackage(
-                    this.grammar.getName_camelCase(), this.destinationPackage);
+            mLexerException.newSpecifiedPackage(this.grammar
+                    .getName_camelCase(), this.destinationPackage);
             mEnd.newSpecifiedPackage(this.grammar.getName_camelCase(),
+                    this.destinationPackage);
+            mTester.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
         }
 
@@ -139,17 +143,16 @@ public class CodeGenerator {
                 mNode.newNodeInternalTypeEnumEntry(namedToken
                         .getName_CamelCase());
 
-                MCustomToken mCustomToken = new MCustomToken(
-                        namedToken.getName_CamelCase());
+                MCustomToken mCustomToken = new MCustomToken(namedToken
+                        .getName_CamelCase());
 
                 if (this.destinationPackage.equals("")) {
                     mCustomToken.newDefaultPackage(this.grammar
                             .getName_camelCase());
                 }
                 else {
-                    mCustomToken.newSpecifiedPackage(
-                            this.grammar.getName_camelCase(),
-                            this.destinationPackage);
+                    mCustomToken.newSpecifiedPackage(this.grammar
+                            .getName_camelCase(), this.destinationPackage);
                 }
 
                 try {
@@ -180,9 +183,8 @@ public class CodeGenerator {
                             .getName_camelCase());
                 }
                 else {
-                    mAnonymousToken.newSpecifiedPackage(
-                            this.grammar.getName_camelCase(),
-                            this.destinationPackage);
+                    mAnonymousToken.newSpecifiedPackage(this.grammar
+                            .getName_camelCase(), this.destinationPackage);
                 }
 
                 try {
@@ -250,9 +252,8 @@ public class CodeGenerator {
                             .getName_camelCase());
                 }
                 else {
-                    mFinalStateSingleton.newSpecifiedPackage(
-                            this.grammar.getName_camelCase(),
-                            this.destinationPackage);
+                    mFinalStateSingleton.newSpecifiedPackage(this.grammar
+                            .getName_camelCase(), this.destinationPackage);
                 }
 
                 Marker marker = acceptation.getMarker();
@@ -308,9 +309,8 @@ public class CodeGenerator {
                             .getName_camelCase());
                 }
                 else {
-                    mTransitionStateSingleton.newSpecifiedPackage(
-                            this.grammar.getName_camelCase(),
-                            this.destinationPackage);
+                    mTransitionStateSingleton.newSpecifiedPackage(this.grammar
+                            .getName_camelCase(), this.destinationPackage);
                 }
 
                 Marker marker = state.getMarker();
@@ -454,6 +454,17 @@ public class CodeGenerator {
         }
         catch (IOException e) {
             new InternalException("TODO: raise error " + "End.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "Tester.java")));
+
+            bw.write(mTester.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            new InternalException("TODO: raise error " + "Tester.java", e);
         }
     }
 
