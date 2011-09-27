@@ -622,8 +622,9 @@ public class Grammar
         if (this.globalAnonymousContext != null) {
             automaton = this.globalAnonymousContext.computeAutomaton()
                     .minimal();
-            this.lexer.setAutomaton(checkAndApplyLexerPrecedence(automaton,
-                    trace, strictness).withMarkers().minimal());
+            automaton = checkAndApplyLexerPrecedence(automaton, trace,
+                    strictness);
+            this.lexer.setAutomaton(automaton.withMarkers().minimal());
         }
         else {
             throw new InternalException("not implemented");
