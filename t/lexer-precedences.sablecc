@@ -1,0 +1,24 @@
+Grammar re:
+Lexer
+        //alt1 a = 'a'; b = 'a' | 'b' ;
+        //alt2 a = 'a'; b = 'a' | 'b' ;
+        //alt3 a = 'a'; b = 'a' | 'b' ;
+        //alt4 a = 'a' | 'c' ; b = 'a' | 'b' ;
+        //alt5 a = 'a' | 'c' ; b = 'a' | 'b' ;
+        //alt6 a = 'a' ; b = 'b' ;
+        //alt7 a = 'a' ; b = 'b' ;
+        //alt8 a = ('a' Lookahead 'b') | 'c'; b = 'a';
+        //alt9 a = 'a'; b = 'b';
+        //alt10 a = 'a'; b = 'b';
+
+
+Token a, b;
+Ignored #10, #13;
+
+//alt2 Precedence a > b;
+//alt3 Precedence b > a;
+//alt5 Precedence a > b;
+//alt7 Precedence a > b;
+//alt10 Precedence a > b;
+
+

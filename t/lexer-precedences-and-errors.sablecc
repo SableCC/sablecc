@@ -1,0 +1,10 @@
+Grammar bug:
+Lexer
+  a = 'a';
+  b = 'b';
+  a_or_b = 'a' | 'b';
+
+  Token
+   a, b, a_or_b;
+
+  //alt1 Precedence a > a_or_b;
