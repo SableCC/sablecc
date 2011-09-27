@@ -45,7 +45,10 @@ public class GrammarVisitor
         node.getLexer().apply(this);
         node.getParser().apply(this);
         node.getTransformation().apply(this);
-        node.getTree().apply(this);
+
+        if (node.hasATree()) {
+            node.getTree().apply(this);
+        }
 
     }
 

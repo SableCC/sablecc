@@ -313,57 +313,63 @@ public abstract class ReferenceVerifier
         public void visitParser(
                 Parser node) {
 
-            if (node.getRootDeclaration() != null) {
-                for (TIdentifier identifier : node.getRootDeclaration()
-                        .getIdentifiers()) {
-                    INameDeclaration declaration = findGlobalDeclaration(
-                            this.grammar, identifier);
+            if (this.grammar.hasATree()) {
+                if (node.getRootDeclaration() != null) {
+                    for (TIdentifier identifier : node.getRootDeclaration()
+                            .getIdentifiers()) {
+                        INameDeclaration declaration = findGlobalDeclaration(
+                                this.grammar, identifier);
 
-                    Parser.ParserProduction rootProd = (Parser.ParserProduction) declaration;
+                        Parser.ParserProduction rootProd = (Parser.ParserProduction) declaration;
 
-                    if (rootProd.getTransformation() != null) {
-                        if (rootProd.getTransformation().getElements().size() != 1
-                                || !rootProd.getTransformation().getElements()
-                                        .get(0).getCardinality()
+                        if (rootProd.getTransformation() != null) {
+                            if (rootProd.getTransformation().getElements()
+                                    .size() != 1
+                                    || !rootProd
+                                            .getTransformation()
+                                            .getElements()
+                                            .get(0)
+                                            .getCardinality()
+                                            .equals(CardinalityInterval.ONE_ONE)) {
+
+                                throw SemanticException
+                                        .badRootElementTransformation(rootProd);
+
+                            }
+                        }
+                        else {
+                            if (!(findTreeDeclaration(this.grammar, identifier) instanceof Tree.TreeProduction)) {
+                                throw SemanticException
+                                        .badRootElementTransformation(rootProd);
+                            }
+                        }
+                    }
+                }
+                else {
+                    Parser.ParserProduction firstProduction = node
+                            .getProductions().get(0);
+
+                    if (firstProduction.getTransformation() != null) {
+                        if (firstProduction.getTransformation().getElements()
+                                .size() != 1
+                                || !firstProduction.getTransformation()
+                                        .getElements().get(0).getCardinality()
                                         .equals(CardinalityInterval.ONE_ONE)) {
 
                             throw SemanticException
-                                    .badRootElementTransformation(rootProd);
+                                    .badRootElementTransformation(firstProduction);
 
                         }
                     }
                     else {
-                        if (!(findTreeDeclaration(this.grammar, identifier) instanceof Tree.TreeProduction)) {
+                        if (!(findTreeDeclaration(this.grammar,
+                                firstProduction.getNameIdentifier()) instanceof Tree.TreeProduction)) {
                             throw SemanticException
-                                    .badRootElementTransformation(rootProd);
+                                    .badRootElementTransformation(firstProduction);
                         }
                     }
+
                 }
-            }
-            else {
-                Parser.ParserProduction firstProduction = node.getProductions()
-                        .get(0);
-
-                if (firstProduction.getTransformation() != null) {
-                    if (firstProduction.getTransformation().getElements()
-                            .size() != 1
-                            || !firstProduction.getTransformation()
-                                    .getElements().get(0).getCardinality()
-                                    .equals(CardinalityInterval.ONE_ONE)) {
-
-                        throw SemanticException
-                                .badRootElementTransformation(firstProduction);
-
-                    }
-                }
-                else {
-                    if (!(findTreeDeclaration(this.grammar,
-                            firstProduction.getNameIdentifier()) instanceof Tree.TreeProduction)) {
-                        throw SemanticException
-                                .badRootElementTransformation(firstProduction);
-                    }
-                }
-
             }
 
             super.visitParser(node);
@@ -373,21 +379,23 @@ public abstract class ReferenceVerifier
         public void visitParserTokenProduction(
                 TokenProduction node) {
 
-            if (node.getTransformation() != null) {
-                if (node.getTransformation().getElements().size() != 1
-                        || !node.getTransformation().getElements().get(0)
-                                .getCardinality()
-                                .equals(CardinalityInterval.ONE_ONE)) {
+            if (this.grammar.hasATree()) {
+                if (node.getTransformation() != null) {
+                    if (node.getTransformation().getElements().size() != 1
+                            || !node.getTransformation().getElements().get(0)
+                                    .getCardinality()
+                                    .equals(CardinalityInterval.ONE_ONE)) {
 
-                    throw SemanticException
-                            .badSyntacticTokenTransformation(node);
+                        throw SemanticException
+                                .badSyntacticTokenTransformation(node);
+                    }
                 }
-            }
-            else {
-                if (!(findTreeDeclaration(this.grammar,
-                        node.getNameIdentifier()) instanceof Tree.TreeProduction)) {
-                    throw SemanticException
-                            .badSyntacticTokenTransformation(node);
+                else {
+                    if (!(findTreeDeclaration(this.grammar,
+                            node.getNameIdentifier()) instanceof Tree.TreeProduction)) {
+                        throw SemanticException
+                                .badSyntacticTokenTransformation(node);
+                    }
                 }
             }
         }

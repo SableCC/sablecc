@@ -81,6 +81,22 @@ public class SAlternativeTransformation {
     }
 
     public SAlternativeTransformation(
+            LinkedList<SAlternativeTransformationListElement> elements,
+            Alternative alternative) {
+
+        if (alternative == null) {
+            throw new InternalException("alternative shouldn't be null");
+        }
+
+        if (elements == null) {
+            throw new InternalException("elements shouldn't be null");
+        }
+        this.elements.add(new SAlternativeTransformationElement.ListElement(
+                elements));
+
+    }
+
+    public SAlternativeTransformation(
             Alternative alternative) {
 
         if (alternative == null) {

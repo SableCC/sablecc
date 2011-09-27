@@ -27,6 +27,8 @@ public class SGrammar {
 
     private Map<String, Production> productions = new HashMap<String, Production>();
 
+    private final Grammar grammar;
+
     public SGrammar(
             Grammar grammar) {
 
@@ -34,8 +36,10 @@ public class SGrammar {
             throw new InternalException("grammar shouldn't be null");
         }
 
+        this.grammar = grammar;
+
         constructNaturalProductions(grammar.getParser());
-        grammar.apply(new GrammarSimplificator());
+        grammar.apply(new GrammarSimplificator(this));
 
     }
 
@@ -63,11 +67,17 @@ public class SGrammar {
         for (Parser.ParserProduction coreProd : parser.getProductions()) {
 
             Production production = new Production(coreProd.getName());
-            production.addTransformation(new SProductionTransformation(coreProd
-                    .getTransformation(), production));
+            if (this.grammar.hasATree()) {
+                production.addTransformation(new SProductionTransformation(
+                        coreProd.getTransformation(), production));
+            }
+            else {
+                production.addTransformation(new SProductionTransformation(
+                        production));
+            }
+
             this.productions.put(production.getName(), production);
         }
 
     }
-
 }

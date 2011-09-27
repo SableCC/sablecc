@@ -22,6 +22,7 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.core.Tree.TreeAlternative;
+import org.sablecc.sablecc.grammar.*;
 import org.sablecc.sablecc.grammar.interfaces.*;
 
 public abstract class SAlternativeTransformationElement {
@@ -79,6 +80,17 @@ public abstract class SAlternativeTransformationElement {
             this.elements = elements;
         }
 
+        public NewElement(
+                Alternative sAlternative) {
+
+            this.elements = new LinkedList<SAlternativeTransformationElement>();
+
+            for (Element element : sAlternative.getElements()) {
+                this.elements
+                        .add(new SAlternativeTransformationElement.ReferenceElement(
+                                element));
+            }
+        }
     }
 
     public static class ListElement

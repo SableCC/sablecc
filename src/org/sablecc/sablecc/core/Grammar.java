@@ -94,13 +94,13 @@ public class Grammar
             findLexerPriorities(ast);
 
             verifyReferences();
-            buildImplicitTransformations();
-            resolveUnknowTypes();
-            verifyAssignability();
 
-            apply(new GrammarVisitor());
+            if (hasATree()) {
+                buildImplicitTransformations();
+                resolveUnknowTypes();
+                verifyAssignability();
+            }
 
-            throw new InternalException("not implemented");
         }
     }
 
@@ -1145,5 +1145,10 @@ public class Grammar
     public String getNextAnonymousTokenName() {
 
         return "t$" + this.nextAnonymousTokenId++;
+    }
+
+    public boolean hasATree() {
+
+        return this.tree.getProductions().size() > 0;
     }
 }

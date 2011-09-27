@@ -20,8 +20,10 @@ package org.sablecc.sablecc.grammar.transformation;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.core.transformation.*;
 import org.sablecc.sablecc.grammar.*;
+import org.sablecc.util.*;
 
 public class SProductionTransformation {
 
@@ -44,6 +46,78 @@ public class SProductionTransformation {
         this.production = production;
 
         generateElements(coreReference);
+
+    }
+
+    public SProductionTransformation(
+            Production production) {
+
+        if (production == null) {
+            throw new InternalException("production shouldn't be null");
+        }
+
+        this.production = production;
+
+        this.elements.add(new SProductionTransformationElement.NormalElement(
+                this));
+    }
+
+    public SProductionTransformation(
+            Production production,
+            String name,
+            IReferencable reference,
+            CardinalityInterval cardinality) {
+
+        if (production == null) {
+            throw new InternalException("production shouldn't be null");
+        }
+
+        if (reference == null) {
+            throw new InternalException("elements shouldn't be null");
+        }
+
+        this.production = production;
+
+        this.elements.add(new SProductionTransformationElement.NormalElement(
+                this, name, reference, cardinality));
+    }
+
+    public SProductionTransformation(
+            Production production,
+            String leftName,
+            String rightName,
+            IReferencable leftReference,
+            IReferencable rightReference,
+            CardinalityInterval cardinality,
+            boolean separated) {
+
+        if (production == null) {
+            throw new InternalException("production shouldn't be null");
+        }
+
+        if (leftReference == null) {
+            throw new InternalException("elements shouldn't be null");
+        }
+
+        if (rightReference == null) {
+            throw new InternalException("elements shouldn't be null");
+        }
+
+        this.production = production;
+
+        if (separated) {
+            this.elements
+                    .add(new SProductionTransformationElement.SeparatedElement(
+                            this, leftName, rightName, leftReference,
+                            rightReference, cardinality));
+        }
+        else {
+            this.elements
+                    .add(new SProductionTransformationElement.AlternatedElement(
+                            this, leftName, rightName, leftReference,
+                            rightReference, cardinality));
+
+        }
 
     }
 
