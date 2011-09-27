@@ -60,6 +60,7 @@ for f in "$@"
 do
         for a in "$f" `./alterner.pl $f`
         do
+                cla=""
                 echo -n "* $a: "
                 res=`basename "$a" .sablecc`.res
                 java -jar "$SABLECCJAR" --quiet --destination="src/$res" "$a" >"out/$res" 2>&1
@@ -68,8 +69,39 @@ do
                         echo -n "!scc "
                 else
                         echo -n ". "
+                        jc=`cd "src/$res"; ls */Tester.java`
+                        js=`ls "src/$res"/*/Tester.java`
+                        javac -sourcepath "src/$res" "$js" #2>/dev/null
+                        if test $? != 0
+                        then
+                                echo -n "!javac "
+                        else
+                                echo -n ". "
+                                cla=${jc%.java}
+                        fi
                 fi
 
                 differ $res
+
+                if test \! -z $cla
+                then
+                        bf=`basename "$f" .sablecc`
+                        for i in "$bf".input*
+                        do
+                                test -f $i || { echo "   - no input: $i" ; continue ; }
+                                ni=${i#$bf}
+                                resi=`basename "$a" .sablecc`"$ni".res
+                                echo -n "  - $i: "
+                                java -cp "src/$res" "$cla" "$i" > "out/$resi"
+                                if test $? != 0
+                                then
+                                        echo -n "!java "
+                                else
+                                        echo -n ". "
+                                fi
+
+                                differ "$resi"
+                        done
+                fi
         done
 done
