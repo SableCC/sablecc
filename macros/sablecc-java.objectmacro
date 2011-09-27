@@ -336,7 +336,6 @@ $macro: accept_marker_declaration(name) $
   String acceptWithMarker$name(int backCount) {
     if(this.sb_contains_eof) {
       this.sb_contains_eof = false;
-      backCount--;
     }
     String text = this.sb.toString().substring(0, this.marker$name - backCount);
     String leftover = this.sb.toString().substring(this.marker$name - backCount, this.sb.length());
