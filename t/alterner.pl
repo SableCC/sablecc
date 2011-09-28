@@ -30,7 +30,7 @@ foreach my $file (@ARGV) {
 
         my %alt;
         foreach my $l (@lines) {
-                if ($l =~ /(\/\/(alt\d+))/) {
+                while ($l =~ /(\/\/(alt\d+))/g) {
                         $alt{$1} = $2;
                 }
         }
