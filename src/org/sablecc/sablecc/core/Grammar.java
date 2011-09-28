@@ -621,9 +621,9 @@ public class Grammar
         Automaton automaton;
         if (this.globalAnonymousContext != null) {
             automaton = this.globalAnonymousContext.computeAutomaton()
-                    .minimal();
+                    .minimal().longest().minimal();
             automaton = checkAndApplyLexerPrecedence(automaton, trace,
-                    strictness);
+                    strictness).minimal();
             this.lexer.setAutomaton(automaton.withMarkers().minimal());
         }
         else {
