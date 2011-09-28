@@ -44,11 +44,16 @@ differ() {
         r="$1"
         if test \! -f "sav/$r"
         then
-                echo "[***no sav***] cp 'out/$r' sav/"
-                test $verbose = true && { cat "out/$r" ; echo ; }
+                if test -s "out/$r"
+                then
+                        echo "[***no sav***] cp 'out/$r' sav/"
+                        test $verbose = true && { cat "out/$r" ; echo ; }
+                else
+                        echo "[0K]"
+                fi
         elif diff "sav/$r" "out/$r" >/dev/null
         then
-                echo "[ok]"
+                echo "[OK]"
         else
                 echo "[******failed******] diff 'sav/$r' 'out/$r'"
                 test $verbose = true && { diff "sav/$r" "out/$r" ; echo ; }
