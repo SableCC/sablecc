@@ -1,0 +1,8 @@
+Grammar re:
+Lexer
+a = 'a';
+b = 'a' 'b' 'a' 'c'; //alt1 //alt2
+//alt1 b = 'a' 'b' 'a'* 'c';
+//alt2 b = 'a'* 'b' 'a' 'c';
+Token a, b;
+Ignored #10, #13;
