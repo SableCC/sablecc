@@ -1,0 +1,8 @@
+Grammar re:
+Lexer
+a='a';
+anb='a' Lookahead Not 'b';
+ab='ab'; //alt1 ab='DUMMY';
+b='b';
+Token a, anb, ab, b;
+Ignored #10, #13;
