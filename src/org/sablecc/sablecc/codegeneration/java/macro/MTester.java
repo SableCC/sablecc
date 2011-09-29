@@ -52,8 +52,7 @@ public class MTester {
         sb.append(System.getProperty("line.separator"));
         sb.append("                try {");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("                        Reader reader = new FileReader(args[0]);");
+        sb.append("                        Reader reader = new FileReader(args[0]);");
         sb.append(System.getProperty("line.separator"));
         sb.append("                        Lexer lexer = new Lexer(reader);");
         sb.append(System.getProperty("line.separator"));
@@ -63,26 +62,21 @@ public class MTester {
         sb.append(System.getProperty("line.separator"));
         sb.append("                                token = lexer.next();");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("                                System.out.println(token.getType() + \"@\" + token.getLine() + \",\" + token.getPos() + \":\" + token.getText());");
+        sb.append("                                System.out.println(token.getType() + \"@\" + token.getLine() + \",\" + token.getPos() + \":\" + token.getText());");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("                        } while (token.getType() != Node.Type.TEnd);");
+        sb.append("                        } while (token.getType() != Node.Type.TEnd);");
         sb.append(System.getProperty("line.separator"));
         sb.append("                } catch (LexerException e) {");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("                        System.out.println(e.getLine() + \",\" + e.getPos()");
+        sb.append("                        System.out.println(e.getLine() + \",\" + e.getPos()");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("                                        + \". Syntax error: Unexpected character '\" + e.getChar()");
+        sb.append("                                        + \". Syntax error: Unexpected character '\" + e.getChar()");
         sb.append(System.getProperty("line.separator"));
         sb.append("                                        + \"'.\");");
         sb.append(System.getProperty("line.separator"));
         sb.append("                } catch (IOException e) {");
         sb.append(System.getProperty("line.separator"));
-        sb
-                .append("                        System.out.println(e.getMessage());");
+        sb.append("                        System.out.println(e.getMessage());");
         sb.append(System.getProperty("line.separator"));
         sb.append("                }");
         sb.append(System.getProperty("line.separator"));

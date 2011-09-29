@@ -115,16 +115,16 @@ public class CodeGenerator {
                     this.destinationPackage);
             mState.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
-            mTransitionState.newSpecifiedPackage(this.grammar
-                    .getName_camelCase(), this.destinationPackage);
+            mTransitionState.newSpecifiedPackage(
+                    this.grammar.getName_camelCase(), this.destinationPackage);
             mFinalState.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
             mSymbol.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
             mLexer.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
-            mLexerException.newSpecifiedPackage(this.grammar
-                    .getName_camelCase(), this.destinationPackage);
+            mLexerException.newSpecifiedPackage(
+                    this.grammar.getName_camelCase(), this.destinationPackage);
             mEnd.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
             mTester.newSpecifiedPackage(this.grammar.getName_camelCase(),
@@ -143,16 +143,17 @@ public class CodeGenerator {
                 mNode.newNodeInternalTypeEnumEntry(namedToken
                         .getName_CamelCase());
 
-                MCustomToken mCustomToken = new MCustomToken(namedToken
-                        .getName_CamelCase());
+                MCustomToken mCustomToken = new MCustomToken(
+                        namedToken.getName_CamelCase());
 
                 if (this.destinationPackage.equals("")) {
                     mCustomToken.newDefaultPackage(this.grammar
                             .getName_camelCase());
                 }
                 else {
-                    mCustomToken.newSpecifiedPackage(this.grammar
-                            .getName_camelCase(), this.destinationPackage);
+                    mCustomToken.newSpecifiedPackage(
+                            this.grammar.getName_camelCase(),
+                            this.destinationPackage);
                 }
 
                 try {
@@ -183,8 +184,9 @@ public class CodeGenerator {
                             .getName_camelCase());
                 }
                 else {
-                    mAnonymousToken.newSpecifiedPackage(this.grammar
-                            .getName_camelCase(), this.destinationPackage);
+                    mAnonymousToken.newSpecifiedPackage(
+                            this.grammar.getName_camelCase(),
+                            this.destinationPackage);
                 }
 
                 try {
@@ -252,8 +254,9 @@ public class CodeGenerator {
                             .getName_camelCase());
                 }
                 else {
-                    mFinalStateSingleton.newSpecifiedPackage(this.grammar
-                            .getName_camelCase(), this.destinationPackage);
+                    mFinalStateSingleton.newSpecifiedPackage(
+                            this.grammar.getName_camelCase(),
+                            this.destinationPackage);
                 }
 
                 Marker marker = acceptation.getMarker();
@@ -309,8 +312,9 @@ public class CodeGenerator {
                             .getName_camelCase());
                 }
                 else {
-                    mTransitionStateSingleton.newSpecifiedPackage(this.grammar
-                            .getName_camelCase(), this.destinationPackage);
+                    mTransitionStateSingleton.newSpecifiedPackage(
+                            this.grammar.getName_camelCase(),
+                            this.destinationPackage);
                 }
 
                 Marker marker = state.getMarker();
