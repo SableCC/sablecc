@@ -53,7 +53,7 @@ features:
   languages).
 * Improved syntax for CST->AST transformations.
 
-What's New in SableCC 4-beta.4
-==============================
+What's New in SableCC [version]
+===============================
 
-* Improved priority handling and related error messages.
+[Milestone text]
