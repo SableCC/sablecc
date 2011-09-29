@@ -59,6 +59,8 @@
   <property name="dist.dir" value="${package.name}-${package.version}" />
   <property name="dist.file" value="${package.name}-${package.version}.zip" />
 
+  <property name="t.dir" value="t" />
+
   <!-- Grammar Compilation -->
 
   <target name="compile-grammars" description="Compile grammars.">
@@ -228,6 +230,10 @@ public class Version {
 
     <delete file="${src.dir}/org/sablecc/sablecc/launcher/Version.java" />
     <delete file="${src.dir}/org/sablecc/objectmacro/launcher/Version.java" />
+
+    <delete dir="${t.dir}/out" />
+    <delete dir="${t.dir}/alt" />
+    <delete dir="${t.dir}/src" />
 
   </target>
 
