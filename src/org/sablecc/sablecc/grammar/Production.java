@@ -88,6 +88,12 @@ public class Production {
         this.alternatives.add(alternative);
     }
 
+    public void removeAlternative(
+            Alternative alternative) {
+
+        this.alternatives.remove(alternative);
+    }
+
     public void addAlternatives(
             List<Alternative> alternatives) {
 
@@ -108,6 +114,27 @@ public class Production {
     public SProductionTransformation getTransformation() {
 
         return this.transformation;
+    }
+
+    @Override
+    public boolean equals(
+            Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Production production = (Production) obj;
+
+        return this.name.equals(production.getName());
     }
 
 }

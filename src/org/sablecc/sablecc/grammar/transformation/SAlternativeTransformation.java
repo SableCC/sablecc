@@ -116,4 +116,18 @@ public class SAlternativeTransformation {
         return this.elements;
     }
 
+    public SAlternativeTransformation buildInlinedTransformation(
+            Alternative inlinedAlternative,
+            Map<Element, Element> oldToNewElement) {
+
+        List<SAlternativeTransformationElement> newAlternativeTransformationElements = new LinkedList<SAlternativeTransformationElement>();
+
+        for (SAlternativeTransformationElement element : this.elements) {
+            newAlternativeTransformationElements.addAll(element.inline(
+                    inlinedAlternative, oldToNewElement));
+        }
+
+        return new SAlternativeTransformation(inlinedAlternative,
+                newAlternativeTransformationElements);
+    }
 }

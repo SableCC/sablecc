@@ -92,9 +92,17 @@ public class GrammarSimplificator
         }
         else {
             LinkedList<SAlternativeTransformationElement> transformationElements = new LinkedList<SAlternativeTransformationElement>();
+
+            LinkedList<SAlternativeTransformationElement> newElements = new LinkedList<SAlternativeTransformationElement>();
+
+            for (Element element : alternative.getElements()) {
+                newElements
+                        .add(new SAlternativeTransformationElement.ReferenceElement(
+                                element));
+            }
             transformationElements
-                    .add(new SAlternativeTransformationElement.NewElement(
-                            alternative));
+                    .add(new SAlternativeTransformationElement.NewElement(node,
+                            newElements));
             SAlternativeTransformation transformation = new SAlternativeTransformation(
                     alternative, transformationElements);
             alternative.addTransformation(transformation);

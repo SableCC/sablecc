@@ -80,4 +80,67 @@ public class SGrammar {
         }
 
     }
+
+    public boolean canBeInlined(
+            Alternative targetAlt) {
+
+        Production targetProd = targetAlt.getProduction();
+
+        for (Production production : targetAlt.getOrigins()) {
+            for (Alternative alternative : production.getAlternatives()) {
+                if (alternative.contains(targetProd)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    // canBeInined must be call before inline(Alternative)
+    public void inline(
+            Alternative targetAlt) {
+
+        Production targetProd = targetAlt.getProduction();
+
+        for (Production production : this.productions.values()) {
+
+            LinkedList<Alternative> alternatives = new LinkedList<Alternative>(
+                    production.getAlternatives());
+            for (Alternative alternative : alternatives) {
+                if (!alternative.equals(targetAlt)) {
+                    alternative.inline(targetAlt);
+                }
+            }
+        }
+
+        targetAlt.getProduction().removeAlternative(targetAlt);
+
+        if (targetProd.getAlternatives().size() == 0) {
+            cleanReferencesTo(targetProd);
+        }
+    }
+
+    private void cleanReferencesTo(
+            Production targetProd) {
+
+        for (Production production : this.productions.values()) {
+
+            int i = 0;
+            Alternative alternative;
+
+            while (i < production.getAlternatives().size()) {
+                alternative = production.getAlternatives().get(i);
+
+                if (alternative.contains(targetProd)) {
+                    alternative.getProduction().removeAlternative(alternative);
+                }
+                else {
+                    i++;
+                }
+            }
+        }
+
+        this.productions.remove(targetProd.getName());
+    }
 }

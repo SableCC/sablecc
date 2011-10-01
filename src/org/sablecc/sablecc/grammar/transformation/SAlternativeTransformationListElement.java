@@ -20,11 +20,18 @@ package org.sablecc.sablecc.grammar.transformation;
 import java.util.*;
 
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.core.*;
-import org.sablecc.sablecc.core.Tree.TreeAlternative;
+import org.sablecc.sablecc.core.interfaces.*;
+import org.sablecc.sablecc.grammar.*;
 import org.sablecc.sablecc.grammar.interfaces.*;
 
 public abstract class SAlternativeTransformationListElement {
+
+    public abstract List<SAlternativeTransformationListElement> inline(
+            Alternative inlinedAlternative,
+            Map<Element, Element> oldToNewElement);
+
+    @Override
+    public abstract SAlternativeTransformationListElement clone();
 
     public static class ReferenceElement
             extends SAlternativeTransformationListElement {
@@ -41,20 +48,83 @@ public abstract class SAlternativeTransformationListElement {
             this.reference = reference;
         }
 
+        @Override
+        public List<SAlternativeTransformationListElement> inline(
+                Alternative inlinedAlternative,
+                Map<Element, Element> oldToNewElement) {
+
+            LinkedList<SAlternativeTransformationListElement> inlineResult = new LinkedList<SAlternativeTransformationListElement>();
+
+            if (this.reference instanceof Element.ProductionElement) {
+                Element.ProductionElement productionElement = (Element.ProductionElement) this.reference;
+
+                if (productionElement.getReference().equals(
+                        inlinedAlternative.getProduction())) {
+
+                    for (SAlternativeTransformationElement element : inlinedAlternative
+                            .getTransformation().getElements()) {
+
+                        for (SAlternativeTransformationElement newElement : element
+                                .inline(inlinedAlternative, oldToNewElement)) {
+
+                            if (newElement instanceof SAlternativeTransformationElement.ReferenceElement) {
+                                inlineResult
+                                        .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                                ((SAlternativeTransformationElement.ReferenceElement) newElement)
+                                                        .getReference()));
+                            }
+                            else if (newElement instanceof SAlternativeTransformationElement.NewElement) {
+                                SAlternativeTransformationElement.NewElement newNewElemnt = (SAlternativeTransformationElement.NewElement) newElement;
+                                inlineResult
+                                        .add(new SAlternativeTransformationListElement.NewElement(
+                                                newNewElemnt.getAlternative(),
+                                                newNewElemnt.getElements()));
+                            }
+                            else if (newElement instanceof SAlternativeTransformationElement.ListElement) {
+                                inlineResult
+                                        .addAll(((SAlternativeTransformationElement.ListElement) newElement)
+                                                .getElements());
+                            }
+                        }
+
+                    }
+
+                }
+                else {
+                    inlineResult
+                            .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                    oldToNewElement.get(this.reference)));
+                }
+            }
+            else {
+                inlineResult
+                        .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                oldToNewElement.get(this.reference)));
+            }
+
+            return inlineResult;
+        }
+
+        @Override
+        public SAlternativeTransformationListElement clone() {
+
+            return new ReferenceElement(this.reference);
+        }
+
     }
 
     public static class NewElement
             extends SAlternativeTransformationListElement {
 
-        private Tree.TreeAlternative treeAlternative;
+        private IReferencable alternative;
 
         private List<SAlternativeTransformationElement> elements = new LinkedList<SAlternativeTransformationElement>();
 
         public NewElement(
-                TreeAlternative treeAlternative,
+                IReferencable alternative,
                 List<SAlternativeTransformationElement> elements) {
 
-            if (treeAlternative == null) {
+            if (alternative == null) {
                 throw new InternalException("reference shouldn't be null");
             }
 
@@ -62,8 +132,46 @@ public abstract class SAlternativeTransformationListElement {
                 throw new InternalException("reference shouldn't be null");
             }
 
-            this.treeAlternative = treeAlternative;
+            this.alternative = alternative;
             this.elements = elements;
+        }
+
+        @Override
+        public List<SAlternativeTransformationListElement> inline(
+                Alternative inlinedAlternative,
+                Map<Element, Element> oldToNewElement) {
+
+            List<SAlternativeTransformationElement> newElements = new LinkedList<SAlternativeTransformationElement>();
+
+            for (SAlternativeTransformationElement element : this.elements) {
+                newElements.addAll(element.inline(inlinedAlternative,
+                        oldToNewElement));
+            }
+
+            List<SAlternativeTransformationListElement> inlineResult = new LinkedList<SAlternativeTransformationListElement>();
+
+            inlineResult
+                    .add(new SAlternativeTransformationListElement.NewElement(
+                            this.alternative, newElements));
+
+            return inlineResult;
+        }
+
+        public IReferencable getAlternative() {
+
+            return this.alternative;
+        }
+
+        @Override
+        public SAlternativeTransformationListElement clone() {
+
+            LinkedList<SAlternativeTransformationElement> newElements = new LinkedList<SAlternativeTransformationElement>();
+
+            for (SAlternativeTransformationElement element : this.elements) {
+                newElements.add(element.clone());
+            }
+
+            return new NewElement(this.alternative, newElements);
         }
 
     }
@@ -83,6 +191,68 @@ public abstract class SAlternativeTransformationListElement {
             this.reference = reference;
         }
 
+        @Override
+        public List<SAlternativeTransformationListElement> inline(
+                Alternative inlinedAlternative,
+                Map<Element, Element> oldToNewElement) {
+
+            LinkedList<SAlternativeTransformationListElement> inlineResult = new LinkedList<SAlternativeTransformationListElement>();
+
+            if (this.reference instanceof Element.ProductionElement) {
+                Element.ProductionElement productionElement = (Element.ProductionElement) this.reference;
+
+                if (productionElement.getReference().equals(
+                        inlinedAlternative.getProduction())) {
+
+                    for (SAlternativeTransformationElement element : inlinedAlternative
+                            .getTransformation().getElements()) {
+                        for (SAlternativeTransformationElement newElement : element
+                                .inline(inlinedAlternative, oldToNewElement)) {
+
+                            if (newElement instanceof SAlternativeTransformationElement.ReferenceElement) {
+                                inlineResult
+                                        .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                                ((SAlternativeTransformationElement.ReferenceElement) newElement)
+                                                        .getReference()));
+                            }
+                            else if (newElement instanceof SAlternativeTransformationElement.NewElement) {
+                                SAlternativeTransformationElement.NewElement newNewElemnt = (SAlternativeTransformationElement.NewElement) newElement;
+                                inlineResult
+                                        .add(new SAlternativeTransformationListElement.NewElement(
+                                                newNewElemnt.getAlternative(),
+                                                newNewElemnt.getElements()));
+                            }
+                            else if (newElement instanceof SAlternativeTransformationElement.ListElement) {
+                                inlineResult
+                                        .addAll(((SAlternativeTransformationElement.ListElement) newElement)
+                                                .getElements());
+                            }
+                        }
+                    }
+
+                }
+                else {
+                    inlineResult
+                            .add(new SAlternativeTransformationListElement.NormalListElement(
+                                    oldToNewElement.get(this.reference)));
+                }
+            }
+            else {
+                inlineResult
+                        .add(new SAlternativeTransformationListElement.NormalListElement(
+                                oldToNewElement.get(this.reference)));
+            }
+
+            return inlineResult;
+        }
+
+        @Override
+        public SAlternativeTransformationListElement clone() {
+
+            // TODO Auto-generated method stub
+            return null;
+        }
+
     }
 
     public static class LeftListElement
@@ -100,6 +270,68 @@ public abstract class SAlternativeTransformationListElement {
             this.reference = reference;
         }
 
+        @Override
+        public SAlternativeTransformationListElement clone() {
+
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public List<SAlternativeTransformationListElement> inline(
+                Alternative inlinedAlternative,
+                Map<Element, Element> oldToNewElement) {
+
+            LinkedList<SAlternativeTransformationListElement> inlineResult = new LinkedList<SAlternativeTransformationListElement>();
+
+            if (this.reference instanceof Element.ProductionElement) {
+                Element.ProductionElement productionElement = (Element.ProductionElement) this.reference;
+
+                if (productionElement.getReference().equals(
+                        inlinedAlternative.getProduction())) {
+
+                    for (SAlternativeTransformationElement element : inlinedAlternative
+                            .getTransformation().getElements()) {
+                        for (SAlternativeTransformationElement newElement : element
+                                .inline(inlinedAlternative, oldToNewElement)) {
+
+                            if (newElement instanceof SAlternativeTransformationElement.ReferenceElement) {
+                                inlineResult
+                                        .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                                ((SAlternativeTransformationElement.ReferenceElement) newElement)
+                                                        .getReference()));
+                            }
+                            else if (newElement instanceof SAlternativeTransformationElement.NewElement) {
+                                SAlternativeTransformationElement.NewElement newNewElemnt = (SAlternativeTransformationElement.NewElement) newElement;
+                                inlineResult
+                                        .add(new SAlternativeTransformationListElement.NewElement(
+                                                newNewElemnt.getAlternative(),
+                                                newNewElemnt.getElements()));
+                            }
+                            else if (newElement instanceof SAlternativeTransformationElement.ListElement) {
+                                inlineResult
+                                        .addAll(((SAlternativeTransformationElement.ListElement) newElement)
+                                                .getElements());
+                            }
+                        }
+                    }
+
+                }
+                else {
+                    inlineResult
+                            .add(new SAlternativeTransformationListElement.LeftListElement(
+                                    oldToNewElement.get(this.reference)));
+                }
+            }
+            else {
+                inlineResult
+                        .add(new SAlternativeTransformationListElement.LeftListElement(
+                                oldToNewElement.get(this.reference)));
+            }
+
+            return inlineResult;
+        }
+
     }
 
     public static class RightListElement
@@ -115,6 +347,68 @@ public abstract class SAlternativeTransformationListElement {
             }
 
             this.reference = reference;
+        }
+
+        @Override
+        public SAlternativeTransformationListElement clone() {
+
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public List<SAlternativeTransformationListElement> inline(
+                Alternative inlinedAlternative,
+                Map<Element, Element> oldToNewElement) {
+
+            LinkedList<SAlternativeTransformationListElement> inlineResult = new LinkedList<SAlternativeTransformationListElement>();
+
+            if (this.reference instanceof Element.ProductionElement) {
+                Element.ProductionElement productionElement = (Element.ProductionElement) this.reference;
+
+                if (productionElement.getReference().equals(
+                        inlinedAlternative.getProduction())) {
+
+                    for (SAlternativeTransformationElement element : inlinedAlternative
+                            .getTransformation().getElements()) {
+                        for (SAlternativeTransformationElement newElement : element
+                                .inline(inlinedAlternative, oldToNewElement)) {
+
+                            if (newElement instanceof SAlternativeTransformationElement.ReferenceElement) {
+                                inlineResult
+                                        .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                                ((SAlternativeTransformationElement.ReferenceElement) newElement)
+                                                        .getReference()));
+                            }
+                            else if (newElement instanceof SAlternativeTransformationElement.NewElement) {
+                                SAlternativeTransformationElement.NewElement newNewElemnt = (SAlternativeTransformationElement.NewElement) newElement;
+                                inlineResult
+                                        .add(new SAlternativeTransformationListElement.NewElement(
+                                                newNewElemnt.getAlternative(),
+                                                newNewElemnt.getElements()));
+                            }
+                            else if (newElement instanceof SAlternativeTransformationElement.ListElement) {
+                                inlineResult
+                                        .addAll(((SAlternativeTransformationElement.ListElement) newElement)
+                                                .getElements());
+                            }
+                        }
+                    }
+
+                }
+                else {
+                    inlineResult
+                            .add(new SAlternativeTransformationListElement.RightListElement(
+                                    oldToNewElement.get(this.reference)));
+                }
+            }
+            else {
+                inlineResult
+                        .add(new SAlternativeTransformationListElement.RightListElement(
+                                oldToNewElement.get(this.reference)));
+            }
+
+            return inlineResult;
         }
 
     }
