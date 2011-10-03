@@ -137,10 +137,78 @@ public class GrammarCompiler {
             }
 
             @Override
-            public void caseAParser(
-                    AParser node) {
+            public void caseARoot(
+                    ARoot node) {
 
-                throw SemanticException.notImplemented(node.getParserKeyword());
+                throw SemanticException.notImplemented(node.getRootKeyword());
+            }
+
+            @Override
+            public void inAParserContext(
+                    AParserContext node) {
+
+                // reject named contexts
+                if (node.getName() != null) {
+                    throw SemanticException.notImplemented(node.getName());
+                }
+            }
+
+            @Override
+            public void caseATokenQualifier(
+                    ATokenQualifier node) {
+
+                throw SemanticException.notImplemented(node.getTokenKeyword());
+            }
+
+            @Override
+            public void caseADanglingQualifier(
+                    ADanglingQualifier node) {
+
+                throw SemanticException.notImplemented(node
+                        .getDanglingKeyword());
+            }
+
+            @Override
+            public void caseALeftParserPriority(
+                    ALeftParserPriority node) {
+
+                throw SemanticException.notImplemented(node.getLeftKeyword());
+            }
+
+            @Override
+            public void caseARightParserPriority(
+                    ARightParserPriority node) {
+
+                throw SemanticException.notImplemented(node.getRightKeyword());
+            }
+
+            @Override
+            public void caseAUnaryParserPriority(
+                    AUnaryParserPriority node) {
+
+                throw SemanticException.notImplemented(node.getUnaryKeyword());
+            }
+
+            @Override
+            public void caseADanglingElement(
+                    ADanglingElement node) {
+
+                throw SemanticException.notImplemented(node
+                        .getDanglingKeyword());
+            }
+
+            @Override
+            public void caseASeparatedElement(
+                    ASeparatedElement node) {
+
+                throw SemanticException.notImplemented(node.getLPar());
+            }
+
+            @Override
+            public void caseAAlternatedElement(
+                    AAlternatedElement node) {
+
+                throw SemanticException.notImplemented(node.getLPar());
             }
 
             @Override
