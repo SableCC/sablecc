@@ -129,7 +129,7 @@ public class Alternative {
             Production production) {
 
         for (Element element : this.elements) {
-            if (element.getName().equals(production.getName())) {
+            if (element.getTypeName().equals(production.getName())) {
                 return true;
             }
         }
@@ -141,7 +141,7 @@ public class Alternative {
             Alternative alternative) {
 
         for (int i = 0; i < this.elements.size(); i++) {
-            if (this.elements.get(i).getName()
+            if (this.elements.get(i).getTypeName()
                     .equals(alternative.getProduction().getName())) {
                 buildInlinedAlternative(i, alternative);
             }

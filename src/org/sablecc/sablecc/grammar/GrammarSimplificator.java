@@ -250,29 +250,30 @@ public class GrammarSimplificator
         String name;
 
         if (cardinality.equals(CardinalityInterval.ZERO_ONE)) {
-            name = element.getName() + "_?";
+            name = element.getTypeName() + "_?";
         }
         else if (cardinality.equals(CardinalityInterval.ONE_OR_MORE)) {
-            name = element.getName() + "_+";
+            name = element.getTypeName() + "_+";
         }
         else if (cardinality.equals(CardinalityInterval.ZERO_OR_MORE)) {
-            name = element.getName() + "_*";
+            name = element.getTypeName() + "_*";
         }
         else if (cardinality.isANumber()) {
             BigInteger number = cardinality.getLowerBound().getValue();
-            name = element.getName() + "_" + number.toString();
+            name = element.getTypeName() + "_" + number.toString();
         }
         else if (cardinality.upperBoundIsInfinite()) {
             BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
-            name = element.getName() + "_" + lowerBoundValue.toString() + "...";
+            name = element.getTypeName() + "_" + lowerBoundValue.toString()
+                    + "...";
         }
         else {
 
             BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
             BigInteger upperBoundValue = cardinality.getUpperBound().getValue();
 
-            name = element.getName() + "_" + lowerBoundValue.toString() + ".."
-                    + upperBoundValue.toString();
+            name = element.getTypeName() + "_" + lowerBoundValue.toString()
+                    + ".." + upperBoundValue.toString();
         }
 
         if (grammar.containsProduction(name)) {
@@ -302,13 +303,13 @@ public class GrammarSimplificator
         String name;
 
         if (cardinality.equals(CardinalityInterval.ONE_OR_MORE)) {
-            name = leftElement.getName() + " Separator "
-                    + rightElement.getName() + "_+";
+            name = leftElement.getTypeName() + " Separator "
+                    + rightElement.getTypeName() + "_+";
 
         }
         else if (cardinality.equals(CardinalityInterval.ZERO_OR_MORE)) {
-            name = leftElement.getName() + " Separator "
-                    + rightElement.getName() + "_*";
+            name = leftElement.getTypeName() + " Separator "
+                    + rightElement.getTypeName() + "_*";
 
         }
         else if (cardinality.equals(cardinality.isANumber())) {
@@ -319,16 +320,16 @@ public class GrammarSimplificator
         else if (cardinality.upperBoundIsInfinite()) {
             BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
 
-            name = leftElement.getName() + " Separator "
-                    + rightElement.getName() + "_" + lowerBoundValue.toString()
-                    + "...";
+            name = leftElement.getTypeName() + " Separator "
+                    + rightElement.getTypeName() + "_"
+                    + lowerBoundValue.toString() + "...";
         }
         else {
             BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
             BigInteger upperBoundValue = cardinality.getUpperBound().getValue();
 
-            name = leftElement.getName() + " Separator " + rightElement + "_"
-                    + lowerBoundValue.toString() + ".."
+            name = leftElement.getTypeName() + " Separator " + rightElement
+                    + "_" + lowerBoundValue.toString() + ".."
                     + upperBoundValue.toString();
 
         }
@@ -361,21 +362,23 @@ public class GrammarSimplificator
         String name;
 
         if (cardinality.equals(CardinalityInterval.ONE_OR_MORE)) {
-            name = leftElement.getName() + rightElement.getName() + "_+";
+            name = leftElement.getTypeName() + rightElement.getTypeName()
+                    + "_+";
         }
 
         if (cardinality.equals(CardinalityInterval.ZERO_OR_MORE)) {
-            name = leftElement.getName() + rightElement.getName() + "_*";
+            name = leftElement.getTypeName() + rightElement.getTypeName()
+                    + "_*";
         }
         else if (cardinality.isANumber()) {
             BigInteger number = cardinality.getLowerBound().getValue();
-            name = leftElement.getName() + rightElement.getName() + "_"
+            name = leftElement.getTypeName() + rightElement.getTypeName() + "_"
                     + number.toString();
 
         }
         else if (cardinality.upperBoundIsInfinite()) {
             BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
-            name = leftElement.getName() + rightElement.getName() + "_"
+            name = leftElement.getTypeName() + rightElement.getTypeName() + "_"
                     + lowerBoundValue.toString() + "...";
         }
         else {
@@ -383,7 +386,7 @@ public class GrammarSimplificator
             BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
             BigInteger upperBoundValue = cardinality.getUpperBound().getValue();
 
-            name = leftElement.getName() + rightElement.getName() + "_"
+            name = leftElement.getTypeName() + rightElement.getTypeName() + "_"
                     + lowerBoundValue.toString() + ".."
                     + upperBoundValue.toString();
 
@@ -456,7 +459,7 @@ public class GrammarSimplificator
 
         private void qmarkCase() {
 
-            String qmarkName = this.sElement.getName() + "_?";
+            String qmarkName = this.sElement.getTypeName() + "_?";
 
             Production qmarkProd = new Production(qmarkName);
 
@@ -470,7 +473,7 @@ public class GrammarSimplificator
 
         private void plusCase() {
 
-            String plusName = this.sElement.getName() + "_+";
+            String plusName = this.sElement.getTypeName() + "_+";
 
             Production plusProd = new Production(plusName);
             // p = a_+ a | a;
@@ -511,12 +514,12 @@ public class GrammarSimplificator
 
         private void starCase() {
 
-            String starName = this.sElement.getName() + "_*";
+            String starName = this.sElement.getTypeName() + "_*";
 
             Production starProd = new Production(starName);
 
             // First Alternative
-            String plusName = this.sElement.getName() + "_+";
+            String plusName = this.sElement.getTypeName() + "_+";
 
             Element firstElement;
             if (this.grammar.containsProduction(plusName)) {
@@ -550,7 +553,7 @@ public class GrammarSimplificator
         private void numberCase() {
 
             BigInteger number = this.cardinality.getLowerBound().getValue();
-            String numberName = this.sElement.getName() + "_"
+            String numberName = this.sElement.getTypeName() + "_"
                     + number.toString();
 
             Production numberProd = new Production(numberName);
@@ -573,7 +576,7 @@ public class GrammarSimplificator
                         alternativeElements, alternativeTransformationElement));
             }
             else {
-                String previousNumberName = this.sElement.getName() + "_"
+                String previousNumberName = this.sElement.getTypeName() + "_"
                         + number.subtract(BigInteger.ONE).toString();
 
                 Element firstElement;
@@ -615,12 +618,12 @@ public class GrammarSimplificator
 
             BigInteger lowerBoundValue = this.cardinality.getLowerBound()
                     .getValue();
-            String atLeastName = this.sElement.getName() + "_"
+            String atLeastName = this.sElement.getTypeName() + "_"
                     + lowerBoundValue.toString() + "...";
 
             Production atLeastProd = new Production(atLeastName);
 
-            String numberName = this.sElement.getName() + "_"
+            String numberName = this.sElement.getTypeName() + "_"
                     + lowerBoundValue.toString();
 
             Element firstElement;
@@ -638,7 +641,7 @@ public class GrammarSimplificator
                                         .getLowerBound())));
             }
 
-            String starName = this.sElement.getName() + "_*";
+            String starName = this.sElement.getTypeName() + "_*";
 
             Element secondElement;
             if (this.grammar.containsProduction(starName)) {
@@ -678,7 +681,7 @@ public class GrammarSimplificator
             BigInteger upperBoundValue = this.cardinality.getUpperBound()
                     .getValue();
 
-            String intervalName = this.sElement.getName() + "_"
+            String intervalName = this.sElement.getTypeName() + "_"
                     + lowerBoundValue.toString() + ".."
                     + upperBoundValue.toString();
 
@@ -800,7 +803,7 @@ public class GrammarSimplificator
             }
             // p^(m..n) with n > 1 = p^m p^(0..(n-m))
             else {
-                String lowerNumberName = this.sElement.getName() + "_"
+                String lowerNumberName = this.sElement.getTypeName() + "_"
                         + lowerBoundValue.toString();
 
                 Element firstElement;
@@ -817,7 +820,8 @@ public class GrammarSimplificator
                                             this.cardinality.getLowerBound())));
                 }
 
-                String zeroToIntervalWidth = this.sElement.getName() + "_0.."
+                String zeroToIntervalWidth = this.sElement.getTypeName()
+                        + "_0.."
                         + upperBoundValue.subtract(lowerBoundValue).toString();
 
                 Element secondElement;
@@ -932,8 +936,8 @@ public class GrammarSimplificator
             }
 
             this.newProduction.addTransformation(new SProductionTransformation(
-                    this.newProduction, this.sLeftElement.getName(),
-                    this.sRightElement.getName(), parserElement
+                    this.newProduction, this.sLeftElement.getTypeName(),
+                    this.sRightElement.getTypeName(), parserElement
                             .getLeftReference(), parserElement
                             .getRightReference(), cardinality, true));
 
@@ -948,15 +952,15 @@ public class GrammarSimplificator
 
         private void plusCase() {
 
-            String plusName = this.sLeftElement.getName() + " Separator "
-                    + this.sRightElement.getName() + "_+";
+            String plusName = this.sLeftElement.getTypeName() + " Separator "
+                    + this.sRightElement.getTypeName() + "_+";
 
             Production plusProd = new Production(plusName);
             Element firstElement;
 
             if (this.sLeftElement instanceof Element.TokenElement) {
                 firstElement = new Element.TokenElement(
-                        this.sLeftElement.getName());
+                        this.sLeftElement.getTypeName());
             }
             else {
                 firstElement = new Element.ProductionElement(
@@ -964,8 +968,8 @@ public class GrammarSimplificator
                                 .getReference());
             }
 
-            String alternatedStarName = this.sRightElement.getName()
-                    + this.sLeftElement.getName() + "_*";
+            String alternatedStarName = this.sRightElement.getTypeName()
+                    + this.sLeftElement.getTypeName() + "_*";
 
             Element secondElement;
 
@@ -1002,15 +1006,15 @@ public class GrammarSimplificator
 
         private void starCase() {
 
-            String starName = this.sLeftElement.getName() + " Separator "
-                    + this.sRightElement.getName() + "_*";
+            String starName = this.sLeftElement.getTypeName() + " Separator "
+                    + this.sRightElement.getTypeName() + "_*";
 
             Production starProd = new Production(starName);
 
             // First alternative
 
-            String separatedPlusName = this.sLeftElement.getName()
-                    + " Separator " + this.sRightElement.getName() + "_+";
+            String separatedPlusName = this.sLeftElement.getTypeName()
+                    + " Separator " + this.sRightElement.getTypeName() + "_+";
 
             Element firstElement;
 
@@ -1125,8 +1129,8 @@ public class GrammarSimplificator
             BigInteger lowerBoundValue = this.cardinality.getLowerBound()
                     .getValue();
 
-            String atLeastName = this.sLeftElement.getName() + " Separator "
-                    + this.sRightElement.getName() + "_"
+            String atLeastName = this.sLeftElement.getTypeName()
+                    + " Separator " + this.sRightElement.getTypeName() + "_"
                     + lowerBoundValue.toString() + "...";
 
             Production atLeastProd = new Production(atLeastName);
@@ -1134,8 +1138,8 @@ public class GrammarSimplificator
             LinkedList<Element> altElements = new LinkedList<Element>();
             LinkedList<SAlternativeTransformationListElement> altTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
 
-            String numberName = this.sLeftElement.getName() + " Separator "
-                    + this.sRightElement.getName() + "_"
+            String numberName = this.sLeftElement.getTypeName() + " Separator "
+                    + this.sRightElement.getTypeName() + "_"
                     + lowerBoundValue.toString();
 
             Element firstElement;
@@ -1155,8 +1159,8 @@ public class GrammarSimplificator
                                         .getLowerBound())));
             }
 
-            String starName = this.sLeftElement.getName() + " Separator "
-                    + this.sRightElement.getName() + "_*";
+            String starName = this.sLeftElement.getTypeName() + " Separator "
+                    + this.sRightElement.getTypeName() + "_*";
 
             Element secondElement;
 
@@ -1195,9 +1199,10 @@ public class GrammarSimplificator
             BigInteger upperBoundValue = this.cardinality.getUpperBound()
                     .getValue();
 
-            String intervalName = this.sLeftElement.getName() + " Separator "
-                    + this.sRightElement + "_" + lowerBoundValue.toString()
-                    + ".." + upperBoundValue.toString();
+            String intervalName = this.sLeftElement.getTypeName()
+                    + " Separator " + this.sRightElement + "_"
+                    + lowerBoundValue.toString() + ".."
+                    + upperBoundValue.toString();
 
             Production intervalProd = new Production(intervalName);
 
@@ -1209,7 +1214,8 @@ public class GrammarSimplificator
 
                 // (a Sep b)^(0..1) = a?
                 if (upperBoundValue.equals(BigInteger.ONE)) {
-                    String qmarkLeftName = this.sLeftElement.getName() + "_?";
+                    String qmarkLeftName = this.sLeftElement.getTypeName()
+                            + "_?";
 
                     Element firstElement;
 
@@ -1240,8 +1246,11 @@ public class GrammarSimplificator
 
                     // First alternative
 
-                    String plusOneIntervalName = this.sLeftElement.getName()
-                            + " Separator " + this.sRightElement + "_"
+                    String plusOneIntervalName = this.sLeftElement
+                            .getTypeName()
+                            + " Separator "
+                            + this.sRightElement
+                            + "_"
                             + lowerBoundValue.add(BigInteger.ONE).toString()
                             + ".." + upperBoundValue.toString();
 
@@ -1283,8 +1292,8 @@ public class GrammarSimplificator
                 Element firstElement = this.sLeftElement.clone();
 
                 String alternatedZeroToIntervalWidth = this.sRightElement
-                        .getName()
-                        + this.sLeftElement.getName()
+                        .getTypeName()
+                        + this.sLeftElement.getTypeName()
                         + "_0.."
                         + upperBoundValue.subtract(lowerBoundValue).toString();
 
@@ -1325,7 +1334,7 @@ public class GrammarSimplificator
             }
             // (a Sep b)^(m..n) = (a Sep b)^m (b a)^(0..(n-m))
             else {
-                String lowerNumberName = this.sLeftElement.getName()
+                String lowerNumberName = this.sLeftElement.getTypeName()
                         + " Separator " + this.sRightElement + "_"
                         + lowerBoundValue.toString();
 
@@ -1346,8 +1355,8 @@ public class GrammarSimplificator
                                             .getLowerBound())));
                 }
 
-                String zeroToLowerBoundName = this.sRightElement.getName()
-                        + this.sLeftElement.getName() + "_0.."
+                String zeroToLowerBoundName = this.sRightElement.getTypeName()
+                        + this.sLeftElement.getTypeName() + "_0.."
                         + lowerBoundValue.toString();
 
                 Element secondElement;
@@ -1462,9 +1471,9 @@ public class GrammarSimplificator
 
                 this.newProduction
                         .addTransformation(new SProductionTransformation(
-                                this.newProduction,
-                                this.sLeftElement.getName(), this.sRightElement
-                                        .getName(), alternatedElement
+                                this.newProduction, this.sLeftElement
+                                        .getTypeName(), this.sRightElement
+                                        .getTypeName(), alternatedElement
                                         .getLeftReference(), alternatedElement
                                         .getRightReference(), cardinality,
                                 false));
@@ -1474,9 +1483,9 @@ public class GrammarSimplificator
 
                 this.newProduction
                         .addTransformation(new SProductionTransformation(
-                                this.newProduction,
-                                this.sLeftElement.getName(), this.sRightElement
-                                        .getName(), separatedElement
+                                this.newProduction, this.sLeftElement
+                                        .getTypeName(), this.sRightElement
+                                        .getTypeName(), separatedElement
                                         .getRightReference(), separatedElement
                                         .getLeftReference(), cardinality, false));
             }
@@ -1492,8 +1501,8 @@ public class GrammarSimplificator
 
         private void plusCase() {
 
-            String plusName = this.sLeftElement.getName()
-                    + this.sRightElement.getName() + "_+";
+            String plusName = this.sLeftElement.getTypeName()
+                    + this.sRightElement.getTypeName() + "_+";
 
             Production plusProd = new Production(plusName);
 
@@ -1543,13 +1552,13 @@ public class GrammarSimplificator
 
         private void starCase() {
 
-            String starName = this.sLeftElement.getName()
-                    + this.sRightElement.getName() + "_*";
+            String starName = this.sLeftElement.getTypeName()
+                    + this.sRightElement.getTypeName() + "_*";
 
             Production starProd = new Production(starName);
 
-            String plusName = this.sLeftElement.getName()
-                    + this.sRightElement.getName() + "_+";
+            String plusName = this.sLeftElement.getTypeName()
+                    + this.sRightElement.getTypeName() + "_+";
 
             // First alternative
             Element firstElement;
@@ -1585,8 +1594,9 @@ public class GrammarSimplificator
         private void numberCase() {
 
             BigInteger number = this.cardinality.getLowerBound().getValue();
-            String numberName = this.sLeftElement.getName()
-                    + this.sRightElement.getName() + "_" + number.toString();
+            String numberName = this.sLeftElement.getTypeName()
+                    + this.sRightElement.getTypeName() + "_"
+                    + number.toString();
 
             Production numberProd = new Production(numberName);
 
@@ -1609,8 +1619,8 @@ public class GrammarSimplificator
                         alternativeElements, altTransformationElement));
             }
             else {
-                String previousNumberName = this.sLeftElement.getName()
-                        + this.sRightElement.getName() + "_"
+                String previousNumberName = this.sLeftElement.getTypeName()
+                        + this.sRightElement.getTypeName() + "_"
                         + number.subtract(BigInteger.ONE).toString();
 
                 Element firstElement;
@@ -1656,14 +1666,14 @@ public class GrammarSimplificator
 
             BigInteger lowerBoundValue = this.cardinality.getLowerBound()
                     .getValue();
-            String atLeastName = this.sLeftElement.getName()
-                    + this.sRightElement.getName() + "_"
+            String atLeastName = this.sLeftElement.getTypeName()
+                    + this.sRightElement.getTypeName() + "_"
                     + lowerBoundValue.toString() + "...";
 
             Production atLeastProd = new Production(atLeastName);
 
-            String numberName = this.sLeftElement.getName()
-                    + this.sRightElement.getName() + "_"
+            String numberName = this.sLeftElement.getTypeName()
+                    + this.sRightElement.getTypeName() + "_"
                     + lowerBoundValue.toString();
 
             Element firstElement;
@@ -1683,8 +1693,8 @@ public class GrammarSimplificator
                                         .getLowerBound())));
             }
 
-            String starName = this.sLeftElement.getName()
-                    + this.sRightElement.getName() + "_*";
+            String starName = this.sLeftElement.getTypeName()
+                    + this.sRightElement.getTypeName() + "_*";
 
             Element secondElement;
 
@@ -1727,8 +1737,8 @@ public class GrammarSimplificator
             BigInteger upperBoundValue = this.cardinality.getUpperBound()
                     .getValue();
 
-            String intervalName = this.sLeftElement.getName()
-                    + this.sRightElement.getName() + "_"
+            String intervalName = this.sLeftElement.getTypeName()
+                    + this.sRightElement.getTypeName() + "_"
                     + lowerBoundValue.toString() + ".."
                     + upperBoundValue.toString();
 
@@ -1761,8 +1771,10 @@ public class GrammarSimplificator
                 else {
                     Element firstElement;
 
-                    String smallerIntervalName = this.sLeftElement.getName()
-                            + this.sRightElement.getName() + "_"
+                    String smallerIntervalName = this.sLeftElement
+                            .getTypeName()
+                            + this.sRightElement.getTypeName()
+                            + "_"
                             + lowerBoundValue.add(BigInteger.ONE).toString()
                             + ".." + upperBoundValue.toString();
 
@@ -1849,8 +1861,8 @@ public class GrammarSimplificator
             }
             // (ab)^(m..n) with n > 1 = (ab)^m (ab)^(0..(n-m))
             else {
-                String lowerNumberName = this.sLeftElement.getName()
-                        + this.sRightElement.getName() + "_"
+                String lowerNumberName = this.sLeftElement.getTypeName()
+                        + this.sRightElement.getTypeName() + "_"
                         + lowerBoundValue.toString();
 
                 LinkedList<Element> altElements = new LinkedList<Element>();
@@ -1874,8 +1886,10 @@ public class GrammarSimplificator
 
                 Element secondElement;
 
-                String zeroToIntervalWidthName = this.sLeftElement.getName()
-                        + this.sRightElement.getName() + "_0.."
+                String zeroToIntervalWidthName = this.sLeftElement
+                        .getTypeName()
+                        + this.sRightElement.getTypeName()
+                        + "_0.."
                         + upperBoundValue.subtract(lowerBoundValue).toString();
 
                 if (this.grammar.containsProduction(zeroToIntervalWidthName)) {

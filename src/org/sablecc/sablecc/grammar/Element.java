@@ -24,7 +24,7 @@ import org.sablecc.sablecc.syntax3.node.*;
 public abstract class Element
         implements IElement {
 
-    public abstract String getName();
+    public abstract String getTypeName();
 
     @Override
     public abstract Element clone();
@@ -32,84 +32,84 @@ public abstract class Element
     public static class TokenElement
             extends Element {
 
-        private String name;
+        private String typeName;
 
         public TokenElement(
-                PUnit name) {
+                PUnit type) {
 
-            if (name instanceof ANameUnit) {
-                this.name = ((ANameUnit) name).getIdentifier().getText();
+            if (type instanceof ANameUnit) {
+                this.typeName = ((ANameUnit) type).getIdentifier().getText();
             }
-            else if (name instanceof AStringUnit) {
-                this.name = ((AStringUnit) name).getString().getText();
+            else if (type instanceof AStringUnit) {
+                this.typeName = ((AStringUnit) type).getString().getText();
             }
-            else if (name instanceof ACharacterUnit) {
-                PCharacter character = ((ACharacterUnit) name).getCharacter();
+            else if (type instanceof ACharacterUnit) {
+                PCharacter character = ((ACharacterUnit) type).getCharacter();
 
                 if (character instanceof ACharCharacter) {
-                    this.name = ((ACharCharacter) character).getChar()
+                    this.typeName = ((ACharCharacter) character).getChar()
                             .getText();
                 }
                 else if (character instanceof ADecCharacter) {
-                    this.name = ((ADecCharacter) character).getDecChar()
+                    this.typeName = ((ADecCharacter) character).getDecChar()
                             .getText();
                 }
                 else if (character instanceof AHexCharacter) {
-                    this.name = ((AHexCharacter) character).getHexChar()
+                    this.typeName = ((AHexCharacter) character).getHexChar()
                             .getText();
                 }
             }
-            else if (name instanceof AStartUnit) {
-                this.name = ((AStartUnit) name).getStartKeyword().getText();
+            else if (type instanceof AStartUnit) {
+                this.typeName = ((AStartUnit) type).getStartKeyword().getText();
             }
-            else if (name instanceof AEndUnit) {
-                this.name = ((AEndUnit) name).getEndKeyword().getText();
+            else if (type instanceof AEndUnit) {
+                this.typeName = ((AEndUnit) type).getEndKeyword().getText();
             }
 
         }
 
         public TokenElement(
-                String name) {
+                String typeName) {
 
-            if (name == null) {
-                throw new InternalException("name shouldn't be null");
+            if (typeName == null) {
+                throw new InternalException("typeName shouldn't be null");
             }
-            this.name = name;
+            this.typeName = typeName;
         }
 
         @Override
-        public String getName() {
+        public String getTypeName() {
 
-            return this.name;
+            return this.typeName;
         }
 
         @Override
         public Element clone() {
 
-            return new TokenElement(this.name);
+            return new TokenElement(this.typeName);
         }
     }
 
     public static class ProductionElement
             extends Element {
 
-        private String name;
+        private String typeName;
 
         private Production reference;
 
         public ProductionElement(
-                String name,
+                String typeName,
                 Production reference) {
 
-            if (name == null) {
-                throw new InternalException("name shouldn't be null");
+            if (typeName == null) {
+                throw new InternalException("typeName shouldn't be null");
             }
 
             if (reference == null) {
                 throw new InternalException("reference shouldn't be null");
             }
 
-            this.name = name;
+            this.typeName = typeName;
             this.reference = reference;
         }
 
@@ -120,14 +120,14 @@ public abstract class Element
                 throw new InternalException("reference shouldn't be null");
             }
 
-            this.name = reference.getName();
+            this.typeName = reference.getName();
             this.reference = reference;
         }
 
         @Override
-        public String getName() {
+        public String getTypeName() {
 
-            return this.name;
+            return this.typeName;
         }
 
         public Production getReference() {
@@ -138,7 +138,7 @@ public abstract class Element
         @Override
         public Element clone() {
 
-            return new ProductionElement(this.name, this.reference);
+            return new ProductionElement(this.typeName, this.reference);
         }
     }
 
