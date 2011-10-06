@@ -235,6 +235,67 @@ public abstract class Context
         return set;
     }
 
+    public boolean isIgnored(
+            LexerExpression lexerExpression) {
+
+        return this.ignoredSet.contains(lexerExpression);
+    }
+
+    public void addTokenIfNecessary(
+            PUnit pUnit) {
+
+        if (pUnit instanceof ANameUnit) {
+            ANameUnit unit = (ANameUnit) pUnit;
+
+            INameDeclaration nameDeclaration = this.grammar
+                    .getGlobalReference(unit.getIdentifier().getText());
+            if (nameDeclaration instanceof IToken) {
+                this.tokenSet.add((IToken) nameDeclaration);
+            }
+        }
+        else if (pUnit instanceof AStringUnit) {
+            AStringUnit unit = (AStringUnit) pUnit;
+
+            this.tokenSet.add(this.grammar.getStringExpression(unit.getString()
+                    .getText()));
+        }
+        else if (pUnit instanceof ACharacterUnit) {
+            ACharacterUnit unit = (ACharacterUnit) pUnit;
+            PCharacter pCharacter = unit.getCharacter();
+
+            if (pCharacter instanceof ACharCharacter) {
+                ACharCharacter character = (ACharCharacter) pCharacter;
+
+                this.tokenSet.add(this.grammar.getCharExpression(character
+                        .getChar().getText()));
+            }
+            else if (pCharacter instanceof ADecCharacter) {
+                ADecCharacter character = (ADecCharacter) pCharacter;
+
+                this.tokenSet.add(this.grammar.getDecExpression(character
+                        .getDecChar().getText()));
+            }
+            else if (pCharacter instanceof AHexCharacter) {
+                AHexCharacter character = (AHexCharacter) pCharacter;
+
+                this.tokenSet.add(this.grammar.getHexExpression(character
+                        .getHexChar().getText()));
+            }
+            else {
+                throw new InternalException("unhandled character type");
+            }
+        }
+        else if (pUnit instanceof AStartUnit) {
+            this.tokenSet.add(this.grammar.getStartExpression());
+        }
+        else if (pUnit instanceof AEndUnit) {
+            this.tokenSet.add(this.grammar.getEndExpression());
+        }
+        else {
+            throw new InternalException("unhandled unit type");
+        }
+    }
+
     public static class NamedContext
             extends Context
             implements INameDeclaration {
@@ -399,12 +460,6 @@ public abstract class Context
             visitor.visitAnonymousContext(this);
 
         }
-    }
-
-    public boolean isIgnored(
-            LexerExpression lexerExpression) {
-
-        return this.ignoredSet.contains(lexerExpression);
     }
 
 }

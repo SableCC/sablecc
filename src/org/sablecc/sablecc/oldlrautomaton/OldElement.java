@@ -19,9 +19,9 @@ package org.sablecc.sablecc.oldlrautomaton;
 
 import org.sablecc.exception.*;
 
-public abstract class Element {
+public abstract class OldElement {
 
-    private final Alternative alternative;
+    private final OldAlternative oldAlternative;
 
     private final int position;
 
@@ -31,12 +31,12 @@ public abstract class Element {
 
     private boolean isStable;
 
-    Element(
-            Alternative alternative,
+    OldElement(
+            OldAlternative oldAlternative,
             int position,
             String shortName) {
 
-        this.alternative = alternative;
+        this.oldAlternative = oldAlternative;
         this.position = position;
         this.shortName = shortName;
     }
@@ -71,7 +71,7 @@ public abstract class Element {
 
     public String getFullName() {
 
-        return this.alternative.getFullName() + "." + getName();
+        return this.oldAlternative.getFullName() + "." + getName();
     }
 
     public int getPosition() {

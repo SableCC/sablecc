@@ -21,15 +21,15 @@ import java.util.*;
 
 import org.sablecc.exception.*;
 
-public class Alternative {
+public class OldAlternative {
 
-    private final Production production;
+    private final OldProduction oldProduction;
 
     private final String shortName;
 
     private String name;
 
-    private final ArrayList<Element> elements = new ArrayList<Element>();
+    private final ArrayList<OldElement> oldElements = new ArrayList<OldElement>();
 
     private boolean isStable;
 
@@ -39,39 +39,40 @@ public class Alternative {
 
 /*    private ParserPriorityLevel priorityLevel;
 */
-    Alternative(
-            Production production,
+    OldAlternative(
+            OldProduction oldProduction,
             String shortName) {
 
-        this.production = production;
+        this.oldProduction = oldProduction;
         this.shortName = shortName;
     }
 
-    public Element addProductionElement(
+    public OldElement addProductionElement(
             String shortName,
-            Production production) {
+            OldProduction oldProduction) {
 
         if (this.isStable) {
             throw new InternalException("alternative is stable");
         }
-        int position = this.elements.size();
-        Element element = new ProductionElement(this, position, shortName,
-                production);
-        this.elements.add(element);
-        return element;
+        int position = this.oldElements.size();
+        OldElement oldElement = new ProductionElement(this, position,
+                shortName, oldProduction);
+        this.oldElements.add(oldElement);
+        return oldElement;
     }
 
-    public Element addTokenElement(
+    public OldElement addTokenElement(
             String shortName,
             Token token) {
 
         if (this.isStable) {
             throw new InternalException("alternative is stable");
         }
-        int position = this.elements.size();
-        Element element = new TokenElement(this, position, shortName, token);
-        this.elements.add(element);
-        return element;
+        int position = this.oldElements.size();
+        OldElement oldElement = new TokenElement(this, position, shortName,
+                token);
+        this.oldElements.add(oldElement);
+        return oldElement;
     }
 
     public String getShortName() {
@@ -99,36 +100,37 @@ public class Alternative {
             throw new InternalException("alternative is already stable");
         }
 
-        Map<String, List<Element>> nameToElementListMap = new LinkedHashMap<String, List<Element>>();
-        for (Element element : this.elements) {
-            String shortName = element.getShortName();
-            List<Element> elementList = nameToElementListMap.get(shortName);
+        Map<String, List<OldElement>> nameToElementListMap = new LinkedHashMap<String, List<OldElement>>();
+        for (OldElement oldElement : this.oldElements) {
+            String shortName = oldElement.getShortName();
+            List<OldElement> elementList = nameToElementListMap.get(shortName);
             if (elementList == null) {
-                elementList = new LinkedList<Element>();
+                elementList = new LinkedList<OldElement>();
                 nameToElementListMap.put(shortName, elementList);
             }
-            elementList.add(element);
+            elementList.add(oldElement);
         }
-        for (List<Element> elementList : nameToElementListMap.values()) {
+        for (List<OldElement> elementList : nameToElementListMap.values()) {
             if (elementList.size() == 1) {
-                Element element = elementList.get(0);
-                element.setName(element.getShortName());
+                OldElement oldElement = elementList.get(0);
+                oldElement.setName(oldElement.getShortName());
             }
             else {
                 int index = 1;
-                for (Element element : elementList) {
-                    element.setName(element.getShortName() + "$" + index++);
+                for (OldElement oldElement : elementList) {
+                    oldElement.setName(oldElement.getShortName() + "$"
+                            + index++);
                 }
             }
         }
-        for (Element element : this.elements) {
-            element.stabilize();
+        for (OldElement oldElement : this.oldElements) {
+            oldElement.stabilize();
         }
 
-        this.items = new ArrayList<Item>(this.elements.size() + 1);
+        this.items = new ArrayList<Item>(this.oldElements.size() + 1);
         int position = 0;
-        for (Element element : this.elements) {
-            if (element instanceof TokenElement) {
+        for (OldElement oldElement : this.oldElements) {
+            if (oldElement instanceof TokenElement) {
                 this.items.add(new Item(this, position, ItemType.BEFORE_TOKEN));
             }
             else {
@@ -142,7 +144,7 @@ public class Alternative {
 
     public String getFullName() {
 
-        return this.production.getName() + "." + getName();
+        return this.oldProduction.getName() + "." + getName();
     }
 
     @Override
@@ -152,9 +154,9 @@ public class Alternative {
         sb.append("{");
         sb.append(getName());
         sb.append(":}");
-        for (Element element : this.elements) {
+        for (OldElement oldElement : this.oldElements) {
             sb.append(" ");
-            sb.append(element);
+            sb.append(oldElement);
         }
         return sb.toString();
     }
@@ -168,12 +170,12 @@ public class Alternative {
 
         Integer length = 0;
 
-        for (Element element : this.elements) {
-            if (element instanceof TokenElement) {
+        for (OldElement oldElement : this.oldElements) {
+            if (oldElement instanceof TokenElement) {
                 length++;
             }
             else {
-                ProductionElement productionElement = (ProductionElement) element;
+                ProductionElement productionElement = (ProductionElement) oldElement;
                 Integer elementLength = productionElement.getProduction()
                         .getShortestLength();
                 if (elementLength == null) {
@@ -202,15 +204,15 @@ public class Alternative {
         return this.items.get(position);
     }
 
-    public Element getElement(
+    public OldElement getElement(
             int position) {
 
-        return this.elements.get(position);
+        return this.oldElements.get(position);
     }
 
-    public ArrayList<Element> getElements() {
+    public ArrayList<OldElement> getElements() {
 
-        return this.elements;
+        return this.oldElements;
     }
 
     Set<Ahead> tryLook(
@@ -219,9 +221,9 @@ public class Alternative {
         return this.items.get(0).tryLook(distance);
     }
 
-    public Production getProduction() {
+    public OldProduction getProduction() {
 
-        return this.production;
+        return this.oldProduction;
     }
 
 /*    public void setPriorityLevel(

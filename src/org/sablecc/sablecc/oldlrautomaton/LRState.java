@@ -20,6 +20,7 @@ package org.sablecc.sablecc.oldlrautomaton;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.launcher.*;
 import org.sablecc.util.*;
 
 public class LRState {
@@ -38,7 +39,7 @@ public class LRState {
 
     private final Map<Token, LRState> tokenTransitions = new LinkedHashMap<Token, LRState>();
 
-    private final Map<Production, LRState> productionTransitions = new LinkedHashMap<Production, LRState>();
+    private final Map<OldProduction, LRState> productionTransitions = new LinkedHashMap<OldProduction, LRState>();
 
     private final Set<Item> shiftItems = new LinkedHashSet<Item>();
 
@@ -48,7 +49,7 @@ public class LRState {
 
     private final Map<Item, Set<LRState>> origins = new LinkedHashMap<Item, Set<LRState>>();
 
-    private Map<Production, Map<Integer, Set<Item>>> productionToLookaheadMap = new LinkedHashMap<Production, Map<Integer, Set<Item>>>();
+    private Map<OldProduction, Map<Integer, Set<Item>>> productionToLookaheadMap = new LinkedHashMap<OldProduction, Map<Integer, Set<Item>>>();
 
     LRState(
             LRAutomaton automaton,
@@ -68,10 +69,11 @@ public class LRState {
                 Item item = workSet.next();
 
                 if (item.getType() == ItemType.BEFORE_PRODUCTION) {
-                    Production production = item.getProductionElement()
+                    OldProduction oldProduction = item.getProductionElement()
                             .getProduction();
-                    for (Alternative alternative : production.getAlternatives()) {
-                        Item newItem = alternative.getItem(0);
+                    for (OldAlternative oldAlternative : oldProduction
+                            .getAlternatives()) {
+                        Item newItem = oldAlternative.getItem(0);
                         this.items.add(newItem);
                         workSet.add(newItem);
                         addOriginatingCoreItem(newItem, coreItem);
@@ -134,7 +136,7 @@ public class LRState {
     void computeTransitions() {
 
         Map<Token, Set<Item>> tokenToItemSetMap = new LinkedHashMap<Token, Set<Item>>();
-        Map<Production, Set<Item>> productionToItemSetMap = new LinkedHashMap<Production, Set<Item>>();
+        Map<OldProduction, Set<Item>> productionToItemSetMap = new LinkedHashMap<OldProduction, Set<Item>>();
 
         for (Item sourceItem : this.items) {
             switch (sourceItem.getType()) {
@@ -149,12 +151,12 @@ public class LRState {
                 break;
             }
             case BEFORE_PRODUCTION: {
-                Production production = sourceItem.getProductionElement()
+                OldProduction oldProduction = sourceItem.getProductionElement()
                         .getProduction();
-                Set<Item> itemSet = productionToItemSetMap.get(production);
+                Set<Item> itemSet = productionToItemSetMap.get(oldProduction);
                 if (itemSet == null) {
                     itemSet = new LinkedHashSet<Item>();
-                    productionToItemSetMap.put(production, itemSet);
+                    productionToItemSetMap.put(oldProduction, itemSet);
                 }
                 itemSet.add(sourceItem.next());
                 break;
@@ -171,12 +173,12 @@ public class LRState {
             this.tokenTransitions.put(token, destinationState);
         }
 
-        for (Map.Entry<Production, Set<Item>> entry : productionToItemSetMap
+        for (Map.Entry<OldProduction, Set<Item>> entry : productionToItemSetMap
                 .entrySet()) {
-            Production production = entry.getKey();
+            OldProduction oldProduction = entry.getKey();
             Set<Item> itemSet = entry.getValue();
             LRState destinationState = this.automaton.getState(itemSet);
-            this.productionTransitions.put(production, destinationState);
+            this.productionTransitions.put(oldProduction, destinationState);
         }
     }
 
@@ -208,13 +210,14 @@ public class LRState {
                 LRState state = this;
                 Item stateItem = item;
                 state.addOrigin(stateItem, this);
-                for (Element element : item.getAlternative().getElements()) {
-                    if (element instanceof TokenElement) {
-                        TokenElement tokenElement = (TokenElement) element;
+                for (OldElement oldElement : item.getAlternative()
+                        .getElements()) {
+                    if (oldElement instanceof TokenElement) {
+                        TokenElement tokenElement = (TokenElement) oldElement;
                         state = state.getTarget(tokenElement.getToken());
                     }
                     else {
-                        ProductionElement productionElement = (ProductionElement) element;
+                        ProductionElement productionElement = (ProductionElement) oldElement;
                         state = state.getTarget(productionElement
                                 .getProduction());
                     }
@@ -248,9 +251,9 @@ public class LRState {
     }
 
     public LRState getTarget(
-            Production production) {
+            OldProduction oldProduction) {
 
-        return this.productionTransitions.get(production);
+        return this.productionTransitions.get(oldProduction);
     }
 
     public Set<LRState> getOrigins(
@@ -263,18 +266,14 @@ public class LRState {
         return this.origins.get(item);
     }
 
-/*    void computeActions(
-            Verbosity verbosity) {
+    void computeActions(
+            Trace trace) {
 
         // LR(0) shift state
         if (this.reduceItems.size() == 0) {
             this.actions.add(new ShiftAction(null));
 
-            switch (verbosity) {
-            case VERBOSE:
-                System.out.println("   - LR(0) shift state found");
-                break;
-            }
+            trace.verboseln("   - LR(0) shift state found");
 
             return;
         }
@@ -284,11 +283,7 @@ public class LRState {
             this.actions.add(new ReduceAction(null, this.reduceItems.iterator()
                     .next().getAlternative()));
 
-            switch (verbosity) {
-            case VERBOSE:
-                System.out.println("   - LR(0) reduce state found");
-                break;
-            }
+            trace.verboseln("   - LR(0) reduce state found");
 
             return;
         }
@@ -299,12 +294,8 @@ public class LRState {
         PairExtractor<Item> pairExtractor = new PairExtractor<Item>(
                 conflictItems);
 
-        switch (verbosity) {
-        case VERBOSE:
-            System.out.println("   - Analyzing "
-                    + pairExtractor.getPairs().size() + " potential conflicts");
-            break;
-        }
+        trace.verboseln("   - Analyzing " + pairExtractor.getPairs().size()
+                + " potential conflicts");
 
         Map<Item, Map<Integer, Set<Item>>> itemToLookaheadMap = new LinkedHashMap<Item, Map<Integer, Set<Item>>>();
         Map<Item, Set<Item>> itemToRemoveLookaheadMap = new LinkedHashMap<Item, Set<Item>>();
@@ -348,16 +339,12 @@ public class LRState {
                 continue;
             }
 
-            switch (verbosity) {
-            case VERBOSE:
-                if (leftItem.getType() == ItemType.BEFORE_TOKEN
-                        || rightItem.getType() == ItemType.BEFORE_TOKEN) {
-                    System.out.println("    - Shift/reduce conflict found");
-                }
-                else {
-                    System.out.println("    - Reduce/reduce conflict found");
-                }
-                break;
+            if (leftItem.getType() == ItemType.BEFORE_TOKEN
+                    || rightItem.getType() == ItemType.BEFORE_TOKEN) {
+                trace.verboseln("    - Shift/reduce conflict found");
+            }
+            else {
+                trace.verboseln("    - Reduce/reduce conflict found");
             }
 
             int distance = 0;
@@ -365,12 +352,8 @@ public class LRState {
             while (!resolved) {
                 distance++;
 
-                switch (verbosity) {
-                case VERBOSE:
-                    System.out.println("     Trying linear approximate LALR("
-                            + distance + ")");
-                    break;
-                }
+                trace.verboseln("     Trying linear approximate LALR("
+                        + distance + ")");
 
                 Set<Item> leftLookItems = leftLookahead.get(distance);
 
@@ -386,8 +369,8 @@ public class LRState {
                         }
                     }
                     for (Farther farther : fartherSet) {
-                        leftLookItems.addAll(lookBeyond(leftItem, farther
-                                .getDistance()));
+                        leftLookItems.addAll(lookBeyond(leftItem,
+                                farther.getDistance()));
                     }
 
                     leftLookahead.put(distance, leftLookItems);
@@ -407,8 +390,8 @@ public class LRState {
                         }
                     }
                     for (Farther farther : fartherSet) {
-                        rightLookItems.addAll(lookBeyond(rightItem, farther
-                                .getDistance()));
+                        rightLookItems.addAll(lookBeyond(rightItem,
+                                farther.getDistance()));
                     }
 
                     rightLookahead.put(distance, rightLookItems);
@@ -449,6 +432,7 @@ public class LRState {
                         reduceLookItems = leftLookItems;
                     }
 
+/*
                     if (shiftItem.hasPriorityOver(reduceItem)) {
                         if (reduceLookItems.contains(shiftItem)) {
                             Set<Item> lookaheadToRemove = itemToRemoveLookaheadMap
@@ -460,7 +444,7 @@ public class LRState {
                             }
                             lookaheadToRemove.add(shiftItem);
                             reduceLookItems.remove(shiftItem);
-                            switch (verbosity) {
+                            switch (trace) {
                             case VERBOSE:
                                 System.out.println("     Applying priority");
                                 break;
@@ -482,13 +466,14 @@ public class LRState {
                             }
                             lookaheadToRemove.add(shiftItem);
                             shiftLookItems.remove(shiftItem);
-                            switch (verbosity) {
+                            switch (trace) {
                             case VERBOSE:
                                 System.out.println("     Applying priority");
                                 break;
                             }
                         }
                     }
+*/
                 }
 
                 Set<Token> leftTokens = new LinkedHashSet<Token>();
@@ -505,11 +490,7 @@ public class LRState {
                 intersection.retainAll(rightTokens);
 
                 if (intersection.size() == 0) {
-                    switch (verbosity) {
-                    case VERBOSE:
-                        System.out.println("     Conflict is resolved");
-                        break;
-                    }
+                    trace.verboseln("     Conflict is resolved");
                     resolved = true;
                 }
                 else {
@@ -567,7 +548,7 @@ public class LRState {
                     .getAlternative()));
         }
     }
-*/
+
     private Set<Item> lookBeyond(
             Item item,
             int distance) {
@@ -592,21 +573,21 @@ public class LRState {
     }
 
     public Set<Item> look(
-            Production production,
+            OldProduction oldProduction,
             int distance) {
 
         Map<Integer, Set<Item>> lookahead = this.productionToLookaheadMap
-                .get(production);
+                .get(oldProduction);
 
         if (lookahead == null) {
             lookahead = new LinkedHashMap<Integer, Set<Item>>();
-            this.productionToLookaheadMap.put(production, lookahead);
+            this.productionToLookaheadMap.put(oldProduction, lookahead);
         }
 
         Set<Item> items = lookahead.get(distance);
 
         if (items == null) {
-            computeLook(production, distance);
+            computeLook(oldProduction, distance);
             items = lookahead.get(distance);
         }
 
@@ -614,12 +595,12 @@ public class LRState {
     }
 
     void computeLook(
-            Production production,
+            OldProduction oldProduction,
             int distance) {
 
         do {
             this.automaton.resetLookComputationData();
-            tryLook(production, distance);
+            tryLook(oldProduction, distance);
         }
         while (this.automaton.lookComputationDataHasChanged());
 
@@ -627,15 +608,15 @@ public class LRState {
     }
 
     Set<Item> tryLook(
-            Production production,
+            OldProduction oldProduction,
             int distance) {
 
         Map<Integer, Set<Item>> lookahead = this.productionToLookaheadMap
-                .get(production);
+                .get(oldProduction);
 
         if (lookahead == null) {
             lookahead = new LinkedHashMap<Integer, Set<Item>>();
-            this.productionToLookaheadMap.put(production, lookahead);
+            this.productionToLookaheadMap.put(oldProduction, lookahead);
         }
 
         Set<Item> currentLookComputationData = lookahead.get(distance);
@@ -645,17 +626,17 @@ public class LRState {
         }
 
         currentLookComputationData = this.automaton
-                .getCurrentLookComputationData(this, production, distance);
+                .getCurrentLookComputationData(this, oldProduction, distance);
 
         if (currentLookComputationData == null) {
-            this.automaton.setCurrentLookComputationData(this, production,
+            this.automaton.setCurrentLookComputationData(this, oldProduction,
                     distance, this.automaton.getPreviousLookComputationData(
-                            this, production, distance));
+                            this, oldProduction, distance));
 
             currentLookComputationData = new LinkedHashSet<Item>();
             for (Item item : this.items) {
                 if (item.getType() == ItemType.BEFORE_PRODUCTION
-                        && item.getProductionElement().getProduction() == production) {
+                        && item.getProductionElement().getProduction() == oldProduction) {
                     Set<Farther> fartherSet = new LinkedHashSet<Farther>();
                     for (Ahead ahead : item.next().look(distance)) {
                         if (ahead instanceof Item) {
@@ -686,7 +667,7 @@ public class LRState {
                 }
             }
 
-            this.automaton.setCurrentLookComputationData(this, production,
+            this.automaton.setCurrentLookComputationData(this, oldProduction,
                     distance, currentLookComputationData);
         }
 
@@ -694,16 +675,16 @@ public class LRState {
     }
 
     void setLook(
-            Production production,
+            OldProduction oldProduction,
             Integer distance,
             Set<Item> items) {
 
         Map<Integer, Set<Item>> lookahead = this.productionToLookaheadMap
-                .get(production);
+                .get(oldProduction);
 
         if (lookahead == null) {
             lookahead = new LinkedHashMap<Integer, Set<Item>>();
-            this.productionToLookaheadMap.put(production, lookahead);
+            this.productionToLookaheadMap.put(oldProduction, lookahead);
         }
 
         if (lookahead.containsKey(distance)) {
@@ -723,7 +704,7 @@ public class LRState {
         return this.tokenTransitions;
     }
 
-    public Map<Production, LRState> getProductionTransitions() {
+    public Map<OldProduction, LRState> getProductionTransitions() {
 
         return this.productionTransitions;
     }

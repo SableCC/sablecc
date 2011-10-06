@@ -24,18 +24,18 @@ import org.sablecc.exception.*;
 public class Item
         implements Ahead {
 
-    private final Alternative alternative;
+    private final OldAlternative oldAlternative;
 
     private final int position;
 
     private final ItemType itemType;
 
     Item(
-            Alternative alternative,
+            OldAlternative oldAlternative,
             int position,
             ItemType itemType) {
 
-        this.alternative = alternative;
+        this.oldAlternative = oldAlternative;
         this.position = position;
         this.itemType = itemType;
     }
@@ -51,7 +51,8 @@ public class Item
             throw new InternalException("invalid call");
         }
 
-        return (ProductionElement) this.alternative.getElement(this.position);
+        return (ProductionElement) this.oldAlternative
+                .getElement(this.position);
     }
 
     public TokenElement getTokenElement() {
@@ -60,23 +61,23 @@ public class Item
             throw new InternalException("invalid call");
         }
 
-        return (TokenElement) this.alternative.getElement(this.position);
+        return (TokenElement) this.oldAlternative.getElement(this.position);
     }
 
     public Item next() {
 
-        return this.alternative.getItem(this.position + 1);
+        return this.oldAlternative.getItem(this.position + 1);
     }
 
     @Override
     public String toString() {
 
-        return this.alternative.getFullName() + ":" + this.position;
+        return this.oldAlternative.getFullName() + ":" + this.position;
     }
 
-    public Alternative getAlternative() {
+    public OldAlternative getAlternative() {
 
-        return this.alternative;
+        return this.oldAlternative;
     }
 
     public int getPosition() {
@@ -91,14 +92,14 @@ public class Item
             throw new InternalException("invalid distance");
         }
 
-        if (this.position == this.alternative.getElements().size()) {
+        if (this.position == this.oldAlternative.getElements().size()) {
             Set<Ahead> result = new LinkedHashSet<Ahead>();
             result.add(Farther.get(distance));
             return result;
         }
 
-        Element element = this.alternative.getElement(this.position);
-        if (element instanceof TokenElement) {
+        OldElement oldElement = this.oldAlternative.getElement(this.position);
+        if (oldElement instanceof TokenElement) {
             if (distance == 1) {
                 Set<Ahead> result = new LinkedHashSet<Ahead>();
                 result.add(this);
@@ -108,10 +109,10 @@ public class Item
             return next().look(distance - 1);
         }
 
-        ProductionElement productionElement = (ProductionElement) element;
-        Production production = productionElement.getProduction();
+        ProductionElement productionElement = (ProductionElement) oldElement;
+        OldProduction oldProduction = productionElement.getProduction();
         Set<Ahead> result = new LinkedHashSet<Ahead>();
-        for (Ahead ahead : production.look(distance)) {
+        for (Ahead ahead : oldProduction.look(distance)) {
             if (ahead instanceof Item) {
                 result.add(ahead);
             }
@@ -130,14 +131,14 @@ public class Item
             throw new InternalException("invalid distance");
         }
 
-        if (this.position == this.alternative.getElements().size()) {
+        if (this.position == this.oldAlternative.getElements().size()) {
             Set<Ahead> result = new LinkedHashSet<Ahead>();
             result.add(Farther.get(distance));
             return result;
         }
 
-        Element element = this.alternative.getElement(this.position);
-        if (element instanceof TokenElement) {
+        OldElement oldElement = this.oldAlternative.getElement(this.position);
+        if (oldElement instanceof TokenElement) {
             if (distance == 1) {
                 Set<Ahead> result = new LinkedHashSet<Ahead>();
                 result.add(this);
@@ -147,10 +148,10 @@ public class Item
             return next().tryLook(distance - 1);
         }
 
-        ProductionElement productionElement = (ProductionElement) element;
-        Production production = productionElement.getProduction();
+        ProductionElement productionElement = (ProductionElement) oldElement;
+        OldProduction oldProduction = productionElement.getProduction();
         Set<Ahead> result = new LinkedHashSet<Ahead>();
-        for (Ahead ahead : production.tryLook(distance)) {
+        for (Ahead ahead : oldProduction.tryLook(distance)) {
             if (ahead instanceof Item) {
                 result.add(ahead);
             }

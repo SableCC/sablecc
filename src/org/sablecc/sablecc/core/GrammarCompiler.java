@@ -88,6 +88,10 @@ public class GrammarCompiler {
 
         grammar.compileLexer(this.trace, this.strictness);
 
+        this.trace.verboseln(" Compiling parser");
+
+        grammar.compileParser(this.trace, this.strictness);
+
         return grammar;
     }
 

@@ -20,10 +20,11 @@ package org.sablecc.sablecc.oldlrautomaton;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.*;
 
-public class Grammar {
+public class OldGrammar {
 
-    private final Map<String, Production> nameToProductionMap = new LinkedHashMap<String, Production>();
+    private final Map<String, OldProduction> nameToProductionMap = new LinkedHashMap<String, OldProduction>();
 
     private final Map<String, Token> nameToTokenMap = new LinkedHashMap<String, Token>();
 
@@ -31,35 +32,35 @@ public class Grammar {
 
     private boolean lookComputationDataHasChanged;
 
-    private Map<Production, Map<Integer, Set<Ahead>>> previousLookComputationData;
+    private Map<OldProduction, Map<Integer, Set<Ahead>>> previousLookComputationData;
 
-    private Map<Production, Map<Integer, Set<Ahead>>> currentLookComputationData;
+    private Map<OldProduction, Map<Integer, Set<Ahead>>> currentLookComputationData;
 
-    public Grammar(
+    public OldGrammar(
             String firstProductionName) {
 
-        Production startProduction = getProduction("$Start");
-        Production firstProduction = getProduction(firstProductionName);
+        OldProduction startProduction = getProduction("$Start");
+        OldProduction firstProduction = getProduction(firstProductionName);
 
-        Alternative startAlternative = startProduction.addAlternative("");
+        OldAlternative startAlternative = startProduction.addAlternative("");
         startAlternative.addProductionElement("", firstProduction);
         startAlternative.addTokenElement("", getToken("$end"));
     }
 
-    public Production getProduction(
+    public OldProduction getProduction(
             String name) {
 
-        Production production = this.nameToProductionMap.get(name);
+        OldProduction oldProduction = this.nameToProductionMap.get(name);
 
-        if (production == null) {
+        if (oldProduction == null) {
             if (this.isStable) {
                 throw new InternalException("grammar is stable");
             }
-            production = new Production(this, name);
-            this.nameToProductionMap.put(name, production);
+            oldProduction = new OldProduction(this, name);
+            this.nameToProductionMap.put(name, oldProduction);
         }
 
-        return production;
+        return oldProduction;
     }
 
     public Token getToken(
@@ -84,8 +85,8 @@ public class Grammar {
             throw new InternalException("grammar is already stable");
         }
         this.isStable = true;
-        for (Production production : this.nameToProductionMap.values()) {
-            production.stabilize();
+        for (OldProduction oldProduction : this.nameToProductionMap.values()) {
+            oldProduction.stabilize();
         }
     }
 
@@ -95,35 +96,34 @@ public class Grammar {
         StringBuilder sb = new StringBuilder();
         sb.append("Grammar{");
         sb.append(System.getProperty("line.separator"));
-        for (Production production : this.nameToProductionMap.values()) {
-            sb.append(production);
+        for (OldProduction oldProduction : this.nameToProductionMap.values()) {
+            sb.append(oldProduction);
             sb.append(System.getProperty("line.separator"));
         }
         sb.append("}");
         return sb.toString();
     }
 
-/*
     public void computeShortestLengthAndDetectUselessProductions() {
 
         boolean modified = true;
         while (modified) {
             modified = false;
 
-            for (Production production : this.nameToProductionMap.values()) {
+            for (OldProduction production : this.nameToProductionMap.values()) {
                 modified = modified || production.computeShortestLength();
             }
         }
 
-        for (Production production : this.nameToProductionMap.values()) {
+        for (OldProduction production : this.nameToProductionMap.values()) {
             if (production.getShortestLength() == null) {
-                throw CompilerException.parserUselessProduction(production
-                        .getName());
+                throw SemanticException.genericError("The "
+                        + production.getName() + " production is useless.");
             }
         }
 
     }
-*/
+
     void resetLookComputationData() {
 
         this.lookComputationDataHasChanged = false;
@@ -131,9 +131,9 @@ public class Grammar {
             this.previousLookComputationData = this.currentLookComputationData;
         }
         else {
-            this.previousLookComputationData = new LinkedHashMap<Production, Map<Integer, Set<Ahead>>>();
+            this.previousLookComputationData = new LinkedHashMap<OldProduction, Map<Integer, Set<Ahead>>>();
         }
-        this.currentLookComputationData = new LinkedHashMap<Production, Map<Integer, Set<Ahead>>>();
+        this.currentLookComputationData = new LinkedHashMap<OldProduction, Map<Integer, Set<Ahead>>>();
     }
 
     boolean lookComputationDataHasChanged() {
@@ -143,12 +143,12 @@ public class Grammar {
 
     void storeLookComputationResults() {
 
-        for (Map.Entry<Production, Map<Integer, Set<Ahead>>> productionEntry : this.currentLookComputationData
+        for (Map.Entry<OldProduction, Map<Integer, Set<Ahead>>> productionEntry : this.currentLookComputationData
                 .entrySet()) {
-            Production production = productionEntry.getKey();
+            OldProduction oldProduction = productionEntry.getKey();
             for (Map.Entry<Integer, Set<Ahead>> distanceEntry : productionEntry
                     .getValue().entrySet()) {
-                production.setLook(distanceEntry.getKey(),
+                oldProduction.setLook(distanceEntry.getKey(),
                         distanceEntry.getValue());
             }
         }
@@ -158,11 +158,11 @@ public class Grammar {
     }
 
     Set<Ahead> getCurrentLookComputationData(
-            Production production,
+            OldProduction oldProduction,
             int distance) {
 
         Map<Integer, Set<Ahead>> distanceToAheadSetMap = this.currentLookComputationData
-                .get(production);
+                .get(oldProduction);
         if (distanceToAheadSetMap == null) {
             return null;
         }
@@ -170,11 +170,11 @@ public class Grammar {
     }
 
     Set<Ahead> getPreviousLookComputationData(
-            Production production,
+            OldProduction oldProduction,
             int distance) {
 
         Map<Integer, Set<Ahead>> distanceToAheadSetMap = this.previousLookComputationData
-                .get(production);
+                .get(oldProduction);
         if (distanceToAheadSetMap == null) {
             return new LinkedHashSet<Ahead>();
         }
@@ -186,15 +186,15 @@ public class Grammar {
     }
 
     void setCurrentLookComputationData(
-            Production production,
+            OldProduction oldProduction,
             int distance,
             Set<Ahead> lookComputationData) {
 
         Map<Integer, Set<Ahead>> distanceToAheadSetMap = this.currentLookComputationData
-                .get(production);
+                .get(oldProduction);
         if (distanceToAheadSetMap == null) {
             distanceToAheadSetMap = new LinkedHashMap<Integer, Set<Ahead>>();
-            this.currentLookComputationData.put(production,
+            this.currentLookComputationData.put(oldProduction,
                     distanceToAheadSetMap);
         }
         distanceToAheadSetMap.put(distance, lookComputationData);
@@ -202,13 +202,13 @@ public class Grammar {
         // detect change
 
         Set<Ahead> previousLookComputationData = getPreviousLookComputationData(
-                production, distance);
+                oldProduction, distance);
         if (!lookComputationData.equals(previousLookComputationData)) {
             this.lookComputationDataHasChanged = true;
         }
     }
 
-    public Collection<Production> getProductions() {
+    public Collection<OldProduction> getProductions() {
 
         return this.nameToProductionMap.values();
     }

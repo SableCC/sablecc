@@ -22,14 +22,14 @@ import java.util.*;
 public class ReduceAction
         extends Action {
 
-    private final Alternative alternative;
+    private final OldAlternative oldAlternative;
 
     ReduceAction(
             Map<Integer, Set<Item>> distanceToItemSetMap,
-            Alternative alternative) {
+            OldAlternative oldAlternative) {
 
         super(distanceToItemSetMap);
-        this.alternative = alternative;
+        this.oldAlternative = oldAlternative;
     }
 
     @Override
@@ -38,8 +38,8 @@ public class ReduceAction
         return ActionType.REDUCE;
     }
 
-    public Alternative getAlternative() {
+    public OldAlternative getAlternative() {
 
-        return this.alternative;
+        return this.oldAlternative;
     }
 }

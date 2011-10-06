@@ -18,17 +18,17 @@
 package org.sablecc.sablecc.oldlrautomaton;
 
 public class TokenElement
-        extends Element {
+        extends OldElement {
 
     private final Token token;
 
     TokenElement(
-            Alternative alternative,
+            OldAlternative oldAlternative,
             int position,
             String shortName,
             Token token) {
 
-        super(alternative, position, shortName);
+        super(oldAlternative, position, shortName);
         this.token = token;
     }
 

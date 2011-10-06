@@ -25,7 +25,7 @@ import org.sablecc.sablecc.grammar.transformation.*;
 
 public class SGrammar {
 
-    private Map<String, Production> productions = new HashMap<String, Production>();
+    private Map<String, Production> productions = new LinkedHashMap<String, Production>();
 
     private final Grammar grammar;
 
@@ -142,5 +142,10 @@ public class SGrammar {
         }
 
         this.productions.remove(targetProd.getName());
+    }
+
+    public Collection<Production> getProductions() {
+
+        return this.productions.values();
     }
 }

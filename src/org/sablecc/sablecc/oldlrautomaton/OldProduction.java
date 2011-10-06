@@ -21,13 +21,13 @@ import java.util.*;
 
 import org.sablecc.exception.*;
 
-public class Production {
+public class OldProduction {
 
-    private final Grammar grammar;
+    private final OldGrammar oldGrammar;
 
     private final String name;
 
-    private final LinkedList<Alternative> alternatives = new LinkedList<Alternative>();
+    private final LinkedList<OldAlternative> oldAlternatives = new LinkedList<OldAlternative>();
 
     private boolean isStable;
 
@@ -35,23 +35,23 @@ public class Production {
 
     private final Map<Integer, Set<Ahead>> distanceToAheadSetMap = new LinkedHashMap<Integer, Set<Ahead>>();
 
-    Production(
-            Grammar grammar,
+    OldProduction(
+            OldGrammar oldGrammar,
             String name) {
 
-        this.grammar = grammar;
+        this.oldGrammar = oldGrammar;
         this.name = name;
     }
 
-    public Alternative addAlternative(
+    public OldAlternative addAlternative(
             String shortName) {
 
         if (this.isStable) {
             throw new InternalException("production is stable");
         }
-        Alternative alternative = new Alternative(this, shortName);
-        this.alternatives.add(alternative);
-        return alternative;
+        OldAlternative oldAlternative = new OldAlternative(this, shortName);
+        this.oldAlternatives.add(oldAlternative);
+        return oldAlternative;
     }
 
     void stabilize() {
@@ -61,39 +61,39 @@ public class Production {
         }
         this.isStable = true;
 
-        Map<String, List<Alternative>> nameToAlternativeListMap = new LinkedHashMap<String, List<Alternative>>();
-        for (Alternative alternative : this.alternatives) {
-            String shortName = alternative.getShortName();
-            List<Alternative> alternativeList = nameToAlternativeListMap
+        Map<String, List<OldAlternative>> nameToAlternativeListMap = new LinkedHashMap<String, List<OldAlternative>>();
+        for (OldAlternative oldAlternative : this.oldAlternatives) {
+            String shortName = oldAlternative.getShortName();
+            List<OldAlternative> alternativeList = nameToAlternativeListMap
                     .get(shortName);
             if (alternativeList == null) {
-                alternativeList = new LinkedList<Alternative>();
+                alternativeList = new LinkedList<OldAlternative>();
                 nameToAlternativeListMap.put(shortName, alternativeList);
             }
-            alternativeList.add(alternative);
+            alternativeList.add(oldAlternative);
         }
-        for (List<Alternative> alternativeList : nameToAlternativeListMap
+        for (List<OldAlternative> alternativeList : nameToAlternativeListMap
                 .values()) {
             if (alternativeList.size() == 1) {
-                Alternative alternative = alternativeList.get(0);
-                if (alternative.getShortName().equals("")
-                        && this.alternatives.size() > 1) {
-                    alternative.setName("$1");
+                OldAlternative oldAlternative = alternativeList.get(0);
+                if (oldAlternative.getShortName().equals("")
+                        && this.oldAlternatives.size() > 1) {
+                    oldAlternative.setName("$1");
                 }
                 else {
-                    alternative.setName(alternative.getShortName());
+                    oldAlternative.setName(oldAlternative.getShortName());
                 }
             }
             else {
                 int index = 1;
-                for (Alternative alternative : alternativeList) {
-                    alternative.setName(alternative.getShortName() + "$"
+                for (OldAlternative oldAlternative : alternativeList) {
+                    oldAlternative.setName(oldAlternative.getShortName() + "$"
                             + index++);
                 }
             }
         }
-        for (Alternative alternative : this.alternatives) {
-            alternative.stabilize();
+        for (OldAlternative oldAlternative : this.oldAlternatives) {
+            oldAlternative.stabilize();
         }
     }
 
@@ -109,7 +109,7 @@ public class Production {
         boolean first = true;
         sb.append("  ");
         sb.append(getName());
-        for (Alternative alternative : this.alternatives) {
+        for (OldAlternative oldAlternative : this.oldAlternatives) {
             if (first) {
                 first = false;
                 sb.append(" =");
@@ -119,7 +119,7 @@ public class Production {
             }
             sb.append(System.getProperty("line.separator"));
             sb.append("    ");
-            sb.append(alternative);
+            sb.append(oldAlternative);
         }
         sb.append(";");
         return sb.toString();
@@ -135,9 +135,9 @@ public class Production {
         Integer minLength = null;
         boolean modified = false;
 
-        for (Alternative alternative : this.alternatives) {
-            modified = modified || alternative.computeShortestLength();
-            Integer length = alternative.getShortestLength();
+        for (OldAlternative oldAlternative : this.oldAlternatives) {
+            modified = modified || oldAlternative.computeShortestLength();
+            Integer length = oldAlternative.getShortestLength();
             if (length != null) {
                 if (minLength == null || length.compareTo(minLength) < 0) {
                     minLength = length;
@@ -156,9 +156,9 @@ public class Production {
         return modified;
     }
 
-    public LinkedList<Alternative> getAlternatives() {
+    public LinkedList<OldAlternative> getAlternatives() {
 
-        return this.alternatives;
+        return this.oldAlternatives;
     }
 
     public Set<Ahead> look(
@@ -178,12 +178,12 @@ public class Production {
             int distance) {
 
         do {
-            this.grammar.resetLookComputationData();
+            this.oldGrammar.resetLookComputationData();
             tryLook(distance);
         }
-        while (this.grammar.lookComputationDataHasChanged());
+        while (this.oldGrammar.lookComputationDataHasChanged());
 
-        this.grammar.storeLookComputationResults();
+        this.oldGrammar.storeLookComputationResults();
     }
 
     Set<Ahead> tryLook(
@@ -196,19 +196,19 @@ public class Production {
             return currentLookComputationData;
         }
 
-        currentLookComputationData = this.grammar
+        currentLookComputationData = this.oldGrammar
                 .getCurrentLookComputationData(this, distance);
 
         if (currentLookComputationData == null) {
-            this.grammar
-                    .setCurrentLookComputationData(this, distance, this.grammar
-                            .getPreviousLookComputationData(this, distance));
+            this.oldGrammar.setCurrentLookComputationData(this, distance,
+                    this.oldGrammar.getPreviousLookComputationData(this,
+                            distance));
             currentLookComputationData = new LinkedHashSet<Ahead>();
-            for (Alternative alternative : this.alternatives) {
-                currentLookComputationData
-                        .addAll(alternative.tryLook(distance));
+            for (OldAlternative oldAlternative : this.oldAlternatives) {
+                currentLookComputationData.addAll(oldAlternative
+                        .tryLook(distance));
             }
-            this.grammar.setCurrentLookComputationData(this, distance,
+            this.oldGrammar.setCurrentLookComputationData(this, distance,
                     currentLookComputationData);
         }
 

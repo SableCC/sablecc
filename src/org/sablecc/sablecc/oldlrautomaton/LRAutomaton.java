@@ -19,55 +19,46 @@ package org.sablecc.sablecc.oldlrautomaton;
 
 import java.util.*;
 
-import org.sablecc.util.*;
+import org.sablecc.sablecc.launcher.*;
 
 public class LRAutomaton {
 
-    private final Grammar grammar;
+    private final OldGrammar oldGrammar;
 
     private final Map<Set<Item>, LRState> coreItemSetToLRStateMap = new LinkedHashMap<Set<Item>, LRState>();
 
     private boolean lookComputationDataHasChanged;
 
-    private Map<LRState, Map<Production, Map<Integer, Set<Item>>>> previousLookComputationData;
+    private Map<LRState, Map<OldProduction, Map<Integer, Set<Item>>>> previousLookComputationData;
 
-    private Map<LRState, Map<Production, Map<Integer, Set<Item>>>> currentLookComputationData;
+    private Map<LRState, Map<OldProduction, Map<Integer, Set<Item>>>> currentLookComputationData;
 
     public LRAutomaton(
-            Grammar grammar,
-            Verbosity verbosity) {
+            OldGrammar oldGrammar,
+            Trace trace) {
 
-        this.grammar = grammar;
+        this.oldGrammar = oldGrammar;
 
-        switch (verbosity) {
-        case VERBOSE:
-            System.out.println("  Computing LR(0) automaton");
-            break;
-
-        }
+        trace.verboseln("  Computing LR(0) automaton");
 
         Set<Item> startSet = new LinkedHashSet<Item>();
-        startSet.add(grammar.getProduction("$Start").getAlternatives().get(0)
-                .getItem(0));
+        startSet.add(oldGrammar.getProduction("$Start").getAlternatives()
+                .get(0).getItem(0));
         LRState startState = new LRState(this, startSet);
         this.coreItemSetToLRStateMap.put(startSet, startState);
         startState.computeTransitions();
 
-        switch (verbosity) {
-        case VERBOSE:
-            System.out.println("  Analyzing "
-                    + this.coreItemSetToLRStateMap.size() + " states");
-            break;
-        }
+        trace.verboseln("  Analyzing " + this.coreItemSetToLRStateMap.size()
+                + " states");
 
         for (LRState state : this.coreItemSetToLRStateMap.values()) {
             state.computeOrigins();
         }
 
-/*        for (LRState state : this.coreItemSetToLRStateMap.values()) {
-            state.computeActions(verbosity);
+        for (LRState state : this.coreItemSetToLRStateMap.values()) {
+            state.computeActions(trace);
         }
-*/  }
+    }
 
     public Collection<LRState> getStates() {
 
@@ -103,9 +94,9 @@ public class LRAutomaton {
             this.previousLookComputationData = this.currentLookComputationData;
         }
         else {
-            this.previousLookComputationData = new LinkedHashMap<LRState, Map<Production, Map<Integer, Set<Item>>>>();
+            this.previousLookComputationData = new LinkedHashMap<LRState, Map<OldProduction, Map<Integer, Set<Item>>>>();
         }
-        this.currentLookComputationData = new LinkedHashMap<LRState, Map<Production, Map<Integer, Set<Item>>>>();
+        this.currentLookComputationData = new LinkedHashMap<LRState, Map<OldProduction, Map<Integer, Set<Item>>>>();
     }
 
     boolean lookComputationDataHasChanged() {
@@ -115,15 +106,15 @@ public class LRAutomaton {
 
     void storeLookComputationResults() {
 
-        for (Map.Entry<LRState, Map<Production, Map<Integer, Set<Item>>>> stateEntry : this.currentLookComputationData
+        for (Map.Entry<LRState, Map<OldProduction, Map<Integer, Set<Item>>>> stateEntry : this.currentLookComputationData
                 .entrySet()) {
             LRState state = stateEntry.getKey();
-            for (Map.Entry<Production, Map<Integer, Set<Item>>> productionEntry : stateEntry
+            for (Map.Entry<OldProduction, Map<Integer, Set<Item>>> productionEntry : stateEntry
                     .getValue().entrySet()) {
-                Production production = productionEntry.getKey();
+                OldProduction oldProduction = productionEntry.getKey();
                 for (Map.Entry<Integer, Set<Item>> distanceEntry : productionEntry
                         .getValue().entrySet()) {
-                    state.setLook(production, distanceEntry.getKey(),
+                    state.setLook(oldProduction, distanceEntry.getKey(),
                             distanceEntry.getValue());
                 }
             }
@@ -135,16 +126,16 @@ public class LRAutomaton {
 
     Set<Item> getCurrentLookComputationData(
             LRState lrState,
-            Production production,
+            OldProduction oldProduction,
             int distance) {
 
-        Map<Production, Map<Integer, Set<Item>>> productionToLookaheadMap = this.currentLookComputationData
+        Map<OldProduction, Map<Integer, Set<Item>>> productionToLookaheadMap = this.currentLookComputationData
                 .get(lrState);
         if (productionToLookaheadMap == null) {
             return null;
         }
         Map<Integer, Set<Item>> lookahead = productionToLookaheadMap
-                .get(production);
+                .get(oldProduction);
         if (lookahead == null) {
             return null;
         }
@@ -153,16 +144,16 @@ public class LRAutomaton {
 
     Set<Item> getPreviousLookComputationData(
             LRState lrState,
-            Production production,
+            OldProduction oldProduction,
             int distance) {
 
-        Map<Production, Map<Integer, Set<Item>>> productionToLookaheadMap = this.previousLookComputationData
+        Map<OldProduction, Map<Integer, Set<Item>>> productionToLookaheadMap = this.previousLookComputationData
                 .get(lrState);
         if (productionToLookaheadMap == null) {
             return new LinkedHashSet<Item>();
         }
         Map<Integer, Set<Item>> lookahead = productionToLookaheadMap
-                .get(production);
+                .get(oldProduction);
         if (lookahead == null) {
             return new LinkedHashSet<Item>();
         }
@@ -175,36 +166,36 @@ public class LRAutomaton {
 
     void setCurrentLookComputationData(
             LRState lrState,
-            Production production,
+            OldProduction oldProduction,
             int distance,
             Set<Item> lookComputationData) {
 
-        Map<Production, Map<Integer, Set<Item>>> productionToLookaheadMap = this.currentLookComputationData
+        Map<OldProduction, Map<Integer, Set<Item>>> productionToLookaheadMap = this.currentLookComputationData
                 .get(lrState);
         if (productionToLookaheadMap == null) {
-            productionToLookaheadMap = new LinkedHashMap<Production, Map<Integer, Set<Item>>>();
+            productionToLookaheadMap = new LinkedHashMap<OldProduction, Map<Integer, Set<Item>>>();
             this.currentLookComputationData.put(lrState,
                     productionToLookaheadMap);
         }
         Map<Integer, Set<Item>> lookahead = productionToLookaheadMap
-                .get(production);
+                .get(oldProduction);
         if (lookahead == null) {
             lookahead = new LinkedHashMap<Integer, Set<Item>>();
-            productionToLookaheadMap.put(production, lookahead);
+            productionToLookaheadMap.put(oldProduction, lookahead);
         }
         lookahead.put(distance, lookComputationData);
 
         // detect change
 
         Set<Item> previousLookComputationData = getPreviousLookComputationData(
-                lrState, production, distance);
+                lrState, oldProduction, distance);
         if (!lookComputationData.equals(previousLookComputationData)) {
             this.lookComputationDataHasChanged = true;
         }
     }
 
-    public Grammar getGrammar() {
+    public OldGrammar getGrammar() {
 
-        return this.grammar;
+        return this.oldGrammar;
     }
 }

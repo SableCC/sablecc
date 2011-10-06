@@ -168,6 +168,8 @@ public abstract class ReferenceVerifier
                 node.addReference(reference);
             }
 
+            node.getAlternative().getProduction().getContext()
+                    .addTokenIfNecessary(unit);
         }
 
         @Override
@@ -192,6 +194,10 @@ public abstract class ReferenceVerifier
                 node.addRightReference(reference);
             }
 
+            node.getAlternative().getProduction().getContext()
+                    .addTokenIfNecessary(leftUnit);
+            node.getAlternative().getProduction().getContext()
+                    .addTokenIfNecessary(rightUnit);
         }
 
         @Override
@@ -216,6 +222,10 @@ public abstract class ReferenceVerifier
                 node.addRightReference(reference);
             }
 
+            node.getAlternative().getProduction().getContext()
+                    .addTokenIfNecessary(leftUnit);
+            node.getAlternative().getProduction().getContext()
+                    .addTokenIfNecessary(rightUnit);
         }
 
         @Override
@@ -235,7 +245,6 @@ public abstract class ReferenceVerifier
             }
 
             node.addReference((Parser.ParserProduction.DanglingProduction) declaration);
-
         }
 
         @Override

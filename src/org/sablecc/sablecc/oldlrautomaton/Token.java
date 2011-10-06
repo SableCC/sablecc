@@ -19,15 +19,15 @@ package org.sablecc.sablecc.oldlrautomaton;
 
 public class Token {
 
-    private final Grammar grammar;
+    private final OldGrammar oldGrammar;
 
     private final String name;
 
     Token(
-            Grammar grammar,
+            OldGrammar oldGrammar,
             String name) {
 
-        this.grammar = grammar;
+        this.oldGrammar = oldGrammar;
         this.name = name;
     }
 

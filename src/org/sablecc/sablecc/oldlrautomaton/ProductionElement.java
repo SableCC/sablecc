@@ -18,28 +18,28 @@
 package org.sablecc.sablecc.oldlrautomaton;
 
 public class ProductionElement
-        extends Element {
+        extends OldElement {
 
-    private final Production production;
+    private final OldProduction oldProduction;
 
     ProductionElement(
-            Alternative alternative,
+            OldAlternative oldAlternative,
             int position,
             String shortName,
-            Production production) {
+            OldProduction oldProduction) {
 
-        super(alternative, position, shortName);
-        this.production = production;
+        super(oldAlternative, position, shortName);
+        this.oldProduction = oldProduction;
     }
 
-    public Production getProduction() {
+    public OldProduction getProduction() {
 
-        return this.production;
+        return this.oldProduction;
     }
 
     @Override
     public String toString() {
 
-        return "[" + getName() + ":]" + this.production.getName();
+        return "[" + getName() + ":]" + this.oldProduction.getName();
     }
 }

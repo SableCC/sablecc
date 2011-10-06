@@ -28,7 +28,9 @@ import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.core.transformation.*;
 import org.sablecc.sablecc.core.walker.*;
+import org.sablecc.sablecc.grammar.*;
 import org.sablecc.sablecc.launcher.*;
+import org.sablecc.sablecc.oldlrautomaton.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.util.*;
@@ -434,6 +436,7 @@ public class Grammar
 
         if (GrammarCompiler.RESTRICTED_SYNTAX) {
             apply(new ReferenceVerifier.LexerReferenceVerifier(this));
+            apply(new ReferenceVerifier.ParserReferenceVerifier(this));
         }
         else {
             apply(new ReferenceVerifier.LexerReferenceVerifier(this));
@@ -643,12 +646,12 @@ public class Grammar
                 if (strictness == Strictness.STRICT) {
                     throw SemanticException.genericError("The "
                             + lexerExpression.getExpressionName()
-                            + " token is useless.");
+                            + " expression is useless.");
                 }
                 else {
                     trace.verboseln("    The "
                             + lexerExpression.getExpressionName()
-                            + " token is useless.");
+                            + " expression is useless.");
                 }
             }
         }
@@ -1150,5 +1153,48 @@ public class Grammar
     public boolean hasATree() {
 
         return this.tree.getProductions().size() > 0;
+    }
+
+    public void compileParser(
+            Trace trace,
+            Strictness strictness) {
+
+        SGrammar sGrammar = new SGrammar(this);
+        OldGrammar oldGrammar = null;
+        for (Production production : sGrammar.getProductions()) {
+
+            if (oldGrammar == null) {
+                oldGrammar = new OldGrammar(production.getName());
+            }
+
+            OldProduction oldProduction = oldGrammar.getProduction(production
+                    .getName());
+
+            for (Alternative alternative : production.getAlternatives()) {
+
+                OldAlternative oldAlternative = oldProduction
+                        .addAlternative("");
+
+                for (Element element : alternative.getElements()) {
+                    if (element instanceof Element.TokenElement) {
+                        oldAlternative.addTokenElement("",
+                                oldGrammar.getToken(element.getTypeName()));
+                    }
+                    else {
+                        oldAlternative
+                                .addProductionElement("", oldGrammar
+                                        .getProduction(element.getTypeName()));
+                    }
+                }
+            }
+        }
+
+        oldGrammar.stabilize();
+        System.out.println(oldGrammar);
+
+        System.out.println("==========");
+
+        oldGrammar.computeShortestLengthAndDetectUselessProductions();
+        System.out.println(new LRAutomaton(oldGrammar, trace));
     }
 }
