@@ -109,6 +109,10 @@ public abstract class ReferenceVerifier
         public void visitParser(
                 Parser node) {
 
+            if (node.getProductions().size() == 0) {
+                return;
+            }
+
             if (node.getRootDeclaration() != null) {
                 for (TIdentifier identifier : node.getRootDeclaration()
                         .getIdentifiers()) {

@@ -90,7 +90,9 @@ public class GrammarCompiler {
 
         this.trace.verboseln(" Compiling parser");
 
-        grammar.compileParser(this.trace, this.strictness);
+        if (grammar.getParser().getProductions().size() > 0) {
+            grammar.compileParser(this.trace, this.strictness);
+        }
 
         return grammar;
     }
