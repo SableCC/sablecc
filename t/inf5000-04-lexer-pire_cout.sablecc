@@ -1,0 +1,6 @@
+Grammar pire_cout:
+Lexer
+  a = 'a';
+  b = 'a'* 'b';
+  Token a, b;
+  Ignored ' ', #9, #10, #13;

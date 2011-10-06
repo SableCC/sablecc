@@ -1,0 +1,12 @@
+Grammar lisp:
+Lexer
+id = ('a'..'z')+;
+Token id, '(', ')';
+Ignored ' ', #9, #10, #13;
+Parser
+
+item = {par:} '(' list ')' |
+       {nil:} '(' ')' |
+       {id:} id ;
+list = {many:} item list |
+       {one:} item ;

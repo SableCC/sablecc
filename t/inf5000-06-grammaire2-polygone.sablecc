@@ -1,0 +1,9 @@
+Grammar polygones:
+Lexer
+  num = ('0'..'9')+;
+  Token num, '(', ',', ')', 'x', 'y', 'deg';
+Parser
+  polygone = '(' (point Separator ',')* ')' ;
+  point =
+    {cart:} '(' num 'x' ',' num 'y' ')' |
+    {pol:} '(' num ',' num 'deg' ')' ;

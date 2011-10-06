@@ -1,0 +1,11 @@
+Grammar formes:
+Lexer
+  nombre = ('0'..'9')+;
+  Token nombre, 'centre', 'rayon', '--', '(', ',', ')', 'cm', 'mm', 'pt', 'px';
+  Ignored ' ', #9, #10, #13;
+Parser
+  forme = {cercle:} 'centre' point 'rayon' long |
+          {segment:} point '--' point ;
+  point = '(' long ',' long ')' ;
+  long = nombre unite ;
+  unite = 'cm' | 'mm' | 'pt' | 'px' ;

@@ -1,0 +1,17 @@
+Grammar arithmetique:
+Lexer
+int = ('0'..'9')+;
+Token int, '+', '-', '*', '(', ')';
+Ignored ' ', #9, #10, #13;
+Parser
+
+exps = exp*;
+
+exp = {add:} exp '+' exp |
+      {min:} exp '-' exp |
+      {mul:} exp '*' exp |
+      {int:} int |
+      {par:} '(' exp ')' ;
+//alt1   Precedence
+//alt1      Left mul;
+//alt1      Left add, min;

@@ -1,0 +1,8 @@
+Grammar parentheses:
+Lexer
+Token '(', ')';
+Ignored ' ', #9, #10, #13;
+Parser
+
+par = {item:} '(' par ')' |
+      {empty:} '(' ')' ;

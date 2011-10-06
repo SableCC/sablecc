@@ -1,0 +1,6 @@
+Grammar priorite_d_inclusion:
+Lexer
+  identifier = ('a'..'z')+;
+  if = 'if';
+  Token identifier, if;
+  Ignored ' ', #9, #10, #13;

@@ -1,0 +1,13 @@
+Grammar demo:
+Lexer
+  letter = 'a'..'z';
+  digit = '0'..'9';
+  identifier = letter (letter | digit)*;
+  comma = ',';
+  blank = (' ' | #9 | #10 | #13)+;
+  if = 'if';
+  else = 'else';
+  Token
+    identifier, comma, if, else;
+  Ignored
+    blank;
