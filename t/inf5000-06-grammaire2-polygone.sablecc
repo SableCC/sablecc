@@ -1,7 +1,8 @@
 Grammar polygones:
 Lexer
   num = ('0'..'9')+;
-  Token num, '(', ',', ')', 'x', 'y', 'deg';
+  Ignored ' ', #9, #10, #13;
+
 Parser
   polygone = '(' (point Separator ',')* ')' ;
   point =

@@ -1,8 +1,8 @@
 Grammar listes:
 Lexer
 id = ('a'..'z')+;
-Token id;
 Ignored ' ', #9, #10, #13;
+
 Parser
 
 list = {many:} id list |

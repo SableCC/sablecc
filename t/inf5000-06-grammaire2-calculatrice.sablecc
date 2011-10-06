@@ -1,8 +1,8 @@
 Grammar calc:
 Lexer
    int = ('0'..'9')+;
-   Token int, '+', '-', '*', '(', ')';
    Ignored ' ', #9, #10, #13;
+
 Parser
    exprs = expr*;
    expr =

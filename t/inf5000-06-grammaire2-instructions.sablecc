@@ -1,12 +1,8 @@
 Grammar instuctions:
 Lexer
 id = ('a'..'z')+;
-Token id, '=', ';', '(', ')', 'print', 'while', '{', '}'
-//alt1 , 'do', 'until'
-//alt2 , 'if', 'else'
-//alt3 , ','
-  ;
 Ignored ' ', #9, #10, #13;
+
 Parser
 
 prog = stmt* ;

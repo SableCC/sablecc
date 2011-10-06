@@ -3,7 +3,6 @@ Lexer
 id = ('a'..'z')+;
 altid = '{' id ':}';
 str = '\'' (Any* - '\'') '\'';
-Token id, '=', ';', '|', altid, str;
 Ignored ' ', #9, #10, #13;
 
 Parser
