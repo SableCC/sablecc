@@ -26,6 +26,7 @@ import org.sablecc.sablecc.alphabet.*;
 import org.sablecc.sablecc.automaton.*;
 import org.sablecc.sablecc.codegeneration.java.macro.*;
 import org.sablecc.sablecc.core.*;
+import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.launcher.*;
 
 public class CodeGenerator {
@@ -89,6 +90,9 @@ public class CodeGenerator {
         MLexerException mLexerException = new MLexerException();
         MEnd mEnd = new MEnd();
         MTester mTester = new MTester();
+        MParserException mParserException = new MParserException();
+        MWalker mWalker = new MWalker();
+        MParser mParser = new MParser();
 
         if (this.destinationPackage.equals("")) {
             packageDirectory = new File(this.destinationDirectory,
@@ -104,6 +108,10 @@ public class CodeGenerator {
             mLexerException.newDefaultPackage(this.grammar.getName_camelCase());
             mEnd.newDefaultPackage(this.grammar.getName_camelCase());
             mTester.newDefaultPackage(this.grammar.getName_camelCase());
+            mParserException
+                    .newDefaultPackage(this.grammar.getName_camelCase());
+            mWalker.newDefaultPackage(this.grammar.getName_camelCase());
+            mParser.newDefaultPackage(this.grammar.getName_camelCase());
         }
         else {
             packageDirectory = new File(this.destinationDirectory,
@@ -129,6 +137,12 @@ public class CodeGenerator {
                     this.destinationPackage);
             mTester.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
+            mParserException.newSpecifiedPackage(
+                    this.grammar.getName_camelCase(), this.destinationPackage);
+            mWalker.newSpecifiedPackage(this.grammar.getName_camelCase(),
+                    this.destinationPackage);
+            mParser.newSpecifiedPackage(this.grammar.getName_camelCase(),
+                    this.destinationPackage);
         }
 
         packageDirectory.mkdirs();
@@ -142,6 +156,10 @@ public class CodeGenerator {
                 mNode.newNodeTypeEnumEntry(namedToken.getName_CamelCase());
                 mNode.newNodeInternalTypeEnumEntry(namedToken
                         .getName_CamelCase());
+
+                mWalker.newWalkerIn(namedToken.getName_CamelCase());
+                mWalker.newWalkerCase(namedToken.getName_CamelCase());
+                mWalker.newWalkerOut(namedToken.getName_CamelCase());
 
                 MCustomToken mCustomToken = new MCustomToken(
                         namedToken.getName_CamelCase());
@@ -358,6 +376,184 @@ public class CodeGenerator {
             mLexer.newAcceptMarkerDeclaration(marker.getName());
         }
 
+        for (Parser.ParserProduction production : this.grammar.getParser()
+                .getProductions()) {
+
+            String production_CamelCaseName = production.getName_CamelCase();
+
+            mNode.newNodeProductionTypeEnumEntry(production_CamelCaseName);
+
+            // if production is not a single anonymous alternative
+            if (production.getAlternatives().size() > 1
+                    || !production.getAlternatives().iterator().next()
+                            .getName().equals("")) {
+
+                MProduction mProduction = new MProduction(
+                        production_CamelCaseName);
+
+                if (this.destinationPackage.equals("")) {
+                    mProduction.newDefaultPackage(this.grammar
+                            .getName_camelCase());
+                }
+                else {
+                    mProduction.newSpecifiedPackage(
+                            this.grammar.getName_camelCase(),
+                            this.destinationPackage);
+                }
+
+                try {
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(
+                            new File(packageDirectory, "N"
+                                    + production_CamelCaseName + ".java")));
+
+                    bw.write(mProduction.toString());
+                    bw.close();
+                }
+                catch (IOException e) {
+                    throw new InternalException("TODO: raise error " + "N"
+                            + production_CamelCaseName + ".java", e);
+                }
+            }
+
+            for (Parser.ParserAlternative alternative : production
+                    .getAlternatives()) {
+                String alt_CamelCaseName = alternative.getName_CamelCase();
+                boolean altIsPublic = alt_CamelCaseName != null;
+                boolean altIsProd = alt_CamelCaseName.equals("");
+                String alt_CamelCaseFullName;
+                if (altIsProd) {
+                    alt_CamelCaseFullName = production_CamelCaseName;
+                }
+                else if (altIsPublic) {
+                    alt_CamelCaseFullName = production_CamelCaseName + "_"
+                            + alt_CamelCaseName;
+                }
+                else {
+                    alt_CamelCaseFullName = production_CamelCaseName + "_"
+                            + alternative.getIndex();
+                }
+
+                MAlternative mAlternative = new MAlternative(
+                        alt_CamelCaseFullName);
+
+                mAlternative.newAltProdType(production_CamelCaseName);
+
+                if (altIsPublic) {
+                    mWalker.newWalkerIn(alt_CamelCaseFullName);
+                    mWalker.newWalkerCase(alt_CamelCaseFullName);
+                    mWalker.newWalkerOut(alt_CamelCaseFullName);
+                    mAlternative.newAltNormalApply();
+                }
+                else {
+                    mAlternative.newAltAnonymousApply();
+                }
+
+                if (this.destinationPackage.equals("")) {
+                    mAlternative.newDefaultPackage(this.grammar
+                            .getName_camelCase());
+                }
+                else {
+                    mAlternative.newSpecifiedPackage(
+                            this.grammar.getName_camelCase(),
+                            this.destinationPackage);
+                }
+
+                mNode.newNodeInternalTypeEnumEntry(alt_CamelCaseFullName);
+                if (altIsPublic) {
+                    mNode.newNodeTypeEnumEntry(alt_CamelCaseFullName);
+                    mAlternative.newPublic();
+                    mAlternative.newNamedAltType();
+                }
+                else {
+                    mAlternative.newAnonymousAltType();
+                }
+
+                if (altIsProd) {
+                    mAlternative.newAlternativeNodeParent();
+                }
+                else {
+                    mAlternative
+                            .newAlternativeNamedParent(production_CamelCaseName);
+                }
+
+                for (Parser.ParserElement parserElement : alternative
+                        .getElements()) {
+                    Parser.ParserElement.NormalElement normalElement = (Parser.ParserElement.NormalElement) parserElement;
+                    String element_CamelCaseName = normalElement
+                            .getName_CamelCase();
+                    boolean elementIsPublicReadable;
+                    if (element_CamelCaseName == null) {
+                        element_CamelCaseName = "" + normalElement.getIndex();
+                        elementIsPublicReadable = false;
+                    }
+                    else {
+                        elementIsPublicReadable = true;
+                    }
+                    String element_CamelCaseType;
+                    String element_CamelCaseInternalType;
+
+                    IReferencable reference = normalElement.getReference();
+                    if (reference instanceof LexerExpression.NamedExpression) {
+                        LexerExpression.NamedExpression namedToken = (LexerExpression.NamedExpression) reference;
+                        element_CamelCaseType = namedToken.getName_CamelCase();
+                        element_CamelCaseInternalType = element_CamelCaseName;
+                    }
+                    else if (reference instanceof LexerExpression.InlineExpression) {
+                        LexerExpression.InlineExpression inlineToken = (LexerExpression.InlineExpression) reference;
+                        element_CamelCaseType = null;
+                        element_CamelCaseInternalType = inlineToken
+                                .getInternalName_CamelCase();
+                    }
+                    else {
+                        Parser.ParserProduction referencedProduction = (Parser.ParserProduction) reference;
+                        element_CamelCaseType = referencedProduction
+                                .getName_CamelCase();
+                        element_CamelCaseInternalType = element_CamelCaseName;
+                    }
+
+                    mAlternative.newNormalConstructorParameter(
+                            element_CamelCaseInternalType,
+                            element_CamelCaseName);
+                    mAlternative
+                            .newNormalContructorInitialization(element_CamelCaseName);
+
+                    mAlternative.newNormalElementDeclaration(
+                            element_CamelCaseInternalType,
+                            element_CamelCaseName);
+                    mAlternative.newNormalElementAccessor(
+                            element_CamelCaseInternalType,
+                            element_CamelCaseName);
+
+                    mAlternative.newNormalChildApply(element_CamelCaseName);
+
+                    if (elementIsPublicReadable) {
+                        MPublicElementAccessor publicElementAccessor = mAlternative
+                                .newPublicElementAccessor(element_CamelCaseName);
+                        if (element_CamelCaseType != null) {
+                            publicElementAccessor
+                                    .newPublicElementType(element_CamelCaseType);
+                        }
+                        else {
+                            publicElementAccessor.newTokenElementType();
+                        }
+                    }
+                }
+
+                try {
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(
+                            new File(packageDirectory, "N"
+                                    + alt_CamelCaseFullName + ".java")));
+
+                    bw.write(mAlternative.toString());
+                    bw.close();
+                }
+                catch (IOException e) {
+                    throw new InternalException("TODO: raise error " + "N"
+                            + alt_CamelCaseFullName + ".java", e);
+                }
+            }
+        }
+
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
                     packageDirectory, "Node.java")));
@@ -470,6 +666,39 @@ public class CodeGenerator {
         catch (IOException e) {
             new InternalException("TODO: raise error " + "Tester.java", e);
         }
-    }
 
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "ParserException.java")));
+
+            bw.write(mParserException.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            new InternalException(
+                    "TODO: raise error " + "ParserException.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "Walker.java")));
+
+            bw.write(mWalker.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            new InternalException("TODO: raise error " + "Walker.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "Parser.java")));
+
+            bw.write(mParser.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            new InternalException("TODO: raise error " + "Parser.java", e);
+        }
+    }
 }

@@ -4,11 +4,11 @@ package org.sablecc.sablecc.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MEnd {
+public class MParserException {
 
     private final List<Object> eDefaultPackage_SpecifiedPackage = new LinkedList<Object>();
 
-    public MEnd() {
+    public MParserException() {
 
     }
 
@@ -42,45 +42,31 @@ public class MEnd {
             sb.append(oDefaultPackage_SpecifiedPackage.toString());
         }
         sb.append(System.getProperty("line.separator"));
-        sb.append("public class End");
+        sb.append("public class ParserException");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    extends Token {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  public End(int line, int pos) {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    super(\"\", line, pos);");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
+        sb.append("    extends Exception {");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("  @Override");
+        sb.append("  private Token token;");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  public Type getType() {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    return Type.TEnd;");
+        sb.append("  public ParserException(Token token) {");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    this.token = token;");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("  @Override");
+        sb.append("  public Token getToken() {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  InternalType getInternalType() {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    return InternalType.TEnd;");
+        sb.append("    return this.token;");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("  @Override");
+        sb.append("  public String getMessage() {");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  public void apply(Walker walker) {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    walker.defaultIn(this);");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    walker.defaultCase(this);");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    walker.defaultOut(this);");
+        sb.append("    return \"unexpected token '\" + this.token.getText() + \"' on line \" + this.token.getLine() + \", pos \" + this.token.getPos();");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));

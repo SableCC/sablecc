@@ -175,27 +175,6 @@ public class GrammarCompiler {
             }
 
             @Override
-            public void caseALeftParserPriority(
-                    ALeftParserPriority node) {
-
-                throw SemanticException.notImplemented(node.getLeftKeyword());
-            }
-
-            @Override
-            public void caseARightParserPriority(
-                    ARightParserPriority node) {
-
-                throw SemanticException.notImplemented(node.getRightKeyword());
-            }
-
-            @Override
-            public void caseAUnaryParserPriority(
-                    AUnaryParserPriority node) {
-
-                throw SemanticException.notImplemented(node.getUnaryKeyword());
-            }
-
-            @Override
             public void caseADanglingElement(
                     ADanglingElement node) {
 

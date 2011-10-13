@@ -164,16 +164,58 @@ public abstract class ReferenceVerifier
         public void visitParserNormalElement(
                 Parser.ParserElement.NormalElement node) {
 
-            PUnit unit = node.getDeclaration().getUnit();
+            PUnit pUnit = node.getDeclaration().getUnit();
 
-            if (unit instanceof ANameUnit) {
+            if (pUnit instanceof ANameUnit) {
+                ANameUnit unit = (ANameUnit) pUnit;
                 IReferencable reference = tokenOrParserProductionExpected(
-                        this.grammar, ((ANameUnit) unit).getIdentifier());
+                        this.grammar, (unit).getIdentifier());
                 node.addReference(reference);
+            }
+            else if (pUnit instanceof AStringUnit) {
+                AStringUnit unit = (AStringUnit) pUnit;
+
+                node.addReference(this.grammar.getStringExpression(unit
+                        .getString().getText()));
+            }
+            else if (pUnit instanceof ACharacterUnit) {
+                ACharacterUnit unit = (ACharacterUnit) pUnit;
+                PCharacter pCharacter = unit.getCharacter();
+
+                if (pCharacter instanceof ACharCharacter) {
+                    ACharCharacter character = (ACharCharacter) pCharacter;
+
+                    node.addReference(this.grammar.getCharExpression(character
+                            .getChar().getText()));
+                }
+                else if (pCharacter instanceof ADecCharacter) {
+                    ADecCharacter character = (ADecCharacter) pCharacter;
+
+                    node.addReference(this.grammar.getDecExpression(character
+                            .getDecChar().getText()));
+                }
+                else if (pCharacter instanceof AHexCharacter) {
+                    AHexCharacter character = (AHexCharacter) pCharacter;
+
+                    node.addReference(this.grammar.getHexExpression(character
+                            .getHexChar().getText()));
+                }
+                else {
+                    throw new InternalException("unhandled character type");
+                }
+            }
+            else if (pUnit instanceof AStartUnit) {
+                node.addReference(this.grammar.getStartExpression());
+            }
+            else if (pUnit instanceof AEndUnit) {
+                node.addReference(this.grammar.getEndExpression());
+            }
+            else {
+                throw new InternalException("unhandled unit type");
             }
 
             node.getAlternative().getProduction().getContext()
-                    .addTokenIfNecessary(unit);
+                    .addTokenIfNecessary(pUnit);
         }
 
         @Override

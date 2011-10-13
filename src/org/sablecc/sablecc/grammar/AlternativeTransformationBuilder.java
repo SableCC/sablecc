@@ -151,7 +151,7 @@ public class AlternativeTransformationBuilder
             currentList
                     .add(new SAlternativeTransformationElement.ReferenceElement(
                             this.alternative.getElements().get(
-                                    reference.index())));
+                                    reference.getIndex())));
 
             this.elementListStack.push(currentList);
         }
@@ -189,7 +189,7 @@ public class AlternativeTransformationBuilder
             currentList
                     .add(new SAlternativeTransformationListElement.ReferenceElement(
                             this.alternative.getElements().get(
-                                    reference.index())));
+                                    reference.getIndex())));
 
             this.listElementListStack.push(currentList);
         }
@@ -226,7 +226,7 @@ public class AlternativeTransformationBuilder
             currentList
                     .add(new SAlternativeTransformationListElement.NormalListElement(
                             this.alternative.getElements().get(
-                                    reference.index())));
+                                    reference.getIndex())));
 
             this.listElementListStack.push(currentList);
         }
@@ -263,7 +263,7 @@ public class AlternativeTransformationBuilder
             currentList
                     .add(new SAlternativeTransformationListElement.LeftListElement(
                             this.alternative.getElements().get(
-                                    reference.index())));
+                                    reference.getIndex())));
 
             this.listElementListStack.push(currentList);
         }
@@ -300,7 +300,7 @@ public class AlternativeTransformationBuilder
             currentList
                     .add(new SAlternativeTransformationListElement.RightListElement(
                             this.alternative.getElements().get(
-                                    reference.index())));
+                                    reference.getIndex())));
 
             this.listElementListStack.push(currentList);
         }

@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.core;
 
+import static org.sablecc.util.CamelCase.*;
+
 import java.math.*;
 import java.util.*;
 
@@ -432,6 +434,11 @@ public class Parser
 
             }
 
+        }
+
+        public String getName_CamelCase() {
+
+            return to_CamelCase(getName());
         }
     }
 
@@ -910,6 +917,12 @@ public class Parser
             }
 
         }
+
+        public String getName_CamelCase() {
+
+            String name = getName();
+            return name == null ? null : to_CamelCase(name);
+        }
     }
 
     public static abstract class ParserElement
@@ -940,7 +953,7 @@ public class Parser
             return this.alternative;
         }
 
-        public int index() {
+        public int getIndex() {
 
             return this.alternative.getElements().indexOf(this);
         }
@@ -1840,6 +1853,12 @@ public class Parser
 
                 this.text += node.getHexChar().getText();
             }
+        }
+
+        public String getName_CamelCase() {
+
+            String name = getName();
+            return name == null ? null : to_CamelCase(name);
         }
     }
 

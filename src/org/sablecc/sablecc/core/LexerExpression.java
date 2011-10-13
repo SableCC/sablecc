@@ -276,7 +276,8 @@ public abstract class LexerExpression
     }
 
     public static abstract class InlineExpression
-            extends LexerExpression {
+            extends LexerExpression
+            implements IReferencable {
 
         private final String text;
 
@@ -324,6 +325,19 @@ public abstract class LexerExpression
         public String getInternalName_CamelCase() {
 
             return to_CamelCase(getInternalName());
+        }
+
+        @Override
+        public Token getLocation() {
+
+            throw new InternalException("Not implemented");
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            throw new InternalException("Not implemented");
         }
     }
 
