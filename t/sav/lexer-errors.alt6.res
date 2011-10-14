@@ -1,3 +1,3 @@
 *** SEMANTIC ERROR ***
 
-The i token is useless.
+The i expression is useless.
