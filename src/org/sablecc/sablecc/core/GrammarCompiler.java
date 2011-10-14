@@ -175,6 +175,32 @@ public class GrammarCompiler {
             }
 
             @Override
+            public void inANormalElement(
+                    ANormalElement node) {
+
+                // reject lists
+                PUnaryOperator unaryOperator = node.getUnaryOperator();
+                if (unaryOperator != null
+                        && unaryOperator instanceof AManyUnaryOperator) {
+                    class Result {
+
+                        Token token;
+                    }
+                    final Result result = new Result();
+                    unaryOperator.apply(new ReversedDepthFirstAdapter() {
+
+                        @Override
+                        public void defaultCase(
+                                Node node) {
+
+                            result.token = (Token) node;
+                        }
+                    });
+                    throw SemanticException.notImplemented(result.token);
+                }
+            }
+
+            @Override
             public void caseADanglingElement(
                     ADanglingElement node) {
 
