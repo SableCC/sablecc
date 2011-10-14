@@ -40,7 +40,11 @@ public class GrammarVisitor
         for (Context.NamedContext context : node.getNamedContexts()) {
             context.apply(this);
         }
-        node.getGlobalAnonymousContext().apply(this);
+
+        Context.AnonymousContext context = node.getGlobalAnonymousContext();
+        if (context != null) {
+            context.apply(this);
+        }
 
         node.getLexer().apply(this);
         node.getParser().apply(this);
