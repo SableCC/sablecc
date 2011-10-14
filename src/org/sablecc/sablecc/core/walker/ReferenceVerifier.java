@@ -169,7 +169,7 @@ public abstract class ReferenceVerifier
             if (pUnit instanceof ANameUnit) {
                 ANameUnit unit = (ANameUnit) pUnit;
                 IReferencable reference = tokenOrParserProductionExpected(
-                        this.grammar, (unit).getIdentifier());
+                        this.grammar, unit.getIdentifier());
                 node.addReference(reference);
             }
             else if (pUnit instanceof AStringUnit) {

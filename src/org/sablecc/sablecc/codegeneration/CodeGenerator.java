@@ -419,7 +419,7 @@ public class CodeGenerator {
                     .getAlternatives()) {
                 String alt_CamelCaseName = alternative.getName_CamelCase();
                 boolean altIsPublic = alt_CamelCaseName != null;
-                boolean altIsProd = alt_CamelCaseName.equals("");
+                boolean altIsProd = altIsPublic && alt_CamelCaseName.equals("");
                 String alt_CamelCaseFullName;
                 if (altIsProd) {
                     alt_CamelCaseFullName = production_CamelCaseName;
@@ -496,7 +496,7 @@ public class CodeGenerator {
                     if (reference instanceof LexerExpression.NamedExpression) {
                         LexerExpression.NamedExpression namedToken = (LexerExpression.NamedExpression) reference;
                         element_CamelCaseType = namedToken.getName_CamelCase();
-                        element_CamelCaseInternalType = element_CamelCaseName;
+                        element_CamelCaseInternalType = element_CamelCaseType;
                     }
                     else if (reference instanceof LexerExpression.InlineExpression) {
                         LexerExpression.InlineExpression inlineToken = (LexerExpression.InlineExpression) reference;
@@ -508,7 +508,7 @@ public class CodeGenerator {
                         Parser.ParserProduction referencedProduction = (Parser.ParserProduction) reference;
                         element_CamelCaseType = referencedProduction
                                 .getName_CamelCase();
-                        element_CamelCaseInternalType = element_CamelCaseName;
+                        element_CamelCaseInternalType = element_CamelCaseType;
                     }
 
                     mAlternative.newNormalConstructorParameter(
