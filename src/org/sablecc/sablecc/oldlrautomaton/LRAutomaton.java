@@ -42,7 +42,7 @@ public class LRAutomaton {
         trace.verboseln("  Computing LR(0) automaton");
 
         Set<Item> startSet = new LinkedHashSet<Item>();
-        startSet.add(oldGrammar.getProduction("$Start").getAlternatives()
+        startSet.add(oldGrammar.getProduction("$Start", null).getAlternatives()
                 .get(0).getItem(0));
         LRState startState = new LRState(this, startSet);
         this.coreItemSetToLRStateMap.put(startSet, startState);

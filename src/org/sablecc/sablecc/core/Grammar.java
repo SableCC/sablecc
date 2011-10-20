@@ -1164,37 +1164,38 @@ public class Grammar
         for (Production production : sGrammar.getProductions()) {
 
             if (oldGrammar == null) {
-                oldGrammar = new OldGrammar(production.getName());
+                oldGrammar = new OldGrammar(production.getName(), production);
             }
 
-            OldProduction oldProduction = oldGrammar.getProduction(production
-                    .getName());
+            OldProduction oldProduction = oldGrammar.getProduction(
+                    production.getName(), production);
 
             for (Alternative alternative : production.getAlternatives()) {
 
-                OldAlternative oldAlternative = oldProduction
-                        .addAlternative("");
+                OldAlternative oldAlternative = oldProduction.addAlternative(
+                        "", alternative);
 
                 for (Element element : alternative.getElements()) {
                     if (element instanceof Element.TokenElement) {
-                        oldAlternative.addTokenElement("",
-                                oldGrammar.getToken(element.getTypeName()));
+                        Element.TokenElement tokenElement = (Element.TokenElement) element;
+                        oldAlternative
+                                .addTokenElement("", oldGrammar
+                                        .getToken(tokenElement.getTypeName()),
+                                        tokenElement);
                     }
                     else {
-                        oldAlternative
-                                .addProductionElement("", oldGrammar
-                                        .getProduction(element.getTypeName()));
+                        Element.ProductionElement productionElement = (Element.ProductionElement) element;
+                        oldAlternative.addProductionElement("", oldGrammar
+                                .getProduction(element.getTypeName(),
+                                        productionElement.getReference()),
+                                productionElement);
                     }
                 }
             }
         }
 
         oldGrammar.stabilize();
-        System.out.println(oldGrammar);
-
-        System.out.println("==========");
-
         oldGrammar.computeShortestLengthAndDetectUselessProductions();
-        System.out.println(new LRAutomaton(oldGrammar, trace));
+        sGrammar.setLRAutomaton(new LRAutomaton(oldGrammar, trace));
     }
 }

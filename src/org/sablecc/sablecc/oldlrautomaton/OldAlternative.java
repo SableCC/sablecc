@@ -20,6 +20,7 @@ package org.sablecc.sablecc.oldlrautomaton;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.grammar.*;
 
 public class OldAlternative {
 
@@ -37,42 +38,53 @@ public class OldAlternative {
 
     private ArrayList<Item> items;
 
+    private final Alternative origin;
+
 /*    private ParserPriorityLevel priorityLevel;
 */
     OldAlternative(
             OldProduction oldProduction,
-            String shortName) {
+            String shortName,
+            Alternative alternative) {
 
         this.oldProduction = oldProduction;
         this.shortName = shortName;
+        this.origin = alternative;
     }
 
     public OldElement addProductionElement(
             String shortName,
-            OldProduction oldProduction) {
+            OldProduction oldProduction,
+            org.sablecc.sablecc.grammar.Element.ProductionElement element) {
 
         if (this.isStable) {
             throw new InternalException("alternative is stable");
         }
         int position = this.oldElements.size();
-        OldElement oldElement = new ProductionElement(this, position,
-                shortName, oldProduction);
+        OldElement oldElement = new OldProductionElement(this, position,
+                shortName, oldProduction, element);
         this.oldElements.add(oldElement);
         return oldElement;
     }
 
     public OldElement addTokenElement(
             String shortName,
-            Token token) {
+            OldToken oldToken,
+            Element.TokenElement element) {
 
         if (this.isStable) {
             throw new InternalException("alternative is stable");
         }
         int position = this.oldElements.size();
-        OldElement oldElement = new TokenElement(this, position, shortName,
-                token);
+        OldElement oldElement = new OldTokenElement(this, position, shortName,
+                oldToken, element);
         this.oldElements.add(oldElement);
         return oldElement;
+    }
+
+    public Alternative getOrigin() {
+
+        return this.origin;
     }
 
     public String getShortName() {
@@ -130,7 +142,7 @@ public class OldAlternative {
         this.items = new ArrayList<Item>(this.oldElements.size() + 1);
         int position = 0;
         for (OldElement oldElement : this.oldElements) {
-            if (oldElement instanceof TokenElement) {
+            if (oldElement instanceof OldTokenElement) {
                 this.items.add(new Item(this, position, ItemType.BEFORE_TOKEN));
             }
             else {
@@ -171,12 +183,12 @@ public class OldAlternative {
         Integer length = 0;
 
         for (OldElement oldElement : this.oldElements) {
-            if (oldElement instanceof TokenElement) {
+            if (oldElement instanceof OldTokenElement) {
                 length++;
             }
             else {
-                ProductionElement productionElement = (ProductionElement) oldElement;
-                Integer elementLength = productionElement.getProduction()
+                OldProductionElement oldProductionElement = (OldProductionElement) oldElement;
+                Integer elementLength = oldProductionElement.getProduction()
                         .getShortestLength();
                 if (elementLength == null) {
                     return false;

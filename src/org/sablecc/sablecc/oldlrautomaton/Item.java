@@ -45,23 +45,23 @@ public class Item
         return this.itemType;
     }
 
-    public ProductionElement getProductionElement() {
+    public OldProductionElement getProductionElement() {
 
         if (this.itemType != ItemType.BEFORE_PRODUCTION) {
             throw new InternalException("invalid call");
         }
 
-        return (ProductionElement) this.oldAlternative
+        return (OldProductionElement) this.oldAlternative
                 .getElement(this.position);
     }
 
-    public TokenElement getTokenElement() {
+    public OldTokenElement getTokenElement() {
 
         if (this.itemType != ItemType.BEFORE_TOKEN) {
             throw new InternalException("invalid call");
         }
 
-        return (TokenElement) this.oldAlternative.getElement(this.position);
+        return (OldTokenElement) this.oldAlternative.getElement(this.position);
     }
 
     public Item next() {
@@ -99,7 +99,7 @@ public class Item
         }
 
         OldElement oldElement = this.oldAlternative.getElement(this.position);
-        if (oldElement instanceof TokenElement) {
+        if (oldElement instanceof OldTokenElement) {
             if (distance == 1) {
                 Set<Ahead> result = new LinkedHashSet<Ahead>();
                 result.add(this);
@@ -109,8 +109,8 @@ public class Item
             return next().look(distance - 1);
         }
 
-        ProductionElement productionElement = (ProductionElement) oldElement;
-        OldProduction oldProduction = productionElement.getProduction();
+        OldProductionElement oldProductionElement = (OldProductionElement) oldElement;
+        OldProduction oldProduction = oldProductionElement.getProduction();
         Set<Ahead> result = new LinkedHashSet<Ahead>();
         for (Ahead ahead : oldProduction.look(distance)) {
             if (ahead instanceof Item) {
@@ -138,7 +138,7 @@ public class Item
         }
 
         OldElement oldElement = this.oldAlternative.getElement(this.position);
-        if (oldElement instanceof TokenElement) {
+        if (oldElement instanceof OldTokenElement) {
             if (distance == 1) {
                 Set<Ahead> result = new LinkedHashSet<Ahead>();
                 result.add(this);
@@ -148,8 +148,8 @@ public class Item
             return next().tryLook(distance - 1);
         }
 
-        ProductionElement productionElement = (ProductionElement) oldElement;
-        OldProduction oldProduction = productionElement.getProduction();
+        OldProductionElement oldProductionElement = (OldProductionElement) oldElement;
+        OldProduction oldProduction = oldProductionElement.getProduction();
         Set<Ahead> result = new LinkedHashSet<Ahead>();
         for (Ahead ahead : oldProduction.tryLook(distance)) {
             if (ahead instanceof Item) {

@@ -17,28 +17,40 @@
 
 package org.sablecc.sablecc.oldlrautomaton;
 
-public class Token {
+import org.sablecc.sablecc.grammar.*;
 
-    private final OldGrammar oldGrammar;
+public class OldTokenElement
+        extends OldElement {
 
-    private final String name;
+    private final OldToken oldToken;
 
-    Token(
-            OldGrammar oldGrammar,
-            String name) {
+    private final Element.TokenElement origin;
 
-        this.oldGrammar = oldGrammar;
-        this.name = name;
+    OldTokenElement(
+            OldAlternative oldAlternative,
+            int position,
+            String shortName,
+            OldToken oldToken,
+            Element.TokenElement element) {
+
+        super(oldAlternative, position, shortName);
+        this.oldToken = oldToken;
+        this.origin = element;
     }
 
-    public String getName() {
+    public OldToken getToken() {
 
-        return this.name;
+        return this.oldToken;
     }
 
     @Override
     public String toString() {
 
-        return this.name;
+        return "[" + getName() + ":]" + this.oldToken.getName();
+    }
+
+    public Element.TokenElement getOrigin() {
+
+        return this.origin;
     }
 }

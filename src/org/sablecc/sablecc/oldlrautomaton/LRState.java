@@ -37,7 +37,7 @@ public class LRState {
 
     private final Set<Item> items = new LinkedHashSet<Item>();
 
-    private final Map<Token, LRState> tokenTransitions = new LinkedHashMap<Token, LRState>();
+    private final Map<OldToken, LRState> tokenTransitions = new LinkedHashMap<OldToken, LRState>();
 
     private final Map<OldProduction, LRState> productionTransitions = new LinkedHashMap<OldProduction, LRState>();
 
@@ -135,17 +135,17 @@ public class LRState {
 
     void computeTransitions() {
 
-        Map<Token, Set<Item>> tokenToItemSetMap = new LinkedHashMap<Token, Set<Item>>();
+        Map<OldToken, Set<Item>> tokenToItemSetMap = new LinkedHashMap<OldToken, Set<Item>>();
         Map<OldProduction, Set<Item>> productionToItemSetMap = new LinkedHashMap<OldProduction, Set<Item>>();
 
         for (Item sourceItem : this.items) {
             switch (sourceItem.getType()) {
             case BEFORE_TOKEN: {
-                Token token = sourceItem.getTokenElement().getToken();
-                Set<Item> itemSet = tokenToItemSetMap.get(token);
+                OldToken oldToken = sourceItem.getTokenElement().getToken();
+                Set<Item> itemSet = tokenToItemSetMap.get(oldToken);
                 if (itemSet == null) {
                     itemSet = new LinkedHashSet<Item>();
-                    tokenToItemSetMap.put(token, itemSet);
+                    tokenToItemSetMap.put(oldToken, itemSet);
                 }
                 itemSet.add(sourceItem.next());
                 break;
@@ -166,11 +166,12 @@ public class LRState {
             }
         }
 
-        for (Map.Entry<Token, Set<Item>> entry : tokenToItemSetMap.entrySet()) {
-            Token token = entry.getKey();
+        for (Map.Entry<OldToken, Set<Item>> entry : tokenToItemSetMap
+                .entrySet()) {
+            OldToken oldToken = entry.getKey();
             Set<Item> itemSet = entry.getValue();
             LRState destinationState = this.automaton.getState(itemSet);
-            this.tokenTransitions.put(token, destinationState);
+            this.tokenTransitions.put(oldToken, destinationState);
         }
 
         for (Map.Entry<OldProduction, Set<Item>> entry : productionToItemSetMap
@@ -212,13 +213,13 @@ public class LRState {
                 state.addOrigin(stateItem, this);
                 for (OldElement oldElement : item.getAlternative()
                         .getElements()) {
-                    if (oldElement instanceof TokenElement) {
-                        TokenElement tokenElement = (TokenElement) oldElement;
-                        state = state.getTarget(tokenElement.getToken());
+                    if (oldElement instanceof OldTokenElement) {
+                        OldTokenElement oldTokenElement = (OldTokenElement) oldElement;
+                        state = state.getTarget(oldTokenElement.getToken());
                     }
                     else {
-                        ProductionElement productionElement = (ProductionElement) oldElement;
-                        state = state.getTarget(productionElement
+                        OldProductionElement oldProductionElement = (OldProductionElement) oldElement;
+                        state = state.getTarget(oldProductionElement
                                 .getProduction());
                     }
                     stateItem = stateItem.next();
@@ -245,9 +246,9 @@ public class LRState {
     }
 
     public LRState getTarget(
-            Token token) {
+            OldToken oldToken) {
 
-        return this.tokenTransitions.get(token);
+        return this.tokenTransitions.get(oldToken);
     }
 
     public LRState getTarget(
@@ -476,8 +477,8 @@ public class LRState {
 */
                 }
 
-                Set<Token> leftTokens = new LinkedHashSet<Token>();
-                Set<Token> rightTokens = new LinkedHashSet<Token>();
+                Set<OldToken> leftTokens = new LinkedHashSet<OldToken>();
+                Set<OldToken> rightTokens = new LinkedHashSet<OldToken>();
 
                 for (Item item : leftLookItems) {
                     leftTokens.add(item.getTokenElement().getToken());
@@ -486,7 +487,8 @@ public class LRState {
                     rightTokens.add(item.getTokenElement().getToken());
                 }
 
-                Set<Token> intersection = new LinkedHashSet<Token>(leftTokens);
+                Set<OldToken> intersection = new LinkedHashSet<OldToken>(
+                        leftTokens);
                 intersection.retainAll(rightTokens);
 
                 if (intersection.size() == 0) {
@@ -494,8 +496,8 @@ public class LRState {
                     resolved = true;
                 }
                 else {
-                    for (Token token : intersection) {
-                        if (token.getName().equals("$end")) {
+                    for (OldToken oldToken : intersection) {
+                        if (oldToken.getName().equals("$end")) {
                             throw new InternalException(
                                     "conflict confirmed between items "
                                             + leftItem + " and " + rightItem);
@@ -699,7 +701,7 @@ public class LRState {
         return "" + this.id;
     }
 
-    public Map<Token, LRState> getTokenTransitions() {
+    public Map<OldToken, LRState> getTokenTransitions() {
 
         return this.tokenTransitions;
     }

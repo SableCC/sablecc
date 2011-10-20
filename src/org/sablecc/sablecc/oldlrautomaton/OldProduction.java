@@ -20,6 +20,7 @@ package org.sablecc.sablecc.oldlrautomaton;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.grammar.*;
 
 public class OldProduction {
 
@@ -35,21 +36,27 @@ public class OldProduction {
 
     private final Map<Integer, Set<Ahead>> distanceToAheadSetMap = new LinkedHashMap<Integer, Set<Ahead>>();
 
+    private final Production origin;
+
     OldProduction(
             OldGrammar oldGrammar,
-            String name) {
+            String name,
+            Production production) {
 
         this.oldGrammar = oldGrammar;
         this.name = name;
+        this.origin = production;
     }
 
     public OldAlternative addAlternative(
-            String shortName) {
+            String shortName,
+            Alternative alternative) {
 
         if (this.isStable) {
             throw new InternalException("production is stable");
         }
-        OldAlternative oldAlternative = new OldAlternative(this, shortName);
+        OldAlternative oldAlternative = new OldAlternative(this, shortName,
+                alternative);
         this.oldAlternatives.add(oldAlternative);
         return oldAlternative;
     }
@@ -224,5 +231,10 @@ public class OldProduction {
         }
 
         this.distanceToAheadSetMap.put(distance, aheadSet);
+    }
+
+    public Production getOrigin() {
+
+        return this.origin;
     }
 }

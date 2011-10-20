@@ -21,12 +21,13 @@ import java.util.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.*;
+import org.sablecc.sablecc.grammar.*;
 
 public class OldGrammar {
 
     private final Map<String, OldProduction> nameToProductionMap = new LinkedHashMap<String, OldProduction>();
 
-    private final Map<String, Token> nameToTokenMap = new LinkedHashMap<String, Token>();
+    private final Map<String, OldToken> nameToTokenMap = new LinkedHashMap<String, OldToken>();
 
     private boolean isStable;
 
@@ -37,18 +38,22 @@ public class OldGrammar {
     private Map<OldProduction, Map<Integer, Set<Ahead>>> currentLookComputationData;
 
     public OldGrammar(
-            String firstProductionName) {
+            String firstProductionName,
+            Production production) {
 
-        OldProduction startProduction = getProduction("$Start");
-        OldProduction firstProduction = getProduction(firstProductionName);
+        OldProduction startProduction = getProduction("$Start", null);
+        OldProduction firstProduction = getProduction(firstProductionName,
+                production);
 
-        OldAlternative startAlternative = startProduction.addAlternative("");
-        startAlternative.addProductionElement("", firstProduction);
-        startAlternative.addTokenElement("", getToken("$end"));
+        OldAlternative startAlternative = startProduction.addAlternative("",
+                null);
+        startAlternative.addProductionElement("", firstProduction, null);
+        startAlternative.addTokenElement("", getToken("$end"), null);
     }
 
     public OldProduction getProduction(
-            String name) {
+            String name,
+            Production production) {
 
         OldProduction oldProduction = this.nameToProductionMap.get(name);
 
@@ -56,27 +61,27 @@ public class OldGrammar {
             if (this.isStable) {
                 throw new InternalException("grammar is stable");
             }
-            oldProduction = new OldProduction(this, name);
+            oldProduction = new OldProduction(this, name, production);
             this.nameToProductionMap.put(name, oldProduction);
         }
 
         return oldProduction;
     }
 
-    public Token getToken(
+    public OldToken getToken(
             String name) {
 
-        Token token = this.nameToTokenMap.get(name);
+        OldToken oldToken = this.nameToTokenMap.get(name);
 
-        if (token == null) {
+        if (oldToken == null) {
             if (this.isStable) {
                 throw new InternalException("grammar is stable");
             }
-            token = new Token(this, name);
-            this.nameToTokenMap.put(name, token);
+            oldToken = new OldToken(this, name);
+            this.nameToTokenMap.put(name, oldToken);
         }
 
-        return token;
+        return oldToken;
     }
 
     public void stabilize() {

@@ -17,19 +17,25 @@
 
 package org.sablecc.sablecc.oldlrautomaton;
 
-public class ProductionElement
+import org.sablecc.sablecc.grammar.Element.ProductionElement;
+
+public class OldProductionElement
         extends OldElement {
 
     private final OldProduction oldProduction;
 
-    ProductionElement(
+    private final ProductionElement origin;
+
+    OldProductionElement(
             OldAlternative oldAlternative,
             int position,
             String shortName,
-            OldProduction oldProduction) {
+            OldProduction oldProduction,
+            ProductionElement element) {
 
         super(oldAlternative, position, shortName);
         this.oldProduction = oldProduction;
+        this.origin = element;
     }
 
     public OldProduction getProduction() {

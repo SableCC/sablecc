@@ -22,12 +22,15 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.grammar.transformation.*;
+import org.sablecc.sablecc.oldlrautomaton.*;
 
 public class SGrammar {
 
     private Map<String, Production> productions = new LinkedHashMap<String, Production>();
 
     private final Grammar grammar;
+
+    private LRAutomaton lrAutomaton;
 
     public SGrammar(
             Grammar grammar) {
@@ -147,5 +150,16 @@ public class SGrammar {
     public Collection<Production> getProductions() {
 
         return this.productions.values();
+    }
+
+    public void setLRAutomaton(
+            LRAutomaton lrAutomaton) {
+
+        this.lrAutomaton = lrAutomaton;
+    }
+
+    public LRAutomaton getLrAutomaton() {
+
+        return this.lrAutomaton;
     }
 }
