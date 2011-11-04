@@ -554,6 +554,218 @@ public class CodeGenerator {
             }
         }
 
+/*
+        for (LRState state : grammar.getSimplifiedGrammar().getLrAutomaton().getStates()) {
+            MLrStateSingleton mLrStateSingleton = mParser
+                    .newLrStateSingleton(state.getName());
+
+            for (Entry<OldToken, LRState> entry : state.getTokenTransitions()
+                    .entrySet()) {
+                OldToken oldToken = entry.getKey();
+                LRState target = entry.getValue();
+
+                if (oldToken.getName().equals("$end")) {
+                    mLrStateSingleton.newEndTokenLrTransitionTarget(target
+                            .getName());
+                }
+                else {
+                    LexerExpression lexerExpression = grammar.getLexerExpression(oldToken.getName());
+                    String element_CamelCaseType;
+                    if (lexerExpression instanceof LexerExpression.NamedExpression) {
+                        LexerExpression.NamedExpression namedExpression = (LexerExpression.NamedExpression) lexerExpression;
+                        element_CamelCaseType = namedExpression.getName_CamelCase();
+                    }
+                    else {
+                        LexerExpression.InlineExpression inlineExpression = (LexerExpression.InlineExpression) lexerExpression;
+
+                        element_CamelCaseType = ""
+                                + inlineExpression.getInternalName_CamelCase();
+                    }
+
+                    mLrStateSingleton.newNormalTokenLrTransitionTarget(
+                            element_CamelCaseType, target.getName());
+                }
+            }
+
+            for (Entry<OldProduction, LRState> entry : state
+                    .getProductionTransitions().entrySet()) {
+                OldProduction oldProduction = entry.getKey();
+                LRState target = entry.getValue();
+
+                String production_CamelCaseName = to_CamelCase(oldProduction.getName());
+                mLrStateSingleton.newProductionLrTransitionTarget(
+                        production_CamelCaseName, target.getName());
+            }
+
+            Map<Integer, MDistance> distanceMap = new LinkedHashMap<Integer, MDistance>();
+            boolean isLr1OrMore = false;
+            for (Action action : state.getActions()) {
+                int maxLookahead = action.getMaxLookahead();
+                while (maxLookahead > distanceMap.size() - 1) {
+                    int distance = distanceMap.size();
+                    distanceMap.put(distance, mLrStateSingleton.newDistance(""
+                            + distance));
+                }
+
+                MDistance mDistance = distanceMap.get(maxLookahead);
+                MAction mAction = mDistance.newAction();
+                if (maxLookahead > 0) {
+                    isLr1OrMore = true;
+                    for (Entry<Integer, Set<Item>> entry : action
+                            .getDistanceToItemSetMap().entrySet()) {
+                        String ahead = "" + entry.getKey();
+                        Set<Item> items = entry.getValue();
+                        Set<Token> tokens = new LinkedHashSet<Token>();
+                        for (Item item : items) {
+                            tokens.add(item.getTokenElement().getToken());
+                        }
+
+                        if (tokens.size() == 0) {
+                            mAction.newFalseGroup();
+                        }
+                        else {
+                            MNormalGroup mNormalGroup = mAction
+                                    .newNormalGroup();
+
+                            for (Token token : tokens) {
+                                if (token.getName().equals("$end")) {
+                                    mNormalGroup.newEndCondition(ahead);
+                                }
+                                else {
+                                    MatchedToken matchedToken = context
+                                            .getMatchedToken(token.getName());
+                                    String element_CamelCaseType;
+                                    if (matchedToken instanceof NameToken) {
+                                        NameToken nameToken = (NameToken) matchedToken;
+                                        element_CamelCaseType = nameToken
+                                                .get_CamelCaseName();
+                                    }
+                                    else {
+                                        AnonymousToken anonymousToken = (AnonymousToken) matchedToken;
+
+                                        element_CamelCaseType = ""
+                                                + anonymousToken
+                                                        .get_CamelCaseName();
+                                    }
+
+                                    mNormalGroup.newNormalCondition(ahead,
+                                            element_CamelCaseType);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (action.getType() == ActionType.SHIFT) {
+                    mAction.newShift();
+                }
+                else {
+                    ReduceAction reduceAction = (ReduceAction) action;
+                    Alternative alternative = reduceAction.getAlternative();
+                    Production production = alternative.getProduction();
+                    String production_CamelCaseName = to_CamelCase(production
+                            .getName());
+                    String alt_CamelCaseName = to_CamelCase(alternative
+                            .getName());
+                    String alt_CamelCaseFullName = production_CamelCaseName
+                            + (alt_CamelCaseName.equals("") ? "" : "_"
+                                    + alt_CamelCaseName);
+
+                    MReduce mReduce = mAction.newReduce(alt_CamelCaseFullName);
+
+                    ArrayList<Element> elements = alternative.getElements();
+                    int elementCount = elements.size();
+                    for (int i = elementCount - 1; i >= 0; i--) {
+                        Element element = elements.get(i);
+                        String element_CamelCaseName = to_CamelCase(element
+                                .getName());
+                        String element_CamelCaseType = null;
+                        boolean elementIsEndToken;
+                        if (element instanceof TokenElement) {
+                            TokenElement tokenElement = (TokenElement) element;
+                            if (tokenElement.getToken().getName()
+                                    .equals("$end")) {
+                                elementIsEndToken = true;
+                            }
+                            else {
+                                MatchedToken matchedToken = context
+                                        .getMatchedToken(tokenElement
+                                                .getToken().getName());
+                                if (matchedToken instanceof NameToken) {
+                                    NameToken nameToken = (NameToken) matchedToken;
+                                    element_CamelCaseType = nameToken
+                                            .get_CamelCaseName();
+                                }
+                                else {
+                                    AnonymousToken anonymousToken = (AnonymousToken) matchedToken;
+
+                                    element_CamelCaseType = ""
+                                            + anonymousToken
+                                                    .get_CamelCaseName();
+                                }
+
+                                elementIsEndToken = false;
+                            }
+                        }
+                        else {
+                            ProductionElement productionElement = (ProductionElement) element;
+                            element_CamelCaseType = to_CamelCase(productionElement
+                                    .getProduction().getName());
+
+                            elementIsEndToken = false;
+                        }
+
+                        if (elementIsEndToken) {
+                            mReduce.newReduceEndPop();
+                        }
+                        else {
+                            mReduce.newReduceNormalPop(element_CamelCaseType,
+                                    element_CamelCaseName);
+                        }
+                    }
+
+                    if (alt_CamelCaseFullName.equals("$Start")) {
+                        mReduce.newAcceptDecision(to_CamelCase(elements.get(0)
+                                .getName()));
+                    }
+                    else {
+                        MReduceDecision mReduceDecision = mReduce
+                                .newReduceDecision();
+
+                        for (Element element : elements) {
+                            String element_CamelCaseName = to_CamelCase(element
+                                    .getName());
+                            boolean elementIsEndToken;
+                            if (element instanceof TokenElement) {
+                                TokenElement tokenElement = (TokenElement) element;
+                                if (tokenElement.getToken().getName().equals(
+                                        "$end")) {
+                                    elementIsEndToken = true;
+                                }
+                                else {
+                                    elementIsEndToken = false;
+                                }
+                            }
+                            else {
+                                elementIsEndToken = false;
+                            }
+                            if (elementIsEndToken) {
+                                mReduceDecision.newEndParameter();
+                            }
+                            else {
+                                mReduceDecision
+                                        .newNormalParameter(element_CamelCaseName);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (isLr1OrMore) {
+                mLrStateSingleton.newLr1OrMore();
+            }
+        }
+*/
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
                     packageDirectory, "Node.java")));

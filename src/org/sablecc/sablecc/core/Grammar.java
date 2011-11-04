@@ -73,6 +73,8 @@ public class Grammar
 
     private int nextAnonymousTokenId;
 
+    private SGrammar simplifiedGrammar;
+
     Grammar(
             Start ast) {
 
@@ -1197,5 +1199,11 @@ public class Grammar
         oldGrammar.stabilize();
         oldGrammar.computeShortestLengthAndDetectUselessProductions();
         sGrammar.setLRAutomaton(new LRAutomaton(oldGrammar, trace));
+        this.simplifiedGrammar = sGrammar;
+    }
+
+    public SGrammar getSimplifiedGrammar() {
+
+        return this.simplifiedGrammar;
     }
 }

@@ -122,6 +122,8 @@ public class CompilationTask {
                         this.trace);
                 codeGenerator.run();
             }
+
+            this.trace.informativeln("Done!");
         }
         catch (IOException e) {
             throw LauncherException.inputError(this.grammarFile.toString(), e);

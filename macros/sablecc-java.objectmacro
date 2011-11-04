@@ -1069,28 +1069,34 @@ $end: lr1_or_more $
   }
 
   @Override
-  LRState getTarget(Node node)
+  LRState getTokenTarget(InternalType type)
       throws ParserException, LexerException, IOException {
 
-    switch(node.getProductionType()) {
+    switch(type) {
+$macro: normal_token_lr_transition_target(node_type, target) $
+    case T_$(node_type):
+      return L_$target.instance;
+$end: normal_token_lr_transition_target $
+$macro: end_token_lr_transition_target(target) $
+    case TEnd:
+      return L_$target.instance;
+$end: end_token_lr_transition_target $
+    default:
+      throw new ParserException((Token) node);
+    }
+  }
+
+  @Override
+  LRState getProductionTarget(ProductionType type)
+      throws ParserException, LexerException, IOException {
+
+    switch(type) {
 $macro: production_lr_transition_target(node_type, target) $
     case T_$(node_type):
       return L_$target.instance;
 $end: production_lr_transition_target $
     default:
-      switch(node.getInternalType()) {
-$macro: normal_token_lr_transition_target(node_type, target) $
-        case T_$(node_type):
-          return L_$target.instance;
-$end: normal_token_lr_transition_target $
-$macro: end_token_lr_transition_target(target) $
-        case TEnd:
-          return L_$target.instance;
-$end: end_token_lr_transition_target $
-        default:
-          throw new ParserException((Token) node);
-      }
-    }
+      throw new RuntimeException("internal error in parsing tables");
   }
 }
 $end: lr_state_singleton $
