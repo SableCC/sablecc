@@ -17,6 +17,7 @@
 
 package org.sablecc.sablecc.grammar;
 
+import java.math.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
@@ -29,11 +30,18 @@ public class Production {
 
     private final String name;
 
+    private final BigInteger id;
+
     private SProductionTransformation transformation;
 
     public Production(
+            BigInteger id,
             String name,
             List<Alternative> alternatives) {
+
+        if (id == null) {
+            throw new InternalException("id may not be null");
+        }
 
         if (name == null) {
             throw new InternalException("name may not be null");
@@ -43,26 +51,38 @@ public class Production {
             throw new InternalException("alternatives may not be null");
         }
 
+        this.id = id;
         this.alternatives = alternatives;
         this.name = name;
 
     }
 
     public Production(
+            BigInteger id,
             String name) {
+
+        if (id == null) {
+            throw new InternalException("id may not be null");
+        }
 
         if (name == null) {
             throw new InternalException("name may not be null");
         }
 
+        this.id = id;
         this.alternatives = new LinkedList<Alternative>();
         this.name = name;
 
     }
 
     public Production(
+            BigInteger id,
             ANameUnit name,
             List<Alternative> alternatives) {
+
+        if (id == null) {
+            throw new InternalException("id may not be null");
+        }
 
         if (name == null) {
             throw new InternalException("name may not be null");
@@ -72,6 +92,7 @@ public class Production {
             throw new InternalException("alternatives may not be null");
         }
 
+        this.id = id;
         this.alternatives = alternatives;
         this.name = name.getIdentifier().getText();
 
@@ -109,6 +130,11 @@ public class Production {
     public String getName() {
 
         return this.name;
+    }
+
+    public BigInteger getId() {
+
+        return this.id;
     }
 
     public SProductionTransformation getTransformation() {

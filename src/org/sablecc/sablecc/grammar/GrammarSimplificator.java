@@ -461,7 +461,8 @@ public class GrammarSimplificator
 
             String qmarkName = this.sElement.getTypeName() + "_?";
 
-            Production qmarkProd = new Production(qmarkName);
+            Production qmarkProd = new Production(
+                    this.grammar.getNextProductionId(), qmarkName);
 
             qmarkProd.addAlternative(newAlternative(qmarkProd,
                     this.sElement.clone()));
@@ -475,7 +476,8 @@ public class GrammarSimplificator
 
             String plusName = this.sElement.getTypeName() + "_+";
 
-            Production plusProd = new Production(plusName);
+            Production plusProd = new Production(
+                    this.grammar.getNextProductionId(), plusName);
             // p = a_+ a | a;
 
             // First alternative
@@ -516,7 +518,8 @@ public class GrammarSimplificator
 
             String starName = this.sElement.getTypeName() + "_*";
 
-            Production starProd = new Production(starName);
+            Production starProd = new Production(
+                    this.grammar.getNextProductionId(), starName);
 
             // First Alternative
             String plusName = this.sElement.getTypeName() + "_+";
@@ -556,7 +559,8 @@ public class GrammarSimplificator
             String numberName = this.sElement.getTypeName() + "_"
                     + number.toString();
 
-            Production numberProd = new Production(numberName);
+            Production numberProd = new Production(
+                    this.grammar.getNextProductionId(), numberName);
 
             if (number.compareTo(BigInteger.valueOf(2L)) == 0) {
 
@@ -621,7 +625,8 @@ public class GrammarSimplificator
             String atLeastName = this.sElement.getTypeName() + "_"
                     + lowerBoundValue.toString() + "...";
 
-            Production atLeastProd = new Production(atLeastName);
+            Production atLeastProd = new Production(
+                    this.grammar.getNextProductionId(), atLeastName);
 
             String numberName = this.sElement.getTypeName() + "_"
                     + lowerBoundValue.toString();
@@ -685,7 +690,8 @@ public class GrammarSimplificator
                     + lowerBoundValue.toString() + ".."
                     + upperBoundValue.toString();
 
-            Production intervalProd = new Production(intervalName);
+            Production intervalProd = new Production(
+                    this.grammar.getNextProductionId(), intervalName);
 
             // p^(0..n) = p^(1..n) | Empty
             if (lowerBoundValue.equals(BigInteger.ZERO)) {
@@ -955,7 +961,8 @@ public class GrammarSimplificator
             String plusName = this.sLeftElement.getTypeName() + " Separator "
                     + this.sRightElement.getTypeName() + "_+";
 
-            Production plusProd = new Production(plusName);
+            Production plusProd = new Production(
+                    this.grammar.getNextProductionId(), plusName);
             Element firstElement;
 
             if (this.sLeftElement instanceof Element.TokenElement) {
@@ -1009,7 +1016,8 @@ public class GrammarSimplificator
             String starName = this.sLeftElement.getTypeName() + " Separator "
                     + this.sRightElement.getTypeName() + "_*";
 
-            Production starProd = new Production(starName);
+            Production starProd = new Production(
+                    this.grammar.getNextProductionId(), starName);
 
             // First alternative
 
@@ -1057,7 +1065,8 @@ public class GrammarSimplificator
             LinkedList<Element> altElements = new LinkedList<Element>();
             LinkedList<SAlternativeTransformationListElement> altTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
 
-            Production numberProd = new Production(numberName);
+            Production numberProd = new Production(
+                    this.grammar.getNextProductionId(), numberName);
 
             if (number.compareTo(BigInteger.valueOf(2L)) == 0) {
 
@@ -1133,7 +1142,8 @@ public class GrammarSimplificator
                     + " Separator " + this.sRightElement.getTypeName() + "_"
                     + lowerBoundValue.toString() + "...";
 
-            Production atLeastProd = new Production(atLeastName);
+            Production atLeastProd = new Production(
+                    this.grammar.getNextProductionId(), atLeastName);
 
             LinkedList<Element> altElements = new LinkedList<Element>();
             LinkedList<SAlternativeTransformationListElement> altTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
@@ -1204,7 +1214,8 @@ public class GrammarSimplificator
                     + lowerBoundValue.toString() + ".."
                     + upperBoundValue.toString();
 
-            Production intervalProd = new Production(intervalName);
+            Production intervalProd = new Production(
+                    this.grammar.getNextProductionId(), intervalName);
 
             // (a Sep b)^(0..n) = (a Sepb b)^(1..n) | Empty
             if (lowerBoundValue.equals(BigInteger.ZERO)) {
@@ -1224,7 +1235,9 @@ public class GrammarSimplificator
                                 this.grammar.getProduction(qmarkLeftName));
                     }
                     else {
-                        Production qmarkProd = new Production(qmarkLeftName);
+                        Production qmarkProd = new Production(
+                                this.grammar.getNextProductionId(),
+                                qmarkLeftName);
 
                         qmarkProd.addAlternative(newAlternative(qmarkProd,
                                 this.sLeftElement.clone()));
@@ -1504,7 +1517,8 @@ public class GrammarSimplificator
             String plusName = this.sLeftElement.getTypeName()
                     + this.sRightElement.getTypeName() + "_+";
 
-            Production plusProd = new Production(plusName);
+            Production plusProd = new Production(
+                    this.grammar.getNextProductionId(), plusName);
 
             LinkedList<Element> firstAlternativeElements = new LinkedList<Element>();
             LinkedList<SAlternativeTransformationListElement> firstAltTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
@@ -1555,7 +1569,8 @@ public class GrammarSimplificator
             String starName = this.sLeftElement.getTypeName()
                     + this.sRightElement.getTypeName() + "_*";
 
-            Production starProd = new Production(starName);
+            Production starProd = new Production(
+                    this.grammar.getNextProductionId(), starName);
 
             String plusName = this.sLeftElement.getTypeName()
                     + this.sRightElement.getTypeName() + "_+";
@@ -1598,7 +1613,8 @@ public class GrammarSimplificator
                     + this.sRightElement.getTypeName() + "_"
                     + number.toString();
 
-            Production numberProd = new Production(numberName);
+            Production numberProd = new Production(
+                    this.grammar.getNextProductionId(), numberName);
 
             LinkedList<SAlternativeTransformationListElement> altTransformationElement = new LinkedList<SAlternativeTransformationListElement>();
             LinkedList<Element> alternativeElements = new LinkedList<Element>();
@@ -1670,7 +1686,8 @@ public class GrammarSimplificator
                     + this.sRightElement.getTypeName() + "_"
                     + lowerBoundValue.toString() + "...";
 
-            Production atLeastProd = new Production(atLeastName);
+            Production atLeastProd = new Production(
+                    this.grammar.getNextProductionId(), atLeastName);
 
             String numberName = this.sLeftElement.getTypeName()
                     + this.sRightElement.getTypeName() + "_"
@@ -1742,7 +1759,8 @@ public class GrammarSimplificator
                     + lowerBoundValue.toString() + ".."
                     + upperBoundValue.toString();
 
-            Production intervalProd = new Production(intervalName);
+            Production intervalProd = new Production(
+                    this.grammar.getNextProductionId(), intervalName);
 
             if (lowerBoundValue.equals(BigInteger.ZERO)) {
 

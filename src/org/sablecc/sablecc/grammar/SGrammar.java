@@ -17,6 +17,7 @@
 
 package org.sablecc.sablecc.grammar;
 
+import java.math.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
@@ -31,6 +32,8 @@ public class SGrammar {
     private final Grammar grammar;
 
     private LRAutomaton lrAutomaton;
+
+    private BigInteger nextProductionId = BigInteger.ZERO;
 
     public SGrammar(
             Grammar grammar) {
@@ -69,7 +72,8 @@ public class SGrammar {
 
         for (Parser.ParserProduction coreProd : parser.getProductions()) {
 
-            Production production = new Production(coreProd.getName());
+            Production production = new Production(getNextProductionId(),
+                    coreProd.getName());
             if (this.grammar.hasATree()) {
                 production.addTransformation(new SProductionTransformation(
                         coreProd.getTransformation(), production));
@@ -161,5 +165,12 @@ public class SGrammar {
     public LRAutomaton getLrAutomaton() {
 
         return this.lrAutomaton;
+    }
+
+    public BigInteger getNextProductionId() {
+
+        BigInteger productionId = this.nextProductionId;
+        this.nextProductionId = this.nextProductionId.add(BigInteger.ONE);
+        return productionId;
     }
 }
