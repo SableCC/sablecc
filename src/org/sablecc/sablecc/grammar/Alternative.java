@@ -186,6 +186,15 @@ public class Alternative {
         newAlternative.addOrigin(inlinedAlt.getProduction());
 
         this.production.addAlternative(newAlternative);
+
+        // Duplicate priorities
+
+        for (Priority priority : this.production.getPriorities()) {
+            if (priority.getAlternatives().contains(this)) {
+                priority.addAlternative(newAlternative, priority
+                        .getAlternatives().indexOf(this));
+            }
+        }
     }
 
 }

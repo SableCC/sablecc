@@ -25,6 +25,9 @@ import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.core.Parser.ParserAlternative;
 import org.sablecc.sablecc.core.Parser.ParserElement.AlternatedElement;
 import org.sablecc.sablecc.core.Parser.ParserElement.SeparatedElement;
+import org.sablecc.sablecc.core.Parser.ParserPriority.LeftPriority;
+import org.sablecc.sablecc.core.Parser.ParserPriority.RightPriority;
+import org.sablecc.sablecc.core.Parser.ParserPriority.UnaryPriority;
 import org.sablecc.sablecc.core.Parser.ParserProduction;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.grammar.transformation.*;
@@ -66,11 +69,38 @@ public class GrammarSimplificator
         String prodName = node.getName();
         this.production = GrammarSimplificator.grammar.getProduction(prodName);
 
+        for (Parser.ParserPriority priority : node.getPriorities()) {
+            priority.apply(this);
+        }
+
         for (Parser.ParserAlternative alternative : node.getAlternatives()) {
             alternative.apply(this);
         }
 
         this.production.addAlternatives(this.alternatives);
+    }
+
+    @Override
+    public void visitLeftParserPriority(
+            LeftPriority node) {
+
+        this.production.addPriority(new Priority.LeftPriority(this.production));
+    }
+
+    @Override
+    public void visitRightParserPriority(
+            RightPriority node) {
+
+        this.production
+                .addPriority(new Priority.RightPriority(this.production));
+    }
+
+    @Override
+    public void visitUnaryParserPriority(
+            UnaryPriority node) {
+
+        this.production
+                .addPriority(new Priority.UnaryPriority(this.production));
     }
 
     @Override
@@ -106,6 +136,16 @@ public class GrammarSimplificator
             SAlternativeTransformation transformation = new SAlternativeTransformation(
                     alternative, transformationElements);
             alternative.addTransformation(transformation);
+        }
+
+        // Resolve priority references
+        for (int i = 0; i < node.getProduction().getPriorities().size(); i++) {
+
+            if (node.getProduction().getPriorities().get(i).getAlternatives()
+                    .contains(node)) {
+                this.production.getPriorities().get(i)
+                        .addAlternative(alternative);
+            }
         }
 
         this.alternatives.add(alternative);

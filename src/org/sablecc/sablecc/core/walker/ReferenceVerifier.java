@@ -304,6 +304,8 @@ public abstract class ReferenceVerifier
                 if (declaration == null) {
                     throw SemanticException.undefinedReference(reference);
                 }
+
+                node.addAlternative(declaration);
             }
         }
 
@@ -318,6 +320,8 @@ public abstract class ReferenceVerifier
                 if (declaration == null) {
                     throw SemanticException.undefinedReference(reference);
                 }
+
+                node.addAlternative(declaration);
             }
         }
 
@@ -332,6 +336,8 @@ public abstract class ReferenceVerifier
                 if (declaration == null) {
                     throw SemanticException.undefinedReference(reference);
                 }
+
+                node.addAlternative(declaration);
             }
         }
 

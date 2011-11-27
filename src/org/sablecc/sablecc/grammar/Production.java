@@ -28,6 +28,8 @@ public class Production {
 
     private List<Alternative> alternatives;
 
+    private List<Priority> priorities = new LinkedList<Priority>();
+
     private final String name;
 
     private final BigInteger id;
@@ -107,6 +109,17 @@ public class Production {
             Alternative alternative) {
 
         this.alternatives.add(alternative);
+    }
+
+    public void addPriority(
+            Priority priority) {
+
+        this.priorities.add(priority);
+    }
+
+    public List<Priority> getPriorities() {
+
+        return this.priorities;
     }
 
     public void removeAlternative(

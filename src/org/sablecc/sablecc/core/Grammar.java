@@ -88,6 +88,7 @@ public class Grammar
             findInlineExpressions(ast);
             findLexerPriorities(ast);
             verifyReferences();
+            verifyPriorities();
         }
         else {
             findAnonymousContexts(ast);
@@ -98,6 +99,7 @@ public class Grammar
             findLexerPriorities(ast);
 
             verifyReferences();
+            verifyPriorities();
 
             if (hasATree()) {
                 buildImplicitTransformations();
@@ -457,6 +459,11 @@ public class Grammar
     private void verifyAssignability() {
 
         apply(new AssignabilityVerifier());
+    }
+
+    private void verifyPriorities() {
+
+        apply(new PriorityVerifier(this));
     }
 
     private void buildImplicitTransformations() {

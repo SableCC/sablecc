@@ -1890,10 +1890,16 @@ public class Parser
             return this.production;
         }
 
+        public abstract List<Parser.ParserAlternative> getAlternatives();
+
+        public abstract Token getLocation();
+
         public static class LeftPriority
                 extends ParserPriority {
 
             private final ALeftParserPriority declaration;
+
+            private List<Parser.ParserAlternative> alternatives = new LinkedList<Parser.ParserAlternative>();
 
             public LeftPriority(
                     ALeftParserPriority declaration,
@@ -1915,6 +1921,23 @@ public class Parser
                 return this.declaration;
             }
 
+            public void addAlternative(
+                    Parser.ParserAlternative alternative) {
+
+                if (!getProduction().getAlternatives().contains(alternative)) {
+                    throw new InternalException(
+                            "the alternative added to a priority must belong to the production");
+                }
+
+                this.alternatives.add(alternative);
+            }
+
+            @Override
+            public List<Parser.ParserAlternative> getAlternatives() {
+
+                return this.alternatives;
+            }
+
             @Override
             public void apply(
                     IGrammarVisitor visitor) {
@@ -1923,12 +1946,20 @@ public class Parser
 
             }
 
+            @Override
+            public Token getLocation() {
+
+                return this.declaration.getLeftKeyword();
+            }
+
         }
 
         public static class RightPriority
                 extends ParserPriority {
 
             private final ARightParserPriority declaration;
+
+            private List<Parser.ParserAlternative> alternatives = new LinkedList<Parser.ParserAlternative>();
 
             public RightPriority(
                     ARightParserPriority declaration,
@@ -1949,6 +1980,23 @@ public class Parser
                 return this.declaration;
             }
 
+            public void addAlternative(
+                    Parser.ParserAlternative alternative) {
+
+                if (!getProduction().getAlternatives().contains(alternative)) {
+                    throw new InternalException(
+                            "the alternative added to a priority must belong to the production");
+                }
+
+                this.alternatives.add(alternative);
+            }
+
+            @Override
+            public List<Parser.ParserAlternative> getAlternatives() {
+
+                return this.alternatives;
+            }
+
             @Override
             public void apply(
                     IGrammarVisitor visitor) {
@@ -1957,12 +2005,20 @@ public class Parser
 
             }
 
+            @Override
+            public Token getLocation() {
+
+                return this.declaration.getRightKeyword();
+            }
+
         }
 
         public static class UnaryPriority
                 extends ParserPriority {
 
             private final AUnaryParserPriority declaration;
+
+            private List<Parser.ParserAlternative> alternatives = new LinkedList<Parser.ParserAlternative>();
 
             public UnaryPriority(
                     AUnaryParserPriority declaration,
@@ -1983,12 +2039,35 @@ public class Parser
                 return this.declaration;
             }
 
+            public void addAlternative(
+                    Parser.ParserAlternative alternative) {
+
+                if (!getProduction().getAlternatives().contains(alternative)) {
+                    throw new InternalException(
+                            "the alternative added to a priority must belong to the production");
+                }
+
+                this.alternatives.add(alternative);
+            }
+
+            @Override
+            public List<Parser.ParserAlternative> getAlternatives() {
+
+                return this.alternatives;
+            }
+
             @Override
             public void apply(
                     IGrammarVisitor visitor) {
 
                 visitor.visitUnaryParserPriority(this);
 
+            }
+
+            @Override
+            public Token getLocation() {
+
+                return this.declaration.getUnaryKeyword();
             }
 
         }

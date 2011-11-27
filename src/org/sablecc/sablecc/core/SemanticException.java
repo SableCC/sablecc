@@ -759,4 +759,294 @@ public class SemanticException
         return new SemanticException(new MGenericLocatedError(text, ""
                 + token.getLine(), "" + token.getPos()).toString(), token);
     }
+
+    public static SemanticException singleUnaryPriority(
+            Parser.ParserPriority priority) {
+
+        return new SemanticException(new MSingleUnaryPriority(priority
+                .getLocation().getLine() + "", priority.getLocation().getPos()
+                + "").toString(), priority.getLocation());
+
+    }
+
+    private static SemanticException leftError(
+            Parser.ParserAlternative alternative,
+            Parser.ParserPriority priority,
+            String text) {
+
+        Token altLocation = alternative.getLocation();
+        Token priorityLocation = priority.getLocation();
+
+        return new SemanticException(new MLeftPriorityError(
+                alternative.getName(), altLocation.getLine() + "",
+                altLocation.getPos() + "", text, priorityLocation.getLine()
+                        + "", priorityLocation.getPos() + "").toString(),
+                priorityLocation);
+    }
+
+    public static SemanticException leftBadPattern(
+            Parser.ParserAlternative alternative,
+            Parser.ParserPriority priority) {
+
+        String text = "The alternative must have at least 3 elements.";
+
+        return leftError(alternative, priority, text);
+    }
+
+    public static SemanticException leftQualifiedRecursiveElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The recursive element \"" + element.getElement()
+                + "\" defined at line " + element.getLocation().getLine()
+                + ", char " + element.getLocation().getPos()
+                + " must be unqualified.";
+
+        return leftError(alternative, priority, text);
+    }
+
+    public static SemanticException leftBadRecursion(
+            Parser.ParserAlternative alternative,
+            Parser.ParserPriority priority) {
+
+        String text = "\"" + alternative.getName()
+                + "\" must be left and right recursive.";
+
+        return leftError(alternative, priority, text);
+    }
+
+    public static SemanticException leftNonNormalSecondElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The second element defined at line "
+                + element.getLocation().getLine() + ", char "
+                + element.getLocation().getPos()
+                + " can't be alternated or separated.";
+
+        return leftError(alternative, priority, text);
+    }
+
+    public static SemanticException leftBadSecondElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The second element defined at line "
+                + element.getLocation().getLine() + ", char "
+                + element.getLocation().getPos()
+                + " must be an unqualified token.";
+
+        return leftError(alternative, priority, text);
+    }
+
+    private static SemanticException rightError(
+            Parser.ParserAlternative alternative,
+            Parser.ParserPriority priority,
+            String text) {
+
+        Token altLocation = alternative.getLocation();
+        Token priorityLocation = priority.getLocation();
+
+        return new SemanticException(new MRightPriorityError(
+                alternative.getName(), altLocation.getLine() + "",
+                altLocation.getPos() + "", text, priorityLocation.getLine()
+                        + "", priorityLocation.getPos() + "").toString(),
+                priorityLocation);
+    }
+
+    public static SemanticException rightBadPattern(
+            Parser.ParserAlternative alternative,
+            Parser.ParserPriority priority) {
+
+        String text = "The alternative must have at least 3 elements.";
+
+        return rightError(alternative, priority, text);
+    }
+
+    public static SemanticException rightQualifiedRecursiveElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The recursive element \"" + element.getElement()
+                + "\" defined at line " + element.getLocation().getLine()
+                + ", char " + element.getLocation().getPos()
+                + " must be unqualified.";
+
+        return rightError(alternative, priority, text);
+    }
+
+    public static SemanticException rightBadRecursion(
+            Parser.ParserAlternative alternative,
+            Parser.ParserPriority priority) {
+
+        String text = "\"" + alternative.getName()
+                + "\" must be left and right recursive.";
+
+        return rightError(alternative, priority, text);
+    }
+
+    public static SemanticException rightNonNormalSecondElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The second element defined at line "
+                + element.getLocation().getLine() + ", char "
+                + element.getLocation().getPos()
+                + " can't be alternated or separated.";
+
+        return rightError(alternative, priority, text);
+    }
+
+    public static SemanticException rightBadSecondElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The second element defined at line "
+                + element.getLocation().getLine() + ", char "
+                + element.getLocation().getPos()
+                + " must be an unqualified token.";
+
+        return rightError(alternative, priority, text);
+    }
+
+    private static SemanticException unaryError(
+            Parser.ParserAlternative alternative,
+            Parser.ParserPriority priority,
+            String text) {
+
+        Token altLocation = alternative.getLocation();
+        Token priorityLocation = priority.getLocation();
+
+        return new SemanticException(new MUnaryPriorityError(
+                alternative.getName(), altLocation.getLine() + "",
+                altLocation.getPos() + "", text, priorityLocation.getLine()
+                        + "", priorityLocation.getPos() + "").toString(),
+                priorityLocation);
+    }
+
+    public static SemanticException unaryBadPattern(
+            Parser.ParserAlternative alternative,
+            Parser.ParserPriority priority) {
+
+        String text = "The alternative must have at least 2 elements.";
+
+        return unaryError(alternative, priority, text);
+    }
+
+    public static SemanticException unaryBadRecursion(
+            Parser.ParserAlternative alternative,
+            Parser.ParserPriority priority) {
+
+        String text = "\"" + alternative.getName()
+                + "\" must be left or right recursive (but not both).";
+
+        return unaryError(alternative, priority, text);
+    }
+
+    public static SemanticException unaryQualifiedRecursiveElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The element \"" + element.getElement()
+                + "\" defined at line " + element.getLocation().getLine()
+                + ", char " + element.getLocation().getPos()
+                + ", starting the recursion, must be unqualified.";
+
+        return unaryError(alternative, priority, text);
+    }
+
+    public static SemanticException unaryBadFirstElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The first element defined at line "
+                + element.getLocation().getLine() + ", char "
+                + element.getLocation().getPos()
+                + " must be an unqualified token.";
+
+        return unaryError(alternative, priority, text);
+    }
+
+    public static SemanticException unaryNonNormalFirstElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The first element defined at line "
+                + element.getLocation().getLine() + ", char "
+                + element.getLocation().getPos()
+                + " can't be alternated or separated.";
+
+        return unaryError(alternative, priority, text);
+    }
+
+    public static SemanticException unaryNonNormalSecondElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The second element defined at line "
+                + element.getLocation().getLine() + ", char "
+                + element.getLocation().getPos()
+                + " can't be alternated or separated.";
+
+        return unaryError(alternative, priority, text);
+    }
+
+    public static SemanticException unaryNonNormalLastElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The last element defined at line "
+                + element.getLocation().getLine() + ", char "
+                + element.getLocation().getPos()
+                + " can't be alternated or separated.";
+
+        return unaryError(alternative, priority, text);
+    }
+
+    public static SemanticException unaryBadSecondElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The second element defined at line "
+                + element.getLocation().getLine() + ", char "
+                + element.getLocation().getPos()
+                + " must be an unqualified token.";
+
+        return unaryError(alternative, priority, text);
+    }
+
+    public static SemanticException unarybadLastElement(
+            Parser.ParserAlternative alternative,
+            Parser.ParserElement element,
+            Parser.ParserPriority priority) {
+
+        String text = "The last element defined at line "
+                + element.getLocation().getLine() + ", char "
+                + element.getLocation().getPos()
+                + " must be an unqualified token.";
+
+        return unaryError(alternative, priority, text);
+    }
+
+    public static SemanticException mixedUnaryPriorities(
+            Parser.ParserPriority priority) {
+
+        String text = "A unary priority definition must only contain left recursive alternatives or"
+                + " right recursive alternatives (but not both).";
+
+        return genericLocatedError(text, priority.getLocation());
+    }
+
 }

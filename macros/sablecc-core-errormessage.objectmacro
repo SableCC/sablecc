@@ -367,6 +367,54 @@ $insert: semantic_error_head $
 $text
 $end: generic_error $
 
+$comment: ========== unary_priority_error ========== $
+
+$macro: unary_priority_error(alt_name,alt_line,alt_char,text,line,char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+
+The alternative "$alt_name" defined at line $alt_line, char $alt_char can't be used within a Unary Priority.
+$text
+$end: unary_priority_error $
+
+$comment: ========== left_priority_error ========== $
+
+$macro: left_priority_error(alt_name,alt_line,alt_char,text,line,char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+
+The alternative "$alt_name" defined at line $alt_line, char $alt_char can't be used within a Left Priority.
+$text
+$end: left_priority_error $
+
+$comment: ========== right_priority_error ========== $
+
+$macro: right_priority_error(alt_name,alt_line,alt_char,text,line,char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+
+The alternative "$alt_name" defined at line $alt_line, char $alt_char can't be used within a Right Priority.
+$text
+$end: right_priority_error $
+
+$comment: ========== single_unary_priority ========== $
+
+$macro: single_unary_priority(line,char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+
+A unary priority can't be defined without another left, right or reversed unary priority.
+$end: single_unary_priority $
+
+
 $comment$
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
