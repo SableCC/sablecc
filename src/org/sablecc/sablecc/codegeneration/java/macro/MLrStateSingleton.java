@@ -14,11 +14,11 @@ public class MLrStateSingleton {
 
     private final List<Object> eLr1OrMore = new LinkedList<Object>();
 
-    private final List<Object> eProductionLrTransitionTarget = new LinkedList<Object>();
-
     private final List<Object> eNormalTokenLrTransitionTarget = new LinkedList<Object>();
 
     private final List<Object> eEndTokenLrTransitionTarget = new LinkedList<Object>();
+
+    private final List<Object> eProductionLrTransitionTarget = new LinkedList<Object>();
 
     MLrStateSingleton(
             String pNumber) {
@@ -44,16 +44,6 @@ public class MLrStateSingleton {
         return lLr1OrMore;
     }
 
-    public MProductionLrTransitionTarget newProductionLrTransitionTarget(
-            String pNodeType,
-            String pTarget) {
-
-        MProductionLrTransitionTarget lProductionLrTransitionTarget = new MProductionLrTransitionTarget(
-                pNodeType, pTarget);
-        this.eProductionLrTransitionTarget.add(lProductionLrTransitionTarget);
-        return lProductionLrTransitionTarget;
-    }
-
     public MNormalTokenLrTransitionTarget newNormalTokenLrTransitionTarget(
             String pNodeType,
             String pTarget) {
@@ -71,6 +61,16 @@ public class MLrStateSingleton {
                 pTarget);
         this.eEndTokenLrTransitionTarget.add(lEndTokenLrTransitionTarget);
         return lEndTokenLrTransitionTarget;
+    }
+
+    public MProductionLrTransitionTarget newProductionLrTransitionTarget(
+            String pNodeType,
+            String pTarget) {
+
+        MProductionLrTransitionTarget lProductionLrTransitionTarget = new MProductionLrTransitionTarget(
+                pNodeType, pTarget);
+        this.eProductionLrTransitionTarget.add(lProductionLrTransitionTarget);
+        return lProductionLrTransitionTarget;
     }
 
     String pNumber() {
@@ -126,19 +126,12 @@ public class MLrStateSingleton {
         sb.append(System.getProperty("line.separator"));
         sb.append("  @Override");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  LRState getTarget(Node node)");
+        sb.append("  LRState getTokenTarget(InternalType type)");
         sb.append(System.getProperty("line.separator"));
         sb.append("      throws ParserException, LexerException, IOException {");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("    switch(node.getProductionType()) {");
-        sb.append(System.getProperty("line.separator"));
-        for (Object oProductionLrTransitionTarget : this.eProductionLrTransitionTarget) {
-            sb.append(oProductionLrTransitionTarget.toString());
-        }
-        sb.append("    default:");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      switch(node.getInternalType()) {");
+        sb.append("    switch(type) {");
         sb.append(System.getProperty("line.separator"));
         for (Object oNormalTokenLrTransitionTarget : this.eNormalTokenLrTransitionTarget) {
             sb.append(oNormalTokenLrTransitionTarget.toString());
@@ -146,13 +139,30 @@ public class MLrStateSingleton {
         for (Object oEndTokenLrTransitionTarget : this.eEndTokenLrTransitionTarget) {
             sb.append(oEndTokenLrTransitionTarget.toString());
         }
-        sb.append("        default:");
+        sb.append("    default:");
         sb.append(System.getProperty("line.separator"));
-        sb.append("          throw new ParserException((Token) node);");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      }");
+        sb.append("      throw new ParserException((Token) node);");
         sb.append(System.getProperty("line.separator"));
         sb.append("    }");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  }");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  @Override");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  LRState getProductionTarget(ProductionType type)");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("      throws ParserException, LexerException, IOException {");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    switch(type) {");
+        sb.append(System.getProperty("line.separator"));
+        for (Object oProductionLrTransitionTarget : this.eProductionLrTransitionTarget) {
+            sb.append(oProductionLrTransitionTarget.toString());
+        }
+        sb.append("    default:");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("      throw new RuntimeException(\"internal error in parsing tables\");");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));

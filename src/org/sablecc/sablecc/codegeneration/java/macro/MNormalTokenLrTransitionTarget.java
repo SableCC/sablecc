@@ -48,11 +48,11 @@ public class MNormalTokenLrTransitionTarget {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("        case T_");
+        sb.append("    case T_");
         sb.append(rNodeType());
         sb.append(":");
         sb.append(System.getProperty("line.separator"));
-        sb.append("          return L_");
+        sb.append("      return L_");
         sb.append(rTarget());
         sb.append(".instance;");
         sb.append(System.getProperty("line.separator"));
