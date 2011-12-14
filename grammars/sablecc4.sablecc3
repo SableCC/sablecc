@@ -356,8 +356,11 @@ Productions
   lexer_contexts
         {-> [lexer_contexts]:lexer_context+ }
     =
-      lexer_default_context [lexer_named_contexts]:lexer_named_context*
-        {-> [lexer_default_context.lexer_context, lexer_named_contexts.lexer_context] }
+      {anonymous} lexer_default_context
+        {-> [lexer_default_context.lexer_context] }
+    |
+      {named} [lexer_named_contexts]:lexer_named_context+
+        {-> [lexer_named_contexts.lexer_context] }
     ;
 
   lexer_default_context
@@ -490,8 +493,11 @@ Productions
   parser_contexts
         {-> [parser_contexts]:parser_context+ }
     =
-      parser_default_context [parser_named_contexts]:parser_named_context*
-        {-> [parser_default_context.parser_context, parser_named_contexts.parser_context] }
+      {anonymous} parser_default_context
+        {-> [parser_default_context.parser_context] }
+    |
+      {named} [parser_named_contexts]:parser_named_context+
+        {-> [parser_named_contexts.parser_context] }
     ;
 
   parser_default_context
