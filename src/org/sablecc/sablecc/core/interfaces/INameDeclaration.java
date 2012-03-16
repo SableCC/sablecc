@@ -21,7 +21,7 @@ import org.sablecc.sablecc.syntax3.node.*;
 
 public interface INameDeclaration {
 
-    public TIdentifier getNameIdentifier();
+    public Token getNameIdentifier();
 
     public String getName();
 

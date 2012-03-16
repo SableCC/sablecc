@@ -29,11 +29,8 @@ public interface IGrammarVisitor {
     void visitGrammar(
             Grammar node);
 
-    void visitNamedContext(
-            Context.NamedContext node);
-
-    void visitAnonymousContext(
-            Context.AnonymousContext node);
+    void visitContext(
+            Context node);
 
     void visitLexer(
             Lexer node);
@@ -119,23 +116,8 @@ public interface IGrammarVisitor {
     void visitParserProduction(
             Parser.ParserProduction node);
 
-    void visitParserNormalProduction(
-            Parser.ParserProduction.NormalProduction node);
-
-    void visitParserDanglingProduction(
-            Parser.ParserProduction.DanglingProduction node);
-
-    void visitParserTokenProduction(
-            Parser.ParserProduction.TokenProduction node);
-
     void visitParserAlternative(
             Parser.ParserAlternative node);
-
-    void visitParserNormalAlternative(
-            Parser.ParserAlternative.NormalAlternative node);
-
-    void visitParserDanglingAlternative(
-            Parser.ParserAlternative.DanglingAlternative node);
 
     void visitLeftParserPriority(
             Parser.ParserPriority.LeftPriority node);
@@ -149,17 +131,11 @@ public interface IGrammarVisitor {
     void visitParserElement(
             Parser.ParserElement node);
 
-    void visitParserNormalElement(
-            Parser.ParserElement.NormalElement node);
+    void visitParserSingleElement(
+            Parser.ParserElement.SingleElement node);
 
-    void visitParserSeparatedElement(
-            Parser.ParserElement.SeparatedElement node);
-
-    void visitParserAlternatedELement(
-            Parser.ParserElement.AlternatedElement node);
-
-    void visitParserDanglingElement(
-            Parser.ParserElement.DanglingElement node);
+    void visitParserDoubleElement(
+            Parser.ParserElement.DoubleElement node);
 
     void visitParserInvestigator(
             Investigator.ParserInvestigator node);
@@ -179,14 +155,11 @@ public interface IGrammarVisitor {
     void visitProductionTransformationElement(
             ProductionTransformationElement node);
 
-    void visitProductionTransformationNormalElement(
-            ProductionTransformationElement.NormalElement node);
+    void visitProductionTransformationSingleElement(
+            ProductionTransformationElement.SingleElement node);
 
-    void visitProductionTransformationSeparatedElement(
-            ProductionTransformationElement.SeparatedElement node);
-
-    void visitProductionTransformationAlternatedElement(
-            ProductionTransformationElement.AlternatedElement node);
+    void visitProductionTransformationDoubleElement(
+            ProductionTransformationElement.DoubleElement node);
 
     void visitAlternativeTransformation(
             AlternativeTransformation node);
@@ -236,13 +209,10 @@ public interface IGrammarVisitor {
     void visitTreeElement(
             Tree.TreeElement node);
 
-    void visitTreeNormalElement(
-            Tree.TreeElement.NormalElement node);
+    void visitTreeSingleElement(
+            Tree.TreeElement.SingleElement node);
 
-    void visitTreeSeparatedElement(
-            Tree.TreeElement.SeparatedElement node);
-
-    void visitTreeAlternatedElement(
-            Tree.TreeElement.AlternatedElement node);
+    void visitTreeDoubleElement(
+            Tree.TreeElement.DoubleElement node);
 
 }

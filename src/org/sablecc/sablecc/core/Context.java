@@ -26,10 +26,17 @@ import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public abstract class Context
-        implements IVisitableGrammarPart {
+public class Context
+        implements IVisitableGrammarPart, INameDeclaration {
 
-    final Grammar grammar;
+    private enum Type {
+        NAMED,
+        ANONYMOUS
+    };
+
+    private final Type type;
+
+    private final Grammar grammar;
 
     private ATokens tokensDeclaration;
 
@@ -39,14 +46,94 @@ public abstract class Context
 
     private Set<IToken> ignoredSet = new LinkedHashSet<IToken>();
 
-    private Context(
-            Grammar grammar) {
+    private ALexerContext lexerDeclaration;
+
+    private AParserContext parserDeclaration;
+
+    public Context(
+            Grammar grammar,
+            ALexerContext declaration) {
 
         if (grammar == null) {
             throw new InternalException("grammar may not be null");
         }
 
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
+        }
+
         this.grammar = grammar;
+        this.lexerDeclaration = declaration;
+
+        if (declaration.getName() == null) {
+            this.type = Type.ANONYMOUS;
+        }
+        else {
+            this.type = Type.NAMED;
+        }
+
+        findTokensAndIgnored(this, this.lexerDeclaration);
+    }
+
+    public Context(
+            Grammar grammar,
+            AParserContext declaration) {
+
+        if (grammar == null) {
+            throw new InternalException("grammar may not be null");
+        }
+
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
+        }
+
+        this.grammar = grammar;
+        this.parserDeclaration = declaration;
+
+        if (declaration.getName() == null) {
+            this.type = Type.ANONYMOUS;
+        }
+        else {
+            this.type = Type.NAMED;
+        }
+
+    }
+
+    public boolean isNamed() {
+
+        return this.type == Type.NAMED;
+    }
+
+    void addDeclaration(
+            AParserContext declaration) {
+
+        switch (this.type) {
+
+        case ANONYMOUS:
+            if (this.parserDeclaration != null) {
+                throw new InternalException(
+                        "the anonymous context may not have two parser declarations");
+            }
+
+            if (declaration.getName() != null) {
+                throw new InternalException("invalid context declaration");
+            }
+            break;
+
+        case NAMED:
+            if (this.parserDeclaration != null) {
+                throw SemanticException.spuriousParserNamedContextDeclaration(
+                        declaration, this);
+            }
+
+            if (declaration.getName() == null
+                    || !declaration.getName().getText().equals(getName())) {
+                throw new InternalException("invalid context declaration");
+            }
+            break;
+        }
+
+        this.parserDeclaration = declaration;
     }
 
     private void addTokensDeclaration(
@@ -154,6 +241,11 @@ public abstract class Context
                         + " token is both ignored and not.");
             }
             else {
+                LexerExpression token = (LexerExpression) intersection
+                        .iterator().next();
+                throw SemanticException.genericError("The "
+                        + token.getExpressionName()
+                        + " token is both ignored and not.");
                 // TODO
             }
         }
@@ -163,28 +255,24 @@ public abstract class Context
 
         Automaton automaton = Automaton.getEmptyAutomaton();
 
-        if (GrammarCompiler.RESTRICTED_SYNTAX) {
-            for (IToken iToken : this.tokenSet) {
-                if (iToken instanceof LexerExpression) {
-                    LexerExpression token = (LexerExpression) iToken;
-                    automaton = automaton.or(token.getAutomaton().accept(
-                            token.getAcceptation()));
-                }
+        // TODO this code may only be stable with restricted syntax
+        for (IToken iToken : this.tokenSet) {
+            if (iToken instanceof LexerExpression) {
+                LexerExpression token = (LexerExpression) iToken;
+                automaton = automaton.or(token.getAutomaton().accept(
+                        token.getAcceptation()));
             }
+        }
 
-            for (IToken iToken : this.ignoredSet) {
-                if (iToken instanceof LexerExpression) {
-                    LexerExpression token = (LexerExpression) iToken;
-                    automaton = automaton.or(token.getAutomaton().accept(
-                            token.getAcceptation()));
-                }
+        for (IToken iToken : this.ignoredSet) {
+            if (iToken instanceof LexerExpression) {
+                LexerExpression token = (LexerExpression) iToken;
+                automaton = automaton.or(token.getAutomaton().accept(
+                        token.getAcceptation()));
             }
+        }
 
-            return automaton;
-        }
-        else {
-            throw new InternalException("not implemented");
-        }
+        return automaton;
     }
 
     private static void findTokensAndIgnored(
@@ -207,6 +295,43 @@ public abstract class Context
                 context.addIgnoredDeclaration(node);
             }
         });
+    }
+
+    @Override
+    public TIdentifier getNameIdentifier() {
+
+        if (!isNamed()) {
+            throw new InternalException(
+                    "getNamedIdentifier() shouldn't not be used with an anonymous context");
+        }
+
+        if (this.lexerDeclaration != null) {
+            return this.lexerDeclaration.getName();
+        }
+
+        return this.parserDeclaration.getName();
+    }
+
+    @Override
+    public String getName() {
+
+        if (!isNamed()) {
+            throw new InternalException(
+                    "getName() shouldn't not be used with an anonymous context");
+        }
+
+        return getNameIdentifier().getText();
+    }
+
+    @Override
+    public String getNameType() {
+
+        return "context";
+    }
+
+    public AParserContext getParserDeclaration() {
+
+        return this.parserDeclaration;
     }
 
     public Set<LexerExpression> getLexerExpressionTokens() {
@@ -296,170 +421,12 @@ public abstract class Context
         }
     }
 
-    public static class NamedContext
-            extends Context
-            implements INameDeclaration {
+    @Override
+    public void apply(
+            IGrammarVisitor visitor) {
 
-        private ALexerContext lexerDeclaration;
+        visitor.visitContext(this);
 
-        private AParserContext parserDeclaration;
-
-        NamedContext(
-                ALexerContext declaration,
-                Grammar grammar) {
-
-            super(grammar);
-
-            if (declaration == null) {
-                throw new InternalException("declaration may not be null");
-            }
-
-            if (declaration.getName() == null) {
-                throw new InternalException(
-                        "anonymous contexts are not allowed");
-            }
-
-            this.lexerDeclaration = declaration;
-
-            findTokensAndIgnored(this, this.lexerDeclaration);
-        }
-
-        NamedContext(
-                AParserContext declaration,
-                Grammar grammar) {
-
-            super(grammar);
-
-            if (declaration == null) {
-                throw new InternalException("declaration may not be null");
-            }
-
-            if (declaration.getName() == null) {
-                throw new InternalException(
-                        "anonymous contexts are not allowed");
-            }
-
-            this.parserDeclaration = declaration;
-        }
-
-        void addDeclaration(
-                AParserContext declaration) {
-
-            if (this.parserDeclaration != null) {
-                throw SemanticException.spuriousParserNamedContextDeclaration(
-                        declaration, this);
-            }
-
-            if (declaration.getName() == null
-                    || !declaration.getName().getText().equals(getName())) {
-                throw new InternalException("invalid context declaration");
-            }
-
-            this.parserDeclaration = declaration;
-        }
-
-        @Override
-        public TIdentifier getNameIdentifier() {
-
-            if (this.lexerDeclaration != null) {
-                return this.lexerDeclaration.getName();
-            }
-
-            return this.parserDeclaration.getName();
-        }
-
-        @Override
-        public String getName() {
-
-            return getNameIdentifier().getText();
-        }
-
-        @Override
-        public String getNameType() {
-
-            return "context";
-        }
-
-        @Override
-        public void apply(
-                IGrammarVisitor visitor) {
-
-            visitor.visitNamedContext(this);
-
-        }
-
-        public AParserContext getParserDeclaration() {
-
-            return this.parserDeclaration;
-        }
-
-    }
-
-    public static class AnonymousContext
-            extends Context {
-
-        private ALexerContext lexerDeclaration;
-
-        private AParserContext parserDeclaration;
-
-        AnonymousContext(
-                ALexerContext declaration,
-                Grammar grammar) {
-
-            super(grammar);
-
-            if (declaration == null) {
-                throw new InternalException("declaration may not be null");
-            }
-
-            if (declaration.getName() != null) {
-                throw new InternalException("named contexts are not allowed");
-            }
-
-            this.lexerDeclaration = declaration;
-
-            findTokensAndIgnored(this, this.lexerDeclaration);
-        }
-
-        AnonymousContext(
-                AParserContext declaration,
-                Grammar grammar) {
-
-            super(grammar);
-
-            if (declaration == null) {
-                throw new InternalException("declaration may not be null");
-            }
-
-            if (declaration.getName() != null) {
-                throw new InternalException("named contexts are not allowed");
-            }
-
-            this.parserDeclaration = declaration;
-        }
-
-        void addDeclaration(
-                AParserContext declaration) {
-
-            if (this.parserDeclaration != null) {
-                throw new InternalException(
-                        "the anonymous context may not have two parser declarations");
-            }
-
-            if (declaration.getName() != null) {
-                throw new InternalException("invalid context declaration");
-            }
-
-            this.parserDeclaration = declaration;
-        }
-
-        @Override
-        public void apply(
-                IGrammarVisitor visitor) {
-
-            visitor.visitAnonymousContext(this);
-
-        }
     }
 
 }

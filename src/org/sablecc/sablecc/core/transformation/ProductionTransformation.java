@@ -166,7 +166,7 @@ public abstract class ProductionTransformation
                         ANormalElement node) {
 
                     ExplicitProductionTransformation.this.elements
-                            .add(new ProductionTransformationElement.ExplicitNormalElement(
+                            .add(new ProductionTransformationElement.ExplicitSingleElement(
                                     this.grammar,
                                     this.productionTransformation, node));
                 };
@@ -176,7 +176,7 @@ public abstract class ProductionTransformation
                         ASeparatedElement node) {
 
                     this.productionTransformation.elements
-                            .add(new ProductionTransformationElement.SeparatedElement(
+                            .add(new ProductionTransformationElement.DoubleElement(
                                     this.grammar,
                                     this.productionTransformation, node));
 
@@ -187,7 +187,7 @@ public abstract class ProductionTransformation
                         AAlternatedElement node) {
 
                     this.productionTransformation.elements
-                            .add(new ProductionTransformationElement.AlternatedElement(
+                            .add(new ProductionTransformationElement.DoubleElement(
                                     this.grammar,
                                     this.productionTransformation, node));
 
@@ -254,8 +254,17 @@ public abstract class ProductionTransformation
             this.reference = parserProduction;
 
             this.elements
-                    .add(new ProductionTransformationElement.ImplicitNormalElement(
+                    .add(new ProductionTransformationElement.ImplicitSingleElement(
                             grammar, this, treeProduction));
+        }
+
+        public ImplicitProductionTransformation(
+                Grammar grammar,
+                Parser.ParserProduction parserProduction) {
+
+            super(grammar);
+
+            this.reference = parserProduction;
         }
 
         @Override

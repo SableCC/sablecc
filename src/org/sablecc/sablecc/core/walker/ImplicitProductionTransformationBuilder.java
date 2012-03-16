@@ -78,19 +78,25 @@ public class ImplicitProductionTransformationBuilder
             INameDeclaration treeDeclaration = this.grammar
                     .getTreeReference(node.getName());
 
+            ProductionTransformation productionTransformation;
+
             if (treeDeclaration instanceof Tree.TreeProduction) {
 
                 Tree.TreeProduction treeProduction = (Tree.TreeProduction) treeDeclaration;
 
-                ProductionTransformation productionTransformation = new ProductionTransformation.ImplicitProductionTransformation(
+                productionTransformation = new ProductionTransformation.ImplicitProductionTransformation(
                         this.grammar, node, treeProduction);
 
-                node.addTransformation(productionTransformation);
+            }
+            else {
+                productionTransformation = new ProductionTransformation.ImplicitProductionTransformation(
+                        this.grammar, node);
+            }
 
-                this.grammar.getTransformation().addProductionTransformation(
-                        productionTransformation);
+            node.addTransformation(productionTransformation);
 
-            } // else there is no transformation for this production (-> null)
+            this.grammar.getTransformation().addProductionTransformation(
+                    productionTransformation);
 
         }
     }

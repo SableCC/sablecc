@@ -31,13 +31,22 @@ import org.sablecc.util.interfaces.*;
 public abstract class ProductionTransformationElement
         implements ImplicitExplicit, IReferencable, IVisitableGrammarPart {
 
+    public static enum ElementType {
+        NORMAL,
+        SEPARATED,
+        ALTERNATED
+    }
+
     private final Grammar grammar;
 
     private final ProductionTransformation productionTransformation;
 
+    private final ElementType elementType;
+
     public ProductionTransformationElement(
             Grammar grammar,
-            ProductionTransformation productionTransformation) {
+            ProductionTransformation productionTransformation,
+            ElementType elementType) {
 
         if (grammar == null) {
             throw new InternalException("grammar may not be null");
@@ -50,6 +59,7 @@ public abstract class ProductionTransformationElement
 
         this.grammar = grammar;
         this.productionTransformation = productionTransformation;
+        this.elementType = elementType;
     }
 
     public int index() {
@@ -77,14 +87,19 @@ public abstract class ProductionTransformationElement
         return this.grammar;
     }
 
-    public static abstract class NormalElement
+    public ElementType getElementType() {
+
+        return this.elementType;
+    }
+
+    public static abstract class SingleElement
             extends ProductionTransformationElement {
 
-        public NormalElement(
+        public SingleElement(
                 Grammar grammar,
                 ProductionTransformation productionTransformation) {
 
-            super(grammar, productionTransformation);
+            super(grammar, productionTransformation, ElementType.NORMAL);
 
         }
 
@@ -92,14 +107,14 @@ public abstract class ProductionTransformationElement
 
     }
 
-    public static class ImplicitNormalElement
-            extends NormalElement {
+    public static class ImplicitSingleElement
+            extends SingleElement {
 
         private final Tree.TreeProduction reference;
 
         private Type.SimpleType type;
 
-        public ImplicitNormalElement(
+        public ImplicitSingleElement(
                 Grammar grammar,
                 ProductionTransformation productionTransformation,
                 Tree.TreeProduction reference) {
@@ -122,7 +137,7 @@ public abstract class ProductionTransformationElement
         public void apply(
                 IGrammarVisitor visitor) {
 
-            visitor.visitProductionTransformationNormalElement(this);
+            visitor.visitProductionTransformationSingleElement(this);
 
         }
 
@@ -184,8 +199,8 @@ public abstract class ProductionTransformationElement
 
     }
 
-    public static class ExplicitNormalElement
-            extends NormalElement {
+    public static class ExplicitSingleElement
+            extends SingleElement {
 
         private final ANormalElement declaration;
 
@@ -203,7 +218,7 @@ public abstract class ProductionTransformationElement
 
         private Type.SimpleType type;
 
-        public ExplicitNormalElement(
+        public ExplicitSingleElement(
 
                 Grammar grammar,
                 ProductionTransformation productionTransformation,
@@ -394,15 +409,15 @@ public abstract class ProductionTransformationElement
         public void apply(
                 IGrammarVisitor visitor) {
 
-            visitor.visitProductionTransformationNormalElement(this);
+            visitor.visitProductionTransformationSingleElement(this);
 
         }
     }
 
-    public static class SeparatedElement
+    public static class DoubleElement
             extends ProductionTransformationElement {
 
-        private final ASeparatedElement declaration;
+        private final PElement declaration;
 
         private String name;
 
@@ -418,12 +433,12 @@ public abstract class ProductionTransformationElement
 
         private Type.SimpleType type;
 
-        public SeparatedElement(
+        public DoubleElement(
                 Grammar grammar,
                 ProductionTransformation productionTransformation,
                 ASeparatedElement declaration) {
 
-            super(grammar, productionTransformation);
+            super(grammar, productionTransformation, ElementType.SEPARATED);
 
             if (declaration == null) {
                 throw new InternalException("declaration may not be null");
@@ -432,181 +447,19 @@ public abstract class ProductionTransformationElement
             this.declaration = declaration;
 
             this.cardinality = new CardinalityInterval(
-                    this.declaration.getManyOperator());
+                    declaration.getManyOperator());
 
             this.element = new InformationExtractor(this).getReferenceText();
 
             constructType();
         }
 
-        private void constructType() {
-
-            InformationExtractor extractor = new InformationExtractor(this);
-
-            this.type = new Type.SimpleType.SeparatedType(
-                    extractor.getLeftText(), extractor.getRightText(),
-                    this.cardinality);
-        }
-
-        public ASeparatedElement getDeclaration() {
-
-            return this.declaration;
-        }
-
-        public IReferencable getLeftReference() {
-
-            if (this.leftReference == null) {
-                throw new InternalException(
-                        "reference should have been initialized using addReference");
-            }
-            return this.leftReference;
-        }
-
-        public IReferencable getRightReference() {
-
-            if (this.rightReference == null) {
-                throw new InternalException(
-                        "reference should have been initialized using addReference");
-            }
-            return this.rightReference;
-        }
-
-        public void addLeftReference(
-                IReferencable leftReference) {
-
-            if (this.leftReference == null) {
-                this.leftReference = leftReference;
-            }
-            else {
-                throw new InternalException(
-                        "addReference shouldn't be used twice");
-            }
-        }
-
-        public void addRightReference(
-                IReferencable rightReference) {
-
-            if (this.rightReference == null) {
-                this.rightReference = rightReference;
-            }
-            else {
-                throw new InternalException(
-                        "addReference shouldn't be used twice");
-            }
-        }
-
-        @Override
-        public String getImplicitName() {
-
-            return null;
-        }
-
-        @Override
-        public String getExplicitName() {
-
-            String explicitName = null;
-
-            if (this.declaration.getElementName() != null) {
-                explicitName = this.declaration.getElementName().getText();
-                explicitName = explicitName.substring(1,
-                        explicitName.length() - 2);
-            }
-
-            return explicitName;
-        }
-
-        public String getLeft() {
-
-            return new InformationExtractor(this).getLeftText();
-        }
-
-        public String getRight() {
-
-            return new InformationExtractor(this).getRightText();
-        }
-
-        @Override
-        public void setName(
-                String name) {
-
-            this.name = name;
-
-        }
-
-        @Override
-        public String getName() {
-
-            return this.name;
-        }
-
-        @Override
-        public Token getNameToken() {
-
-            return this.declaration.getElementName();
-        }
-
-        @Override
-        public Token getLocation() {
-
-            if (this.elementToken == null) {
-                this.elementToken = new InformationExtractor(this)
-                        .getFirstToken();
-            }
-
-            return this.elementToken;
-        }
-
-        @Override
-        public String getElement() {
-
-            return this.element;
-        }
-
-        @Override
-        public CardinalityInterval getCardinality() {
-
-            return this.cardinality;
-        }
-
-        @Override
-        public void apply(
-                IGrammarVisitor visitor) {
-
-            visitor.visitProductionTransformationSeparatedElement(this);
-        }
-
-        @Override
-        public Type.SimpleType getType() {
-
-            return this.type;
-        }
-    }
-
-    public static class AlternatedElement
-            extends ProductionTransformationElement {
-
-        private final AAlternatedElement declaration;
-
-        private String name;
-
-        private IReferencable leftReference;
-
-        private IReferencable rightReference;
-
-        private Token elementToken;
-
-        private String element;
-
-        private CardinalityInterval cardinality;
-
-        private Type.SimpleType type;
-
-        public AlternatedElement(
+        public DoubleElement(
                 Grammar grammar,
                 ProductionTransformation productionTransformation,
                 AAlternatedElement declaration) {
 
-            super(grammar, productionTransformation);
+            super(grammar, productionTransformation, ElementType.ALTERNATED);
 
             if (declaration == null) {
                 throw new InternalException("declaration may not be null");
@@ -615,7 +468,7 @@ public abstract class ProductionTransformationElement
             this.declaration = declaration;
 
             this.cardinality = new CardinalityInterval(
-                    this.declaration.getManyOperator());
+                    declaration.getManyOperator());
 
             this.element = new InformationExtractor(this).getReferenceText();
 
@@ -626,12 +479,20 @@ public abstract class ProductionTransformationElement
 
             InformationExtractor extractor = new InformationExtractor(this);
 
-            this.type = new Type.SimpleType.AlternatedType(
-                    extractor.getLeftText(), extractor.getRightText(),
-                    this.cardinality);
+            if (getElementType() == ElementType.SEPARATED) {
+                this.type = new Type.SimpleType.SeparatedType(
+                        extractor.getLeftText(), extractor.getRightText(),
+                        this.cardinality);
+            }
+            else // ElementType.ALTERNATED
+            {
+                this.type = new Type.SimpleType.AlternatedType(
+                        extractor.getLeftText(), extractor.getRightText(),
+                        this.cardinality);
+            }
         }
 
-        public AAlternatedElement getDeclaration() {
+        public PElement getDeclaration() {
 
             return this.declaration;
         }
@@ -645,11 +506,6 @@ public abstract class ProductionTransformationElement
             return this.leftReference;
         }
 
-        public String getLeft() {
-
-            return new InformationExtractor(this).getLeftText();
-        }
-
         public IReferencable getRightReference() {
 
             if (this.rightReference == null) {
@@ -657,11 +513,6 @@ public abstract class ProductionTransformationElement
                         "reference should have been initialized using addReference");
             }
             return this.rightReference;
-        }
-
-        public String getRight() {
-
-            return new InformationExtractor(this).getRightText();
         }
 
         public void addLeftReference(
@@ -698,9 +549,21 @@ public abstract class ProductionTransformationElement
         public String getExplicitName() {
 
             String explicitName = null;
+            TElementName elementName = null;
 
-            if (this.declaration.getElementName() != null) {
-                explicitName = this.declaration.getElementName().getText();
+            switch (getElementType()) {
+            case SEPARATED:
+                elementName = ((ASeparatedElement) this.declaration)
+                        .getElementName();
+                break;
+            case ALTERNATED:
+                elementName = ((AAlternatedElement) this.declaration)
+                        .getElementName();
+                break;
+            }
+
+            if (elementName != null) {
+                explicitName = elementName.getText();
                 explicitName = explicitName.substring(1,
                         explicitName.length() - 2);
             }
@@ -708,12 +571,14 @@ public abstract class ProductionTransformationElement
             return explicitName;
         }
 
-        @Override
-        public void setName(
-                String name) {
+        public String getLeft() {
 
-            this.name = name;
+            return new InformationExtractor(this).getLeftText();
+        }
 
+        public String getRight() {
+
+            return new InformationExtractor(this).getRightText();
         }
 
         @Override
@@ -725,7 +590,19 @@ public abstract class ProductionTransformationElement
         @Override
         public Token getNameToken() {
 
-            return this.declaration.getElementName();
+            TElementName elementName = null;
+
+            switch (getElementType()) {
+            case SEPARATED:
+                elementName = ((ASeparatedElement) this.declaration)
+                        .getElementName();
+                break;
+            case ALTERNATED:
+                elementName = ((AAlternatedElement) this.declaration)
+                        .getElementName();
+            }
+
+            return elementName;
         }
 
         @Override
@@ -752,18 +629,27 @@ public abstract class ProductionTransformationElement
         }
 
         @Override
-        public void apply(
-                IGrammarVisitor visitor) {
-
-            visitor.visitProductionTransformationAlternatedElement(this);
-
-        }
-
-        @Override
         public Type.SimpleType getType() {
 
             return this.type;
         }
+
+        @Override
+        public void setName(
+                String name) {
+
+            this.name = name;
+
+        }
+
+        @Override
+        public void apply(
+                IGrammarVisitor visitor) {
+
+            // visitor.visitProductionTransformationDoubleElement(this);
+
+        }
+
     }
 
     static class InformationExtractor
@@ -778,19 +664,13 @@ public abstract class ProductionTransformationElement
         private Token token;
 
         public InformationExtractor(
-                ProductionTransformationElement.ExplicitNormalElement element) {
+                ProductionTransformationElement.ExplicitSingleElement element) {
 
             element.getDeclaration().apply(this);
         }
 
         public InformationExtractor(
-                ProductionTransformationElement.AlternatedElement element) {
-
-            element.getDeclaration().apply(this);
-        }
-
-        public InformationExtractor(
-                ProductionTransformationElement.SeparatedElement element) {
+                ProductionTransformationElement.DoubleElement element) {
 
             element.getDeclaration().apply(this);
         }

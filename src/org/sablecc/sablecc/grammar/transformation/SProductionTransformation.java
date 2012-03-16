@@ -136,23 +136,26 @@ public class SProductionTransformation {
 
         for (ProductionTransformationElement element : coreReference
                 .getElements()) {
-            if (element instanceof ProductionTransformationElement.NormalElement) {
+
+            switch (element.getElementType()) {
+            case NORMAL:
                 this.elements
                         .add(new SProductionTransformationElement.NormalElement(
                                 this,
-                                (ProductionTransformationElement.NormalElement) element));
-            }
-            else if (element instanceof ProductionTransformationElement.SeparatedElement) {
+                                (ProductionTransformationElement.SingleElement) element));
+                break;
+            case SEPARATED:
                 this.elements
                         .add(new SProductionTransformationElement.SeparatedElement(
                                 this,
-                                (ProductionTransformationElement.SeparatedElement) element));
-            }
-            else if (element instanceof ProductionTransformationElement.AlternatedElement) {
+                                (ProductionTransformationElement.DoubleElement) element));
+                break;
+            case ALTERNATED:
                 this.elements
                         .add(new SProductionTransformationElement.AlternatedElement(
                                 this,
-                                (ProductionTransformationElement.AlternatedElement) element));
+                                (ProductionTransformationElement.DoubleElement) element));
+                break;
             }
         }
 

@@ -30,6 +30,8 @@ public class Lexer
 
     private final List<LexerExpression.NamedExpression> namedExpressions = new LinkedList<LexerExpression.NamedExpression>();
 
+    private final Map<String, LexerExpression> stringToExpression = new HashMap<String, LexerExpression>();
+
     private final List<Investigator.LexerInvestigator> investigators = new LinkedList<Investigator.LexerInvestigator>();
 
     private final List<Selector.LexerSelector> selectors = new LinkedList<Selector.LexerSelector>();
@@ -57,6 +59,15 @@ public class Lexer
             LexerExpression.NamedExpression namedExpression) {
 
         this.namedExpressions.add(namedExpression);
+        this.stringToExpression.put(namedExpression.getExpressionName(),
+                namedExpression);
+    }
+
+    public void addInlineExpression(
+            LexerExpression.InlineExpression inlineExpression) {
+
+        this.stringToExpression.put(inlineExpression.getExpressionName(),
+                inlineExpression);
     }
 
     public void addInvestigator(
@@ -80,6 +91,17 @@ public class Lexer
     public List<LexerExpression.NamedExpression> getNamedExpressions() {
 
         return this.namedExpressions;
+    }
+
+    public LexerExpression getExpression(
+            String name) {
+
+        return this.stringToExpression.get(name);
+    }
+
+    public Collection<LexerExpression> getExpressions() {
+
+        return this.stringToExpression.values();
     }
 
     public List<Investigator.LexerInvestigator> getInvestigators() {

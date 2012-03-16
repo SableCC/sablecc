@@ -23,8 +23,9 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.core.Parser.ParserAlternative;
-import org.sablecc.sablecc.core.Parser.ParserElement.AlternatedElement;
-import org.sablecc.sablecc.core.Parser.ParserElement.SeparatedElement;
+import org.sablecc.sablecc.core.Parser.ParserElement.DoubleElement;
+import org.sablecc.sablecc.core.Parser.ParserElement.ElementType;
+import org.sablecc.sablecc.core.Parser.ParserElement.SingleElement;
 import org.sablecc.sablecc.core.Parser.ParserPriority.LeftPriority;
 import org.sablecc.sablecc.core.Parser.ParserPriority.RightPriority;
 import org.sablecc.sablecc.core.Parser.ParserPriority.UnaryPriority;
@@ -62,7 +63,7 @@ public class GrammarSimplificator
 
         this.alternatives = new LinkedList<Alternative>();
 
-        if (node.getContext() instanceof Context.NamedContext) {
+        if (node.getContext().isNamed()) {
             throw new InternalException("Context are not supported yet");
         }
 
@@ -120,7 +121,7 @@ public class GrammarSimplificator
             new AlternativeTransformationBuilder(alternative,
                     node.getTransformation());
         }
-        else {
+        else { // Grammar hasn't Tree
             LinkedList<SAlternativeTransformationElement> transformationElements = new LinkedList<SAlternativeTransformationElement>();
 
             LinkedList<SAlternativeTransformationElement> newElements = new LinkedList<SAlternativeTransformationElement>();
@@ -152,69 +153,83 @@ public class GrammarSimplificator
     }
 
     @Override
-    public void visitParserNormalElement(
-            Parser.ParserElement.NormalElement node) {
+    public void visitParserSingleElement(
+            SingleElement node) {
 
-        if (!node.getCardinality().equals(CardinalityInterval.ZERO_ZERO)) {
-            Element simpleElement;
+        if (node.getElementType() == ElementType.NORMAL) {
+            if (!node.getCardinality().equals(CardinalityInterval.ZERO_ZERO)) {
+                Element simpleElement;
+                PUnit unit = ((ANormalElement) node.getDeclaration()).getUnit();
+                if (node.getReference() instanceof Parser.ParserProduction) {
+                    String prodName = ((ANameUnit) unit).getIdentifier()
+                            .getText();
 
-            if (node.getReference() instanceof Parser.ParserProduction) {
-                String prodName = ((ANameUnit) node.getDeclaration().getUnit())
-                        .getIdentifier().getText();
+                    simpleElement = new Element.ProductionElement(
+                            GrammarSimplificator.grammar
+                                    .getProduction(prodName));
+                }
+                else {
+                    simpleElement = new Element.TokenElement(unit);
+                }
 
-                simpleElement = new Element.ProductionElement(
-                        GrammarSimplificator.grammar.getProduction(prodName));
+                if (node.getCardinality().equals(CardinalityInterval.ONE_ONE)) {
+                    this.elements.add(simpleElement);
+                }
+                else {
+                    Element complexElement = new Element.ProductionElement(
+                            newNormalProduction(node, simpleElement,
+                                    node.getCardinality()));
+                    this.elements.add(complexElement);
+                }
+
             }
-            else {
-                simpleElement = new Element.TokenElement(node.getDeclaration()
-                        .getUnit());
-            }
-
-            if (node.getCardinality().equals(CardinalityInterval.ONE_ONE)) {
-                this.elements.add(simpleElement);
-            }
-            else {
-                Element complexElement = new Element.ProductionElement(
-                        newNormalProduction(node, simpleElement,
-                                node.getCardinality()));
-                this.elements.add(complexElement);
-            }
-
         }
-
     }
 
     @Override
-    public void visitParserSeparatedElement(
-            SeparatedElement node) {
+    public void visitParserDoubleElement(
+            DoubleElement node) {
+
+        if (node.getElementType() == ElementType.SEPARATED) {
+            caseSeparatedElement(node);
+        }
+        else {
+            caseAlternatedElement(node);
+        }
+    }
+
+    private void caseSeparatedElement(
+            DoubleElement node) {
 
         if (!node.getCardinality().equals(CardinalityInterval.ZERO_ZERO)) {
             Element leftSimpleElement;
+            PUnit leftUnit = ((ASeparatedElement) node.getDeclaration())
+                    .getLeft();
+            PUnit rightUnit = ((ASeparatedElement) node.getDeclaration())
+                    .getRight();
 
             if (node.getLeftReference() instanceof Parser.ParserProduction) {
-                String prodName = ((ANameUnit) node.getDeclaration().getLeft())
-                        .getIdentifier().getText();
+                String prodName = ((ANameUnit) leftUnit).getIdentifier()
+                        .getText();
 
                 leftSimpleElement = new Element.ProductionElement(
                         GrammarSimplificator.grammar.getProduction(prodName));
             }
             else {
-                leftSimpleElement = new Element.TokenElement(node
-                        .getDeclaration().getLeft());
+                leftSimpleElement = new Element.TokenElement(leftUnit);
             }
 
             Element rightSimpleElement;
 
             if (node.getRightReference() instanceof Parser.ParserProduction) {
-                String prodName = ((ANameUnit) node.getDeclaration().getRight())
-                        .getIdentifier().getText();
+                String prodName = ((ANameUnit) rightUnit).getIdentifier()
+                        .getText();
 
                 rightSimpleElement = new Element.ProductionElement(
                         GrammarSimplificator.grammar.getProduction(prodName));
             }
             else {
-                rightSimpleElement = new Element.TokenElement(node
-                        .getDeclaration().getRight());
+                rightSimpleElement = new Element.TokenElement(rightUnit);
             }
 
             if (node.getCardinality().equals(CardinalityInterval.ONE_ONE)) {
@@ -229,37 +244,38 @@ public class GrammarSimplificator
         }
     }
 
-    @Override
-    public void visitParserAlternatedELement(
-            AlternatedElement node) {
+    private void caseAlternatedElement(
+            DoubleElement node) {
 
         if (!node.getCardinality().equals(CardinalityInterval.ZERO_ZERO)) {
             Element leftSimpleElement;
+            PUnit leftUnit = ((AAlternatedElement) node.getDeclaration())
+                    .getLeft();
+            PUnit rightUnit = ((AAlternatedElement) node.getDeclaration())
+                    .getRight();
 
             if (node.getLeftReference() instanceof Parser.ParserProduction) {
-                String prodName = ((ANameUnit) node.getDeclaration().getLeft())
-                        .getIdentifier().getText();
+                String prodName = ((ANameUnit) leftUnit).getIdentifier()
+                        .getText();
 
                 leftSimpleElement = new Element.ProductionElement(
                         GrammarSimplificator.grammar.getProduction(prodName));
             }
             else {
-                leftSimpleElement = new Element.TokenElement(node
-                        .getDeclaration().getLeft());
+                leftSimpleElement = new Element.TokenElement(leftUnit);
             }
 
             Element rightSimpleElement;
 
             if (node.getRightReference() instanceof Parser.ParserProduction) {
-                String prodName = ((ANameUnit) node.getDeclaration().getRight())
-                        .getIdentifier().getText();
+                String prodName = ((ANameUnit) rightUnit).getIdentifier()
+                        .getText();
 
                 rightSimpleElement = new Element.ProductionElement(
                         GrammarSimplificator.grammar.getProduction(prodName));
             }
             else {
-                rightSimpleElement = new Element.TokenElement(node
-                        .getDeclaration().getRight());
+                rightSimpleElement = new Element.TokenElement(rightUnit);
             }
 
             if (node.getCardinality().equals(CardinalityInterval.ONE_ONE)) {
@@ -276,7 +292,7 @@ public class GrammarSimplificator
     }
 
     private static Production newNormalProduction(
-            Parser.ParserElement.NormalElement node,
+            Parser.ParserElement.SingleElement node,
             Element element,
             CardinalityInterval cardinality) {
 
@@ -329,10 +345,15 @@ public class GrammarSimplificator
     }
 
     private static Production newSeparatedProduction(
-            Parser.ParserElement.SeparatedElement node,
+            Parser.ParserElement.DoubleElement node,
             Element leftElement,
             Element rightElement,
             CardinalityInterval cardinality) {
+
+        if (node.getElementType() != ElementType.SEPARATED) {
+            throw new InternalException("A " + node.getNameType()
+                    + " should'nt be simplified in a separated production");
+        }
 
         if (cardinality.equals(CardinalityInterval.ONE_ONE)
                 || cardinality.equals(CardinalityInterval.ZERO_ZERO)) {
@@ -388,7 +409,7 @@ public class GrammarSimplificator
     }
 
     private static Production newAlternatedProduction(
-            Parser.ParserElement node,
+            Parser.ParserElement.DoubleElement node,
             Element leftElement,
             Element rightElement,
             CardinalityInterval cardinality) {
@@ -443,7 +464,7 @@ public class GrammarSimplificator
 
     private static class NormalProductionBuilder {
 
-        private final Parser.ParserElement.NormalElement parserElement;
+        private final Parser.ParserElement.SingleElement parserElement;
 
         private final Element sElement;
 
@@ -454,7 +475,7 @@ public class GrammarSimplificator
         private SGrammar grammar;
 
         public NormalProductionBuilder(
-                Parser.ParserElement.NormalElement parserElement,
+                Parser.ParserElement.SingleElement parserElement,
                 Element sElement,
                 CardinalityInterval cardinality,
                 SGrammar grammar) {
@@ -463,6 +484,10 @@ public class GrammarSimplificator
             this.sElement = sElement;
             this.cardinality = cardinality;
             this.grammar = grammar;
+
+            if (parserElement.getElementType() == ElementType.DANGLING) {
+                throw new InternalException("The element shouldn't be dangling");
+            }
 
             if (cardinality.equals(CardinalityInterval.ZERO_ONE)) {
 
@@ -950,14 +975,19 @@ public class GrammarSimplificator
 
         private SGrammar grammar;
 
-        private final Parser.ParserElement.SeparatedElement parserElement;
+        private final Parser.ParserElement.DoubleElement parserElement;
 
         public SeparatedProductionBuilder(
-                Parser.ParserElement.SeparatedElement parserElement,
+                Parser.ParserElement.DoubleElement parserElement,
                 Element sLeftElement,
                 Element sRightElement,
                 CardinalityInterval cardinality,
                 SGrammar grammar) {
+
+            if (parserElement.getElementType() != ElementType.SEPARATED) {
+                throw new InternalException("A " + parserElement.getNameType()
+                        + " should'nt be simplified in a separated production");
+            }
 
             this.parserElement = parserElement;
             this.sLeftElement = sLeftElement;
@@ -1478,7 +1508,7 @@ public class GrammarSimplificator
 
     private static class AlternatedProductionBuilder {
 
-        private final Parser.ParserElement parserElement;
+        private final Parser.ParserElement.DoubleElement parserElement;
 
         private final Element sLeftElement;
 
@@ -1491,7 +1521,7 @@ public class GrammarSimplificator
         private SGrammar grammar;
 
         public AlternatedProductionBuilder(
-                Parser.ParserElement parserElement,
+                Parser.ParserElement.DoubleElement parserElement,
                 Element sLeftElement,
                 Element sRightElement,
                 CardinalityInterval cardinality,
@@ -1519,27 +1549,25 @@ public class GrammarSimplificator
                 intervalCase();
             }
 
-            if (parserElement instanceof Parser.ParserElement.AlternatedElement) {
-                Parser.ParserElement.AlternatedElement alternatedElement = (Parser.ParserElement.AlternatedElement) parserElement;
+            if (parserElement.getElementType() == ElementType.ALTERNATED) {
 
                 this.newProduction
                         .addTransformation(new SProductionTransformation(
                                 this.newProduction, this.sLeftElement
                                         .getTypeName(), this.sRightElement
-                                        .getTypeName(), alternatedElement
-                                        .getLeftReference(), alternatedElement
+                                        .getTypeName(), parserElement
+                                        .getLeftReference(), parserElement
                                         .getRightReference(), cardinality,
                                 false));
             }
             else {
-                Parser.ParserElement.SeparatedElement separatedElement = (Parser.ParserElement.SeparatedElement) parserElement;
 
                 this.newProduction
                         .addTransformation(new SProductionTransformation(
                                 this.newProduction, this.sLeftElement
                                         .getTypeName(), this.sRightElement
-                                        .getTypeName(), separatedElement
-                                        .getRightReference(), separatedElement
+                                        .getTypeName(), parserElement
+                                        .getRightReference(), parserElement
                                         .getLeftReference(), cardinality, false));
             }
 

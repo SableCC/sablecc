@@ -37,11 +37,12 @@ public class GrammarVisitor
     public void visitGrammar(
             Grammar node) {
 
-        for (Context.NamedContext context : node.getNamedContexts()) {
+        for (Context context : node.getNamedContexts()) {
             context.apply(this);
         }
 
-        Context.AnonymousContext context = node.getGlobalAnonymousContext();
+        Context context = node.getGlobalAnonymousContext();
+
         if (context != null) {
             context.apply(this);
         }
@@ -57,16 +58,8 @@ public class GrammarVisitor
     }
 
     @Override
-    public void visitNamedContext(
-            Context.NamedContext node) {
-
-        // Leaf
-
-    }
-
-    @Override
-    public void visitAnonymousContext(
-            Context.AnonymousContext node) {
+    public void visitContext(
+            Context node) {
 
         // Leaf
 
@@ -343,28 +336,6 @@ public class GrammarVisitor
     }
 
     @Override
-    public void visitParserNormalProduction(
-            Parser.ParserProduction.NormalProduction node) {
-
-        visitParserProduction(node);
-    }
-
-    @Override
-    public void visitParserDanglingProduction(
-            Parser.ParserProduction.DanglingProduction node) {
-
-        visitParserProduction(node);
-    }
-
-    @Override
-    public void visitParserTokenProduction(
-            Parser.ParserProduction.TokenProduction node) {
-
-        visitParserProduction(node);
-
-    }
-
-    @Override
     public void visitParserAlternative(
             Parser.ParserAlternative node) {
 
@@ -372,21 +343,6 @@ public class GrammarVisitor
             parserElement.apply(this);
         }
 
-    }
-
-    @Override
-    public void visitParserNormalAlternative(
-            Parser.ParserAlternative.NormalAlternative node) {
-
-        visitParserAlternative(node);
-
-    }
-
-    @Override
-    public void visitParserDanglingAlternative(
-            Parser.ParserAlternative.DanglingAlternative node) {
-
-        visitParserAlternative(node);
     }
 
     @Override
@@ -420,32 +376,19 @@ public class GrammarVisitor
     }
 
     @Override
-    public void visitParserNormalElement(
-            Parser.ParserElement.NormalElement node) {
+    public void visitParserSingleElement(
+            Parser.ParserElement.SingleElement node) {
 
         visitParserElement(node);
 
     }
 
     @Override
-    public void visitParserSeparatedElement(
-            Parser.ParserElement.SeparatedElement node) {
+    public void visitParserDoubleElement(
+            Parser.ParserElement.DoubleElement node) {
 
         visitParserElement(node);
-    }
 
-    @Override
-    public void visitParserAlternatedELement(
-            Parser.ParserElement.AlternatedElement node) {
-
-        visitParserElement(node);
-    }
-
-    @Override
-    public void visitParserDanglingElement(
-            Parser.ParserElement.DanglingElement node) {
-
-        // Leaf
     }
 
     @Override
@@ -501,25 +444,19 @@ public class GrammarVisitor
     }
 
     @Override
-    public void visitProductionTransformationNormalElement(
-            ProductionTransformationElement.NormalElement node) {
+    public void visitProductionTransformationSingleElement(
+            ProductionTransformationElement.SingleElement node) {
 
         visitProductionTransformationElement(node);
 
     }
 
     @Override
-    public void visitProductionTransformationSeparatedElement(
-            ProductionTransformationElement.SeparatedElement node) {
+    public void visitProductionTransformationDoubleElement(
+            ProductionTransformationElement.DoubleElement node) {
 
         visitProductionTransformationElement(node);
-    }
 
-    @Override
-    public void visitProductionTransformationAlternatedElement(
-            ProductionTransformationElement.AlternatedElement node) {
-
-        visitProductionTransformationElement(node);
     }
 
     @Override
@@ -671,24 +608,16 @@ public class GrammarVisitor
     }
 
     @Override
-    public void visitTreeNormalElement(
-            Tree.TreeElement.NormalElement node) {
+    public void visitTreeSingleElement(
+            Tree.TreeElement.SingleElement node) {
 
         visitTreeElement(node);
 
     }
 
     @Override
-    public void visitTreeSeparatedElement(
-            Tree.TreeElement.SeparatedElement node) {
-
-        visitTreeElement(node);
-
-    }
-
-    @Override
-    public void visitTreeAlternatedElement(
-            Tree.TreeElement.AlternatedElement node) {
+    public void visitTreeDoubleElement(
+            Tree.TreeElement.DoubleElement node) {
 
         visitTreeElement(node);
 

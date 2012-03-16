@@ -418,7 +418,7 @@ public class Tree
                 public void inANormalElement(
                         ANormalElement node) {
 
-                    TreeElement.NormalElement element = new TreeElement.NormalElement(
+                    TreeElement.SingleElement element = new TreeElement.SingleElement(
                             node, TreeAlternative.this.grammar,
                             TreeAlternative.this);
 
@@ -429,7 +429,7 @@ public class Tree
                 public void inASeparatedElement(
                         ASeparatedElement node) {
 
-                    TreeElement.SeparatedElement element = new TreeElement.SeparatedElement(
+                    TreeElement.DoubleElement element = new TreeElement.DoubleElement(
                             node, TreeAlternative.this.grammar,
                             TreeAlternative.this);
 
@@ -441,7 +441,7 @@ public class Tree
                 public void inAAlternatedElement(
                         AAlternatedElement node) {
 
-                    TreeElement.AlternatedElement element = new TreeElement.AlternatedElement(
+                    TreeElement.DoubleElement element = new TreeElement.DoubleElement(
                             node, TreeAlternative.this.grammar,
                             TreeAlternative.this);
 
@@ -477,13 +477,22 @@ public class Tree
     public static abstract class TreeElement
             implements ImplicitExplicit, IReferencable, IVisitableGrammarPart {
 
+        public static enum ElementType {
+            NORMAL,
+            SEPARATED,
+            ALTERNATED
+        }
+
         private final Grammar grammar;
 
         private final TreeAlternative alternative;
 
+        private final ElementType elementType;
+
         private TreeElement(
                 Grammar grammar,
-                TreeAlternative alternative) {
+                TreeAlternative alternative,
+                ElementType elementType) {
 
             if (grammar == null) {
                 throw new InternalException("grammar may not be null");
@@ -495,12 +504,20 @@ public class Tree
 
             this.grammar = grammar;
             this.alternative = alternative;
+            this.elementType = elementType;
         }
 
         public TreeAlternative getAlternative() {
 
             return this.alternative;
         }
+
+        public ElementType getElementType() {
+
+            return this.elementType;
+        }
+
+        public abstract Node getDeclaration();
 
         public abstract String getName();
 
@@ -512,7 +529,7 @@ public class Tree
 
         public abstract Type.SimpleType getType();
 
-        public static class NormalElement
+        public static class SingleElement
                 extends TreeElement {
 
             private final ANormalElement declaration;
@@ -531,12 +548,12 @@ public class Tree
 
             private Type.SimpleType type;
 
-            public NormalElement(
+            public SingleElement(
                     ANormalElement declaration,
                     Grammar grammar,
                     TreeAlternative alternative) {
 
-                super(grammar, alternative);
+                super(grammar, alternative, ElementType.NORMAL);
 
                 if (declaration == null) {
                     throw new InternalException("declaration may not be null");
@@ -595,6 +612,7 @@ public class Tree
                 }
             }
 
+            @Override
             public ANormalElement getDeclaration() {
 
                 return this.declaration;
@@ -714,16 +732,16 @@ public class Tree
             public void apply(
                     IGrammarVisitor visitor) {
 
-                visitor.visitTreeNormalElement(this);
+                visitor.visitTreeSingleElement(this);
 
             }
 
         }
 
-        public static class SeparatedElement
+        public static class DoubleElement
                 extends TreeElement {
 
-            private final ASeparatedElement declaration;
+            private final PElement declaration;
 
             private String name;
 
@@ -739,12 +757,12 @@ public class Tree
 
             private Type.SimpleType type;
 
-            public SeparatedElement(
+            public DoubleElement(
                     ASeparatedElement declaration,
                     Grammar grammar,
                     TreeAlternative alternative) {
 
-                super(grammar, alternative);
+                super(grammar, alternative, ElementType.SEPARATED);
 
                 if (declaration == null) {
                     throw new InternalException("declaration may not be null");
@@ -753,168 +771,17 @@ public class Tree
                 this.declaration = declaration;
 
                 this.cardinality = new CardinalityInterval(
-                        this.declaration.getManyOperator());
+                        declaration.getManyOperator());
 
                 constructType();
             }
 
-            private void constructType() {
-
-                InformationExtractor extractor = new InformationExtractor(this);
-
-                this.type = new Type.SimpleType.SeparatedType(
-                        extractor.getLeftText(), extractor.getRightText(),
-                        this.cardinality);
-            }
-
-            public ASeparatedElement getDeclaration() {
-
-                return this.declaration;
-            }
-
-            public IReferencable getLeftReference() {
-
-                return this.leftReference;
-            }
-
-            public void addLeftReference(
-                    IReferencable leftReference) {
-
-                if (this.leftReference == null) {
-                    this.leftReference = leftReference;
-                }
-                else {
-                    throw new InternalException(
-                            "addReference shouldn't be used twice");
-                }
-            }
-
-            public IReferencable getRightReference() {
-
-                return this.rightReference;
-            }
-
-            public void addRightReference(
-                    IReferencable rightReference) {
-
-                if (this.rightReference == null) {
-                    this.rightReference = rightReference;
-                }
-                else {
-                    throw new InternalException(
-                            "addReference shouldn't be used twice");
-                }
-            }
-
-            @Override
-            public String getImplicitName() {
-
-                return null;
-            }
-
-            @Override
-            public String getExplicitName() {
-
-                String explicitName = null;
-
-                if (this.declaration.getElementName() != null) {
-                    explicitName = this.declaration.getElementName().getText();
-                    explicitName = explicitName.substring(1,
-                            explicitName.length() - 2);
-                }
-
-                return explicitName;
-            }
-
-            @Override
-            public void setName(
-                    String name) {
-
-                this.name = name;
-
-            }
-
-            @Override
-            public String getName() {
-
-                return this.name;
-            }
-
-            @Override
-            public Token getNameToken() {
-
-                return this.declaration.getElementName();
-            }
-
-            @Override
-            public Token getLocation() {
-
-                if (this.elementToken == null) {
-                    this.elementToken = new InformationExtractor(this)
-                            .getFirstToken();
-                }
-
-                return this.elementToken;
-            }
-
-            @Override
-            public String getElement() {
-
-                if (this.element == null) {
-                    this.element = new InformationExtractor(this)
-                            .getReferenceText();
-                }
-
-                return this.element;
-            }
-
-            @Override
-            public CardinalityInterval getCardinality() {
-
-                return this.cardinality;
-            }
-
-            @Override
-            public void apply(
-                    IGrammarVisitor visitor) {
-
-                visitor.visitTreeSeparatedElement(this);
-
-            }
-
-            @Override
-            public Type.SimpleType getType() {
-
-                return this.type;
-            }
-
-        }
-
-        public static class AlternatedElement
-                extends TreeElement {
-
-            private final AAlternatedElement declaration;
-
-            private String name;
-
-            private IReferencable leftReference;
-
-            private IReferencable rightReference;
-
-            private String element;
-
-            private Token elementToken;
-
-            private CardinalityInterval cardinality;
-
-            private Type.SimpleType type;
-
-            public AlternatedElement(
+            public DoubleElement(
                     AAlternatedElement declaration,
                     Grammar grammar,
                     TreeAlternative alternative) {
 
-                super(grammar, alternative);
+                super(grammar, alternative, ElementType.ALTERNATED);
 
                 if (declaration == null) {
                     throw new InternalException("declaration may not be null");
@@ -923,7 +790,7 @@ public class Tree
                 this.declaration = declaration;
 
                 this.cardinality = new CardinalityInterval(
-                        this.declaration.getManyOperator());
+                        declaration.getManyOperator());
 
                 constructType();
 
@@ -933,12 +800,22 @@ public class Tree
 
                 InformationExtractor extractor = new InformationExtractor(this);
 
-                this.type = new Type.SimpleType.AlternatedType(
-                        extractor.getLeftText(), extractor.getRightText(),
-                        this.cardinality);
+                if (getElementType() == ElementType.SEPARATED) {
+                    this.type = new Type.SimpleType.SeparatedType(
+                            extractor.getLeftText(), extractor.getRightText(),
+                            this.cardinality);
+                }
+                else // ElementType.ALTERNATED
+                {
+                    this.type = new Type.SimpleType.AlternatedType(
+                            extractor.getLeftText(), extractor.getRightText(),
+                            this.cardinality);
+                }
+
             }
 
-            public AAlternatedElement getDeclaration() {
+            @Override
+            public PElement getDeclaration() {
 
                 return this.declaration;
             }
@@ -987,21 +864,26 @@ public class Tree
             public String getExplicitName() {
 
                 String explicitName = null;
+                TElementName elementName = null;
 
-                if (this.declaration.getElementName() != null) {
-                    explicitName = this.declaration.getElementName().getText();
+                switch (getElementType()) {
+                case SEPARATED:
+                    elementName = ((ASeparatedElement) this.declaration)
+                            .getElementName();
+                    break;
+                case ALTERNATED:
+                    elementName = ((AAlternatedElement) this.declaration)
+                            .getElementName();
+                    break;
+                }
+
+                if (elementName != null) {
+                    explicitName = elementName.getText();
                     explicitName = explicitName.substring(1,
                             explicitName.length() - 2);
                 }
 
                 return explicitName;
-            }
-
-            @Override
-            public void setName(
-                    String name) {
-
-                this.name = name;
             }
 
             @Override
@@ -1013,7 +895,19 @@ public class Tree
             @Override
             public Token getNameToken() {
 
-                return this.declaration.getElementName();
+                TElementName elementName = null;
+
+                switch (getElementType()) {
+                case SEPARATED:
+                    elementName = ((ASeparatedElement) this.declaration)
+                            .getElementName();
+                    break;
+                case ALTERNATED:
+                    elementName = ((AAlternatedElement) this.declaration)
+                            .getElementName();
+                }
+
+                return elementName;
             }
 
             @Override
@@ -1045,17 +939,25 @@ public class Tree
             }
 
             @Override
-            public void apply(
-                    IGrammarVisitor visitor) {
+            public Type.SimpleType getType() {
 
-                visitor.visitTreeAlternatedElement(this);
+                return this.type;
+            }
+
+            @Override
+            public void setName(
+                    String name) {
+
+                this.name = name;
 
             }
 
             @Override
-            public Type.SimpleType getType() {
+            public void apply(
+                    IGrammarVisitor visitor) {
 
-                return this.type;
+                // visitor.visitTreeDoubleElement(this);
+
             }
 
         }
@@ -1072,19 +974,13 @@ public class Tree
             private Token token;
 
             public InformationExtractor(
-                    Tree.TreeElement.NormalElement element) {
+                    Tree.TreeElement.SingleElement element) {
 
                 element.getDeclaration().apply(this);
             }
 
             public InformationExtractor(
-                    Tree.TreeElement.AlternatedElement element) {
-
-                element.getDeclaration().apply(this);
-            }
-
-            public InformationExtractor(
-                    Tree.TreeElement.SeparatedElement element) {
+                    Tree.TreeElement.DoubleElement element) {
 
                 element.getDeclaration().apply(this);
             }

@@ -24,6 +24,7 @@ import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.transformation.*;
 import org.sablecc.sablecc.core.transformation.AlternativeTransformationElement.NewElement;
+import org.sablecc.sablecc.core.transformation.AlternativeTransformationElement.NullElement;
 import org.sablecc.sablecc.core.transformation.AlternativeTransformationListElement.LeftListElement;
 import org.sablecc.sablecc.core.transformation.AlternativeTransformationListElement.NormalListElement;
 import org.sablecc.sablecc.core.transformation.AlternativeTransformationListElement.ReferenceElement;
@@ -69,6 +70,19 @@ public class AlternativeTransformationBuilder
 
         this.alternative.addTransformation(new SAlternativeTransformation(
                 this.alternative, this.elementListStack.pop()));
+    }
+
+    @Override
+    public void visitAlternativeTransformationNullElement(
+            NullElement node) {
+
+        List<SAlternativeTransformationElement> listElement = new LinkedList<SAlternativeTransformationElement>();
+
+        SAlternativeTransformationElement.NullElement nullElement = new SAlternativeTransformationElement.NullElement();
+
+        listElement.add(nullElement);
+
+        this.elementListStack.push(listElement);
     }
 
     @Override

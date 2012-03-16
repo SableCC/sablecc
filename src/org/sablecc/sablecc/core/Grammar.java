@@ -45,23 +45,13 @@ public class Grammar
     private final TreeNameSpace treeNameSpace = new TreeNameSpace(
             this.globalNameSpace);
 
-    private final Map<String, LexerExpression.StringExpression> stringToStringExpression = new HashMap<String, LexerExpression.StringExpression>();
-
-    private final Map<String, LexerExpression.CharExpression> stringToCharExpression = new HashMap<String, LexerExpression.CharExpression>();
-
-    private final Map<String, LexerExpression.DecExpression> stringToDecExpression = new HashMap<String, LexerExpression.DecExpression>();
-
-    private final Map<String, LexerExpression.HexExpression> stringToHexExpression = new HashMap<String, LexerExpression.HexExpression>();
-
-    private final Map<String, LexerExpression> stringToLexerExpression = new HashMap<String, LexerExpression>();
-
-    private Context.AnonymousContext globalAnonymousContext;
+    private Context globalAnonymousContext;
 
     private LexerExpression.StartExpression globalStartExpression;
 
     private LexerExpression.EndExpression globalEndExpression;
 
-    private final List<Context.NamedContext> namedContexts = new LinkedList<Context.NamedContext>();
+    private final List<Context> namedContexts = new LinkedList<Context>();
 
     private final Lexer lexer = new Lexer();
 
@@ -143,12 +133,12 @@ public class Grammar
         return "grammar";
     }
 
-    public List<Context.NamedContext> getNamedContexts() {
+    public List<Context> getNamedContexts() {
 
         return this.namedContexts;
     }
 
-    public Context.AnonymousContext getGlobalAnonymousContext() {
+    public Context getGlobalAnonymousContext() {
 
         return this.globalAnonymousContext;
     }
@@ -235,8 +225,6 @@ public class Grammar
 
                 this.globalNameSpace.add(namedExpression);
                 Grammar.this.lexer.addNamedExpression(namedExpression);
-                Grammar.this.stringToLexerExpression.put(
-                        namedExpression.getExpressionName(), namedExpression);
             }
 
             @Override
@@ -244,8 +232,7 @@ public class Grammar
                     ALexerContext node) {
 
                 if (node.getName() != null) {
-                    Context.NamedContext namedContext = new Context.NamedContext(
-                            node, this.grammar);
+                    Context namedContext = new Context(this.grammar, node);
                     this.globalNameSpace.add(namedContext);
                     Grammar.this.namedContexts.add(namedContext);
                 }
@@ -264,15 +251,14 @@ public class Grammar
 
                 if (node.getName() != null) {
                     String name = node.getName().getText();
-                    Context.NamedContext namedContext = this.globalNameSpace
+                    Context namedContext = this.globalNameSpace
                             .getNamedContext(name);
 
                     if (namedContext != null) {
                         namedContext.addDeclaration(node);
                     }
                     else {
-                        namedContext = new Context.NamedContext(node,
-                                this.grammar);
+                        namedContext = new Context(this.grammar, node);
                         this.globalNameSpace.add(namedContext);
                         Grammar.this.namedContexts.add(namedContext);
                     }
@@ -406,8 +392,8 @@ public class Grammar
                                 "globalAnonymousContext should not have been created yet");
                     }
 
-                    Grammar.this.globalAnonymousContext = new Context.AnonymousContext(
-                            node, this.grammar);
+                    Grammar.this.globalAnonymousContext = new Context(
+                            this.grammar, node);
                 }
             }
 
@@ -417,8 +403,8 @@ public class Grammar
 
                 if (node.getName() == null) {
                     if (Grammar.this.globalAnonymousContext == null) {
-                        Grammar.this.globalAnonymousContext = new Context.AnonymousContext(
-                                node, this.grammar);
+                        Grammar.this.globalAnonymousContext = new Context(
+                                this.grammar, node);
                     }
                     else {
                         Grammar.this.globalAnonymousContext
@@ -514,105 +500,67 @@ public class Grammar
     void addStringExpression(
             LexerExpression.StringExpression stringExpression) {
 
-        String text = stringExpression.getText();
-
-        if (this.stringToStringExpression.containsKey(text)) {
-            throw new InternalException("multiple mappings for " + text);
-        }
-
-        this.stringToStringExpression.put(text, stringExpression);
-        this.stringToLexerExpression.put(stringExpression.getExpressionName(),
-                stringExpression);
+        this.globalNameSpace.add(stringExpression);
+        this.lexer.addInlineExpression(stringExpression);
     }
 
     void addCharExpression(
             LexerExpression.CharExpression charExpression) {
 
-        String text = charExpression.getText();
-
-        if (this.stringToCharExpression.containsKey(text)) {
-            throw new InternalException("multiple mappings for " + text);
-        }
-
-        this.stringToCharExpression.put(text, charExpression);
-        this.stringToLexerExpression.put(charExpression.getExpressionName(),
-                charExpression);
+        this.globalNameSpace.add(charExpression);
+        this.lexer.addInlineExpression(charExpression);
     }
 
     void addDecExpression(
             LexerExpression.DecExpression decExpression) {
 
-        String text = decExpression.getText();
-
-        if (this.stringToDecExpression.containsKey(text)) {
-            throw new InternalException("multiple mappings for " + text);
-        }
-
-        this.stringToDecExpression.put(text, decExpression);
-        this.stringToLexerExpression.put(decExpression.getExpressionName(),
-                decExpression);
+        this.globalNameSpace.add(decExpression);
+        this.lexer.addInlineExpression(decExpression);
     }
 
     void addHexExpression(
             LexerExpression.HexExpression hexExpression) {
 
-        String text = hexExpression.getText();
-
-        if (this.stringToHexExpression.containsKey(text)) {
-            throw new InternalException("multiple mappings for " + text);
-        }
-
-        this.stringToHexExpression.put(text, hexExpression);
-        this.stringToLexerExpression.put(hexExpression.getExpressionName(),
-                hexExpression);
+        this.globalNameSpace.add(hexExpression);
+        this.lexer.addInlineExpression(hexExpression);
     }
 
     void addStartExpression(
             LexerExpression.StartExpression startExpression) {
 
-        if (this.globalStartExpression != null) {
-            throw new InternalException("multiple starts");
-        }
-
         this.globalStartExpression = startExpression;
-        this.stringToLexerExpression.put(startExpression.getExpressionName(),
-                startExpression);
+        this.lexer.addInlineExpression(startExpression);
     }
 
     void addEndExpression(
             LexerExpression.EndExpression endExpression) {
 
-        if (this.globalEndExpression != null) {
-            throw new InternalException("multiple ends");
-        }
-
         this.globalEndExpression = endExpression;
-        this.stringToLexerExpression.put(endExpression.getExpressionName(),
-                endExpression);
+        this.lexer.addInlineExpression(endExpression);
     }
 
     public LexerExpression.StringExpression getStringExpression(
             String text) {
 
-        return this.stringToStringExpression.get(text);
+        return this.globalNameSpace.getStringExpression(text);
     }
 
     public LexerExpression.CharExpression getCharExpression(
             String text) {
 
-        return this.stringToCharExpression.get(text);
+        return this.globalNameSpace.getCharExpression(text);
     }
 
     public LexerExpression.DecExpression getDecExpression(
             String text) {
 
-        return this.stringToDecExpression.get(text);
+        return this.globalNameSpace.getDecExpression(text);
     }
 
     public LexerExpression.HexExpression getHexExpression(
             String text) {
 
-        return this.stringToHexExpression.get(text);
+        return this.globalNameSpace.getHexExpression(text);
     }
 
     public LexerExpression.StartExpression getStartExpression() {
@@ -628,7 +576,7 @@ public class Grammar
     public LexerExpression getLexerExpression(
             String expressionName) {
 
-        return this.stringToLexerExpression.get(expressionName);
+        return this.lexer.getExpression(expressionName);
     }
 
     public void compileLexer(
@@ -647,13 +595,12 @@ public class Grammar
             throw new InternalException("not implemented");
         }
 
-        for (Context.NamedContext context : this.namedContexts) {
+        for (Context context : this.namedContexts) {
             context.computeAutomaton();
         }
 
         // Look for useless LexerExpression
-        for (LexerExpression lexerExpression : this.stringToLexerExpression
-                .values()) {
+        for (LexerExpression lexerExpression : this.lexer.getExpressions()) {
             // If their is no automaton saved it means that the LexerExpression
             // was not used to build the big automaton.
             if (lexerExpression.getSavedAutomaton() == null) {
@@ -670,8 +617,7 @@ public class Grammar
             }
         }
 
-        for (LexerExpression lexerExpression : this.stringToLexerExpression
-                .values()) {
+        for (LexerExpression lexerExpression : this.lexer.getExpressions()) {
             // Note: getting the automaton forces the validation of the semantic
             // validity of (eg. cirularity)
             Automaton lexerAutomaton = lexerExpression.getAutomaton();
@@ -912,7 +858,7 @@ public class Grammar
         return automaton.resetAcceptations(newAccepts);
     }
 
-    private static class NameSpace {
+    static class NameSpace {
 
         private final Map<String, INameDeclaration> nameMap = new HashMap<String, INameDeclaration>();
 
@@ -954,9 +900,14 @@ public class Grammar
         }
 
         private void add(
-                Context.NamedContext namedContext) {
+                Context context) {
 
-            internalAdd(namedContext);
+            if (!context.isNamed()) {
+                throw new InternalException(
+                        "The anonymous context shouldn't be added to the global namespace");
+            }
+
+            internalAdd(context);
         }
 
         private void add(
@@ -983,6 +934,12 @@ public class Grammar
             internalAdd(investigator);
         }
 
+        private void add(
+                LexerExpression.InlineExpression inlineExpression) {
+
+            internalAdd(inlineExpression);
+        }
+
         private Grammar getGrammar(
                 String name) {
 
@@ -1003,12 +960,12 @@ public class Grammar
             return null;
         }
 
-        private Context.NamedContext getNamedContext(
+        private Context getNamedContext(
                 String name) {
 
             INameDeclaration nameDeclaration = getNameDeclaration(name);
-            if (nameDeclaration instanceof Context.NamedContext) {
-                return (Context.NamedContext) nameDeclaration;
+            if (nameDeclaration instanceof Context) {
+                return (Context) nameDeclaration;
             }
             return null;
         }
@@ -1079,6 +1036,46 @@ public class Grammar
             INameDeclaration nameDeclaration = getNameDeclaration(name);
             if (nameDeclaration instanceof Investigator.ParserInvestigator) {
                 return (Investigator.ParserInvestigator) nameDeclaration;
+            }
+            return null;
+        }
+
+        private LexerExpression.StringExpression getStringExpression(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof LexerExpression.StringExpression) {
+                return (LexerExpression.StringExpression) nameDeclaration;
+            }
+            return null;
+        }
+
+        private LexerExpression.CharExpression getCharExpression(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof LexerExpression.CharExpression) {
+                return (LexerExpression.CharExpression) nameDeclaration;
+            }
+            return null;
+        }
+
+        private LexerExpression.DecExpression getDecExpression(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof LexerExpression.DecExpression) {
+                return (LexerExpression.DecExpression) nameDeclaration;
+            }
+            return null;
+        }
+
+        private LexerExpression.HexExpression getHexExpression(
+                String name) {
+
+            INameDeclaration nameDeclaration = getNameDeclaration(name);
+            if (nameDeclaration instanceof LexerExpression.HexExpression) {
+                return (LexerExpression.HexExpression) nameDeclaration;
             }
             return null;
         }

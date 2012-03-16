@@ -20,6 +20,7 @@ package org.sablecc.sablecc.grammar.transformation;
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.core.transformation.*;
+import org.sablecc.sablecc.core.transformation.ProductionTransformationElement.ElementType;
 import org.sablecc.sablecc.grammar.interfaces.*;
 import org.sablecc.util.*;
 
@@ -55,7 +56,7 @@ public abstract class SProductionTransformationElement
 
         public NormalElement(
                 SProductionTransformation productionTransformation,
-                ProductionTransformationElement.NormalElement coreReference) {
+                ProductionTransformationElement.SingleElement coreReference) {
 
             super(productionTransformation);
 
@@ -132,12 +133,17 @@ public abstract class SProductionTransformationElement
 
         public SeparatedElement(
                 SProductionTransformation productionTransformation,
-                ProductionTransformationElement.SeparatedElement coreReference) {
+                ProductionTransformationElement.DoubleElement coreReference) {
 
             super(productionTransformation);
 
             if (coreReference == null) {
                 throw new InternalException("coreReference shouldn't be null");
+            }
+
+            if (coreReference.getElementType() != ElementType.SEPARATED) {
+                throw new InternalException(
+                        "The core reference must be separated in a simplified separated element");
             }
 
             this.leftName = coreReference.getLeft();
@@ -299,12 +305,17 @@ public abstract class SProductionTransformationElement
 
         public AlternatedElement(
                 SProductionTransformation productionTransformation,
-                ProductionTransformationElement.AlternatedElement coreReference) {
+                ProductionTransformationElement.DoubleElement coreReference) {
 
             super(productionTransformation);
 
             if (coreReference == null) {
                 throw new InternalException("coreReference shouldn't be null");
+            }
+
+            if (coreReference.getElementType() != ElementType.SEPARATED) {
+                throw new InternalException(
+                        "The core reference must be alternated in a alternated separated element");
             }
 
             this.leftName = coreReference.getLeft();

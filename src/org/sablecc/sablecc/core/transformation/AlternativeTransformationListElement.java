@@ -22,6 +22,7 @@ import java.util.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.*;
+import org.sablecc.sablecc.core.Parser.ParserElement.ElementType;
 import org.sablecc.sablecc.core.analysis.*;
 import org.sablecc.sablecc.core.interfaces.*;
 import org.sablecc.sablecc.syntax3.node.*;
@@ -533,37 +534,54 @@ public abstract class AlternativeTransformationListElement
             String leftName = null;
 
             if (this.reference instanceof Parser.ParserElement) {
-                cardinality = ((Parser.ParserElement) this.reference)
-                        .getCardinality();
-                rightName = ((Parser.ParserElement) this.reference)
-                        .getElement();
+                Parser.ParserElement parserElement = (Parser.ParserElement) this.reference;
+                cardinality = parserElement.getCardinality();
+
+                switch (parserElement.getElementType()) {
+                case NORMAL:
+                    rightName = ((Parser.ParserElement.SingleElement) this.reference)
+                            .getElement();
+                    break;
+                case SEPARATED:
+                    rightName = ((Parser.ParserElement.DoubleElement) this.reference)
+                            .getRight();
+                    leftName = ((Parser.ParserElement.DoubleElement) this.reference)
+                            .getLeft();
+                    break;
+                case ALTERNATED:
+                    rightName = ((Parser.ParserElement.DoubleElement) this.reference)
+                            .getRight();
+                    leftName = ((Parser.ParserElement.DoubleElement) this.reference)
+                            .getLeft();
+                    break;
+                default:
+                    throw new InternalException("Unhandled element type "
+                            + parserElement.getNameType());
+                }
             }
             else {
 
                 ProductionTransformationElement transformationElement = (ProductionTransformationElement) this.reference;
                 cardinality = transformationElement.getCardinality();
 
-                if (transformationElement instanceof ProductionTransformationElement.NormalElement) {
+                if (transformationElement instanceof ProductionTransformationElement.SingleElement) {
                     rightName = ((ProductionTransformationElement) this.reference)
                             .getElement();
                 }
-                else if (transformationElement instanceof ProductionTransformationElement.SeparatedElement) {
-                    rightName = ((ProductionTransformationElement.SeparatedElement) transformationElement)
-                            .getRight();
-                    leftName = ((ProductionTransformationElement.SeparatedElement) transformationElement)
-                            .getLeft();
-                }
                 else {
-                    rightName = ((ProductionTransformationElement.AlternatedElement) transformationElement)
+                    rightName = ((ProductionTransformationElement.DoubleElement) transformationElement)
                             .getRight();
-                    leftName = ((ProductionTransformationElement.AlternatedElement) transformationElement)
+                    leftName = ((ProductionTransformationElement.DoubleElement) transformationElement)
                             .getLeft();
                 }
 
             }
 
-            if (this.reference instanceof Parser.ParserElement.SeparatedElement
-                    || this.reference instanceof ProductionTransformationElement.SeparatedElement) {
+            if (this.reference instanceof Parser.ParserElement
+                    && ((Parser.ParserElement) this.reference).getElementType() == Parser.ParserElement.ElementType.SEPARATED
+                    || this.reference instanceof ProductionTransformationElement
+                    && ((ProductionTransformationElement) this.reference)
+                            .getElementType() == ProductionTransformationElement.ElementType.SEPARATED) {
                 if (leftName == null) {
                     this.type = new Type.SimpleType.SeparatedType(rightName,
                             cardinality);
@@ -573,8 +591,11 @@ public abstract class AlternativeTransformationListElement
                             rightName, cardinality);
                 }
             }
-            else if (this.reference instanceof Parser.ParserElement.AlternatedElement
-                    || this.reference instanceof ProductionTransformationElement.AlternatedElement) {
+            else if (this.reference instanceof Parser.ParserElement
+                    && ((Parser.ParserElement) this.reference).getElementType() == ElementType.ALTERNATED
+                    || this.reference instanceof ProductionTransformationElement
+                    && ((ProductionTransformationElement) this.reference)
+                            .getElementType() == ProductionTransformationElement.ElementType.SEPARATED) {
                 if (leftName == null) {
                     this.type = new Type.SimpleType.AlternatedType(rightName,
                             cardinality);
@@ -1179,13 +1200,13 @@ public abstract class AlternativeTransformationListElement
 
             if (referencedType instanceof Type.SimpleType.AlternatedType) {
                 elementName = ((Type.SimpleType.AlternatedType) referencedType)
-                        .getLeftElementName();
+                        .getRightElementName();
                 intermediateInterval = ((Type.SimpleType.AlternatedType) referencedType)
                         .getCardinality();
             }
             else if (referencedType instanceof Type.SimpleType.SeparatedType) {
                 elementName = ((Type.SimpleType.SeparatedType) referencedType)
-                        .getLeftElementName();
+                        .getRightElementName();
 
                 intermediateInterval = ((Type.SimpleType.SeparatedType) referencedType)
                         .getCardinality();

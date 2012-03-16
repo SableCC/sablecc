@@ -94,6 +94,26 @@ public abstract class AlternativeTransformation
             this.transformationElements.add(newElement);
         }
 
+        public ImplicitAlternativeTransformation(
+                Parser.ParserAlternative alternative,
+                AlternativeTransformationElement.ImplicitNullElement nullElement,
+                Grammar grammar) {
+
+            super(grammar);
+
+            if (alternative == null) {
+                throw new InternalException("alternative may not be null");
+            }
+
+            if (nullElement == null) {
+                throw new InternalException("newElement may not be null");
+            }
+
+            this.alternative = alternative;
+            this.transformationElements = new LinkedList<AlternativeTransformationElement>();
+            this.transformationElements.add(nullElement);
+        }
+
         @Override
         public Parser.ParserAlternative getAlternativeReference() {
 

@@ -103,7 +103,6 @@ public abstract class AlternativeTransformationElement
             extends NullElement {
 
         public ImplicitNullElement(
-                ANullTransformationElement declaration,
                 Grammar grammar) {
 
             super(grammar);

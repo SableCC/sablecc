@@ -478,7 +478,7 @@ public class CodeGenerator {
 
                 for (Parser.ParserElement parserElement : alternative
                         .getElements()) {
-                    Parser.ParserElement.NormalElement normalElement = (Parser.ParserElement.NormalElement) parserElement;
+                    Parser.ParserElement.SingleElement normalElement = (Parser.ParserElement.SingleElement) parserElement;
                     String element_CamelCaseName = normalElement
                             .getName_CamelCase();
                     boolean elementIsPublicReadable;

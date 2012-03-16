@@ -54,6 +54,7 @@ public class TokenOrderVerifier
         this.previousIndex = -1;
         this.transformedProductionPreviousIndex.clear();
         node.getTransformation().apply(this);
+
     }
 
     @Override
@@ -90,7 +91,7 @@ public class TokenOrderVerifier
                     .getDeclaration().getElementReference()).getPart()
                     .getText();
 
-            Parser.ParserProduction transformedProduction = (Parser.ParserProduction) ((Parser.ParserElement.NormalElement) this.alternative
+            Parser.ParserProduction transformedProduction = (Parser.ParserProduction) ((Parser.ParserElement.SingleElement) this.alternative
                     .getLocalReference(productionReference)).getReference();
 
             ProductionTransformationElement transformationElement = ((ProductionTransformation.ExplicitProductionTransformation) transformedProduction

@@ -27,7 +27,7 @@ import org.sablecc.util.*;
 
 public class GrammarCompiler {
 
-    public static final boolean RESTRICTED_SYNTAX = true;
+    public static final boolean RESTRICTED_SYNTAX = false;
 
     final private String text;
 

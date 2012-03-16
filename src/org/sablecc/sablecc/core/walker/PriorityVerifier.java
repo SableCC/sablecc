@@ -19,6 +19,7 @@ package org.sablecc.sablecc.core.walker;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.core.*;
+import org.sablecc.sablecc.core.Parser.ParserElement.ElementType;
 import org.sablecc.sablecc.core.Parser.ParserPriority.LeftPriority;
 import org.sablecc.sablecc.core.Parser.ParserPriority.RightPriority;
 import org.sablecc.sablecc.core.Parser.ParserPriority.UnaryPriority;
@@ -75,9 +76,9 @@ public class PriorityVerifier
             Parser.ParserElement lastElement = alternative.getElements()
                     .getLast();
 
-            if (!(firstElement instanceof Parser.ParserElement.NormalElement && ((Parser.ParserElement.NormalElement) firstElement)
+            if (!(firstElement.getElementType() == ElementType.NORMAL && ((Parser.ParserElement.SingleElement) firstElement)
                     .getReference() == this.production)
-                    || !(lastElement instanceof Parser.ParserElement.NormalElement && ((Parser.ParserElement.NormalElement) lastElement)
+                    || !(lastElement.getElementType() == ElementType.NORMAL && ((Parser.ParserElement.SingleElement) lastElement)
                             .getReference() == this.production)) {
 
                 throw SemanticException.leftBadRecursion(alternative, node);
@@ -85,15 +86,15 @@ public class PriorityVerifier
             }
 
             // First element verification
-            if (!((Parser.ParserElement.NormalElement) firstElement)
+            if (!((Parser.ParserElement.SingleElement) firstElement)
                     .getCardinality().equals(CardinalityInterval.ONE_ONE)) {
                 throw SemanticException.leftQualifiedRecursiveElement(
                         alternative, firstElement, node);
             }
 
             // Second element verification
-            if (alternative.getElements().get(1) instanceof Parser.ParserElement.NormalElement) {
-                Parser.ParserElement.NormalElement secondElement = (Parser.ParserElement.NormalElement) alternative
+            if (alternative.getElements().get(1).getElementType() == ElementType.NORMAL) {
+                Parser.ParserElement.SingleElement secondElement = (Parser.ParserElement.SingleElement) alternative
                         .getElements().get(1);
 
                 if (!secondElement.getCardinality().equals(
@@ -110,7 +111,7 @@ public class PriorityVerifier
             }
 
             // Last element verification
-            if (!((Parser.ParserElement.NormalElement) lastElement)
+            if (!((Parser.ParserElement.SingleElement) lastElement)
                     .getCardinality().equals(CardinalityInterval.ONE_ONE)) {
                 throw SemanticException.leftQualifiedRecursiveElement(
                         alternative, lastElement, node);
@@ -135,9 +136,9 @@ public class PriorityVerifier
             Parser.ParserElement lastElement = alternative.getElements()
                     .getLast();
 
-            if (!(firstElement instanceof Parser.ParserElement.NormalElement && ((Parser.ParserElement.NormalElement) firstElement)
+            if (!(firstElement.getElementType() == ElementType.NORMAL && ((Parser.ParserElement.SingleElement) firstElement)
                     .getReference() == this.production)
-                    || !(lastElement instanceof Parser.ParserElement.NormalElement && ((Parser.ParserElement.NormalElement) lastElement)
+                    || !(lastElement.getElementType() == ElementType.NORMAL && ((Parser.ParserElement.SingleElement) lastElement)
                             .getReference() == this.production)) {
 
                 throw SemanticException.rightBadRecursion(alternative, node);
@@ -145,15 +146,15 @@ public class PriorityVerifier
             }
 
             // First element verification
-            if (!((Parser.ParserElement.NormalElement) firstElement)
+            if (!((Parser.ParserElement.SingleElement) firstElement)
                     .getCardinality().equals(CardinalityInterval.ONE_ONE)) {
                 throw SemanticException.rightQualifiedRecursiveElement(
                         alternative, firstElement, node);
             }
 
             // Second element verification
-            if (alternative.getElements().get(1) instanceof Parser.ParserElement.NormalElement) {
-                Parser.ParserElement.NormalElement secondElement = (Parser.ParserElement.NormalElement) alternative
+            if (alternative.getElements().get(1).getElementType() == ElementType.NORMAL) {
+                Parser.ParserElement.SingleElement secondElement = (Parser.ParserElement.SingleElement) alternative
                         .getElements().get(1);
 
                 if (!secondElement.getCardinality().equals(
@@ -170,7 +171,7 @@ public class PriorityVerifier
             }
 
             // Last element verification
-            if (!((Parser.ParserElement.NormalElement) lastElement)
+            if (!((Parser.ParserElement.SingleElement) lastElement)
                     .getCardinality().equals(CardinalityInterval.ONE_ONE)) {
                 throw SemanticException.rightQualifiedRecursiveElement(
                         alternative, lastElement, node);
@@ -199,8 +200,8 @@ public class PriorityVerifier
             // First be : determine whether or not the alternative
             // is well recursive.
 
-            if (firstElement instanceof Parser.ParserElement.NormalElement
-                    && ((Parser.ParserElement.NormalElement) firstElement)
+            if (firstElement.getElementType() == ElementType.NORMAL
+                    && ((Parser.ParserElement.SingleElement) firstElement)
                             .getReference() == this.production) {
                 leftRecursive = true;
             }
@@ -208,7 +209,7 @@ public class PriorityVerifier
             Parser.ParserElement lastElement = alternative.getElements()
                     .getLast();
 
-            if (!((firstElement instanceof Parser.ParserElement.NormalElement && ((Parser.ParserElement.NormalElement) lastElement)
+            if (!((firstElement.getElementType() == ElementType.NORMAL && ((Parser.ParserElement.SingleElement) lastElement)
                     .getReference() == this.production) ^ leftRecursive)) {
                 throw SemanticException.unaryBadRecursion(alternative, node);
             }
@@ -218,15 +219,15 @@ public class PriorityVerifier
 
             if (leftRecursive) {
 
-                if (!((Parser.ParserElement.NormalElement) firstElement)
+                if (!((Parser.ParserElement.SingleElement) firstElement)
                         .getCardinality().equals(CardinalityInterval.ONE_ONE)) {
                     throw SemanticException.unaryQualifiedRecursiveElement(
                             alternative, firstElement, node);
                 }
 
                 if (alternative.getElements().size() > 2) {
-                    if (alternative.getElements().get(1) instanceof Parser.ParserElement.NormalElement) {
-                        Parser.ParserElement.NormalElement secondElement = (Parser.ParserElement.NormalElement) alternative
+                    if (alternative.getElements().get(1).getElementType() == ElementType.NORMAL) {
+                        Parser.ParserElement.SingleElement secondElement = (Parser.ParserElement.SingleElement) alternative
                                 .getElements().get(1);
 
                         if (!secondElement.getCardinality().equals(
@@ -244,8 +245,8 @@ public class PriorityVerifier
                     }
                 }
 
-                if (lastElement instanceof Parser.ParserElement.NormalElement) {
-                    Parser.ParserElement.NormalElement lastNormalElement = (Parser.ParserElement.NormalElement) alternative
+                if (lastElement.getElementType() == ElementType.NORMAL) {
+                    Parser.ParserElement.SingleElement lastNormalElement = (Parser.ParserElement.SingleElement) alternative
                             .getElements().getLast();
 
                     if (!lastElement.getCardinality().equals(
@@ -264,14 +265,14 @@ public class PriorityVerifier
             }
             else {
 
-                if (!((Parser.ParserElement.NormalElement) lastElement)
+                if (!((Parser.ParserElement.SingleElement) lastElement)
                         .getCardinality().equals(CardinalityInterval.ONE_ONE)) {
                     throw SemanticException.unaryQualifiedRecursiveElement(
                             alternative, lastElement, node);
                 }
 
-                if (firstElement instanceof Parser.ParserElement.NormalElement) {
-                    Parser.ParserElement.NormalElement firstNormalElement = (Parser.ParserElement.NormalElement) alternative
+                if (firstElement.getElementType() == ElementType.NORMAL) {
+                    Parser.ParserElement.SingleElement firstNormalElement = (Parser.ParserElement.SingleElement) alternative
                             .getElements().getFirst();
 
                     if (!lastElement.getCardinality().equals(

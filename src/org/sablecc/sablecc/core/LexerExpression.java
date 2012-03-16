@@ -277,7 +277,7 @@ public abstract class LexerExpression
 
     public static abstract class InlineExpression
             extends LexerExpression
-            implements IReferencable {
+            implements INameDeclaration, IReferencable {
 
         private final String text;
 
@@ -346,6 +346,10 @@ public abstract class LexerExpression
 
         private Set<AStringUnit> declarations = new LinkedHashSet<AStringUnit>();
 
+        private String firstName;
+
+        private TString firstToken;
+
         private StringExpression(
                 AStringUnit declaration,
                 Grammar grammar) {
@@ -400,12 +404,47 @@ public abstract class LexerExpression
 
             return automaton;
         }
+
+        @Override
+        public TString getNameIdentifier() {
+
+            if (this.firstToken == null) {
+                AStringUnit firstOccurence = this.declarations.iterator()
+                        .next();
+                this.firstToken = firstOccurence.getString();
+            }
+
+            return this.firstToken;
+
+        }
+
+        @Override
+        public String getName() {
+
+            if (this.firstName == null) {
+                AStringUnit firstOccurence = this.declarations.iterator()
+                        .next();
+                this.firstName = firstOccurence.getString().getText();
+            }
+
+            return this.firstName;
+        }
+
+        @Override
+        public String getNameType() {
+
+            return "String Inline Expression";
+        }
     }
 
     public static class CharExpression
             extends InlineExpression {
 
         private Set<ACharCharacter> declarations = new LinkedHashSet<ACharCharacter>();
+
+        private String firstName;
+
+        private TChar firstToken;
 
         private CharExpression(
                 ACharCharacter declaration,
@@ -451,12 +490,46 @@ public abstract class LexerExpression
             }
             return automaton;
         }
+
+        @Override
+        public TChar getNameIdentifier() {
+
+            if (this.firstToken == null) {
+                ACharCharacter firstOccurence = this.declarations.iterator()
+                        .next();
+                this.firstToken = firstOccurence.getChar();
+            }
+
+            return this.firstToken;
+        }
+
+        @Override
+        public String getName() {
+
+            if (this.firstName == null) {
+                ACharCharacter firstOccurence = this.declarations.iterator()
+                        .next();
+                this.firstName = firstOccurence.getChar().getText();
+            }
+
+            return this.firstName;
+        }
+
+        @Override
+        public String getNameType() {
+
+            return "char inline expression";
+        }
     }
 
     public static class DecExpression
             extends InlineExpression {
 
         private Set<ADecCharacter> declarations = new LinkedHashSet<ADecCharacter>();
+
+        private String firstName;
+
+        private TDecChar firstToken;
 
         private DecExpression(
                 ADecCharacter declaration,
@@ -496,12 +569,46 @@ public abstract class LexerExpression
 
             return automaton;
         }
+
+        @Override
+        public TDecChar getNameIdentifier() {
+
+            if (this.firstToken == null) {
+                ADecCharacter firstOccurence = this.declarations.iterator()
+                        .next();
+                this.firstToken = firstOccurence.getDecChar();
+            }
+
+            return this.firstToken;
+        }
+
+        @Override
+        public String getName() {
+
+            if (this.firstName == null) {
+                ADecCharacter firstOccurence = this.declarations.iterator()
+                        .next();
+                this.firstName = firstOccurence.getDecChar().getText();
+            }
+
+            return this.firstName;
+        }
+
+        @Override
+        public String getNameType() {
+
+            return "dec char inline expression";
+        }
     }
 
     public static class HexExpression
             extends InlineExpression {
 
         private Set<AHexCharacter> declarations = new LinkedHashSet<AHexCharacter>();
+
+        private String firstName;
+
+        private THexChar firstToken;
 
         private HexExpression(
                 AHexCharacter declaration,
@@ -542,12 +649,46 @@ public abstract class LexerExpression
 
             return automaton;
         }
+
+        @Override
+        public THexChar getNameIdentifier() {
+
+            if (this.firstToken == null) {
+                AHexCharacter firstOccurence = this.declarations.iterator()
+                        .next();
+                this.firstToken = firstOccurence.getHexChar();
+            }
+
+            return this.firstToken;
+        }
+
+        @Override
+        public String getName() {
+
+            if (this.firstName == null) {
+                AHexCharacter firstOccurence = this.declarations.iterator()
+                        .next();
+                this.firstName = firstOccurence.getHexChar().getText();
+            }
+
+            return this.firstName;
+        }
+
+        @Override
+        public String getNameType() {
+
+            return "hex char inline expression";
+        }
     }
 
     public static class StartExpression
             extends InlineExpression {
 
         private Set<AStartUnit> declarations = new LinkedHashSet<AStartUnit>();
+
+        private String firstName;
+
+        private TStartKeyword firstToken;
 
         private StartExpression(
                 AStartUnit declaration,
@@ -579,12 +720,44 @@ public abstract class LexerExpression
             throw new InternalException("not implemented");
 
         }
+
+        @Override
+        public TStartKeyword getNameIdentifier() {
+
+            if (this.firstToken == null) {
+                AStartUnit firstOccurence = this.declarations.iterator().next();
+                this.firstToken = firstOccurence.getStartKeyword();
+            }
+
+            return this.firstToken;
+        }
+
+        @Override
+        public String getName() {
+
+            if (this.firstName == null) {
+                AStartUnit firstOccurence = this.declarations.iterator().next();
+                this.firstName = firstOccurence.getStartKeyword().getText();
+            }
+
+            return this.firstName;
+        }
+
+        @Override
+        public String getNameType() {
+
+            return "start expression";
+        }
     }
 
     public static class EndExpression
             extends InlineExpression {
 
         private Set<AEndUnit> declarations = new LinkedHashSet<AEndUnit>();
+
+        private String firstName;
+
+        private TEndKeyword firstToken;
 
         private EndExpression(
                 AEndUnit declaration,
@@ -621,6 +794,34 @@ public abstract class LexerExpression
             }
 
             return automaton;
+        }
+
+        @Override
+        public TEndKeyword getNameIdentifier() {
+
+            if (this.firstToken == null) {
+                AEndUnit firstOccurence = this.declarations.iterator().next();
+                this.firstToken = firstOccurence.getEndKeyword();
+            }
+
+            return this.firstToken;
+        }
+
+        @Override
+        public String getName() {
+
+            if (this.firstName == null) {
+                AEndUnit firstOccurence = this.declarations.iterator().next();
+                this.firstName = firstOccurence.getEndKeyword().getText();
+            }
+
+            return this.firstName;
+        }
+
+        @Override
+        public String getNameType() {
+
+            return "end inline expression";
         }
     }
 }
