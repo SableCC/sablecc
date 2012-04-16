@@ -1,0 +1,52 @@
+/* This file is part of SableCC ( http://sablecc.org ).
+ *
+ * See the NOTICE file distributed with this work for copyright information.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+ Grammar mixed_list:
+
+ Lexer
+   id = letter (letter | digit)*;
+   letter = 'a'..'z' | 'A'..'Z';
+   digit = '0'..'9';
+   blank = ' ' | #13 | #10 | #9;
+
+   Ignored
+     blank;
+
+ Parser
+   separated =
+     id_list?;
+
+   id_list =
+     id id_list_tail?;
+
+   id_list_tail =
+     {one:} [comma:]',' id |
+     {many:} id_list_tail [comma:]',' id;
+
+ Transformation
+   Production
+     id_list -> [elements:](id Separator ',')+;
+     id_list_tail -> [elements:](',' id)+;
+   Alternative
+     separated -> New separated(id_list.elements);
+     id_list -> List(id id_list_tail.elements...);
+     id_list_tail.one -> List(comma id);
+     id_list_tail.many -> List(id_list_tail.elements... comma id);
+
+ Tree
+   separated = (id Separator ',')*;
+
