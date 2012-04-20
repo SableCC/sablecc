@@ -10,7 +10,7 @@ public class MPublicElementAccessor {
 
     private final MPublicElementAccessor mPublicElementAccessor = this;
 
-    private final List<Object> ePublicElementType_TokenElementType = new LinkedList<Object>();
+    private final List<Object> ePublicElementType_PublicListElementType_PublicAlternatedListElementType_PublicSeparatedListElementType_TokenElementType = new LinkedList<Object>();
 
     MPublicElementAccessor(
             String pElementName) {
@@ -26,14 +26,48 @@ public class MPublicElementAccessor {
 
         MPublicElementType lPublicElementType = new MPublicElementType(
                 pElementType);
-        this.ePublicElementType_TokenElementType.add(lPublicElementType);
+        this.ePublicElementType_PublicListElementType_PublicAlternatedListElementType_PublicSeparatedListElementType_TokenElementType
+                .add(lPublicElementType);
         return lPublicElementType;
+    }
+
+    public MPublicListElementType newPublicListElementType(
+            String pElementType) {
+
+        MPublicListElementType lPublicListElementType = new MPublicListElementType(
+                pElementType);
+        this.ePublicElementType_PublicListElementType_PublicAlternatedListElementType_PublicSeparatedListElementType_TokenElementType
+                .add(lPublicListElementType);
+        return lPublicListElementType;
+    }
+
+    public MPublicAlternatedListElementType newPublicAlternatedListElementType(
+            String pLeftElementType,
+            String pRightElementType) {
+
+        MPublicAlternatedListElementType lPublicAlternatedListElementType = new MPublicAlternatedListElementType(
+                pLeftElementType, pRightElementType);
+        this.ePublicElementType_PublicListElementType_PublicAlternatedListElementType_PublicSeparatedListElementType_TokenElementType
+                .add(lPublicAlternatedListElementType);
+        return lPublicAlternatedListElementType;
+    }
+
+    public MPublicSeparatedListElementType newPublicSeparatedListElementType(
+            String pLeftElementType,
+            String pRightElementType) {
+
+        MPublicSeparatedListElementType lPublicSeparatedListElementType = new MPublicSeparatedListElementType(
+                pLeftElementType, pRightElementType);
+        this.ePublicElementType_PublicListElementType_PublicAlternatedListElementType_PublicSeparatedListElementType_TokenElementType
+                .add(lPublicSeparatedListElementType);
+        return lPublicSeparatedListElementType;
     }
 
     public MTokenElementType newTokenElementType() {
 
         MTokenElementType lTokenElementType = new MTokenElementType();
-        this.ePublicElementType_TokenElementType.add(lTokenElementType);
+        this.ePublicElementType_PublicListElementType_PublicAlternatedListElementType_PublicSeparatedListElementType_TokenElementType
+                .add(lTokenElementType);
         return lTokenElementType;
     }
 
@@ -52,12 +86,15 @@ public class MPublicElementAccessor {
 
         StringBuilder sb = new StringBuilder();
         sb.append("  public ");
-        for (Object oPublicElementType_TokenElementType : this.ePublicElementType_TokenElementType) {
-            sb.append(oPublicElementType_TokenElementType.toString());
+        for (Object oPublicElementType_PublicListElementType_PublicAlternatedListElementType_PublicSeparatedListElementType_TokenElementType : this.ePublicElementType_PublicListElementType_PublicAlternatedListElementType_PublicSeparatedListElementType_TokenElementType) {
+            sb.append(oPublicElementType_PublicListElementType_PublicAlternatedListElementType_PublicSeparatedListElementType_TokenElementType
+                    .toString());
         }
         sb.append(" get_");
         sb.append(rElementName());
         sb.append("() {");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("    return this.e");
         sb.append(rElementName());

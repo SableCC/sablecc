@@ -48,7 +48,7 @@ public class MProductionLrTransitionTarget {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("    case T_");
+        sb.append("    case ");
         sb.append(rNodeType());
         sb.append(":");
         sb.append(System.getProperty("line.separator"));

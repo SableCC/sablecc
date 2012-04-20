@@ -54,7 +54,7 @@ public abstract class AlternativeTransformationListElement
 
     public abstract String getElement();
 
-    public abstract IReferencable getReference();
+    public abstract IReferencable getTargetReference();
 
     public abstract Token getLocation();
 
@@ -63,7 +63,9 @@ public abstract class AlternativeTransformationListElement
 
         private Type.SimpleType type;
 
-        private IReferencable reference;
+        private IReferencable targetReference;
+
+        private Parser.ParserElement originReference;
 
         public ReferenceElement(
                 Grammar grammar) {
@@ -83,15 +85,26 @@ public abstract class AlternativeTransformationListElement
         }
 
         @Override
-        public IReferencable getReference() {
+        public IReferencable getTargetReference() {
 
-            return this.reference;
+            return this.targetReference;
         }
 
-        protected void addReference(
+        protected void addTargetReference(
                 IReferencable reference) {
 
-            this.reference = reference;
+            this.targetReference = reference;
+        }
+
+        public Parser.ParserElement getOriginReference() {
+
+            return this.originReference;
+        }
+
+        protected void addOriginReference(
+                Parser.ParserElement reference) {
+
+            this.originReference = reference;
         }
 
         @Override
@@ -102,19 +115,25 @@ public abstract class AlternativeTransformationListElement
                         "constructType shouldn't be used twice");
             }
 
-            if (this.reference == null) {
+            if (this.targetReference == null) {
                 throw new InternalException(
                         "constructType shouldn't be called before reference resolution");
             }
 
-            if (this.reference instanceof Parser.ParserElement) {
-                this.type = ((Parser.ParserElement) this.reference).getType();
+            if (this.targetReference instanceof Parser.ParserElement) {
+                this.type = ((Parser.ParserElement) this.targetReference)
+                        .getType();
             }
             else {
-                this.type = ((ProductionTransformationElement) this.reference)
+                this.type = ((ProductionTransformationElement) this.targetReference)
                         .getType();
             }
 
+        }
+
+        public boolean isTransformed() {
+
+            return this.targetReference instanceof ProductionTransformationElement;
         }
 
     }
@@ -125,7 +144,7 @@ public abstract class AlternativeTransformationListElement
         private String element;
 
         public ImplicitReferenceElement(
-                IReferencable reference,
+                Parser.ParserElement reference,
                 Grammar grammar) {
 
             super(grammar);
@@ -134,7 +153,8 @@ public abstract class AlternativeTransformationListElement
                 throw new InternalException("referenceText may not be null");
             }
 
-            super.addReference(reference);
+            super.addOriginReference(reference);
+            super.addTargetReference(reference);
         }
 
         @Override
@@ -148,33 +168,35 @@ public abstract class AlternativeTransformationListElement
         @Override
         public String getElement() {
 
-            if (getReference() instanceof INameDeclaration) {
-                this.element = ((INameDeclaration) getReference()).getName();
+            if (getTargetReference() instanceof INameDeclaration) {
+                this.element = ((INameDeclaration) getTargetReference())
+                        .getName();
             }
-            else if (getReference() instanceof Parser.ParserAlternative) {
-                this.element = ((Parser.ParserAlternative) getReference())
+            else if (getTargetReference() instanceof Parser.ParserAlternative) {
+                this.element = ((Parser.ParserAlternative) getTargetReference())
                         .getName();
                 if (this.element == null) {
                     this.element = "{"
-                            + ((Parser.ParserAlternative) getReference())
+                            + ((Parser.ParserAlternative) getTargetReference())
                                     .getIndex() + "}";
                 }
             }
-            else if (getReference() instanceof Tree.TreeAlternative) {
-                this.element = ((Tree.TreeAlternative) getReference())
+            else if (getTargetReference() instanceof Tree.TreeAlternative) {
+                this.element = ((Tree.TreeAlternative) getTargetReference())
                         .getName();
                 if (this.element == null) {
                     this.element = "{"
-                            + ((Tree.TreeAlternative) getReference())
+                            + ((Tree.TreeAlternative) getTargetReference())
                                     .getIndex() + "}";
                 }
             }
-            else if (getReference() instanceof Parser.ParserElement) {
-                this.element = ((Parser.ParserElement) getReference())
+            else if (getTargetReference() instanceof Parser.ParserElement) {
+                this.element = ((Parser.ParserElement) getTargetReference())
                         .getElement();
             }
-            else if (getReference() instanceof Tree.TreeElement) {
-                this.element = ((Tree.TreeElement) getReference()).getElement();
+            else if (getTargetReference() instanceof Tree.TreeElement) {
+                this.element = ((Tree.TreeElement) getTargetReference())
+                        .getElement();
             }
 
             return this.element;
@@ -183,7 +205,7 @@ public abstract class AlternativeTransformationListElement
         @Override
         public Token getLocation() {
 
-            return getReference().getLocation();
+            return getTargetReference().getLocation();
         }
     }
 
@@ -213,27 +235,39 @@ public abstract class AlternativeTransformationListElement
         }
 
         @Override
-        public IReferencable getReference() {
+        public IReferencable getTargetReference() {
 
-            if (super.getReference() == null) {
+            if (super.getTargetReference() == null) {
                 throw new InternalException(
                         "reference should have been initialized using addReference");
             }
 
-            return super.getReference();
+            return super.getTargetReference();
 
         }
 
         @Override
-        public void addReference(
+        public void addTargetReference(
                 IReferencable reference) {
 
-            if (super.getReference() != null) {
+            if (super.getTargetReference() != null) {
                 throw new InternalException(
                         "addReference shouldn't be used twice");
             }
 
-            super.addReference(reference);
+            super.addTargetReference(reference);
+        }
+
+        @Override
+        public void addOriginReference(
+                Parser.ParserElement reference) {
+
+            if (super.getOriginReference() != null) {
+                throw new InternalException(
+                        "addReference shouldn't be used twice");
+            }
+
+            super.addOriginReference(reference);
         }
 
         @Override
@@ -300,7 +334,7 @@ public abstract class AlternativeTransformationListElement
         public abstract List<AlternativeTransformationElement> getParameters();
 
         @Override
-        public Tree.TreeAlternative getReference() {
+        public Tree.TreeAlternative getTargetReference() {
 
             return this.reference;
         }
@@ -377,13 +411,13 @@ public abstract class AlternativeTransformationListElement
         @Override
         public String getElement() {
 
-            return getReference().getName();
+            return getTargetReference().getName();
         }
 
         @Override
         public Token getLocation() {
 
-            return getReference().getLocation();
+            return getTargetReference().getLocation();
         }
     }
 
@@ -427,21 +461,21 @@ public abstract class AlternativeTransformationListElement
         }
 
         @Override
-        public Tree.TreeAlternative getReference() {
+        public Tree.TreeAlternative getTargetReference() {
 
-            if (super.getReference() == null) {
+            if (super.getTargetReference() == null) {
                 throw new InternalException(
                         "reference should have been initialized using addReference");
             }
 
-            return super.getReference();
+            return super.getTargetReference();
         }
 
         @Override
         public void addReference(
                 Tree.TreeAlternative reference) {
 
-            if (super.getReference() != null) {
+            if (super.getTargetReference() != null) {
                 throw new InternalException(
                         "addReference shouldn't be used twice");
             }
@@ -486,7 +520,9 @@ public abstract class AlternativeTransformationListElement
 
         private Type.SimpleType type;
 
-        private IReferencable reference;
+        private IReferencable targetReference;
+
+        private Parser.ParserElement originReference;
 
         public NormalListElement(
                 Grammar grammar) {
@@ -505,15 +541,26 @@ public abstract class AlternativeTransformationListElement
         }
 
         @Override
-        public IReferencable getReference() {
+        public IReferencable getTargetReference() {
 
-            return this.reference;
+            return this.targetReference;
         }
 
-        protected void addReference(
+        public Parser.ParserElement getOriginReference() {
+
+            return this.originReference;
+        }
+
+        protected void addTargetReference(
                 IReferencable reference) {
 
-            this.reference = reference;
+            this.targetReference = reference;
+        }
+
+        protected void addOriginReference(
+                Parser.ParserElement reference) {
+
+            this.originReference = reference;
         }
 
         @Override
@@ -524,7 +571,7 @@ public abstract class AlternativeTransformationListElement
                         "constructType shouldn't be used twice");
             }
 
-            if (this.reference == null) {
+            if (this.targetReference == null) {
                 throw new InternalException(
                         "constructType shouldn't be called before reference resolution");
             }
@@ -533,25 +580,25 @@ public abstract class AlternativeTransformationListElement
             String rightName;
             String leftName = null;
 
-            if (this.reference instanceof Parser.ParserElement) {
-                Parser.ParserElement parserElement = (Parser.ParserElement) this.reference;
+            if (this.targetReference instanceof Parser.ParserElement) {
+                Parser.ParserElement parserElement = (Parser.ParserElement) this.targetReference;
                 cardinality = parserElement.getCardinality();
 
                 switch (parserElement.getElementType()) {
                 case NORMAL:
-                    rightName = ((Parser.ParserElement.SingleElement) this.reference)
+                    rightName = ((Parser.ParserElement.SingleElement) this.targetReference)
                             .getElement();
                     break;
                 case SEPARATED:
-                    rightName = ((Parser.ParserElement.DoubleElement) this.reference)
+                    rightName = ((Parser.ParserElement.DoubleElement) this.targetReference)
                             .getRight();
-                    leftName = ((Parser.ParserElement.DoubleElement) this.reference)
+                    leftName = ((Parser.ParserElement.DoubleElement) this.targetReference)
                             .getLeft();
                     break;
                 case ALTERNATED:
-                    rightName = ((Parser.ParserElement.DoubleElement) this.reference)
+                    rightName = ((Parser.ParserElement.DoubleElement) this.targetReference)
                             .getRight();
-                    leftName = ((Parser.ParserElement.DoubleElement) this.reference)
+                    leftName = ((Parser.ParserElement.DoubleElement) this.targetReference)
                             .getLeft();
                     break;
                 default:
@@ -561,11 +608,11 @@ public abstract class AlternativeTransformationListElement
             }
             else {
 
-                ProductionTransformationElement transformationElement = (ProductionTransformationElement) this.reference;
+                ProductionTransformationElement transformationElement = (ProductionTransformationElement) this.targetReference;
                 cardinality = transformationElement.getCardinality();
 
                 if (transformationElement instanceof ProductionTransformationElement.SingleElement) {
-                    rightName = ((ProductionTransformationElement) this.reference)
+                    rightName = ((ProductionTransformationElement) this.targetReference)
                             .getElement();
                 }
                 else {
@@ -577,10 +624,11 @@ public abstract class AlternativeTransformationListElement
 
             }
 
-            if (this.reference instanceof Parser.ParserElement
-                    && ((Parser.ParserElement) this.reference).getElementType() == Parser.ParserElement.ElementType.SEPARATED
-                    || this.reference instanceof ProductionTransformationElement
-                    && ((ProductionTransformationElement) this.reference)
+            if (this.targetReference instanceof Parser.ParserElement
+                    && ((Parser.ParserElement) this.targetReference)
+                            .getElementType() == Parser.ParserElement.ElementType.SEPARATED
+                    || this.targetReference instanceof ProductionTransformationElement
+                    && ((ProductionTransformationElement) this.targetReference)
                             .getElementType() == ProductionTransformationElement.ElementType.SEPARATED) {
                 if (leftName == null) {
                     this.type = new Type.SimpleType.SeparatedType(rightName,
@@ -591,11 +639,12 @@ public abstract class AlternativeTransformationListElement
                             rightName, cardinality);
                 }
             }
-            else if (this.reference instanceof Parser.ParserElement
-                    && ((Parser.ParserElement) this.reference).getElementType() == ElementType.ALTERNATED
-                    || this.reference instanceof ProductionTransformationElement
-                    && ((ProductionTransformationElement) this.reference)
-                            .getElementType() == ProductionTransformationElement.ElementType.SEPARATED) {
+            else if (this.targetReference instanceof Parser.ParserElement
+                    && ((Parser.ParserElement) this.targetReference)
+                            .getElementType() == ElementType.ALTERNATED
+                    || this.targetReference instanceof ProductionTransformationElement
+                    && ((ProductionTransformationElement) this.targetReference)
+                            .getElementType() == ProductionTransformationElement.ElementType.ALTERNATED) {
                 if (leftName == null) {
                     this.type = new Type.SimpleType.AlternatedType(rightName,
                             cardinality);
@@ -656,6 +705,11 @@ public abstract class AlternativeTransformationListElement
             }
         }
 
+        public boolean isTransformed() {
+
+            return this.targetReference instanceof ProductionTransformationElement;
+        }
+
     }
 
     public static class ImplicitNormalListElement
@@ -664,7 +718,7 @@ public abstract class AlternativeTransformationListElement
         private String element;
 
         public ImplicitNormalListElement(
-                IReferencable reference,
+                Parser.ParserElement reference,
                 Grammar grammar) {
 
             super(grammar);
@@ -673,7 +727,9 @@ public abstract class AlternativeTransformationListElement
                 throw new InternalException("reference may not be null");
             }
 
-            super.addReference(reference);
+            super.addTargetReference(reference);
+            super.addOriginReference(reference);
+
         }
 
         @Override
@@ -687,33 +743,35 @@ public abstract class AlternativeTransformationListElement
         @Override
         public String getElement() {
 
-            if (getReference() instanceof INameDeclaration) {
-                this.element = ((INameDeclaration) getReference()).getName();
+            if (getTargetReference() instanceof INameDeclaration) {
+                this.element = ((INameDeclaration) getTargetReference())
+                        .getName();
             }
-            else if (getReference() instanceof Parser.ParserAlternative) {
-                this.element = ((Parser.ParserAlternative) getReference())
+            else if (getTargetReference() instanceof Parser.ParserAlternative) {
+                this.element = ((Parser.ParserAlternative) getTargetReference())
                         .getName();
                 if (this.element == null) {
                     this.element = "{"
-                            + ((Parser.ParserAlternative) getReference())
+                            + ((Parser.ParserAlternative) getTargetReference())
                                     .getIndex() + "}";
                 }
             }
-            else if (getReference() instanceof Tree.TreeAlternative) {
-                this.element = ((Tree.TreeAlternative) getReference())
+            else if (getTargetReference() instanceof Tree.TreeAlternative) {
+                this.element = ((Tree.TreeAlternative) getTargetReference())
                         .getName();
                 if (this.element == null) {
                     this.element = "{"
-                            + ((Tree.TreeAlternative) getReference())
+                            + ((Tree.TreeAlternative) getTargetReference())
                                     .getIndex() + "}";
                 }
             }
-            else if (getReference() instanceof Parser.ParserElement) {
-                this.element = ((Parser.ParserElement) getReference())
+            else if (getTargetReference() instanceof Parser.ParserElement) {
+                this.element = ((Parser.ParserElement) getTargetReference())
                         .getElement();
             }
-            else if (getReference() instanceof Tree.TreeElement) {
-                this.element = ((Tree.TreeElement) getReference()).getElement();
+            else if (getTargetReference() instanceof Tree.TreeElement) {
+                this.element = ((Tree.TreeElement) getTargetReference())
+                        .getElement();
             }
 
             this.element += "...";
@@ -724,7 +782,7 @@ public abstract class AlternativeTransformationListElement
         @Override
         public Token getLocation() {
 
-            return getReference().getLocation();
+            return getTargetReference().getLocation();
         }
     }
 
@@ -754,27 +812,51 @@ public abstract class AlternativeTransformationListElement
         }
 
         @Override
-        public IReferencable getReference() {
+        public IReferencable getTargetReference() {
 
-            if (super.getReference() == null) {
+            if (super.getTargetReference() == null) {
                 throw new InternalException(
                         "reference should have been initialized using addReference");
             }
 
-            return super.getReference();
+            return super.getTargetReference();
 
         }
 
         @Override
-        public void addReference(
+        public void addTargetReference(
                 IReferencable reference) {
 
-            if (super.getReference() != null) {
+            if (super.getTargetReference() != null) {
                 throw new InternalException(
                         "addReference shouldn't be used twice");
             }
 
-            super.addReference(reference);
+            super.addTargetReference(reference);
+        }
+
+        @Override
+        public Parser.ParserElement getOriginReference() {
+
+            if (super.getOriginReference() == null) {
+                throw new InternalException(
+                        "reference should have been initialized using addReference");
+            }
+
+            return super.getOriginReference();
+
+        }
+
+        @Override
+        public void addOriginReference(
+                Parser.ParserElement reference) {
+
+            if (super.getOriginReference() != null) {
+                throw new InternalException(
+                        "addReference shouldn't be used twice");
+            }
+
+            super.addOriginReference(reference);
         }
 
         @Override
@@ -824,7 +906,9 @@ public abstract class AlternativeTransformationListElement
     public static abstract class LeftListElement
             extends AlternativeTransformationListElement {
 
-        private IReferencable reference;
+        private IReferencable targetReference;
+
+        private Parser.ParserElement originReference;
 
         private Type.SimpleType type;
 
@@ -845,15 +929,26 @@ public abstract class AlternativeTransformationListElement
         }
 
         @Override
-        public IReferencable getReference() {
+        public IReferencable getTargetReference() {
 
-            return this.reference;
+            return this.targetReference;
         }
 
-        protected void addReference(
+        public Parser.ParserElement getOriginReference() {
+
+            return this.originReference;
+        }
+
+        protected void addTargetReference(
                 IReferencable reference) {
 
-            this.reference = reference;
+            this.targetReference = reference;
+        }
+
+        protected void addOriginReference(
+                Parser.ParserElement reference) {
+
+            this.originReference = reference;
         }
 
         @Override
@@ -864,19 +959,19 @@ public abstract class AlternativeTransformationListElement
                         "constructType shouldn't be used twice");
             }
 
-            if (this.reference == null) {
+            if (this.targetReference == null) {
                 throw new InternalException(
                         "constructType shouldn't be called before reference resolution");
             }
 
             Type referencedType;
 
-            if (this.reference instanceof Parser.ParserElement) {
-                referencedType = ((Parser.ParserElement) this.reference)
+            if (this.targetReference instanceof Parser.ParserElement) {
+                referencedType = ((Parser.ParserElement) this.targetReference)
                         .getType();
             }
             else {
-                referencedType = ((ProductionTransformationElement) this.reference)
+                referencedType = ((ProductionTransformationElement) this.targetReference)
                         .getType();
             }
 
@@ -969,6 +1064,11 @@ public abstract class AlternativeTransformationListElement
 
         }
 
+        public boolean isTransformed() {
+
+            return this.targetReference instanceof ProductionTransformationElement;
+        }
+
     }
 
     public static class ImplicitLeftListElement
@@ -977,7 +1077,7 @@ public abstract class AlternativeTransformationListElement
         private String element;
 
         public ImplicitLeftListElement(
-                IReferencable reference,
+                Parser.ParserElement reference,
                 Grammar grammar) {
 
             super(grammar);
@@ -986,7 +1086,8 @@ public abstract class AlternativeTransformationListElement
                 throw new InternalException("reference may not be null");
             }
 
-            super.addReference(reference);
+            super.addTargetReference(reference);
+            super.addOriginReference(reference);
         }
 
         @Override
@@ -1000,33 +1101,35 @@ public abstract class AlternativeTransformationListElement
         @Override
         public String getElement() {
 
-            if (getReference() instanceof INameDeclaration) {
-                this.element = ((INameDeclaration) getReference()).getName();
+            if (getTargetReference() instanceof INameDeclaration) {
+                this.element = ((INameDeclaration) getTargetReference())
+                        .getName();
             }
-            else if (getReference() instanceof Parser.ParserAlternative) {
-                this.element = ((Parser.ParserAlternative) getReference())
+            else if (getTargetReference() instanceof Parser.ParserAlternative) {
+                this.element = ((Parser.ParserAlternative) getTargetReference())
                         .getName();
                 if (this.element == null) {
                     this.element = "{"
-                            + ((Parser.ParserAlternative) getReference())
+                            + ((Parser.ParserAlternative) getTargetReference())
                                     .getIndex() + "}";
                 }
             }
-            else if (getReference() instanceof Tree.TreeAlternative) {
-                this.element = ((Tree.TreeAlternative) getReference())
+            else if (getTargetReference() instanceof Tree.TreeAlternative) {
+                this.element = ((Tree.TreeAlternative) getTargetReference())
                         .getName();
                 if (this.element == null) {
                     this.element = "{"
-                            + ((Tree.TreeAlternative) getReference())
+                            + ((Tree.TreeAlternative) getTargetReference())
                                     .getIndex() + "}";
                 }
             }
-            else if (getReference() instanceof Parser.ParserElement) {
-                this.element = ((Parser.ParserElement) getReference())
+            else if (getTargetReference() instanceof Parser.ParserElement) {
+                this.element = ((Parser.ParserElement) getTargetReference())
                         .getElement();
             }
-            else if (getReference() instanceof Tree.TreeElement) {
-                this.element = ((Tree.TreeElement) getReference()).getElement();
+            else if (getTargetReference() instanceof Tree.TreeElement) {
+                this.element = ((Tree.TreeElement) getTargetReference())
+                        .getElement();
             }
 
             this.element += ".Left...";
@@ -1037,7 +1140,7 @@ public abstract class AlternativeTransformationListElement
         @Override
         public Token getLocation() {
 
-            return getReference().getLocation();
+            return getTargetReference().getLocation();
         }
     }
 
@@ -1067,27 +1170,51 @@ public abstract class AlternativeTransformationListElement
         }
 
         @Override
-        public IReferencable getReference() {
+        public IReferencable getTargetReference() {
 
-            if (super.getReference() == null) {
+            if (super.getTargetReference() == null) {
                 throw new InternalException(
                         "reference should have been initialized using addReference");
             }
 
-            return super.getReference();
+            return super.getTargetReference();
 
         }
 
         @Override
-        public void addReference(
+        public void addTargetReference(
                 IReferencable reference) {
 
-            if (super.getReference() != null) {
+            if (super.getTargetReference() != null) {
                 throw new InternalException(
                         "addReference shouldn't be used twice");
             }
 
-            super.addReference(reference);
+            super.addTargetReference(reference);
+        }
+
+        @Override
+        public Parser.ParserElement getOriginReference() {
+
+            if (super.getOriginReference() == null) {
+                throw new InternalException(
+                        "reference should have been initialized using addReference");
+            }
+
+            return super.getOriginReference();
+
+        }
+
+        @Override
+        public void addOriginReference(
+                Parser.ParserElement reference) {
+
+            if (super.getOriginReference() != null) {
+                throw new InternalException(
+                        "addReference shouldn't be used twice");
+            }
+
+            super.addOriginReference(reference);
         }
 
         @Override
@@ -1137,7 +1264,9 @@ public abstract class AlternativeTransformationListElement
     public static abstract class RightListElement
             extends AlternativeTransformationListElement {
 
-        private IReferencable reference;
+        private IReferencable targetReference;
+
+        private Parser.ParserElement originReference;
 
         private Type.SimpleType type;
 
@@ -1158,15 +1287,26 @@ public abstract class AlternativeTransformationListElement
         }
 
         @Override
-        public IReferencable getReference() {
+        public IReferencable getTargetReference() {
 
-            return this.reference;
+            return this.targetReference;
         }
 
-        protected void addReference(
+        public Parser.ParserElement getOriginReference() {
+
+            return this.originReference;
+        }
+
+        protected void addTargetReference(
                 IReferencable reference) {
 
-            this.reference = reference;
+            this.targetReference = reference;
+        }
+
+        protected void addOriginReference(
+                Parser.ParserElement reference) {
+
+            this.originReference = reference;
         }
 
         @Override
@@ -1177,19 +1317,19 @@ public abstract class AlternativeTransformationListElement
                         "constructType shouldn't be used twice");
             }
 
-            if (this.reference == null) {
+            if (this.targetReference == null) {
                 throw new InternalException(
                         "constructType shouldn't be called before reference resolution");
             }
 
             Type referencedType;
 
-            if (this.reference instanceof Parser.ParserElement) {
-                referencedType = ((Parser.ParserElement) this.reference)
+            if (this.targetReference instanceof Parser.ParserElement) {
+                referencedType = ((Parser.ParserElement) this.targetReference)
                         .getType();
             }
             else {
-                referencedType = ((ProductionTransformationElement) this.reference)
+                referencedType = ((ProductionTransformationElement) this.targetReference)
                         .getType();
             }
 
@@ -1259,6 +1399,11 @@ public abstract class AlternativeTransformationListElement
             }
 
         }
+
+        public boolean isTransformed() {
+
+            return this.targetReference instanceof ProductionTransformationElement;
+        }
     }
 
     public static class ImplicitRightListElement
@@ -1267,7 +1412,7 @@ public abstract class AlternativeTransformationListElement
         private String element;
 
         public ImplicitRightListElement(
-                IReferencable reference,
+                Parser.ParserElement reference,
                 Grammar grammar) {
 
             super(grammar);
@@ -1276,7 +1421,8 @@ public abstract class AlternativeTransformationListElement
                 throw new InternalException("reference may not be null");
             }
 
-            super.addReference(reference);
+            super.addTargetReference(reference);
+            super.addOriginReference(reference);
         }
 
         @Override
@@ -1290,33 +1436,35 @@ public abstract class AlternativeTransformationListElement
         @Override
         public String getElement() {
 
-            if (getReference() instanceof INameDeclaration) {
-                this.element = ((INameDeclaration) getReference()).getName();
+            if (getTargetReference() instanceof INameDeclaration) {
+                this.element = ((INameDeclaration) getTargetReference())
+                        .getName();
             }
-            else if (getReference() instanceof Parser.ParserAlternative) {
-                this.element = ((Parser.ParserAlternative) getReference())
+            else if (getTargetReference() instanceof Parser.ParserAlternative) {
+                this.element = ((Parser.ParserAlternative) getTargetReference())
                         .getName();
                 if (this.element == null) {
                     this.element = "{"
-                            + ((Parser.ParserAlternative) getReference())
+                            + ((Parser.ParserAlternative) getTargetReference())
                                     .getIndex() + "}";
                 }
             }
-            else if (getReference() instanceof Tree.TreeAlternative) {
-                this.element = ((Tree.TreeAlternative) getReference())
+            else if (getTargetReference() instanceof Tree.TreeAlternative) {
+                this.element = ((Tree.TreeAlternative) getTargetReference())
                         .getName();
                 if (this.element == null) {
                     this.element = "{"
-                            + ((Tree.TreeAlternative) getReference())
+                            + ((Tree.TreeAlternative) getTargetReference())
                                     .getIndex() + "}";
                 }
             }
-            else if (getReference() instanceof Parser.ParserElement) {
-                this.element = ((Parser.ParserElement) getReference())
+            else if (getTargetReference() instanceof Parser.ParserElement) {
+                this.element = ((Parser.ParserElement) getTargetReference())
                         .getElement();
             }
-            else if (getReference() instanceof Tree.TreeElement) {
-                this.element = ((Tree.TreeElement) getReference()).getElement();
+            else if (getTargetReference() instanceof Tree.TreeElement) {
+                this.element = ((Tree.TreeElement) getTargetReference())
+                        .getElement();
             }
 
             this.element += ".Right...";
@@ -1327,7 +1475,7 @@ public abstract class AlternativeTransformationListElement
         @Override
         public Token getLocation() {
 
-            return getReference().getLocation();
+            return getTargetReference().getLocation();
         }
     }
 
@@ -1357,27 +1505,51 @@ public abstract class AlternativeTransformationListElement
         }
 
         @Override
-        public IReferencable getReference() {
+        public IReferencable getTargetReference() {
 
-            if (super.getReference() == null) {
+            if (super.getTargetReference() == null) {
                 throw new InternalException(
                         "reference should have been initialized using addReference");
             }
 
-            return super.getReference();
+            return super.getTargetReference();
 
         }
 
         @Override
-        public void addReference(
+        public void addTargetReference(
                 IReferencable reference) {
 
-            if (super.getReference() != null) {
+            if (super.getTargetReference() != null) {
                 throw new InternalException(
                         "addReference shouldn't be used twice");
             }
 
-            super.addReference(reference);
+            super.addTargetReference(reference);
+        }
+
+        @Override
+        public Parser.ParserElement getOriginReference() {
+
+            if (super.getOriginReference() == null) {
+                throw new InternalException(
+                        "reference should have been initialized using addReference");
+            }
+
+            return super.getOriginReference();
+
+        }
+
+        @Override
+        public void addOriginReference(
+                Parser.ParserElement reference) {
+
+            if (super.getOriginReference() != null) {
+                throw new InternalException(
+                        "addReference shouldn't be used twice");
+            }
+
+            super.addOriginReference(reference);
         }
 
         @Override

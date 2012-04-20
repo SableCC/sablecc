@@ -57,6 +57,185 @@ public class GrammarSimplificator
 
     }
 
+    // This method find a valid name for character declared inline
+    // that can't be used in a java identifier.
+    private static String computeValidName(
+            String name) {
+
+        StringBuilder sb = new StringBuilder();
+
+        // TODO Complete these list
+
+        for (char c : name.toCharArray()) {
+
+            switch (c) {
+
+            case ',':
+                sb.append("comma");
+                break;
+            case '_':
+                sb.append("underscore");
+                break;
+            case '.':
+                sb.append("period");
+                break;
+            case ':':
+                sb.append("semicolon");
+                break;
+            case '?':
+                sb.append("questionMark");
+                break;
+            case '+':
+                sb.append("plus");
+                break;
+            case '-':
+                sb.append("minus");
+                break;
+            case '*':
+                sb.append("star");
+                break;
+            case '/':
+                sb.append("slash");
+                break;
+            default:
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String computeNewProductionName(
+            Element sourceElement,
+            CardinalityInterval cardinality) {
+
+        String name = sourceElement.getTypeName();
+
+        if (sourceElement.getTypeName().startsWith("'")) {
+            name = computeValidName(name.substring(1, name.length() - 1));
+        }
+
+        name = "$" + name;
+
+        if (cardinality.equals(CardinalityInterval.ZERO_ONE)) {
+            name += "_qmark";
+        }
+        else if (cardinality.equals(CardinalityInterval.ZERO_OR_MORE)) {
+            name += "_star";
+        }
+        else if (cardinality.equals(CardinalityInterval.ONE_OR_MORE)) {
+            name += "_plus";
+
+        }
+        else if (cardinality.isANumber()) {
+            name += "_" + cardinality.getLowerBound().getValue();
+        }
+        else if (cardinality.upperBoundIsInfinite()) {
+            name += "_" + cardinality.getLowerBound().getValue();
+        }
+        else {
+            name += "_from" + cardinality.getLowerBound().getValue() + "to"
+                    + cardinality.getUpperBound().getValue();
+        }
+
+        return name;
+    }
+
+    private static String computeNewSeparatedProductionName(
+            Element leftSourceElement,
+            Element rightSourceElement,
+            CardinalityInterval cardinality) {
+
+        String name = leftSourceElement.getTypeName();
+
+        if (leftSourceElement.getTypeName().startsWith("'")) {
+            name = computeValidName(name.substring(1, name.length() - 1));
+        }
+
+        name += "_SeparatedBy_";
+
+        if (rightSourceElement.getTypeName().startsWith("'")) {
+            name += computeValidName(rightSourceElement
+                    .getTypeName()
+                    .substring(1, rightSourceElement.getTypeName().length() - 1));
+        }
+        else {
+            name += rightSourceElement.getTypeName();
+        }
+
+        name = "$" + name;
+
+        if (cardinality.equals(CardinalityInterval.ZERO_ONE)) {
+            name += "_qmark";
+        }
+        else if (cardinality.equals(CardinalityInterval.ZERO_OR_MORE)) {
+            name += "_star";
+        }
+        else if (cardinality.equals(CardinalityInterval.ONE_OR_MORE)) {
+            name += "_plus";
+
+        }
+        else if (cardinality.isANumber()) {
+            name += "_" + cardinality.getLowerBound().getValue();
+        }
+        else if (cardinality.upperBoundIsInfinite()) {
+            name += "_" + cardinality.getLowerBound().getValue();
+        }
+        else {
+            name += "_from" + cardinality.getLowerBound().getValue() + "to"
+                    + cardinality.getUpperBound().getValue();
+        }
+
+        return name;
+    }
+
+    private static String computeNewAlternatedProductionName(
+            Element leftSourceElement,
+            Element rightSourceElement,
+            CardinalityInterval cardinality) {
+
+        String name = leftSourceElement.getTypeName();
+
+        if (leftSourceElement.getTypeName().startsWith("'")) {
+            name = computeValidName(name.substring(1, name.length() - 1));
+        }
+
+        name += "_";
+
+        if (rightSourceElement.getTypeName().startsWith("'")) {
+            name += computeValidName(rightSourceElement
+                    .getTypeName()
+                    .substring(1, rightSourceElement.getTypeName().length() - 1));
+        }
+        else {
+            name += rightSourceElement.getTypeName();
+        }
+
+        name = "$" + name;
+
+        if (cardinality.equals(CardinalityInterval.ZERO_ONE)) {
+            name += "_qmark";
+        }
+        else if (cardinality.equals(CardinalityInterval.ZERO_OR_MORE)) {
+            name += "_star";
+        }
+        else if (cardinality.equals(CardinalityInterval.ONE_OR_MORE)) {
+            name += "_plus";
+
+        }
+        else if (cardinality.isANumber()) {
+            name += "_" + cardinality.getLowerBound().getValue();
+        }
+        else if (cardinality.upperBoundIsInfinite()) {
+            name += "_" + cardinality.getLowerBound().getValue();
+        }
+        else {
+            name += "_from" + cardinality.getLowerBound().getValue() + "to"
+                    + cardinality.getUpperBound().getValue();
+        }
+
+        return name;
+    }
+
     @Override
     public void visitParserProduction(
             ParserProduction node) {
@@ -119,7 +298,7 @@ public class GrammarSimplificator
 
         if (node.getTransformation() != null) {
             new AlternativeTransformationBuilder(alternative,
-                    node.getTransformation());
+                    node.getTransformation(), grammar);
         }
         else { // Grammar hasn't Tree
             LinkedList<SAlternativeTransformationElement> transformationElements = new LinkedList<SAlternativeTransformationElement>();
@@ -127,9 +306,99 @@ public class GrammarSimplificator
             LinkedList<SAlternativeTransformationElement> newElements = new LinkedList<SAlternativeTransformationElement>();
 
             for (Element element : alternative.getElements()) {
-                newElements
-                        .add(new SAlternativeTransformationElement.ReferenceElement(
-                                element));
+                if (element instanceof Element.ProductionElement) {
+                    Element.ProductionElement productionElement = (Element.ProductionElement) element;
+
+                    SProductionTransformationElement targetProdTransformation = productionElement
+                            .getReference().getTransformation().getElements()
+                            .get(0);
+
+                    if (targetProdTransformation instanceof SProductionTransformationElement.NormalElement) {
+                        SProductionTransformationElement.NormalElement normalElement = (SProductionTransformationElement.NormalElement) targetProdTransformation;
+
+                        if (normalElement.getCardinality().equals(
+                                CardinalityInterval.ONE_ONE)
+                                || normalElement.getCardinality().equals(
+                                        CardinalityInterval.ZERO_ONE)) {
+
+                            if (normalElement.getName().equals(
+                                    productionElement.getReference().getName())) {
+                                newElements
+                                        .add(new SAlternativeTransformationElement.ReferenceElement(
+                                                element, element));
+                            }
+                            else {
+                                newElements
+                                        .add(new SAlternativeTransformationElement.ReferenceElement(
+                                                element,
+                                                targetProdTransformation));
+                            }
+
+                        }
+                        else {
+
+                            List<SAlternativeTransformationListElement> listElements = new LinkedList<SAlternativeTransformationListElement>();
+                            listElements
+                                    .add(new SAlternativeTransformationListElement.NormalListElement(
+                                            element, targetProdTransformation));
+                            newElements
+                                    .add(new SAlternativeTransformationElement.ListElement(
+                                            listElements,
+                                            new Type.SimpleType.HomogeneousType(
+                                                    normalElement.getName(),
+                                                    normalElement
+                                                            .getCardinality())));
+
+                        }
+                    }
+                    else if (targetProdTransformation instanceof SProductionTransformationElement.SeparatedElement) {
+
+                        SProductionTransformationElement.SeparatedElement separatedElement = (SProductionTransformationElement.SeparatedElement) targetProdTransformation;
+
+                        List<SAlternativeTransformationListElement> listElements = new LinkedList<SAlternativeTransformationListElement>();
+                        listElements
+                                .add(new SAlternativeTransformationListElement.NormalListElement(
+                                        element, targetProdTransformation));
+                        newElements
+                                .add(new SAlternativeTransformationElement.ListElement(
+                                        listElements,
+                                        new Type.SimpleType.SeparatedType(
+                                                separatedElement.getLeftName(),
+                                                separatedElement.getRightName(),
+                                                separatedElement
+                                                        .getCardinality())));
+
+                    }
+                    else if (targetProdTransformation instanceof SProductionTransformationElement.AlternatedElement) {
+
+                        SProductionTransformationElement.AlternatedElement alternatedElement = (SProductionTransformationElement.AlternatedElement) targetProdTransformation;
+
+                        List<SAlternativeTransformationListElement> listElements = new LinkedList<SAlternativeTransformationListElement>();
+                        listElements
+                                .add(new SAlternativeTransformationListElement.NormalListElement(
+                                        element, targetProdTransformation));
+                        newElements
+                                .add(new SAlternativeTransformationElement.ListElement(
+                                        listElements,
+                                        new Type.SimpleType.AlternatedType(
+                                                alternatedElement.getLeftName(),
+                                                alternatedElement
+                                                        .getRightName(),
+                                                alternatedElement
+                                                        .getCardinality())));
+
+                    }
+                    else {
+                        throw new InternalException(
+                                "Unexpected production transformation element type");
+                    }
+                }
+                else {
+                    newElements
+                            .add(new SAlternativeTransformationElement.ReferenceElement(
+                                    element, element));
+                }
+
             }
             transformationElements
                     .add(new SAlternativeTransformationElement.NewElement(node,
@@ -165,11 +434,13 @@ public class GrammarSimplificator
                             .getText();
 
                     simpleElement = new Element.ProductionElement(
+                            node.getName(),
                             GrammarSimplificator.grammar
                                     .getProduction(prodName));
                 }
                 else {
-                    simpleElement = new Element.TokenElement(unit);
+                    simpleElement = new Element.TokenElement(node.getName(),
+                            unit);
                 }
 
                 if (node.getCardinality().equals(CardinalityInterval.ONE_ONE)) {
@@ -177,8 +448,8 @@ public class GrammarSimplificator
                 }
                 else {
                     Element complexElement = new Element.ProductionElement(
-                            newNormalProduction(node, simpleElement,
-                                    node.getCardinality()));
+                            node.getName(), newNormalProduction(node,
+                                    simpleElement, node.getCardinality()));
                     this.elements.add(complexElement);
                 }
 
@@ -212,11 +483,11 @@ public class GrammarSimplificator
                 String prodName = ((ANameUnit) leftUnit).getIdentifier()
                         .getText();
 
-                leftSimpleElement = new Element.ProductionElement(
+                leftSimpleElement = new Element.ProductionElement("",
                         GrammarSimplificator.grammar.getProduction(prodName));
             }
             else {
-                leftSimpleElement = new Element.TokenElement(leftUnit);
+                leftSimpleElement = new Element.TokenElement("", leftUnit);
             }
 
             Element rightSimpleElement;
@@ -225,18 +496,18 @@ public class GrammarSimplificator
                 String prodName = ((ANameUnit) rightUnit).getIdentifier()
                         .getText();
 
-                rightSimpleElement = new Element.ProductionElement(
+                rightSimpleElement = new Element.ProductionElement("",
                         GrammarSimplificator.grammar.getProduction(prodName));
             }
             else {
-                rightSimpleElement = new Element.TokenElement(rightUnit);
+                rightSimpleElement = new Element.TokenElement("", rightUnit);
             }
 
             if (node.getCardinality().equals(CardinalityInterval.ONE_ONE)) {
                 this.elements.add(leftSimpleElement);
             }
             else {
-                Element complexElement = new Element.ProductionElement(
+                Element complexElement = new Element.ProductionElement("",
                         newSeparatedProduction(node, leftSimpleElement,
                                 rightSimpleElement, node.getCardinality()));
                 this.elements.add(complexElement);
@@ -258,11 +529,11 @@ public class GrammarSimplificator
                 String prodName = ((ANameUnit) leftUnit).getIdentifier()
                         .getText();
 
-                leftSimpleElement = new Element.ProductionElement(
+                leftSimpleElement = new Element.ProductionElement("",
                         GrammarSimplificator.grammar.getProduction(prodName));
             }
             else {
-                leftSimpleElement = new Element.TokenElement(leftUnit);
+                leftSimpleElement = new Element.TokenElement("", leftUnit);
             }
 
             Element rightSimpleElement;
@@ -271,11 +542,11 @@ public class GrammarSimplificator
                 String prodName = ((ANameUnit) rightUnit).getIdentifier()
                         .getText();
 
-                rightSimpleElement = new Element.ProductionElement(
+                rightSimpleElement = new Element.ProductionElement("",
                         GrammarSimplificator.grammar.getProduction(prodName));
             }
             else {
-                rightSimpleElement = new Element.TokenElement(rightUnit);
+                rightSimpleElement = new Element.TokenElement("", rightUnit);
             }
 
             if (node.getCardinality().equals(CardinalityInterval.ONE_ONE)) {
@@ -283,7 +554,7 @@ public class GrammarSimplificator
                 this.elements.add(rightSimpleElement);
             }
             else {
-                Element complexElement = new Element.ProductionElement(
+                Element complexElement = new Element.ProductionElement("",
                         newAlternatedProduction(node, leftSimpleElement,
                                 rightSimpleElement, node.getCardinality()));
                 this.elements.add(complexElement);
@@ -303,34 +574,7 @@ public class GrammarSimplificator
         }
 
         Production production;
-        String name;
-
-        if (cardinality.equals(CardinalityInterval.ZERO_ONE)) {
-            name = element.getTypeName() + "_?";
-        }
-        else if (cardinality.equals(CardinalityInterval.ONE_OR_MORE)) {
-            name = element.getTypeName() + "_+";
-        }
-        else if (cardinality.equals(CardinalityInterval.ZERO_OR_MORE)) {
-            name = element.getTypeName() + "_*";
-        }
-        else if (cardinality.isANumber()) {
-            BigInteger number = cardinality.getLowerBound().getValue();
-            name = element.getTypeName() + "_" + number.toString();
-        }
-        else if (cardinality.upperBoundIsInfinite()) {
-            BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
-            name = element.getTypeName() + "_" + lowerBoundValue.toString()
-                    + "...";
-        }
-        else {
-
-            BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
-            BigInteger upperBoundValue = cardinality.getUpperBound().getValue();
-
-            name = element.getTypeName() + "_" + lowerBoundValue.toString()
-                    + ".." + upperBoundValue.toString();
-        }
+        String name = computeNewProductionName(element, cardinality);
 
         if (grammar.containsProduction(name)) {
             production = grammar.getProduction(name);
@@ -361,39 +605,8 @@ public class GrammarSimplificator
                     "cardinality shouldn't be (1,1) or (0,0) in newNormalProduction");
         }
 
-        String name;
-
-        if (cardinality.equals(CardinalityInterval.ONE_OR_MORE)) {
-            name = leftElement.getTypeName() + " Separator "
-                    + rightElement.getTypeName() + "_+";
-
-        }
-        else if (cardinality.equals(CardinalityInterval.ZERO_OR_MORE)) {
-            name = leftElement.getTypeName() + " Separator "
-                    + rightElement.getTypeName() + "_*";
-
-        }
-        else if (cardinality.equals(cardinality.isANumber())) {
-            BigInteger number = cardinality.getLowerBound().getValue();
-            name = leftElement + " Separator " + rightElement + "_"
-                    + number.toString();
-        }
-        else if (cardinality.upperBoundIsInfinite()) {
-            BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
-
-            name = leftElement.getTypeName() + " Separator "
-                    + rightElement.getTypeName() + "_"
-                    + lowerBoundValue.toString() + "...";
-        }
-        else {
-            BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
-            BigInteger upperBoundValue = cardinality.getUpperBound().getValue();
-
-            name = leftElement.getTypeName() + " Separator " + rightElement
-                    + "_" + lowerBoundValue.toString() + ".."
-                    + upperBoundValue.toString();
-
-        }
+        String name = computeNewSeparatedProductionName(leftElement,
+                rightElement, cardinality);
 
         Production production;
 
@@ -420,38 +633,8 @@ public class GrammarSimplificator
                     "cardinality shouldn't be (1,1) or (0,0) in newAlternatedProduction");
         }
 
-        String name;
-
-        if (cardinality.equals(CardinalityInterval.ONE_OR_MORE)) {
-            name = leftElement.getTypeName() + rightElement.getTypeName()
-                    + "_+";
-        }
-
-        if (cardinality.equals(CardinalityInterval.ZERO_OR_MORE)) {
-            name = leftElement.getTypeName() + rightElement.getTypeName()
-                    + "_*";
-        }
-        else if (cardinality.isANumber()) {
-            BigInteger number = cardinality.getLowerBound().getValue();
-            name = leftElement.getTypeName() + rightElement.getTypeName() + "_"
-                    + number.toString();
-
-        }
-        else if (cardinality.upperBoundIsInfinite()) {
-            BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
-            name = leftElement.getTypeName() + rightElement.getTypeName() + "_"
-                    + lowerBoundValue.toString() + "...";
-        }
-        else {
-
-            BigInteger lowerBoundValue = cardinality.getLowerBound().getValue();
-            BigInteger upperBoundValue = cardinality.getUpperBound().getValue();
-
-            name = leftElement.getTypeName() + rightElement.getTypeName() + "_"
-                    + lowerBoundValue.toString() + ".."
-                    + upperBoundValue.toString();
-
-        }
+        String name = computeNewAlternatedProductionName(leftElement,
+                rightElement, cardinality);
 
         if (grammar.containsProduction(name)) {
             return grammar.getProduction(name);
@@ -472,6 +655,8 @@ public class GrammarSimplificator
 
         private Production newProduction;
 
+        private SProductionTransformation newTransformation;
+
         private SGrammar grammar;
 
         public NormalProductionBuilder(
@@ -487,6 +672,22 @@ public class GrammarSimplificator
 
             if (parserElement.getElementType() == ElementType.DANGLING) {
                 throw new InternalException("The element shouldn't be dangling");
+            }
+
+            if (parserElement.getReference() instanceof Token) {
+                this.newTransformation = new SProductionTransformation(null,
+                        this.parserElement.getElement(), this.parserElement,
+                        this.cardinality);
+            }
+            else if (parserElement.getReference() instanceof Parser.ParserProduction) {
+                Parser.ParserProduction parserProduction = (Parser.ParserProduction) parserElement
+                        .getReference();
+                this.newTransformation = new SProductionTransformation(null);
+                this.newTransformation.addElement(
+                        parserProduction.getTransformation().getElements()
+                                .get(0),
+                        parserProduction.getTransformation().getElements()
+                                .get(0).getCardinality().union(cardinality));
             }
 
             if (cardinality.equals(CardinalityInterval.ZERO_ONE)) {
@@ -509,9 +710,8 @@ public class GrammarSimplificator
                 intervalCase();
             }
 
-            this.newProduction.addTransformation(new SProductionTransformation(
-                    this.newProduction, this.parserElement.getElement(),
-                    this.parserElement, this.cardinality));
+            this.newTransformation.addProduction(this.newProduction);
+            this.newProduction.addTransformation(this.newTransformation);
 
             this.grammar.addProduction(this.newProduction);
 
@@ -524,13 +724,20 @@ public class GrammarSimplificator
 
         private void qmarkCase() {
 
-            String qmarkName = this.sElement.getTypeName() + "_?";
+            String qmarkName = computeNewProductionName(this.sElement,
+                    this.cardinality);
 
             Production qmarkProd = new Production(
                     this.grammar.getNextProductionId(), qmarkName);
 
-            qmarkProd.addAlternative(newAlternative(qmarkProd,
-                    this.sElement.clone()));
+            LinkedList<Element> elements = new LinkedList<Element>();
+            elements.add(this.sElement.clone());
+            Alternative firstAlternative = new Alternative(qmarkProd, elements);
+
+            firstAlternative.addTransformation(new SAlternativeTransformation(
+                    firstAlternative, elements));
+
+            qmarkProd.addAlternative(firstAlternative);
             qmarkProd.addAlternative(new Alternative(qmarkProd));
 
             this.newProduction = qmarkProd;
@@ -539,7 +746,8 @@ public class GrammarSimplificator
 
         private void plusCase() {
 
-            String plusName = this.sElement.getTypeName() + "_+";
+            String plusName = computeNewProductionName(this.sElement,
+                    this.cardinality);
 
             Production plusProd = new Production(
                     this.grammar.getNextProductionId(), plusName);
@@ -549,17 +757,18 @@ public class GrammarSimplificator
             LinkedList<Element> firstAlternativeElements = new LinkedList<Element>();
             LinkedList<SAlternativeTransformationListElement> firstAltTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
 
-            Element firstElement = new Element.ProductionElement(plusProd);
+            Element firstElement = new Element.ProductionElement("", plusProd);
             firstAlternativeElements.add(firstElement);
             firstAltTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            firstElement));
+                            firstElement, this.newTransformation.getElements()
+                                    .get(0)));
 
             Element secondElement = this.sElement.clone();
             firstAlternativeElements.add(secondElement);
             firstAltTransformationElements
                     .add(new SAlternativeTransformationListElement.ReferenceElement(
-                            secondElement));
+                            secondElement, secondElement));
 
             plusProd.addAlternative(newListAlternative(plusProd,
                     firstAlternativeElements, firstAltTransformationElements));
@@ -571,6 +780,7 @@ public class GrammarSimplificator
             secondAlternativeElements.add(this.sElement.clone());
             secondAltTransformationElements
                     .add(new SAlternativeTransformationListElement.ReferenceElement(
+                            secondAlternativeElements.get(0),
                             secondAlternativeElements.get(0)));
             plusProd.addAlternative(newListAlternative(plusProd,
                     secondAlternativeElements, secondAltTransformationElements));
@@ -581,17 +791,19 @@ public class GrammarSimplificator
 
         private void starCase() {
 
-            String starName = this.sElement.getTypeName() + "_*";
+            String starName = computeNewProductionName(this.sElement,
+                    this.cardinality);
 
             Production starProd = new Production(
                     this.grammar.getNextProductionId(), starName);
 
             // First Alternative
-            String plusName = this.sElement.getTypeName() + "_+";
+            String plusName = computeNewProductionName(this.sElement,
+                    CardinalityInterval.ONE_OR_MORE);
 
-            Element firstElement;
+            Element.ProductionElement firstElement;
             if (this.grammar.containsProduction(plusName)) {
-                firstElement = new Element.ProductionElement(
+                firstElement = new Element.ProductionElement("",
                         this.grammar.getProduction(plusName));
             }
             else {
@@ -606,7 +818,8 @@ public class GrammarSimplificator
             firstAlternativeElements.add(firstElement);
             firstAltTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            firstElement));
+                            firstElement, firstElement.getReference()
+                                    .getTransformation().getElements().get(0)));
 
             starProd.addAlternative(newListAlternative(starProd,
                     firstAlternativeElements, firstAltTransformationElements));
@@ -621,8 +834,8 @@ public class GrammarSimplificator
         private void numberCase() {
 
             BigInteger number = this.cardinality.getLowerBound().getValue();
-            String numberName = this.sElement.getTypeName() + "_"
-                    + number.toString();
+            String numberName = computeNewProductionName(this.sElement,
+                    this.cardinality);
 
             Production numberProd = new Production(
                     this.grammar.getNextProductionId(), numberName);
@@ -636,30 +849,35 @@ public class GrammarSimplificator
                 LinkedList<SAlternativeTransformationListElement> alternativeTransformationElement = new LinkedList<SAlternativeTransformationListElement>();
                 alternativeTransformationElement
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                alternativeElements.get(0)));
+                                alternativeElements.get(0), alternativeElements
+                                        .get(0)));
                 alternativeTransformationElement
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                alternativeElements.get(1)));
+                                alternativeElements.get(1), alternativeElements
+                                        .get(1)));
 
                 numberProd.addAlternative(newListAlternative(numberProd,
                         alternativeElements, alternativeTransformationElement));
             }
             else {
-                String previousNumberName = this.sElement.getTypeName() + "_"
-                        + number.subtract(BigInteger.ONE).toString();
+                String previousNumberName = computeNewProductionName(
+                        this.sElement, this.cardinality);
 
                 Element firstElement;
                 if (this.grammar.containsProduction(previousNumberName)) {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             this.grammar.getProduction(previousNumberName));
                 }
                 else {
                     Production previousNumberProd = newNormalProduction(
-                            this.parserElement, this.sElement,
+                            this.parserElement,
+                            this.sElement,
                             new CardinalityInterval(this.cardinality
-                                    .getLowerBound().subtract(BigInteger.ONE)));
+                                    .getLowerBound().subtract(BigInteger.ONE),
+                                    this.cardinality.getLowerBound().subtract(
+                                            BigInteger.ONE)));
 
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             previousNumberProd);
                 }
 
@@ -670,10 +888,11 @@ public class GrammarSimplificator
                 LinkedList<SAlternativeTransformationListElement> alternativeTransformationElement = new LinkedList<SAlternativeTransformationListElement>();
                 alternativeTransformationElement
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                firstElement));
+                                firstElement, firstElement));
                 alternativeTransformationElement
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                alternativeElements.get(1)));
+                                alternativeElements.get(1), alternativeElements
+                                        .get(1)));
 
                 numberProd.addAlternative(newListAlternative(numberProd,
                         alternativeElements, alternativeTransformationElement));
@@ -685,24 +904,23 @@ public class GrammarSimplificator
 
         private void atLeastCase() {
 
-            BigInteger lowerBoundValue = this.cardinality.getLowerBound()
-                    .getValue();
-            String atLeastName = this.sElement.getTypeName() + "_"
-                    + lowerBoundValue.toString() + "...";
+            String atLeastName = computeNewProductionName(this.sElement,
+                    this.cardinality);
 
             Production atLeastProd = new Production(
                     this.grammar.getNextProductionId(), atLeastName);
 
-            String numberName = this.sElement.getTypeName() + "_"
-                    + lowerBoundValue.toString();
+            String numberName = computeNewProductionName(this.sElement,
+                    new CardinalityInterval(this.cardinality.getLowerBound(),
+                            this.cardinality.getLowerBound()));
 
-            Element firstElement;
+            Element.ProductionElement firstElement;
             if (this.grammar.containsProduction(numberName)) {
-                firstElement = new Element.ProductionElement(
+                firstElement = new Element.ProductionElement("",
                         this.grammar.getProduction(atLeastName));
             }
             else {
-                firstElement = new Element.ProductionElement(
+                firstElement = new Element.ProductionElement("",
                         newNormalProduction(
                                 this.parserElement,
                                 this.sElement,
@@ -711,15 +929,16 @@ public class GrammarSimplificator
                                         .getLowerBound())));
             }
 
-            String starName = this.sElement.getTypeName() + "_*";
+            String starName = computeNewProductionName(this.sElement,
+                    CardinalityInterval.ZERO_OR_MORE);
 
-            Element secondElement;
+            Element.ProductionElement secondElement;
             if (this.grammar.containsProduction(starName)) {
-                secondElement = new Element.ProductionElement(
+                secondElement = new Element.ProductionElement("",
                         this.grammar.getProduction(starName));
             }
             else {
-                secondElement = new Element.ProductionElement(
+                secondElement = new Element.ProductionElement("",
                         newNormalProduction(this.parserElement, this.sElement,
                                 CardinalityInterval.ZERO_OR_MORE));
             }
@@ -732,10 +951,12 @@ public class GrammarSimplificator
 
             altTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            firstElement));
+                            firstElement, firstElement.getReference()
+                                    .getTransformation().getElements().get(0)));
             altTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            secondElement));
+                            secondElement, firstElement.getReference()
+                                    .getTransformation().getElements().get(0)));
 
             atLeastProd.addAlternative(newListAlternative(atLeastProd,
                     alternativeElements, altTransformationElements));
@@ -751,9 +972,8 @@ public class GrammarSimplificator
             BigInteger upperBoundValue = this.cardinality.getUpperBound()
                     .getValue();
 
-            String intervalName = this.sElement.getTypeName() + "_"
-                    + lowerBoundValue.toString() + ".."
-                    + upperBoundValue.toString();
+            String intervalName = computeNewProductionName(this.sElement,
+                    this.cardinality);
 
             Production intervalProd = new Production(
                     this.grammar.getNextProductionId(), intervalName);
@@ -769,18 +989,14 @@ public class GrammarSimplificator
 
                 LinkedList<SAlternativeTransformationListElement> firstAltTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
                 LinkedList<Element> firstAlternativeElements = new LinkedList<Element>();
-                Element firstElement;
+                Element.ProductionElement firstElement;
 
                 if (this.grammar.containsProduction(plusOneIntervalName)) {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             this.grammar.getProduction(plusOneIntervalName));
-
-                    firstAltTransformationElements
-                            .add(new SAlternativeTransformationListElement.NormalListElement(
-                                    firstElement));
                 }
                 else {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             newNormalProduction(this.parserElement,
                                     this.sElement, new CardinalityInterval(
                                             Bound.ONE, new Bound(
@@ -790,7 +1006,9 @@ public class GrammarSimplificator
                 firstAlternativeElements.add(firstElement);
                 firstAltTransformationElements
                         .add(new SAlternativeTransformationListElement.NormalListElement(
-                                firstElement));
+                                firstElement, firstElement.getReference()
+                                        .getTransformation().getElements()
+                                        .get(0)));
 
                 intervalProd.addAlternative(newListAlternative(intervalProd,
                         firstAlternativeElements,
@@ -811,6 +1029,7 @@ public class GrammarSimplificator
                 firstAlternativeElements.add(this.sElement.clone());
                 firstAltTransformationElements
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                firstAlternativeElements.get(0),
                                 firstAlternativeElements.get(0)));
 
                 intervalProd.addAlternative(newListAlternative(intervalProd,
@@ -825,9 +1044,11 @@ public class GrammarSimplificator
                 secondAlternativeElements.add(this.sElement.clone());
                 secondAltTransformationElements
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                secondAlternativeElements.get(0),
                                 secondAlternativeElements.get(0)));
                 secondAltTransformationElements
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                secondAlternativeElements.get(1),
                                 secondAlternativeElements.get(1)));
 
                 intervalProd.addAlternative(newListAlternative(intervalProd,
@@ -840,14 +1061,14 @@ public class GrammarSimplificator
                         + lowerBoundValue.toString() + ".."
                         + upperBoundValue.subtract(BigInteger.ONE).toString();
 
-                Element firstElement;
+                Element.ProductionElement firstElement;
 
                 if (this.grammar.containsProduction(smallerIntervalName)) {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             this.grammar.getProduction(smallerIntervalName));
                 }
                 else {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             newNormalProduction(this.parserElement,
                                     this.sElement, new CardinalityInterval(
                                             this.cardinality.getLowerBound(),
@@ -862,10 +1083,13 @@ public class GrammarSimplificator
                 LinkedList<SAlternativeTransformationListElement> alternativeTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
                 alternativeTransformationElements
                         .add(new SAlternativeTransformationListElement.NormalListElement(
-                                firstElement));
+                                firstElement, firstElement.getReference()
+                                        .getTransformation().getElements()
+                                        .get(0)));
                 alternativeTransformationElements
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                alternativeElements.get(1)));
+                                alternativeElements.get(1), alternativeElements
+                                        .get(1)));
 
                 intervalProd
                         .addAlternative(newListAlternative(intervalProd,
@@ -874,35 +1098,39 @@ public class GrammarSimplificator
             }
             // p^(m..n) with n > 1 = p^m p^(0..(n-m))
             else {
-                String lowerNumberName = this.sElement.getTypeName() + "_"
-                        + lowerBoundValue.toString();
+                String lowerNumberName = computeNewProductionName(
+                        this.sElement,
+                        new CardinalityInterval(this.cardinality
+                                .getLowerBound(), this.cardinality
+                                .getLowerBound()));
 
-                Element firstElement;
+                Element.ProductionElement firstElement;
 
                 if (this.grammar.containsProduction(lowerNumberName)) {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             this.grammar.getProduction(lowerNumberName));
                 }
                 else {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             newNormalProduction(this.parserElement,
                                     this.sElement, new CardinalityInterval(
                                             this.cardinality.getLowerBound(),
                                             this.cardinality.getLowerBound())));
                 }
 
-                String zeroToIntervalWidth = this.sElement.getTypeName()
-                        + "_0.."
-                        + upperBoundValue.subtract(lowerBoundValue).toString();
+                String zeroToIntervalWidth = computeNewProductionName(
+                        this.sElement,
+                        new CardinalityInterval(Bound.ZERO, new Bound(
+                                upperBoundValue.subtract(lowerBoundValue))));
 
-                Element secondElement;
+                Element.ProductionElement secondElement;
 
                 if (this.grammar.containsProduction(zeroToIntervalWidth)) {
-                    secondElement = new Element.ProductionElement(
+                    secondElement = new Element.ProductionElement("",
                             this.grammar.getProduction(zeroToIntervalWidth));
                 }
                 else {
-                    secondElement = new Element.ProductionElement(
+                    secondElement = new Element.ProductionElement("",
                             newNormalProduction(this.parserElement,
                                     this.sElement,
                                     new CardinalityInterval(Bound.ZERO,
@@ -917,10 +1145,14 @@ public class GrammarSimplificator
 
                 firstAltTransformationElements
                         .add(new SAlternativeTransformationListElement.NormalListElement(
-                                firstElement));
+                                firstElement, firstElement.getReference()
+                                        .getTransformation().getElements()
+                                        .get(0)));
                 firstAltTransformationElements
                         .add(new SAlternativeTransformationListElement.NormalListElement(
-                                secondElement));
+                                secondElement, firstElement.getReference()
+                                        .getTransformation().getElements()
+                                        .get(0)));
 
                 intervalProd.addAlternative(newListAlternative(intervalProd,
                         firstAlternativeElements,
@@ -931,25 +1163,6 @@ public class GrammarSimplificator
 
         }
 
-        private Alternative newAlternative(
-                Production production,
-                Element element) {
-
-            LinkedList<Element> elements = new LinkedList<Element>();
-            elements.add(element);
-            return newAlternative(production, elements);
-        }
-
-        private Alternative newAlternative(
-                Production production,
-                LinkedList<Element> elements) {
-
-            Alternative alternative = new Alternative(production, elements);
-            alternative.addTransformation(new SAlternativeTransformation(
-                    alternative, elements));
-            return alternative;
-        }
-
         private Alternative newListAlternative(
                 Production production,
                 LinkedList<Element> elements,
@@ -957,7 +1170,9 @@ public class GrammarSimplificator
 
             Alternative alternative = new Alternative(production, elements);
             alternative.addTransformation(new SAlternativeTransformation(
-                    transformationElements, alternative));
+                    transformationElements, alternative,
+                    new Type.SimpleType.HomogeneousType(this.sElement
+                            .getTypeName(), this.cardinality)));
             return alternative;
         }
 
@@ -972,6 +1187,8 @@ public class GrammarSimplificator
         private final CardinalityInterval cardinality;
 
         private Production newProduction;
+
+        private SProductionTransformation newTransformation;
 
         private SGrammar grammar;
 
@@ -995,6 +1212,12 @@ public class GrammarSimplificator
             this.cardinality = cardinality;
             this.grammar = grammar;
 
+            this.newTransformation = new SProductionTransformation(null,
+                    this.sLeftElement.getTypeName(),
+                    this.sRightElement.getTypeName(),
+                    parserElement.getLeftReference(),
+                    parserElement.getRightReference(), cardinality, true);
+
             if (cardinality.equals(CardinalityInterval.ONE_OR_MORE)) {
                 plusCase();
             }
@@ -1011,11 +1234,8 @@ public class GrammarSimplificator
                 intervalCase();
             }
 
-            this.newProduction.addTransformation(new SProductionTransformation(
-                    this.newProduction, this.sLeftElement.getTypeName(),
-                    this.sRightElement.getTypeName(), parserElement
-                            .getLeftReference(), parserElement
-                            .getRightReference(), cardinality, true));
+            this.newTransformation.addProduction(this.newProduction);
+            this.newProduction.addTransformation(this.newTransformation);
 
             this.grammar.addProduction(this.newProduction);
 
@@ -1028,38 +1248,41 @@ public class GrammarSimplificator
 
         private void plusCase() {
 
-            String plusName = this.sLeftElement.getTypeName() + " Separator "
-                    + this.sRightElement.getTypeName() + "_+";
+            // (a Sep b)+ = a (b a)*;
+
+            String plusName = computeNewSeparatedProductionName(
+                    this.sLeftElement, this.sRightElement, this.cardinality);
 
             Production plusProd = new Production(
                     this.grammar.getNextProductionId(), plusName);
             Element firstElement;
 
             if (this.sLeftElement instanceof Element.TokenElement) {
-                firstElement = new Element.TokenElement(
+                firstElement = new Element.TokenElement("",
                         this.sLeftElement.getTypeName());
             }
             else {
-                firstElement = new Element.ProductionElement(
+                firstElement = new Element.ProductionElement("",
                         ((Element.ProductionElement) this.sLeftElement)
                                 .getReference());
             }
 
-            String alternatedStarName = this.sRightElement.getTypeName()
-                    + this.sLeftElement.getTypeName() + "_*";
+            String alternatedStarName = computeNewSeparatedProductionName(
+                    this.sRightElement, this.sLeftElement,
+                    CardinalityInterval.ZERO_OR_MORE);
 
-            Element secondElement;
+            Element.ProductionElement secondElement;
 
             if (GrammarSimplificator.grammar
                     .containsProduction(alternatedStarName)) {
-                secondElement = new Element.ProductionElement(
+                secondElement = new Element.ProductionElement("",
                         GrammarSimplificator.grammar
                                 .getProduction(alternatedStarName));
             }
             else {
-                secondElement = new Element.ProductionElement(
+                secondElement = new Element.ProductionElement("",
                         newAlternatedProduction(this.parserElement,
-                                this.sLeftElement, this.sRightElement,
+                                this.sRightElement, this.sLeftElement,
                                 CardinalityInterval.ZERO_OR_MORE));
             }
 
@@ -1070,10 +1293,11 @@ public class GrammarSimplificator
             LinkedList<SAlternativeTransformationListElement> altTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
             altTransformationElements
                     .add(new SAlternativeTransformationListElement.ReferenceElement(
-                            firstElement));
+                            firstElement, firstElement));
             altTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            secondElement));
+                            secondElement, secondElement.getReference()
+                                    .getTransformation().getElements().get(0)));
 
             plusProd.addAlternative(newListAlternative(plusProd,
                     alternativeElements, altTransformationElements));
@@ -1083,28 +1307,31 @@ public class GrammarSimplificator
 
         private void starCase() {
 
-            String starName = this.sLeftElement.getTypeName() + " Separator "
-                    + this.sRightElement.getTypeName() + "_*";
+            // (a Sep b)* = (a Sep b)+ | ;
+
+            String starName = computeNewSeparatedProductionName(
+                    this.sLeftElement, this.sRightElement, this.cardinality);
 
             Production starProd = new Production(
                     this.grammar.getNextProductionId(), starName);
 
             // First alternative
 
-            String separatedPlusName = this.sLeftElement.getTypeName()
-                    + " Separator " + this.sRightElement.getTypeName() + "_+";
+            String separatedPlusName = computeNewSeparatedProductionName(
+                    this.sLeftElement, this.sRightElement,
+                    CardinalityInterval.ONE_OR_MORE);
 
-            Element firstElement;
+            Element.ProductionElement firstElement;
 
             if (this.grammar.containsProduction(separatedPlusName)) {
-                firstElement = new Element.ProductionElement(
+                firstElement = new Element.ProductionElement("",
                         GrammarSimplificator.grammar
                                 .getProduction(separatedPlusName));
             }
             else {
-                firstElement = new Element.ProductionElement(
-                        newAlternatedProduction(this.parserElement,
-                                this.sRightElement, this.sLeftElement,
+                firstElement = new Element.ProductionElement("",
+                        newSeparatedProduction(this.parserElement,
+                                this.sLeftElement, this.sRightElement,
                                 CardinalityInterval.ONE_OR_MORE));
             }
 
@@ -1114,7 +1341,8 @@ public class GrammarSimplificator
             LinkedList<SAlternativeTransformationListElement> firstAltTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
             firstAltTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            firstElement));
+                            firstElement, firstElement.getReference()
+                                    .getTransformation().getElements().get(0)));
 
             starProd.addAlternative(newListAlternative(starProd,
                     firstAltElements, firstAltTransformationElements));
@@ -1129,8 +1357,8 @@ public class GrammarSimplificator
         private void numberCase() {
 
             BigInteger number = this.cardinality.getLowerBound().getValue();
-            String numberName = this.sLeftElement + " Separator "
-                    + this.sRightElement + "_" + number.toString();
+            String numberName = computeNewSeparatedProductionName(
+                    this.sLeftElement, this.sRightElement, this.cardinality);
 
             LinkedList<Element> altElements = new LinkedList<Element>();
             LinkedList<SAlternativeTransformationListElement> altTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
@@ -1146,38 +1374,45 @@ public class GrammarSimplificator
 
                 altTransformationElements
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                altElements.get(0)));
+                                altElements.get(0), altElements.get(0)));
                 altTransformationElements
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                altElements.get(1)));
+                                altElements.get(1), altElements.get(1)));
                 altTransformationElements
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                altElements.get(2)));
+                                altElements.get(2), altElements.get(2)));
 
                 numberProd.addAlternative(newListAlternative(numberProd,
                         altElements, altTransformationElements));
             }
             else {
-                String previousNumberName = this.sLeftElement + " Separator "
-                        + this.sRightElement + "_"
-                        + number.subtract(BigInteger.ONE).toString();
+                String previousNumberName = computeNewSeparatedProductionName(
+                        this.sLeftElement,
+                        this.sRightElement,
+                        new CardinalityInterval(this.cardinality
+                                .getLowerBound().subtract(Bound.ONE),
+                                this.cardinality.getLowerBound().subtract(
+                                        Bound.ONE)));
 
-                Element firstElement;
+                Element.ProductionElement firstElement;
 
                 if (GrammarSimplificator.grammar
                         .containsProduction(previousNumberName)) {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             GrammarSimplificator.grammar
                                     .getProduction(previousNumberName));
                 }
                 else {
                     Production previousNumberProd = newSeparatedProduction(
-                            this.parserElement, this.sLeftElement,
+                            this.parserElement,
+                            this.sLeftElement,
                             this.sRightElement,
                             new CardinalityInterval(this.cardinality
-                                    .getLowerBound().subtract(BigInteger.ONE)));
+                                    .getLowerBound().subtract(BigInteger.ONE),
+                                    this.cardinality.getLowerBound().subtract(
+                                            BigInteger.ONE)));
 
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             previousNumberProd);
                 }
 
@@ -1187,13 +1422,15 @@ public class GrammarSimplificator
 
                 altTransformationElements
                         .add(new SAlternativeTransformationListElement.NormalListElement(
-                                firstElement));
+                                firstElement, firstElement.getReference()
+                                        .getTransformation().getElements()
+                                        .get(0)));
                 altTransformationElements
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                altElements.get(1)));
+                                altElements.get(1), altElements.get(1)));
                 altTransformationElements
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                altElements.get(2)));
+                                altElements.get(2), altElements.get(2)));
             }
 
             numberProd.addAlternative(newListAlternative(numberProd,
@@ -1205,12 +1442,8 @@ public class GrammarSimplificator
 
         private void atLeastCase() {
 
-            BigInteger lowerBoundValue = this.cardinality.getLowerBound()
-                    .getValue();
-
-            String atLeastName = this.sLeftElement.getTypeName()
-                    + " Separator " + this.sRightElement.getTypeName() + "_"
-                    + lowerBoundValue.toString() + "...";
+            String atLeastName = computeNewSeparatedProductionName(
+                    this.sLeftElement, this.sRightElement, this.cardinality);
 
             Production atLeastProd = new Production(
                     this.grammar.getNextProductionId(), atLeastName);
@@ -1218,18 +1451,19 @@ public class GrammarSimplificator
             LinkedList<Element> altElements = new LinkedList<Element>();
             LinkedList<SAlternativeTransformationListElement> altTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
 
-            String numberName = this.sLeftElement.getTypeName() + " Separator "
-                    + this.sRightElement.getTypeName() + "_"
-                    + lowerBoundValue.toString();
+            String numberName = computeNewSeparatedProductionName(
+                    this.sLeftElement, this.sRightElement,
+                    new CardinalityInterval(this.cardinality.getLowerBound(),
+                            this.cardinality.getLowerBound()));
 
-            Element firstElement;
+            Element.ProductionElement firstElement;
 
             if (this.grammar.containsProduction(numberName)) {
-                firstElement = new Element.ProductionElement(
-                        GrammarSimplificator.grammar.getProduction(atLeastName));
+                firstElement = new Element.ProductionElement("",
+                        GrammarSimplificator.grammar.getProduction(numberName));
             }
             else {
-                firstElement = new Element.ProductionElement(
+                firstElement = new Element.ProductionElement("",
                         newSeparatedProduction(
                                 this.parserElement,
                                 this.sLeftElement,
@@ -1239,17 +1473,18 @@ public class GrammarSimplificator
                                         .getLowerBound())));
             }
 
-            String starName = this.sLeftElement.getTypeName() + " Separator "
-                    + this.sRightElement.getTypeName() + "_*";
+            String starName = computeNewSeparatedProductionName(
+                    this.sLeftElement, this.sRightElement,
+                    CardinalityInterval.ZERO_OR_MORE);
 
-            Element secondElement;
+            Element.ProductionElement secondElement;
 
             if (this.grammar.containsProduction(starName)) {
-                secondElement = new Element.ProductionElement(
+                secondElement = new Element.ProductionElement("",
                         GrammarSimplificator.grammar.getProduction(starName));
             }
             else {
-                secondElement = new Element.ProductionElement(
+                secondElement = new Element.ProductionElement("",
                         newAlternatedProduction(this.parserElement,
                                 this.sRightElement, this.sLeftElement,
                                 CardinalityInterval.ZERO_OR_MORE));
@@ -1260,10 +1495,12 @@ public class GrammarSimplificator
 
             altTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            firstElement));
+                            firstElement, firstElement.getReference()
+                                    .getTransformation().getElements().get(0)));
             altTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            secondElement));
+                            secondElement, secondElement.getReference()
+                                    .getTransformation().getElements().get(0)));
 
             atLeastProd.addAlternative(newListAlternative(atLeastProd,
                     altElements, altTransformationElements));
@@ -1279,10 +1516,8 @@ public class GrammarSimplificator
             BigInteger upperBoundValue = this.cardinality.getUpperBound()
                     .getValue();
 
-            String intervalName = this.sLeftElement.getTypeName()
-                    + " Separator " + this.sRightElement + "_"
-                    + lowerBoundValue.toString() + ".."
-                    + upperBoundValue.toString();
+            String intervalName = computeNewSeparatedProductionName(
+                    this.sLeftElement, this.sRightElement, this.cardinality);
 
             Production intervalProd = new Production(
                     this.grammar.getNextProductionId(), intervalName);
@@ -1295,13 +1530,13 @@ public class GrammarSimplificator
 
                 // (a Sep b)^(0..1) = a?
                 if (upperBoundValue.equals(BigInteger.ONE)) {
-                    String qmarkLeftName = this.sLeftElement.getTypeName()
-                            + "_?";
+                    String qmarkLeftName = computeNewProductionName(
+                            this.sLeftElement, CardinalityInterval.ZERO_ONE);
 
                     Element firstElement;
 
                     if (this.grammar.containsProduction(qmarkLeftName)) {
-                        firstElement = new Element.ProductionElement(
+                        firstElement = new Element.ProductionElement("",
                                 this.grammar.getProduction(qmarkLeftName));
                     }
                     else {
@@ -1313,13 +1548,14 @@ public class GrammarSimplificator
                                 this.sLeftElement.clone()));
                         qmarkProd.addAlternative(new Alternative(qmarkProd));
 
-                        firstElement = new Element.ProductionElement(qmarkProd);
+                        firstElement = new Element.ProductionElement("",
+                                qmarkProd);
                     }
 
                     firstAlternativeElement.add(firstElement);
                     firstAltTransformationElement
                             .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                    firstElement));
+                                    firstElement, firstElement));
 
                     intervalProd.addAlternative(newListAlternative(
                             intervalProd, firstAlternativeElement,
@@ -1329,22 +1565,20 @@ public class GrammarSimplificator
 
                     // First alternative
 
-                    String plusOneIntervalName = this.sLeftElement
-                            .getTypeName()
-                            + " Separator "
-                            + this.sRightElement
-                            + "_"
-                            + lowerBoundValue.add(BigInteger.ONE).toString()
-                            + ".." + upperBoundValue.toString();
+                    String plusOneIntervalName = computeNewSeparatedProductionName(
+                            this.sLeftElement, this.sRightElement,
+                            new CardinalityInterval(this.cardinality
+                                    .getLowerBound().add(Bound.ONE),
+                                    this.cardinality.getUpperBound()));
 
-                    Element firstElement;
+                    Element.ProductionElement firstElement;
 
                     if (this.grammar.containsProduction(plusOneIntervalName)) {
-                        firstElement = new Element.ProductionElement(
+                        firstElement = new Element.ProductionElement("",
                                 this.grammar.getProduction(plusOneIntervalName));
                     }
                     else {
-                        firstElement = new Element.ProductionElement(
+                        firstElement = new Element.ProductionElement("",
                                 newSeparatedProduction(
                                         this.parserElement,
                                         this.sLeftElement,
@@ -1358,7 +1592,9 @@ public class GrammarSimplificator
 
                     firstAltTransformationElement
                             .add(new SAlternativeTransformationListElement.NormalListElement(
-                                    firstElement));
+                                    firstElement, firstElement.getReference()
+                                            .getTransformation().getElements()
+                                            .get(0)));
 
                     intervalProd.addAlternative(newListAlternative(
                             intervalProd, firstAlternativeElement,
@@ -1374,22 +1610,25 @@ public class GrammarSimplificator
             else if (lowerBoundValue.equals(BigInteger.ONE)) {
                 Element firstElement = this.sLeftElement.clone();
 
-                String alternatedZeroToIntervalWidth = this.sRightElement
-                        .getTypeName()
-                        + this.sLeftElement.getTypeName()
-                        + "_0.."
-                        + upperBoundValue.subtract(lowerBoundValue).toString();
+                String alternatedZeroToIntervalWidth = computeNewAlternatedProductionName(
+                        this.sRightElement,
+                        this.sLeftElement,
+                        new CardinalityInterval(Bound.ZERO, this.cardinality
+                                .getUpperBound().subtract(
+                                        this.cardinality.getLowerBound())));
 
-                Element secondElement;
+                Element.ProductionElement secondElement;
 
                 if (this.grammar
                         .containsProduction(alternatedZeroToIntervalWidth)) {
                     secondElement = new Element.ProductionElement(
+                            "",
                             this.grammar
                                     .getProduction(alternatedZeroToIntervalWidth));
                 }
                 else {
                     secondElement = new Element.ProductionElement(
+                            "",
                             newAlternatedProduction(this.parserElement,
                                     this.sRightElement, this.sLeftElement,
                                     new CardinalityInterval(Bound.ZERO,
@@ -1405,10 +1644,12 @@ public class GrammarSimplificator
                 LinkedList<SAlternativeTransformationListElement> alternativeTransformationListElement = new LinkedList<SAlternativeTransformationListElement>();
                 alternativeTransformationListElement
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                firstElement));
+                                firstElement, firstElement));
                 alternativeTransformationListElement
                         .add(new SAlternativeTransformationListElement.NormalListElement(
-                                secondElement));
+                                secondElement, secondElement.getReference()
+                                        .getTransformation().getElements()
+                                        .get(0)));
 
                 intervalProd.addAlternative(newListAlternative(intervalProd,
                         alternativeElements,
@@ -1417,18 +1658,21 @@ public class GrammarSimplificator
             }
             // (a Sep b)^(m..n) = (a Sep b)^m (b a)^(0..(n-m))
             else {
-                String lowerNumberName = this.sLeftElement.getTypeName()
-                        + " Separator " + this.sRightElement + "_"
-                        + lowerBoundValue.toString();
+                String lowerNumberName = computeNewSeparatedProductionName(
+                        this.sLeftElement,
+                        this.sRightElement,
+                        new CardinalityInterval(this.cardinality
+                                .getLowerBound(), this.cardinality
+                                .getUpperBound()));
 
-                Element firstElement;
+                Element.ProductionElement firstElement;
 
                 if (this.grammar.containsProduction(lowerNumberName)) {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             this.grammar.getProduction(lowerNumberName));
                 }
                 else {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             newSeparatedProduction(
                                     this.parserElement,
                                     this.sLeftElement,
@@ -1438,18 +1682,20 @@ public class GrammarSimplificator
                                             .getLowerBound())));
                 }
 
-                String zeroToLowerBoundName = this.sRightElement.getTypeName()
-                        + this.sLeftElement.getTypeName() + "_0.."
-                        + lowerBoundValue.toString();
+                String zeroToLowerBoundName = computeNewSeparatedProductionName(
+                        this.sRightElement,
+                        this.sLeftElement,
+                        new CardinalityInterval(Bound.ZERO, this.cardinality
+                                .getLowerBound()));
 
-                Element secondElement;
+                Element.ProductionElement secondElement;
 
                 if (this.grammar.containsProduction(zeroToLowerBoundName)) {
-                    secondElement = new Element.ProductionElement(
+                    secondElement = new Element.ProductionElement("",
                             this.grammar.getProduction(zeroToLowerBoundName));
                 }
                 else {
-                    secondElement = new Element.ProductionElement(
+                    secondElement = new Element.ProductionElement("",
                             newAlternatedProduction(this.parserElement,
                                     this.sRightElement, this.sLeftElement,
                                     new CardinalityInterval(Bound.ZERO,
@@ -1463,10 +1709,14 @@ public class GrammarSimplificator
                 LinkedList<SAlternativeTransformationListElement> altTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
                 altTransformationElements
                         .add(new SAlternativeTransformationListElement.NormalListElement(
-                                firstElement));
+                                firstElement, firstElement.getReference()
+                                        .getTransformation().getElements()
+                                        .get(0)));
                 altTransformationElements
                         .add(new SAlternativeTransformationListElement.NormalListElement(
-                                secondElement));
+                                secondElement, secondElement.getReference()
+                                        .getTransformation().getElements()
+                                        .get(0)));
 
                 intervalProd.addAlternative(newListAlternative(intervalProd,
                         alternativeElements, altTransformationElements));
@@ -1501,7 +1751,10 @@ public class GrammarSimplificator
 
             Alternative alternative = new Alternative(production, elements);
             alternative.addTransformation(new SAlternativeTransformation(
-                    transformationElements, alternative));
+                    transformationElements, alternative,
+                    new Type.SimpleType.SeparatedType(this.sLeftElement
+                            .getTypeName(), this.sRightElement.getTypeName(),
+                            this.cardinality)));
             return alternative;
         }
     }
@@ -1518,6 +1771,8 @@ public class GrammarSimplificator
 
         private Production newProduction;
 
+        private SProductionTransformation newTransformation;
+
         private SGrammar grammar;
 
         public AlternatedProductionBuilder(
@@ -1532,6 +1787,12 @@ public class GrammarSimplificator
             this.sRightElement = sRightElement;
             this.cardinality = cardinality;
             this.grammar = grammar;
+
+            this.newTransformation = new SProductionTransformation(null,
+                    this.sLeftElement.getTypeName(),
+                    this.sRightElement.getTypeName(),
+                    parserElement.getRightReference(),
+                    parserElement.getLeftReference(), cardinality, false);
 
             if (cardinality.equals(CardinalityInterval.ONE_OR_MORE)) {
                 plusCase();
@@ -1549,27 +1810,8 @@ public class GrammarSimplificator
                 intervalCase();
             }
 
-            if (parserElement.getElementType() == ElementType.ALTERNATED) {
-
-                this.newProduction
-                        .addTransformation(new SProductionTransformation(
-                                this.newProduction, this.sLeftElement
-                                        .getTypeName(), this.sRightElement
-                                        .getTypeName(), parserElement
-                                        .getLeftReference(), parserElement
-                                        .getRightReference(), cardinality,
-                                false));
-            }
-            else {
-
-                this.newProduction
-                        .addTransformation(new SProductionTransformation(
-                                this.newProduction, this.sLeftElement
-                                        .getTypeName(), this.sRightElement
-                                        .getTypeName(), parserElement
-                                        .getRightReference(), parserElement
-                                        .getLeftReference(), cardinality, false));
-            }
+            this.newTransformation.addProduction(this.newProduction);
+            this.newProduction.addTransformation(this.newTransformation);
 
             this.grammar.addProduction(this.newProduction);
 
@@ -1582,8 +1824,8 @@ public class GrammarSimplificator
 
         private void plusCase() {
 
-            String plusName = this.sLeftElement.getTypeName()
-                    + this.sRightElement.getTypeName() + "_+";
+            String plusName = computeNewAlternatedProductionName(
+                    this.sLeftElement, this.sRightElement, this.cardinality);
 
             Production plusProd = new Production(
                     this.grammar.getNextProductionId(), plusName);
@@ -1591,22 +1833,22 @@ public class GrammarSimplificator
             LinkedList<Element> firstAlternativeElements = new LinkedList<Element>();
             LinkedList<SAlternativeTransformationListElement> firstAltTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
 
-            firstAlternativeElements
-                    .add(new Element.ProductionElement(plusProd));
+            firstAlternativeElements.add(new Element.ProductionElement("",
+                    plusProd));
             firstAlternativeElements.add(this.sLeftElement.clone());
             firstAlternativeElements.add(this.sRightElement.clone());
 
             firstAltTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            firstAlternativeElements.get(0)));
+                            firstAlternativeElements.get(0),
+                            this.newTransformation.getElements().get(0)));
             firstAltTransformationElements
                     .add(new SAlternativeTransformationListElement.ReferenceElement(
+                            firstAlternativeElements.get(1),
                             firstAlternativeElements.get(1)));
             firstAltTransformationElements
                     .add(new SAlternativeTransformationListElement.ReferenceElement(
-                            firstAlternativeElements.get(1)));
-            firstAltTransformationElements
-                    .add(new SAlternativeTransformationListElement.ReferenceElement(
+                            firstAlternativeElements.get(2),
                             firstAlternativeElements.get(2)));
 
             plusProd.addAlternative(newListAlternative(plusProd,
@@ -1620,9 +1862,11 @@ public class GrammarSimplificator
 
             secondAltTransformationElements
                     .add(new SAlternativeTransformationListElement.ReferenceElement(
+                            secondAlternativeElements.get(0),
                             secondAlternativeElements.get(0)));
             secondAltTransformationElements
                     .add(new SAlternativeTransformationListElement.ReferenceElement(
+                            secondAlternativeElements.get(1),
                             secondAlternativeElements.get(1)));
 
             plusProd.addAlternative(newListAlternative(plusProd,
@@ -1634,20 +1878,21 @@ public class GrammarSimplificator
 
         private void starCase() {
 
-            String starName = this.sLeftElement.getTypeName()
-                    + this.sRightElement.getTypeName() + "_*";
+            String starName = computeNewAlternatedProductionName(
+                    this.sLeftElement, this.sRightElement, this.cardinality);
 
             Production starProd = new Production(
                     this.grammar.getNextProductionId(), starName);
 
-            String plusName = this.sLeftElement.getTypeName()
-                    + this.sRightElement.getTypeName() + "_+";
+            String plusName = computeNewAlternatedProductionName(
+                    this.sLeftElement, this.sRightElement,
+                    CardinalityInterval.ONE_OR_MORE);
 
             // First alternative
-            Element firstElement;
+            Element.ProductionElement firstElement;
 
             if (this.grammar.containsProduction(plusName)) {
-                firstElement = new Element.ProductionElement(
+                firstElement = new Element.ProductionElement("",
                         this.grammar.getProduction(plusName));
             }
             else {
@@ -1663,7 +1908,8 @@ public class GrammarSimplificator
             firstAlternativeElements.add(firstElement);
             firstAltTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            firstElement));
+                            firstElement, firstElement.getReference()
+                                    .getTransformation().getElements().get(0)));
 
             starProd.addAlternative(newListAlternative(starProd,
                     firstAlternativeElements, firstAltTransformationElements));
@@ -1677,9 +1923,8 @@ public class GrammarSimplificator
         private void numberCase() {
 
             BigInteger number = this.cardinality.getLowerBound().getValue();
-            String numberName = this.sLeftElement.getTypeName()
-                    + this.sRightElement.getTypeName() + "_"
-                    + number.toString();
+            String numberName = computeNewAlternatedProductionName(
+                    this.sLeftElement, this.sRightElement, this.cardinality);
 
             Production numberProd = new Production(
                     this.grammar.getNextProductionId(), numberName);
@@ -1694,32 +1939,41 @@ public class GrammarSimplificator
 
                 altTransformationElement
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                alternativeElements.get(0)));
+                                alternativeElements.get(0), alternativeElements
+                                        .get(0)));
                 altTransformationElement
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                alternativeElements.get(1)));
+                                alternativeElements.get(1), alternativeElements
+                                        .get(1)));
 
                 numberProd.addAlternative(newListAlternative(numberProd,
                         alternativeElements, altTransformationElement));
             }
             else {
-                String previousNumberName = this.sLeftElement.getTypeName()
-                        + this.sRightElement.getTypeName() + "_"
-                        + number.subtract(BigInteger.ONE).toString();
+                String previousNumberName = computeNewAlternatedProductionName(
+                        this.sLeftElement,
+                        this.sRightElement,
+                        new CardinalityInterval(this.cardinality
+                                .getLowerBound().subtract(Bound.ONE),
+                                this.cardinality.getLowerBound().subtract(
+                                        Bound.ONE)));
 
-                Element firstElement;
+                Element.ProductionElement firstElement;
                 if (this.grammar.containsProduction(previousNumberName)) {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             this.grammar.getProduction(previousNumberName));
                 }
                 else {
                     Production previousNumberProd = newAlternatedProduction(
-                            this.parserElement, this.sLeftElement,
+                            this.parserElement,
+                            this.sLeftElement,
                             this.sRightElement,
                             new CardinalityInterval(this.cardinality
-                                    .getLowerBound().subtract(BigInteger.ONE)));
+                                    .getLowerBound().subtract(BigInteger.ONE),
+                                    this.cardinality.getLowerBound().subtract(
+                                            BigInteger.ONE)));
 
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             previousNumberProd);
                 }
 
@@ -1729,13 +1983,17 @@ public class GrammarSimplificator
 
                 altTransformationElement
                         .add(new SAlternativeTransformationListElement.NormalListElement(
-                                alternativeElements.get(0)));
+                                alternativeElements.get(0), firstElement
+                                        .getReference().getTransformation()
+                                        .getElements().get(0)));
                 altTransformationElement
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                alternativeElements.get(1)));
+                                alternativeElements.get(1), alternativeElements
+                                        .get(1)));
                 altTransformationElement
                         .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                alternativeElements.get(1)));
+                                alternativeElements.get(1), alternativeElements
+                                        .get(1)));
 
                 numberProd.addAlternative(newListAlternative(numberProd,
                         alternativeElements, altTransformationElement));
@@ -1748,27 +2006,25 @@ public class GrammarSimplificator
 
         private void atLeastCase() {
 
-            BigInteger lowerBoundValue = this.cardinality.getLowerBound()
-                    .getValue();
-            String atLeastName = this.sLeftElement.getTypeName()
-                    + this.sRightElement.getTypeName() + "_"
-                    + lowerBoundValue.toString() + "...";
+            String atLeastName = computeNewAlternatedProductionName(
+                    this.sLeftElement, this.sRightElement, this.cardinality);
 
             Production atLeastProd = new Production(
                     this.grammar.getNextProductionId(), atLeastName);
 
-            String numberName = this.sLeftElement.getTypeName()
-                    + this.sRightElement.getTypeName() + "_"
-                    + lowerBoundValue.toString();
+            String numberName = computeNewAlternatedProductionName(
+                    this.sLeftElement, this.sRightElement,
+                    new CardinalityInterval(this.cardinality.getLowerBound(),
+                            this.cardinality.getLowerBound()));
 
-            Element firstElement;
+            Element.ProductionElement firstElement;
 
             if (this.grammar.containsProduction(numberName)) {
-                firstElement = new Element.ProductionElement(
+                firstElement = new Element.ProductionElement("",
                         this.grammar.getProduction(atLeastName));
             }
             else {
-                firstElement = new Element.ProductionElement(
+                firstElement = new Element.ProductionElement("",
                         newAlternatedProduction(
                                 this.parserElement,
                                 this.sLeftElement,
@@ -1778,17 +2034,18 @@ public class GrammarSimplificator
                                         .getLowerBound())));
             }
 
-            String starName = this.sLeftElement.getTypeName()
-                    + this.sRightElement.getTypeName() + "_*";
+            String starName = computeNewAlternatedProductionName(
+                    this.sLeftElement, this.sRightElement,
+                    CardinalityInterval.ZERO_OR_MORE);
 
-            Element secondElement;
+            Element.ProductionElement secondElement;
 
             if (this.grammar.containsProduction(starName)) {
-                secondElement = new Element.ProductionElement(
+                secondElement = new Element.ProductionElement("",
                         this.grammar.getProduction(starName));
             }
             else {
-                secondElement = new Element.ProductionElement(
+                secondElement = new Element.ProductionElement("",
                         newAlternatedProduction(this.parserElement,
                                 this.sLeftElement, this.sRightElement,
                                 CardinalityInterval.ZERO_OR_MORE));
@@ -1803,10 +2060,12 @@ public class GrammarSimplificator
 
             altTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            firstElement));
+                            firstElement, firstElement.getReference()
+                                    .getTransformation().getElements().get(0)));
             altTransformationElements
                     .add(new SAlternativeTransformationListElement.NormalListElement(
-                            secondElement));
+                            secondElement, secondElement.getReference()
+                                    .getTransformation().getElements().get(0)));
 
             atLeastProd.addAlternative(newListAlternative(atLeastProd,
                     alternativeElements, altTransformationElements));
@@ -1822,10 +2081,8 @@ public class GrammarSimplificator
             BigInteger upperBoundValue = this.cardinality.getUpperBound()
                     .getValue();
 
-            String intervalName = this.sLeftElement.getTypeName()
-                    + this.sRightElement.getTypeName() + "_"
-                    + lowerBoundValue.toString() + ".."
-                    + upperBoundValue.toString();
+            String intervalName = computeNewAlternatedProductionName(
+                    this.sLeftElement, this.sRightElement, this.cardinality);
 
             Production intervalProd = new Production(
                     this.grammar.getNextProductionId(), intervalName);
@@ -1844,10 +2101,10 @@ public class GrammarSimplificator
 
                     altTransformationElements
                             .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                    altElements.get(0)));
+                                    altElements.get(0), altElements.get(0)));
                     altTransformationElements
                             .add(new SAlternativeTransformationListElement.ReferenceElement(
-                                    altElements.get(1)));
+                                    altElements.get(1), altElements.get(1)));
 
                     intervalProd.addAlternative(newListAlternative(
                             intervalProd, altElements,
@@ -1855,22 +2112,21 @@ public class GrammarSimplificator
                 }
                 // (ab)^0..m with m > 1 = (ab)^(1..m) | Empty
                 else {
-                    Element firstElement;
+                    Element.ProductionElement firstElement;
 
-                    String smallerIntervalName = this.sLeftElement
-                            .getTypeName()
-                            + this.sRightElement.getTypeName()
-                            + "_"
-                            + lowerBoundValue.add(BigInteger.ONE).toString()
-                            + ".." + upperBoundValue.toString();
+                    String smallerIntervalName = computeNewAlternatedProductionName(
+                            this.sLeftElement, this.sRightElement,
+                            new CardinalityInterval(this.cardinality
+                                    .getLowerBound().add(Bound.ONE),
+                                    this.cardinality.getUpperBound()));
 
                     if (this.grammar.containsProduction(smallerIntervalName)) {
-                        firstElement = new Element.ProductionElement(
+                        firstElement = new Element.ProductionElement("",
                                 this.grammar.getProduction(smallerIntervalName));
                     }
                     else {
 
-                        firstElement = new Element.ProductionElement(
+                        firstElement = new Element.ProductionElement("",
                                 newAlternatedProduction(
                                         this.parserElement,
                                         this.sLeftElement,
@@ -1884,7 +2140,9 @@ public class GrammarSimplificator
 
                     altTransformationElements
                             .add(new SAlternativeTransformationListElement.NormalListElement(
-                                    firstElement));
+                                    firstElement, firstElement.getReference()
+                                            .getTransformation().getElements()
+                                            .get(0)));
                 }
 
                 // Second alternative
@@ -1907,9 +2165,11 @@ public class GrammarSimplificator
 
                     firstAltTransformationElements
                             .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                    firstAlternativeElements.get(0),
                                     firstAlternativeElements.get(0)));
                     firstAltTransformationElements
                             .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                    firstAlternativeElements.get(1),
                                     firstAlternativeElements.get(1)));
 
                     intervalProd.addAlternative(newListAlternative(
@@ -1928,15 +2188,19 @@ public class GrammarSimplificator
 
                     secondAltTransformationElements
                             .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                    secondAlternativeElements.get(0),
                                     secondAlternativeElements.get(0)));
                     secondAltTransformationElements
                             .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                    secondAlternativeElements.get(1),
                                     secondAlternativeElements.get(1)));
                     secondAltTransformationElements
                             .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                    secondAlternativeElements.get(2),
                                     secondAlternativeElements.get(2)));
                     secondAltTransformationElements
                             .add(new SAlternativeTransformationListElement.ReferenceElement(
+                                    secondAlternativeElements.get(3),
                                     secondAlternativeElements.get(3)));
 
                     intervalProd.addAlternative(newListAlternative(
@@ -1947,20 +2211,23 @@ public class GrammarSimplificator
             }
             // (ab)^(m..n) with n > 1 = (ab)^m (ab)^(0..(n-m))
             else {
-                String lowerNumberName = this.sLeftElement.getTypeName()
-                        + this.sRightElement.getTypeName() + "_"
-                        + lowerBoundValue.toString();
+                String lowerNumberName = computeNewAlternatedProductionName(
+                        this.sLeftElement,
+                        this.sRightElement,
+                        new CardinalityInterval(this.cardinality
+                                .getLowerBound(), this.cardinality
+                                .getLowerBound()));
 
                 LinkedList<Element> altElements = new LinkedList<Element>();
                 LinkedList<SAlternativeTransformationListElement> altTransformationElements = new LinkedList<SAlternativeTransformationListElement>();
-                Element firstElement;
+                Element.ProductionElement firstElement;
 
                 if (this.grammar.containsProduction(lowerNumberName)) {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             this.grammar.getProduction(lowerNumberName));
                 }
                 else {
-                    firstElement = new Element.ProductionElement(
+                    firstElement = new Element.ProductionElement("",
                             newAlternatedProduction(
                                     this.parserElement,
                                     this.sLeftElement,
@@ -1970,20 +2237,21 @@ public class GrammarSimplificator
                                             .getLowerBound())));
                 }
 
-                Element secondElement;
+                Element.ProductionElement secondElement;
 
-                String zeroToIntervalWidthName = this.sLeftElement
-                        .getTypeName()
-                        + this.sRightElement.getTypeName()
-                        + "_0.."
-                        + upperBoundValue.subtract(lowerBoundValue).toString();
+                String zeroToIntervalWidthName = computeNewAlternatedProductionName(
+                        this.sLeftElement,
+                        this.sRightElement,
+                        new CardinalityInterval(Bound.ZERO, this.cardinality
+                                .getUpperBound().subtract(
+                                        this.cardinality.getLowerBound())));
 
                 if (this.grammar.containsProduction(zeroToIntervalWidthName)) {
-                    secondElement = new Element.ProductionElement(
+                    secondElement = new Element.ProductionElement("",
                             this.grammar.getProduction(zeroToIntervalWidthName));
                 }
                 else {
-                    secondElement = new Element.ProductionElement(
+                    secondElement = new Element.ProductionElement("",
                             newAlternatedProduction(this.parserElement,
                                     this.sLeftElement, this.sRightElement,
                                     new CardinalityInterval(Bound.ZERO,
@@ -1996,10 +2264,14 @@ public class GrammarSimplificator
 
                 altTransformationElements
                         .add(new SAlternativeTransformationListElement.NormalListElement(
-                                firstElement));
+                                firstElement, firstElement.getReference()
+                                        .getTransformation().getElements()
+                                        .get(0)));
                 altTransformationElements
                         .add(new SAlternativeTransformationListElement.NormalListElement(
-                                secondElement));
+                                secondElement, secondElement.getReference()
+                                        .getTransformation().getElements()
+                                        .get(0)));
                 intervalProd.addAlternative(newListAlternative(intervalProd,
                         altElements, altTransformationElements));
             }
@@ -2014,7 +2286,10 @@ public class GrammarSimplificator
 
             Alternative alternative = new Alternative(production, elements);
             alternative.addTransformation(new SAlternativeTransformation(
-                    transformationElements, alternative));
+                    transformationElements, alternative,
+                    new Type.SimpleType.AlternatedType(this.sLeftElement
+                            .getTypeName(), this.sRightElement.getTypeName(),
+                            this.cardinality)));
             return alternative;
         }
 

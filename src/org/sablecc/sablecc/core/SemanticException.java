@@ -222,7 +222,7 @@ public class SemanticException
     }
 
     public static SemanticException undefinedReference(
-            TIdentifier undefinedNameToken) {
+            Token undefinedNameToken) {
 
         return new SemanticException(new MUndefinedReference(
                 undefinedNameToken.getText(),

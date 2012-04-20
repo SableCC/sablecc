@@ -77,7 +77,7 @@ public class Grammar
             fillGlobalNameSpace(ast);
             findInlineExpressions(ast);
             findLexerPriorities(ast);
-            verifyReferences();
+            verifyandResolveReferences();
             verifyPriorities();
         }
         else {
@@ -88,7 +88,7 @@ public class Grammar
             findTransformations(ast);
             findLexerPriorities(ast);
 
-            verifyReferences();
+            verifyandResolveReferences();
             verifyPriorities();
 
             if (hasATree()) {
@@ -427,7 +427,10 @@ public class Grammar
         ast.apply(new DeclarationFinder.LexerPrioritiesFinder(this));
     }
 
-    private void verifyReferences() {
+    private void verifyandResolveReferences() {
+
+        // The reference solvers should call in this
+        // order to sucessfully complete.
 
         if (GrammarCompiler.RESTRICTED_SYNTAX) {
             apply(new ReferenceVerifier.LexerReferenceVerifier(this));
@@ -1175,7 +1178,8 @@ public class Grammar
         for (Production production : sGrammar.getProductions()) {
 
             if (oldGrammar == null) {
-                oldGrammar = new OldGrammar(production.getName(), production);
+                oldGrammar = new OldGrammar(this, production.getName(),
+                        production);
             }
 
             OldProduction oldProduction = oldGrammar.getProduction(
@@ -1187,20 +1191,23 @@ public class Grammar
                         "", alternative);
 
                 for (Element element : alternative.getElements()) {
+                    OldElement oldElement;
                     if (element instanceof Element.TokenElement) {
                         Element.TokenElement tokenElement = (Element.TokenElement) element;
-                        oldAlternative
-                                .addTokenElement("", oldGrammar
-                                        .getToken(tokenElement.getTypeName()),
-                                        tokenElement);
+                        oldElement = oldAlternative
+                                .addTokenElement(this, element.getName(),
+                                        oldGrammar.getToken(tokenElement
+                                                .getTypeName()), tokenElement);
                     }
                     else {
                         Element.ProductionElement productionElement = (Element.ProductionElement) element;
-                        oldAlternative.addProductionElement("", oldGrammar
-                                .getProduction(element.getTypeName(),
+                        oldElement = oldAlternative.addProductionElement(
+                                element.getName(), oldGrammar.getProduction(
+                                        element.getTypeName(),
                                         productionElement.getReference()),
                                 productionElement);
                     }
+                    sGrammar.addOldElement(element, oldElement);
                 }
             }
         }

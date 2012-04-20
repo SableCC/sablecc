@@ -150,6 +150,14 @@ public final class CardinalityInterval
                 this.upperBound.add(anInterval.upperBound));
     }
 
+    public CardinalityInterval union(
+            CardinalityInterval anInterval) {
+
+        return new CardinalityInterval(
+                this.lowerBound.min(anInterval.lowerBound),
+                this.upperBound.max(this.upperBound));
+    }
+
     @Override
     public boolean equals(
             Object obj) {
@@ -210,5 +218,35 @@ public final class CardinalityInterval
 
         this.lowerBound = new Bound(node.getNumber().getText());
         this.upperBound = Bound.MAX;
+    }
+
+    @Override
+    public String toString() {
+
+        if (this.lowerBound.equals(Bound.ZERO)) {
+            if (this.upperBound.equals(Bound.ONE)) {
+                return "?";
+            }
+            else if (upperBoundIsInfinite()) {
+                return "*";
+            }
+            else {
+                return "^(" + this.lowerBound.getValue() + ".."
+                        + this.upperBound.getValue() + ")";
+            }
+        }
+        else if (this.lowerBound.equals(Bound.ONE) && upperBoundIsInfinite()) {
+            return "+";
+        }
+        else if (this.lowerBound.equals(this.upperBound)) {
+            return "^" + this.lowerBound.getValue();
+        }
+        else if (upperBoundIsInfinite()) {
+            return "^" + this.lowerBound.getValue() + "..";
+        }
+        else {
+            return "^(" + this.lowerBound.getValue() + ".."
+                    + this.upperBound.getValue() + ")";
+        }
     }
 }

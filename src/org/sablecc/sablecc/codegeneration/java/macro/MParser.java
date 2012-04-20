@@ -8,18 +8,8 @@ public class MParser {
 
     private final List<Object> eDefaultPackage_SpecifiedPackage = new LinkedList<Object>();
 
-    private final List<Object> eLrStateSingleton = new LinkedList<Object>();
-
     public MParser() {
 
-    }
-
-    public MLrStateSingleton newLrStateSingleton(
-            String pNumber) {
-
-        MLrStateSingleton lLrStateSingleton = new MLrStateSingleton(pNumber);
-        this.eLrStateSingleton.add(lLrStateSingleton);
-        return lLrStateSingleton;
     }
 
     public MDefaultPackage newDefaultPackage(
@@ -134,132 +124,15 @@ public class MParser {
         sb.append(System.getProperty("line.separator"));
         sb.append("    }");
         sb.append(System.getProperty("line.separator"));
-        sb.append("    stack.push(token, stack.getState().getTarget(token));");
+        sb.append("    ");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    stack.push(new AbstractForest(CSTProductionType.NOT_A_PRODUCTION,token), stack.getState().getTokenTarget(token));");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append("}");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("class ParseStack {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  private ParseStackEntry stack = new ParseStackEntry(null, null, L_0.instance);");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  private ParseStackEntry freeList;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  void push(Node node, LRState state) {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    ParseStackEntry entry;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    if(freeList != null) {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      entry = freeList;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      freeList = freeList.previous;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      entry.set(stack, node, state);");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    else {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      entry = new ParseStackEntry(stack, node, state);");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    stack = entry;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  LRState getState() {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    return stack.state;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  Node pop() {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    Node node = stack.node;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    ParseStackEntry entry = stack;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    stack = stack.previous;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    entry.set(freeList, null, null);");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    freeList = entry;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    return node;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  private static class ParseStackEntry {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    ParseStackEntry previous;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    Node node;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    LRState state;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    ParseStackEntry(");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("        ParseStackEntry previous,");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("        Node node,");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("        LRState state) {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("     this.previous = previous;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("     this.node = node;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("     this.state = state;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    void set(");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("        ParseStackEntry previous,");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("        Node node,");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("        LRState state) {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("     this.previous = previous;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("     this.node = node;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("     this.state = state;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("   }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("}");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("abstract class LRState {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  abstract Node apply(Parser parser)");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      throws ParserException, LexerException, IOException;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  abstract LRState getTarget(Node node)");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      throws ParserException, LexerException, IOException;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("}");
-        sb.append(System.getProperty("line.separator"));
-        for (Object oLrStateSingleton : this.eLrStateSingleton) {
-            sb.append(oLrStateSingleton.toString());
-        }
         return sb.toString();
     }
 

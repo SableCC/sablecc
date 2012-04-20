@@ -46,9 +46,9 @@ public class MAction {
     }
 
     public MReduce newReduce(
-            String pAlternative) {
+            String pReducedProduction) {
 
-        MReduce lReduce = new MReduce(pAlternative);
+        MReduce lReduce = new MReduce(pReducedProduction);
         this.eReduce.add(lReduce);
         return lReduce;
     }

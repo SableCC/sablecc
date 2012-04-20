@@ -176,4 +176,26 @@ public class Production {
         return this.name.equals(production.getName());
     }
 
+    @Override
+    public String toString() {
+
+        String productionText = getName() + " = " + "\r\n";
+
+        if (this.alternatives.size() > 1) {
+            for (Alternative alternative : this.alternatives.subList(0,
+                    this.alternatives.size() - 1)) {
+
+                productionText += "  " + alternative.toString() + " | \r\n";
+            }
+        }
+
+        if (this.alternatives.size() > 0) {
+            productionText += "  "
+                    + this.alternatives.get(this.alternatives.size() - 1)
+                            .toString() + ";";
+        }
+
+        return productionText;
+    }
+
 }

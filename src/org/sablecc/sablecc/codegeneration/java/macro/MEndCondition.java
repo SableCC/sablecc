@@ -33,7 +33,7 @@ public class MEndCondition {
         StringBuilder sb = new StringBuilder();
         sb.append("parser.look(");
         sb.append(rAhead());
-        sb.append(").getInternalType() == Node.InternalType.TEnd");
+        sb.append(").getInternalType() == Token.InternalType.TEnd");
         return sb.toString();
     }
 

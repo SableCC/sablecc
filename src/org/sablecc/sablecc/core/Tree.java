@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.core;
 
+import static org.sablecc.util.CamelCase.*;
+
 import java.math.*;
 import java.util.*;
 
@@ -144,6 +146,11 @@ public class Tree
         public String getNameType() {
 
             return "tree production";
+        }
+
+        public String getName_CamelCase() {
+
+            return to_CamelCase(getName());
         }
 
         @Override
@@ -365,6 +372,12 @@ public class Tree
             return this.name;
         }
 
+        public String getName_CamelCase() {
+
+            String name = getName();
+            return name == null ? null : to_CamelCase(name);
+        }
+
         public Token getNameToken() {
 
             if (this.token == null) {
@@ -515,6 +528,11 @@ public class Tree
         public ElementType getElementType() {
 
             return this.elementType;
+        }
+
+        public int getIndex() {
+
+            return this.alternative.getElements().indexOf(this);
         }
 
         public abstract Node getDeclaration();
@@ -956,10 +974,16 @@ public class Tree
             public void apply(
                     IGrammarVisitor visitor) {
 
-                // visitor.visitTreeDoubleElement(this);
+                visitor.visitTreeDoubleElement(this);
 
             }
 
+        }
+
+        public String getName_CamelCase() {
+
+            String name = getName();
+            return name == null ? null : to_CamelCase(name);
         }
 
         private static class InformationExtractor

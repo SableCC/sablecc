@@ -52,8 +52,6 @@ $end: node_type_enum_entry $
     TAnonymous;
   }
 
-  public abstract ProductionType getProductionType();
-
   public static enum ProductionType {
 $macro: node_production_type_enum_entry(name) $
     T_$name,
@@ -82,16 +80,741 @@ $end: node_production_type_enum_entry $
     return "\\"" + getText() + "\\"@(" + getLine() + "," + getPos() + ")";
   }
 
-  abstract InternalType getInternalType();
-
-  static enum InternalType {
-$macro: node_internal_type_enum_entry(name) $
-    T_$name,
-$end: node_internal_type_enum_entry $
-    TEnd;
-  }
 }
 $end: node $
+
+$comment: ========== entry ========== $
+
+$macro: entry $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+class Entry<E> {
+
+    E element;
+
+    Entry<E> next;
+
+    Entry<E> previous;
+
+    Entry(
+            E element,
+            Entry<E> next,
+            Entry<E> previous) {
+
+        this.element = element;
+        this.next = next;
+        this.previous = previous;
+
+    }
+}
+
+$end: entry$
+
+$comment: ========== node_list ========== $
+
+$macro: node_list $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+import java.util.*;
+
+public class NodeList<TNode extends Node>extends Node
+        implements Iterable<TNode> {
+
+        int lowerBound;
+        int upperBound;
+
+        int size = 0;
+
+        private final int INF = -1;
+
+        Entry<TNode> header = new Entry<TNode>(null,null,null);
+
+        NodeList(){
+                this.header.next = this.header.previous = this.header;
+        }
+
+        NodeList(int lowerBound){
+            this.header.next = this.header.previous = this.header;
+                this.lowerBound = lowerBound;
+                this.upperBound = INF;
+        }
+
+        NodeList(int lowerBound,int upperBound){
+            this.header.next = this.header.previous = this.header;
+            this.lowerBound = lowerBound;
+                this.upperBound = upperBound;
+        }
+
+        void add(TNode element){
+                 Entry<TNode> newEntry = new Entry<TNode>(element, this.header, this.header.previous);
+                 newEntry.previous.next = newEntry;
+                 newEntry.next.previous = newEntry;
+                 size++;
+
+                 //TODO Control list bounds
+        }
+
+        void addAll(NodeList<TNode> elements){
+                this.header.previous.next = elements.header.next;
+                elements.header.next.previous = this.header.previous;
+                this.header.previous = elements.header.previous;
+                elements.header.previous.next = this.header;
+                this.size += elements.size;
+
+                //TODO Control list bounds
+        }
+
+        public int size(){
+
+                return size;
+        }
+
+ @Override
+  public String getText() {
+          return "";
+  }
+
+  @Override
+  public int getLine() {
+    return 0;
+  }
+
+  @Override
+  public int getPos() {
+    return 0;
+  }
+
+  @Override
+  public Type getType() {
+    return Type.TAnonymous;
+  }
+
+  @Override
+  public void applyOnChildren(Walker walker) {
+        for (TNode node : this) {
+            node.apply(walker);
+        }
+  }
+
+  @Override
+  public void apply(Walker walker){
+    this.applyOnChildren(walker);
+  }
+
+  @Override
+  public Iterator<TNode> iterator(){
+          return new NodeListItr();
+  }
+
+  private class NodeListItr
+            implements Iterator<TNode> {
+
+    private int cursor = 0;
+
+    private Entry<TNode> current;
+
+    NodeListItr() {
+
+         this.current = NodeList.this.header;
+    }
+
+    @Override
+    public boolean hasNext() {
+
+        return this.cursor != size();
+    }
+
+    @Override
+    public TNode next() {
+
+        this.cursor++;
+        current = this.current.next;
+        return this.current.element;
+    }
+
+    @Override
+    public void remove() {
+
+    }
+  }
+
+}
+
+$end: node_list$
+
+$comment: ========== pair_node_list ========== $
+
+$macro: pair_node_list $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+import java.util.*;
+
+public class PairNodeList<TNodeLeft extends Node, TNodeRight extends Node>
+        extends Node {
+
+    int lowerBound;
+
+    int upperBound;
+
+    int size = 0;
+
+    private final int INF = -1;
+
+    Entry<TNodeLeft> leftHeader = new Entry<TNodeLeft>(null, null, null);
+
+    Entry<TNodeRight> rightHeader = new Entry<TNodeRight>(null, null, null);
+
+    PairNodeList(){
+        this.leftHeader.next = this.leftHeader.previous = this.leftHeader;
+        this.rightHeader.next = this.rightHeader.previous = this.rightHeader;
+    }
+
+    PairNodeList(int lowerBound){
+        this.leftHeader.next = this.leftHeader.previous = this.leftHeader;
+        this.rightHeader.next = this.rightHeader.previous = this.rightHeader;
+        this.lowerBound = lowerBound;
+        this.upperBound = INF;
+    }
+
+    PairNodeList(int lowerBound,int upperBound){
+        this.leftHeader.next = this.leftHeader.previous = this.leftHeader;
+        this.rightHeader.next = this.rightHeader.previous = this.rightHeader;
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
+    }
+
+    void addLeft(
+            TNodeLeft element) {
+
+        Entry<TNodeLeft> newEntry = new Entry<TNodeLeft>(element,
+                this.leftHeader, this.leftHeader.previous);
+        newEntry.previous.next = newEntry;
+        newEntry.next.previous = newEntry;
+        this.size++;
+
+        // TODO Control list bounds
+    }
+
+    void addRight(
+            TNodeRight element) {
+
+        Entry<TNodeRight> newEntry = new Entry<TNodeRight>(element,
+                this.rightHeader, this.rightHeader.previous);
+        newEntry.previous.next = newEntry;
+        newEntry.next.previous = newEntry;
+        this.size++;
+
+        // TODO Control list bounds
+    }
+
+    void addAll(
+            PairNodeList<TNodeLeft, TNodeRight> elements) {
+
+        this.leftHeader.previous.next = elements.leftHeader.next;
+        elements.leftHeader.next.previous = this.leftHeader.previous;
+        this.leftHeader.previous = elements.leftHeader.previous;
+        elements.leftHeader.previous.next = this.leftHeader;
+
+        this.rightHeader.previous.next = elements.rightHeader.next;
+        elements.rightHeader.next.previous = this.rightHeader.previous;
+        this.rightHeader.previous = elements.rightHeader.previous;
+        elements.rightHeader.previous.next = this.rightHeader;
+
+        this.size += elements.size;
+
+        // TODO Control list bounds
+    }
+
+     void addAll(
+            SeparatedNodeList<TNodeLeft, TNodeRight> elements) {
+
+        this.leftHeader.previous.next = elements.leftHeader.next;
+        elements.leftHeader.next.previous = this.leftHeader.previous;
+        this.leftHeader.previous = elements.leftHeader.previous;
+        elements.leftHeader.previous.next = this.leftHeader;
+
+        this.rightHeader.previous.next = elements.rightHeader.next;
+        elements.rightHeader.next.previous = this.rightHeader.previous;
+        this.rightHeader.previous = elements.rightHeader.previous;
+        elements.rightHeader.previous.next = this.rightHeader;
+
+        this.size += elements.size;
+        // TODO Control list bounds
+    }
+
+     void addAllReverse(
+            SeparatedNodeList<TNodeRight, TNodeLeft> elements) {
+
+            this.leftHeader.previous.next = elements.rightHeader.next;
+            elements.leftHeader.next.previous = this.rightHeader.previous;
+            this.leftHeader.previous = elements.rightHeader.previous;
+            elements.leftHeader.previous.next = this.rightHeader;
+
+            this.rightHeader.previous.next = elements.leftHeader.next;
+            elements.rightHeader.next.previous = this.leftHeader.previous;
+            this.rightHeader.previous = elements.leftHeader.previous;
+            elements.rightHeader.previous.next = this.leftHeader;
+
+        this.size += elements.size;
+        // TODO Control list bounds
+    }
+
+    NodeList<TNodeLeft> getLeft(){
+        NodeList<TNodeLeft> list = new NodeList<TNodeLeft>();
+        Iterator<TNodeLeft> leftIterator = this.leftIterator();
+
+        while(leftIterator.hasNext()){
+            list.add(leftIterator.next());
+        }
+
+        return list;
+    }
+
+    NodeList<TNodeRight> getRight(){
+        NodeList<TNodeRight> list = new NodeList<TNodeRight>();
+        Iterator<TNodeRight> rightIterator = this.rightIterator();
+
+        while(rightIterator.hasNext()){
+            list.add(rightIterator.next());
+        }
+
+        return list;
+    }
+
+    public Iterator<TNodeLeft> leftIterator() {
+
+        return new LeftNodeListItr();
+    }
+
+    public Iterator<TNodeRight> rightIterator() {
+
+        return new RightNodeListItr();
+    }
+
+    public int size() {
+
+        return this.size;
+    }
+
+    @Override
+    public Type getType() {
+
+        return Type.TAnonymous;
+    }
+
+    @Override
+    public String getText() {
+
+        return "";
+    }
+
+    @Override
+    public int getLine() {
+
+        return 0;
+    }
+
+    @Override
+    public int getPos() {
+
+        return 0;
+    }
+
+    @Override
+    public void apply(
+            Walker walker) {
+
+        this.applyOnChildren(walker);
+
+    }
+
+    @Override
+    public void applyOnChildren(
+            Walker walker) {
+
+        Iterator<TNodeLeft> leftIterator = leftIterator();
+        Iterator<TNodeRight> rightIterator = rightIterator();
+
+        while(leftIterator.hasNext()){
+            leftIterator.next().apply(walker);
+            rightIterator.next().apply(walker);
+        }
+
+    }
+
+    private class LeftNodeListItr
+            implements Iterator<TNodeLeft> {
+
+        private int cursor = 0;
+
+        private int size;
+
+        private Entry<TNodeLeft> current;
+
+        LeftNodeListItr() {
+
+            this.current = PairNodeList.this.leftHeader;
+            this.size = size() /2;
+        }
+
+        @Override
+        public boolean hasNext() {
+
+            return this.cursor != size;
+        }
+
+        @Override
+        public TNodeLeft next() {
+
+            this.cursor++;
+            this.current = this.current.next;
+            return this.current.element;
+        }
+
+        @Override
+        public void remove() {
+
+        }
+    }
+
+    private class RightNodeListItr
+            implements Iterator<TNodeRight> {
+
+        private int cursor = 0;
+
+        private int size;
+
+        private Entry<TNodeRight> current;
+
+        RightNodeListItr() {
+
+            this.current = PairNodeList.this.rightHeader;
+            this.size = size() /2;
+        }
+
+        @Override
+        public boolean hasNext() {
+
+            return this.cursor != size;
+        }
+
+        @Override
+        public TNodeRight next() {
+
+            this.cursor++;
+            this.current = this.current.next;
+            return this.current.element;
+        }
+
+        @Override
+        public void remove() {
+
+        }
+    }
+
+}
+$end: pair_node_list$
+
+$comment: ========== separated_node_list ========== $
+
+$macro: separated_node_list $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+import java.util.*;
+
+public class SeparatedNodeList<TNodeLeft extends Node, TNodeRight extends Node>
+        extends Node
+        implements Iterable<TNodeLeft> {
+
+    int lowerBound;
+
+    int upperBound;
+
+    int size = 0;
+
+    private final int INF = -1;
+
+    Entry<TNodeLeft> leftHeader = new Entry<TNodeLeft>(null, null, null);
+
+    Entry<TNodeRight> rightHeader = new Entry<TNodeRight>(null, null, null);
+
+    SeparatedNodeList(){
+        this.leftHeader.next = this.leftHeader.previous = this.leftHeader;
+        this.rightHeader.next = this.rightHeader.previous = this.rightHeader;
+    }
+
+    SeparatedNodeList(int lowerBound){
+        this.leftHeader.next = this.leftHeader.previous = this.leftHeader;
+        this.rightHeader.next = this.rightHeader.previous = this.rightHeader;
+        this.lowerBound = lowerBound;
+        this.upperBound = INF;
+    }
+
+    SeparatedNodeList(int lowerBound,int upperBound){
+        this.leftHeader.next = this.leftHeader.previous = this.leftHeader;
+        this.rightHeader.next = this.rightHeader.previous = this.rightHeader;
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
+    }
+
+    void addLeft(
+            TNodeLeft element) {
+
+        Entry<TNodeLeft> newEntry = new Entry<TNodeLeft>(element,
+                this.leftHeader, this.leftHeader.previous);
+        newEntry.previous.next = newEntry;
+        newEntry.next.previous = newEntry;
+        this.size++;
+
+        // TODO Control list bounds
+    }
+
+    void addRight(
+            TNodeRight element) {
+
+        Entry<TNodeRight> newEntry = new Entry<TNodeRight>(element,
+                this.rightHeader, this.rightHeader.previous);
+        newEntry.previous.next = newEntry;
+        newEntry.next.previous = newEntry;
+        this.size++;
+
+        // TODO Control list bounds
+    }
+
+     void addAll(
+            PairNodeList<TNodeLeft, TNodeRight> elements) {
+
+        this.leftHeader.previous.next = elements.leftHeader.next;
+        elements.leftHeader.next.previous = this.leftHeader.previous;
+        this.leftHeader.previous = elements.leftHeader.previous;
+        elements.leftHeader.previous.next = this.leftHeader;
+
+        this.rightHeader.previous.next = elements.rightHeader.next;
+        elements.rightHeader.next.previous = this.rightHeader.previous;
+        this.rightHeader.previous = elements.rightHeader.previous;
+        elements.rightHeader.previous.next = this.rightHeader;
+
+        this.size += elements.size;
+
+        // TODO Control list bounds
+    }
+
+     void addAll(
+            SeparatedNodeList<TNodeLeft, TNodeRight> elements) {
+
+        this.leftHeader.previous.next = elements.leftHeader.next;
+        elements.leftHeader.next.previous = this.leftHeader.previous;
+        this.leftHeader.previous = elements.leftHeader.previous;
+        elements.leftHeader.previous.next = this.leftHeader;
+
+        this.rightHeader.previous.next = elements.rightHeader.next;
+        elements.rightHeader.next.previous = this.rightHeader.previous;
+        this.rightHeader.previous = elements.rightHeader.previous;
+        elements.rightHeader.previous.next = this.rightHeader;
+
+        this.size += elements.size;
+        // TODO Control list bounds
+    }
+
+    void addAllReverse(
+            PairNodeList<TNodeRight, TNodeLeft> elements) {
+
+            this.leftHeader.previous.next = elements.rightHeader.next;
+            elements.leftHeader.next.previous = this.rightHeader.previous;
+            this.leftHeader.previous = elements.rightHeader.previous;
+            elements.leftHeader.previous.next = this.rightHeader;
+
+            this.rightHeader.previous.next = elements.leftHeader.next;
+            elements.rightHeader.next.previous = this.leftHeader.previous;
+            this.rightHeader.previous = elements.leftHeader.previous;
+            elements.rightHeader.previous.next = this.leftHeader;
+
+        this.size += elements.size;
+
+        // TODO Control list bounds
+    }
+
+     void addAllReverse(
+            SeparatedNodeList<TNodeRight, TNodeLeft> elements) {
+
+            this.leftHeader.previous.next = elements.rightHeader.next;
+            elements.leftHeader.next.previous = this.rightHeader.previous;
+            this.leftHeader.previous = elements.rightHeader.previous;
+            elements.leftHeader.previous.next = this.rightHeader;
+
+            this.rightHeader.previous.next = elements.leftHeader.next;
+            elements.rightHeader.next.previous = this.leftHeader.previous;
+            this.rightHeader.previous = elements.leftHeader.previous;
+            elements.rightHeader.previous.next = this.leftHeader;
+
+        this.size += elements.size;
+        // TODO Control list bounds
+    }
+
+    NodeList<TNodeLeft> getLeft(){
+        NodeList<TNodeLeft> list = new NodeList<TNodeLeft>();
+        Iterator<TNodeLeft> leftIterator = this.iterator();
+
+        while(leftIterator.hasNext()){
+            list.add(leftIterator.next());
+        }
+
+        return list;
+    }
+
+    NodeList<TNodeRight> getRight(){
+        NodeList<TNodeRight> list = new NodeList<TNodeRight>();
+        Iterator<TNodeRight> rightIterator = this.separatorIterator();
+
+        while(rightIterator.hasNext()){
+            list.add(rightIterator.next());
+        }
+
+        return list;
+    }
+
+    @Override
+    public Iterator<TNodeLeft> iterator() {
+
+        return new LeftNodeListItr();
+    }
+
+    public Iterator<TNodeRight> separatorIterator() {
+
+        return new RightNodeListItr();
+    }
+
+    public int size() {
+
+        return this.size;
+    }
+
+    @Override
+    public Type getType() {
+
+        return Type.TAnonymous;
+    }
+
+    @Override
+    public String getText() {
+
+        return "";
+    }
+
+    @Override
+    public int getLine() {
+
+        return 0;
+    }
+
+    @Override
+    public int getPos() {
+
+        return 0;
+    }
+
+    @Override
+    public void apply(
+            Walker walker) {
+
+        this.applyOnChildren(walker);
+
+    }
+
+    @Override
+    public void applyOnChildren(
+            Walker walker) {
+
+        Iterator<TNodeLeft> leftIterator = iterator();
+        Iterator<TNodeRight> rightIterator = separatorIterator();
+
+        leftIterator.next().apply(walker);
+
+        while(leftIterator.hasNext()){
+            rightIterator.next().apply(walker);
+            leftIterator.next().apply(walker);
+
+        }
+
+    }
+
+    private class LeftNodeListItr
+            implements Iterator<TNodeLeft> {
+
+        private int cursor = 0;
+
+        private int size;
+
+        private Entry<TNodeLeft> current;
+
+        LeftNodeListItr() {
+
+            this.current = SeparatedNodeList.this.leftHeader;
+            this.size = size() / 2 + 1;
+        }
+
+        @Override
+        public boolean hasNext() {
+
+            return this.cursor != this.size;
+        }
+
+        @Override
+        public TNodeLeft next() {
+
+            this.cursor++;
+            this.current = this.current.next;
+            return this.current.element;
+        }
+
+        @Override
+        public void remove() {
+
+        }
+    }
+
+    private class RightNodeListItr
+            implements Iterator<TNodeRight> {
+
+        private int cursor = 0;
+
+        private int size;
+
+        private Entry<TNodeRight> current;
+
+        RightNodeListItr() {
+
+            this.current = SeparatedNodeList.this.rightHeader;
+            this.size = size() / 2;
+        }
+
+        @Override
+        public boolean hasNext() {
+
+            return this.cursor != size;
+        }
+
+        @Override
+        public TNodeRight next() {
+
+            this.cursor++;
+            this.current = this.current.next;
+            return this.current.element;
+        }
+
+        @Override
+        public void remove() {
+
+        }
+    }
+
+}
+
+$end: separated_node_list$
 
 $comment: ========== token ========== $
 
@@ -113,11 +836,6 @@ public abstract class Token
   }
 
   @Override
-  public ProductionType getProductionType() {
-    return ProductionType.TNotAProduction;
-  }
-
-  @Override
   public String getText() {
     return this.text;
   }
@@ -132,8 +850,22 @@ public abstract class Token
     return this.pos;
   }
 
+    static enum InternalType {
+$macro: node_internal_type_enum_entry(name) $
+    T_$name,
+$end: node_internal_type_enum_entry $
+    TEnd;
+  }
+
+  abstract InternalType getInternalType();
+
   @Override
   public void applyOnChildren(Walker walker) {
+  }
+
+   @Override
+  public void apply(Walker walker) {
+
   }
 }
 $end: token $
@@ -663,23 +1395,45 @@ import java.io.*;
 
 public class Tester {
 
-        static public void main(String[] args) {
-                try {
-                        Reader reader = new FileReader(args[0]);
-                        Lexer lexer = new Lexer(reader);
-                        Token token;
-                        do {
-                                token = lexer.next();
-                                System.out.println(token.getType() + "@" + token.getLine() + "," + token.getPos() + ":" + token.getText());
-                        } while (token.getType() != Node.Type.TEnd);
-                } catch (LexerException e) {
-                        System.out.println(e.getLine() + "," + e.getPos()
-                                        + ". Syntax error: Unexpected character '" + e.getChar()
-                                        + "'.");
-                } catch (IOException e) {
-                        System.out.println(e.getMessage());
+    static public void main(
+            String[] args) {
+
+        try {
+            Reader reader = new FileReader(args[0]);
+            Parser parser = new Parser(reader);
+            Node tree = parser.parse();
+
+            tree.apply(new Walker() {
+
+                @Override
+                public void defaultCase(
+                        Node node) {
+
+                    if (node instanceof Token) {
+                        Token token = (Token) node;
+                        System.out.println(token.getText());
+                    }
+                    else {
+                        super.defaultCase(node);
+                    }
+
                 }
+            });
+
         }
+        catch (LexerException e) {
+            System.out.println(e.getMessage() + "," + e.getPos()
+                    + ". Syntax error: Unexpected character '" + e.getChar()
+                    + "'.");
+        }
+        catch (ParserException e) {
+            System.out.println(e.getMessage());
+        }
+
+        catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
 $end: tester $
 
@@ -719,7 +1473,7 @@ $end: alternative_node_parent $
 
   private final int line;
   private final int pos;
-$expand: normal_element_declaration, end_element_declaration $
+$expand: normal_element_declaration,list_element_declaration,alternated_list_element_declaration,separated_list_element_declaration, end_element_declaration $
 
   @Override
   public int getLine() {
@@ -761,10 +1515,19 @@ $macro: end_child_apply $
 $end: end_child_apply $
   }
 
-  N$name(int line, int pos$expand: normal_constructor_parameter, end_constructor_parameter, before_first=", ", separator=", " $) {
+  N$name(int line, int pos$expand: normal_constructor_parameter,list_constructor_parameter,alternated_list_constructor_parameter,separated_list_constructor_parameter, end_constructor_parameter, before_first=", ", separator=", " $) {
 $macro: normal_constructor_parameter(element_type, element_name) $
 N$element_type p$(element_name)$no_eol$
 $end: normal_constructor_parameter $
+$macro: list_constructor_parameter(list_type, element_name) $
+NodeList<N$list_type> p$(element_name)$no_eol$
+$end: list_constructor_parameter $
+$macro: separated_list_constructor_parameter(left_list_type,right_list_type, element_name) $
+SeparatedNodeList<N$(left_list_type),N$(right_list_type)> p$(element_name)$no_eol$
+$end: separated_list_constructor_parameter $
+$macro: alternated_list_constructor_parameter(left_list_type,right_list_type, element_name) $
+PairNodeList<N$(left_list_type),N$(right_list_type)> p$(element_name)$no_eol$
+$end: alternated_list_constructor_parameter $
 $macro: end_constructor_parameter $
 End p\$end$no_eol$
 $end: end_constructor_parameter $
@@ -788,27 +1551,36 @@ $macro: anonymous_alt_type $
 $end: anonymous_alt_type $
   }
 
-  @Override
-  public ProductionType getProductionType() {
-$macro: alt_prod_type(prod_name) $
-    return ProductionType.T_$prod_name;
-$end: alt_prod_type $
-  }
-
-  @Override
-  InternalType getInternalType() {
-    return InternalType.T_$name;
-  }
 $expand: public_element_accessor, before_first="\n", separator="\n" $
 $expand: normal_element_accessor, end_element_accessor, before_first="\n", separator="\n" $
 $macro: normal_element_declaration(element_type, element_name) $
   private final N$element_type e$element_name;
 $end: normal_element_declaration $
+$macro: list_element_declaration(list_type, element_name) $
+  private final NodeList<N$list_type> e$element_name;
+$end: list_element_declaration $
+$macro: separated_list_element_declaration(left_list_type,right_list_type, element_name) $
+  private final SeparatedNodeList<N$left_list_type,N$right_list_type> e$element_name;
+$end: separated_list_element_declaration $
+$macro: alternated_list_element_declaration(left_list_type,right_list_type, element_name) $
+  private final PairNodeList<N$left_list_type,N$right_list_type> e$element_name;
+$end: alternated_list_element_declaration $
 $macro: public_element_accessor(element_name) $
-  public $expand: public_element_type, token_element_type $ get_$element_name() {
+  public $expand: public_element_type,public_list_element_type,public_alternated_list_element_type,public_separated_list_element_type, token_element_type $ get_$element_name() {
 $macro: public_element_type(element_type) $
 N$(element_type)$no_eol$
 $end: public_element_type $
+$macro: public_list_element_type(element_type) $
+NodeList<N$(element_type)>$no_eol$
+$end: public_list_element_type $
+$macro: public_separated_list_element_type(left_element_type,right_element_type) $
+SeparatedNodeList<N$(left_element_type),N$(right_element_type)>$no_eol$
+$end: public_separated_list_element_type $
+$macro: public_alternated_list_element_type(left_element_type,right_element_type) $
+PairNodeList<N$(left_element_type),N$(right_element_type)>$no_eol$
+$end: public_alternated_list_element_type $
+
+
 $macro: token_element_type $
 Token$no_eol$
 $end: token_element_type $
@@ -820,6 +1592,21 @@ $macro: normal_element_accessor(element_type, element_name) $
     return this.e$element_name;
   }
 $end: normal_element_accessor$
+$macro: list_element_accessor(list_type, element_name) $
+  NodeList<N$list_type> internalGet$element_name() {
+    return this.e$element_name;
+  }
+$end: list_element_accessor$
+$macro: separated_list_element_accessor(left_list_type,right_list_type, element_name) $
+  SeparatedNodeList<N$left_list_type,N$right_list_type> internalGet$element_name() {
+    return this.e$element_name;
+  }
+$end: separated_list_element_accessor$
+$macro: alternated_list_element_accessor(left_list_type,right_list_type, element_name) $
+  PairNodeList<N$left_list_type,N$right_list_type> internalGet$element_name() {
+    return this.e$element_name;
+  }
+$end: alternated_list_element_accessor$
 $macro: end_element_declaration $
   private final End e\$end;
 $end: end_element_declaration $
@@ -881,6 +1668,19 @@ $end: walker_out $
 }
 $end: walker $
 
+$comment: ========== CSTProductionType ========== $
+
+$macro: cst_production_type $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+enum CSTProductionType {
+$macro: cst_production_type_declaration(name) $
+  $name,
+$end: cst_production_type_declaration $
+}
+$end: cst_production_type $
+
 $comment: ========== parser ========== $
 
 $macro: parser $
@@ -933,23 +1733,32 @@ public class Parser {
     else {
       token = lexer.next();
     }
-    stack.push(token, stack.getState().getTarget(token));
+
+    stack.push(new AbstractForest(CSTProductionType.NOT_A_PRODUCTION,token), stack.getState().getTokenTarget(token));
   }
 }
+
+$end: parser$
+
+$comment: ========== parseStack ========== $
+
+$macro: parse_stack $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
 
 class ParseStack {
   private ParseStackEntry stack = new ParseStackEntry(null, null, L_0.instance);
   private ParseStackEntry freeList;
 
-  void push(Node node, LRState state) {
+  void push(AbstractForest forest, LRState state) {
     ParseStackEntry entry;
     if(freeList != null) {
       entry = freeList;
       freeList = freeList.previous;
-      entry.set(stack, node, state);
+      entry.set(stack,forest, state);
     }
     else {
-      entry = new ParseStackEntry(stack, node, state);
+      entry = new ParseStackEntry(stack, forest, state);
     }
     stack = entry;
   }
@@ -958,48 +1767,107 @@ class ParseStack {
     return stack.state;
   }
 
-  Node pop() {
-    Node node = stack.node;
+  AbstractForest pop() {
+    AbstractForest forest = stack.forest;
     ParseStackEntry entry = stack;
     stack = stack.previous;
     entry.set(freeList, null, null);
     freeList = entry;
-    return node;
+    return forest;
   }
 
   private static class ParseStackEntry {
     ParseStackEntry previous;
-    Node node;
+    AbstractForest forest;
     LRState state;
 
     ParseStackEntry(
         ParseStackEntry previous,
-        Node node,
+        AbstractForest forest,
         LRState state) {
      this.previous = previous;
-     this.node = node;
+     this.forest = forest;
      this.state = state;
     }
 
     void set(
         ParseStackEntry previous,
-        Node node,
+        AbstractForest forest,
         LRState state) {
      this.previous = previous;
-     this.node = node;
+     this.forest = forest;
      this.state = state;
    }
   }
 }
 
+$end: parse_stack$
+
+$comment: ========== abstract_forest ========== $
+
+$macro: abstract_forest $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+import java.util.*;
+
+class AbstractForest{
+
+        private final CSTProductionType type;
+        private final List<Node> nodes;
+
+        AbstractForest(CSTProductionType type,List<Node> nodes){
+
+          this.type = type;
+          this.nodes = nodes;
+        }
+
+        AbstractForest(CSTProductionType type,Node node){
+
+          this.type = type;
+          this.nodes = new LinkedList<Node>();
+          this.nodes.add(node);
+        }
+
+        CSTProductionType getProductionType(){
+          return type;
+        }
+
+        List<Node> getNodes(){
+          return nodes;
+        }
+}
+
+$end: abstract_forest $
+
+
+$comment: ========== lr_state ========== $
+
+$macro: lr_state $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+import java.io.*;
+
 abstract class LRState {
 
   abstract Node apply(Parser parser)
       throws ParserException, LexerException, IOException;
-  abstract LRState getTarget(Node node)
+
+  abstract LRState getTokenTarget(Token token)
+      throws ParserException, LexerException, IOException;
+
+  abstract LRState getProductionTarget(CSTProductionType cstType)
       throws ParserException, LexerException, IOException;
 }
+$end: lr_state $
+
 $macro: lr_state_singleton(number) $
+$insert: header $
+$expand: default_package, specified_package, before_first="\n" $
+
+import java.io.*;
+import java.util.*;
 
 class L_$number
     extends LRState {
@@ -1021,10 +1889,10 @@ $macro: normal_group$
 $expand: normal_condition, end_condition, before_many="(", separator=" || ", after_many=")" $
 $end: normal_group $
 $macro: normal_condition(ahead,token_type) $
-parser.look($ahead).getInternalType() == Node.InternalType.T_$(token_type)$no_eol$
+parser.look($ahead).getInternalType() == Token.InternalType.T_$(token_type)$no_eol$
 $end: normal_condition $
 $macro: end_condition(ahead) $
-parser.look($ahead).getInternalType() == Node.InternalType.TEnd$no_eol$
+parser.look($ahead).getInternalType() == Token.InternalType.TEnd$no_eol$
 $end: end_condition $
 $macro: false_group $
 false$no_eol$
@@ -1033,30 +1901,111 @@ $macro: shift $
       parser.shift();
       return null;
 $end: shift $
-$macro: reduce(alternative) $
+$macro: reduce(reduced_production) $
       ParseStack stack = parser.getStack();
-
 $expand: reduce_normal_pop, reduce_end_pop $
-$macro: reduce_normal_pop(element_type, element_name) $
-      N$element_type l$element_name = (N$element_type) stack.pop();
+$macro: reduce_normal_pop(element_name) $
+      AbstractForest l$(element_name) = stack.pop();
 $end: reduce_normal_pop $
 $macro: reduce_end_pop $
-      End l\$end = (End) stack.pop();
+      End l\$end = (End) stack.pop().getNodes().get(0);
 $end: reduce_end_pop $
-
-$macro: normal_parameter(element_name) $
-l$(element_name)$no_eol$
+$macro: reduce_decision $
+      List<Node> trees = new LinkedList<Node>();
+      $expand: new_tree_class,new_list $
+$macro: new_tree_class(element_type,element_name) $
+$expand: new_tree_class,new_list $
+        N$(element_type) n$(element_name) = new N$(element_type) (-1, -1$expand: normal_parameter,null_parameter,separated_parameter,alternated_parameter,new_parameter, end_parameter, before_first=", ", separator=", " $);
+$end: new_tree_class$
+$macro: new_list(list_name) $
+$expand: new_tree_class,new_list $
+        $expand:normal_declaration,alternated_declaration,separated_declaration$ n$(list_name) = new $expand:normal_declaration,alternated_declaration,separated_declaration$ ($expand: string_parameter,normal_parameter,separated_parameter,alternated_parameter,new_parameter, separator=", "$);
+$expand: add_pop_element,add_pop_element_left,add_pop_element_right,add_new_element,add_pop_list,add_pop_separated_list,add_pop_alternated_list,add_pop_reverse_separated_list,add_pop_reverse_alternated_list,add_new_list $
+$macro: normal_declaration(normal_list_type) $
+NodeList<N$(normal_list_type)>$no_eol$
+$end: normal_declaration$
+$macro: alternated_declaration(left_list_type,right_list_type) $
+PairNodeList<N$(left_list_type),N$(right_list_type)>$no_eol$
+$end: alternated_declaration$
+$macro: separated_declaration(left_list_type,right_list_type) $
+SeparatedNodeList<N$(left_list_type),N$(right_list_type)>$no_eol$
+$end: separated_declaration$
+$end: new_list$
+$expand: add_l_to_forest,add_null_to_forest,add_n_to_forest $
+$macro: add_pop_to_forest(element_name,index) $
+      trees.add(l$(element_name).getNodes().get($index));
+$end: add_pop_to_forest $
+$macro: add_l_to_forest(element_name) $
+      trees.add(l$(element_name));
+$end: add_l_to_forest $
+$macro: add_null_to_forest $
+      trees.add(null);
+$end: add_null_to_forest $
+$macro: add_n_to_forest(element_name) $
+      trees.add(n$(element_name));
+$end: add_n_to_forest $
+      stack.push(new AbstractForest(CSTProductionType.$reduced_production,trees), stack.getState().getProductionTarget(CSTProductionType.$reduced_production));
+      return null;
+$end: reduce_decision $
+$macro: normal_parameter(element_type,element_name,index) $
+(N$(element_type)) l$(element_name).getNodes().get($index)$no_eol$
 $end: normal_parameter $
+$macro: separated_parameter(left_element_type,right_element_type,element_name,index) $
+(SeparatedNodeList<N$(left_element_type),N$(right_element_type)>) l$(element_name).getNodes().get($index)$no_eol$
+$end: separated_parameter $
+$macro: alternated_parameter(left_element_type,right_element_type,element_name,index) $
+(PairNodeList<N$(left_element_type),N$(right_element_type)>) l$(element_name).getNodes().get($index)$no_eol$
+$end: alternated_parameter $
+$macro: new_parameter(element_name) $
+n$(element_name)$no_eol$
+$end: new_parameter $
+$macro: null_parameter $
+null$no_eol$
+$end: null_parameter $
 $macro: end_parameter $
 l\$end$no_eol$
 $end: end_parameter $
-$macro: reduce_decision $
-      N$alternative l$alternative = new N$alternative(-1, -1$expand: normal_parameter, end_parameter, before_first=", ", separator=", " $);
-      stack.push(l$alternative, stack.getState().getTarget(l$alternative));
-      return null;
-$end: reduce_decision $
+$macro: string_parameter(string)$
+$(string)$no_eol$
+$end: string_parameter$
+$macro: add_pop_element(list_name,element_name,element_type,index) $
+      n$(list_name).add((N$(element_type))l$(element_name).getNodes().get($index));
+$end: add_pop_element $
+$macro: add_pop_element_left(list_name,element_name,element_type,index) $
+      n$(list_name).addLeft((N$(element_type))l$(element_name).getNodes().get($index));
+$end: add_pop_element_left $
+$macro: add_pop_element_right(list_name,element_name,element_type,index) $
+      n$(list_name).addRight((N$(element_type))l$(element_name).getNodes().get($index));
+$end: add_pop_element_right $
+$macro: add_new_element(list_name,element_name) $
+      n$(list_name).add($element_name);
+$end: add_new_element $
+$macro: add_pop_list(list_name,element_name,element_type,index) $
+      n$(list_name).addAll((NodeList<N$(element_type)>)l$(element_name).getNodes().get($index));
+$end: add_pop_list $
+$macro: add_pop_separated_list(list_name,element_name,left_type,right_type,index) $
+      n$(list_name).addAll(((SeparatedNodeList<N$(left_type),N$(right_type)>)l$(element_name).getNodes().get($index))$expand: get_left,get_right $);
+$end: add_pop_separated_list $
+$macro: add_pop_alternated_list(list_name,element_name,left_type,right_type,index) $
+      n$(list_name).addAll(((PairNodeList<N$(left_type),N$(right_type)>)l$(element_name).getNodes().get($index))$expand: get_left,get_right $);
+$end: add_pop_alternated_list $
+$macro: add_pop_reverse_separated_list(list_name,element_name,left_type,right_type,index) $
+      n$(list_name).addAllReverse(((SeparatedNodeList<N$(left_type),N$(right_type)>)l$(element_name).getNodes().get($index))$expand: get_left,get_right $);
+$end: add_pop_reverse_separated_list $
+$macro: add_pop_reverse_alternated_list(list_name,element_name,left_type,right_type,index) $
+      n$(list_name).addAllReverse(((PairNodeList<N$(left_type),N$(right_type)>)l$(element_name).getNodes().get($index))$expand: get_left,get_right $);
+$end: add_pop_reverse_alternated_list $
+$macro: get_left$
+.getLeft()$no_eol$
+$end: get_left$
+$macro: get_right$
+.getRight()$no_eol$
+$end: get_right$
+$macro: add_new_list(list_name,element_name) $
+      n$(list_name).addAll($element_name);
+$end: add_new_list $
 $macro: accept_decision(element_name) $
-      return l$element_name;
+      return l$element_name.getNodes().get(0);
 $end: accept_decision $
 $end: reduce $
     }
@@ -1069,10 +2018,10 @@ $end: lr1_or_more $
   }
 
   @Override
-  LRState getTokenTarget(InternalType type)
+  LRState getTokenTarget(Token token)
       throws ParserException, LexerException, IOException {
 
-    switch(type) {
+    switch(token.getInternalType()) {
 $macro: normal_token_lr_transition_target(node_type, target) $
     case T_$(node_type):
       return L_$target.instance;
@@ -1082,22 +2031,22 @@ $macro: end_token_lr_transition_target(target) $
       return L_$target.instance;
 $end: end_token_lr_transition_target $
     default:
-      throw new ParserException((Token) node);
+      throw new ParserException(token);
     }
   }
 
   @Override
-  LRState getProductionTarget(ProductionType type)
+  LRState getProductionTarget(CSTProductionType type)
       throws ParserException, LexerException, IOException {
 
     switch(type) {
 $macro: production_lr_transition_target(node_type, target) $
-    case T_$(node_type):
+    case $(node_type):
       return L_$target.instance;
 $end: production_lr_transition_target $
     default:
       throw new RuntimeException("internal error in parsing tables");
+    }
   }
 }
 $end: lr_state_singleton $
-$end: parser $

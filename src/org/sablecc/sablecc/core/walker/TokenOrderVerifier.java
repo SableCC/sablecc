@@ -61,9 +61,9 @@ public class TokenOrderVerifier
     public void visitAlternativeTransformationReferenceElement(
             AlternativeTransformationElement.ReferenceElement node) {
 
-        if (node.getReference() instanceof Parser.ParserElement) {
+        if (node.getTargetReference() instanceof Parser.ParserElement) {
             Parser.ParserElement element = (Parser.ParserElement) node
-                    .getReference();
+                    .getTargetReference();
 
             element.apply(this);
         }
@@ -107,9 +107,9 @@ public class TokenOrderVerifier
     public void visitAlternativeTransformationListElement(
             AlternativeTransformationListElement node) {
 
-        if (node.getReference() instanceof Parser.ParserElement) {
+        if (node.getTargetReference() instanceof Parser.ParserElement) {
             Parser.ParserElement element = (Parser.ParserElement) node
-                    .getReference();
+                    .getTargetReference();
 
             element.apply(this);
         }

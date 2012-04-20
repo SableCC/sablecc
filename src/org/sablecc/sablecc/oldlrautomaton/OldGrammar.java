@@ -38,6 +38,7 @@ public class OldGrammar {
     private Map<OldProduction, Map<Integer, Set<Ahead>>> currentLookComputationData;
 
     public OldGrammar(
+            Grammar grammar,
             String firstProductionName,
             Production production) {
 
@@ -48,7 +49,7 @@ public class OldGrammar {
         OldAlternative startAlternative = startProduction.addAlternative("",
                 null);
         startAlternative.addProductionElement("", firstProduction, null);
-        startAlternative.addTokenElement("", getToken("$end"), null);
+        startAlternative.addTokenElement(grammar, "", getToken("$end"), null);
     }
 
     public OldProduction getProduction(

@@ -8,8 +8,19 @@ public class MToken {
 
     private final List<Object> eDefaultPackage_SpecifiedPackage = new LinkedList<Object>();
 
+    private final List<Object> eNodeInternalTypeEnumEntry = new LinkedList<Object>();
+
     public MToken() {
 
+    }
+
+    public MNodeInternalTypeEnumEntry newNodeInternalTypeEnumEntry(
+            String pName) {
+
+        MNodeInternalTypeEnumEntry lNodeInternalTypeEnumEntry = new MNodeInternalTypeEnumEntry(
+                pName);
+        this.eNodeInternalTypeEnumEntry.add(lNodeInternalTypeEnumEntry);
+        return lNodeInternalTypeEnumEntry;
     }
 
     public MDefaultPackage newDefaultPackage(
@@ -67,15 +78,6 @@ public class MToken {
         sb.append(System.getProperty("line.separator"));
         sb.append("  @Override");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  public ProductionType getProductionType() {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    return ProductionType.TNotAProduction;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  @Override");
-        sb.append(System.getProperty("line.separator"));
         sb.append("  public String getText() {");
         sb.append(System.getProperty("line.separator"));
         sb.append("    return this.text;");
@@ -100,10 +102,34 @@ public class MToken {
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
+        sb.append("  ");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    static enum InternalType {");
+        sb.append(System.getProperty("line.separator"));
+        for (Object oNodeInternalTypeEnumEntry : this.eNodeInternalTypeEnumEntry) {
+            sb.append(oNodeInternalTypeEnumEntry.toString());
+        }
+        sb.append("    TEnd;");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  }");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  ");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  abstract InternalType getInternalType();");
+        sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("  @Override");
         sb.append(System.getProperty("line.separator"));
         sb.append("  public void applyOnChildren(Walker walker) {");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  }");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  ");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("   @Override");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  public void apply(Walker walker) {");
+        sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));

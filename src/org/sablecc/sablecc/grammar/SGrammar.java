@@ -29,6 +29,8 @@ public class SGrammar {
 
     private Map<String, Production> productions = new LinkedHashMap<String, Production>();
 
+    private Map<Element, OldElement> sElementToOldElementMap = new LinkedHashMap<Element, OldElement>();
+
     private final Grammar grammar;
 
     private LRAutomaton lrAutomaton;
@@ -79,8 +81,14 @@ public class SGrammar {
                         coreProd.getTransformation(), production));
             }
             else {
-                production.addTransformation(new SProductionTransformation(
-                        production));
+                SProductionTransformation transformation = new SProductionTransformation(
+                        production);
+
+                transformation
+                        .addElement(new SProductionTransformationElement.NormalElement(
+                                transformation));
+
+                production.addTransformation(transformation);
             }
 
             this.productions.put(production.getName(), production);
@@ -172,5 +180,39 @@ public class SGrammar {
         BigInteger productionId = this.nextProductionId;
         this.nextProductionId = this.nextProductionId.add(BigInteger.ONE);
         return productionId;
+    }
+
+    public void addOldElement(
+            Element sElement,
+            OldElement oldEement) {
+
+        this.sElementToOldElementMap.put(sElement, oldEement);
+    }
+
+    public OldElement getOldElement(
+            Element element) {
+
+        return this.sElementToOldElementMap.get(element);
+    }
+
+    @Override
+    public String toString() {
+
+        String parserPart = "Parser \r\n";
+        String productionTransformationPart = "\r\nTransformation \r\n Production \r\n ";
+        String alternativeTransformationPart = "\r\n Alternatives \r\n";
+
+        for (Production production : this.productions.values()) {
+            parserPart += production.toString() + "\r\n \r\n";
+            productionTransformationPart += "  "
+                    + production.getTransformation().toString() + "\r\n";
+            for (Alternative alternative : production.getAlternatives()) {
+                alternativeTransformationPart += "  "
+                        + alternative.getTransformation().toString() + "\r\n";
+            }
+        }
+
+        return parserPart + productionTransformationPart
+                + alternativeTransformationPart;
     }
 }

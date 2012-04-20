@@ -275,8 +275,8 @@ public abstract class Type {
                         }
                     }
 
-                    if (!separatedType.getCardinality().isIncludedIn(
-                            this.cardinality)) {
+                    if (!this.cardinality.isIncludedIn(separatedType
+                            .getCardinality())) {
                         return false;
                     }
 
@@ -637,7 +637,7 @@ public abstract class Type {
                             }
                             // (x Sep y)^(n..m) + (y Sep..)^1
                             // = (x y)^(n..m)
-                            else if (this.leftElementName.equals(separatedType
+                            else if (this.rightElementName.equals(separatedType
                                     .getLeftElementName())
                                     && separatedType.getCardinality().equals(
                                             CardinalityInterval.ONE_ONE)) {
@@ -755,8 +755,8 @@ public abstract class Type {
                         return false;
                     }
 
-                    if (!alternatedType.getCardinality().isIncludedIn(
-                            this.cardinality)) {
+                    if (!this.cardinality.isIncludedIn(alternatedType
+                            .getCardinality())) {
                         return false;
                     }
                 }

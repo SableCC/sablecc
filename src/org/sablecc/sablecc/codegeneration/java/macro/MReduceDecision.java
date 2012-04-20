@@ -8,7 +8,11 @@ public class MReduceDecision {
 
     private final MReduce mReduce;
 
-    private final List<Object> eNormalParameter_EndParameter = new LinkedList<Object>();
+    private final List<Object> eNewTreeClass_NewList = new LinkedList<Object>();
+
+    private final List<Object> eAddLToForest_AddNullToForest_AddNToForest = new LinkedList<Object>();
+
+    private final List<Object> eAddPopToForest = new LinkedList<Object>();
 
     MReduceDecision(
             MReduce mReduce) {
@@ -19,58 +23,82 @@ public class MReduceDecision {
         this.mReduce = mReduce;
     }
 
-    public MNormalParameter newNormalParameter(
+    public MAddPopToForest newAddPopToForest(
+            String pElementName,
+            String pIndex) {
+
+        MAddPopToForest lAddPopToForest = new MAddPopToForest(pElementName,
+                pIndex);
+        this.eAddPopToForest.add(lAddPopToForest);
+        return lAddPopToForest;
+    }
+
+    public MNewTreeClass newNewTreeClass(
+            String pElementType,
             String pElementName) {
 
-        MNormalParameter lNormalParameter = new MNormalParameter(pElementName);
-        this.eNormalParameter_EndParameter.add(lNormalParameter);
-        return lNormalParameter;
+        MNewTreeClass lNewTreeClass = new MNewTreeClass(pElementType,
+                pElementName);
+        this.eNewTreeClass_NewList.add(lNewTreeClass);
+        return lNewTreeClass;
     }
 
-    public MEndParameter newEndParameter() {
+    public MNewList newNewList(
+            String pListName) {
 
-        MEndParameter lEndParameter = new MEndParameter();
-        this.eNormalParameter_EndParameter.add(lEndParameter);
-        return lEndParameter;
+        MNewList lNewList = new MNewList(pListName);
+        this.eNewTreeClass_NewList.add(lNewList);
+        return lNewList;
     }
 
-    private String rAlternative() {
+    public MAddLToForest newAddLToForest(
+            String pElementName) {
 
-        return this.mReduce.pAlternative();
+        MAddLToForest lAddLToForest = new MAddLToForest(pElementName);
+        this.eAddLToForest_AddNullToForest_AddNToForest.add(lAddLToForest);
+        return lAddLToForest;
+    }
+
+    public MAddNullToForest newAddNullToForest() {
+
+        MAddNullToForest lAddNullToForest = new MAddNullToForest();
+        this.eAddLToForest_AddNullToForest_AddNToForest.add(lAddNullToForest);
+        return lAddNullToForest;
+    }
+
+    public MAddNToForest newAddNToForest(
+            String pElementName) {
+
+        MAddNToForest lAddNToForest = new MAddNToForest(pElementName);
+        this.eAddLToForest_AddNullToForest_AddNToForest.add(lAddNToForest);
+        return lAddNToForest;
+    }
+
+    private String rReducedProduction() {
+
+        return this.mReduce.pReducedProduction();
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("      N");
-        sb.append(rAlternative());
-        sb.append(" l");
-        sb.append(rAlternative());
-        sb.append(" = new N");
-        sb.append(rAlternative());
-        sb.append("(-1, -1");
-        if (this.eNormalParameter_EndParameter.size() > 0) {
-            sb.append(", ");
-        }
-        {
-            boolean first = true;
-            for (Object oNormalParameter_EndParameter : this.eNormalParameter_EndParameter) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    sb.append(", ");
-                }
-                sb.append(oNormalParameter_EndParameter.toString());
-            }
-        }
-        sb.append(");");
+        sb.append("      List<Node> trees = new LinkedList<Node>();");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      stack.push(l");
-        sb.append(rAlternative());
-        sb.append(", stack.getState().getTarget(l");
-        sb.append(rAlternative());
+        sb.append("      ");
+        for (Object oNewTreeClass_NewList : this.eNewTreeClass_NewList) {
+            sb.append(oNewTreeClass_NewList.toString());
+        }
+        for (Object oAddLToForest_AddNullToForest_AddNToForest : this.eAddLToForest_AddNullToForest_AddNToForest) {
+            sb.append(oAddLToForest_AddNullToForest_AddNToForest.toString());
+        }
+        for (Object oAddPopToForest : this.eAddPopToForest) {
+            sb.append(oAddPopToForest.toString());
+        }
+        sb.append("      stack.push(new AbstractForest(CSTProductionType.");
+        sb.append(rReducedProduction());
+        sb.append(",trees), stack.getState().getProductionTarget(CSTProductionType.");
+        sb.append(rReducedProduction());
         sb.append("));");
         sb.append(System.getProperty("line.separator"));
         sb.append("      return null;");

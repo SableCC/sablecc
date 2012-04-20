@@ -50,7 +50,7 @@ public class MNormalCondition {
         StringBuilder sb = new StringBuilder();
         sb.append("parser.look(");
         sb.append(rAhead());
-        sb.append(").getInternalType() == Node.InternalType.T_");
+        sb.append(").getInternalType() == Token.InternalType.T_");
         sb.append(rTokenType());
         return sb.toString();
     }

@@ -52,14 +52,7 @@ public class SProductionTransformation {
     public SProductionTransformation(
             Production production) {
 
-        if (production == null) {
-            throw new InternalException("production shouldn't be null");
-        }
-
         this.production = production;
-
-        this.elements.add(new SProductionTransformationElement.NormalElement(
-                this));
     }
 
     public SProductionTransformation(
@@ -67,10 +60,6 @@ public class SProductionTransformation {
             String name,
             IReferencable reference,
             CardinalityInterval cardinality) {
-
-        if (production == null) {
-            throw new InternalException("production shouldn't be null");
-        }
 
         if (reference == null) {
             throw new InternalException("elements shouldn't be null");
@@ -90,10 +79,6 @@ public class SProductionTransformation {
             IReferencable rightReference,
             CardinalityInterval cardinality,
             boolean separated) {
-
-        if (production == null) {
-            throw new InternalException("production shouldn't be null");
-        }
 
         if (leftReference == null) {
             throw new InternalException("elements shouldn't be null");
@@ -126,9 +111,68 @@ public class SProductionTransformation {
         return this.elements;
     }
 
+    public void addElement(
+            SProductionTransformationElement element) {
+
+        this.elements.add(element);
+    }
+
+    public void addElement(
+            ProductionTransformationElement element,
+            CardinalityInterval cardinality) {
+
+        if (cardinality == null) {
+            cardinality = element.getCardinality();
+        }
+        switch (element.getElementType()) {
+        case NORMAL:
+            this.elements
+                    .add(new SProductionTransformationElement.NormalElement(
+                            this,
+                            ((ProductionTransformationElement.SingleElement) element)
+                                    .getElement(),
+                            ((ProductionTransformationElement.SingleElement) element)
+                                    .getReference(), cardinality));
+
+            break;
+        case SEPARATED:
+            this.elements
+                    .add(new SProductionTransformationElement.SeparatedElement(
+                            this,
+                            ((ProductionTransformationElement.DoubleElement) element)
+                                    .getLeft(),
+                            ((ProductionTransformationElement.DoubleElement) element)
+                                    .getRight(),
+                            ((ProductionTransformationElement.DoubleElement) element)
+                                    .getLeftReference(),
+                            ((ProductionTransformationElement.DoubleElement) element)
+                                    .getRightReference(), cardinality));
+            break;
+        case ALTERNATED:
+            this.elements
+                    .add(new SProductionTransformationElement.AlternatedElement(
+                            this,
+                            ((ProductionTransformationElement.DoubleElement) element)
+                                    .getLeft(),
+                            ((ProductionTransformationElement.DoubleElement) element)
+                                    .getRight(),
+                            ((ProductionTransformationElement.DoubleElement) element)
+                                    .getLeftReference(),
+                            ((ProductionTransformationElement.DoubleElement) element)
+                                    .getRightReference(), cardinality));
+            break;
+        }
+    }
+
     public Production getProduction() {
 
         return this.production;
+    }
+
+    public void addProduction(
+            Production production) {
+
+        this.production = production;
     }
 
     private void generateElements(
@@ -137,28 +181,21 @@ public class SProductionTransformation {
         for (ProductionTransformationElement element : coreReference
                 .getElements()) {
 
-            switch (element.getElementType()) {
-            case NORMAL:
-                this.elements
-                        .add(new SProductionTransformationElement.NormalElement(
-                                this,
-                                (ProductionTransformationElement.SingleElement) element));
-                break;
-            case SEPARATED:
-                this.elements
-                        .add(new SProductionTransformationElement.SeparatedElement(
-                                this,
-                                (ProductionTransformationElement.DoubleElement) element));
-                break;
-            case ALTERNATED:
-                this.elements
-                        .add(new SProductionTransformationElement.AlternatedElement(
-                                this,
-                                (ProductionTransformationElement.DoubleElement) element));
-                break;
-            }
+            this.addElement(element, null);
         }
 
+    }
+
+    @Override
+    public String toString() {
+
+        String transformationText = this.production.getName() + " -> ";
+
+        for (SProductionTransformationElement element : this.elements) {
+            transformationText += element.toString() + " ";
+        }
+
+        return transformationText + ";";
     }
 
 }

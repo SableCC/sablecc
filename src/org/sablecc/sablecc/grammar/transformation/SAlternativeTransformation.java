@@ -21,10 +21,11 @@ import java.util.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.grammar.*;
+import org.sablecc.util.*;
 
 public class SAlternativeTransformation {
 
-    private Alternative alternative;
+    private final Alternative alternative;
 
     private List<SAlternativeTransformationElement> elements = new LinkedList<SAlternativeTransformationElement>();
 
@@ -46,23 +47,6 @@ public class SAlternativeTransformation {
 
     public SAlternativeTransformation(
             Alternative alternative,
-            Element element) {
-
-        if (alternative == null) {
-            throw new InternalException("alternative shouldn't be null");
-        }
-
-        if (element == null) {
-            throw new InternalException("element shouldn't be null");
-        }
-
-        this.elements
-                .add(new SAlternativeTransformationElement.ReferenceElement(
-                        element));
-    }
-
-    public SAlternativeTransformation(
-            Alternative alternative,
             LinkedList<Element> elements) {
 
         if (alternative == null) {
@@ -73,16 +57,78 @@ public class SAlternativeTransformation {
             throw new InternalException("elements shouldn't be null");
         }
 
+        this.alternative = alternative;
+
         for (Element element : elements) {
-            this.elements
-                    .add(new SAlternativeTransformationElement.ReferenceElement(
-                            element));
+            if (element instanceof Element.TokenElement) {
+                this.elements
+                        .add(new SAlternativeTransformationElement.ReferenceElement(
+                                element, element));
+            }
+            else {
+                SProductionTransformation productionTransformation = ((Element.ProductionElement) element)
+                        .getReference().getTransformation();
+                SProductionTransformationElement firstElement = productionTransformation
+                        .getElements().get(0);
+
+                if (firstElement instanceof SProductionTransformationElement.NormalElement
+                        && ((SProductionTransformationElement.NormalElement) firstElement)
+                                .getCardinality().isIncludedIn(
+                                        CardinalityInterval.ZERO_ONE)) {
+                    this.elements
+                            .add(new SAlternativeTransformationElement.ReferenceElement(
+                                    element, productionTransformation
+                                            .getElements().get(0)));
+                }
+                else {
+                    LinkedList<SAlternativeTransformationListElement> transformationListElements = new LinkedList<SAlternativeTransformationListElement>();
+                    transformationListElements
+                            .add(new SAlternativeTransformationListElement.NormalListElement(
+                                    element, productionTransformation
+                                            .getElements().get(0)));
+                    Type.SimpleType listType;
+
+                    if (firstElement instanceof SProductionTransformationElement.NormalElement) {
+                        listType = new Type.SimpleType.HomogeneousType(
+                                ((SProductionTransformationElement.NormalElement) firstElement)
+                                        .getName(), firstElement
+                                        .getCardinality());
+                    }
+                    else if (firstElement instanceof SProductionTransformationElement.SeparatedElement) {
+                        listType = new Type.SimpleType.SeparatedType(
+                                ((SProductionTransformationElement.SeparatedElement) firstElement)
+                                        .getLeftName(),
+                                ((SProductionTransformationElement.SeparatedElement) firstElement)
+                                        .getRightName(), firstElement
+                                        .getCardinality());
+
+                    }
+                    else if (firstElement instanceof SProductionTransformationElement.AlternatedElement) {
+                        listType = new Type.SimpleType.AlternatedType(
+                                ((SProductionTransformationElement.AlternatedElement) firstElement)
+                                        .getLeftName(),
+                                ((SProductionTransformationElement.AlternatedElement) firstElement)
+                                        .getRightName(), firstElement
+                                        .getCardinality());
+                    }
+                    else {
+                        throw new InternalException("Unhandle list type");
+                    }
+
+                    this.elements
+                            .add(new SAlternativeTransformationElement.ListElement(
+                                    transformationListElements, listType));
+                }
+
+            }
+
         }
     }
 
     public SAlternativeTransformation(
             LinkedList<SAlternativeTransformationListElement> elements,
-            Alternative alternative) {
+            Alternative alternative,
+            Type.SimpleType type) {
 
         if (alternative == null) {
             throw new InternalException("alternative shouldn't be null");
@@ -91,8 +137,11 @@ public class SAlternativeTransformation {
         if (elements == null) {
             throw new InternalException("elements shouldn't be null");
         }
+
+        this.alternative = alternative;
+
         this.elements.add(new SAlternativeTransformationElement.ListElement(
-                elements));
+                elements, type));
 
     }
 
@@ -102,6 +151,8 @@ public class SAlternativeTransformation {
         if (alternative == null) {
             throw new InternalException("alternative shouldn't be null");
         }
+
+        this.alternative = alternative;
 
         this.elements.add(new SAlternativeTransformationElement.NullElement());
     }
@@ -129,5 +180,22 @@ public class SAlternativeTransformation {
 
         return new SAlternativeTransformation(inlinedAlternative,
                 newAlternativeTransformationElements);
+    }
+
+    @Override
+    public String toString() {
+
+        String transformationText = this.alternative.getProduction().getName()
+                + "."
+                + this.alternative.getProduction().getAlternatives()
+                        .indexOf(this.alternative) + " -> ";
+
+        for (SAlternativeTransformationElement element : this.elements) {
+            transformationText += element.toString() + " ";
+        }
+
+        transformationText += ";";
+
+        return transformationText;
     }
 }

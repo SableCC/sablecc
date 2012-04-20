@@ -197,4 +197,16 @@ public class Alternative {
         }
     }
 
+    @Override
+    public String toString() {
+
+        String alternativeText = "";
+
+        for (Element element : this.elements) {
+            alternativeText += element.toString() + " ";
+        }
+
+        return alternativeText;
+    }
+
 }

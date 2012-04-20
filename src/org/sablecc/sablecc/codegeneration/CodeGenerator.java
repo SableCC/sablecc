@@ -17,17 +17,25 @@
 
 package org.sablecc.sablecc.codegeneration;
 
+import static org.sablecc.util.CamelCase.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.sablecc.alphabet.Bound;
 import org.sablecc.sablecc.automaton.*;
 import org.sablecc.sablecc.codegeneration.java.macro.*;
 import org.sablecc.sablecc.core.*;
+import org.sablecc.sablecc.core.Parser.ParserElement.ElementType;
 import org.sablecc.sablecc.core.interfaces.*;
+import org.sablecc.sablecc.grammar.*;
+import org.sablecc.sablecc.grammar.transformation.*;
 import org.sablecc.sablecc.launcher.*;
+import org.sablecc.sablecc.oldlrautomaton.*;
+import org.sablecc.util.*;
 
 public class CodeGenerator {
 
@@ -93,6 +101,14 @@ public class CodeGenerator {
         MParserException mParserException = new MParserException();
         MWalker mWalker = new MWalker();
         MParser mParser = new MParser();
+        MParseStack mParseStack = new MParseStack();
+        MLrState mLrState = new MLrState();
+        MCstProductionType mCstName = new MCstProductionType();
+        MAbstractForest mAbstractForest = new MAbstractForest();
+        MEntry mEntry = new MEntry();
+        MNodeList mNodeList = new MNodeList();
+        MPairNodeList mPairNodeList = new MPairNodeList();
+        MSeparatedNodeList mSeparatedNodeList = new MSeparatedNodeList();
 
         if (this.destinationPackage.equals("")) {
             packageDirectory = new File(this.destinationDirectory,
@@ -112,6 +128,15 @@ public class CodeGenerator {
                     .newDefaultPackage(this.grammar.getName_camelCase());
             mWalker.newDefaultPackage(this.grammar.getName_camelCase());
             mParser.newDefaultPackage(this.grammar.getName_camelCase());
+            mParseStack.newDefaultPackage(this.grammar.getName_camelCase());
+            mLrState.newDefaultPackage(this.grammar.getName_camelCase());
+            mCstName.newDefaultPackage(this.grammar.getName_camelCase());
+            mAbstractForest.newDefaultPackage(this.grammar.getName_camelCase());
+            mNodeList.newDefaultPackage(this.grammar.getName_camelCase());
+            mPairNodeList.newDefaultPackage(this.grammar.getName_camelCase());
+            mSeparatedNodeList.newDefaultPackage(this.grammar
+                    .getName_camelCase());
+            mEntry.newDefaultPackage(this.grammar.getName_camelCase());
         }
         else {
             packageDirectory = new File(this.destinationDirectory,
@@ -143,18 +168,39 @@ public class CodeGenerator {
                     this.destinationPackage);
             mParser.newSpecifiedPackage(this.grammar.getName_camelCase(),
                     this.destinationPackage);
+            mParseStack.newSpecifiedPackage(this.grammar.getName_camelCase(),
+                    this.destinationPackage);
+            mLrState.newSpecifiedPackage(this.grammar.getName_camelCase(),
+                    this.destinationPackage);
+            mCstName.newSpecifiedPackage(this.grammar.getName_camelCase(),
+                    this.destinationPackage);
+            mAbstractForest.newSpecifiedPackage(
+                    this.grammar.getName_camelCase(), this.destinationPackage);
+            mNodeList.newSpecifiedPackage(this.grammar.getName_camelCase(),
+                    this.destinationPackage);
+            mPairNodeList.newSpecifiedPackage(this.grammar.getName_camelCase(),
+                    this.destinationPackage);
+            mSeparatedNodeList.newSpecifiedPackage(
+                    this.grammar.getName_camelCase(), this.destinationPackage);
+            mEntry.newSpecifiedPackage(this.grammar.getName_camelCase(),
+                    this.destinationPackage);
         }
 
         packageDirectory.mkdirs();
 
         Context context = this.grammar.getGlobalAnonymousContext();
+        Automaton lexer = this.grammar.getLexer().getAutomaton();
+
+        /*
+         * Generate token
+         */
 
         for (LexerExpression token : context.getLexerExpressionTokens()) {
             if (token instanceof LexerExpression.NamedExpression) {
                 LexerExpression.NamedExpression namedToken = (LexerExpression.NamedExpression) token;
 
                 mNode.newNodeTypeEnumEntry(namedToken.getName_CamelCase());
-                mNode.newNodeInternalTypeEnumEntry(namedToken
+                mToken.newNodeInternalTypeEnumEntry(namedToken
                         .getName_CamelCase());
 
                 mWalker.newWalkerIn(namedToken.getName_CamelCase());
@@ -191,7 +237,7 @@ public class CodeGenerator {
             else {
                 LexerExpression.InlineExpression inlineToken = (LexerExpression.InlineExpression) token;
 
-                mNode.newNodeInternalTypeEnumEntry(""
+                mToken.newNodeInternalTypeEnumEntry(""
                         + inlineToken.getInternalName_CamelCase());
 
                 MAnonymousToken mAnonymousToken = new MAnonymousToken(""
@@ -226,7 +272,9 @@ public class CodeGenerator {
             }
         }
 
-        Automaton lexer = this.grammar.getLexer().getAutomaton();
+        /*
+         * Generate Symbol
+         */
 
         for (Symbol symbol : lexer.getAlphabet().getSymbols()) {
             mSymbol.newSymbolDeclaration(symbol.getSimpleName());
@@ -260,6 +308,10 @@ public class CodeGenerator {
                         .toString(), symbol.getSimpleName());
             }
         }
+
+        /*
+         * Generate lexer states
+         */
 
         for (State state : lexer.getStates()) {
             if (state.isAcceptState()) {
@@ -376,188 +428,730 @@ public class CodeGenerator {
             mLexer.newAcceptMarkerDeclaration(marker.getName());
         }
 
-        for (Parser.ParserProduction production : this.grammar.getParser()
-                .getProductions()) {
+        /*
+         * Generate AST Class
+         * */
 
-            String production_CamelCaseName = production.getName_CamelCase();
+        Map<IReferencable, String> alternativeToCamelFullName = new HashMap<IReferencable, String>();
 
-            mNode.newNodeProductionTypeEnumEntry(production_CamelCaseName);
+        if (this.grammar.hasATree()) {
+            for (Tree.TreeProduction production : this.grammar.getTree()
+                    .getProductions()) {
+                String production_CamelCaseName = production
+                        .getName_CamelCase();
 
-            // if production is not a single anonymous alternative
-            if (production.getAlternatives().size() > 1
-                    || !production.getAlternatives().iterator().next()
-                            .getName().equals("")) {
+                mNode.newNodeProductionTypeEnumEntry(production_CamelCaseName);
 
-                MProduction mProduction = new MProduction(
-                        production_CamelCaseName);
+                // if production is not a single anonymous alternative
+                if (production.getAlternatives().size() > 1
+                        || !production.getAlternatives().iterator().next()
+                                .getName().equals("")) {
 
-                if (this.destinationPackage.equals("")) {
-                    mProduction.newDefaultPackage(this.grammar
-                            .getName_camelCase());
-                }
-                else {
-                    mProduction.newSpecifiedPackage(
-                            this.grammar.getName_camelCase(),
-                            this.destinationPackage);
-                }
+                    MProduction mProduction = new MProduction(
+                            production_CamelCaseName);
 
-                try {
-                    BufferedWriter bw = new BufferedWriter(new FileWriter(
-                            new File(packageDirectory, "N"
-                                    + production_CamelCaseName + ".java")));
-
-                    bw.write(mProduction.toString());
-                    bw.close();
-                }
-                catch (IOException e) {
-                    throw new InternalException("TODO: raise error " + "N"
-                            + production_CamelCaseName + ".java", e);
-                }
-            }
-
-            for (Parser.ParserAlternative alternative : production
-                    .getAlternatives()) {
-                String alt_CamelCaseName = alternative.getName_CamelCase();
-                boolean altIsPublic = alt_CamelCaseName != null;
-                boolean altIsProd = altIsPublic && alt_CamelCaseName.equals("");
-                String alt_CamelCaseFullName;
-                if (altIsProd) {
-                    alt_CamelCaseFullName = production_CamelCaseName;
-                }
-                else if (altIsPublic) {
-                    alt_CamelCaseFullName = production_CamelCaseName + "_"
-                            + alt_CamelCaseName;
-                }
-                else {
-                    alt_CamelCaseFullName = production_CamelCaseName + "_"
-                            + alternative.getIndex();
-                }
-
-                MAlternative mAlternative = new MAlternative(
-                        alt_CamelCaseFullName);
-
-                mAlternative.newAltProdType(production_CamelCaseName);
-
-                if (altIsPublic) {
-                    mWalker.newWalkerIn(alt_CamelCaseFullName);
-                    mWalker.newWalkerCase(alt_CamelCaseFullName);
-                    mWalker.newWalkerOut(alt_CamelCaseFullName);
-                    mAlternative.newAltNormalApply();
-                }
-                else {
-                    mAlternative.newAltAnonymousApply();
-                }
-
-                if (this.destinationPackage.equals("")) {
-                    mAlternative.newDefaultPackage(this.grammar
-                            .getName_camelCase());
-                }
-                else {
-                    mAlternative.newSpecifiedPackage(
-                            this.grammar.getName_camelCase(),
-                            this.destinationPackage);
-                }
-
-                mNode.newNodeInternalTypeEnumEntry(alt_CamelCaseFullName);
-                if (altIsPublic) {
-                    mNode.newNodeTypeEnumEntry(alt_CamelCaseFullName);
-                    mAlternative.newPublic();
-                    mAlternative.newNamedAltType();
-                }
-                else {
-                    mAlternative.newAnonymousAltType();
-                }
-
-                if (altIsProd) {
-                    mAlternative.newAlternativeNodeParent();
-                }
-                else {
-                    mAlternative
-                            .newAlternativeNamedParent(production_CamelCaseName);
-                }
-
-                for (Parser.ParserElement parserElement : alternative
-                        .getElements()) {
-                    Parser.ParserElement.SingleElement normalElement = (Parser.ParserElement.SingleElement) parserElement;
-                    String element_CamelCaseName = normalElement
-                            .getName_CamelCase();
-                    boolean elementIsPublicReadable;
-                    if (element_CamelCaseName == null) {
-                        element_CamelCaseName = "" + normalElement.getIndex();
-                        elementIsPublicReadable = false;
+                    if (this.destinationPackage.equals("")) {
+                        mProduction.newDefaultPackage(this.grammar
+                                .getName_camelCase());
                     }
                     else {
-                        elementIsPublicReadable = true;
+                        mProduction.newSpecifiedPackage(
+                                this.grammar.getName_camelCase(),
+                                this.destinationPackage);
                     }
-                    String element_CamelCaseType;
-                    String element_CamelCaseInternalType;
 
-                    IReferencable reference = normalElement.getReference();
-                    if (reference instanceof LexerExpression.NamedExpression) {
-                        LexerExpression.NamedExpression namedToken = (LexerExpression.NamedExpression) reference;
-                        element_CamelCaseType = namedToken.getName_CamelCase();
-                        element_CamelCaseInternalType = element_CamelCaseType;
+                    try {
+                        BufferedWriter bw = new BufferedWriter(new FileWriter(
+                                new File(packageDirectory, "N"
+                                        + production_CamelCaseName + ".java")));
+
+                        bw.write(mProduction.toString());
+                        bw.close();
                     }
-                    else if (reference instanceof LexerExpression.InlineExpression) {
-                        LexerExpression.InlineExpression inlineToken = (LexerExpression.InlineExpression) reference;
-                        element_CamelCaseType = null;
-                        element_CamelCaseInternalType = inlineToken
-                                .getInternalName_CamelCase();
+                    catch (IOException e) {
+                        throw new InternalException("TODO: raise error " + "N"
+                                + production_CamelCaseName + ".java", e);
+                    }
+                }
+
+                for (Tree.TreeAlternative alternative : production
+                        .getAlternatives()) {
+                    String alt_CamelCaseName = alternative.getName_CamelCase();
+                    boolean altIsPublic = alt_CamelCaseName != null;
+                    boolean altIsProd = altIsPublic
+                            && alt_CamelCaseName.equals("");
+                    String alt_CamelCaseFullName;
+
+                    if (altIsProd) {
+                        alt_CamelCaseFullName = production_CamelCaseName;
+                    }
+                    else if (altIsPublic) {
+                        alt_CamelCaseFullName = production_CamelCaseName + "_"
+                                + alt_CamelCaseName;
                     }
                     else {
-                        Parser.ParserProduction referencedProduction = (Parser.ParserProduction) reference;
-                        element_CamelCaseType = referencedProduction
-                                .getName_CamelCase();
-                        element_CamelCaseInternalType = element_CamelCaseType;
+                        alt_CamelCaseFullName = production_CamelCaseName + "_$"
+                                + alternative.getIndex();
+
                     }
 
-                    mAlternative.newNormalConstructorParameter(
-                            element_CamelCaseInternalType,
-                            element_CamelCaseName);
-                    mAlternative
-                            .newNormalContructorInitialization(element_CamelCaseName);
+                    MAlternative mAlternative = new MAlternative(
+                            alt_CamelCaseFullName);
 
-                    mAlternative.newNormalElementDeclaration(
-                            element_CamelCaseInternalType,
-                            element_CamelCaseName);
-                    mAlternative.newNormalElementAccessor(
-                            element_CamelCaseInternalType,
-                            element_CamelCaseName);
+                    alternativeToCamelFullName.put(alternative,
+                            alt_CamelCaseFullName);
 
-                    mAlternative.newNormalChildApply(element_CamelCaseName);
+                    if (altIsPublic) {
+                        mWalker.newWalkerIn(alt_CamelCaseFullName);
+                        mWalker.newWalkerCase(alt_CamelCaseFullName);
+                        mWalker.newWalkerOut(alt_CamelCaseFullName);
+                        mAlternative.newAltNormalApply();
+                    }
+                    else {
+                        mAlternative.newAltAnonymousApply();
+                    }
 
-                    if (elementIsPublicReadable) {
-                        MPublicElementAccessor publicElementAccessor = mAlternative
-                                .newPublicElementAccessor(element_CamelCaseName);
-                        if (element_CamelCaseType != null) {
-                            publicElementAccessor
-                                    .newPublicElementType(element_CamelCaseType);
+                    if (this.destinationPackage.equals("")) {
+                        mAlternative.newDefaultPackage(this.grammar
+                                .getName_camelCase());
+                    }
+                    else {
+                        mAlternative.newSpecifiedPackage(
+                                this.grammar.getName_camelCase(),
+                                this.destinationPackage);
+                    }
+
+                    if (altIsPublic) {
+                        mNode.newNodeTypeEnumEntry(alt_CamelCaseFullName);
+                        mAlternative.newPublic();
+                        mAlternative.newNamedAltType();
+                    }
+                    else {
+                        mAlternative.newAnonymousAltType();
+                    }
+
+                    if (altIsProd) {
+                        mAlternative.newAlternativeNodeParent();
+                    }
+                    else {
+                        mAlternative
+                                .newAlternativeNamedParent(production_CamelCaseName);
+                    }
+
+                    for (Tree.TreeElement treeElement : alternative
+                            .getElements()) {
+
+                        if (treeElement instanceof Tree.TreeElement.SingleElement) {
+
+                            Tree.TreeElement.SingleElement normalElement = (Tree.TreeElement.SingleElement) treeElement;
+                            String element_CamelCaseName = normalElement
+                                    .getName_CamelCase();
+                            boolean elementIsPublicReadable;
+                            if (element_CamelCaseName == null) {
+                                element_CamelCaseName = "$"
+                                        + normalElement.getIndex();
+                                elementIsPublicReadable = false;
+                            }
+                            else {
+                                elementIsPublicReadable = true;
+                            }
+                            String element_CamelCaseType;
+                            String element_CamelCaseInternalType;
+
+                            IReferencable reference = normalElement
+                                    .getReference();
+                            if (reference instanceof LexerExpression.NamedExpression) {
+                                LexerExpression.NamedExpression namedToken = (LexerExpression.NamedExpression) reference;
+                                element_CamelCaseType = namedToken
+                                        .getName_CamelCase();
+                                element_CamelCaseInternalType = element_CamelCaseType;
+                            }
+                            else if (reference instanceof LexerExpression.InlineExpression) {
+                                LexerExpression.InlineExpression inlineToken = (LexerExpression.InlineExpression) reference;
+                                element_CamelCaseType = null;
+                                element_CamelCaseInternalType = inlineToken
+                                        .getInternalName_CamelCase();
+                            }
+                            else {
+                                Tree.TreeProduction referencedProduction = (Tree.TreeProduction) reference;
+                                element_CamelCaseType = referencedProduction
+                                        .getName_CamelCase();
+                                element_CamelCaseInternalType = element_CamelCaseType;
+                            }
+
+                            if (treeElement.getType().getCardinality()
+                                    .equals(CardinalityInterval.ONE_ONE)
+                                    || treeElement
+                                            .getType()
+                                            .getCardinality()
+                                            .equals(CardinalityInterval.ZERO_ONE)) {
+                                mAlternative.newNormalConstructorParameter(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+                                mAlternative
+                                        .newNormalContructorInitialization(element_CamelCaseName);
+
+                                mAlternative.newNormalElementDeclaration(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+                                mAlternative.newNormalElementAccessor(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+
+                                if (elementIsPublicReadable) {
+                                    MPublicElementAccessor publicElementAccessor = mAlternative
+                                            .newPublicElementAccessor(element_CamelCaseName);
+                                    if (element_CamelCaseType != null) {
+                                        publicElementAccessor
+                                                .newPublicElementType(element_CamelCaseType);
+                                    }
+                                    else {
+                                        publicElementAccessor
+                                                .newTokenElementType();
+                                    }
+                                }
+                            }
+                            else {
+                                mAlternative.newListConstructorParameter(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+                                mAlternative
+                                        .newNormalContructorInitialization(element_CamelCaseName);
+
+                                mAlternative.newListElementDeclaration(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+                                mAlternative.newListElementAccessor(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+
+                                if (elementIsPublicReadable) {
+                                    MPublicElementAccessor publicElementAccessor = mAlternative
+                                            .newPublicElementAccessor(element_CamelCaseName);
+                                    publicElementAccessor
+                                            .newPublicListElementType(element_CamelCaseInternalType);
+
+                                }
+
+                            }
+                            mAlternative
+                                    .newNormalChildApply(element_CamelCaseName);
+
                         }
                         else {
-                            publicElementAccessor.newTokenElementType();
+                            Tree.TreeElement.DoubleElement doubleElement = (Tree.TreeElement.DoubleElement) treeElement;
+                            String element_CamelCaseName = doubleElement
+                                    .getName_CamelCase();
+
+                            boolean elementIsPublicReadable;
+                            if (element_CamelCaseName == null) {
+                                element_CamelCaseName = "$"
+                                        + doubleElement.getIndex();
+                                elementIsPublicReadable = false;
+                            }
+                            else {
+                                elementIsPublicReadable = true;
+                            }
+                            String leftElement_CamelCaseType;
+                            String leftElement_CamelCaseInternalType;
+
+                            IReferencable leftReference = doubleElement
+                                    .getLeftReference();
+                            if (leftReference instanceof LexerExpression.NamedExpression) {
+                                LexerExpression.NamedExpression namedToken = (LexerExpression.NamedExpression) leftReference;
+                                leftElement_CamelCaseType = namedToken
+                                        .getName_CamelCase();
+                                leftElement_CamelCaseInternalType = leftElement_CamelCaseType;
+                            }
+                            else if (leftReference instanceof LexerExpression.InlineExpression) {
+                                LexerExpression.InlineExpression inlineToken = (LexerExpression.InlineExpression) leftReference;
+                                leftElement_CamelCaseType = null;
+                                leftElement_CamelCaseInternalType = inlineToken
+                                        .getInternalName_CamelCase();
+                            }
+                            else {
+                                Parser.ParserProduction referencedProduction = (Parser.ParserProduction) leftReference;
+                                leftElement_CamelCaseType = referencedProduction
+                                        .getName_CamelCase();
+                                leftElement_CamelCaseInternalType = leftElement_CamelCaseType;
+                            }
+
+                            String rightElement_CamelCaseType;
+                            String rightElement_CamelCaseInternalType;
+
+                            IReferencable rightReference = doubleElement
+                                    .getRightReference();
+                            if (rightReference instanceof LexerExpression.NamedExpression) {
+                                LexerExpression.NamedExpression namedToken = (LexerExpression.NamedExpression) rightReference;
+                                rightElement_CamelCaseType = namedToken
+                                        .getName_CamelCase();
+                                rightElement_CamelCaseInternalType = rightElement_CamelCaseType;
+                            }
+                            else if (rightReference instanceof LexerExpression.InlineExpression) {
+                                LexerExpression.InlineExpression inlineToken = (LexerExpression.InlineExpression) rightReference;
+                                rightElement_CamelCaseType = null;
+                                rightElement_CamelCaseInternalType = inlineToken
+                                        .getInternalName_CamelCase();
+                            }
+                            else {
+                                Parser.ParserProduction referencedProduction = (Parser.ParserProduction) rightReference;
+                                rightElement_CamelCaseType = referencedProduction
+                                        .getName_CamelCase();
+                                rightElement_CamelCaseInternalType = rightElement_CamelCaseType;
+                            }
+
+                            if (doubleElement.getElementType() == Tree.TreeElement.ElementType.SEPARATED) {
+
+                                mAlternative
+                                        .newSeparatedListConstructorParameter(
+                                                leftElement_CamelCaseInternalType,
+                                                rightElement_CamelCaseInternalType,
+                                                element_CamelCaseName);
+                                mAlternative
+                                        .newNormalContructorInitialization(element_CamelCaseName);
+
+                                mAlternative
+                                        .newSeparatedListElementDeclaration(
+                                                leftElement_CamelCaseInternalType,
+                                                rightElement_CamelCaseInternalType,
+                                                element_CamelCaseName);
+                                mAlternative.newSeparatedListElementAccessor(
+                                        leftElement_CamelCaseInternalType,
+                                        rightElement_CamelCaseInternalType,
+                                        element_CamelCaseName);
+
+                                if (elementIsPublicReadable) {
+                                    MPublicElementAccessor publicElementAccessor = mAlternative
+                                            .newPublicElementAccessor(element_CamelCaseName);
+                                    publicElementAccessor
+                                            .newPublicSeparatedListElementType(
+                                                    leftElement_CamelCaseInternalType,
+                                                    rightElement_CamelCaseInternalType);
+
+                                }
+                            }
+                            else {
+                                mAlternative
+                                        .newAlternatedListConstructorParameter(
+                                                leftElement_CamelCaseInternalType,
+                                                rightElement_CamelCaseInternalType,
+                                                element_CamelCaseName);
+                                mAlternative
+                                        .newNormalContructorInitialization(element_CamelCaseName);
+
+                                mAlternative
+                                        .newAlternatedListElementDeclaration(
+                                                leftElement_CamelCaseInternalType,
+                                                rightElement_CamelCaseInternalType,
+                                                element_CamelCaseName);
+                                mAlternative.newAlternatedListElementAccessor(
+                                        leftElement_CamelCaseInternalType,
+                                        rightElement_CamelCaseInternalType,
+                                        element_CamelCaseName);
+
+                                if (elementIsPublicReadable) {
+                                    MPublicElementAccessor publicElementAccessor = mAlternative
+                                            .newPublicElementAccessor(element_CamelCaseName);
+                                    publicElementAccessor
+                                            .newPublicAlternatedListElementType(
+                                                    leftElement_CamelCaseInternalType,
+                                                    rightElement_CamelCaseInternalType);
+
+                                }
+                            }
+
+                            mAlternative
+                                    .newNormalChildApply(element_CamelCaseName);
                         }
+                    }
+
+                    try {
+                        BufferedWriter bw = new BufferedWriter(new FileWriter(
+                                new File(packageDirectory, "N"
+                                        + alt_CamelCaseFullName + ".java")));
+
+                        bw.write(mAlternative.toString());
+                        bw.close();
+                    }
+                    catch (IOException e) {
+                        throw new InternalException("TODO: raise error " + "N"
+                                + alt_CamelCaseFullName + ".java", e);
+                    }
+
+                }
+
+            }
+        }
+        else { // Grammar hasn't tree
+            for (Parser.ParserProduction production : this.grammar.getParser()
+                    .getProductions()) {
+
+                String production_CamelCaseName = production
+                        .getName_CamelCase();
+
+                mNode.newNodeProductionTypeEnumEntry(production_CamelCaseName);
+
+                // if production is not a single anonymous alternative
+                if (production.getAlternatives().size() > 1
+                        || !production.getAlternatives().iterator().next()
+                                .getName().equals("")) {
+
+                    MProduction mProduction = new MProduction(
+                            production_CamelCaseName);
+
+                    if (this.destinationPackage.equals("")) {
+                        mProduction.newDefaultPackage(this.grammar
+                                .getName_camelCase());
+                    }
+                    else {
+                        mProduction.newSpecifiedPackage(
+                                this.grammar.getName_camelCase(),
+                                this.destinationPackage);
+                    }
+
+                    try {
+                        BufferedWriter bw = new BufferedWriter(new FileWriter(
+                                new File(packageDirectory, "N"
+                                        + production_CamelCaseName + ".java")));
+
+                        bw.write(mProduction.toString());
+                        bw.close();
+                    }
+                    catch (IOException e) {
+                        throw new InternalException("TODO: raise error " + "N"
+                                + production_CamelCaseName + ".java", e);
                     }
                 }
 
-                try {
-                    BufferedWriter bw = new BufferedWriter(new FileWriter(
-                            new File(packageDirectory, "N"
-                                    + alt_CamelCaseFullName + ".java")));
+                for (Parser.ParserAlternative alternative : production
+                        .getAlternatives()) {
+                    String alt_CamelCaseName = alternative.getName_CamelCase();
+                    boolean altIsPublic = alt_CamelCaseName != null;
+                    boolean altIsProd = altIsPublic
+                            && alt_CamelCaseName.equals("");
+                    String alt_CamelCaseFullName;
+                    if (altIsProd) {
+                        alt_CamelCaseFullName = production_CamelCaseName;
+                    }
+                    else if (altIsPublic) {
+                        alt_CamelCaseFullName = production_CamelCaseName + "_"
+                                + alt_CamelCaseName;
+                    }
+                    else {
+                        alt_CamelCaseFullName = production_CamelCaseName + "_$"
+                                + alternative.getIndex();
 
-                    bw.write(mAlternative.toString());
-                    bw.close();
-                }
-                catch (IOException e) {
-                    throw new InternalException("TODO: raise error " + "N"
-                            + alt_CamelCaseFullName + ".java", e);
+                    }
+
+                    MAlternative mAlternative = new MAlternative(
+                            alt_CamelCaseFullName);
+
+                    alternativeToCamelFullName.put(alternative,
+                            alt_CamelCaseFullName);
+
+                    if (altIsPublic) {
+                        mWalker.newWalkerIn(alt_CamelCaseFullName);
+                        mWalker.newWalkerCase(alt_CamelCaseFullName);
+                        mWalker.newWalkerOut(alt_CamelCaseFullName);
+                        mAlternative.newAltNormalApply();
+                    }
+                    else {
+                        mAlternative.newAltAnonymousApply();
+                    }
+
+                    if (this.destinationPackage.equals("")) {
+                        mAlternative.newDefaultPackage(this.grammar
+                                .getName_camelCase());
+                    }
+                    else {
+                        mAlternative.newSpecifiedPackage(
+                                this.grammar.getName_camelCase(),
+                                this.destinationPackage);
+                    }
+
+                    if (altIsPublic) {
+                        mNode.newNodeTypeEnumEntry(alt_CamelCaseFullName);
+                        mAlternative.newPublic();
+                        mAlternative.newNamedAltType();
+                    }
+                    else {
+                        mAlternative.newAnonymousAltType();
+                    }
+
+                    if (altIsProd) {
+                        mAlternative.newAlternativeNodeParent();
+                    }
+                    else {
+                        mAlternative
+                                .newAlternativeNamedParent(production_CamelCaseName);
+                    }
+
+                    for (Parser.ParserElement parserElement : alternative
+                            .getElements()) {
+                        if (parserElement instanceof Parser.ParserElement.SingleElement) {
+
+                            Parser.ParserElement.SingleElement normalElement = (Parser.ParserElement.SingleElement) parserElement;
+                            String element_CamelCaseName = normalElement
+                                    .getName_CamelCase();
+                            boolean elementIsPublicReadable;
+                            if (element_CamelCaseName == null) {
+                                element_CamelCaseName = "$"
+                                        + normalElement.getIndex();
+                                elementIsPublicReadable = false;
+                            }
+                            else {
+                                elementIsPublicReadable = true;
+                            }
+                            String element_CamelCaseType;
+                            String element_CamelCaseInternalType;
+
+                            IReferencable reference = normalElement
+                                    .getReference();
+                            if (reference instanceof LexerExpression.NamedExpression) {
+                                LexerExpression.NamedExpression namedToken = (LexerExpression.NamedExpression) reference;
+                                element_CamelCaseType = namedToken
+                                        .getName_CamelCase();
+                                element_CamelCaseInternalType = element_CamelCaseType;
+                            }
+                            else if (reference instanceof LexerExpression.InlineExpression) {
+                                LexerExpression.InlineExpression inlineToken = (LexerExpression.InlineExpression) reference;
+                                element_CamelCaseType = null;
+                                element_CamelCaseInternalType = inlineToken
+                                        .getInternalName_CamelCase();
+                            }
+                            else {
+                                Parser.ParserProduction referencedProduction = (Parser.ParserProduction) reference;
+                                element_CamelCaseType = referencedProduction
+                                        .getName_CamelCase();
+                                element_CamelCaseInternalType = element_CamelCaseType;
+                            }
+
+                            if (parserElement.getType().getCardinality()
+                                    .equals(CardinalityInterval.ONE_ONE)
+                                    || parserElement
+                                            .getType()
+                                            .getCardinality()
+                                            .equals(CardinalityInterval.ZERO_ONE)) {
+                                mAlternative.newNormalConstructorParameter(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+                                mAlternative
+                                        .newNormalContructorInitialization(element_CamelCaseName);
+
+                                mAlternative.newNormalElementDeclaration(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+                                mAlternative.newNormalElementAccessor(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+
+                                if (elementIsPublicReadable) {
+                                    MPublicElementAccessor publicElementAccessor = mAlternative
+                                            .newPublicElementAccessor(element_CamelCaseName);
+                                    if (element_CamelCaseType != null) {
+                                        publicElementAccessor
+                                                .newPublicElementType(element_CamelCaseType);
+                                    }
+                                    else {
+                                        publicElementAccessor
+                                                .newTokenElementType();
+                                    }
+                                }
+                            }
+                            else {
+                                mAlternative.newListConstructorParameter(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+                                mAlternative
+                                        .newNormalContructorInitialization(element_CamelCaseName);
+
+                                mAlternative.newListElementDeclaration(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+                                mAlternative.newListElementAccessor(
+                                        element_CamelCaseInternalType,
+                                        element_CamelCaseName);
+
+                                if (elementIsPublicReadable) {
+                                    MPublicElementAccessor publicElementAccessor = mAlternative
+                                            .newPublicElementAccessor(element_CamelCaseName);
+                                    publicElementAccessor
+                                            .newPublicListElementType(element_CamelCaseInternalType);
+
+                                }
+
+                            }
+
+                            mAlternative
+                                    .newNormalChildApply(element_CamelCaseName);
+
+                        }
+                        else {
+                            Parser.ParserElement.DoubleElement doubleElement = (Parser.ParserElement.DoubleElement) parserElement;
+                            String element_CamelCaseName = doubleElement
+                                    .getName_CamelCase();
+
+                            boolean elementIsPublicReadable;
+                            if (element_CamelCaseName == null) {
+                                element_CamelCaseName = "$"
+                                        + doubleElement.getIndex();
+                                elementIsPublicReadable = false;
+                            }
+                            else {
+                                elementIsPublicReadable = true;
+                            }
+                            String leftElement_CamelCaseType;
+                            String leftElement_CamelCaseInternalType;
+
+                            IReferencable leftReference = doubleElement
+                                    .getLeftReference();
+                            if (leftReference instanceof LexerExpression.NamedExpression) {
+                                LexerExpression.NamedExpression namedToken = (LexerExpression.NamedExpression) leftReference;
+                                leftElement_CamelCaseType = namedToken
+                                        .getName_CamelCase();
+                                leftElement_CamelCaseInternalType = leftElement_CamelCaseType;
+                            }
+                            else if (leftReference instanceof LexerExpression.InlineExpression) {
+                                LexerExpression.InlineExpression inlineToken = (LexerExpression.InlineExpression) leftReference;
+                                leftElement_CamelCaseType = null;
+                                leftElement_CamelCaseInternalType = inlineToken
+                                        .getInternalName_CamelCase();
+                            }
+                            else {
+                                Parser.ParserProduction referencedProduction = (Parser.ParserProduction) leftReference;
+                                leftElement_CamelCaseType = referencedProduction
+                                        .getName_CamelCase();
+                                leftElement_CamelCaseInternalType = leftElement_CamelCaseType;
+                            }
+
+                            String rightElement_CamelCaseType;
+                            String rightElement_CamelCaseInternalType;
+
+                            IReferencable rightReference = doubleElement
+                                    .getRightReference();
+                            if (rightReference instanceof LexerExpression.NamedExpression) {
+                                LexerExpression.NamedExpression namedToken = (LexerExpression.NamedExpression) rightReference;
+                                rightElement_CamelCaseType = namedToken
+                                        .getName_CamelCase();
+                                rightElement_CamelCaseInternalType = rightElement_CamelCaseType;
+                            }
+                            else if (rightReference instanceof LexerExpression.InlineExpression) {
+                                LexerExpression.InlineExpression inlineToken = (LexerExpression.InlineExpression) rightReference;
+                                rightElement_CamelCaseType = null;
+                                rightElement_CamelCaseInternalType = inlineToken
+                                        .getInternalName_CamelCase();
+                            }
+                            else {
+                                Parser.ParserProduction referencedProduction = (Parser.ParserProduction) rightReference;
+                                rightElement_CamelCaseType = referencedProduction
+                                        .getName_CamelCase();
+                                rightElement_CamelCaseInternalType = rightElement_CamelCaseType;
+                            }
+
+                            if (doubleElement.getElementType() == ElementType.SEPARATED) {
+
+                                mAlternative
+                                        .newSeparatedListConstructorParameter(
+                                                leftElement_CamelCaseInternalType,
+                                                rightElement_CamelCaseInternalType,
+                                                element_CamelCaseName);
+                                mAlternative
+                                        .newNormalContructorInitialization(element_CamelCaseName);
+
+                                mAlternative
+                                        .newSeparatedListElementDeclaration(
+                                                leftElement_CamelCaseInternalType,
+                                                rightElement_CamelCaseInternalType,
+                                                element_CamelCaseName);
+                                mAlternative.newSeparatedListElementAccessor(
+                                        leftElement_CamelCaseInternalType,
+                                        rightElement_CamelCaseInternalType,
+                                        element_CamelCaseName);
+
+                                if (elementIsPublicReadable) {
+                                    MPublicElementAccessor publicElementAccessor = mAlternative
+                                            .newPublicElementAccessor(element_CamelCaseName);
+                                    publicElementAccessor
+                                            .newPublicSeparatedListElementType(
+                                                    leftElement_CamelCaseInternalType,
+                                                    rightElement_CamelCaseInternalType);
+
+                                }
+                            }
+                            else {
+                                mAlternative
+                                        .newAlternatedListConstructorParameter(
+                                                leftElement_CamelCaseInternalType,
+                                                rightElement_CamelCaseInternalType,
+                                                element_CamelCaseName);
+                                mAlternative
+                                        .newNormalContructorInitialization(element_CamelCaseName);
+
+                                mAlternative
+                                        .newAlternatedListElementDeclaration(
+                                                leftElement_CamelCaseInternalType,
+                                                rightElement_CamelCaseInternalType,
+                                                element_CamelCaseName);
+                                mAlternative.newAlternatedListElementAccessor(
+                                        leftElement_CamelCaseInternalType,
+                                        rightElement_CamelCaseInternalType,
+                                        element_CamelCaseName);
+
+                                if (elementIsPublicReadable) {
+                                    MPublicElementAccessor publicElementAccessor = mAlternative
+                                            .newPublicElementAccessor(element_CamelCaseName);
+                                    publicElementAccessor
+                                            .newPublicAlternatedListElementType(
+                                                    leftElement_CamelCaseInternalType,
+                                                    rightElement_CamelCaseInternalType);
+
+                                }
+                            }
+
+                            mAlternative
+                                    .newNormalChildApply(element_CamelCaseName);
+
+                        }
+
+                    }
+
+                    try {
+                        BufferedWriter bw = new BufferedWriter(new FileWriter(
+                                new File(packageDirectory, "N"
+                                        + alt_CamelCaseFullName + ".java")));
+
+                        bw.write(mAlternative.toString());
+                        bw.close();
+                    }
+                    catch (IOException e) {
+                        throw new InternalException("TODO: raise error " + "N"
+                                + alt_CamelCaseFullName + ".java", e);
+                    }
                 }
             }
         }
 
-/*
-        for (LRState state : grammar.getSimplifiedGrammar().getLrAutomaton().getStates()) {
-            MLrStateSingleton mLrStateSingleton = mParser
-                    .newLrStateSingleton(state.getName());
+        /*
+         * Generate CST production name
+         *
+         **/
+
+        for (Production production : this.grammar.getSimplifiedGrammar()
+                .getProductions()) {
+            mCstName.newCstProductionTypeDeclaration(production.getName());
+
+        }
+
+        mCstName.newCstProductionTypeDeclaration("NOT_A_PRODUCTION");
+
+        /*
+         * Generate LRState
+         */
+
+        for (LRState state : this.grammar.getSimplifiedGrammar()
+                .getLrAutomaton().getStates()) {
+            MLrStateSingleton mLrStateSingleton = new MLrStateSingleton(
+                    state.getName());
 
             for (Entry<OldToken, LRState> entry : state.getTokenTransitions()
                     .entrySet()) {
@@ -569,11 +1163,13 @@ public class CodeGenerator {
                             .getName());
                 }
                 else {
-                    LexerExpression lexerExpression = grammar.getLexerExpression(oldToken.getName());
+                    LexerExpression lexerExpression = this.grammar
+                            .getLexerExpression(oldToken.getName());
                     String element_CamelCaseType;
                     if (lexerExpression instanceof LexerExpression.NamedExpression) {
                         LexerExpression.NamedExpression namedExpression = (LexerExpression.NamedExpression) lexerExpression;
-                        element_CamelCaseType = namedExpression.getName_CamelCase();
+                        element_CamelCaseType = namedExpression
+                                .getName_CamelCase();
                     }
                     else {
                         LexerExpression.InlineExpression inlineExpression = (LexerExpression.InlineExpression) lexerExpression;
@@ -592,9 +1188,9 @@ public class CodeGenerator {
                 OldProduction oldProduction = entry.getKey();
                 LRState target = entry.getValue();
 
-                String production_CamelCaseName = to_CamelCase(oldProduction.getName());
+                String production_camelCaseName = oldProduction.getName();
                 mLrStateSingleton.newProductionLrTransitionTarget(
-                        production_CamelCaseName, target.getName());
+                        production_camelCaseName, target.getName());
             }
 
             Map<Integer, MDistance> distanceMap = new LinkedHashMap<Integer, MDistance>();
@@ -603,8 +1199,8 @@ public class CodeGenerator {
                 int maxLookahead = action.getMaxLookahead();
                 while (maxLookahead > distanceMap.size() - 1) {
                     int distance = distanceMap.size();
-                    distanceMap.put(distance, mLrStateSingleton.newDistance(""
-                            + distance));
+                    distanceMap.put(distance,
+                            mLrStateSingleton.newDistance("" + distance));
                 }
 
                 MDistance mDistance = distanceMap.get(maxLookahead);
@@ -615,7 +1211,7 @@ public class CodeGenerator {
                             .getDistanceToItemSetMap().entrySet()) {
                         String ahead = "" + entry.getKey();
                         Set<Item> items = entry.getValue();
-                        Set<Token> tokens = new LinkedHashSet<Token>();
+                        Set<OldToken> tokens = new LinkedHashSet<OldToken>();
                         for (Item item : items) {
                             tokens.add(item.getTokenElement().getToken());
                         }
@@ -627,25 +1223,25 @@ public class CodeGenerator {
                             MNormalGroup mNormalGroup = mAction
                                     .newNormalGroup();
 
-                            for (Token token : tokens) {
+                            for (OldToken token : tokens) {
                                 if (token.getName().equals("$end")) {
                                     mNormalGroup.newEndCondition(ahead);
                                 }
                                 else {
-                                    MatchedToken matchedToken = context
-                                            .getMatchedToken(token.getName());
+                                    LexerExpression lexerExpression = this.grammar
+                                            .getLexerExpression(token.getName());
                                     String element_CamelCaseType;
-                                    if (matchedToken instanceof NameToken) {
-                                        NameToken nameToken = (NameToken) matchedToken;
-                                        element_CamelCaseType = nameToken
-                                                .get_CamelCaseName();
+                                    if (lexerExpression instanceof LexerExpression.NamedExpression) {
+                                        LexerExpression.NamedExpression namedExpression = (LexerExpression.NamedExpression) lexerExpression;
+                                        element_CamelCaseType = namedExpression
+                                                .getName_CamelCase();
                                     }
                                     else {
-                                        AnonymousToken anonymousToken = (AnonymousToken) matchedToken;
+                                        LexerExpression.InlineExpression inlineExpression = (LexerExpression.InlineExpression) lexerExpression;
 
                                         element_CamelCaseType = ""
-                                                + anonymousToken
-                                                        .get_CamelCaseName();
+                                                + inlineExpression
+                                                        .getInternalName_CamelCase();
                                     }
 
                                     mNormalGroup.newNormalCondition(ahead,
@@ -661,8 +1257,9 @@ public class CodeGenerator {
                 }
                 else {
                     ReduceAction reduceAction = (ReduceAction) action;
-                    Alternative alternative = reduceAction.getAlternative();
-                    Production production = alternative.getProduction();
+                    OldAlternative alternative = reduceAction.getAlternative();
+                    OldProduction production = alternative.getProduction();
+
                     String production_CamelCaseName = to_CamelCase(production
                             .getName());
                     String alt_CamelCaseName = to_CamelCase(alternative
@@ -671,47 +1268,26 @@ public class CodeGenerator {
                             + (alt_CamelCaseName.equals("") ? "" : "_"
                                     + alt_CamelCaseName);
 
-                    MReduce mReduce = mAction.newReduce(alt_CamelCaseFullName);
+                    MReduce mReduce = mAction.newReduce(production.getName());
 
-                    ArrayList<Element> elements = alternative.getElements();
+                    ArrayList<OldElement> elements = alternative.getElements();
+
                     int elementCount = elements.size();
+
                     for (int i = elementCount - 1; i >= 0; i--) {
-                        Element element = elements.get(i);
-                        String element_CamelCaseName = to_CamelCase(element
+
+                        OldElement element = elements.get(i);
+                        String element_CamelCaseName = to_camelCase(element
                                 .getName());
-                        String element_CamelCaseType = null;
+
                         boolean elementIsEndToken;
-                        if (element instanceof TokenElement) {
-                            TokenElement tokenElement = (TokenElement) element;
-                            if (tokenElement.getToken().getName()
-                                    .equals("$end")) {
-                                elementIsEndToken = true;
-                            }
-                            else {
-                                MatchedToken matchedToken = context
-                                        .getMatchedToken(tokenElement
-                                                .getToken().getName());
-                                if (matchedToken instanceof NameToken) {
-                                    NameToken nameToken = (NameToken) matchedToken;
-                                    element_CamelCaseType = nameToken
-                                            .get_CamelCaseName();
-                                }
-                                else {
-                                    AnonymousToken anonymousToken = (AnonymousToken) matchedToken;
 
-                                    element_CamelCaseType = ""
-                                            + anonymousToken
-                                                    .get_CamelCaseName();
-                                }
+                        if (element instanceof OldTokenElement) {
 
-                                elementIsEndToken = false;
-                            }
+                            elementIsEndToken = ((OldTokenElement) element)
+                                    .getToken().getName().equals("$end");
                         }
                         else {
-                            ProductionElement productionElement = (ProductionElement) element;
-                            element_CamelCaseType = to_CamelCase(productionElement
-                                    .getProduction().getName());
-
                             elementIsEndToken = false;
                         }
 
@@ -719,8 +1295,8 @@ public class CodeGenerator {
                             mReduce.newReduceEndPop();
                         }
                         else {
-                            mReduce.newReduceNormalPop(element_CamelCaseType,
-                                    element_CamelCaseName);
+
+                            mReduce.newReduceNormalPop(element_CamelCaseName);
                         }
                     }
 
@@ -732,14 +1308,28 @@ public class CodeGenerator {
                         MReduceDecision mReduceDecision = mReduce
                                 .newReduceDecision();
 
-                        for (Element element : elements) {
-                            String element_CamelCaseName = to_CamelCase(element
-                                    .getName());
+                        SAlternativeTransformation transformation = alternative
+                                .getOrigin().getTransformation();
+
+                        for (SAlternativeTransformationElement transformationElement : transformation
+                                .getElements()) {
+
+                            transformationElement
+                                    .apply(new TransformationGeneration(
+                                            this.grammar, alternative,
+                                            mReduceDecision,
+                                            alternativeToCamelFullName));
+
+                        }
+
+                        for (OldElement element : elements) {
+
                             boolean elementIsEndToken;
-                            if (element instanceof TokenElement) {
-                                TokenElement tokenElement = (TokenElement) element;
-                                if (tokenElement.getToken().getName().equals(
-                                        "$end")) {
+                            if (element instanceof OldTokenElement) {
+                                OldTokenElement tokenElement = (OldTokenElement) element;
+
+                                if (tokenElement.getToken().getName()
+                                        .equals("$end")) {
                                     elementIsEndToken = true;
                                 }
                                 else {
@@ -750,22 +1340,41 @@ public class CodeGenerator {
                                 elementIsEndToken = false;
                             }
                             if (elementIsEndToken) {
-                                mReduceDecision.newEndParameter();
-                            }
-                            else {
-                                mReduceDecision
-                                        .newNormalParameter(element_CamelCaseName);
+                                mReduce.newEndParameter();
                             }
                         }
                     }
                 }
+
             }
 
             if (isLr1OrMore) {
                 mLrStateSingleton.newLr1OrMore();
             }
+
+            if (this.destinationPackage.equals("")) {
+                mLrStateSingleton.newDefaultPackage(this.grammar
+                        .getName_camelCase());
+            }
+            else {
+                mLrStateSingleton.newSpecifiedPackage(
+                        this.grammar.getName_camelCase(),
+                        this.destinationPackage);
+            }
+
+            try {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                        packageDirectory, "L" + state.getName() + ".java")));
+
+                bw.write(mLrStateSingleton.toString());
+                bw.close();
+            }
+            catch (IOException e) {
+                throw new InternalException("TODO: raise error " + "N"
+                        + state.getName() + ".java", e);
+            }
         }
-*/
+
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
                     packageDirectory, "Node.java")));
@@ -832,6 +1441,18 @@ public class CodeGenerator {
         }
         catch (IOException e) {
             throw new InternalException("TODO: raise error " + "Symbol.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "CSTProductionType.java")));
+
+            bw.write(mCstName.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            throw new InternalException("TODO: raise error "
+                    + "CSTProductionTypeName.java", e);
         }
 
         try {
@@ -911,6 +1532,85 @@ public class CodeGenerator {
         }
         catch (IOException e) {
             new InternalException("TODO: raise error " + "Parser.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "ParseStack.java")));
+
+            bw.write(mParseStack.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            new InternalException("TODO: raise error " + "ParseStack.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "LRState.java")));
+
+            bw.write(mLrState.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            new InternalException("TODO: raise error " + "LRState.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "AbstractForest.java")));
+
+            bw.write(mAbstractForest.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            new InternalException("TODO: raise error " + "AbstractForest.java",
+                    e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "NodeList.java")));
+
+            bw.write(mNodeList.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            new InternalException("TODO: raise error " + "NodeList.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "Entry.java")));
+
+            bw.write(mEntry.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            new InternalException("TODO: raise error " + "Entry.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "PairNodeList.java")));
+
+            bw.write(mPairNodeList.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            new InternalException("TODO: raise error " + "PairNodeList.java", e);
+        }
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+                    packageDirectory, "SeparatedNodeList.java")));
+
+            bw.write(mSeparatedNodeList.toString());
+            bw.close();
+        }
+        catch (IOException e) {
+            new InternalException("TODO: raise error "
+                    + "SeparatedNodeList.java", e);
         }
     }
 }

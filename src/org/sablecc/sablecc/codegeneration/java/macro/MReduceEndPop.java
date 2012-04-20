@@ -12,7 +12,7 @@ public class MReduceEndPop {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("      End l$end = (End) stack.pop();");
+        sb.append("      End l$end = (End) stack.pop().getNodes().get(0);");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

@@ -20,6 +20,7 @@ package org.sablecc.sablecc.oldlrautomaton;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.grammar.*;
 
 public class OldAlternative {
@@ -68,6 +69,7 @@ public class OldAlternative {
     }
 
     public OldElement addTokenElement(
+            Grammar grammar,
             String shortName,
             OldToken oldToken,
             Element.TokenElement element) {
@@ -76,8 +78,8 @@ public class OldAlternative {
             throw new InternalException("alternative is stable");
         }
         int position = this.oldElements.size();
-        OldElement oldElement = new OldTokenElement(this, position, shortName,
-                oldToken, element);
+        OldElement oldElement = new OldTokenElement(grammar, this, position,
+                shortName, oldToken, element);
         this.oldElements.add(oldElement);
         return oldElement;
     }
@@ -125,7 +127,13 @@ public class OldAlternative {
         for (List<OldElement> elementList : nameToElementListMap.values()) {
             if (elementList.size() == 1) {
                 OldElement oldElement = elementList.get(0);
-                oldElement.setName(oldElement.getShortName());
+                if (oldElement.getShortName() != "") {
+                    oldElement.setName(oldElement.getShortName());
+                }
+                else {
+                    oldElement.setName("$1");
+                }
+
             }
             else {
                 int index = 1;
@@ -220,6 +228,20 @@ public class OldAlternative {
             int position) {
 
         return this.oldElements.get(position);
+    }
+
+    public OldElement getElement(
+            Element sElement) {
+
+        Iterator<OldElement> i = this.oldElements.iterator();
+        while (i.hasNext()) {
+            OldElement e = i.next();
+            if (e.getOrigin() == sElement) {
+                return e;
+            }
+        }
+
+        return null;
     }
 
     public ArrayList<OldElement> getElements() {

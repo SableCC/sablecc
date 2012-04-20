@@ -33,7 +33,7 @@ public class MAcceptDecision {
         StringBuilder sb = new StringBuilder();
         sb.append("      return l");
         sb.append(rElementName());
-        sb.append(";");
+        sb.append(".getNodes().get(0);");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

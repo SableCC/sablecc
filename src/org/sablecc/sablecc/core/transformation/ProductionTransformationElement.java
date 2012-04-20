@@ -646,7 +646,7 @@ public abstract class ProductionTransformationElement
         public void apply(
                 IGrammarVisitor visitor) {
 
-            // visitor.visitProductionTransformationDoubleElement(this);
+            visitor.visitProductionTransformationDoubleElement(this);
 
         }
 

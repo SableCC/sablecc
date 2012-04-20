@@ -40,6 +40,10 @@ public abstract class SProductionTransformationElement
         this.productionTransformation = productionTransformation;
     }
 
+    public abstract int getIndex();
+
+    public abstract CardinalityInterval getCardinality();
+
     public SProductionTransformation getProductionTransformation() {
 
         return this.productionTransformation;
@@ -52,7 +56,7 @@ public abstract class SProductionTransformationElement
 
         private CardinalityInterval cardinality;
 
-        private IReferencable treeReference;
+        private IReferencable coreReference;
 
         public NormalElement(
                 SProductionTransformation productionTransformation,
@@ -68,18 +72,18 @@ public abstract class SProductionTransformationElement
 
             this.cardinality = coreReference.getCardinality();
 
-            this.treeReference = coreReference.getReference();
+            this.coreReference = coreReference.getReference();
         }
 
         public NormalElement(
                 SProductionTransformation productionTransformation,
                 String name,
-                IReferencable treeReference,
+                IReferencable coreReference,
                 CardinalityInterval cardinality) {
 
             super(productionTransformation);
 
-            if (treeReference == null) {
+            if (coreReference == null) {
                 throw new InternalException("treeReference shouldn't be null");
             }
 
@@ -88,7 +92,7 @@ public abstract class SProductionTransformationElement
             }
 
             this.name = name;
-            this.treeReference = treeReference;
+            this.coreReference = coreReference;
             this.cardinality = cardinality;
         }
 
@@ -102,6 +106,7 @@ public abstract class SProductionTransformationElement
             this.cardinality = CardinalityInterval.ONE_ONE;
         }
 
+        @Override
         public CardinalityInterval getCardinality() {
 
             return this.cardinality;
@@ -112,9 +117,23 @@ public abstract class SProductionTransformationElement
             return this.name;
         }
 
-        public IReferencable getTreeReference() {
+        public IReferencable getCoreReference() {
 
-            return this.treeReference;
+            return this.coreReference;
+        }
+
+        @Override
+        public int getIndex() {
+
+            return getProductionTransformation().getElements().indexOf(this);
+        }
+
+        @Override
+        public String toString() {
+
+            return this.name
+                    + (this.cardinality.equals(CardinalityInterval.ONE_ONE) ? ""
+                            : this.cardinality);
         }
     }
 
@@ -208,6 +227,7 @@ public abstract class SProductionTransformationElement
             return this.rightName;
         }
 
+        @Override
         public CardinalityInterval getCardinality() {
 
             return this.cardinality;
@@ -221,6 +241,24 @@ public abstract class SProductionTransformationElement
         public IReferencable getRightTreeReference() {
 
             return this.rightTreeReference;
+        }
+
+        @Override
+        public int getIndex() {
+
+            return getProductionTransformation().getElements().indexOf(this);
+        }
+
+        @Override
+        public String toString() {
+
+            return "("
+                    + this.leftName
+                    + " Separated "
+                    + this.rightName
+                    + ")"
+                    + (this.cardinality.equals(CardinalityInterval.ONE_ONE) ? ""
+                            : this.cardinality);
         }
     }
 
@@ -247,6 +285,7 @@ public abstract class SProductionTransformationElement
             return this.rightName;
         }
 
+        @Override
         public CardinalityInterval getCardinality() {
 
             return this.cardinality;
@@ -313,9 +352,9 @@ public abstract class SProductionTransformationElement
                 throw new InternalException("coreReference shouldn't be null");
             }
 
-            if (coreReference.getElementType() != ElementType.SEPARATED) {
+            if (coreReference.getElementType() != ElementType.ALTERNATED) {
                 throw new InternalException(
-                        "The core reference must be alternated in a alternated separated element");
+                        "The core reference must be alternated in an alternated element");
             }
 
             this.leftName = coreReference.getLeft();
@@ -327,6 +366,24 @@ public abstract class SProductionTransformationElement
             this.leftTreeReference = coreReference.getLeftReference();
 
             this.rightTreeReference = coreReference.getRightReference();
+        }
+
+        @Override
+        public int getIndex() {
+
+            return getProductionTransformation().getElements().indexOf(this);
+        }
+
+        @Override
+        public String toString() {
+
+            return "("
+                    + this.leftName
+                    + " "
+                    + this.rightName
+                    + ")"
+                    + (this.cardinality.equals(CardinalityInterval.ONE_ONE) ? ""
+                            : this.cardinality);
         }
 
     }

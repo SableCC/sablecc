@@ -4,39 +4,22 @@ package org.sablecc.sablecc.codegeneration.java.macro;
 
 public class MReduceNormalPop {
 
-    private final String pElementType;
-
     private final String pElementName;
 
     private final MReduceNormalPop mReduceNormalPop = this;
 
     MReduceNormalPop(
-            String pElementType,
             String pElementName) {
 
-        if (pElementType == null) {
-            throw new NullPointerException();
-        }
-        this.pElementType = pElementType;
         if (pElementName == null) {
             throw new NullPointerException();
         }
         this.pElementName = pElementName;
     }
 
-    String pElementType() {
-
-        return this.pElementType;
-    }
-
     String pElementName() {
 
         return this.pElementName;
-    }
-
-    private String rElementType() {
-
-        return this.mReduceNormalPop.pElementType();
     }
 
     private String rElementName() {
@@ -48,13 +31,9 @@ public class MReduceNormalPop {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("      N");
-        sb.append(rElementType());
-        sb.append(" l");
+        sb.append("      AbstractForest l");
         sb.append(rElementName());
-        sb.append(" = (N");
-        sb.append(rElementType());
-        sb.append(") stack.pop();");
+        sb.append(" = stack.pop();");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

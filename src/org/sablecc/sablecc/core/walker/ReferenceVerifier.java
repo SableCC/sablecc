@@ -172,49 +172,8 @@ public abstract class ReferenceVerifier
                             this.grammar, unit.getIdentifier());
                     node.addReference(reference);
                 }
-                else if (pUnit instanceof AStringUnit) {
-                    AStringUnit unit = (AStringUnit) pUnit;
-
-                    node.addReference(this.grammar.getStringExpression(unit
-                            .getString().getText()));
-                }
-                else if (pUnit instanceof ACharacterUnit) {
-                    ACharacterUnit unit = (ACharacterUnit) pUnit;
-                    PCharacter pCharacter = unit.getCharacter();
-
-                    if (pCharacter instanceof ACharCharacter) {
-                        ACharCharacter character = (ACharCharacter) pCharacter;
-
-                        node.addReference(this.grammar
-                                .getCharExpression(character.getChar()
-                                        .getText()));
-                    }
-                    else if (pCharacter instanceof ADecCharacter) {
-                        ADecCharacter character = (ADecCharacter) pCharacter;
-
-                        node.addReference(this.grammar
-                                .getDecExpression(character.getDecChar()
-                                        .getText()));
-                    }
-                    else if (pCharacter instanceof AHexCharacter) {
-                        AHexCharacter character = (AHexCharacter) pCharacter;
-
-                        node.addReference(this.grammar
-                                .getHexExpression(character.getHexChar()
-                                        .getText()));
-                    }
-                    else {
-                        throw new InternalException("unhandled character type");
-                    }
-                }
-                else if (pUnit instanceof AStartUnit) {
-                    node.addReference(this.grammar.getStartExpression());
-                }
-                else if (pUnit instanceof AEndUnit) {
-                    node.addReference(this.grammar.getEndExpression());
-                }
                 else {
-                    throw new InternalException("unhandled unit type");
+                    node.addReference(findInlineToken(this.grammar, pUnit));
                 }
 
                 node.getAlternative().getProduction().getContext()
@@ -270,12 +229,18 @@ public abstract class ReferenceVerifier
                         this.grammar, ((ANameUnit) leftUnit).getIdentifier());
                 node.addLeftReference(reference);
             }
+            else {
+                node.addLeftReference(findInlineToken(this.grammar, leftUnit));
+            }
 
             if (rightUnit instanceof ANameUnit) {
 
                 IReferencable reference = tokenOrParserProductionExpected(
                         this.grammar, ((ANameUnit) rightUnit).getIdentifier());
                 node.addRightReference(reference);
+            }
+            else {
+                node.addRightReference(findInlineToken(this.grammar, rightUnit));
             }
 
             node.getAlternative().getProduction().getContext()
@@ -567,40 +532,33 @@ public abstract class ReferenceVerifier
                         + node.getClass());
             }
 
-            if (leftUnit instanceof ANameUnit) {
-                TIdentifier identifier = ((ANameUnit) leftUnit).getIdentifier();
+            INameDeclaration leftDeclaration = findTreeDeclaration(
+                    this.grammar, computeUnitToken(leftUnit));
 
-                INameDeclaration declaration = findTreeDeclaration(
-                        this.grammar, identifier);
+            if (!(leftDeclaration instanceof Tree.TreeProduction)
+                    && !(leftDeclaration instanceof IToken)) {
+                String[] expectedNames = { "tree production", "token" };
+                throw SemanticException.badReference(
+                        computeUnitToken(leftUnit),
+                        leftDeclaration.getNameType(), expectedNames);
 
-                if (!(declaration instanceof Tree.TreeProduction)
-                        && !(declaration instanceof IToken)) {
-                    String[] expectedNames = { "tree production", "token" };
-                    throw SemanticException.badReference(identifier,
-                            declaration.getNameType(), expectedNames);
-
-                }
-
-                node.addLeftReference((IReferencable) declaration);
             }
 
-            if (rightUnit instanceof ANameUnit) {
-                TIdentifier identifier = ((ANameUnit) rightUnit)
-                        .getIdentifier();
+            node.addLeftReference((IReferencable) leftDeclaration);
 
-                INameDeclaration declaration = findTreeDeclaration(
-                        this.grammar, identifier);
+            INameDeclaration rightDeclaration = findTreeDeclaration(
+                    this.grammar, computeUnitToken(rightUnit));
 
-                if (!(declaration instanceof Tree.TreeProduction)
-                        && !(declaration instanceof IToken)) {
-                    String[] expectedNames = { "tree production", "token" };
-                    throw SemanticException.badReference(identifier,
-                            declaration.getNameType(), expectedNames);
+            if (!(rightDeclaration instanceof Tree.TreeProduction)
+                    && !(rightDeclaration instanceof IToken)) {
+                String[] expectedNames = { "tree production", "token" };
+                throw SemanticException.badReference(
+                        computeUnitToken(rightUnit),
+                        rightDeclaration.getNameType(), expectedNames);
 
-                }
-
-                node.addRightReference((IReferencable) declaration);
             }
+
+            node.addRightReference((IReferencable) rightDeclaration);
         }
 
         @Override
@@ -631,9 +589,10 @@ public abstract class ReferenceVerifier
                 PElementReference elementReference = transformationElement
                         .getDeclaration().getElementReference();
 
-                IReferencable reference = resolveAlternativeElementReference(elementReference);
+                Pair<Parser.ParserElement, IReferencable> references = resolveAlternativeElementReference(elementReference);
 
-                transformationElement.addReference(reference);
+                transformationElement.addOriginReference(references.getLeft());
+                transformationElement.addTargetReference(references.getRight());
             }
 
         }
@@ -687,22 +646,24 @@ public abstract class ReferenceVerifier
                 PElementReference elementReference = listElement
                         .getDeclaration().getElementReference();
 
-                IReferencable reference = resolveAlternativeElementReference(elementReference);
+                Pair<Parser.ParserElement, IReferencable> references = resolveAlternativeElementReference(elementReference);
 
-                if (reference instanceof Parser.ParserElement) {
-                    if (((Parser.ParserElement) reference).getCardinality()
-                            .getUpperBound().compareTo(Bound.ONE) > 0) {
-                        throw SemanticException.listExpansionMissing(node);
-                    }
-                }
-                else {
-                    if (((ProductionTransformationElement) reference)
+                if (references.getRight() instanceof Parser.ParserElement) {
+                    if (((Parser.ParserElement) references.getRight())
                             .getCardinality().getUpperBound()
                             .compareTo(Bound.ONE) > 0) {
                         throw SemanticException.listExpansionMissing(node);
                     }
                 }
-                listElement.addReference(reference);
+                else {
+                    if (((ProductionTransformationElement) references
+                            .getRight()).getCardinality().getUpperBound()
+                            .compareTo(Bound.ONE) > 0) {
+                        throw SemanticException.listExpansionMissing(node);
+                    }
+                }
+                listElement.addOriginReference(references.getLeft());
+                listElement.addTargetReference(references.getRight());
             }
 
         }
@@ -717,9 +678,10 @@ public abstract class ReferenceVerifier
                 PElementReference elementReference = listElement
                         .getDeclaration().getElementReference();
 
-                IReferencable reference = resolveAlternativeElementReference(elementReference);
+                Pair<Parser.ParserElement, IReferencable> references = resolveAlternativeElementReference(elementReference);
 
-                listElement.addReference(reference);
+                listElement.addTargetReference(references.getRight());
+                listElement.addOriginReference(references.getLeft());
 
                 String name = listElement.getElement().substring(0,
                         listElement.getElement().length() - 4);
@@ -744,9 +706,10 @@ public abstract class ReferenceVerifier
                 PElementReference elementReference = listElement
                         .getDeclaration().getElementReference();
 
-                IReferencable reference = resolveAlternativeElementReference(elementReference);
+                Pair<Parser.ParserElement, IReferencable> references = resolveAlternativeElementReference(elementReference);
 
-                listElement.addReference(reference);
+                listElement.addTargetReference(references.getRight());
+                listElement.addOriginReference(references.getLeft());
 
                 String name = listElement.getElement().substring(0,
                         listElement.getElement().length() - 8);
@@ -771,9 +734,10 @@ public abstract class ReferenceVerifier
                 PElementReference elementReference = listElement
                         .getDeclaration().getElementReference();
 
-                IReferencable reference = resolveAlternativeElementReference(elementReference);
+                Pair<Parser.ParserElement, IReferencable> references = resolveAlternativeElementReference(elementReference);
 
-                listElement.addReference(reference);
+                listElement.addTargetReference(references.getRight());
+                listElement.addOriginReference(references.getLeft());
 
                 String name = listElement.getElement().substring(0,
                         listElement.getElement().length() - 9);
@@ -788,21 +752,43 @@ public abstract class ReferenceVerifier
 
         }
 
-        private IReferencable resolveAlternativeElementReference(
+        private Pair<Parser.ParserElement, IReferencable> resolveAlternativeElementReference(
                 PElementReference elementReference) {
 
-            IReferencable reference;
+            Parser.ParserElement originReference;
+            IReferencable targetReference;
 
             if (elementReference instanceof ATransformedElementReference) {
 
-                TIdentifier typeIdentifier = ((ATransformedElementReference) elementReference)
-                        .getElement();
+                originReference = findElement(
+                        ((ATransformedElementReference) elementReference)
+                                .getElement(),
+                        this.currentAlternative);
+
+                if (originReference == null) {
+                    throw SemanticException
+                            .undefinedReference(((ATransformedElementReference) elementReference)
+                                    .getElement());
+                }
 
                 TIdentifier transformationElementIdentifier = ((ATransformedElementReference) elementReference)
                         .getPart();
 
-                ProductionTransformation.ExplicitProductionTransformation productionTransformation = findProductionTransformation(
-                        typeIdentifier, transformationElementIdentifier);
+                IReferencable productionReference = ((Parser.ParserElement.SingleElement) originReference)
+                        .getReference();
+
+                ProductionTransformation.ExplicitProductionTransformation productionTransformation;
+
+                if (productionReference instanceof Parser.ParserProduction) {
+
+                    productionTransformation = (ProductionTransformation.ExplicitProductionTransformation) ((Parser.ParserProduction) productionReference)
+                            .getTransformation();
+
+                }
+                else {
+                    throw new InternalException("Unhandle case with class"
+                            + productionReference.getClass());
+                }
 
                 ProductionTransformationElement transformationElement = productionTransformation
                         .getLocalReference(transformationElementIdentifier
@@ -815,15 +801,21 @@ public abstract class ReferenceVerifier
                                     productionTransformation);
                 }
 
-                reference = transformationElement;
+                targetReference = transformationElement;
 
             }
             else {
 
-                reference = findElement(
+                originReference = findElement(
                         ((ANaturalElementReference) elementReference)
                                 .getElement(),
                         this.currentAlternative);
+
+                if (originReference == null) {
+                    throw SemanticException
+                            .undefinedReference(((ANaturalElementReference) elementReference)
+                                    .getElement());
+                }
 
                 // Normal ref should only be used with non transformed prof
 
@@ -843,45 +835,12 @@ public abstract class ReferenceVerifier
                     }
                 }
 
+                targetReference = originReference;
+
             }
 
-            return reference;
-        }
-
-        private ProductionTransformation.ExplicitProductionTransformation findProductionTransformation(
-                TIdentifier typeIdentifier,
-                TIdentifier transformationElementIdentifier) {
-
-            Parser.ParserElement element = findElement(typeIdentifier,
-                    this.currentAlternative);
-
-            if (!(element.getElementType() == ElementType.NORMAL)) {
-                String[] expectedNames = { "normal parser element" };
-                throw SemanticException.badReference(typeIdentifier,
-                        element.getNameType(), expectedNames);
-            }
-
-            PUnit unit = ((ANormalElement) element.getDeclaration()).getUnit();
-
-            if (!(unit instanceof ANameUnit)) {
-                throw SemanticException.badProductionReference(typeIdentifier,
-                        this.currentAlternative.getProduction());
-            }
-
-            Parser.ParserProduction production = (Parser.ParserProduction) this.grammar
-                    .getGlobalReference(((ANameUnit) unit).getIdentifier()
-                            .getText());
-
-            ProductionTransformation.ExplicitProductionTransformation productionTransformation = (ProductionTransformation.ExplicitProductionTransformation) production
-                    .getTransformation();
-
-            if (productionTransformation == null) {
-                throw SemanticException.badAlternativeTransformationReference(
-                        typeIdentifier, transformationElementIdentifier,
-                        production);
-            }
-
-            return productionTransformation;
+            return new Pair<Parser.ParserElement, IReferencable>(
+                    originReference, targetReference);
         }
 
         private Parser.ParserAlternative findParserAlternative(
@@ -1037,14 +996,16 @@ public abstract class ReferenceVerifier
         public void visitTreeSingleElement(
                 Tree.TreeElement.SingleElement node) {
 
-            PUnit unit = node.getDeclaration().getUnit();
+            PUnit pUnit = node.getDeclaration().getUnit();
 
-            if (unit instanceof ANameUnit) {
+            if (pUnit instanceof ANameUnit) {
                 IReferencable reference = tokenOrTreeProductionExpected(
-                        this.grammar, ((ANameUnit) unit).getIdentifier());
+                        this.grammar, ((ANameUnit) pUnit).getIdentifier());
                 node.addReference(reference);
             }
-
+            else {
+                node.addReference(findInlineToken(this.grammar, pUnit));
+            }
         }
 
         @Override
@@ -1077,18 +1038,24 @@ public abstract class ReferenceVerifier
                         this.grammar, ((ANameUnit) leftUnit).getIdentifier());
                 node.addLeftReference(reference);
             }
+            else {
+                node.addLeftReference(findInlineToken(this.grammar, leftUnit));
+            }
 
             if (rightUnit instanceof ANameUnit) {
                 IReferencable reference = tokenOrTreeProductionExpected(
                         this.grammar, ((ANameUnit) rightUnit).getIdentifier());
                 node.addRightReference(reference);
             }
+            else {
+                node.addRightReference(findInlineToken(this.grammar, rightUnit));
+            }
         }
     }
 
     private static INameDeclaration findGlobalDeclaration(
             Grammar grammar,
-            TIdentifier identifier) {
+            Token identifier) {
 
         INameDeclaration declaration = grammar.getGlobalReference(identifier
                 .getText());
@@ -1099,9 +1066,64 @@ public abstract class ReferenceVerifier
         return declaration;
     }
 
+    private static IReferencable findInlineToken(
+            Grammar grammar,
+            PUnit pUnit) {
+
+        if (pUnit instanceof ANameUnit) {
+            throw new InternalException("ANameUnit can't be an inline token !");
+        }
+
+        IReferencable reference;
+
+        if (pUnit instanceof AStringUnit) {
+            AStringUnit unit = (AStringUnit) pUnit;
+
+            reference = grammar.getStringExpression(unit.getString().getText());
+        }
+        else if (pUnit instanceof ACharacterUnit) {
+            ACharacterUnit unit = (ACharacterUnit) pUnit;
+            PCharacter pCharacter = unit.getCharacter();
+
+            if (pCharacter instanceof ACharCharacter) {
+                ACharCharacter character = (ACharCharacter) pCharacter;
+
+                reference = grammar.getCharExpression(character.getChar()
+                        .getText());
+            }
+            else if (pCharacter instanceof ADecCharacter) {
+                ADecCharacter character = (ADecCharacter) pCharacter;
+
+                reference = grammar.getDecExpression(character.getDecChar()
+                        .getText());
+            }
+            else if (pCharacter instanceof AHexCharacter) {
+                AHexCharacter character = (AHexCharacter) pCharacter;
+
+                reference = grammar.getHexExpression(character.getHexChar()
+                        .getText());
+            }
+            else {
+                throw new InternalException("unhandled character type");
+            }
+        }
+        else if (pUnit instanceof AStartUnit) {
+            reference = grammar.getStartExpression();
+        }
+        else if (pUnit instanceof AEndUnit) {
+            reference = grammar.getEndExpression();
+        }
+        else {
+            throw new InternalException("unhandled unit type");
+        }
+
+        return reference;
+
+    }
+
     private static INameDeclaration findTreeDeclaration(
             Grammar grammar,
-            TIdentifier identifier) {
+            Token identifier) {
 
         INameDeclaration declaration = grammar.getTreeReference(identifier
                 .getText());
@@ -1251,6 +1273,45 @@ public abstract class ReferenceVerifier
         }
 
         return (IReferencable) declaration;
+    }
+
+    private static Token computeUnitToken(
+            PUnit unit) {
+
+        if (unit instanceof ANameUnit) {
+
+            return ((ANameUnit) unit).getIdentifier();
+
+        }
+        else if (unit instanceof AStringUnit) {
+
+            return ((AStringUnit) unit).getString();
+
+        }
+        else if (unit instanceof ACharacterUnit) {
+            PCharacter character = ((ACharacterUnit) unit).getCharacter();
+            if (character instanceof ACharCharacter) {
+                return ((ACharCharacter) character).getChar();
+            }
+            else if (character instanceof ADecCharacter) {
+                return ((ADecCharacter) character).getDecChar();
+            }
+            else if (character instanceof AHexCharacter) {
+                return ((AHexCharacter) character).getHexChar();
+            }
+
+        }
+        else if (unit instanceof AStartUnit) {
+
+            return ((AStartUnit) unit).getStartKeyword();
+
+        }
+        else if (unit instanceof AEndUnit) {
+            return ((AEndUnit) unit).getEndKeyword();
+        }
+
+        throw new InternalException("Unhandled unit type");
+
     }
 
 }

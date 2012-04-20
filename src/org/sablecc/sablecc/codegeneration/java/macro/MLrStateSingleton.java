@@ -10,6 +10,8 @@ public class MLrStateSingleton {
 
     private final MLrStateSingleton mLrStateSingleton = this;
 
+    private final List<Object> eDefaultPackage_SpecifiedPackage = new LinkedList<Object>();
+
     private final List<Object> eDistance = new LinkedList<Object>();
 
     private final List<Object> eLr1OrMore = new LinkedList<Object>();
@@ -20,7 +22,7 @@ public class MLrStateSingleton {
 
     private final List<Object> eProductionLrTransitionTarget = new LinkedList<Object>();
 
-    MLrStateSingleton(
+    public MLrStateSingleton(
             String pNumber) {
 
         if (pNumber == null) {
@@ -73,6 +75,24 @@ public class MLrStateSingleton {
         return lProductionLrTransitionTarget;
     }
 
+    public MDefaultPackage newDefaultPackage(
+            String pLanguageName) {
+
+        MDefaultPackage lDefaultPackage = new MDefaultPackage(pLanguageName);
+        this.eDefaultPackage_SpecifiedPackage.add(lDefaultPackage);
+        return lDefaultPackage;
+    }
+
+    public MSpecifiedPackage newSpecifiedPackage(
+            String pLanguageName,
+            String pPackage) {
+
+        MSpecifiedPackage lSpecifiedPackage = new MSpecifiedPackage(
+                pLanguageName, pPackage);
+        this.eDefaultPackage_SpecifiedPackage.add(lSpecifiedPackage);
+        return lSpecifiedPackage;
+    }
+
     String pNumber() {
 
         return this.pNumber;
@@ -87,6 +107,18 @@ public class MLrStateSingleton {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
+        sb.append(new MHeader().toString());
+        if (this.eDefaultPackage_SpecifiedPackage.size() > 0) {
+            sb.append(System.getProperty("line.separator"));
+        }
+        for (Object oDefaultPackage_SpecifiedPackage : this.eDefaultPackage_SpecifiedPackage) {
+            sb.append(oDefaultPackage_SpecifiedPackage.toString());
+        }
+        sb.append(System.getProperty("line.separator"));
+        sb.append("import java.io.*;");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("import java.util.*;");
+        sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("class L_");
         sb.append(rNumber());
@@ -126,12 +158,12 @@ public class MLrStateSingleton {
         sb.append(System.getProperty("line.separator"));
         sb.append("  @Override");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  LRState getTokenTarget(InternalType type)");
+        sb.append("  LRState getTokenTarget(Token token)");
         sb.append(System.getProperty("line.separator"));
         sb.append("      throws ParserException, LexerException, IOException {");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("    switch(type) {");
+        sb.append("    switch(token.getInternalType()) {");
         sb.append(System.getProperty("line.separator"));
         for (Object oNormalTokenLrTransitionTarget : this.eNormalTokenLrTransitionTarget) {
             sb.append(oNormalTokenLrTransitionTarget.toString());
@@ -141,7 +173,7 @@ public class MLrStateSingleton {
         }
         sb.append("    default:");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      throw new ParserException((Token) node);");
+        sb.append("      throw new ParserException(token);");
         sb.append(System.getProperty("line.separator"));
         sb.append("    }");
         sb.append(System.getProperty("line.separator"));
@@ -150,7 +182,7 @@ public class MLrStateSingleton {
         sb.append(System.getProperty("line.separator"));
         sb.append("  @Override");
         sb.append(System.getProperty("line.separator"));
-        sb.append("  LRState getProductionTarget(ProductionType type)");
+        sb.append("  LRState getProductionTarget(CSTProductionType type)");
         sb.append(System.getProperty("line.separator"));
         sb.append("      throws ParserException, LexerException, IOException {");
         sb.append(System.getProperty("line.separator"));
@@ -163,6 +195,8 @@ public class MLrStateSingleton {
         sb.append("    default:");
         sb.append(System.getProperty("line.separator"));
         sb.append("      throw new RuntimeException(\"internal error in parsing tables\");");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    }");
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));

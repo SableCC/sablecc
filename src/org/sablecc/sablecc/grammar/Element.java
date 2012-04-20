@@ -26,6 +26,8 @@ public abstract class Element
 
     public abstract String getTypeName();
 
+    public abstract String getName();
+
     @Override
     public abstract Element clone();
 
@@ -34,7 +36,10 @@ public abstract class Element
 
         private String typeName;
 
+        private String name;
+
         public TokenElement(
+                String name,
                 PUnit type) {
 
             if (type instanceof ANameUnit) {
@@ -66,15 +71,28 @@ public abstract class Element
                 this.typeName = ((AEndUnit) type).getEndKeyword().getText();
             }
 
+            if (name == null) {
+                name = "";
+            }
+
+            this.name = name;
+
         }
 
         public TokenElement(
+                String name,
                 String typeName) {
 
             if (typeName == null) {
                 throw new InternalException("typeName shouldn't be null");
             }
             this.typeName = typeName;
+
+            if (name == null) {
+                name = "";
+            }
+
+            this.name = name;
         }
 
         @Override
@@ -84,9 +102,29 @@ public abstract class Element
         }
 
         @Override
+        public String getName() {
+
+            return this.name;
+        }
+
+        @Override
         public Element clone() {
 
-            return new TokenElement(this.typeName);
+            return new TokenElement(this.name, this.typeName);
+        }
+
+        @Override
+        public String toString() {
+
+            String text = "";
+
+            if (this.name != null && this.name != "") {
+                text += "[" + this.name + ":]";
+            }
+
+            text += this.typeName;
+
+            return text;
         }
     }
 
@@ -95,9 +133,12 @@ public abstract class Element
 
         private String typeName;
 
+        private String name;
+
         private Production reference;
 
         public ProductionElement(
+                String name,
                 String typeName,
                 Production reference) {
 
@@ -109,17 +150,29 @@ public abstract class Element
                 throw new InternalException("reference shouldn't be null");
             }
 
+            if (name == null) {
+                name = "";
+            }
+
+            this.name = name;
             this.typeName = typeName;
             this.reference = reference;
         }
 
         public ProductionElement(
+                String name,
                 Production reference) {
 
             if (reference == null) {
                 throw new InternalException("reference shouldn't be null");
             }
 
+            if (name == null) {
+                name = "";
+            }
+
+            this.name = name;
+            ;
             this.typeName = reference.getName();
             this.reference = reference;
         }
@@ -136,9 +189,29 @@ public abstract class Element
         }
 
         @Override
+        public String getName() {
+
+            return this.name;
+        }
+
+        @Override
         public Element clone() {
 
             return new ProductionElement(this.typeName, this.reference);
+        }
+
+        @Override
+        public String toString() {
+
+            String text = "";
+
+            if (this.name != null && this.name != "") {
+                text += "[" + this.name + ":]";
+            }
+
+            text += this.typeName;
+
+            return text;
         }
     }
 

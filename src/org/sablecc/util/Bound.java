@@ -178,6 +178,30 @@ public class Bound
         return new Bound(this.value.subtract(value));
     }
 
+    public Bound subtract(
+            Bound bound) {
+
+        if (bound == null) {
+            throw new InternalError("value shouldn't be null");
+        }
+
+        if (equals(MAX) && bound.equals(MAX) || equals(MIN)
+                && bound.equals(MIN)) {
+            throw new InternalError(
+                    "Canno't subtract + infinite and - infinite");
+        }
+
+        if (bound.equals(MAX) || equals(MIN)) {
+            return MIN;
+        }
+        else if (bound.equals(MIN) || equals(MAX)) {
+            return MAX;
+        }
+        else {
+            return new Bound(this.value.subtract(bound.getValue()));
+        }
+    }
+
     public Bound multiply(
             BigInteger value) {
 
@@ -209,6 +233,14 @@ public class Bound
     public Bound min(
             Bound aBound) {
 
+        if (equals(MIN)) {
+            return this;
+        }
+
+        if (aBound.equals(MIN)) {
+            return aBound;
+        }
+
         if (this.value.min(aBound.getValue()).equals(this.value)) {
             return this;
         }
@@ -219,6 +251,14 @@ public class Bound
 
     public Bound max(
             Bound aBound) {
+
+        if (equals(MAX)) {
+            return this;
+        }
+
+        if (aBound.equals(MAX)) {
+            return aBound;
+        }
 
         if (this.value.max(aBound.getValue()).equals(this.value)) {
             return this;

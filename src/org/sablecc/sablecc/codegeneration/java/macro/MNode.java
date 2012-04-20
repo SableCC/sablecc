@@ -12,8 +12,6 @@ public class MNode {
 
     private final List<Object> eNodeProductionTypeEnumEntry = new LinkedList<Object>();
 
-    private final List<Object> eNodeInternalTypeEnumEntry = new LinkedList<Object>();
-
     public MNode() {
 
     }
@@ -33,15 +31,6 @@ public class MNode {
                 pName);
         this.eNodeProductionTypeEnumEntry.add(lNodeProductionTypeEnumEntry);
         return lNodeProductionTypeEnumEntry;
-    }
-
-    public MNodeInternalTypeEnumEntry newNodeInternalTypeEnumEntry(
-            String pName) {
-
-        MNodeInternalTypeEnumEntry lNodeInternalTypeEnumEntry = new MNodeInternalTypeEnumEntry(
-                pName);
-        this.eNodeInternalTypeEnumEntry.add(lNodeInternalTypeEnumEntry);
-        return lNodeInternalTypeEnumEntry;
     }
 
     public MDefaultPackage newDefaultPackage(
@@ -92,9 +81,6 @@ public class MNode {
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("  public abstract ProductionType getProductionType();");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
         sb.append("  public static enum ProductionType {");
         sb.append(System.getProperty("line.separator"));
         for (Object oNodeProductionTypeEnumEntry : this.eNodeProductionTypeEnumEntry) {
@@ -141,18 +127,6 @@ public class MNode {
         sb.append(System.getProperty("line.separator"));
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  abstract InternalType getInternalType();");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  static enum InternalType {");
-        sb.append(System.getProperty("line.separator"));
-        for (Object oNodeInternalTypeEnumEntry : this.eNodeInternalTypeEnumEntry) {
-            sb.append(oNodeInternalTypeEnumEntry.toString());
-        }
-        sb.append("    TEnd;");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
         sb.append(System.getProperty("line.separator"));
         sb.append("}");
         sb.append(System.getProperty("line.separator"));

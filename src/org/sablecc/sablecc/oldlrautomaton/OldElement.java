@@ -18,6 +18,7 @@
 package org.sablecc.sablecc.oldlrautomaton;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.grammar.*;
 
 public abstract class OldElement {
 
@@ -45,6 +46,8 @@ public abstract class OldElement {
 
         return this.shortName;
     }
+
+    abstract public String getTypeName();
 
     void setName(
             String name) {
@@ -81,4 +84,6 @@ public abstract class OldElement {
 
     @Override
     public abstract String toString();
+
+    abstract public Element getOrigin();
 }
