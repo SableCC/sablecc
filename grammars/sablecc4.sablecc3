@@ -103,7 +103,6 @@ Tokens
   end_keyword = 'End';
   except_keyword = 'Except';
   grammar_keyword = 'Grammar';
-  group_keyword = 'Group';
   ignored_keyword = 'Ignored';
   incremental_keyword = 'Incremental';
   investigator_keyword = 'Investigator';
