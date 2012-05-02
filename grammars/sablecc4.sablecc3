@@ -195,8 +195,8 @@ Productions
 
   lexer
     =
-      lexer_keyword [named_expressions]:named_expression* lexer_contexts investigators? selectors?
-        {-> New lexer(lexer_keyword, [named_expressions], [lexer_contexts.lexer_contexts], [investigators.investigators], [selectors.selectors]) }
+      lexer_keyword [named_expressions]:named_expression* selectors? investigators?
+        {-> New lexer(lexer_keyword, [named_expressions], [selectors.selectors], [investigators.investigators]) }
     ;
 
   named_expression
@@ -339,77 +339,6 @@ Productions
       {at_least} caret l_par number three_dots r_par
     ;
 
-  lexer_contexts
-        {-> [lexer_contexts]:lexer_context+ }
-    =
-      {anonymous} lexer_default_context
-        {-> [lexer_default_context.lexer_context] }
-    |
-      {named} [lexer_named_contexts]:lexer_named_context+
-        {-> [lexer_named_contexts.lexer_context] }
-    ;
-
-  lexer_default_context
-        {-> lexer_context }
-    =
-      lexer_context_body
-        {-> New lexer_context(Null, lexer_context_body.tokens, lexer_context_body.ignored) }
-    ;
-
-  lexer_named_context
-        {-> lexer_context }
-    =
-      context_keyword identifier lexer_context_body
-        {-> New lexer_context(identifier, lexer_context_body.tokens, lexer_context_body.ignored) }
-    ;
-
-  lexer_context_body
-        {-> tokens? ignored? }
-    =
-      tokens? ignored?
-        {-> tokens ignored }
-    ;
-
-  tokens
-    =
-      token_keyword tokens_body?
-        {-> New tokens(token_keyword, [tokens_body.units]) }
-    ;
-
-  tokens_body
-        {-> [units]:unit* }
-    =
-      unit_list? semicolon
-        {-> [unit_list.units] }
-    ;
-
-  ignored
-    =
-      ignored_keyword ignored_body?
-        {-> New ignored(ignored_keyword, [ignored_body.units]) }
-    ;
-
-  ignored_body
-        {-> [units]:unit* }
-    =
-      unit_list? semicolon
-        {-> [unit_list.units] }
-    ;
-
-  unit_list
-        {-> [units]:unit+ }
-    =
-      unit [additional_units]:additional_unit* comma?
-        {-> [unit, additional_units.unit] }
-    ;
-
-  additional_unit
-        {-> unit }
-    =
-      comma unit
-        {-> unit }
-    ;
-
   investigators
         {-> [investigators]:investigator* }
     =
@@ -489,15 +418,49 @@ Productions
   parser_default_context
         {-> parser_context }
     =
-      [parser_productions]:parser_production*
-        {-> New parser_context(Null, [parser_productions]) }
+      parser_context_body
+        {-> New parser_context(Null, parser_context_body.ignored, [parser_context_body.parser_productions]) }
     ;
 
   parser_named_context
         {-> parser_context }
     =
-      context_keyword identifier [parser_productions]:parser_production*
-        {-> New parser_context(identifier, [parser_productions]) }
+      context_keyword identifier parser_context_body
+        {-> New parser_context(identifier, parser_context_body.ignored, [parser_context_body.parser_productions]) }
+    ;
+
+  parser_context_body
+        {-> ignored? [parser_productions]:parser_production* }
+    =
+      ignored? [parser_productions]:parser_production*
+        {-> ignored [parser_productions] }
+    ;
+
+  ignored
+    =
+      ignored_keyword ignored_body?
+        {-> New ignored(ignored_keyword, [ignored_body.units]) }
+    ;
+
+  ignored_body
+        {-> [units]:unit* }
+    =
+      unit_list? semicolon
+        {-> [unit_list.units] }
+    ;
+
+  unit_list
+        {-> [units]:unit+ }
+    =
+      unit [additional_units]:additional_unit* comma?
+        {-> [unit, additional_units.unit] }
+    ;
+
+  additional_unit
+        {-> unit }
+    =
+      comma unit
+        {-> unit }
     ;
 
   parser_production
@@ -685,9 +648,8 @@ Abstract Syntax Tree
     grammar_keyword [name]:identifier lexer? parser? transformation? tree?;
 
   lexer =
-    lexer_keyword [named_expressions]:named_expression*
-      [lexer_contexts]:lexer_context+ [investigators]:investigator*
-      [selectors]:selector*;
+    lexer_keyword [named_expressions]:named_expression* [selectors]:selector*
+      [investigators]:investigator*;
 
   named_expression =
     [name]:identifier assign expression;
@@ -727,15 +689,6 @@ Abstract Syntax Tree
     {start} start_keyword |
     {end} end_keyword;
 
-  lexer_context =
-    [name]:identifier? tokens? ignored?;
-
-  tokens =
-    token_keyword [units]:unit*;
-
-  ignored =
-    ignored_keyword [units]:unit*;
-
   investigator =
     [name]:identifier [parameter]:identifier;
 
@@ -751,7 +704,10 @@ Abstract Syntax Tree
     root_keyword [identifiers]:identifier*;
 
   parser_context =
-    [name]:identifier? [parser_productions]:parser_production*;
+    [name]:identifier? ignored? [parser_productions]:parser_production*;
+
+  ignored =
+    ignored_keyword [units]:unit*;
 
   parser_production =
     qualifier? [name]:identifier assign
