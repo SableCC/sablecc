@@ -57,13 +57,6 @@ public abstract class ReferenceVerifier
         }
 
         @Override
-        public void visitLexerPriority(
-                Lexer.LexerPriority node) {
-
-            node.resolveReferences();
-        }
-
-        @Override
         public void visitLexerInvestigator(
                 Investigator.LexerInvestigator node) {
 

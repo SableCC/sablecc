@@ -98,9 +98,6 @@ public interface IGrammarVisitor {
     void visitUnaryExpression(
             Expression.Unary node);
 
-    void visitLexerPriority(
-            Lexer.LexerPriority node);
-
     void visitLexerInvestigator(
             Investigator.LexerInvestigator node);
 

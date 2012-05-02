@@ -82,11 +82,6 @@ public class GrammarVisitor
                 .getNamedExpressions()) {
             namedExpression.apply(this);
         }
-
-        for (Lexer.LexerPriority priority : node.getPriorities()) {
-            priority.apply(this);
-        }
-
     }
 
     @Override
@@ -260,14 +255,6 @@ public class GrammarVisitor
             Expression.Unary node) {
 
         node.getExpression().apply(this);
-
-    }
-
-    @Override
-    public void visitLexerPriority(
-            Lexer.LexerPriority node) {
-
-        // Leaf
 
     }
 

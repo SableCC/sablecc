@@ -770,62 +770,6 @@ public class Grammar
             }
         }
 
-        // Enhance the priorities structure with explicit priorities
-        for (Lexer.LexerPriority p : getLexer().getPriorities()) {
-            LexerExpression high = p.getHigh();
-            LexerExpression low = p.getLow();
-            Acceptation highA = high.getAcceptation();
-            Acceptation lowA = low.getAcceptation();
-
-            /* FIXME: Correctly detect redundancy of explicit priorities and
-             *  contradiction of explicit priorities.
-             */
-            if (hasPriority(priorities, highA, lowA)) {
-                if (strictness == Strictness.STRICT) {
-                    throw SemanticException.genericLocatedError(
-                            "The precedence is useless as the "
-                                    + high.getExpressionName()
-                                    + " token is included in the "
-                                    + low.getExpressionName() + " token.", p
-                                    .getDeclaration().getGt());
-                }
-                else {
-                    trace.verboseln("    The precedence is useless as the "
-                            + high.getExpressionName()
-                            + " token is included in the "
-                            + low.getExpressionName() + " token.");
-                }
-            }
-            else if (hasPriority(priorities, lowA, highA)) {
-                throw SemanticException.genericLocatedError(
-                        "The precedence is invalid as the "
-                                + low.getExpressionName()
-                                + " token is included in the "
-                                + high.getExpressionName() + " token.", p
-                                .getDeclaration().getGt());
-            }
-            else if (conflicts.get(highA).contains(lowA)) {
-                addPriority(priorities, highA, lowA);
-            }
-            else {
-                if (strictness == Strictness.STRICT) {
-                    throw SemanticException.genericLocatedError(
-                            "The precedence is useless as the "
-                                    + high.getExpressionName()
-                                    + " token and the "
-                                    + low.getExpressionName()
-                                    + " token have no conflicts.", p
-                                    .getDeclaration().getGt());
-                }
-                else {
-                    trace.verboseln("The precedence is useless as the "
-                            + high.getExpressionName() + " token and the "
-                            + low.getExpressionName()
-                            + " token have no conflicts.");
-                }
-            }
-        }
-
         // Collect new acceptation states and see if a conflict still exists
         Map<State, Acceptation> newAccepts = new HashMap<State, Acceptation>();
         for (State s : automaton.getStates()) {

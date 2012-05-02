@@ -144,14 +144,6 @@ public class DeclarationFinder
 
             this.grammar = grammar;
         }
-
-        @Override
-        public void inALexerPriority(
-                ALexerPriority node) {
-
-            this.grammar.getLexer().addPriority(
-                    new Lexer.LexerPriority(node, this.grammar));
-        }
     }
 
 }

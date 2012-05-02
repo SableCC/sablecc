@@ -195,8 +195,8 @@ Productions
 
   lexer
     =
-      lexer_keyword [named_expressions]:named_expression* lexer_contexts lexer_priorities? investigators? selectors?
-        {-> New lexer(lexer_keyword, [named_expressions], [lexer_contexts.lexer_contexts], [lexer_priorities.lexer_priorities], [investigators.investigators], [selectors.selectors]) }
+      lexer_keyword [named_expressions]:named_expression* lexer_contexts investigators? selectors?
+        {-> New lexer(lexer_keyword, [named_expressions], [lexer_contexts.lexer_contexts], [investigators.investigators], [selectors.selectors]) }
     ;
 
   named_expression
@@ -337,19 +337,6 @@ Productions
       {interval} caret l_par [from]:number two_dots [to]:number r_par
     |
       {at_least} caret l_par number three_dots r_par
-    ;
-
-  lexer_priorities
-        {-> [lexer_priorities]:lexer_priority* }
-    =
-      precedence_keyword [lexer_priorities]:lexer_priority*
-        {-> [lexer_priorities] }
-    ;
-
-  lexer_priority
-    =
-      [high]:unit gt [low]:unit semicolon
-        {-> New lexer_priority(high, gt, low) }
     ;
 
   lexer_contexts
@@ -699,8 +686,8 @@ Abstract Syntax Tree
 
   lexer =
     lexer_keyword [named_expressions]:named_expression*
-      [lexer_contexts]:lexer_context+ [lexer_priorities]:lexer_priority*
-      [investigators]:investigator* [selectors]:selector*;
+      [lexer_contexts]:lexer_context+ [investigators]:investigator*
+      [selectors]:selector*;
 
   named_expression =
     [name]:identifier assign expression;
@@ -739,9 +726,6 @@ Abstract Syntax Tree
     {character} character |
     {start} start_keyword |
     {end} end_keyword;
-
-  lexer_priority =
-    [high]:unit gt [low]:unit;
 
   lexer_context =
     [name]:identifier? tokens? ignored?;
