@@ -105,6 +105,7 @@ Tokens
   grammar_keyword = 'Grammar';
   group_keyword = 'Group';
   ignored_keyword = 'Ignored';
+  incremental_keyword = 'Incremental';
   investigator_keyword = 'Investigator';
   left_keyword = 'Left';
   lexer_keyword = 'Lexer';
@@ -374,8 +375,8 @@ Productions
 
   parser
     =
-      parser_keyword root? parser_contexts investigators? selectors?
-        {-> New parser(parser_keyword, root, [parser_contexts.parser_contexts], [investigators.investigators], [selectors.selectors]) }
+      incremental_keyword? parser_keyword root? parser_contexts investigators? selectors?
+        {-> New parser(incremental_keyword, parser_keyword, root, [parser_contexts.parser_contexts], [investigators.investigators], [selectors.selectors]) }
     ;
 
   root
@@ -697,7 +698,7 @@ Abstract Syntax Tree
     [parameter]:identifier;
 
   parser =
-    parser_keyword root? [parser_contexts]:parser_context+
+    incremental_keyword? parser_keyword root? [parser_contexts]:parser_context+
       [investigators]:investigator* [selectors]:selector*;
 
   root =
