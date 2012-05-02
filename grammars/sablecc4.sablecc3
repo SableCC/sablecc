@@ -149,7 +149,6 @@ Tokens
   arrow = '->';
   bar = '|';
   caret = '^';
-  colon = ':';
   comma = ',';
   dot = '.';
   gt = '>';
@@ -190,7 +189,7 @@ Productions
 
   grammar
     =
-      grammar_keyword identifier colon lexer? parser? transformation? tree? ctrl_z?
+      grammar_keyword identifier lexer? parser? transformation? tree? ctrl_z?
         {-> New grammar(grammar_keyword, identifier, lexer, parser, transformation, tree) }
     ;
 
@@ -373,7 +372,7 @@ Productions
   lexer_named_context
         {-> lexer_context }
     =
-      context_keyword identifier colon lexer_context_body
+      context_keyword identifier lexer_context_body
         {-> New lexer_context(identifier, lexer_context_body.tokens, lexer_context_body.ignored) }
     ;
 
@@ -510,7 +509,7 @@ Productions
   parser_named_context
         {-> parser_context }
     =
-      context_keyword identifier colon [parser_productions]:parser_production*
+      context_keyword identifier [parser_productions]:parser_production*
         {-> New parser_context(identifier, [parser_productions]) }
     ;
 
