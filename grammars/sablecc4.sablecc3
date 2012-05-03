@@ -499,7 +499,7 @@ Productions
   parser_production
     =
       qualifier? parser_production_body
-        {-> New parser_production(qualifier, parser_production_body.identifier, parser_production_body.assign, [parser_production_body.parser_alternatives], [parser_production_body.parser_priorities]) }
+        {-> New parser_production(qualifier, parser_production_body.identifier, parser_production_body.assign, [parser_production_body.alternatives], [parser_production_body.precedence_rules]) }
     ;
 
   qualifier
@@ -510,33 +510,33 @@ Productions
     ;
 
   parser_production_body
-        {-> identifier assign [parser_alternatives]:parser_alternative+ [parser_priorities]:parser_priority* }
+        {-> identifier assign [alternatives]:alternative+ [precedence_rules]:precedence_rule* }
     =
-      identifier assign parser_alternatives semicolon parser_priorities?
-        {-> identifier assign [parser_alternatives.parser_alternatives] [parser_priorities.parser_priorities] }
+      identifier assign alternatives semicolon precedence_rules?
+        {-> identifier assign [alternatives.alternatives] [precedence_rules.precedence_rules] }
     ;
 
-  parser_alternatives
-        {-> [parser_alternatives]:parser_alternative+ }
+  alternatives
+        {-> [alternatives]:alternative+ }
     =
-      parser_alternative [additional_parser_alternatives]:additional_parser_alternative*
-        {-> [parser_alternative, additional_parser_alternatives.parser_alternative] }
+      alternative [additional_alternatives]:additional_alternative*
+        {-> [alternative, additional_alternatives.alternative] }
     ;
 
-  additional_parser_alternative
-        {-> parser_alternative }
+  additional_alternative
+        {-> alternative }
     =
-      bar parser_alternative
-        {-> parser_alternative }
+      bar alternative
+        {-> alternative }
     ;
 
-  parser_alternative
+  alternative
     =
-      {normal} alternative_name? [elements]:element+ dangling_element?
-        {-> New parser_alternative(alternative_name, [elements], dangling_element) }
+      {normal} alternative_name? [elements]:element+
+        {-> New alternative(alternative_name, [elements]) }
     |
-      {empty} alternative_name? empty_keyword dangling_element?
-        {-> New parser_alternative(alternative_name, [], dangling_element) }
+      {empty} alternative_name? empty_keyword
+        {-> New alternative(alternative_name, []) }
     ;
 
   element
@@ -550,28 +550,23 @@ Productions
         {-> New element.alternated(element_name, l_par, left, right, many_operator) }
     ;
 
-  dangling_element
+  precedence_rules
+        {-> [precedence_rules]:precedence_rule*}
     =
-      dangling_keyword element_name? identifier q_mark
+      precedence_keyword [precedence_rules]:precedence_rule*
+        {-> [precedence_rules.precedence_rule] }
     ;
 
-  parser_priorities
-        {-> [parser_priorities]:parser_priority*}
-    =
-      precedence_keyword [parser_priorities]:parser_priority*
-        {-> [parser_priorities.parser_priority] }
-    ;
-
-  parser_priority
+  precedence_rule
     =
       {left} left_keyword identifier_list semicolon
-        {-> New parser_priority.left(left_keyword, [identifier_list.identifiers]) }
+        {-> New precedence_rule.left(left_keyword, [identifier_list.identifiers]) }
     |
       {right} right_keyword identifier_list semicolon
-        {-> New parser_priority.right(right_keyword, [identifier_list.identifiers]) }
+        {-> New precedence_rule.right(right_keyword, [identifier_list.identifiers]) }
     |
       {unary} unary_keyword identifier_list semicolon
-        {-> New parser_priority.unary(unary_keyword, [identifier_list.identifiers]) }
+        {-> New precedence_rule.unary(unary_keyword, [identifier_list.identifiers]) }
     ;
 
   transformation
@@ -654,31 +649,8 @@ Productions
 
   tree_production
     =
-      identifier assign tree_alternatives semicolon
-        {-> New tree_production(identifier, assign, [tree_alternatives.tree_alternatives]) }
-    ;
-
-  tree_alternatives
-        {-> [tree_alternatives]:tree_alternative+ }
-    =
-      tree_alternative [additional_tree_alternatives]:additional_tree_alternative*
-        {-> [tree_alternative, additional_tree_alternatives.tree_alternative] }
-    ;
-
-  additional_tree_alternative
-        {-> tree_alternative }
-    =
-      bar tree_alternative
-        {-> tree_alternative }
-    ;
-
-  tree_alternative
-    =
-      {normal} alternative_name? [elements]:element+
-        {-> New tree_alternative(alternative_name, [elements]) }
-    |
-      {empty} alternative_name? empty_keyword
-        {-> New tree_alternative(alternative_name, []) }
+      identifier assign alternatives semicolon
+        {-> New tree_production(identifier, assign, [alternatives.alternatives]) }
     ;
 
 Abstract Syntax Tree
@@ -760,15 +732,15 @@ Abstract Syntax Tree
 
   parser_production =
     qualifier? [name]:identifier assign
-      [parser_alternatives]:parser_alternative+
-      [parser_priorities]:parser_priority*;
+      [alternatives]:alternative+
+      [precedence_rules]:precedence_rule*;
 
   qualifier =
     {dangling} dangling_keyword |
     {token} token_keyword;
 
-  parser_alternative =
-    alternative_name? [elements]:element* dangling_element?;
+  alternative =
+    alternative_name? [elements]:element*;
 
   element =
     {normal} element_name? unit unary_operator? |
@@ -786,10 +758,7 @@ Abstract Syntax Tree
     {interval} caret l_par [from]:number two_dots [to]:number r_par |
     {at_least} caret l_par number three_dots r_par;
 
-  dangling_element =
-    dangling_keyword element_name? identifier q_mark;
-
-  parser_priority =
+  precedence_rule =
     {left} left_keyword [identifiers]:identifier+ |
     {right} right_keyword [identifiers]:identifier+ |
     {unary} unary_keyword [identifiers]:identifier+;
@@ -841,7 +810,4 @@ Abstract Syntax Tree
     tree_keyword [tree_productions]:tree_production*;
 
   tree_production =
-    [name]:identifier assign [tree_alternatives]:tree_alternative+;
-
-  tree_alternative =
-    alternative_name? [elements]:element*;
+    [name]:identifier assign [alternatives]:alternative+;
