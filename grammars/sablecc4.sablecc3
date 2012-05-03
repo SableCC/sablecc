@@ -758,9 +758,9 @@ Abstract Syntax Tree
     {at_least} caret l_par number three_dots r_par;
 
   precedence_rule =
-    {left} left_keyword [identifiers]:identifier+ |
-    {right} right_keyword [identifiers]:identifier+ |
-    {unary} unary_keyword [identifiers]:identifier+;
+    {left} left_keyword [identifiers]:identifier* |
+    {right} right_keyword [identifiers]:identifier* |
+    {unary} unary_keyword [identifiers]:identifier*;
 
   transformation =
     transformation_keyword production_transformations?
