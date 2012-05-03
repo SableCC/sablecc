@@ -119,6 +119,7 @@ Tokens
   parser_keyword = 'Parser';
   precedence_keyword = 'Precedence';
   production_keyword = 'Production';
+  rejected_keyword = 'Rejected';
   right_keyword = 'Right';
   root_keyword = 'Root';
   selector_keyword = 'Selector';
@@ -423,21 +424,21 @@ Productions
         {-> parser_context }
     =
       parser_context_body
-        {-> New parser_context(Null, parser_context_body.ignored, [parser_context_body.parser_productions]) }
+        {-> New parser_context(Null, parser_context_body.ignored, parser_context_body.rejected, [parser_context_body.parser_productions]) }
     ;
 
   parser_named_context
         {-> parser_context }
     =
       context_keyword identifier parser_context_body
-        {-> New parser_context(identifier, parser_context_body.ignored, [parser_context_body.parser_productions]) }
+        {-> New parser_context(identifier, parser_context_body.ignored, parser_context_body.rejected, [parser_context_body.parser_productions]) }
     ;
 
   parser_context_body
-        {-> ignored? [parser_productions]:parser_production* }
+        {-> ignored? rejected? [parser_productions]:parser_production* }
     =
-      ignored? [parser_productions]:parser_production*
-        {-> ignored [parser_productions] }
+      ignored? rejected? [parser_productions]:parser_production*
+        {-> ignored rejected [parser_productions] }
     ;
 
   ignored
@@ -447,6 +448,19 @@ Productions
     ;
 
   ignored_body
+        {-> [units]:unit* }
+    =
+      unit_list? semicolon
+        {-> [unit_list.units] }
+    ;
+
+  rejected
+    =
+      rejected_keyword rejected_body?
+        {-> New rejected(rejected_keyword, [rejected_body.units]) }
+    ;
+
+  rejected_body
         {-> [units]:unit* }
     =
       unit_list? semicolon
@@ -715,10 +729,14 @@ Abstract Syntax Tree
     root_keyword [identifiers]:identifier*;
 
   parser_context =
-    [name]:identifier? ignored? [parser_productions]:parser_production*;
+    [name]:identifier? ignored? rejected?
+      [parser_productions]:parser_production*;
 
   ignored =
     ignored_keyword [units]:unit*;
+
+  rejected =
+    rejected_keyword [units]:unit*;
 
   parser_production =
     qualifier? [name]:identifier assign
