@@ -803,7 +803,7 @@ Abstract Syntax Tree
 
   element_reference =
     {natural} [element]:identifier |
-    {transformed} [element]:identifier dot [part]:identifier;
+    {transformed} [element]:identifier dot [subtree]:identifier;
 
   tree =
     tree_keyword [tree_productions]:tree_production*;
