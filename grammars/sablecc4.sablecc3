@@ -230,10 +230,10 @@ Productions
       {lookahead} [here]:concatenation lookahead_keyword [lookahead_not_keyword]:not_keyword? [ahead]:concatenation
         {-> New expression.look(here.expression, Null, New lookahead(lookahead_keyword, lookahead_not_keyword, ahead.expression)) }
     |
-      {shortest} shortest_keyword concatenation
+      {shortest} shortest_keyword l_par concatenation r_par
         {-> New expression.shortest(shortest_keyword, concatenation.expression) }
     |
-      {longest} longest_keyword concatenation
+      {longest} longest_keyword l_par concatenation r_par
         {-> New expression.longest(longest_keyword, concatenation.expression) }
     |
       {subtraction} [left]:concatenation minus [right]:concatenation
