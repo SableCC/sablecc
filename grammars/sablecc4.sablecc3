@@ -136,7 +136,7 @@ Tokens
   alternative_name = '{' (normal_identifier | rich_identifier) ':}';
   element_name = '[' (normal_identifier | rich_identifier) ':]';
 
-  epsilon = ''' ''';
+  empty_string = ''' ''';
   char = ''' (string_char | string_escape) ''';
   string = ''' (string_char | string_escape)+ ''';
   number = decimal_digit+;
@@ -292,8 +292,8 @@ Productions
       {unit} unit
         {-> New expression.unit(unit) }
     |
-      {epsilon} epsilon
-        {-> New expression.epsilon(epsilon) }
+      {empty_string} empty_string
+        {-> New expression.empty_string(empty_string) }
     |
       {any} any_keyword
         {-> New expression.any(any_keyword) }
@@ -691,7 +691,7 @@ Abstract Syntax Tree
     {separated} [base]:expression separator_keyword [separator]:expression
       many_operator |
     {unit} unit |
-    {epsilon} epsilon |
+    {empty_string} empty_string |
     {interval} [from]:character two_dots [to]:character |
     {open_interval} [from]:character three_dots |
     {any} any_keyword;
