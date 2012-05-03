@@ -247,6 +247,9 @@ Productions
     |
       {interval} [from]:character two_dots [to]:character
         {-> New expression.interval(from, two_dots, to) }
+    |
+      {open_interval} [from]:character three_dots
+        {-> New expression.open_interval(from, three_dots) }
     ;
 
   and_expression
@@ -676,6 +679,7 @@ Abstract Syntax Tree
     {unit} unit |
     {epsilon} epsilon |
     {interval} [from]:character two_dots [to]:character |
+    {open_interval} [from]:character three_dots |
     {any} any_keyword;
 
   lookback =
