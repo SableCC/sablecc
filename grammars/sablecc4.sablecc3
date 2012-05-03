@@ -242,7 +242,7 @@ Productions
       {except} [left]:concatenation except_keyword [right]:concatenation
         {-> New expression.except(left.expression, except_keyword, right.expression) }
     |
-      {intersection} and_expression
+      {and} and_expression
         {-> and_expression.expression }
     |
       {interval} [from]:character two_dots [to]:character
@@ -256,10 +256,10 @@ Productions
         {-> expression }
     =
       {normal} [left]:concatenation and_keyword [right]:concatenation
-        {-> New expression.intersection(left.expression, and_keyword, right.expression) }
+        {-> New expression.and(left.expression, and_keyword, right.expression) }
     |
       {recursive} [left]:and_expression and_keyword [right]:concatenation
-        {-> New expression.intersection(left.expression, and_keyword, right.expression) }
+        {-> New expression.and(left.expression, and_keyword, right.expression) }
     ;
 
   concatenation
@@ -288,14 +288,32 @@ Productions
   term
         {-> expression }
     =
-      {unit} unit
-        {-> New expression.unit(unit) }
-    |
       {empty_string} empty_string
         {-> New expression.empty_string(empty_string) }
     |
+      {char} char
+        {-> New expression.char(char) }
+    |
+      {dec} dec_char
+        {-> New expression.dec(dec_char) }
+    |
+      {hex} hex_char
+        {-> New expression.hex(hex_char) }
+    |
+      {string} string
+        {-> New expression.string(string) }
+    |
       {any} any_keyword
         {-> New expression.any(any_keyword) }
+    |
+      {start} start_keyword
+        {-> New expression.start(start_keyword) }
+    |
+      {end} end_keyword
+        {-> New expression.end(end_keyword) }
+    |
+      {name} identifier
+        {-> New expression.name(identifier) }
     |
       {par} l_par expression r_par
         {-> expression }
@@ -305,11 +323,9 @@ Productions
     =
       {name} identifier
     |
+      {char} char
+    |
       {string} string
-    |
-      {character} character
-    |
-      {start} start_keyword
     |
       {end} end_keyword
     ;
@@ -679,21 +695,27 @@ Abstract Syntax Tree
 
   expression =
     {or} [left]:expression bar [right]:expression |
-    {concatenation} [left]:expression [right]:expression |
     {look} expression lookback? lookahead? |
     {shortest} shortest_keyword expression |
     {longest} longest_keyword expression |
     {subtraction} [left]:expression minus [right]:expression |
     {except} [left]:expression except_keyword [right]:expression |
-    {intersection} [left]:expression and_keyword [right]:expression |
+    {and} [left]:expression and_keyword [right]:expression |
+    {interval} [from]:character two_dots [to]:character |
+    {open_interval} [from]:character three_dots |
+    {concatenation} [left]:expression [right]:expression |
     {unary_operator} expression unary_operator |
     {separated} [base]:expression separator_keyword [separator]:expression
       many_operator |
-    {unit} unit |
     {empty_string} empty_string |
-    {interval} [from]:character two_dots [to]:character |
-    {open_interval} [from]:character three_dots |
-    {any} any_keyword;
+    {char} char |
+    {dec} dec_char |
+    {hex} hex_char |
+    {string} string |
+    {any} any_keyword |
+    {start} start_keyword |
+    {end} end_keyword |
+    {name} identifier;
 
   lookback =
     lookback_keyword not_keyword? expression;
@@ -708,9 +730,8 @@ Abstract Syntax Tree
 
   unit =
     {name} identifier |
+    {char} char |
     {string} string |
-    {character} character |
-    {start} start_keyword |
     {end} end_keyword;
 
   investigator =
