@@ -82,7 +82,6 @@ Helpers
   decimal_digit = ['0' .. '9'];
   hexadecimal_digit = [decimal_digit + [['A' .. 'F'] + ['a' .. 'f']]];
 
-  sign = ['+' + '-'];
   x = ['X' + 'x'];
 
   lowercase = ['a'..'z'];
@@ -141,8 +140,8 @@ Tokens
   string = ''' (string_char | string_escape)+ ''';
   number = decimal_digit+;
 
-  dec_char = '#' sign? decimal_digit+;
-  hex_char = '#' x sign? hexadecimal_digit+;
+  dec_char = '#' '-'? decimal_digit+;
+  hex_char = '#' '-'? x hexadecimal_digit+;
 
   l_par = '(';
   r_par =')';
@@ -176,8 +175,8 @@ Tokens
   invalid_normal_identifier = ascii_id_continue+;
   invalid_rich_identifier = '<' ascii_id_continue*;
   invalid_string = ''' (string_char | string_escape)*;
-  invalid_hex_char = '#' x sign? ascii_id_continue*;
-  invalid_dec_char = '#' sign? ascii_id_continue*;
+  invalid_hex_char = '#' '-'? x ascii_id_continue*;
+  invalid_dec_char = '#' '-'? ascii_id_continue*;
   invalid_alternative_name = '{' '<'? ascii_id_continue*;
   invalid_element_name = '[' '<'? ascii_id_continue*;
 
