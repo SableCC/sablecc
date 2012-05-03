@@ -559,13 +559,13 @@ Productions
 
   precedence_rule
     =
-      {left} left_keyword identifier_list semicolon
+      {left} left_keyword identifier_list? semicolon
         {-> New precedence_rule.left(left_keyword, [identifier_list.identifiers]) }
     |
-      {right} right_keyword identifier_list semicolon
+      {right} right_keyword identifier_list? semicolon
         {-> New precedence_rule.right(right_keyword, [identifier_list.identifiers]) }
     |
-      {unary} unary_keyword identifier_list semicolon
+      {unary} unary_keyword identifier_list? semicolon
         {-> New precedence_rule.unary(unary_keyword, [identifier_list.identifiers]) }
     ;
 
@@ -581,8 +581,8 @@ Productions
 
   production_transformation
     =
-      [production]:identifier arrow [elements]:element* semicolon
-        {-> New production_transformation(production, arrow, [elements]) }
+      [production]:identifier arrow [subtrees]:element* semicolon
+        {-> New production_transformation(production, arrow, [subtrees]) }
     ;
 
   alternative_transformations
@@ -639,7 +639,7 @@ Productions
     =
       {natural} [element]:identifier
     |
-      {transformed} [element]:identifier dot [part]:identifier
+      {transformed} [element]:identifier dot [subtree]:identifier
     ;
 
   tree
@@ -711,7 +711,7 @@ Abstract Syntax Tree
 
   selector =
     [names]:identifier+ assign [selector_name]:identifier
-    [parameter]:identifier;
+      [parameter]:identifier;
 
   parser =
     incremental_keyword? parser_keyword root? [parser_contexts]:parser_context+
@@ -731,8 +731,7 @@ Abstract Syntax Tree
     rejected_keyword [units]:unit*;
 
   parser_production =
-    qualifier? [name]:identifier assign
-      [alternatives]:alternative+
+    qualifier? [name]:identifier assign [alternatives]:alternative+
       [precedence_rules]:precedence_rule*;
 
   qualifier =
@@ -771,7 +770,7 @@ Abstract Syntax Tree
     production_keyword [production_transformations]:production_transformation*;
 
   production_transformation =
-    [production]:identifier arrow [elements]:element*;
+    [production]:identifier arrow [subtrees]:element*;
 
   alternative_transformations =
     alternative_keyword
