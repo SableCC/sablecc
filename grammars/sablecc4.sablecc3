@@ -191,8 +191,8 @@ Productions
 
   grammar
     =
-      grammar_keyword identifier lexer? parser? transformation? tree? ctrl_z?
-        {-> New grammar(grammar_keyword, identifier, lexer, parser, transformation, tree) }
+      grammar_keyword identifier lexer? parser? tree? transformation? ctrl_z?
+        {-> New grammar(grammar_keyword, identifier, lexer, parser, tree, transformation) }
     ;
 
   lexer
@@ -379,8 +379,8 @@ Productions
 
   parser
     =
-      incremental_keyword? parser_keyword root? parser_contexts investigators? selectors?
-        {-> New parser(incremental_keyword, parser_keyword, root, [parser_contexts.parser_contexts], [investigators.investigators], [selectors.selectors]) }
+      incremental_keyword? parser_keyword root? parser_contexts selectors? investigators?
+        {-> New parser(incremental_keyword, parser_keyword, root, [parser_contexts.parser_contexts], [selectors.selectors], [investigators.investigators]) }
     ;
 
   root
@@ -669,7 +669,7 @@ Productions
 Abstract Syntax Tree
 
   grammar =
-    grammar_keyword [name]:identifier lexer? parser? transformation? tree?;
+    grammar_keyword [name]:identifier lexer? parser? tree? transformation?;
 
   lexer =
     lexer_keyword [named_expressions]:named_expression* [selectors]:selector*
@@ -723,7 +723,7 @@ Abstract Syntax Tree
 
   parser =
     incremental_keyword? parser_keyword root? [parser_contexts]:parser_context+
-      [investigators]:investigator* [selectors]:selector*;
+      [selectors]:selector* [investigators]:investigator*;
 
   root =
     root_keyword [identifiers]:identifier*;
