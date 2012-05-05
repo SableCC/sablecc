@@ -381,12 +381,12 @@ Productions
 
   selector
     =
-      {selection} selection assign [selector_name]:identifier l_par [parameter]:unit r_par semicolon
-        {-> New selector([selection.identifiers], assign, selector_name, parameter) }
+      {selection} selection assign [name]:identifier l_par [parameter]:unit r_par semicolon
+        {-> New selector([selection.names], assign, name, parameter) }
     ;
 
   selection
-        {-> [identifiers]:identifier+ }
+        {-> [names]:identifier+ }
     =
       l_par identifier [additional_identifiers]:additional_identifier+ r_par
         {-> [identifier, additional_identifiers.identifier]}
@@ -710,8 +710,7 @@ Abstract Syntax Tree
     [name]:identifier [parameter]:unit;
 
   selector =
-    [names]:identifier+ assign [selector_name]:identifier
-      [parameter]:unit;
+    [names]:identifier+ assign [name]:identifier [parameter]:unit;
 
   parser =
     incremental_keyword? parser_keyword root? [parser_contexts]:parser_context+
