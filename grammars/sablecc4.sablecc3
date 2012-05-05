@@ -368,8 +368,8 @@ Productions
 
   investigator
     =
-      [name]:identifier l_par identifier r_par semicolon
-        {-> New investigator(name, identifier) }
+      [name]:identifier l_par [parameter]:unit r_par semicolon
+        {-> New investigator(name, parameter) }
     ;
 
   selectors
@@ -381,7 +381,7 @@ Productions
 
   selector
     =
-      {selection} selection assign [selector_name]:identifier l_par [parameter]:identifier r_par semicolon
+      {selection} selection assign [selector_name]:identifier l_par [parameter]:unit r_par semicolon
         {-> New selector([selection.identifiers], assign, selector_name, parameter) }
     ;
 
@@ -637,9 +637,9 @@ Productions
 
   element_reference
     =
-      {natural} [element]:identifier
+      {natural} [element]:unit
     |
-      {transformed} [element]:identifier dot [subtree]:identifier
+      {transformed} [element]:identifier dot [subtree]:unit
     ;
 
   tree
@@ -707,11 +707,11 @@ Abstract Syntax Tree
     {end} end_keyword;
 
   investigator =
-    [name]:identifier [parameter]:identifier;
+    [name]:identifier [parameter]:unit;
 
   selector =
     [names]:identifier+ assign [selector_name]:identifier
-      [parameter]:identifier;
+      [parameter]:unit;
 
   parser =
     incremental_keyword? parser_keyword root? [parser_contexts]:parser_context+
@@ -802,8 +802,8 @@ Abstract Syntax Tree
       [transformation_elements]:transformation_element* r_par;
 
   element_reference =
-    {natural} [element]:identifier |
-    {transformed} [element]:identifier dot [subtree]:identifier;
+    {natural} [element]:unit |
+    {transformed} [element]:identifier dot [subtree]:unit;
 
   tree =
     tree_keyword [tree_productions]:tree_production*;
