@@ -545,9 +545,6 @@ Productions
     |
       {separated} element_name? l_par [left]:unit separator_keyword [right]:unit r_par many_operator
         {-> New element.separated(element_name, l_par, left, right, many_operator) }
-    |
-      {alternated} element_name? l_par [left]:unit [right]:unit r_par many_operator
-        {-> New element.alternated(element_name, l_par, left, right, many_operator) }
     ;
 
   precedence_rules
@@ -729,8 +726,7 @@ Abstract Syntax Tree
 
   element =
     {normal} element_name? unit unary_operator? |
-    {separated} element_name? l_par [left]:unit [right]:unit many_operator |
-    {alternated} element_name? l_par [left]:unit [right]:unit many_operator;
+    {separated} element_name? l_par [left]:unit [right]:unit many_operator;
 
   unary_operator =
     {zero_or_one} q_mark |
