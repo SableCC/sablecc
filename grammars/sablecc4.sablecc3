@@ -319,17 +319,6 @@ Productions
         {-> expression }
     ;
 
-  unit
-    =
-      {name} identifier
-    |
-      {char} char
-    |
-      {string} string
-    |
-      {end} end_keyword
-    ;
-
   character
     =
       {char} char
@@ -357,39 +346,6 @@ Productions
       {interval} caret l_par [from]:number two_dots [to]:number r_par
     |
       {at_least} caret l_par number three_dots r_par
-    ;
-
-  investigators
-        {-> [investigators]:investigator* }
-    =
-      investigator_keyword [investigators]:investigator*
-        {-> [investigators] }
-    ;
-
-  investigator
-    =
-      [name]:identifier l_par [parameter]:unit r_par semicolon
-        {-> New investigator(name, parameter) }
-    ;
-
-  selectors
-        {-> [selectors]:selector* }
-    =
-      selector_keyword [selectors]:selector*
-        {-> [selectors] }
-    ;
-
-  selector
-    =
-      {selection} selection assign [name]:identifier l_par [parameter]:unit r_par semicolon
-        {-> New selector([selection.names], assign, name, parameter) }
-    ;
-
-  selection
-        {-> [names]:identifier+ }
-    =
-      l_par identifier [additional_identifiers]:additional_identifier+ r_par
-        {-> [identifier, additional_identifiers.identifier]}
     ;
 
   parser
@@ -445,8 +401,8 @@ Productions
   parser_named_context
         {-> parser_context }
     =
-      context_keyword identifier parser_context_body
-        {-> New parser_context(identifier, parser_context_body.ignored, parser_context_body.rejected, [parser_context_body.parser_productions]) }
+      context_keyword [name]:identifier parser_context_body
+        {-> New parser_context(name, parser_context_body.ignored, parser_context_body.rejected, [parser_context_body.parser_productions]) }
     ;
 
   parser_context_body
@@ -564,6 +520,72 @@ Productions
     |
       {unary} unary_keyword identifier_list? semicolon
         {-> New precedence_rule.unary(unary_keyword, [identifier_list.identifiers]) }
+    ;
+
+
+  selectors
+        {-> [selectors]:selector* }
+    =
+      selector_keyword [selectors]:selector*
+        {-> [selectors] }
+    ;
+
+  selector
+    =
+      {selection} selection assign [name]:identifier l_par [parameter]:unit r_par semicolon
+        {-> New selector([selection.names], assign, name, parameter) }
+    ;
+
+  selection
+        {-> [names]:identifier+ }
+    =
+      l_par identifier [additional_identifiers]:additional_identifier+ r_par
+        {-> [identifier, additional_identifiers.identifier]}
+    ;
+
+  investigators
+        {-> [investigators]:investigator* }
+    =
+      investigator_keyword investigators_body?
+        {-> [investigators_body.investigators] }
+    ;
+
+  investigators_body
+        {-> [investigators]:investigator* }
+    =
+      investigator_list? semicolon
+        {-> [investigator_list.investigators] }
+    ;
+
+  investigator_list
+        {-> [investigators]:investigator+ }
+    =
+      investigator [additional_investigators]:additional_investigator* comma?
+        {-> [investigator, additional_investigators.investigator] }
+    ;
+
+  additional_investigator
+        {-> investigator }
+    =
+      comma investigator
+        {-> investigator }
+    ;
+
+  investigator
+    =
+      [name]:identifier l_par [parameter]:unit r_par
+        {-> New investigator(name, parameter) }
+    ;
+
+  unit
+    =
+      {name} identifier
+    |
+      {char} char
+    |
+      {string} string
+    |
+      {end} end_keyword
     ;
 
   transformation
