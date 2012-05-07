@@ -196,8 +196,8 @@ Productions
 
   lexer
     =
-      lexer_keyword [named_expressions]:named_expression* selectors? investigators?
-        {-> New lexer(lexer_keyword, [named_expressions], [selectors.selectors], [investigators.investigators]) }
+      lexer_keyword [named_expressions]:named_expression*
+        {-> New lexer(lexer_keyword, [named_expressions]) }
     ;
 
   named_expression
@@ -659,8 +659,7 @@ Abstract Syntax Tree
     grammar_keyword [name]:identifier lexer? parser? tree? transformation?;
 
   lexer =
-    lexer_keyword [named_expressions]:named_expression* [selectors]:selector*
-      [investigators]:investigator*;
+    lexer_keyword [named_expressions]:named_expression*;
 
   named_expression =
     [name]:identifier assign expression;
@@ -699,18 +698,6 @@ Abstract Syntax Tree
     {char} char |
     {dec} dec_char |
     {hex} hex_char;
-
-  unit =
-    {name} identifier |
-    {char} char |
-    {string} string |
-    {end} end_keyword;
-
-  investigator =
-    [name]:identifier [parameter]:unit;
-
-  selector =
-    [names]:identifier+ assign [name]:identifier [parameter]:unit;
 
   parser =
     incremental_keyword? parser_keyword root? [parser_contexts]:parser_context+
@@ -760,6 +747,18 @@ Abstract Syntax Tree
     {left} left_keyword [identifiers]:identifier* |
     {right} right_keyword [identifiers]:identifier* |
     {unary} unary_keyword [identifiers]:identifier*;
+
+  selector =
+    [names]:identifier+ assign [name]:identifier [parameter]:unit;
+
+  investigator =
+    [name]:identifier [parameter]:unit;
+
+  unit =
+    {name} identifier |
+    {char} char |
+    {string} string |
+    {end} end_keyword;
 
   transformation =
     transformation_keyword production_transformations?
