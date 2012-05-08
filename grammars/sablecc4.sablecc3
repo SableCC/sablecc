@@ -368,11 +368,8 @@ Productions
   additional_context
       {-> context }
     =
-      {with_ignored} ignored rejected? [parser_productions]:parser_production+
+      ignored rejected? [parser_productions]:parser_production+
         {-> New context(ignored, rejected, [parser_productions]) }
-    |
-      {without_ignored} rejected [parser_productions]:parser_production+
-        {-> New context(Null, rejected, [parser_productions]) }
     ;
 
   ignored
