@@ -221,14 +221,11 @@ Productions
       {simple} concatenation
         {-> concatenation.expression }
     |
-      {look} [here]:concatenation lookback_keyword [lookback_not_keyword]:not_keyword? [back]:concatenation lookahead_keyword [lookahead_not_keyword]:not_keyword? [ahead]:concatenation
-        {-> New expression.look(here.expression, New lookback(lookback_keyword, lookback_not_keyword, back.expression), New lookahead(lookahead_keyword, lookahead_not_keyword, ahead.expression)) }
+      {lookback} concatenation lookback_keyword [lookback_not_keyword]:not_keyword? [back]:concatenation
+        {-> New expression.lookback(concatenation.expression, lookback_keyword, lookback_not_keyword, back.expression) }
     |
-      {lookback} [here]:concatenation lookback_keyword [lookback_not_keyword]:not_keyword? [back]:concatenation
-        {-> New expression.look(here.expression, New lookback(lookback_keyword, lookback_not_keyword, back.expression), Null) }
-    |
-      {lookahead} [here]:concatenation lookahead_keyword [lookahead_not_keyword]:not_keyword? [ahead]:concatenation
-        {-> New expression.look(here.expression, Null, New lookahead(lookahead_keyword, lookahead_not_keyword, ahead.expression)) }
+      {lookahead} concatenation lookahead_keyword [lookahead_not_keyword]:not_keyword? [ahead]:concatenation
+        {-> New expression.lookahead(concatenation.expression, lookahead_keyword, lookahead_not_keyword, ahead.expression) }
     |
       {shortest} shortest_keyword l_par concatenation r_par
         {-> New expression.shortest(shortest_keyword, concatenation.expression) }
@@ -281,8 +278,8 @@ Productions
       {unary_operator} term unary_operator
         {-> New expression.unary_operator(term.expression, unary_operator) }
     |
-      {separated} l_par [base]:term separator_keyword [separator]:term r_par many_operator
-        {-> New expression.separated(base.expression, separator_keyword, separator.expression, many_operator) }
+      {separated} l_par term separator_keyword [separator]:term r_par many_operator
+        {-> New expression.separated(term.expression, separator_keyword, separator.expression, many_operator) }
     ;
 
   term
@@ -685,7 +682,8 @@ Abstract Syntax Tree
 
   expression =
     {or} [left]:expression bar [right]:expression |
-    {look} expression lookback? lookahead? |
+    {lookback} expression lookback_keyword not_keyword? [back]:expression |
+    {lookahead} expression lookahead_keyword not_keyword? [ahead]:expression |
     {shortest} shortest_keyword expression |
     {longest} longest_keyword expression |
     {subtraction} [left]:expression minus [right]:expression |
@@ -695,7 +693,7 @@ Abstract Syntax Tree
     {open_interval} [from]:character three_dots |
     {concatenation} [left]:expression [right]:expression |
     {unary_operator} expression unary_operator |
-    {separated} [base]:expression separator_keyword [separator]:expression
+    {separated} expression separator_keyword [separator]:expression
       many_operator |
     {empty_string} empty_string |
     {char} char |
@@ -706,12 +704,6 @@ Abstract Syntax Tree
     {start} start_keyword |
     {end} end_keyword |
     {name} identifier;
-
-  lookback =
-    lookback_keyword not_keyword? expression;
-
-  lookahead =
-    lookahead_keyword not_keyword? expression;
 
   character =
     {char} char |
