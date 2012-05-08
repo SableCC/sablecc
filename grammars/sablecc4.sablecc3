@@ -219,11 +219,11 @@ Productions
       {simple} concatenation
         {-> concatenation.expression }
     |
-      {lookback} concatenation lookback_keyword [lookback_not_keyword]:not_keyword? [back]:concatenation
-        {-> New expression.lookback(concatenation.expression, lookback_keyword, lookback_not_keyword, back.expression) }
+      {lookback} concatenation lookback_keyword not_keyword? [back]:concatenation
+        {-> New expression.lookback(concatenation.expression, lookback_keyword, not_keyword, back.expression) }
     |
-      {lookahead} concatenation lookahead_keyword [lookahead_not_keyword]:not_keyword? [ahead]:concatenation
-        {-> New expression.lookahead(concatenation.expression, lookahead_keyword, lookahead_not_keyword, ahead.expression) }
+      {lookahead} concatenation lookahead_keyword not_keyword? [ahead]:concatenation
+        {-> New expression.lookahead(concatenation.expression, lookahead_keyword, not_keyword, ahead.expression) }
     |
       {shortest} shortest_keyword l_par concatenation r_par
         {-> New expression.shortest(shortest_keyword, concatenation.expression) }
@@ -243,8 +243,8 @@ Productions
       {interval} [from]:character two_dots [to]:character
         {-> New expression.interval(from, two_dots, to) }
     |
-      {open_interval} [from]:character three_dots
-        {-> New expression.open_interval(from, three_dots) }
+      {open_interval} character three_dots
+        {-> New expression.open_interval(character, three_dots) }
     ;
 
   and_expression
@@ -493,9 +493,11 @@ Productions
 
   directive
     =
-      {selector} selector_keyword [name]:identifier
+      {selector} selector_keyword identifier semicolon
+        {-> New directive.selector(selector_keyword, identifier) }
     |
-      {investigator} investigator_keyword [name]:identifier
+      {investigator} investigator_keyword identifier semicolon
+        {-> New directive.investigator(investigator_keyword, identifier) }
     ;
 
   tree
@@ -515,8 +517,8 @@ Productions
 
   production_transformation
     =
-      [production]:identifier arrow [subtrees]:element* semicolon
-        {-> New production_transformation(production, arrow, [subtrees]) }
+      identifier arrow [subtrees]:element* semicolon
+        {-> New production_transformation(identifier, arrow, [subtrees]) }
     ;
 
   alternative_transformations
@@ -532,7 +534,7 @@ Productions
 
   alternative_reference
     =
-      {unnamed} [production]:identifier
+      {unnamed} identifier
     |
       {named} [production]:identifier dot [alternative]:identifier
     ;
@@ -571,9 +573,9 @@ Productions
 
   element_reference
     =
-      {natural} [element]:unit
+      {natural} unit
     |
-      {transformed} [element]:identifier dot [subtree]:unit
+      {transformed} identifier dot unit
     ;
 
   tree_production
