@@ -152,7 +152,6 @@ Tokens
   caret = '^';
   comma = ',';
   dot = '.';
-  gt = '>';
   minus = '-';
   plus = '+';
   q_mark = '?';
