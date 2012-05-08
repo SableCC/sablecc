@@ -96,7 +96,6 @@ Tokens
   alternative_keyword = 'Alternative';
   and_keyword = 'And';
   any_keyword = 'Any';
-  context_keyword = 'Context';
   dangling_keyword = 'Dangling';
   delete_keyword = 'Delete';
   empty_keyword = 'Empty';
@@ -189,8 +188,8 @@ Productions
 
   grammar
     =
-      grammar_keyword identifier lexer? parser? tree? transformation? ctrl_z?
-        {-> New grammar(grammar_keyword, identifier, lexer, parser, tree, transformation) }
+      grammar_keyword identifier semicolon lexer? parser? tree? ctrl_z?
+        {-> New grammar(grammar_keyword, identifier, lexer, parser, tree) }
     ;
 
   lexer
@@ -346,92 +345,46 @@ Productions
 
   parser
     =
-      incremental_keyword? parser_keyword root? parser_contexts selectors? investigators?
-        {-> New parser(incremental_keyword, parser_keyword, root, [parser_contexts.parser_contexts], [selectors.selectors], [investigators.investigators]) }
+      incremental_keyword? parser_keyword contexts
+        {-> New parser(incremental_keyword, parser_keyword, [contexts.contexts]) }
     ;
 
-  root
+  contexts
+        {-> [contexts]:context+ }
     =
-      root_keyword root_body?
-        {-> New root(root_keyword, [root_body.identifiers]) }
-    ;
-
-  root_body
-        {-> [identifiers]:identifier* }
-    =
-      identifier_list? semicolon
-        {-> [identifier_list.identifiers] }
-    ;
-
-  identifier_list
-        {-> [identifiers]:identifier+ }
-    =
-      identifier [additional_identifiers]:additional_identifier* comma?
-        {-> [identifier, additional_identifiers.identifier] }
-    ;
-
-  additional_identifier
-        {-> identifier }
-    =
-      comma identifier
-        {-> identifier }
-    ;
-
-  parser_contexts
-        {-> [parser_contexts]:parser_context+ }
-    =
-      {anonymous} parser_default_context
-        {-> [parser_default_context.parser_context] }
+      {full} context [additional_contexts]:additional_context*
+        {-> [context, additional_contexts.context] }
     |
-      {named} [parser_named_contexts]:parser_named_context+
-        {-> [parser_named_contexts.parser_context] }
+      {empty}
+        {-> [New context(Null, Null, [])] }
     ;
 
-  parser_default_context
-        {-> parser_context }
+  context
     =
-      parser_context_body
-        {-> New parser_context(Null, parser_context_body.ignored, parser_context_body.rejected, [parser_context_body.parser_productions]) }
+      ignored? rejected? [parser_productions]:parser_production+
+        {-> New context(ignored, rejected, [parser_productions]) }
     ;
 
-  parser_named_context
-        {-> parser_context }
+  additional_context
+      {-> context }
     =
-      context_keyword [name]:identifier parser_context_body
-        {-> New parser_context(name, parser_context_body.ignored, parser_context_body.rejected, [parser_context_body.parser_productions]) }
-    ;
-
-  parser_context_body
-        {-> ignored? rejected? [parser_productions]:parser_production* }
-    =
-      ignored? rejected? [parser_productions]:parser_production*
-        {-> ignored rejected [parser_productions] }
+      {with_ignored} ignored rejected? [parser_productions]:parser_production+
+        {-> New context(ignored, rejected, [parser_productions]) }
+    |
+      {without_ignored} rejected [parser_productions]:parser_production+
+        {-> New context(Null, rejected, [parser_productions]) }
     ;
 
   ignored
     =
-      ignored_keyword ignored_body?
-        {-> New ignored(ignored_keyword, [ignored_body.units]) }
-    ;
-
-  ignored_body
-        {-> [units]:unit* }
-    =
-      unit_list? semicolon
-        {-> [unit_list.units] }
+      ignored_keyword unit_list? semicolon
+        {-> New ignored(ignored_keyword, [unit_list.units]) }
     ;
 
   rejected
     =
-      rejected_keyword rejected_body?
-        {-> New rejected(rejected_keyword, [rejected_body.units]) }
-    ;
-
-  rejected_body
-        {-> [units]:unit* }
-    =
-      unit_list? semicolon
-        {-> [unit_list.units] }
+      rejected_keyword unit_list? semicolon
+        {-> New rejected(rejected_keyword, [unit_list.units]) }
     ;
 
   unit_list
@@ -450,8 +403,8 @@ Productions
 
   parser_production
     =
-      qualifier? parser_production_body
-        {-> New parser_production(qualifier, parser_production_body.identifier, parser_production_body.assign, [parser_production_body.alternatives], [parser_production_body.precedence_rules]) }
+      qualifier? identifier assign alternatives semicolon precedence_rules? directive?
+        {-> New parser_production(qualifier, identifier, assign, [alternatives.alternatives], [precedence_rules.precedence_rules], directive) }
     ;
 
   qualifier
@@ -459,13 +412,8 @@ Productions
       {dangling} dangling_keyword
     |
       {token} token_keyword
-    ;
-
-  parser_production_body
-        {-> identifier assign [alternatives]:alternative+ [precedence_rules]:precedence_rule* }
-    =
-      identifier assign alternatives semicolon precedence_rules?
-        {-> identifier assign [alternatives.alternatives] [precedence_rules.precedence_rules] }
+    |
+      {root} root_keyword
     ;
 
   alternatives
@@ -499,6 +447,17 @@ Productions
         {-> New element.separated(element_name, l_par, left, right, many_operator) }
     ;
 
+  unit
+    =
+      {name} identifier
+    |
+      {char} char
+    |
+      {string} string
+    |
+      {end} end_keyword
+    ;
+
   precedence_rules
         {-> [precedence_rules]:precedence_rule*}
     =
@@ -518,70 +477,30 @@ Productions
         {-> New precedence_rule.unary(unary_keyword, [identifier_list.identifiers]) }
     ;
 
-
-  selectors
-        {-> [selectors]:selector* }
+  identifier_list
+        {-> [identifiers]:identifier+ }
     =
-      selector_keyword [selectors]:selector*
-        {-> [selectors] }
+      identifier [additional_identifiers]:additional_identifier* comma?
+        {-> [identifier, additional_identifiers.identifier] }
     ;
 
-  selector
+  additional_identifier
+        {-> identifier }
     =
-      {selection} selection assign [name]:identifier l_par [parameter]:unit r_par semicolon
-        {-> New selector([selection.names], assign, name, parameter) }
+      comma identifier
+        {-> identifier }
     ;
 
-  selection
-        {-> [names]:identifier+ }
+  directive
     =
-      l_par identifier [additional_identifiers]:additional_identifier+ r_par
-        {-> [identifier, additional_identifiers.identifier]}
-    ;
-
-  investigators
-        {-> [investigators]:investigator* }
-    =
-      investigator_keyword investigators_body?
-        {-> [investigators_body.investigators] }
-    ;
-
-  investigators_body
-        {-> [investigators]:investigator* }
-    =
-      investigator_list? semicolon
-        {-> [investigator_list.investigators] }
-    ;
-
-  investigator_list
-        {-> [investigators]:investigator+ }
-    =
-      investigator [additional_investigators]:additional_investigator* comma?
-        {-> [investigator, additional_investigators.investigator] }
-    ;
-
-  additional_investigator
-        {-> investigator }
-    =
-      comma investigator
-        {-> investigator }
-    ;
-
-  investigator
-    =
-      [name]:identifier l_par [parameter]:unit r_par
-        {-> New investigator(name, parameter) }
-    ;
-
-  unit
-    =
-      {name} identifier
+      {selector} selector_keyword [name]:identifier
     |
-      {char} char
-    |
-      {string} string
-    |
-      {end} end_keyword
+      {investigator} investigator_keyword [name]:identifier
+    ;
+
+  tree
+    =
+      transformation? tree_keyword [tree_productions]:tree_production*
     ;
 
   transformation
@@ -657,11 +576,6 @@ Productions
       {transformed} [element]:identifier dot [subtree]:unit
     ;
 
-  tree
-    =
-      tree_keyword [tree_productions]:tree_production*
-    ;
-
   tree_production
     =
       identifier assign alternatives semicolon
@@ -671,7 +585,7 @@ Productions
 Abstract Syntax Tree
 
   grammar =
-    grammar_keyword [name]:identifier lexer? parser? tree? transformation?;
+    grammar_keyword [name]:identifier lexer? parser? tree?;
 
   lexer =
     lexer_keyword [named_expressions]:named_expression*;
@@ -710,15 +624,10 @@ Abstract Syntax Tree
     {hex} hex_char;
 
   parser =
-    incremental_keyword? parser_keyword root? [parser_contexts]:parser_context+
-      [selectors]:selector* [investigators]:investigator*;
+    incremental_keyword? parser_keyword [contexts]:context+;
 
-  root =
-    root_keyword [identifiers]:identifier*;
-
-  parser_context =
-    [name]:identifier? ignored? rejected?
-      [parser_productions]:parser_production*;
+  context =
+    ignored? rejected? [parser_productions]:parser_production*;
 
   ignored =
     ignored_keyword [units]:unit*;
@@ -728,11 +637,12 @@ Abstract Syntax Tree
 
   parser_production =
     qualifier? [name]:identifier assign [alternatives]:alternative+
-      [precedence_rules]:precedence_rule*;
+      [precedence_rules]:precedence_rule* directive?;
 
   qualifier =
     {dangling} dangling_keyword |
-    {token} token_keyword;
+    {token} token_keyword |
+    {root} root_keyword;
 
   alternative =
     alternative_name? [elements]:element*;
@@ -740,6 +650,12 @@ Abstract Syntax Tree
   element =
     {normal} element_name? unit unary_operator? |
     {separated} element_name? l_par [left]:unit [right]:unit many_operator;
+
+  unit =
+    {name} identifier |
+    {char} char |
+    {string} string |
+    {end} end_keyword;
 
   unary_operator =
     {zero_or_one} q_mark |
@@ -757,17 +673,12 @@ Abstract Syntax Tree
     {right} right_keyword [identifiers]:identifier* |
     {unary} unary_keyword [identifiers]:identifier*;
 
-  selector =
-    [names]:identifier+ assign [name]:identifier [parameter]:unit;
+  directive =
+    {selector} selector_keyword [name]:identifier |
+    {investigator} investigator_keyword [name]:identifier;
 
-  investigator =
-    [name]:identifier [parameter]:unit;
-
-  unit =
-    {name} identifier |
-    {char} char |
-    {string} string |
-    {end} end_keyword;
+  tree =
+     transformation? tree_keyword [tree_productions]:tree_production*;
 
   transformation =
     transformation_keyword production_transformations?
@@ -811,9 +722,6 @@ Abstract Syntax Tree
   element_reference =
     {natural} [element]:unit |
     {transformed} [element]:identifier dot [subtree]:unit;
-
-  tree =
-    tree_keyword [tree_productions]:tree_production*;
 
   tree_production =
     [name]:identifier assign [alternatives]:alternative+;
