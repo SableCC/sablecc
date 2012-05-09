@@ -338,21 +338,14 @@ Productions
   contexts
         {-> [contexts]:context+ }
     =
-      {full} context [additional_contexts]:additional_context*
-        {-> [context, additional_contexts.context] }
+      {full} [contexts]:context+
+        {-> [contexts] }
     |
       {empty}
         {-> [New context(Null, Null, [])] }
     ;
 
   context
-    =
-      ignored? rejected? [parser_productions]:parser_production+
-        {-> New context(ignored, rejected, [parser_productions]) }
-    ;
-
-  additional_context
-      {-> context }
     =
       ignored rejected? [parser_productions]:parser_production+
         {-> New context(ignored, rejected, [parser_productions]) }
