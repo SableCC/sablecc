@@ -94,7 +94,6 @@ Helpers
 Tokens
 
   alternative_keyword = 'Alternative';
-  and_keyword = 'And';
   any_keyword = 'Any';
   dangling_keyword = 'Dangling';
   delete_keyword = 'Delete';
@@ -237,24 +236,11 @@ Productions
       {except} [left]:concatenation except_keyword [right]:concatenation
         {-> New expression.except(left.expression, except_keyword, right.expression) }
     |
-      {and} and_expression
-        {-> and_expression.expression }
-    |
       {interval} [from]:character two_dots [to]:character
         {-> New expression.interval(from, two_dots, to) }
     |
       {open_interval} character three_dots
         {-> New expression.open_interval(character, three_dots) }
-    ;
-
-  and_expression
-        {-> expression }
-    =
-      {normal} [left]:concatenation and_keyword [right]:concatenation
-        {-> New expression.and(left.expression, and_keyword, right.expression) }
-    |
-      {recursive} [left]:and_expression and_keyword [right]:concatenation
-        {-> New expression.and(left.expression, and_keyword, right.expression) }
     ;
 
   concatenation
@@ -600,7 +586,6 @@ Abstract Syntax Tree
     {longest} longest_keyword expression |
     {subtraction} [left]:expression minus [right]:expression |
     {except} [left]:expression except_keyword [right]:expression |
-    {and} [left]:expression and_keyword [right]:expression |
     {interval} [from]:character two_dots [to]:character |
     {open_interval} [from]:character three_dots |
     {concatenation} [left]:expression [right]:expression |
