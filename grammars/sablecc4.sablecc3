@@ -331,8 +331,8 @@ Productions
 
   parser
     =
-      incremental_keyword? parser_keyword contexts
-        {-> New parser(incremental_keyword, parser_keyword, [contexts.contexts]) }
+      parser_keyword contexts
+        {-> New parser(parser_keyword, [contexts.contexts]) }
     ;
 
   contexts
@@ -389,7 +389,7 @@ Productions
     |
       {token} token_keyword
     |
-      {root} root_keyword
+      {root} incremental_keyword? root_keyword
     ;
 
   alternatives
@@ -601,7 +601,7 @@ Abstract Syntax Tree
     {hex} hex_char;
 
   parser =
-    incremental_keyword? parser_keyword [contexts]:context+;
+    parser_keyword [contexts]:context+;
 
   context =
     ignored? rejected? [parser_productions]:parser_production*;
@@ -619,7 +619,7 @@ Abstract Syntax Tree
   qualifier =
     {dangling} dangling_keyword |
     {token} token_keyword |
-    {root} root_keyword;
+    {root} incremental_keyword? root_keyword;
 
   alternative =
     alternative_name? [elements]:element*;
