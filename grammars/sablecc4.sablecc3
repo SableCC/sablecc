@@ -331,23 +331,13 @@ Productions
 
   parser
     =
-      parser_keyword contexts
-        {-> New parser(parser_keyword, [contexts.contexts]) }
-    ;
-
-  contexts
-        {-> [contexts]:context+ }
-    =
-      {full} [contexts]:context+
-        {-> [contexts] }
-    |
-      {empty}
-        {-> [New context(Null, Null, [])] }
+      parser_keyword [contexts]:context*
+        {-> New parser(parser_keyword, [contexts]) }
     ;
 
   context
     =
-      ignored rejected? [parser_productions]:parser_production+
+      ignored rejected? [parser_productions]:parser_production*
         {-> New context(ignored, rejected, [parser_productions]) }
     ;
 
@@ -601,10 +591,10 @@ Abstract Syntax Tree
     {hex} hex_char;
 
   parser =
-    parser_keyword [contexts]:context+;
+    parser_keyword [contexts]:context*;
 
   context =
-    ignored? rejected? [parser_productions]:parser_production*;
+    ignored rejected? [parser_productions]:parser_production*;
 
   ignored =
     ignored_keyword [units]:unit*;
