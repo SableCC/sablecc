@@ -187,7 +187,7 @@ Productions
 
   grammar
     =
-      grammar_keyword identifier semicolon lexer? parser? tree? ctrl_z?
+      grammar_keyword identifier semicolon lexer? parser tree? ctrl_z?
         {-> New grammar(grammar_keyword, identifier, lexer, parser, tree) }
     ;
 
@@ -553,7 +553,7 @@ Productions
 Abstract Syntax Tree
 
   grammar =
-    grammar_keyword [name]:identifier lexer? parser? tree?;
+    grammar_keyword [name]:identifier lexer? parser tree?;
 
   lexer =
     lexer_keyword [named_expressions]:named_expression*;
