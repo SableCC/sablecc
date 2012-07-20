@@ -331,13 +331,13 @@ Productions
 
   parser
     =
-      parser_keyword [contexts]:context*
+      parser_keyword [contexts]:context+
         {-> New parser(parser_keyword, [contexts]) }
     ;
 
   context
     =
-      ignored rejected? [parser_productions]:parser_production*
+      ignored rejected? [parser_productions]:parser_production+
         {-> New context(ignored, rejected, [parser_productions]) }
     ;
 
@@ -433,13 +433,13 @@ Productions
 
   precedence_rule
     =
-      {left} left_keyword identifier_list? semicolon
+      {left} left_keyword identifier_list semicolon
         {-> New precedence_rule.left(left_keyword, [identifier_list.identifiers]) }
     |
-      {right} right_keyword identifier_list? semicolon
+      {right} right_keyword identifier_list semicolon
         {-> New precedence_rule.right(right_keyword, [identifier_list.identifiers]) }
     |
-      {unary} unary_keyword identifier_list? semicolon
+      {unary} unary_keyword identifier_list semicolon
         {-> New precedence_rule.unary(unary_keyword, [identifier_list.identifiers]) }
     ;
 
@@ -468,7 +468,7 @@ Productions
 
   tree
     =
-      transformation? tree_keyword [tree_productions]:tree_production*
+      transformation? tree_keyword [tree_productions]:tree_production+
     ;
 
   transformation
@@ -591,10 +591,10 @@ Abstract Syntax Tree
     {hex} hex_char;
 
   parser =
-    parser_keyword [contexts]:context*;
+    parser_keyword [contexts]:context+;
 
   context =
-    ignored rejected? [parser_productions]:parser_production*;
+    ignored rejected? [parser_productions]:parser_production+;
 
   ignored =
     ignored_keyword [units]:unit*;
@@ -636,16 +636,16 @@ Abstract Syntax Tree
     {at_least} caret l_par number three_dots r_par;
 
   precedence_rule =
-    {left} left_keyword [identifiers]:identifier* |
-    {right} right_keyword [identifiers]:identifier* |
-    {unary} unary_keyword [identifiers]:identifier*;
+    {left} left_keyword [identifiers]:identifier+ |
+    {right} right_keyword [identifiers]:identifier+ |
+    {unary} unary_keyword [identifiers]:identifier+;
 
   directive =
     {selector} selector_keyword [name]:identifier |
     {investigator} investigator_keyword [name]:identifier;
 
   tree =
-     transformation? tree_keyword [tree_productions]:tree_production*;
+     transformation? tree_keyword [tree_productions]:tree_production+;
 
   transformation =
     transformation_keyword production_transformations?
