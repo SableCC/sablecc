@@ -21,13 +21,10 @@ import java.io.*;
 
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.launcher.*;
-import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.util.*;
 
 public class GrammarCompiler {
-
-    public static final boolean RESTRICTED_SYNTAX = false;
 
     final private String text;
 
@@ -78,10 +75,6 @@ public class GrammarCompiler {
 
         this.trace.verboseln(" Verifying semantics");
 
-        if (RESTRICTED_SYNTAX) {
-            restrictSyntax(ast);
-        }
-
         Grammar grammar = new Grammar(ast);
 
         this.trace.verboseln(" Compiling lexer");
@@ -95,157 +88,5 @@ public class GrammarCompiler {
         }
 
         return grammar;
-    }
-
-    /** restrict accepted syntax to desired subset */
-    private void restrictSyntax(
-            Start ast) {
-
-        ast.apply(new DepthFirstAdapter() {
-
-            @Override
-            public void caseAInvestigator(
-                    AInvestigator node) {
-
-                throw SemanticException.notImplemented(node.getName());
-            }
-
-            @Override
-            public void caseASelector(
-                    ASelector node) {
-
-                throw SemanticException.notImplemented(node.getSelectorName());
-            }
-
-            @Override
-            public void inALexerContext(
-                    ALexerContext node) {
-
-                // reject named contexts
-                if (node.getName() != null) {
-                    throw SemanticException.notImplemented(node.getName());
-                }
-            }
-
-            @Override
-            public void caseALookback(
-                    ALookback node) {
-
-                throw SemanticException.notImplemented(node
-                        .getLookbackKeyword());
-            }
-
-            @Override
-            public void caseAStartUnit(
-                    AStartUnit node) {
-
-                throw SemanticException.notImplemented(node.getStartKeyword());
-            }
-
-            @Override
-            public void caseARoot(
-                    ARoot node) {
-
-                throw SemanticException.notImplemented(node.getRootKeyword());
-            }
-
-            @Override
-            public void inAParserContext(
-                    AParserContext node) {
-
-                // reject named contexts
-                if (node.getName() != null) {
-                    throw SemanticException.notImplemented(node.getName());
-                }
-            }
-
-            @Override
-            public void caseATokenQualifier(
-                    ATokenQualifier node) {
-
-                throw SemanticException.notImplemented(node.getTokenKeyword());
-            }
-
-            @Override
-            public void caseADanglingQualifier(
-                    ADanglingQualifier node) {
-
-                throw SemanticException.notImplemented(node
-                        .getDanglingKeyword());
-            }
-
-            @Override
-            public void inANormalElement(
-                    ANormalElement node) {
-
-                // reject lists
-                PUnaryOperator unaryOperator = node.getUnaryOperator();
-                if (unaryOperator != null
-                        && unaryOperator instanceof AManyUnaryOperator) {
-                    class Result {
-
-                        Token token;
-                    }
-                    final Result result = new Result();
-                    unaryOperator.apply(new ReversedDepthFirstAdapter() {
-
-                        @Override
-                        public void defaultCase(
-                                Node node) {
-
-                            result.token = (Token) node;
-                        }
-                    });
-                    throw SemanticException.notImplemented(result.token);
-                }
-            }
-
-            @Override
-            public void caseADanglingElement(
-                    ADanglingElement node) {
-
-                throw SemanticException.notImplemented(node
-                        .getDanglingKeyword());
-            }
-
-            @Override
-            public void caseASeparatedElement(
-                    ASeparatedElement node) {
-
-                throw SemanticException.notImplemented(node.getLPar());
-            }
-
-            @Override
-            public void caseAAlternatedElement(
-                    AAlternatedElement node) {
-
-                throw SemanticException.notImplemented(node.getLPar());
-            }
-
-            @Override
-            public void caseATransformation(
-                    ATransformation node) {
-
-                throw SemanticException.notImplemented(node
-                        .getTransformationKeyword());
-            }
-
-            @Override
-            public void caseATree(
-                    ATree node) {
-
-                throw SemanticException.notImplemented(node.getTreeKeyword());
-            }
-
-            @Override
-            public void caseTIdentifier(
-                    TIdentifier node) {
-
-                // reject rich identifiers
-                if (node.getText().charAt(0) == '<') {
-                    throw SemanticException.notImplemented(node);
-                }
-            }
-        });
     }
 }
