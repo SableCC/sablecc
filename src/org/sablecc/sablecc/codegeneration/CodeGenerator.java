@@ -51,12 +51,17 @@ public class CodeGenerator {
 
     public CodeGenerator(
             Grammar grammar,
+            String targetLanguage,
             File destinationDirectory,
             String destinationPackage,
             Trace trace) {
 
         if (grammar == null) {
             throw new InternalException("grammar may not be null");
+        }
+
+        if (targetLanguage == null) {
+            throw new InternalException("targetLanguage may not be null");
         }
 
         if (destinationDirectory == null) {

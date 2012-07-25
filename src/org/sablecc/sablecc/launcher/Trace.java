@@ -17,8 +17,6 @@
 
 package org.sablecc.sablecc.launcher;
 
-import static org.sablecc.sablecc.launcher.Version.*;
-
 import org.sablecc.util.*;
 
 public class Trace {
@@ -29,11 +27,6 @@ public class Trace {
             Verbosity verbosity) {
 
         this.verbosity = verbosity;
-
-        informativeln();
-        informativeln("SableCC version " + VERSION);
-        informativeln("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
-        informativeln();
     }
 
     public void verbose(

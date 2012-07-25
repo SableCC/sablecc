@@ -118,8 +118,8 @@ public class CompilationTask {
 
             if (this.generateCode) {
                 CodeGenerator codeGenerator = new CodeGenerator(grammar,
-                        this.destinationDirectory, this.destinationPackage,
-                        this.trace);
+                        this.targetLanguage, this.destinationDirectory,
+                        this.destinationPackage, this.trace);
                 codeGenerator.run();
             }
 

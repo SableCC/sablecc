@@ -255,6 +255,12 @@ public class SableCC {
         }
 
         Trace trace = new Trace(verbosity);
+
+        trace.informativeln();
+        trace.informativeln("SableCC version " + VERSION);
+        trace.informativeln("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
+        trace.informativeln();
+
         CompilationTask compilationTask = new CompilationTask(grammarFile,
                 targetLanguage, destinationDirectory, destinationPackage,
                 generateCode, strictness, trace);
