@@ -25,10 +25,15 @@ import java.io.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.codegeneration.*;
+import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.launcher.errormessage.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
+import org.sablecc.sablecc.syntax3.lexer.Lexer;
+import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.sablecc.syntax3.parser.*;
+import org.sablecc.sablecc.syntax3.parser.Parser;
 import org.sablecc.util.*;
 
 /**
@@ -261,10 +266,112 @@ public class SableCC {
         trace.informativeln("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
         trace.informativeln();
 
-        CompilationTask compilationTask = new CompilationTask(grammarFile,
-                targetLanguage, destinationDirectory, destinationPackage,
-                generateCode, strictness, trace);
+        compileFile(grammarFile, targetLanguage, destinationDirectory,
+                destinationPackage, generateCode, strictness, trace);
+    }
 
-        compilationTask.run();
+    public static void compileFile(
+            final File grammarFile,
+            final String targetLanguage,
+            final File destinationDirectory,
+            final String destinationPackage,
+            final boolean generateCode,
+            final Strictness strictness,
+            final Trace trace)
+            throws ParserException, LexerException {
+
+        if (grammarFile == null) {
+            throw new InternalException("grammarFile may not be null");
+        }
+
+        if (targetLanguage == null) {
+            throw new InternalException("targetLanguage may not be null");
+        }
+
+        if (destinationDirectory == null) {
+            throw new InternalException("destinationDirectory may not be null");
+        }
+
+        if (destinationPackage == null) {
+            throw new InternalException("destinationPackage may not be null");
+        }
+
+        if (strictness == null) {
+            throw new InternalException("strictness may not be null");
+        }
+
+        if (trace == null) {
+            throw new InternalException("trace may not be null");
+        }
+
+        trace.informativeln("Compiling \"" + grammarFile.toString() + "\"");
+
+        try {
+            FileReader fr = new FileReader(grammarFile);
+            BufferedReader br = new BufferedReader(fr);
+
+            StringBuilder sb = new StringBuilder();
+            int c;
+            while ((c = br.read()) != -1) {
+                sb.append((char) c);
+            }
+
+            br.close();
+            fr.close();
+
+            Grammar grammar = compileGrammar(sb.toString(), strictness, trace);
+
+            if (generateCode) {
+                CodeGenerator codeGenerator = new CodeGenerator(grammar,
+                        targetLanguage, destinationDirectory,
+                        destinationPackage, trace);
+                codeGenerator.run();
+            }
+
+            trace.informativeln("Done!");
+        }
+        catch (IOException e) {
+            throw LauncherException.inputError(grammarFile.toString(), e);
+        }
+    }
+
+    public static Grammar compileGrammar(
+            final String text,
+            final Strictness strictness,
+            final Trace trace)
+            throws ParserException, LexerException, IOException {
+
+        if (text == null) {
+            throw new InternalException("text may not be null");
+        }
+
+        if (strictness == null) {
+            throw new InternalException("strictness may not be null");
+        }
+
+        if (trace == null) {
+            throw new InternalException("trace may not be null");
+        }
+
+        trace.verboseln(" Parsing");
+
+        Start ast = new Parser(new Lexer(new PushbackReader(new StringReader(
+                text), 1024))).parse();
+
+        trace.verboseln(" Verifying semantics");
+
+        Grammar grammar = new Grammar(ast);
+
+        trace.verboseln(" Compiling lexer");
+
+        grammar.compileLexer(trace, strictness);
+
+        trace.verboseln(" Compiling parser");
+
+        if (grammar.getParser().getProductions().size() > 0) {
+            grammar.compileParser(trace, strictness);
+        }
+
+        return grammar;
     }
 }

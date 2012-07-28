@@ -65,7 +65,7 @@ public class Grammar
 
     private SGrammar simplifiedGrammar;
 
-    Grammar(
+    public Grammar(
             Start ast) {
 
         if (ast == null) {
