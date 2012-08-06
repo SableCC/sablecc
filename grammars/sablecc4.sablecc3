@@ -224,11 +224,11 @@ Productions
       {lookahead} concatenation lookahead_keyword not_keyword? [ahead]:concatenation
         {-> New expression.lookahead(concatenation.expression, lookahead_keyword, not_keyword, ahead.expression) }
     |
-      {shortest} shortest_keyword l_par concatenation r_par
-        {-> New expression.shortest(shortest_keyword, concatenation.expression) }
+      {shortest} shortest_keyword l_par expression r_par
+        {-> New expression.shortest(shortest_keyword, expression) }
     |
-      {longest} longest_keyword l_par concatenation r_par
-        {-> New expression.longest(longest_keyword, concatenation.expression) }
+      {longest} longest_keyword l_par expression r_par
+        {-> New expression.longest(longest_keyword, expression) }
     |
       {subtraction} [left]:concatenation minus [right]:concatenation
         {-> New expression.subtraction(left.expression, minus, right.expression) }
