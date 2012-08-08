@@ -74,7 +74,7 @@ Parser
     {gt:} [left:]sub_expression '>' [right:]sub_expression |
     {lteq:} [left:]sub_expression '<=' [right:]sub_expression |
     {gteq:} [left:]sub_expression '>=' [right:]sub_expression |
-    {simple:} expression;
+    {simple:} sub_expression;
 
   sub_expression =
     {add:} [left:]sub_expression '+' [right:] sub_expression |
