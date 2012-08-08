@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-        <classpathentry kind="src" path="src"/>
+        <classpathentry excluding="org/sablecc/sablecc/codegeneration/|org/sablecc/sablecc/core/|org/sablecc/sablecc/core/transformation/|org/sablecc/sablecc/core/walker/|org/sablecc/sablecc/oldgrammar/|org/sablecc/sablecc/oldgrammar/transformation/|org/sablecc/sablecc/oldlrautomaton/" kind="src" path="src"/>
         <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
         <classpathentry kind="output" path="classes"/>
 </classpath>

@@ -25,15 +25,12 @@ import java.io.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
-import org.sablecc.sablecc.codegeneration.*;
-import org.sablecc.sablecc.core.*;
 import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.launcher.errormessage.*;
+import org.sablecc.sablecc.semantics.*;
 import org.sablecc.sablecc.syntax3.lexer.*;
-import org.sablecc.sablecc.syntax3.lexer.Lexer;
 import org.sablecc.sablecc.syntax3.node.*;
 import org.sablecc.sablecc.syntax3.parser.*;
-import org.sablecc.sablecc.syntax3.parser.Parser;
 import org.sablecc.util.*;
 
 /**
@@ -319,6 +316,11 @@ public class SableCC {
             br.close();
             fr.close();
 
+            compileGrammar(sb.toString(), strictness, trace);
+
+            // TODO: implement
+
+            /*
             Grammar grammar = compileGrammar(sb.toString(), strictness, trace);
 
             if (generateCode) {
@@ -327,15 +329,19 @@ public class SableCC {
                         destinationPackage, trace);
                 codeGenerator.run();
             }
+            */
 
-            trace.informativeln("Done!");
+            trace.informativeln();
+            trace.informativeln("SableCC has successfully compiled \""
+                    + grammarFile.toString() + "\".");
         }
         catch (IOException e) {
             throw LauncherException.inputError(grammarFile.toString(), e);
         }
     }
 
-    public static Grammar compileGrammar(
+    // TODO: change return type and return structure
+    public static void compileGrammar(
             final String text,
             final Strictness strictness,
             final Trace trace)
@@ -360,6 +366,11 @@ public class SableCC {
 
         trace.verboseln(" Verifying semantics");
 
+        SemanticVerifier.verify(ast);
+
+        // TODO: implement
+
+        /*
         Grammar grammar = new Grammar(ast);
 
         trace.verboseln(" Compiling lexer");
@@ -373,5 +384,6 @@ public class SableCC {
         }
 
         return grammar;
+        */
     }
 }
