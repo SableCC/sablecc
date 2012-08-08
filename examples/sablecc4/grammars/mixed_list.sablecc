@@ -15,18 +15,20 @@
  * limitations under the License.
  */
 
- Grammar mixed_list:
+Grammar mixed_list;
 
- Lexer
-   id = letter (letter | digit)*;
-   letter = 'a'..'z' | 'A'..'Z';
-   digit = '0'..'9';
-   blank = ' ' | #13 | #10 | #9;
+Lexer
+
+  id = letter (letter | digit)*;
+  letter = 'a'..'z' | 'A'..'Z';
+  digit = '0'..'9';
+  blank = ' ' | #13 | #10 | #9;
+
+Parser
 
    Ignored
      blank;
 
- Parser
    separated =
      id_list?;
 
@@ -37,16 +39,19 @@
      {one:} [comma:]',' id |
      {many:} id_list_tail [comma:]',' id;
 
- Transformation
-   Production
-     id_list -> [elements:](id Separator ',')+;
-     id_list_tail -> [elements:](',' id)+;
-   Alternative
-     separated -> New separated(id_list.elements);
-     id_list -> List(id id_list_tail.elements...);
-     id_list_tail.one -> List(comma id);
-     id_list_tail.many -> List(id_list_tail.elements... comma id);
+Transformation
 
- Tree
-   separated = (id Separator ',')*;
+  Production
 
+    id_list -> [elements:](id Separator ',')+;
+    id_list_tail -> [comma:]',' [elements:](id Separator ',')+;
+
+  Alternative
+    separated -> New separated(id_list.elements);
+    id_list -> List(id id_list_tail.comma id_list_tail.elements...);
+    id_list_tail.one -> comma List(id);
+    id_list_tail.many -> id_list_tail.comma List(id_list_tail.elements... comma id);
+
+Tree
+
+  separated = (id Separator ',')*;

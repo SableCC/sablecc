@@ -15,112 +15,109 @@
  * limitations under the License.
  */
 
-Grammar mini_language:
+Grammar mini_language;
 
-  Lexer
-    id = letter (letter | digit)*;
-    number = digit+;
+Lexer
 
-    letter = 'a'..'z';
-    digit = '0'..'9';
+  id = letter (letter | digit)*;
+  number = digit+;
 
-    string_text = string_char+;
-    string_char = (#32..#126) - ('"' | '\\');
+  letter = 'a'..'z';
+  digit = '0'..'9';
 
-    blank = (' ' | tab | vtab | eol)+;
-    tab = #9;
-    vtab = #11;
-    eol = cr | lf | cr lf;
-    cr = #13;
-    lf = #10;
+  string_text = string_char+;
+  string_char = (#32..#126) - ('"' | '\\');
 
-    ctrl_z = #26;
+  blank = (' ' | tab | vtab | eol)+;
+  tab = #9;
+  vtab = #11;
+  eol = cr | lf | cr lf;
+  cr = #13;
+  lf = #10;
 
-    line_comment = Shortest '//' Any* (Longest eol | End);
+  ctrl_z = #26;
 
-    comment_text = Any+ - ('/*' | '*/');
+  line_comment = Shortest('//' Any* Longest(eol | End));
 
-    Context normal_context:
+  comment_text = Any+ - ('/*' | '*/');
 
-      Ignored
-        blank, comment, line_comment;
+Parser
 
-  Parser
+  Ignored
+    blank, comment, line_comment;
 
-    Context normal_context:
+  program =
+    statement? ctrl_z?;
 
-      program =
-        statement? ctrl_z?;
+  statement =
+    {block:} '{' declaration* statement* '}' |
+    {assign:} id '=' expression ';' |
+    {if:} 'if' '(' expression ')' statement else? |
+    {while:} 'while' '(' expression ')' statement |
+    {print:} 'print' '(' (expression Separator ',')* ')' ';';
 
-      statement =
-        {block:} '{' declaration* statement* '}' |
-        {assign:} id '=' expression ';' |
-        {if:} 'if' '(' expression ')' statement Dangling else? |
-        {while:} 'while' '(' expression ')' statement |
-        {print:} 'print' '(' (expression Separator ',')* ')' ';';
+  Dangling else =
+    'else' statement;
 
-      Dangling else =
-        'else' statement;
+  declaration =
+    type (id Separator ',')+ ';';
 
-      declaration =
-        type (id Separator ',')+ ';';
+  type =
+    {int:} 'int' |
+    {bool:} 'bool' |
+    {string:} 'string';
 
-      type =
-        {int:} 'int' |
-        {bool:} 'bool' |
-        {string:} 'string';
+  expression =
+    {eq:} [left:]sub_expression '==' [right:]sub_expression |
+    {neq:} [left:]sub_expression '!=' [right:]sub_expression |
+    {lt:} [left:]sub_expression '<' [right:]sub_expression |
+    {gt:} [left:]sub_expression '>' [right:]sub_expression |
+    {lteq:} [left:]sub_expression '<=' [right:]sub_expression |
+    {gteq:} [left:]sub_expression '>=' [right:]sub_expression |
+    {simple:} expression;
 
-      expression =
-        {eq:} [left:]sub_expression '==' [right:]sub_expression |
-        {neq:} [left:]sub_expression '!=' [right:]sub_expression |
-        {lt:} [left:]sub_expression '<' [right:]sub_expression |
-        {gt:} [left:]sub_expression '>' [right:]sub_expression |
-        {lteq:} [left:]sub_expression '<=' [right:]sub_expression |
-        {gteq:} [left:]sub_expression '>=' [right:]sub_expression |
-        {simple:} expression;
+  sub_expression =
+    {add:} [left:]sub_expression '+' [right:] sub_expression |
+    {sub:} [left:]sub_expression '-' [right:] sub_expression |
+    {mul:} [left:]sub_expression '*' [right:] sub_expression |
+    {div:} [left:]sub_expression '/' [right:] sub_expression |
+    {mod:} [left:]sub_expression '%' [right:] sub_expression |
+    {not:} '!' sub_expression |
+    {par:} '(' expression ')' |
+    {number:} number |
+    {true:} 'true' |
+    {false:} 'false' |
+    {string:} string |
+    {read:} 'read' '(' ')' |
+    {str2int:} 'str2int' '(' expression ')';
 
-      sub_expression =
-        {add:} [left:]sub_expression '+' [right:] sub_expression |
-        {sub:} [left:]sub_expression '-' [right:] sub_expression |
-        {mul:} [left:]sub_expression '*' [right:] sub_expression |
-        {div:} [left:]sub_expression '/' [right:] sub_expression |
-        {mod:} [left:]sub_expression '%' [right:] sub_expression |
-        {not:} '!' sub_expression |
-        {par:} '(' expression ')' |
-        {number:} number |
-        {true:} 'true' |
-        {false:} 'false' |
-        {string:} string |
-        {read:} 'read' '(' ')' |
-        {str2int:} 'str2int' '(' expression ')';
+    Precedence
+      Unary not;
+      Left mul, div, mod;
+      Left add, sub;
 
-        Precedence
-          Unary not;
-          Left mul, div, mod;
-          Left add, sub;
+Context string;
 
-      Context string_context:
+  Token string =
+    '"' string_part* '"';
 
-        Token string =
-          '"' string_part* '"';
+  string_part =
+    {string_text:} string_text |
+    {string_escape:} string_escape;
 
-        string_part =
-          {string_text:} string_text |
-          {string_escape:} string_escape;
+Context escape;
 
-      Context string_escape_context:
+  string_escape =
+    {back_slash:} '\\' '\\' |
+    {double_quote:} '\\' '"' |
+    {new_line:} '\\' 'n' |
+    {tab:} '\\' 't';
 
-        string_escape =
-          {back_slash:} '\\' '\\' |
-          {double_quote:} '\\' '"' |
-          {new_line:} '\\' 'n' |
-          {tab:} '\\' 't';
+Context comment;
 
-      Context comment_context:
+  Token comment =
+    '/*' comment_part* '*/';
 
-        Token comment =
-          '/*' comment_part* '*/';
-
-        comment_part =
-          {comment_text:} comment_text |
-          {nested_comment:} comment;
+  comment_part =
+    {comment_text:} comment_text |
+    {nested_comment:} comment;

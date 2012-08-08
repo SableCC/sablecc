@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 
-Grammar lexer_features:
+Grammar lexer_features;
 
 Lexer
 
   identifier = letter (letter | digit)*;
   decimal = digit+;
   hex = '0x' hex_digit+;
-  zero = '0'+ | 'zero';
 
   letter = upper_case | lower_case;
   upper_case = 'A'..'Z';
@@ -32,18 +31,17 @@ Lexer
 
   ip_address = (decimal Separator '.')^4;
 
-  c_comment = Shortest '/*' Any* '*/';
-  c_line_comment = Shortest '//' Any* (Longest eol | End);
+  c_comment = Shortest('/*' Any* '*/');
+  c_line_comment = '//' (Any* - eol) (eol | End);
 
   tab = #9;
-  eol = #xD | #xA | #xD #xA;
+  eol = #xd | #xa | #13 #10;
 
-  Token
-    zero, 'if', 'else', 'while', identifier, decimal, ip_address, hex;
+Parser
 
   Ignored
     c_comment, c_line_comment, ' ', tab, eol;
 
-  Precedence
-    zero > identifier;
-    zero > decimal;
+  tokens = token*;
+
+  token = 'if' | 'else' | 'while' | identifier | decimal | ip_address | hex;
