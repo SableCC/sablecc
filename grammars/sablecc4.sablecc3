@@ -225,12 +225,6 @@ Productions
       {lookahead} concatenation lookahead_keyword not_keyword? [ahead]:concatenation
         {-> New expression.lookahead(concatenation.expression, lookahead_keyword, not_keyword, ahead.expression) }
     |
-      {shortest} shortest_keyword l_par expression r_par
-        {-> New expression.shortest(shortest_keyword, expression) }
-    |
-      {longest} longest_keyword l_par expression r_par
-        {-> New expression.longest(longest_keyword, expression) }
-    |
       {subtraction} [left]:concatenation minus [right]:concatenation
         {-> New expression.subtraction(left.expression, minus, right.expression) }
     |
@@ -297,6 +291,12 @@ Productions
       {name} identifier
         {-> New expression.name(identifier) }
     |
+      {shortest} shortest_keyword l_par expression r_par
+        {-> New expression.shortest(shortest_keyword, expression) }
+    |
+      {longest} longest_keyword l_par expression r_par
+        {-> New expression.longest(longest_keyword, expression) }
+    |
       {par} l_par expression r_par
         {-> expression }
     ;
@@ -332,10 +332,10 @@ Productions
 
   parser
     =
-      {simple} parser_keyword context_body
-        {-> New parser(parser_keyword, [New context(Null, context_body.ignored, context_body.rejected, [context_body.parser_productions])]) }
+      {anonymous} parser_keyword context_body [contexts]:context*
+        {-> New parser(parser_keyword, [New context(Null, context_body.ignored, context_body.rejected, [context_body.parser_productions]), contexts]) }
     |
-      {context} parser_keyword [contexts]:context+
+      {named} parser_keyword [contexts]:context+
         {-> New parser(parser_keyword, [contexts]) }
     ;
 
