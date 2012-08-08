@@ -26,32 +26,32 @@ Lexer
 
 Parser
 
-   Ignored
-     blank;
+  Ignored
+    blank;
 
-   separated =
-     id_list?;
+  separated =
+    id_list?;
 
-   id_list =
-     id id_list_tail?;
+  id_list =
+    id id_list_tail?;
 
-   id_list_tail =
-     {one:} [comma:]',' id |
-     {many:} id_list_tail [comma:]',' id;
+  id_list_tail =
+    {one:} ',' id |
+    {many:} id_list_tail ',' id;
 
 Transformation
 
   Production
 
     id_list -> [elements:](id Separator ',')+;
-    id_list_tail -> [comma:]',' [elements:](id Separator ',')+;
+    id_list_tail -> ',' [elements:](id Separator ',')+;
 
   Alternative
     separated -> New separated(id_list.elements);
-    id_list -> List(id id_list_tail.comma id_list_tail.elements...);
-    id_list_tail.one -> comma List(id);
-    id_list_tail.many -> id_list_tail.comma List(id_list_tail.elements... comma id);
+    id_list -> List(id id_list_tail.',' id_list_tail.elements...);
+    id_list_tail.one -> ',' List(id);
+    id_list_tail.many -> id_list_tail.',' List(id_list_tail.elements... ',' id);
 
 Tree
 
-  separated = (id Separator ',')*;
+  separated = [elements:](id Separator ',')*;
