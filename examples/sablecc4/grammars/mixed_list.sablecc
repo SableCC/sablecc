@@ -43,15 +43,15 @@ Transformation
 
   Production
 
-    id_list -> [elements:](id Separator ',')+;
-    id_list_tail -> ',' [elements:](id Separator ',')+;
+    id_list -> (id Separator ',')+;
+    id_list_tail -> ',' (id Separator ',')+;
 
   Alternative
-    separated -> New separated(id_list.elements);
-    id_list -> List(id id_list_tail.',' id_list_tail.elements...);
-    id_list_tail.one -> ',' List(id);
-    id_list_tail.many -> id_list_tail.',' List(id_list_tail.elements... ',' id);
+    separated -> New separated(id_list.id_list);
+    id_list -> List(id id_list_tail.token id_list_tail.id_list);
+    id_list_tail.one -> token List(id);
+    id_list_tail.many -> id_list_tail.token List(id_list_tail.id_list token id);
 
 Tree
 
-  separated = [elements:](id Separator ',')*;
+  separated = (id Separator ',')*;
