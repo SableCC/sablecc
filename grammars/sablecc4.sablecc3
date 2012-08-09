@@ -535,9 +535,9 @@ Productions
 
   element_reference
     =
-      {natural} unit
+      {natural} identifier
     |
-      {transformed} identifier dot unit
+      {transformed} identifier dot [subtree]:identifier
     ;
 
   tree_production
@@ -677,8 +677,8 @@ Abstract Syntax Tree
     {right_reference} right_keyword l_par element_reference r_par;
 
   element_reference =
-    {natural} [element]:unit |
-    {transformed} [element]:identifier dot [subtree]:unit;
+    {natural} [element]:identifier |
+    {transformed} [element]:identifier dot [subtree]:identifier;
 
   tree_production =
     [name]:identifier assign [alternatives]:alternative+;
