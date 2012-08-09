@@ -523,29 +523,14 @@ Productions
       {reference} element_reference
     |
       {delete} delete_keyword l_par element_reference r_par
-        {-> New transformation_element.delete(element_reference) }
     |
       {new} new_keyword alternative_reference l_par [transformation_elements]:transformation_element* r_par
     |
-      {list} list_keyword l_par [list_elements]:list_element* r_par
-    ;
-
-  list_element
-    =
-      {reference} element_reference
+      {list} list_keyword l_par [transformation_elements]:transformation_element* r_par
     |
-      {delete} delete_keyword l_par element_reference r_par
-        {-> New list_element.delete(element_reference) }
+      {left_reference} left_keyword l_par element_reference r_par
     |
-      {list_reference} element_reference three_dots
-    |
-      {left_list_reference} element_reference dot left_keyword three_dots
-        {-> New list_element.left_list_reference(element_reference, left_keyword) }
-    |
-      {right_list_reference} element_reference dot right_keyword three_dots
-        {-> New list_element.right_list_reference(element_reference, right_keyword) }
-    |
-      {new} new_keyword alternative_reference l_par [transformation_elements]:transformation_element* r_par
+      {right_reference} right_keyword l_par element_reference r_par
     ;
 
   element_reference
@@ -683,19 +668,13 @@ Abstract Syntax Tree
   transformation_element =
     {null} null_keyword |
     {reference} element_reference |
-    {delete} element_reference |
+    {delete} delete_keyword l_par element_reference r_par |
     {new} new_keyword alternative_reference l_par
       [transformation_elements]:transformation_element* r_par |
-    {list} list_keyword l_par [list_elements]:list_element* r_par;
-
-  list_element =
-    {reference} element_reference |
-    {delete} element_reference |
-    {list_reference} element_reference three_dots |
-    {left_list_reference} element_reference left_keyword |
-    {right_list_reference} element_reference right_keyword |
-    {new} new_keyword alternative_reference l_par
-      [transformation_elements]:transformation_element* r_par;
+    {list} list_keyword l_par [transformation_elements]:transformation_element*
+      r_par |
+    {left_reference} left_keyword l_par element_reference r_par |
+    {right_reference} right_keyword l_par element_reference r_par;
 
   element_reference =
     {natural} [element]:unit |
