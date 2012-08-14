@@ -36,8 +36,8 @@ Parser
     id id_list_tail?;
 
   id_list_tail =
-    {one:} ',' id |
-    {many:} id_list_tail ',' id;
+    ',' id |
+    id_list_tail ',' id;
 
 Transformation
 
@@ -49,8 +49,8 @@ Transformation
   Alternative
     separated -> New separated(id_list.id_list);
     id_list -> List(id id_list_tail.token id_list_tail.id_list);
-    id_list_tail.one -> token List(id);
-    id_list_tail.many -> id_list_tail.token List(id_list_tail.id_list token id);
+    id_list_tail.token -> token List(id);
+    id_list_tail.id_list_tail -> id_list_tail.token List(id_list_tail.id_list token id);
 
 Tree
 
