@@ -39,6 +39,10 @@ Parser
     ',' id |
     id_list_tail ',' id;
 
+Tree
+
+  separated = (id Separator ',')*;
+
 Transformation
 
   Production
@@ -51,7 +55,3 @@ Transformation
     id_list -> List(id id_list_tail.token id_list_tail.id_list);
     id_list_tail.token -> token List(id);
     id_list_tail.id_list_tail -> id_list_tail.token List(id_list_tail.id_list token id);
-
-Tree
-
-  separated = (id Separator ',')*;

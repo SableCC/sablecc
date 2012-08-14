@@ -479,7 +479,13 @@ Productions
 
   tree
     =
-      transformation? tree_keyword [tree_productions]:tree_production+
+      tree_keyword [tree_productions]:tree_production+ transformation?
+    ;
+
+  tree_production
+    =
+      identifier assign alternatives semicolon
+        {-> New tree_production(identifier, assign, [alternatives.alternatives]) }
     ;
 
   transformation
@@ -538,12 +544,6 @@ Productions
       {natural} identifier
     |
       {transformed} identifier dot [subtree]:identifier
-    ;
-
-  tree_production
-    =
-      identifier assign alternatives semicolon
-        {-> New tree_production(identifier, assign, [alternatives.alternatives]) }
     ;
 
 Abstract Syntax Tree
@@ -641,7 +641,10 @@ Abstract Syntax Tree
     {investigator} investigator_keyword [name]:identifier;
 
   tree =
-     transformation? tree_keyword [tree_productions]:tree_production+;
+    tree_keyword [tree_productions]:tree_production+ transformation?;
+
+  tree_production =
+    [name]:identifier assign [alternatives]:alternative+;
 
   transformation =
     transformation_keyword production_transformations?
@@ -679,6 +682,3 @@ Abstract Syntax Tree
   element_reference =
     {natural} [element]:identifier |
     {transformed} [element]:identifier dot [subtree]:identifier;
-
-  tree_production =
-    [name]:identifier assign [alternatives]:alternative+;
