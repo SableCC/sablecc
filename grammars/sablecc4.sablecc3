@@ -95,7 +95,6 @@ Tokens
 
   alternative_keyword = 'Alternative';
   any_keyword = 'Any';
-  context_keyword = 'Context';
   dangling_keyword = 'Dangling';
   delete_keyword = 'Delete';
   empty_keyword = 'Empty';
@@ -114,6 +113,7 @@ Tokens
   not_keyword = 'Not';
   new_keyword = 'New';
   null_keyword = 'Null';
+  opportunistic_keyword = 'Opportunistic';
   parser_keyword = 'Parser';
   precedence_keyword = 'Precedence';
   production_keyword = 'Production';
@@ -188,8 +188,15 @@ Productions
 
   grammar
     =
-      grammar_keyword identifier semicolon lexer? parser tree? ctrl_z?
-        {-> New grammar(grammar_keyword, identifier, lexer, parser, tree) }
+      header lexer? parser tree? ctrl_z?
+        {-> New grammar(header.grammar_keyword, header.identifier, lexer, parser, tree) }
+    ;
+
+  header
+        {-> grammar_keyword identifier }
+    =
+      grammar_keyword identifier semicolon
+        {-> grammar_keyword identifier }
     ;
 
   lexer
@@ -219,23 +226,17 @@ Productions
       {simple} concatenation
         {-> concatenation.expression }
     |
-      {lookback} concatenation lookback_keyword not_keyword? [back]:concatenation
-        {-> New expression.lookback(concatenation.expression, lookback_keyword, not_keyword, back.expression) }
+      {lookback} top_expression lookback_keyword not_keyword? [back]:concatenation
+        {-> New expression.lookback(top_expression.expression, lookback_keyword, not_keyword, back.expression) }
     |
-      {lookahead} concatenation lookahead_keyword not_keyword? [ahead]:concatenation
-        {-> New expression.lookahead(concatenation.expression, lookahead_keyword, not_keyword, ahead.expression) }
+      {lookahead} top_expression lookahead_keyword not_keyword? [ahead]:concatenation
+        {-> New expression.lookahead(top_expression.expression, lookahead_keyword, not_keyword, ahead.expression) }
     |
-      {subtraction} [left]:concatenation minus [right]:concatenation
+      {subtraction} [left]:top_expression minus [right]:concatenation
         {-> New expression.subtraction(left.expression, minus, right.expression) }
     |
-      {except} [left]:concatenation except_keyword [right]:concatenation
+      {except} [left]:top_expression except_keyword [right]:concatenation
         {-> New expression.except(left.expression, except_keyword, right.expression) }
-    |
-      {interval} [from]:character two_dots [to]:character
-        {-> New expression.interval(from, two_dots, to) }
-    |
-      {open_interval} character three_dots
-        {-> New expression.open_interval(character, three_dots) }
     ;
 
   concatenation
@@ -254,11 +255,8 @@ Productions
       {simple} term
         {-> term.expression }
     |
-      {unary_operator} term unary_operator
-        {-> New expression.unary_operator(term.expression, unary_operator) }
-    |
-      {separated} l_par term separator_keyword [separator]:term r_par many_operator
-        {-> New expression.separated(term.expression, separator_keyword, separator.expression, many_operator) }
+      {unary_operator} unary_expression unary_operator
+        {-> New expression.unary_operator(unary_expression.expression, unary_operator) }
     ;
 
   term
@@ -298,7 +296,16 @@ Productions
         {-> New expression.longest(longest_keyword, expression) }
     |
       {par} l_par expression r_par
-        {-> expression }
+        {-> New expression.par(l_par, expression, r_par) }
+    |
+      {interval} [from]:character two_dots [to]:character
+        {-> New expression.interval(from, two_dots, to) }
+    |
+      {open_interval} character three_dots
+        {-> New expression.open_interval(character, three_dots) }
+    |
+      {separated} l_par expression separator_keyword [separator]:expression r_par many_operator
+        {-> New expression.separated(expression, separator_keyword, separator, many_operator) }
     ;
 
   character
@@ -332,36 +339,39 @@ Productions
 
   parser
     =
-      {anonymous} parser_keyword context_body [contexts]:context*
-        {-> New parser(parser_keyword, [New context(Null, context_body.ignored, context_body.rejected, [context_body.parser_productions]), contexts]) }
-    |
-      {named} parser_keyword [contexts]:context+
-        {-> New parser(parser_keyword, [contexts]) }
+      parser_keyword head_context? [contexts]:context* tail_context?
+        {-> New parser(parser_keyword, [head_context.context, contexts, tail_context.context]) }
+    ;
+
+  head_context
+        {-> context }
+    =
+      [parser_productions]:parser_production+
+        {-> New context([], [parser_productions]) }
     ;
 
   context
     =
-      context_keyword identifier semicolon context_body
-        {-> New context(identifier, context_body.ignored, context_body.rejected, [context_body.parser_productions]) }
+       [token_lists]:token_list+ [parser_productions]:parser_production+
     ;
 
-  context_body
-        {-> ignored? rejected? [parser_productions]:parser_production+ }
+  tail_context
+        {-> context }
     =
-      ignored? rejected? [parser_productions]:parser_production+
-        {-> ignored rejected [parser_productions] }
+      [token_lists]:token_list+
+        {-> New context([token_lists], []) }
     ;
 
-  ignored
+  token_list
     =
-      ignored_keyword unit_list? semicolon
-        {-> New ignored(ignored_keyword, [unit_list.units]) }
-    ;
-
-  rejected
-    =
-      rejected_keyword unit_list? semicolon
-        {-> New rejected(rejected_keyword, [unit_list.units]) }
+      {ignored} ignored_keyword unit_list? semicolon
+        {-> New token_list.ignored(ignored_keyword, [unit_list.units]) }
+    |
+      {rejected} rejected_keyword unit_list? semicolon
+        {-> New token_list.rejected(rejected_keyword, [unit_list.units]) }
+    |
+      {opportunistic} opportunistic_keyword unit_list? semicolon
+        {-> New token_list.opportunistic(opportunistic_keyword, [unit_list.units]) }
     ;
 
   unit_list
@@ -380,17 +390,23 @@ Productions
 
   parser_production
     =
-      qualifier? identifier assign alternatives semicolon precedence_rules? directive?
-        {-> New parser_production(qualifier, identifier, assign, [alternatives.alternatives], [precedence_rules.precedence_rules], directive) }
+      [qualifiers]:qualifier* identifier assign alternatives semicolon precedence_rules?
+        {-> New parser_production([qualifiers], identifier, assign, [alternatives.alternatives], [precedence_rules.precedence_rules]) }
     ;
 
   qualifier
     =
-      {dangling} dangling_keyword
+      {root} root_keyword
+    |
+      {incremental} incremental_keyword
     |
       {token} token_keyword
     |
-      {root} incremental_keyword? root_keyword
+      {dangling} dangling_keyword
+    |
+      {investigator} investigator_keyword
+    |
+      {selector} selector_keyword
     ;
 
   alternatives
@@ -444,13 +460,16 @@ Productions
 
   precedence_rule
     =
-      {left} left_keyword identifier_list semicolon
+      {left} left_keyword identifier_list? semicolon
         {-> New precedence_rule.left(left_keyword, [identifier_list.identifiers]) }
     |
-      {right} right_keyword identifier_list semicolon
+      {right} right_keyword identifier_list? semicolon
         {-> New precedence_rule.right(right_keyword, [identifier_list.identifiers]) }
     |
-      {unary} unary_keyword identifier_list semicolon
+      {not} not_keyword identifier_list? semicolon
+        {-> New precedence_rule.not(not_keyword, [identifier_list.identifiers]) }
+    |
+      {unary} unary_keyword identifier_list? semicolon
         {-> New precedence_rule.unary(unary_keyword, [identifier_list.identifiers]) }
     ;
 
@@ -468,18 +487,9 @@ Productions
         {-> identifier }
     ;
 
-  directive
-    =
-      {selector} selector_keyword identifier semicolon
-        {-> New directive.selector(selector_keyword, identifier) }
-    |
-      {investigator} investigator_keyword identifier semicolon
-        {-> New directive.investigator(investigator_keyword, identifier) }
-    ;
-
   tree
     =
-      tree_keyword [tree_productions]:tree_production+ transformation?
+      tree_keyword [tree_productions]:tree_production* transformation?
     ;
 
   tree_production
@@ -561,16 +571,10 @@ Abstract Syntax Tree
     {or} [left]:expression bar [right]:expression |
     {lookback} expression lookback_keyword not_keyword? [back]:expression |
     {lookahead} expression lookahead_keyword not_keyword? [ahead]:expression |
-    {shortest} shortest_keyword expression |
-    {longest} longest_keyword expression |
     {subtraction} [left]:expression minus [right]:expression |
     {except} [left]:expression except_keyword [right]:expression |
-    {interval} [from]:character two_dots [to]:character |
-    {open_interval} [from]:character three_dots |
     {concatenation} [left]:expression [right]:expression |
     {unary_operator} expression unary_operator |
-    {separated} expression separator_keyword [separator]:expression
-      many_operator |
     {empty_string} empty_string |
     {char} char |
     {dec} dec_char |
@@ -579,7 +583,14 @@ Abstract Syntax Tree
     {any} any_keyword |
     {start} start_keyword |
     {end} end_keyword |
-    {name} identifier;
+    {name} identifier |
+    {shortest} shortest_keyword expression |
+    {longest} longest_keyword expression |
+    {par} l_par expression r_par |
+    {interval} [from]:character two_dots [to]:character |
+    {open_interval} [from]:character three_dots |
+    {separated} expression separator_keyword [separator]:expression
+      many_operator;
 
   character =
     {char} char |
@@ -587,25 +598,27 @@ Abstract Syntax Tree
     {hex} hex_char;
 
   parser =
-    parser_keyword [contexts]:context+;
+    parser_keyword [contexts]:context*;
 
   context =
-    [name]:identifier? ignored? rejected? [parser_productions]:parser_production+;
+    [token_lists]:token_list* [parser_productions]:parser_production*;
 
-  ignored =
-    ignored_keyword [units]:unit*;
-
-  rejected =
-    rejected_keyword [units]:unit*;
+  token_list =
+    {ignored} ignored_keyword [units]:unit* |
+    {rejected} rejected_keyword [units]:unit* |
+    {opportunistic} opportunistic_keyword [units]:unit*;
 
   parser_production =
-    qualifier? [name]:identifier assign [alternatives]:alternative+
-      [precedence_rules]:precedence_rule* directive?;
+    [qualifiers]:qualifier* [name]:identifier assign
+      [alternatives]:alternative+ [precedence_rules]:precedence_rule*;
 
   qualifier =
-    {dangling} dangling_keyword |
+    {root} root_keyword |
+    {incremental} incremental_keyword |
     {token} token_keyword |
-    {root} incremental_keyword? root_keyword;
+    {dangling} dangling_keyword |
+    {investigator} investigator_keyword |
+    {selector} selector_keyword;
 
   alternative =
     alternative_name? [elements]:element*;
@@ -632,13 +645,10 @@ Abstract Syntax Tree
     {at_least} caret l_par number three_dots r_par;
 
   precedence_rule =
-    {left} left_keyword [identifiers]:identifier+ |
-    {right} right_keyword [identifiers]:identifier+ |
-    {unary} unary_keyword [identifiers]:identifier+;
-
-  directive =
-    {selector} selector_keyword [name]:identifier |
-    {investigator} investigator_keyword [name]:identifier;
+    {left} left_keyword [identifiers]:identifier* |
+    {right} right_keyword [identifiers]:identifier* |
+    {not} not_keyword [identifiers]:identifier* |
+    {unary} unary_keyword [identifiers]:identifier*;
 
   tree =
     tree_keyword [tree_productions]:tree_production+ transformation?;
