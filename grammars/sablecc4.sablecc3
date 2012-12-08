@@ -207,7 +207,7 @@ Productions
 
   named_expression
     =
-      identifier assign expression semicolon
+      identifier assign expression? semicolon
         {-> New named_expression(identifier, assign, expression) }
     ;
 
@@ -565,7 +565,7 @@ Abstract Syntax Tree
     lexer_keyword [named_expressions]:named_expression*;
 
   named_expression =
-    [name]:identifier assign expression;
+    [name]:identifier assign expression?;
 
   expression =
     {or} [left]:expression bar [right]:expression |
