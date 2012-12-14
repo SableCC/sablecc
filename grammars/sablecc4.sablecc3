@@ -93,6 +93,7 @@ Helpers
 
 Tokens
 
+  action_keyword = 'Action';
   alternative_keyword = 'Alternative';
   any_keyword = 'Any';
   dangling_keyword = 'Dangling';
@@ -103,7 +104,6 @@ Tokens
   grammar_keyword = 'Grammar';
   ignored_keyword = 'Ignored';
   incremental_keyword = 'Incremental';
-  investigator_keyword = 'Investigator';
   left_keyword = 'Left';
   lexer_keyword = 'Lexer';
   list_keyword = 'List';
@@ -120,7 +120,7 @@ Tokens
   rejected_keyword = 'Rejected';
   right_keyword = 'Right';
   root_keyword = 'Root';
-  selector_keyword = 'Selector';
+  selection_keyword = 'Selection';
   separator_keyword = 'Separator';
   shortest_keyword = 'Shortest';
   start_keyword = 'Start';
@@ -404,9 +404,9 @@ Productions
     |
       {dangling} dangling_keyword
     |
-      {investigator} investigator_keyword
+      {action} action_keyword
     |
-      {selector} selector_keyword
+      {selection} selection_keyword
     ;
 
   alternatives
@@ -622,8 +622,8 @@ Abstract Syntax Tree
     {incremental} incremental_keyword |
     {token} token_keyword |
     {dangling} dangling_keyword |
-    {investigator} investigator_keyword |
-    {selector} selector_keyword;
+    {action} action_keyword |
+    {selection} selection_keyword;
 
   alternative =
     alternative_name? [elements]:element*;
