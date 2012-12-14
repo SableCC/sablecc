@@ -62,24 +62,20 @@ public class SableCC {
             System.exit(1);
         }
         catch (ParserException e) {
-            int start = e.getMessage().indexOf(' ');
-            System.err.print(new MSyntaxError(e.getToken().getLine() + "", e
-                    .getToken().getPos() + "", e.getToken().getClass()
-                    .getSimpleName().substring(1), e.getToken().getText(), e
-                    .getMessage().substring(start)));
+            String line = "" + e.getToken().getLine();
+            String pos = "" + e.getToken().getPos();
+            int start = e.getMessage().indexOf(' ') + 1;
+
+            System.err.print(new MSyntaxError(line, pos, e.getToken()
+                    .getClass().getSimpleName().substring(1), e.getToken()
+                    .getText(), e.getMessage().substring(start)));
             System.err.flush();
             System.exit(1);
         }
         catch (LexerException e) {
-            int start = e.getMessage().indexOf('[') + 1;
-            int end = e.getMessage().indexOf(',');
-            String line = e.getMessage().substring(start, end);
-
-            start = e.getMessage().indexOf(',') + 1;
-            end = e.getMessage().indexOf(']');
-            String pos = e.getMessage().substring(start, end);
-
-            start = e.getMessage().indexOf(' ') + 1;
+            String line = "" + e.getToken().getLine();
+            String pos = "" + e.getToken().getPos();
+            int start = e.getMessage().indexOf(' ') + 1;
 
             System.err.print(new MLexicalError(line, pos, e.getMessage()
                     .substring(start)));

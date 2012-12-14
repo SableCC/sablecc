@@ -15,15 +15,10 @@
  * limitations under the License.
  */
 
-package org.sablecc.sablecc.core;
+package org.sablecc.sablecc.semantics;
 
-import org.sablecc.exception.*;
-import org.sablecc.sablecc.core.errormessage.*;
-import org.sablecc.sablecc.core.interfaces.*;
-import org.sablecc.sablecc.core.transformation.*;
 import org.sablecc.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
-import org.sablecc.util.*;
 
 public class SemanticException
         extends CompilerException {
@@ -38,7 +33,7 @@ public class SemanticException
 
         this.location = location;
     }
-
+/*
     public static SemanticException notImplemented(
             Token token) {
 
@@ -1048,5 +1043,5 @@ public class SemanticException
 
         return genericLocatedError(text, priority.getLocation());
     }
-
+*/
 }

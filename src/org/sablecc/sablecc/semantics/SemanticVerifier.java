@@ -17,16 +17,16 @@
 
 package org.sablecc.sablecc.semantics;
 
-import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class SemanticVerifier
-        extends DepthFirstAdapter {
+public class SemanticVerifier {
+
+    private Start ast;
 
     public SemanticVerifier(
             Start ast) {
 
-        // TODO: implement
+        this.ast = ast;
     }
 
     // TODO: change return type and return structure
@@ -34,7 +34,6 @@ public class SemanticVerifier
             Start ast) {
 
         SemanticVerifier verifier = new SemanticVerifier(ast);
-        ast.apply(verifier);
 
         // TODO: implement
     }
