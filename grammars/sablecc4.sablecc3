@@ -434,10 +434,15 @@ Productions
 
   element
     =
-      {normal} element_name? unit unary_operator?
+      element_name? element_body
+    ;
+
+  element_body
+    =
+      {normal} unit unary_operator?
     |
-      {separated} element_name? l_par [left]:unit separator_keyword [right]:unit r_par many_operator
-        {-> New element.separated(element_name, l_par, left, right, many_operator) }
+      {separated} l_par [left]:unit separator_keyword [right]:unit r_par many_operator
+        {-> New element_body.separated(l_par, left, right, many_operator) }
     ;
 
   unit
@@ -551,9 +556,9 @@ Productions
 
   element_reference
     =
-      {natural} identifier
+      {natural} element_body
     |
-      {transformed} identifier dot [subtree]:identifier
+      {transformed} element_body dot [subtree]:element_body
     ;
 
 Abstract Syntax Tree
@@ -624,8 +629,11 @@ Abstract Syntax Tree
     alternative_name? [elements]:element*;
 
   element =
-    {normal} element_name? unit unary_operator? |
-    {separated} element_name? l_par [left]:unit [right]:unit many_operator;
+    element_name? element_body;
+
+  element_body =
+    {normal} unit unary_operator? |
+    {separated} l_par [left]:unit [right]:unit many_operator;
 
   unit =
     {name} identifier |
@@ -690,5 +698,5 @@ Abstract Syntax Tree
     {right_reference} right_keyword l_par element_reference r_par;
 
   element_reference =
-    {natural} [element]:identifier |
-    {transformed} [element]:identifier dot [subtree]:identifier;
+    {natural} element_body |
+    {transformed} element_body dot [subtree]:element_body;
