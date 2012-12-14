@@ -178,7 +178,7 @@ Tokens
   invalid_alternative_name = '{' '<'? ascii_id_continue*;
   invalid_element_name = '[' '<'? ascii_id_continue*;
 
-  invalid_character = [0..0xffff];
+  invalid_token = [0..0xffff];
 
 Ignored Tokens
 
