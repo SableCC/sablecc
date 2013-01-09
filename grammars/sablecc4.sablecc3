@@ -332,9 +332,9 @@ Productions
     |
       {number} caret number
     |
-      {interval} caret l_par [from]:number two_dots [to]:number r_par
+      {interval} caret [from]:number two_dots [to]:number
     |
-      {at_least} caret l_par number three_dots r_par
+      {at_least} caret number three_dots
     ;
 
   parser
@@ -649,8 +649,8 @@ Abstract Syntax Tree
     {zero_or_more} star |
     {one_or_more} plus |
     {number} caret number |
-    {interval} caret l_par [from]:number two_dots [to]:number r_par |
-    {at_least} caret l_par number three_dots r_par;
+    {interval} caret [from]:number two_dots [to]:number |
+    {at_least} caret number three_dots;
 
   precedence_rule =
     {left} left_keyword [identifiers]:identifier* |
