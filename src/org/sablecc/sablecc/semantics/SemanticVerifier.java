@@ -23,7 +23,7 @@ public class SemanticVerifier {
 
     private Start ast;
 
-    public SemanticVerifier(
+    private SemanticVerifier(
             Start ast) {
 
         this.ast = ast;
@@ -35,6 +35,14 @@ public class SemanticVerifier {
 
         SemanticVerifier verifier = new SemanticVerifier(ast);
 
+        verifier.collectDeclarations();
+
         // TODO: implement
+    }
+
+    private void collectDeclarations() {
+
+        // TODO Auto-generated method stub
+
     }
 }

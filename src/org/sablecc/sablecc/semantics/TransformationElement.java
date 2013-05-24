@@ -17,18 +17,7 @@
 
 package org.sablecc.sablecc.semantics;
 
-import java.util.*;
+public class TransformationElement {
 
-import org.sablecc.sablecc.syntax3.node.*;
-
-public class Grammar {
-
-    private AGrammar declaration;
-
-    private Map<Node, Object> nodeMap;
-
-    private NameSpace parserNameSpace;
-
-    private NameSpace treeNameSpace;
-
+    private Grammar grammar;
 }

@@ -17,6 +17,11 @@
 
 package org.sablecc.sablecc.semantics;
 
+import org.sablecc.sablecc.syntax3.node.*;
+
 public class Production {
 
+    private Grammar grammar;
+
+    private Node declaration;
 }

@@ -19,4 +19,5 @@ package org.sablecc.sablecc.semantics;
 
 public class Element {
 
+    private Grammar grammar;
 }

@@ -17,6 +17,11 @@
 
 package org.sablecc.sablecc.semantics;
 
+import org.sablecc.sablecc.syntax3.node.*;
+
 public class Expression {
 
+    private Grammar grammar;
+
+    private PExpression declaration;
 }
