@@ -17,11 +17,14 @@
 
 package org.sablecc.sablecc.semantics;
 
+import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class SemanticVerifier {
 
     private Start ast;
+
+    private Grammar grammar;
 
     private SemanticVerifier(
             Start ast) {
@@ -42,7 +45,52 @@ public class SemanticVerifier {
 
     private void collectDeclarations() {
 
-        // TODO Auto-generated method stub
+        // grammar, lexer and parser
+        this.ast.apply(new DepthFirstAdapter() {
+
+            private void visit(
+                    Node node) {
+
+                if (node != null) {
+                    node.apply(this);
+                }
+            }
+
+            @Override
+            public void caseAGrammar(
+                    AGrammar node) {
+
+                SemanticVerifier.this.grammar = new Grammar(node);
+                visit(node.getLexer());
+                visit(node.getParser());
+            }
+
+            @Override
+            public void caseANamedExpression(
+                    ANamedExpression node) {
+
+                SemanticVerifier.this.grammar.addExpression(node);
+            }
+        });
+
+        // tree
+        this.ast.apply(new DepthFirstAdapter() {
+
+            private void visit(
+                    Node node) {
+
+                if (node != null) {
+                    node.apply(this);
+                }
+            }
+
+            @Override
+            public void caseAGrammar(
+                    AGrammar node) {
+
+                visit(node.getTree());
+            }
+        });
 
     }
 }

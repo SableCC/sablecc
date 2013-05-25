@@ -21,14 +21,58 @@ import java.util.*;
 
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class Grammar {
+public class Grammar
+        implements Declaration {
 
     private AGrammar declaration;
 
-    private Map<Node, Object> nodeMap;
+    private Map<Node, Object> nodeMap = new HashMap<Node, Object>();
 
-    private NameSpace parserNameSpace;
+    private NameSpace parserNameSpace = new NameSpace();
 
-    private NameSpace treeNameSpace;
+    private NameSpace treeNameSpace = new NameSpace();
 
+    // Cached values
+
+    private String name;
+
+    private Token location;
+
+    Grammar(
+            AGrammar declaration) {
+
+        this.declaration = declaration;
+        this.nodeMap.put(declaration, this);
+        this.parserNameSpace.add(this);
+        this.treeNameSpace.add(this);
+    }
+
+    @Override
+    public String getName() {
+
+        if (this.name == null) {
+            this.name = this.declaration.getName().getText();
+        }
+
+        return this.name;
+    }
+
+    @Override
+    public Token getLocation() {
+
+        if (this.location == null) {
+            this.location = this.declaration.getName();
+        }
+
+        return this.location;
+    }
+
+    void addExpression(
+            Node declaration) {
+
+        Expression expression = new Expression(this, declaration);
+        this.nodeMap.put(declaration, expression);
+        this.parserNameSpace.add(expression);
+        this.treeNameSpace.add(expression);
+    }
 }

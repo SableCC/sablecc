@@ -17,11 +17,58 @@
 
 package org.sablecc.sablecc.semantics;
 
+import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class Expression {
+public class Expression
+        implements Declaration {
 
     private Grammar grammar;
 
-    private PExpression declaration;
+    private Node declaration;
+
+    // Cached values
+
+    private String name;
+
+    private Token location;
+
+    Expression(
+            Grammar grammar,
+            Node declaration) {
+
+        this.grammar = grammar;
+        this.declaration = declaration;
+    }
+
+    @Override
+    public String getName() {
+
+        if (this.name == null) {
+            if (this.declaration instanceof ANamedExpression) {
+                this.name = ((ANamedExpression) this.declaration).getName()
+                        .getText();
+            }
+            else {
+                throw new InternalException("unhandled case");
+            }
+        }
+
+        return this.name;
+    }
+
+    @Override
+    public Token getLocation() {
+
+        if (this.location == null) {
+            if (this.declaration instanceof ANamedExpression) {
+                this.location = ((ANamedExpression) this.declaration).getName();
+            }
+            else {
+                throw new InternalException("unhandled case");
+            }
+        }
+
+        return this.location;
+    }
 }
