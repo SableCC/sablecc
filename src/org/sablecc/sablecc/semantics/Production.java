@@ -17,11 +17,68 @@
 
 package org.sablecc.sablecc.semantics;
 
+import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public class Production {
+public class Production
+        implements Declaration {
 
     private Grammar grammar;
 
     private Node declaration;
+
+    // Cached values
+
+    private String name;
+
+    private Token location;
+
+    Production(
+            Grammar grammar,
+            Node declaration) {
+
+        this.grammar = grammar;
+        this.declaration = declaration;
+    }
+
+    @Override
+    public String getName() {
+
+        if (this.name == null) {
+            if (this.declaration instanceof AParserProduction) {
+                this.name = ((AParserProduction) this.declaration).getName()
+                        .getText();
+            }
+            else if (this.declaration instanceof ATreeProduction) {
+                this.name = ((ATreeProduction) this.declaration).getName()
+                        .getText();
+            }
+            else {
+                throw new InternalException("unhandled case: "
+                        + this.declaration.getClass().getSimpleName());
+            }
+        }
+
+        return this.name;
+    }
+
+    @Override
+    public Token getLocation() {
+
+        if (this.location == null) {
+            if (this.declaration instanceof AParserProduction) {
+                this.location = ((AParserProduction) this.declaration)
+                        .getName();
+            }
+            else if (this.declaration instanceof ATreeProduction) {
+                this.location = ((ATreeProduction) this.declaration).getName();
+            }
+            else {
+                throw new InternalException("unhandled case: "
+                        + this.declaration.getClass().getSimpleName());
+            }
+        }
+
+        return this.location;
+    }
 }

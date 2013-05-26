@@ -45,7 +45,6 @@ public class SemanticVerifier {
 
     private void collectDeclarations() {
 
-        // grammar, lexer and parser
         this.ast.apply(new DepthFirstAdapter() {
 
             private void visit(
@@ -63,6 +62,7 @@ public class SemanticVerifier {
                 SemanticVerifier.this.grammar = new Grammar(node);
                 visit(node.getLexer());
                 visit(node.getParser());
+                visit(node.getTree());
             }
 
             @Override
@@ -71,26 +71,20 @@ public class SemanticVerifier {
 
                 SemanticVerifier.this.grammar.addExpression(node);
             }
-        });
 
-        // tree
-        this.ast.apply(new DepthFirstAdapter() {
+            @Override
+            public void caseAParserProduction(
+                    AParserProduction node) {
 
-            private void visit(
-                    Node node) {
-
-                if (node != null) {
-                    node.apply(this);
-                }
+                SemanticVerifier.this.grammar.addParserProduction(node);
             }
 
             @Override
-            public void caseAGrammar(
-                    AGrammar node) {
+            public void caseATreeProduction(
+                    ATreeProduction node) {
 
-                visit(node.getTree());
+                SemanticVerifier.this.grammar.addTreeProduction(node);
             }
         });
-
     }
 }

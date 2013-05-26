@@ -75,4 +75,20 @@ public class Grammar
         this.parserNameSpace.add(expression);
         this.treeNameSpace.add(expression);
     }
+
+    void addParserProduction(
+            AParserProduction declaration) {
+
+        Production production = new Production(this, declaration);
+        this.nodeMap.put(declaration, production);
+        this.parserNameSpace.add(production);
+    }
+
+    void addTreeProduction(
+            ATreeProduction declaration) {
+
+        Production production = new Production(this, declaration);
+        this.nodeMap.put(declaration, production);
+        this.treeNameSpace.add(production);
+    }
 }

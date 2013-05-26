@@ -28,10 +28,9 @@ public class NameSpace {
 
         String name = declaration.getName();
         if (this.nameMap.containsKey(name)) {
-            throw SemanticException
-                    .semanticError("Another \"" + name
-                            + "\" has already been declared",
-                            declaration.getLocation());
+            throw SemanticException.semanticError("Another \"" + name
+                    + "\" has already been declared.",
+                    declaration.getLocation());
         }
         this.nameMap.put(name, declaration);
     }

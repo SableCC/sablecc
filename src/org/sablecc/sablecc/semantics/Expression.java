@@ -50,7 +50,8 @@ public class Expression
                         .getText();
             }
             else {
-                throw new InternalException("unhandled case");
+                throw new InternalException("unhandled case: "
+                        + this.declaration.getClass().getSimpleName());
             }
         }
 
@@ -65,7 +66,8 @@ public class Expression
                 this.location = ((ANamedExpression) this.declaration).getName();
             }
             else {
-                throw new InternalException("unhandled case");
+                throw new InternalException("unhandled case: "
+                        + this.declaration.getClass().getSimpleName());
             }
         }
 
