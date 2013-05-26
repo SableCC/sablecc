@@ -41,6 +41,13 @@ public class Expression
         this.declaration = declaration;
     }
 
+    private String removeQuotes(
+            String string) {
+
+        int length = string.length();
+        return string.substring(1, length - 1);
+    }
+
     @Override
     public String getName() {
 
@@ -48,6 +55,21 @@ public class Expression
             if (this.declaration instanceof ANamedExpression) {
                 this.name = ((ANamedExpression) this.declaration).getName()
                         .getText();
+            }
+            else if (this.declaration instanceof AIdentifierCharUnit) {
+                this.name = removeQuotes(((AIdentifierCharUnit) this.declaration)
+                        .getIdentifierChar().getText());
+            }
+            else if (this.declaration instanceof ACharUnit) {
+                this.name = ((ACharUnit) this.declaration).getChar().getText();
+            }
+            else if (this.declaration instanceof AIdentifierStringUnit) {
+                this.name = removeQuotes(((AIdentifierStringUnit) this.declaration)
+                        .getIdentifierString().getText());
+            }
+            else if (this.declaration instanceof AStringUnit) {
+                this.name = removeQuotes(((AStringUnit) this.declaration)
+                        .getString().getText());
             }
             else {
                 throw new InternalException("unhandled case: "

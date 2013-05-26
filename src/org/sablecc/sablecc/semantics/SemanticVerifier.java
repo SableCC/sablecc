@@ -73,14 +73,42 @@ public class SemanticVerifier {
             }
 
             @Override
-            public void caseAParserProduction(
+            public void caseAIdentifierCharUnit(
+                    AIdentifierCharUnit node) {
+
+                SemanticVerifier.this.grammar.addImplicitExpression(node);
+            }
+
+            @Override
+            public void caseACharUnit(
+                    ACharUnit node) {
+
+                SemanticVerifier.this.grammar.addImplicitExpression(node);
+            }
+
+            @Override
+            public void caseAIdentifierStringUnit(
+                    AIdentifierStringUnit node) {
+
+                SemanticVerifier.this.grammar.addImplicitExpression(node);
+            }
+
+            @Override
+            public void caseAStringUnit(
+                    AStringUnit node) {
+
+                SemanticVerifier.this.grammar.addImplicitExpression(node);
+            }
+
+            @Override
+            public void outAParserProduction(
                     AParserProduction node) {
 
                 SemanticVerifier.this.grammar.addParserProduction(node);
             }
 
             @Override
-            public void caseATreeProduction(
+            public void outATreeProduction(
                     ATreeProduction node) {
 
                 SemanticVerifier.this.grammar.addTreeProduction(node);

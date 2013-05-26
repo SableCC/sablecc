@@ -76,6 +76,17 @@ public class Grammar
         this.treeNameSpace.add(expression);
     }
 
+    void addImplicitExpression(
+            Node declaration) {
+
+        Expression expression = new Expression(this, declaration);
+        this.nodeMap.put(declaration, expression);
+        if (this.parserNameSpace.get(expression.getName()) == null) {
+            this.parserNameSpace.add(expression);
+            this.treeNameSpace.add(expression);
+        }
+    }
+
     void addParserProduction(
             AParserProduction declaration) {
 

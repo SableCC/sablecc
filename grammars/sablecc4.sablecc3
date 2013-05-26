@@ -135,7 +135,9 @@ Tokens
   element_name = '[' (normal_identifier | rich_identifier) ':]';
 
   empty_string = ''' ''';
+  identifier_char = ''' lowercase ''';
   char = ''' (string_char | string_escape) ''';
+  identifier_string = ''' normal_identifier ''';
   string = ''' (string_char | string_escape)+ ''';
   number = decimal_digit+;
 
@@ -265,6 +267,9 @@ Productions
       {empty_string} empty_string
         {-> New expression.empty_string(empty_string) }
     |
+      {identifier_char} identifier_char
+        {-> New expression.identifier_char(identifier_char) }
+    |
       {char} char
         {-> New expression.char(char) }
     |
@@ -273,6 +278,9 @@ Productions
     |
       {hex} hex_char
         {-> New expression.hex(hex_char) }
+    |
+      {identifier_string} identifier_string
+        {-> New expression.identifier_string(identifier_string) }
     |
       {string} string
         {-> New expression.string(string) }
@@ -310,6 +318,8 @@ Productions
 
   character
     =
+      {identifier_char} identifier_char
+    |
       {char} char
     |
       {dec} dec_char
@@ -449,7 +459,11 @@ Productions
     =
       {name} identifier
     |
+      {identifier_char} identifier_char
+    |
       {char} char
+    |
+      {identifier_string} identifier_string
     |
       {string} string
     |
@@ -581,9 +595,11 @@ Abstract Syntax Tree
     {concatenation} [left]:expression [right]:expression |
     {unary_operator} expression unary_operator |
     {empty_string} empty_string |
+    {identifier_char} identifier_char |
     {char} char |
     {dec} dec_char |
     {hex} hex_char |
+    {identifier_string} identifier_string |
     {string} string |
     {any} any_keyword |
     {start} start_keyword |
@@ -598,6 +614,7 @@ Abstract Syntax Tree
       many_operator;
 
   character =
+    {identifier_char} identifier_char |
     {char} char |
     {dec} dec_char |
     {hex} hex_char;
@@ -637,7 +654,9 @@ Abstract Syntax Tree
 
   unit =
     {name} identifier |
+    {identifier_char} identifier_char |
     {char} char |
+    {identifier_string} identifier_string |
     {string} string |
     {end} end_keyword;
 
