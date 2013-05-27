@@ -100,15 +100,17 @@ public class SemanticVerifier {
                 SemanticVerifier.this.grammar.addImplicitExpression(node);
             }
 
+            // add production then visit subtree to collect implicit expressions
             @Override
-            public void outAParserProduction(
+            public void inAParserProduction(
                     AParserProduction node) {
 
                 SemanticVerifier.this.grammar.addParserProduction(node);
             }
 
+            // do not collect implicit expressions in subtree
             @Override
-            public void outATreeProduction(
+            public void caseATreeProduction(
                     ATreeProduction node) {
 
                 SemanticVerifier.this.grammar.addTreeProduction(node);
