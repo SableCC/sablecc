@@ -72,6 +72,14 @@ public class SemanticVerifier {
                 SemanticVerifier.this.grammar.addExpression(node);
             }
 
+            // add production then visit subtree to collect implicit expressions
+            @Override
+            public void inAParserProduction(
+                    AParserProduction node) {
+
+                SemanticVerifier.this.grammar.addParserProduction(node);
+            }
+
             @Override
             public void caseAIdentifierCharUnit(
                     AIdentifierCharUnit node) {
@@ -100,12 +108,14 @@ public class SemanticVerifier {
                 SemanticVerifier.this.grammar.addImplicitExpression(node);
             }
 
-            // add production then visit subtree to collect implicit expressions
+            // do not collect implicit expressions in transformation
             @Override
-            public void inAParserProduction(
-                    AParserProduction node) {
+            public void caseATree(
+                    ATree node) {
 
-                SemanticVerifier.this.grammar.addParserProduction(node);
+                for (PTreeProduction treeProduction : node.getTreeProductions()) {
+                    visit(treeProduction);
+                }
             }
 
             // do not collect implicit expressions in subtree
