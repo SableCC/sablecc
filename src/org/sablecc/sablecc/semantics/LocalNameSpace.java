@@ -22,9 +22,7 @@ import java.util.Map.Entry;
 
 public class LocalNameSpace<T extends LocalDeclaration> {
 
-    private Map<String, T> unambiguousNameMap;
-
-    private Map<String, T> internalNameMap;
+    private Map<String, T> nameMap;
 
     LocalNameSpace(
             List<T> localDeclarations) {
@@ -46,9 +44,8 @@ public class LocalNameSpace<T extends LocalDeclaration> {
             List<T> declarations = entry.getValue();
             if (declarations.size() == 1) {
                 T declaration = declarations.get(0);
-                this.unambiguousNameMap.put(name, declaration);
+                this.nameMap.put(name, declaration);
                 declaration.setUnambiguousName(name);
-                this.internalNameMap.put(name, declaration);
                 declaration.setInternalName(name);
             }
             else {
@@ -56,22 +53,15 @@ public class LocalNameSpace<T extends LocalDeclaration> {
                 for (T declaration : declarations) {
                     String unambiguousName = name + "." + index++;
                     declaration.setUnambiguousName("");
-                    this.internalNameMap.put(unambiguousName, declaration);
                     declaration.setInternalName(unambiguousName);
                 }
             }
         }
     }
 
-    public T getUnambiguous(
-            String unambiguousName) {
+    public T get(
+            String name) {
 
-        return this.unambiguousNameMap.get(unambiguousName);
-    }
-
-    public T getInternal(
-            String internalName) {
-
-        return this.internalNameMap.get(internalName);
+        return this.nameMap.get(name);
     }
 }
