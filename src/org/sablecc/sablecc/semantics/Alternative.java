@@ -17,7 +17,15 @@
 
 package org.sablecc.sablecc.semantics;
 
-public class Alternative {
+public class Alternative
+        extends LocalDeclaration {
 
     private Grammar grammar;
+
+    @Override
+    public String getName() {
+
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

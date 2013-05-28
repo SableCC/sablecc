@@ -41,13 +41,6 @@ public class Expression
         this.declaration = declaration;
     }
 
-    private String removeQuotes(
-            String string) {
-
-        int length = string.length();
-        return string.substring(1, length - 1);
-    }
-
     @Override
     public String getName() {
 
@@ -94,5 +87,12 @@ public class Expression
         }
 
         return this.location;
+    }
+
+    private String removeQuotes(
+            String string) {
+
+        int length = string.length();
+        return string.substring(1, length - 1);
     }
 }

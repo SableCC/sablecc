@@ -23,6 +23,12 @@ public class NameSpace {
 
     private final Map<String, Declaration> nameMap = new TreeMap<String, Declaration>();
 
+    public Declaration get(
+            String name) {
+
+        return this.nameMap.get(name);
+    }
+
     void add(
             Declaration declaration) {
 
@@ -33,12 +39,6 @@ public class NameSpace {
                     declaration.getLocation());
         }
         this.nameMap.put(name, declaration);
-    }
-
-    public Declaration get(
-            String name) {
-
-        return this.nameMap.get(name);
     }
 
 }
