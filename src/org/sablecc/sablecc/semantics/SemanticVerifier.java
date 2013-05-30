@@ -84,28 +84,28 @@ public class SemanticVerifier {
             public void caseAIdentifierCharUnit(
                     AIdentifierCharUnit node) {
 
-                SemanticVerifier.this.grammar.addImplicitExpression(node);
+                SemanticVerifier.this.grammar.addInlineExpression(node);
             }
 
             @Override
             public void caseACharUnit(
                     ACharUnit node) {
 
-                SemanticVerifier.this.grammar.addImplicitExpression(node);
+                SemanticVerifier.this.grammar.addInlineExpression(node);
             }
 
             @Override
             public void caseAIdentifierStringUnit(
                     AIdentifierStringUnit node) {
 
-                SemanticVerifier.this.grammar.addImplicitExpression(node);
+                SemanticVerifier.this.grammar.addInlineExpression(node);
             }
 
             @Override
             public void caseAStringUnit(
                     AStringUnit node) {
 
-                SemanticVerifier.this.grammar.addImplicitExpression(node);
+                SemanticVerifier.this.grammar.addInlineExpression(node);
             }
 
             // do not collect implicit expressions in transformation

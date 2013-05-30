@@ -31,6 +31,8 @@ public class Expression
 
     private String name;
 
+    private Boolean hasQuotedName;
+
     private Token location;
 
     Expression(
@@ -48,21 +50,26 @@ public class Expression
             if (this.declaration instanceof ANamedExpression) {
                 this.name = ((ANamedExpression) this.declaration).getName()
                         .getText();
+                this.hasQuotedName = false;
             }
             else if (this.declaration instanceof AIdentifierCharUnit) {
                 this.name = removeQuotes(((AIdentifierCharUnit) this.declaration)
                         .getIdentifierChar().getText());
+                this.hasQuotedName = true;
             }
             else if (this.declaration instanceof ACharUnit) {
                 this.name = ((ACharUnit) this.declaration).getChar().getText();
+                this.hasQuotedName = true;
             }
             else if (this.declaration instanceof AIdentifierStringUnit) {
                 this.name = removeQuotes(((AIdentifierStringUnit) this.declaration)
                         .getIdentifierString().getText());
+                this.hasQuotedName = true;
             }
             else if (this.declaration instanceof AStringUnit) {
-                this.name = removeQuotes(((AStringUnit) this.declaration)
-                        .getString().getText());
+                this.name = ((AStringUnit) this.declaration).getString()
+                        .getText();
+                this.hasQuotedName = true;
             }
             else {
                 throw new InternalException("unhandled case: "
@@ -74,11 +81,31 @@ public class Expression
     }
 
     @Override
+    public boolean hasQuotedName() {
+
+        return this.hasQuotedName;
+    }
+
+    @Override
     public Token getLocation() {
 
         if (this.location == null) {
             if (this.declaration instanceof ANamedExpression) {
                 this.location = ((ANamedExpression) this.declaration).getName();
+            }
+            else if (this.declaration instanceof AIdentifierCharUnit) {
+                this.location = ((AIdentifierCharUnit) this.declaration)
+                        .getIdentifierChar();
+            }
+            else if (this.declaration instanceof ACharUnit) {
+                this.location = ((ACharUnit) this.declaration).getChar();
+            }
+            else if (this.declaration instanceof AIdentifierStringUnit) {
+                this.location = ((AIdentifierStringUnit) this.declaration)
+                        .getIdentifierString();
+            }
+            else if (this.declaration instanceof AStringUnit) {
+                this.location = ((AStringUnit) this.declaration).getString();
             }
             else {
                 throw new InternalException("unhandled case: "

@@ -58,6 +58,12 @@ public class Grammar
     }
 
     @Override
+    public boolean hasQuotedName() {
+
+        return false;
+    }
+
+    @Override
     public Token getLocation() {
 
         if (this.location == null) {
@@ -84,12 +90,14 @@ public class Grammar
         this.parserNameSpace.add(production);
     }
 
-    void addImplicitExpression(
+    void addInlineExpression(
             Node declaration) {
 
         Expression expression = new Expression(this, declaration);
         this.nodeMap.put(declaration, expression);
-        if (this.parserNameSpace.get(expression.getName()) == null) {
+        Declaration previousDeclaration = this.parserNameSpace.get(expression
+                .getName());
+        if (previousDeclaration == null || !previousDeclaration.hasQuotedName()) {
             this.parserNameSpace.add(expression);
             this.treeNameSpace.add(expression);
         }

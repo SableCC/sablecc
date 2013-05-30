@@ -19,6 +19,8 @@ package org.sablecc.sablecc.semantics;
 
 import java.util.*;
 
+import org.sablecc.sablecc.syntax3.node.*;
+
 public class NameSpace {
 
     private final Map<String, Declaration> nameMap = new TreeMap<String, Declaration>();
@@ -34,9 +36,12 @@ public class NameSpace {
 
         String name = declaration.getName();
         if (this.nameMap.containsKey(name)) {
-            throw SemanticException.semanticError("Another \"" + name
-                    + "\" has already been declared.",
-                    declaration.getLocation());
+            Token location = this.nameMap.get(name).getLocation();
+            throw SemanticException.semanticError(
+                    "Another \"" + name
+                            + "\" has already been declared on line "
+                            + location.getLine() + " char " + location.getPos()
+                            + ".", declaration.getLocation());
         }
         this.nameMap.put(name, declaration);
     }

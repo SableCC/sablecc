@@ -63,6 +63,12 @@ public class Production
     }
 
     @Override
+    public boolean hasQuotedName() {
+
+        return false;
+    }
+
+    @Override
     public Token getLocation() {
 
         if (this.location == null) {
