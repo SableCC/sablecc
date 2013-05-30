@@ -90,7 +90,7 @@ public class Grammar
         this.parserNameSpace.add(production);
     }
 
-    void addInlineExpression(
+    void addInlinedExpression(
             Node declaration) {
 
         Expression expression = new Expression(this, declaration);
