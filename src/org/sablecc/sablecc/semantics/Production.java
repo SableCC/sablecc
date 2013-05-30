@@ -63,7 +63,7 @@ public class Production
     }
 
     @Override
-    public boolean hasQuotedName() {
+    public boolean isInlinedExpression() {
 
         return false;
     }

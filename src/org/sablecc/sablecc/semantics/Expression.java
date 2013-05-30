@@ -31,7 +31,7 @@ public class Expression
 
     private String name;
 
-    private Boolean hasQuotedName;
+    private Boolean isInlinedExpression;
 
     private Token location;
 
@@ -50,26 +50,26 @@ public class Expression
             if (this.declaration instanceof ANamedExpression) {
                 this.name = ((ANamedExpression) this.declaration).getName()
                         .getText();
-                this.hasQuotedName = false;
+                this.isInlinedExpression = false;
             }
             else if (this.declaration instanceof AIdentifierCharUnit) {
                 this.name = removeQuotes(((AIdentifierCharUnit) this.declaration)
                         .getIdentifierChar().getText());
-                this.hasQuotedName = true;
+                this.isInlinedExpression = true;
             }
             else if (this.declaration instanceof ACharUnit) {
                 this.name = ((ACharUnit) this.declaration).getChar().getText();
-                this.hasQuotedName = true;
+                this.isInlinedExpression = true;
             }
             else if (this.declaration instanceof AIdentifierStringUnit) {
                 this.name = removeQuotes(((AIdentifierStringUnit) this.declaration)
                         .getIdentifierString().getText());
-                this.hasQuotedName = true;
+                this.isInlinedExpression = true;
             }
             else if (this.declaration instanceof AStringUnit) {
                 this.name = ((AStringUnit) this.declaration).getString()
                         .getText();
-                this.hasQuotedName = true;
+                this.isInlinedExpression = true;
             }
             else {
                 throw new InternalException("unhandled case: "
@@ -81,9 +81,9 @@ public class Expression
     }
 
     @Override
-    public boolean hasQuotedName() {
+    public boolean isInlinedExpression() {
 
-        return this.hasQuotedName;
+        return this.isInlinedExpression;
     }
 
     @Override

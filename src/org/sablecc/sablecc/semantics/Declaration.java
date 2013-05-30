@@ -23,7 +23,7 @@ public interface Declaration {
 
     String getName();
 
-    boolean hasQuotedName();
+    boolean isInlinedExpression();
 
     Token getLocation();
 }

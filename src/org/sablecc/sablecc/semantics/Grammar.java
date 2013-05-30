@@ -58,7 +58,7 @@ public class Grammar
     }
 
     @Override
-    public boolean hasQuotedName() {
+    public boolean isInlinedExpression() {
 
         return false;
     }
@@ -97,7 +97,8 @@ public class Grammar
         this.nodeMap.put(declaration, expression);
         Declaration previousDeclaration = this.parserNameSpace.get(expression
                 .getName());
-        if (previousDeclaration == null || !previousDeclaration.hasQuotedName()) {
+        if (previousDeclaration == null
+                || !previousDeclaration.isInlinedExpression()) {
             this.parserNameSpace.add(expression);
             this.treeNameSpace.add(expression);
         }
