@@ -37,23 +37,16 @@ public abstract class LocalDeclaration {
         return this.internalName;
     }
 
-    void setUnambiguousName(
-            String unambiguousName) {
-
-        if (this.unambiguousName != null) {
-            throw new InternalException("unambiguousName is already set");
-        }
-
-        this.unambiguousName = unambiguousName;
-    }
-
-    void setInternalName(
+    void setUnambiguousAndInternalNames(
+            String unambiguousName,
             String internalName) {
 
         if (this.internalName != null) {
-            throw new InternalException("internalName is already set");
+            throw new InternalException(
+                    "unambiguousName and internalName are already set");
         }
 
+        this.unambiguousName = unambiguousName;
         this.internalName = internalName;
     }
 }

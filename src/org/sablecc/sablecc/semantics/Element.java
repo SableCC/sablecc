@@ -29,6 +29,8 @@ public class Element
 
     // Cached values
 
+    private boolean nameIsCached;
+
     private String name;
 
     Element(
@@ -42,11 +44,12 @@ public class Element
     @Override
     public String getName() {
 
-        if (this.name == null) {
+        if (!this.nameIsCached) {
             TElementName elementName = this.declaration.getElementName();
             if (elementName != null) {
                 String text = elementName.getText();
                 this.name = text.substring(1, text.length() - 2);
+                this.nameIsCached = true;
             }
             else {
                 this.declaration.apply(new TreeWalker() {
@@ -68,7 +71,8 @@ public class Element
                             visit(node.getUnit());
                         }
                         else {
-                            Element.this.name = "";
+                            // anonymous
+                            Element.this.nameIsCached = true;
                         }
                     }
 
@@ -76,7 +80,8 @@ public class Element
                     public void caseASeparatedElementBody(
                             ASeparatedElementBody node) {
 
-                        Element.this.name = "";
+                        // anonymous
+                        Element.this.nameIsCached = true;
                     }
 
                     @Override
@@ -84,6 +89,7 @@ public class Element
                             ANameUnit node) {
 
                         Element.this.name = node.getIdentifier().getText();
+                        Element.this.nameIsCached = true;
                     }
 
                     @Override
@@ -92,13 +98,15 @@ public class Element
 
                         String text = node.getIdentifierChar().getText();
                         Element.this.name = text.substring(1, text.length() - 1);
+                        Element.this.nameIsCached = true;
                     }
 
                     @Override
                     public void caseACharUnit(
                             ACharUnit node) {
 
-                        Element.this.name = "";
+                        // anonymous
+                        Element.this.nameIsCached = true;
                     }
 
                     @Override
@@ -107,13 +115,15 @@ public class Element
 
                         String text = node.getIdentifierString().getText();
                         Element.this.name = text.substring(1, text.length() - 1);
+                        Element.this.nameIsCached = true;
                     }
 
                     @Override
                     public void caseAStringUnit(
                             AStringUnit node) {
 
-                        Element.this.name = "";
+                        // anonymous
+                        Element.this.nameIsCached = true;
                     }
 
                     @Override
@@ -121,10 +131,11 @@ public class Element
                             AEndUnit node) {
 
                         Element.this.name = "end";
+                        Element.this.nameIsCached = true;
                     }
                 });
 
-                if (this.name == null) {
+                if (!this.nameIsCached) {
                     throw new InternalException("unhandled case: "
                             + this.declaration);
                 }
@@ -137,6 +148,6 @@ public class Element
     @Override
     public String toString() {
 
-        return "(" + getInternalName() + ")";
+        return "[" + getInternalName() + ":]";
     }
 }

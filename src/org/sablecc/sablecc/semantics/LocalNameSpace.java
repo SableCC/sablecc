@@ -28,15 +28,21 @@ public class LocalNameSpace<T extends LocalDeclaration> {
             List<T> localDeclarations) {
 
         Map<String, List<T>> declarationMap = new TreeMap<String, List<T>>();
+        List<T> anonymousList = new LinkedList<T>();
 
         for (T localDeclaration : localDeclarations) {
             String name = localDeclaration.getName();
-            List<T> declarations = declarationMap.get(name);
-            if (declarations == null) {
-                declarations = new LinkedList<T>();
-                declarationMap.put(name, declarations);
+            if (name == null) {
+                anonymousList.add(localDeclaration);
             }
-            declarations.add(localDeclaration);
+            else {
+                List<T> declarations = declarationMap.get(name);
+                if (declarations == null) {
+                    declarations = new LinkedList<T>();
+                    declarationMap.put(name, declarations);
+                }
+                declarations.add(localDeclaration);
+            }
         }
 
         for (Entry<String, List<T>> entry : declarationMap.entrySet()) {
@@ -44,18 +50,23 @@ public class LocalNameSpace<T extends LocalDeclaration> {
             List<T> declarations = entry.getValue();
             if (declarations.size() == 1) {
                 T declaration = declarations.get(0);
+                declaration.setUnambiguousAndInternalNames(name, name);
                 this.nameMap.put(name, declaration);
-                declaration.setUnambiguousName(name);
-                declaration.setInternalName(name);
             }
             else {
                 int index = 1;
                 for (T declaration : declarations) {
-                    String unambiguousName = name + "." + index++;
-                    declaration.setUnambiguousName("");
-                    declaration.setInternalName(unambiguousName);
+                    String internalName = name + "." + index++;
+                    declaration.setUnambiguousAndInternalNames(null,
+                            internalName);
                 }
             }
+        }
+
+        int index = 1;
+        for (T declaration : anonymousList) {
+            String internalName = "." + index++;
+            declaration.setUnambiguousAndInternalNames(null, internalName);
         }
     }
 

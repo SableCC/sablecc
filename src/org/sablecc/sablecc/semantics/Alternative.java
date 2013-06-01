@@ -35,6 +35,8 @@ public class Alternative
 
     // Cached values
 
+    private boolean nameIsCached;
+
     private String name;
 
     Alternative(
@@ -48,12 +50,13 @@ public class Alternative
     @Override
     public String getName() {
 
-        if (this.name == null) {
+        if (!this.nameIsCached) {
             TAlternativeName alternativeName = this.declaration
                     .getAlternativeName();
             if (alternativeName != null) {
                 String text = alternativeName.getText();
                 this.name = text.substring(1, text.length() - 2);
+                this.nameIsCached = true;
             }
             else {
                 Node parent = this.declaration.parent();
@@ -61,16 +64,18 @@ public class Alternative
                     AParserProduction production = (AParserProduction) parent;
                     if (production.getAlternatives().size() == 1) {
                         this.name = "";
+                        this.nameIsCached = true;
                     }
                 }
                 else {
                     ATreeProduction production = (ATreeProduction) parent;
                     if (production.getAlternatives().size() == 1) {
                         this.name = "";
+                        this.nameIsCached = true;
                     }
                 }
 
-                if (this.name == null) {
+                if (!this.nameIsCached) {
                     this.declaration.apply(new TreeWalker() {
 
                         @Override
@@ -79,6 +84,7 @@ public class Alternative
 
                             if (node.getElements().size() == 0) {
                                 Alternative.this.name = "empty";
+                                Alternative.this.nameIsCached = true;
                             }
                             else {
                                 visit(node.getElements().getFirst());
@@ -94,6 +100,7 @@ public class Alternative
                                 String text = elementName.getText();
                                 Alternative.this.name = text.substring(1,
                                         text.length() - 2);
+                                Alternative.this.nameIsCached = true;
                             }
                             else {
                                 visit(node.getElementBody());
@@ -111,7 +118,8 @@ public class Alternative
                                 visit(node.getUnit());
                             }
                             else {
-                                Alternative.this.name = "";
+                                // anonymous
+                                Alternative.this.nameIsCached = true;
                             }
                         }
 
@@ -119,7 +127,8 @@ public class Alternative
                         public void caseASeparatedElementBody(
                                 ASeparatedElementBody node) {
 
-                            Alternative.this.name = "";
+                            // anonymous
+                            Alternative.this.nameIsCached = true;
                         }
 
                         @Override
@@ -128,6 +137,7 @@ public class Alternative
 
                             Alternative.this.name = node.getIdentifier()
                                     .getText();
+                            Alternative.this.nameIsCached = true;
                         }
 
                         @Override
@@ -137,13 +147,15 @@ public class Alternative
                             String text = node.getIdentifierChar().getText();
                             Alternative.this.name = text.substring(1,
                                     text.length() - 1);
+                            Alternative.this.nameIsCached = true;
                         }
 
                         @Override
                         public void caseACharUnit(
                                 ACharUnit node) {
 
-                            Alternative.this.name = "";
+                            // anonymous
+                            Alternative.this.nameIsCached = true;
                         }
 
                         @Override
@@ -153,13 +165,15 @@ public class Alternative
                             String text = node.getIdentifierString().getText();
                             Alternative.this.name = text.substring(1,
                                     text.length() - 1);
+                            Alternative.this.nameIsCached = true;
                         }
 
                         @Override
                         public void caseAStringUnit(
                                 AStringUnit node) {
 
-                            Alternative.this.name = "";
+                            // anonymous
+                            Alternative.this.nameIsCached = true;
                         }
 
                         @Override
@@ -167,10 +181,11 @@ public class Alternative
                                 AEndUnit node) {
 
                             Alternative.this.name = "end";
+                            Alternative.this.nameIsCached = true;
                         }
                     });
 
-                    if (this.name == null) {
+                    if (!this.nameIsCached) {
                         throw new InternalException("unhandled case: "
                                 + this.declaration);
                     }
