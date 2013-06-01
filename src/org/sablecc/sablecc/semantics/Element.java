@@ -98,7 +98,7 @@ public class Element
                     public void caseACharUnit(
                             ACharUnit node) {
 
-                        Element.this.name = node.getChar().getText();
+                        Element.this.name = "";
                     }
 
                     @Override
@@ -113,14 +113,14 @@ public class Element
                     public void caseAStringUnit(
                             AStringUnit node) {
 
-                        Element.this.name = node.getString().getText();
+                        Element.this.name = "";
                     }
 
                     @Override
                     public void caseAEndUnit(
                             AEndUnit node) {
 
-                        Element.this.name = node.getEndKeyword().getText();
+                        Element.this.name = "end";
                     }
                 });
 

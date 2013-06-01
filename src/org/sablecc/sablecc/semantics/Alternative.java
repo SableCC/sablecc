@@ -77,7 +77,12 @@ public class Alternative
                         public void caseAAlternative(
                                 AAlternative node) {
 
-                            visit(node.getElements().getFirst());
+                            if (node.getElements().size() == 0) {
+                                Alternative.this.name = "empty";
+                            }
+                            else {
+                                visit(node.getElements().getFirst());
+                            }
                         }
 
                         @Override
@@ -138,7 +143,7 @@ public class Alternative
                         public void caseACharUnit(
                                 ACharUnit node) {
 
-                            Alternative.this.name = node.getChar().getText();
+                            Alternative.this.name = "";
                         }
 
                         @Override
@@ -154,15 +159,14 @@ public class Alternative
                         public void caseAStringUnit(
                                 AStringUnit node) {
 
-                            Alternative.this.name = node.getString().getText();
+                            Alternative.this.name = "";
                         }
 
                         @Override
                         public void caseAEndUnit(
                                 AEndUnit node) {
 
-                            Alternative.this.name = node.getEndKeyword()
-                                    .getText();
+                            Alternative.this.name = "end";
                         }
                     });
 
