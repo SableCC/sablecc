@@ -23,7 +23,7 @@ import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Production
-        implements Declaration {
+        extends Declaration {
 
     private Grammar grammar;
 
@@ -51,27 +51,16 @@ public class Production
     public String getName() {
 
         if (this.name == null) {
-            if (this.declaration instanceof AParserProduction) {
-                this.name = ((AParserProduction) this.declaration).getName()
-                        .getText();
-            }
-            else if (this.declaration instanceof ATreeProduction) {
-                this.name = ((ATreeProduction) this.declaration).getName()
-                        .getText();
-            }
-            else {
-                throw new InternalException("unhandled case: "
-                        + this.declaration.getClass().getSimpleName());
-            }
+            this.name = getLocation().getText();
         }
 
         return this.name;
     }
 
     @Override
-    public boolean isInlinedExpression() {
+    public String getLookupName() {
 
-        return false;
+        return getName();
     }
 
     @Override

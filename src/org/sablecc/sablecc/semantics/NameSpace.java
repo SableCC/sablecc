@@ -34,16 +34,16 @@ public class NameSpace {
     void add(
             Declaration declaration) {
 
-        String name = declaration.getName();
-        if (this.nameMap.containsKey(name)) {
-            Token location = this.nameMap.get(name).getLocation();
+        String lookupName = declaration.getLookupName();
+        if (this.nameMap.containsKey(lookupName)) {
+            Token location = this.nameMap.get(lookupName).getLocation();
             throw SemanticException.semanticError(
-                    "Another \"" + name
+                    "Another \"" + lookupName
                             + "\" has already been declared on line "
                             + location.getLine() + " char " + location.getPos()
                             + ".", declaration.getLocation());
         }
-        this.nameMap.put(name, declaration);
+        this.nameMap.put(lookupName, declaration);
     }
 
 }

@@ -22,7 +22,7 @@ import java.util.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Grammar
-        implements Declaration {
+        extends Declaration {
 
     private AGrammar declaration;
 
@@ -31,6 +31,8 @@ public class Grammar
     private NameSpace parserNameSpace = new NameSpace();
 
     private NameSpace treeNameSpace = new NameSpace();
+
+    private int nextInternalNameIndex = 1;
 
     // Cached values
 
@@ -51,16 +53,16 @@ public class Grammar
     public String getName() {
 
         if (this.name == null) {
-            this.name = this.declaration.getName().getText();
+            this.name = getLocation().getText();
         }
 
         return this.name;
     }
 
     @Override
-    public boolean isInlinedExpression() {
+    public String getLookupName() {
 
-        return false;
+        return getName();
     }
 
     @Override
@@ -107,6 +109,7 @@ public class Grammar
             Node declaration) {
 
         Expression expression = new Expression(this, declaration);
+        expression.setInternalName(expression.getName());
         this.nodeMap.put(declaration, expression);
         this.parserNameSpace.add(expression);
         this.treeNameSpace.add(expression);
@@ -116,11 +119,22 @@ public class Grammar
             Node declaration) {
 
         Expression expression = new Expression(this, declaration);
+
+        String name = expression.getName();
+        String lookupName = expression.getLookupName();
+        if (lookupName.equals(name)) {
+            expression.setInternalName(lookupName);
+        }
+        else {
+            expression.setInternalName("." + this.nextInternalNameIndex++);
+        }
+
         this.nodeMap.put(declaration, expression);
+
         Declaration previousDeclaration = this.parserNameSpace.get(expression
-                .getName());
+                .getLookupName());
         if (previousDeclaration == null
-                || !previousDeclaration.isInlinedExpression()) {
+                || previousDeclaration.getName() != null) {
             this.parserNameSpace.add(expression);
             this.treeNameSpace.add(expression);
         }
@@ -130,6 +144,7 @@ public class Grammar
             AParserProduction declaration) {
 
         Production production = new Production(this, declaration);
+        production.setInternalName(production.getName());
         this.nodeMap.put(declaration, production);
         this.parserNameSpace.add(production);
     }
@@ -138,6 +153,7 @@ public class Grammar
             ATreeProduction declaration) {
 
         Production production = new Production(this, declaration);
+        production.setInternalName(production.getName());
         this.nodeMap.put(declaration, production);
         this.treeNameSpace.add(production);
     }

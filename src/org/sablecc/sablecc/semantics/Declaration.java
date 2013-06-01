@@ -17,13 +17,31 @@
 
 package org.sablecc.sablecc.semantics;
 
+import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
-public interface Declaration {
+public abstract class Declaration {
 
-    String getName();
+    private String internalName;
 
-    boolean isInlinedExpression();
+    public abstract String getName();
 
-    Token getLocation();
+    public abstract String getLookupName();
+
+    public String getInternalName() {
+
+        return this.internalName;
+    }
+
+    public abstract Token getLocation();
+
+    void setInternalName(
+            String internalName) {
+
+        if (this.internalName != null) {
+            throw new InternalException("internalName is already set");
+        }
+
+        this.internalName = internalName;
+    }
 }

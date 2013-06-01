@@ -21,7 +21,7 @@ import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Expression
-        implements Declaration {
+        extends Declaration {
 
     private Grammar grammar;
 
@@ -31,7 +31,7 @@ public class Expression
 
     private String name;
 
-    private Boolean isInlinedExpression;
+    private String lookupName;
 
     private Token location;
 
@@ -47,38 +47,14 @@ public class Expression
     public String getName() {
 
         if (this.name == null) {
-            if (this.declaration instanceof ANamedExpression) {
-                this.name = ((ANamedExpression) this.declaration).getName()
-                        .getText();
-                this.isInlinedExpression = false;
-            }
-            else if (this.declaration instanceof AIdentifierCharUnit) {
-                this.name = removeQuotes(((AIdentifierCharUnit) this.declaration)
-                        .getIdentifierChar().getText());
-                this.isInlinedExpression = true;
-            }
-            else if (this.declaration instanceof ACharUnit) {
-                this.name = ((ACharUnit) this.declaration).getChar().getText();
-                this.isInlinedExpression = true;
-            }
-            else if (this.declaration instanceof AIdentifierStringUnit) {
-                this.name = removeQuotes(((AIdentifierStringUnit) this.declaration)
-                        .getIdentifierString().getText());
-                this.isInlinedExpression = true;
-            }
-            else if (this.declaration instanceof AStringUnit) {
-                this.name = ((AStringUnit) this.declaration).getString()
-                        .getText();
-                this.isInlinedExpression = true;
-            }
-            else if (this.declaration instanceof AEndUnit) {
-                this.name = ((AEndUnit) this.declaration).getEndKeyword()
-                        .getText();
-                this.isInlinedExpression = true;
+
+            Token nameToken = getLocation();
+
+            if (nameToken instanceof TIdentifier) {
+                this.name = nameToken.getText();
             }
             else {
-                throw new InternalException("unhandled case: "
-                        + this.declaration.getClass().getSimpleName());
+                this.name = null;
             }
         }
 
@@ -86,9 +62,29 @@ public class Expression
     }
 
     @Override
-    public boolean isInlinedExpression() {
+    public String getLookupName() {
 
-        return this.isInlinedExpression;
+        if (this.lookupName == null) {
+
+            Token nameToken = getLocation();
+
+            if (nameToken instanceof TIdentifier || nameToken instanceof TChar
+                    || nameToken instanceof TString
+                    || nameToken instanceof TEndKeyword) {
+                this.lookupName = nameToken.getText();
+            }
+            else if (nameToken instanceof TIdentifierChar
+                    || nameToken instanceof TIdentifierString) {
+                String text = nameToken.getText();
+                this.lookupName = text.substring(1, text.length() - 1);
+            }
+            else {
+                throw new InternalException("unhandled case: "
+                        + nameToken.getClass().getSimpleName());
+            }
+        }
+
+        return this.lookupName;
     }
 
     @Override
@@ -112,6 +108,9 @@ public class Expression
             else if (this.declaration instanceof AStringUnit) {
                 this.location = ((AStringUnit) this.declaration).getString();
             }
+            else if (this.declaration instanceof AEndUnit) {
+                this.location = ((AEndUnit) this.declaration).getEndKeyword();
+            }
             else {
                 throw new InternalException("unhandled case: "
                         + this.declaration.getClass().getSimpleName());
@@ -119,11 +118,5 @@ public class Expression
         }
 
         return this.location;
-    }
-
-    private String removeQuotes(
-            String string) {
-
-        return string.substring(1, string.length() - 1);
     }
 }
