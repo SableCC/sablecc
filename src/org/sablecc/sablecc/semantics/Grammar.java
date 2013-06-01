@@ -73,6 +73,36 @@ public class Grammar
         return this.location;
     }
 
+    public Expression getExpression(
+            Node declaration) {
+
+        return (Expression) this.nodeMap.get(declaration);
+    }
+
+    public Production getProduction(
+            AParserProduction declaration) {
+
+        return (Production) this.nodeMap.get(declaration);
+    }
+
+    public Production getProduction(
+            ATreeProduction declaration) {
+
+        return (Production) this.nodeMap.get(declaration);
+    }
+
+    public Alternative getAlternative(
+            AAlternative declaration) {
+
+        return (Alternative) this.nodeMap.get(declaration);
+    }
+
+    public Element getElement(
+            AElement declaration) {
+
+        return (Element) this.nodeMap.get(declaration);
+    }
+
     void addExpression(
             Node declaration) {
 
@@ -80,14 +110,6 @@ public class Grammar
         this.nodeMap.put(declaration, expression);
         this.parserNameSpace.add(expression);
         this.treeNameSpace.add(expression);
-    }
-
-    void addParserProduction(
-            AParserProduction declaration) {
-
-        Production production = new Production(this, declaration);
-        this.nodeMap.put(declaration, production);
-        this.parserNameSpace.add(production);
     }
 
     void addInlinedExpression(
@@ -104,11 +126,33 @@ public class Grammar
         }
     }
 
-    void addTreeProduction(
+    void addProduction(
+            AParserProduction declaration) {
+
+        Production production = new Production(this, declaration);
+        this.nodeMap.put(declaration, production);
+        this.parserNameSpace.add(production);
+    }
+
+    void addProduction(
             ATreeProduction declaration) {
 
         Production production = new Production(this, declaration);
         this.nodeMap.put(declaration, production);
         this.treeNameSpace.add(production);
+    }
+
+    void addAlternative(
+            AAlternative declaration) {
+
+        Alternative alternative = new Alternative(this, declaration);
+        this.nodeMap.put(declaration, alternative);
+    }
+
+    void addElement(
+            AElement declaration) {
+
+        Element element = new Element(this, declaration);
+        this.nodeMap.put(declaration, element);
     }
 }

@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 
 public class LocalNameSpace<T extends LocalDeclaration> {
 
-    private Map<String, T> nameMap;
+    private Map<String, T> nameMap = new TreeMap<String, T>();
 
     LocalNameSpace(
             List<T> localDeclarations) {

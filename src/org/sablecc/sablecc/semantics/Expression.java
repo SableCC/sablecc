@@ -71,6 +71,11 @@ public class Expression
                         .getText();
                 this.isInlinedExpression = true;
             }
+            else if (this.declaration instanceof AEndUnit) {
+                this.name = ((AEndUnit) this.declaration).getEndKeyword()
+                        .getText();
+                this.isInlinedExpression = true;
+            }
             else {
                 throw new InternalException("unhandled case: "
                         + this.declaration.getClass().getSimpleName());
@@ -119,7 +124,6 @@ public class Expression
     private String removeQuotes(
             String string) {
 
-        int length = string.length();
-        return string.substring(1, length - 1);
+        return string.substring(1, string.length() - 1);
     }
 }

@@ -17,7 +17,8 @@
 
 package org.sablecc.sablecc.semantics;
 
-import org.sablecc.sablecc.syntax3.analysis.*;
+import java.util.*;
+
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class SemanticVerifier {
@@ -39,21 +40,14 @@ public class SemanticVerifier {
         SemanticVerifier verifier = new SemanticVerifier(ast);
 
         verifier.collectDeclarations();
+        verifier.collectAlternativesAndElements();
 
         // TODO: implement
     }
 
     private void collectDeclarations() {
 
-        this.ast.apply(new DepthFirstAdapter() {
-
-            private void visit(
-                    Node node) {
-
-                if (node != null) {
-                    node.apply(this);
-                }
-            }
+        this.ast.apply(new TreeWalker() {
 
             @Override
             public void caseAGrammar(
@@ -77,7 +71,7 @@ public class SemanticVerifier {
             public void inAParserProduction(
                     AParserProduction node) {
 
-                SemanticVerifier.this.grammar.addParserProduction(node);
+                SemanticVerifier.this.grammar.addProduction(node);
             }
 
             @Override
@@ -123,7 +117,93 @@ public class SemanticVerifier {
             public void caseATreeProduction(
                     ATreeProduction node) {
 
-                SemanticVerifier.this.grammar.addTreeProduction(node);
+                SemanticVerifier.this.grammar.addProduction(node);
+            }
+        });
+    }
+
+    private void collectAlternativesAndElements() {
+
+        this.ast.apply(new TreeWalker() {
+
+            List<Element> elements;
+
+            List<Alternative> alternatives;
+
+            // do not visit transformation
+            @Override
+            public void caseATree(
+                    ATree node) {
+
+                for (PTreeProduction treeProduction : node.getTreeProductions()) {
+                    visit(treeProduction);
+                }
+            }
+
+            @Override
+            public void inAParserProduction(
+                    AParserProduction node) {
+
+                this.alternatives = new ArrayList<Alternative>(node
+                        .getAlternatives().size());
+            }
+
+            @Override
+            public void outAParserProduction(
+                    AParserProduction node) {
+
+                Production production = SemanticVerifier.this.grammar
+                        .getProduction(node);
+                production.setAlternatives(this.alternatives);
+                this.alternatives = null;
+            }
+
+            @Override
+            public void inATreeProduction(
+                    ATreeProduction node) {
+
+                this.alternatives = new ArrayList<Alternative>(node
+                        .getAlternatives().size());
+            }
+
+            @Override
+            public void outATreeProduction(
+                    ATreeProduction node) {
+
+                Production production = SemanticVerifier.this.grammar
+                        .getProduction(node);
+                production.setAlternatives(this.alternatives);
+                this.alternatives = null;
+            }
+
+            @Override
+            public void inAAlternative(
+                    AAlternative node) {
+
+                this.elements = new ArrayList<Element>(node.getElements()
+                        .size());
+            }
+
+            @Override
+            public void outAAlternative(
+                    AAlternative node) {
+
+                SemanticVerifier.this.grammar.addAlternative(node);
+                Alternative alternative = SemanticVerifier.this.grammar
+                        .getAlternative(node);
+                this.alternatives.add(alternative);
+
+                alternative.setElements(this.elements);
+                this.elements = null;
+            }
+
+            @Override
+            public void caseAElement(
+                    AElement node) {
+
+                SemanticVerifier.this.grammar.addElement(node);
+                this.elements.add(SemanticVerifier.this.grammar
+                        .getElement(node));
             }
         });
     }

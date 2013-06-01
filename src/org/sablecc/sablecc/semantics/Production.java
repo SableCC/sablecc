@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.semantics;
 
+import java.util.*;
+
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
@@ -26,6 +28,10 @@ public class Production
     private Grammar grammar;
 
     private Node declaration;
+
+    private List<Alternative> alternatives;
+
+    private LocalNameSpace<Alternative> localNameSpace;
 
     // Cached values
 
@@ -86,5 +92,28 @@ public class Production
         }
 
         return this.location;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(getName());
+        sb.append(" = ");
+        for (Alternative alternative : this.alternatives) {
+            sb.append("\n  " + alternative);
+        }
+        return sb.toString();
+    }
+
+    void setAlternatives(
+            List<Alternative> alternatives) {
+
+        if (this.alternatives != null) {
+            throw new InternalException("alternatives is already set");
+        }
+
+        this.alternatives = alternatives;
+        this.localNameSpace = new LocalNameSpace<Alternative>(alternatives);
     }
 }
