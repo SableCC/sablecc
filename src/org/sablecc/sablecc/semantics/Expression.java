@@ -50,8 +50,14 @@ public class Expression
 
             Token nameToken = getLocation();
 
-            if (nameToken instanceof TIdentifier) {
+            if (nameToken instanceof TIdentifier
+                    || nameToken instanceof TEndKeyword) {
                 this.name = nameToken.getText();
+            }
+            else if (nameToken instanceof TIdentifierChar
+                    || nameToken instanceof TIdentifierString) {
+                String text = nameToken.getText();
+                this.lookupName = text.substring(1, text.length() - 1);
             }
             else {
                 this.name = null;

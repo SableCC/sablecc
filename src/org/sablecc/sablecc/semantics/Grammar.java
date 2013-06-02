@@ -119,22 +119,22 @@ public class Grammar
             Node declaration) {
 
         Expression expression = new Expression(this, declaration);
-
         String name = expression.getName();
-        String lookupName = expression.getLookupName();
-        if (lookupName.equals(name)) {
-            expression.setInternalName(lookupName);
+        if (name != null) {
+            expression.setInternalName(name);
         }
         else {
             expression.setInternalName("." + this.nextInternalNameIndex++);
         }
-
         this.nodeMap.put(declaration, expression);
 
         Declaration previousDeclaration = this.parserNameSpace.get(expression
                 .getLookupName());
+
+        // only add if it's a new declaration or if it redeclares a normal
+        // expression
         if (previousDeclaration == null
-                || previousDeclaration.getName() != null) {
+                || previousDeclaration.getLocation() instanceof TIdentifier) {
             this.parserNameSpace.add(expression);
             this.treeNameSpace.add(expression);
         }
