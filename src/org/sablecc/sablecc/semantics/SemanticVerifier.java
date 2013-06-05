@@ -41,6 +41,7 @@ public class SemanticVerifier {
 
         verifier.collectDeclarations();
         verifier.collectAlternativesAndElements();
+        verifier.resolveReferences();
 
         // TODO: implement
     }
@@ -204,6 +205,19 @@ public class SemanticVerifier {
                 SemanticVerifier.this.grammar.addElement(node);
                 this.elements.add(SemanticVerifier.this.grammar
                         .getElement(node));
+            }
+        });
+    }
+
+    private void resolveReferences() {
+
+        this.ast.apply(new TreeWalker() {
+
+            @Override
+            public void caseANameExpression(
+                    ANameExpression node) {
+
+                SemanticVerifier.this.grammar.resolveExpression(node);
             }
         });
     }

@@ -19,6 +19,7 @@ package org.sablecc.sablecc.semantics;
 
 import java.util.*;
 
+import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Grammar
@@ -27,6 +28,8 @@ public class Grammar
     private AGrammar declaration;
 
     private Map<Node, Object> nodeMap = new HashMap<Node, Object>();
+
+    private Map<Node, Declaration> resolutionMap = new HashMap<Node, Declaration>();
 
     private NameSpace parserNameSpace = new NameSpace();
 
@@ -170,5 +173,37 @@ public class Grammar
 
         Element element = new Element(this, declaration);
         this.nodeMap.put(declaration, element);
+    }
+
+    public void resolveExpression(
+            ANameExpression nameExpression) {
+
+        TIdentifier nameIdentifier = nameExpression.getIdentifier();
+        String name = nameIdentifier.getText();
+        Declaration declaration = this.parserNameSpace.get(name);
+
+        if (declaration == null) {
+            declaration = this.treeNameSpace.get(name);
+
+            if (declaration == null) {
+                throw SemanticException.semanticError("No \"" + name
+                        + "\" has been declared.", nameIdentifier);
+            }
+
+            if (!(declaration instanceof Expression)) {
+                throw SemanticException.semanticError("\"" + name
+                        + "\" is not an expression.", nameIdentifier);
+            }
+
+            throw new InternalException(
+                    "an expression must be in both parser and tree name spaces");
+        }
+
+        if (!(declaration instanceof Expression)) {
+            throw SemanticException.semanticError("\"" + name
+                    + "\" is not an expression.", nameIdentifier);
+        }
+
+        this.resolutionMap.put(nameExpression, declaration);
     }
 }
