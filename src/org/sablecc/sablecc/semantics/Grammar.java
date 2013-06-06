@@ -29,7 +29,7 @@ public class Grammar
 
     private Map<Node, Object> nodeMap = new HashMap<Node, Object>();
 
-    private Map<Node, Declaration> resolutionMap = new HashMap<Node, Declaration>();
+    private Map<TIdentifier, Declaration> identifierResolutionMap = new HashMap<TIdentifier, Declaration>();
 
     private NameSpace parserNameSpace = new NameSpace();
 
@@ -175,7 +175,7 @@ public class Grammar
         this.nodeMap.put(declaration, element);
     }
 
-    public void resolveExpression(
+    void resolveExpression(
             ANameExpression nameExpression) {
 
         TIdentifier nameIdentifier = nameExpression.getIdentifier();
@@ -204,6 +204,48 @@ public class Grammar
                     + "\" is not an expression.", nameIdentifier);
         }
 
-        this.resolutionMap.put(nameExpression, declaration);
+        this.identifierResolutionMap.put(nameIdentifier, declaration);
+    }
+
+    void resolveParserIdentifier(
+            TIdentifier identifier) {
+
+        String name = identifier.getText();
+        Declaration declaration = this.parserNameSpace.get(name);
+
+        if (declaration == null) {
+            declaration = this.treeNameSpace.get(name);
+
+            if (declaration == null) {
+                throw SemanticException.semanticError("No \"" + name
+                        + "\" has been declared.", identifier);
+            }
+
+            throw SemanticException.semanticError("\"" + name
+                    + "\" is not a parser production.", identifier);
+        }
+
+        this.identifierResolutionMap.put(identifier, declaration);
+    }
+
+    void resolveTreeIdentifier(
+            TIdentifier identifier) {
+
+        String name = identifier.getText();
+        Declaration declaration = this.treeNameSpace.get(name);
+
+        if (declaration == null) {
+            declaration = this.parserNameSpace.get(name);
+
+            if (declaration == null) {
+                throw SemanticException.semanticError("No \"" + name
+                        + "\" has been declared.", identifier);
+            }
+
+            throw SemanticException.semanticError("\"" + name
+                    + "\" is not a tree production.", identifier);
+        }
+
+        this.identifierResolutionMap.put(identifier, declaration);
     }
 }
