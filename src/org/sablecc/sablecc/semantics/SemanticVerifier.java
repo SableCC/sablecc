@@ -42,6 +42,7 @@ public class SemanticVerifier {
         verifier.collectDeclarations();
         verifier.collectAlternativesAndElements();
         verifier.resolveParserAndTreeReferences();
+        verifier.resolveRemainingReferences();
 
         // TODO: implement
     }
@@ -127,6 +128,10 @@ public class SemanticVerifier {
 
         this.ast.apply(new TreeWalker() {
 
+            Production currentProduction;
+
+            Alternative currentAlternative;
+
             List<Element> elements;
 
             List<Alternative> alternatives;
@@ -145,6 +150,8 @@ public class SemanticVerifier {
             public void inAParserProduction(
                     AParserProduction node) {
 
+                this.currentProduction = SemanticVerifier.this.grammar
+                        .getProduction(node);
                 this.alternatives = new ArrayList<Alternative>(node
                         .getAlternatives().size());
             }
@@ -153,9 +160,8 @@ public class SemanticVerifier {
             public void outAParserProduction(
                     AParserProduction node) {
 
-                Production production = SemanticVerifier.this.grammar
-                        .getProduction(node);
-                production.setAlternatives(this.alternatives);
+                this.currentProduction.setAlternatives(this.alternatives);
+                this.currentProduction = null;
                 this.alternatives = null;
             }
 
@@ -163,6 +169,8 @@ public class SemanticVerifier {
             public void inATreeProduction(
                     ATreeProduction node) {
 
+                this.currentProduction = SemanticVerifier.this.grammar
+                        .getProduction(node);
                 this.alternatives = new ArrayList<Alternative>(node
                         .getAlternatives().size());
             }
@@ -171,9 +179,8 @@ public class SemanticVerifier {
             public void outATreeProduction(
                     ATreeProduction node) {
 
-                Production production = SemanticVerifier.this.grammar
-                        .getProduction(node);
-                production.setAlternatives(this.alternatives);
+                this.currentProduction.setAlternatives(this.alternatives);
+                this.currentProduction = null;
                 this.alternatives = null;
             }
 
@@ -181,6 +188,11 @@ public class SemanticVerifier {
             public void inAAlternative(
                     AAlternative node) {
 
+                SemanticVerifier.this.grammar.addAlternative(
+                        this.currentProduction, node);
+                this.currentAlternative = SemanticVerifier.this.grammar
+                        .getAlternative(node);
+                this.alternatives.add(this.currentAlternative);
                 this.elements = new ArrayList<Element>(node.getElements()
                         .size());
             }
@@ -189,12 +201,8 @@ public class SemanticVerifier {
             public void outAAlternative(
                     AAlternative node) {
 
-                SemanticVerifier.this.grammar.addAlternative(node);
-                Alternative alternative = SemanticVerifier.this.grammar
-                        .getAlternative(node);
-                this.alternatives.add(alternative);
-
-                alternative.setElements(this.elements);
+                this.currentAlternative.setElements(this.elements);
+                this.currentAlternative = null;
                 this.elements = null;
             }
 
@@ -202,7 +210,8 @@ public class SemanticVerifier {
             public void caseAElement(
                     AElement node) {
 
-                SemanticVerifier.this.grammar.addElement(node);
+                SemanticVerifier.this.grammar.addElement(
+                        this.currentAlternative, node);
                 this.elements.add(SemanticVerifier.this.grammar
                         .getElement(node));
             }
@@ -246,6 +255,60 @@ public class SemanticVerifier {
                             .getIdentifier());
                 }
             }
+        });
+    }
+
+    private void resolveRemainingReferences() {
+
+        this.ast.apply(new TreeWalker() {
+
+            private Production currentProduction;
+
+            @Override
+            public void caseAParserProduction(
+                    AParserProduction node) {
+
+                this.currentProduction = SemanticVerifier.this.grammar
+                        .getProduction(node);
+                for (PPrecedenceRule precedenceRule : node.getPrecedenceRules()) {
+                    visit(precedenceRule);
+                }
+                this.currentProduction = null;
+            }
+
+            @Override
+            public void caseALeftPrecedenceRule(
+                    ALeftPrecedenceRule node) {
+
+                SemanticVerifier.this.grammar.resolveAlternativeIdentifiers(
+                        this.currentProduction, node.getIdentifiers());
+            }
+
+            @Override
+            public void caseARightPrecedenceRule(
+                    ARightPrecedenceRule node) {
+
+                SemanticVerifier.this.grammar.resolveAlternativeIdentifiers(
+                        this.currentProduction, node.getIdentifiers());
+            }
+
+            @Override
+            public void caseANotPrecedenceRule(
+                    ANotPrecedenceRule node) {
+
+                SemanticVerifier.this.grammar.resolveAlternativeIdentifiers(
+                        this.currentProduction, node.getIdentifiers());
+            }
+
+            @Override
+            public void caseAUnaryPrecedenceRule(
+                    AUnaryPrecedenceRule node) {
+
+                SemanticVerifier.this.grammar.resolveAlternativeIdentifiers(
+                        this.currentProduction, node.getIdentifiers());
+            }
+
+            // TODO: Handle references in transformation section.
         });
     }
 }

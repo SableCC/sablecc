@@ -25,6 +25,8 @@ public class Element
 
     private Grammar grammar;
 
+    private Alternative alternative;
+
     private AElement declaration;
 
     // Cached values
@@ -35,9 +37,11 @@ public class Element
 
     Element(
             Grammar grammar,
+            Alternative alternative,
             AElement declaration) {
 
         this.grammar = grammar;
+        this.alternative = alternative;
         this.declaration = declaration;
     }
 

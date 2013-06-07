@@ -24,6 +24,8 @@ public class LocalNameSpace<T extends LocalDeclaration> {
 
     private Map<String, T> nameMap = new TreeMap<String, T>();
 
+    private Set<String> nameSet = new TreeSet<String>();
+
     LocalNameSpace(
             List<T> localDeclarations) {
 
@@ -47,6 +49,7 @@ public class LocalNameSpace<T extends LocalDeclaration> {
 
         for (Entry<String, List<T>> entry : declarationMap.entrySet()) {
             String name = entry.getKey();
+            this.nameSet.add(name);
             List<T> declarations = entry.getValue();
             if (declarations.size() == 1) {
                 T declaration = declarations.get(0);
@@ -74,5 +77,11 @@ public class LocalNameSpace<T extends LocalDeclaration> {
             String name) {
 
         return this.nameMap.get(name);
+    }
+
+    public boolean has(
+            String name) {
+
+        return this.nameSet.contains(name);
     }
 }

@@ -95,6 +95,18 @@ public class Production
         return sb.toString();
     }
 
+    public Alternative getAlternative(
+            String name) {
+
+        return this.localNameSpace.get(name);
+    }
+
+    public boolean hasAlternative(
+            String name) {
+
+        return this.localNameSpace.has(name);
+    }
+
     void setAlternatives(
             List<Alternative> alternatives) {
 

@@ -29,7 +29,9 @@ public class Grammar
 
     private Map<Node, Object> nodeMap = new HashMap<Node, Object>();
 
-    private Map<TIdentifier, Declaration> identifierResolutionMap = new HashMap<TIdentifier, Declaration>();
+    private Map<TIdentifier, Declaration> declarationResolutionMap = new HashMap<TIdentifier, Declaration>();
+
+    private Map<TIdentifier, Alternative> alternativeResolutionMap = new HashMap<TIdentifier, Alternative>();
 
     private NameSpace parserNameSpace = new NameSpace();
 
@@ -162,16 +164,18 @@ public class Grammar
     }
 
     void addAlternative(
+            Production production,
             AAlternative declaration) {
 
-        Alternative alternative = new Alternative(this, declaration);
+        Alternative alternative = new Alternative(this, production, declaration);
         this.nodeMap.put(declaration, alternative);
     }
 
     void addElement(
+            Alternative alternative,
             AElement declaration) {
 
-        Element element = new Element(this, declaration);
+        Element element = new Element(this, alternative, declaration);
         this.nodeMap.put(declaration, element);
     }
 
@@ -204,7 +208,7 @@ public class Grammar
                     + "\" is not an expression.", nameIdentifier);
         }
 
-        this.identifierResolutionMap.put(nameIdentifier, declaration);
+        this.declarationResolutionMap.put(nameIdentifier, declaration);
     }
 
     void resolveParserIdentifier(
@@ -225,7 +229,7 @@ public class Grammar
                     + "\" is not a parser production.", identifier);
         }
 
-        this.identifierResolutionMap.put(identifier, declaration);
+        this.declarationResolutionMap.put(identifier, declaration);
     }
 
     void resolveTreeIdentifier(
@@ -246,6 +250,37 @@ public class Grammar
                     + "\" is not a tree production.", identifier);
         }
 
-        this.identifierResolutionMap.put(identifier, declaration);
+        this.declarationResolutionMap.put(identifier, declaration);
+    }
+
+    void resolveAlternativeIdentifiers(
+            Production production,
+            LinkedList<TIdentifier> identifiers) {
+
+        for (TIdentifier identifier : identifiers) {
+            resolveAlternativeIdentifier(production, identifier);
+        }
+    }
+
+    void resolveAlternativeIdentifier(
+            Production production,
+            TIdentifier identifier) {
+
+        String name = identifier.getText();
+        Alternative alternative = production.getAlternative(name);
+
+        if (alternative == null) {
+            if (production.hasAlternative(name)) {
+                throw SemanticException.semanticError("Production \""
+                        + production.getName() + "\" has two \"" + name
+                        + "\" alternatives (or more).", identifier);
+            }
+
+            throw SemanticException.semanticError(
+                    "\"" + name + "\" is not an alternative of production \""
+                            + production.getName() + "\".", identifier);
+        }
+
+        this.alternativeResolutionMap.put(identifier, alternative);
     }
 }

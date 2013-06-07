@@ -27,6 +27,8 @@ public class Alternative
 
     private Grammar grammar;
 
+    private Production production;
+
     private AAlternative declaration;
 
     private List<Element> elements;
@@ -41,9 +43,11 @@ public class Alternative
 
     Alternative(
             Grammar grammar,
+            Production production,
             AAlternative declaration) {
 
         this.grammar = grammar;
+        this.production = production;
         this.declaration = declaration;
     }
 
