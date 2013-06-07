@@ -265,16 +265,35 @@ public class SemanticVerifier {
 
             private Production currentProduction;
 
+            private Set<String> alternativesWithPrecedence;
+
             @Override
             public void caseAParserProduction(
                     AParserProduction node) {
 
                 this.currentProduction = SemanticVerifier.this.grammar
                         .getProduction(node);
+                this.alternativesWithPrecedence = new TreeSet<String>();
                 for (PPrecedenceRule precedenceRule : node.getPrecedenceRules()) {
                     visit(precedenceRule);
                 }
                 this.currentProduction = null;
+                this.alternativesWithPrecedence = null;
+            }
+
+            private void detectMultiplePrecedences(
+                    LinkedList<TIdentifier> identifiers) {
+
+                for (TIdentifier identifier : identifiers) {
+                    String name = identifier.getText();
+                    if (this.alternativesWithPrecedence.contains(name)) {
+                        throw SemanticException.semanticError(
+                                "The precedence of \"" + name
+                                        + "\" has already been set.",
+                                identifier);
+                    }
+                    this.alternativesWithPrecedence.add(name);
+                }
             }
 
             @Override
@@ -283,6 +302,7 @@ public class SemanticVerifier {
 
                 SemanticVerifier.this.grammar.resolveAlternativeIdentifiers(
                         this.currentProduction, node.getIdentifiers());
+                detectMultiplePrecedences(node.getIdentifiers());
             }
 
             @Override
@@ -291,6 +311,7 @@ public class SemanticVerifier {
 
                 SemanticVerifier.this.grammar.resolveAlternativeIdentifiers(
                         this.currentProduction, node.getIdentifiers());
+                detectMultiplePrecedences(node.getIdentifiers());
             }
 
             @Override
@@ -299,6 +320,7 @@ public class SemanticVerifier {
 
                 SemanticVerifier.this.grammar.resolveAlternativeIdentifiers(
                         this.currentProduction, node.getIdentifiers());
+                detectMultiplePrecedences(node.getIdentifiers());
             }
 
             @Override
@@ -307,6 +329,7 @@ public class SemanticVerifier {
 
                 SemanticVerifier.this.grammar.resolveAlternativeIdentifiers(
                         this.currentProduction, node.getIdentifiers());
+                detectMultiplePrecedences(node.getIdentifiers());
             }
 
             @Override

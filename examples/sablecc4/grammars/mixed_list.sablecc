@@ -46,7 +46,7 @@ Tree
 Transformation
 
   Production
-
+    separated -> separated;
     id_list -> (id Separator ',')+;
     id_list_tail -> ',' (id Separator ',')+;
 
