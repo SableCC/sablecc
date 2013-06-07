@@ -19,6 +19,7 @@ package org.sablecc.sablecc.semantics;
 
 import java.util.*;
 
+import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class SemanticVerifier {
@@ -308,7 +309,100 @@ public class SemanticVerifier {
                         this.currentProduction, node.getIdentifiers());
             }
 
-            // TODO: Handle references in transformation section.
+            @Override
+            public void caseATree(
+                    ATree node) {
+
+                visit(node.getTransformation());
+            }
+
+            @Override
+            public void caseAProductionTransformation(
+                    AProductionTransformation node) {
+
+                SemanticVerifier.this.grammar.resolveParserIdentifier(node
+                        .getProduction());
+                for (PElement element : node.getSubtrees()) {
+                    visit(element);
+                }
+            }
+
+            @Override
+            public void caseANaturalElementReference(
+                    ANaturalElementReference node) {
+
+                // do not visit subtree
+            }
+
+            @Override
+            public void caseATransformedElementReference(
+                    ATransformedElementReference node) {
+
+                // do not visit subtree
+            }
+
+            @Override
+            public void caseANameUnit(
+                    ANameUnit node) {
+
+                SemanticVerifier.this.grammar.resolveTreeIdentifier(node
+                        .getIdentifier());
+            }
+
+            @Override
+            public void caseAUnnamedAlternativeReference(
+                    AUnnamedAlternativeReference node) {
+
+                Node parent = node.parent();
+                if (parent instanceof AAlternativeTransformation) {
+                    SemanticVerifier.this.grammar.resolveParserIdentifier(node
+                            .getProduction());
+                }
+                else if (parent instanceof ANewTransformationElement) {
+                    SemanticVerifier.this.grammar.resolveTreeIdentifier(node
+                            .getProduction());
+                }
+                else {
+                    throw new InternalException("unhandled case");
+                }
+
+                Declaration declaration = SemanticVerifier.this.grammar
+                        .getDeclarationResolution(node.getProduction());
+                if (!(declaration instanceof Production)) {
+                    throw SemanticException.semanticError("\""
+                            + node.getProduction().getText()
+                            + "\" is not a production.", node.getProduction());
+                }
+            }
+
+            @Override
+            public void caseANamedAlternativeReference(
+                    ANamedAlternativeReference node) {
+
+                Node parent = node.parent();
+                if (parent instanceof AAlternativeTransformation) {
+                    SemanticVerifier.this.grammar.resolveParserIdentifier(node
+                            .getProduction());
+                }
+                else if (parent instanceof ANewTransformationElement) {
+                    SemanticVerifier.this.grammar.resolveTreeIdentifier(node
+                            .getProduction());
+                }
+                else {
+                    throw new InternalException("unhandled case");
+                }
+
+                Declaration declaration = SemanticVerifier.this.grammar
+                        .getDeclarationResolution(node.getProduction());
+                if (!(declaration instanceof Production)) {
+                    throw SemanticException.semanticError("\""
+                            + node.getProduction().getText()
+                            + "\" is not a production.", node.getProduction());
+                }
+                Production production = (Production) declaration;
+                SemanticVerifier.this.grammar.resolveAlternativeIdentifier(
+                        production, node.getAlternative());
+            }
         });
     }
 }

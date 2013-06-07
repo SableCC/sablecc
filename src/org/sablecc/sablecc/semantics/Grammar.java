@@ -110,6 +110,18 @@ public class Grammar
         return (Element) this.nodeMap.get(declaration);
     }
 
+    public Declaration getDeclarationResolution(
+            TIdentifier identifier) {
+
+        return this.declarationResolutionMap.get(identifier);
+    }
+
+    public Alternative getAlternativeResolution(
+            TIdentifier identifier) {
+
+        return this.alternativeResolutionMap.get(identifier);
+    }
+
     void addExpression(
             Node declaration) {
 

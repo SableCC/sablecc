@@ -36,8 +36,8 @@ Parser
     id id_list_tail?;
 
   id_list_tail =
-    ',' id |
-    id_list_tail ',' id;
+    {one:} ',' id |
+    {many:} id_list_tail ',' id;
 
 Tree
 
@@ -51,7 +51,7 @@ Transformation
     id_list_tail -> ',' (id Separator ',')+;
 
   Alternative
-    separated -> New separated(id_list.id_list);
-    id_list -> List(id id_list_tail.token id_list_tail.id_list);
-    id_list_tail.token -> token List(id);
-    id_list_tail.id_list_tail -> id_list_tail.token List(id_list_tail.id_list token id);
+    separated -> New separated(id_list?.(id Separator ',')+);
+    id_list -> List(id id_list_tail?.',' id_list_tail?.(id Separator ',')+);
+    id_list_tail.one -> ',' List(id);
+    id_list_tail.many -> id_list_tail.',' List(id_list_tail.(id Separator ',')+ ',' id);
