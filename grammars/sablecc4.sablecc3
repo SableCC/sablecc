@@ -444,7 +444,7 @@ Productions
 
   element
     =
-      element_name? element_body
+      selection_keyword? element_name? element_body
     ;
 
   element_body
@@ -646,7 +646,7 @@ Abstract Syntax Tree
     alternative_name? [elements]:element*;
 
   element =
-    element_name? element_body;
+    selection_keyword? element_name? element_body;
 
   element_body =
     {normal} unit unary_operator? |
