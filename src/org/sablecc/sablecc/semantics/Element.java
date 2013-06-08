@@ -35,6 +35,8 @@ public class Element
 
     private String name;
 
+    private boolean isSelection;
+
     Element(
             Grammar grammar,
             Alternative alternative,
@@ -43,6 +45,13 @@ public class Element
         this.grammar = grammar;
         this.alternative = alternative;
         this.declaration = declaration;
+
+        if (declaration.getSelectionKeyword() != null) {
+            this.isSelection = true;
+
+            throw SemanticException.notImplementedError(declaration
+                    .getSelectionKeyword());
+        }
     }
 
     @Override

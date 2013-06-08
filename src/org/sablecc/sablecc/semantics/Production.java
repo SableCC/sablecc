@@ -39,12 +39,26 @@ public class Production
 
     private Token location;
 
+    private boolean isRoot;
+
+    private boolean isIncremental;
+
+    private boolean isToken;
+
+    private boolean isDangling;
+
+    private boolean isAction;
+
+    private boolean isSelection;
+
     Production(
             Grammar grammar,
             Node declaration) {
 
         this.grammar = grammar;
         this.declaration = declaration;
+
+        detectQualifiers();
     }
 
     @Override
@@ -116,5 +130,123 @@ public class Production
 
         this.alternatives = alternatives;
         this.localNameSpace = new LocalNameSpace<Alternative>(alternatives);
+    }
+
+    private void detectQualifiers() {
+
+        if (this.declaration instanceof AParserProduction) {
+            ((AParserProduction) this.declaration).apply(new TreeWalker() {
+
+                @Override
+                public void caseAParserProduction(
+                        AParserProduction node) {
+
+                    for (PQualifier qualifier : node.getQualifiers()) {
+                        visit(qualifier);
+                    }
+                }
+
+                @Override
+                public void caseARootQualifier(
+                        ARootQualifier node) {
+
+                    if (Production.this.isRoot) {
+                        throw SemanticException.semanticError(
+                                "The Root qualifier has already been applied.",
+                                node.getRootKeyword());
+                    }
+
+                    Production.this.isRoot = true;
+
+                    throw SemanticException.notImplementedError(node
+                            .getRootKeyword());
+                }
+
+                @Override
+                public void caseAIncrementalQualifier(
+                        AIncrementalQualifier node) {
+
+                    if (Production.this.isIncremental) {
+                        throw SemanticException
+                                .semanticError(
+                                        "The Incremental qualifier has already been applied.",
+                                        node.getIncrementalKeyword());
+                    }
+
+                    Production.this.isIncremental = true;
+
+                    throw SemanticException.notImplementedError(node
+                            .getIncrementalKeyword());
+                }
+
+                @Override
+                public void caseATokenQualifier(
+                        ATokenQualifier node) {
+
+                    if (Production.this.isToken) {
+                        throw SemanticException
+                                .semanticError(
+                                        "The Token qualifier has already been applied.",
+                                        node.getTokenKeyword());
+                    }
+
+                    Production.this.isToken = true;
+
+                    throw SemanticException.notImplementedError(node
+                            .getTokenKeyword());
+                }
+
+                @Override
+                public void caseADanglingQualifier(
+                        ADanglingQualifier node) {
+
+                    if (Production.this.isDangling) {
+                        throw SemanticException
+                                .semanticError(
+                                        "The Dangling qualifier has already been applied.",
+                                        node.getDanglingKeyword());
+                    }
+
+                    Production.this.isDangling = true;
+
+                    throw SemanticException.notImplementedError(node
+                            .getDanglingKeyword());
+                }
+
+                @Override
+                public void caseAActionQualifier(
+                        AActionQualifier node) {
+
+                    if (Production.this.isAction) {
+                        throw SemanticException
+                                .semanticError(
+                                        "The Action qualifier has already been applied.",
+                                        node.getActionKeyword());
+                    }
+
+                    Production.this.isAction = true;
+
+                    throw SemanticException.notImplementedError(node
+                            .getActionKeyword());
+                }
+
+                @Override
+                public void caseASelectionQualifier(
+                        ASelectionQualifier node) {
+
+                    if (Production.this.isSelection) {
+                        throw SemanticException
+                                .semanticError(
+                                        "The Selection qualifier has already been applied.",
+                                        node.getSelectionKeyword());
+                    }
+
+                    Production.this.isSelection = true;
+
+                    throw SemanticException.notImplementedError(node
+                            .getSelectionKeyword());
+                }
+            });
+        }
     }
 }
