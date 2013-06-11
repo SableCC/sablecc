@@ -33,6 +33,8 @@ public class Production
 
     private LocalNameSpace<Alternative> localNameSpace;
 
+    private ProductionTransformation productionTransformation;
+
     // Cached values
 
     private String name;
@@ -130,6 +132,20 @@ public class Production
 
         this.alternatives = alternatives;
         this.localNameSpace = new LocalNameSpace<Alternative>(alternatives);
+    }
+
+    void setDeclaredTransformation(
+            ProductionTransformation productionTransformation) {
+
+        if (this.productionTransformation != null) {
+            Token location = this.productionTransformation.getLocation();
+            throw SemanticException.semanticError("The production " + getName()
+                    + " was already transformed on line " + location.getLine()
+                    + " char " + location.getPos() + ".",
+                    productionTransformation.getLocation());
+        }
+
+        this.productionTransformation = productionTransformation;
     }
 
     private void detectQualifiers() {

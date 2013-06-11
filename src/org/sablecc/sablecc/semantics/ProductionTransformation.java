@@ -17,7 +17,61 @@
 
 package org.sablecc.sablecc.semantics;
 
+import java.util.*;
+
+import org.sablecc.sablecc.syntax3.node.*;
+
 public class ProductionTransformation {
 
     private Grammar grammar;
+
+    private AProductionTransformation declaration;
+
+    private Signature signature;
+
+    private ProductionTransformation(
+            Grammar grammar,
+            AProductionTransformation declaration) {
+
+        this.grammar = grammar;
+        this.declaration = declaration;
+    }
+
+    public Token getLocation() {
+
+        return this.declaration.getProduction();
+    }
+
+    static void createDeclaredProductionTransformation(
+            Grammar grammar,
+            AProductionTransformation node) {
+
+        ProductionTransformation productionTransformation = new ProductionTransformation(
+                grammar, node);
+
+        productionTransformation.computeSignature();
+
+        Declaration declaration = grammar.getDeclarationResolution(node
+                .getProduction());
+
+        if (!(declaration instanceof Production)) {
+            throw SemanticException.semanticError("\""
+                    + node.getProduction().getText()
+                    + "\" is not a production.", node.getProduction());
+        }
+
+        Production production = (Production) declaration;
+        production.setDeclaredTransformation(productionTransformation);
+    }
+
+    private void computeSignature() {
+
+        ArrayList<Type> subtreeTypes = new ArrayList<Type>();
+        for (PElement pSubtree : this.declaration.getSubtrees()) {
+            AElement subtree = (AElement) pSubtree;
+            subtreeTypes.add(new Type(this.grammar, subtree.getElementBody()));
+        }
+
+        this.signature = new Signature(subtreeTypes);
+    }
 }

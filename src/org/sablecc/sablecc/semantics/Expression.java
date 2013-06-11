@@ -50,9 +50,11 @@ public class Expression
 
             Token nameToken = getLocation();
 
-            if (nameToken instanceof TIdentifier
-                    || nameToken instanceof TEndKeyword) {
+            if (nameToken instanceof TIdentifier) {
                 this.name = nameToken.getText();
+            }
+            else if (nameToken instanceof TEndKeyword) {
+                this.name = "end";
             }
             else if (nameToken instanceof TIdentifierChar
                     || nameToken instanceof TIdentifierString) {
@@ -75,9 +77,11 @@ public class Expression
             Token nameToken = getLocation();
 
             if (nameToken instanceof TIdentifier || nameToken instanceof TChar
-                    || nameToken instanceof TString
-                    || nameToken instanceof TEndKeyword) {
+                    || nameToken instanceof TString) {
                 this.lookupName = nameToken.getText();
+            }
+            else if (nameToken instanceof TEndKeyword) {
+                this.lookupName = "end";
             }
             else if (nameToken instanceof TIdentifierChar
                     || nameToken instanceof TIdentifierString) {

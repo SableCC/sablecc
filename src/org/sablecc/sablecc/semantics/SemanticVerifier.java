@@ -44,6 +44,7 @@ public class SemanticVerifier {
         verifier.collectAlternativesAndElements();
         verifier.resolveParserAndTreeReferences();
         verifier.resolveRemainingReferences();
+        verifier.constructTransformations();
 
         // TODO: implement
     }
@@ -101,6 +102,13 @@ public class SemanticVerifier {
             @Override
             public void caseAStringUnit(
                     AStringUnit node) {
+
+                SemanticVerifier.this.grammar.addInlinedExpression(node);
+            }
+
+            @Override
+            public void caseAEndUnit(
+                    AEndUnit node) {
 
                 SemanticVerifier.this.grammar.addInlinedExpression(node);
             }
@@ -425,6 +433,21 @@ public class SemanticVerifier {
                 Production production = (Production) declaration;
                 SemanticVerifier.this.grammar.resolveAlternativeIdentifier(
                         production, node.getAlternative());
+            }
+        });
+    }
+
+    private void constructTransformations() {
+
+        this.ast.apply(new TreeWalker() {
+
+            @Override
+            public void caseAProductionTransformation(
+                    AProductionTransformation node) {
+
+                ProductionTransformation
+                        .createDeclaredProductionTransformation(
+                                SemanticVerifier.this.grammar, node);
             }
         });
     }

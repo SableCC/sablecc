@@ -31,6 +31,8 @@ public class Grammar
 
     private Map<TIdentifier, Declaration> declarationResolutionMap = new HashMap<TIdentifier, Declaration>();
 
+    private Map<Token, Expression> inlinedExpressionResolutionMap = new HashMap<Token, Expression>();
+
     private Map<TIdentifier, Alternative> alternativeResolutionMap = new HashMap<TIdentifier, Alternative>();
 
     private NameSpace parserNameSpace = new NameSpace();
@@ -116,6 +118,36 @@ public class Grammar
         return this.declarationResolutionMap.get(identifier);
     }
 
+    public Expression getExpressionResolution(
+            TIdentifierChar node) {
+
+        return this.inlinedExpressionResolutionMap.get(node);
+    }
+
+    public Expression getExpressionResolution(
+            TChar node) {
+
+        return this.inlinedExpressionResolutionMap.get(node);
+    }
+
+    public Expression getExpressionResolution(
+            TIdentifierString node) {
+
+        return this.inlinedExpressionResolutionMap.get(node);
+    }
+
+    public Expression getExpressionResolution(
+            TString node) {
+
+        return this.inlinedExpressionResolutionMap.get(node);
+    }
+
+    public Expression getExpressionResolution(
+            TEndKeyword node) {
+
+        return this.inlinedExpressionResolutionMap.get(node);
+    }
+
     public Alternative getAlternativeResolution(
             TIdentifier identifier) {
 
@@ -143,17 +175,20 @@ public class Grammar
         else {
             expression.setInternalName("." + this.nextInternalNameIndex++);
         }
-        this.nodeMap.put(declaration, expression);
 
         Declaration previousDeclaration = this.parserNameSpace.get(expression
                 .getLookupName());
 
-        // only add if it's a new declaration or if it redeclares a normal
-        // expression
+        // only add new expression if it's a new declaration or if it redeclares
+        // a normal expression
         if (previousDeclaration == null
                 || previousDeclaration.getLocation() instanceof TIdentifier) {
+            this.nodeMap.put(declaration, expression);
             this.parserNameSpace.add(expression);
             this.treeNameSpace.add(expression);
+        }
+        else {
+            this.nodeMap.put(declaration, previousDeclaration);
         }
     }
 
@@ -223,6 +258,70 @@ public class Grammar
         this.declarationResolutionMap.put(nameIdentifier, declaration);
     }
 
+    void resolveParserNameUnit(
+            ANameUnit nameUnit) {
+
+        TIdentifier nameIdentifier = nameUnit.getIdentifier();
+        String name = nameIdentifier.getText();
+        Declaration declaration = this.parserNameSpace.get(name);
+
+        if (declaration == null) {
+            declaration = this.treeNameSpace.get(name);
+
+            if (declaration == null) {
+                throw SemanticException.semanticError("No \"" + name
+                        + "\" has been declared.", nameIdentifier);
+            }
+
+            throw SemanticException.semanticError("\"" + name
+                    + "\" is not a parser production.", nameIdentifier);
+        }
+
+        this.declarationResolutionMap.put(nameIdentifier, declaration);
+    }
+
+    void resolveParserIdentifierCharUnit(
+            AIdentifierCharUnit identifierCharUnit) {
+
+        TIdentifierChar identifierChar = identifierCharUnit.getIdentifierChar();
+        String text = identifierChar.getText();
+        String name = text.substring(1, text.length() - 1);
+        resolveInlinedExpression(name, identifierChar);
+    }
+
+    void resolveParserCharUnit(
+            ACharUnit charUnit) {
+
+        TChar charToken = charUnit.getChar();
+        String name = charToken.getText();
+        resolveInlinedExpression(name, charToken);
+    }
+
+    void resolveParserIdentifierStringUnit(
+            AIdentifierStringUnit identifierStringUnit) {
+
+        TIdentifierString identifierString = identifierStringUnit
+                .getIdentifierString();
+        String text = identifierString.getText();
+        String name = text.substring(1, text.length() - 1);
+        resolveInlinedExpression(name, identifierString);
+    }
+
+    void resolveParserStringUnit(
+            AStringUnit stringUnit) {
+
+        TString stringToken = stringUnit.getString();
+        String name = stringToken.getText();
+        resolveInlinedExpression(name, stringToken);
+    }
+
+    void resolveParserEndUnit(
+            AEndUnit endUnit) {
+
+        TEndKeyword endKeyword = endUnit.getEndKeyword();
+        resolveInlinedExpression("end", endKeyword);
+    }
+
     void resolveParserIdentifier(
             TIdentifier identifier) {
 
@@ -239,6 +338,12 @@ public class Grammar
 
             throw SemanticException.semanticError("\"" + name
                     + "\" is not a parser production.", identifier);
+        }
+
+        if (!(declaration instanceof Production)
+                && !(declaration instanceof Expression)) {
+            throw SemanticException.semanticError("\"" + name
+                    + "\" is not a production or an expression.", identifier);
         }
 
         this.declarationResolutionMap.put(identifier, declaration);
@@ -260,6 +365,12 @@ public class Grammar
 
             throw SemanticException.semanticError("\"" + name
                     + "\" is not a tree production.", identifier);
+        }
+
+        if (!(declaration instanceof Production)
+                && !(declaration instanceof Expression)) {
+            throw SemanticException.semanticError("\"" + name
+                    + "\" is not a production or an expression.", identifier);
         }
 
         this.declarationResolutionMap.put(identifier, declaration);
@@ -294,5 +405,37 @@ public class Grammar
         }
 
         this.alternativeResolutionMap.put(identifier, alternative);
+    }
+
+    private void resolveInlinedExpression(
+            String name,
+            Token location) {
+
+        Declaration declaration = this.parserNameSpace.get(name);
+
+        if (declaration == null) {
+            declaration = this.treeNameSpace.get(name);
+
+            if (declaration == null) {
+                throw SemanticException.semanticError("No \"" + name
+                        + "\" has been declared.", location);
+            }
+
+            if (!(declaration instanceof Expression)) {
+                throw SemanticException.semanticError("\"" + name
+                        + "\" is not an expression.", location);
+            }
+
+            throw new InternalException(
+                    "an expression must be in both parser and tree name spaces");
+        }
+
+        if (!(declaration instanceof Expression)) {
+            throw SemanticException.semanticError("\"" + name
+                    + "\" is not an expression.", location);
+        }
+
+        this.inlinedExpressionResolutionMap.put(location,
+                (Expression) declaration);
     }
 }
