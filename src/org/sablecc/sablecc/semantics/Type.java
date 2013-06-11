@@ -88,7 +88,7 @@ public class Type {
             public void caseANameUnit(
                     ANameUnit node) {
 
-                grammar.resolveParserNameUnit(node);
+                grammar.resolveTreeNameUnit(node);
                 Declaration declaration = grammar.getDeclarationResolution(node
                         .getIdentifier());
 
@@ -109,7 +109,7 @@ public class Type {
             public void caseAIdentifierCharUnit(
                     AIdentifierCharUnit node) {
 
-                grammar.resolveParserIdentifierCharUnit(node);
+                grammar.resolveIdentifierCharUnit(node);
                 Expression expression = grammar.getExpressionResolution(node
                         .getIdentifierChar());
 
@@ -130,7 +130,7 @@ public class Type {
             public void caseACharUnit(
                     ACharUnit node) {
 
-                grammar.resolveParserCharUnit(node);
+                grammar.resolveCharUnit(node);
                 Expression expression = grammar.getExpressionResolution(node
                         .getChar());
 
@@ -151,7 +151,7 @@ public class Type {
             public void caseAIdentifierStringUnit(
                     AIdentifierStringUnit node) {
 
-                grammar.resolveParserIdentifierStringUnit(node);
+                grammar.resolveIdentifierStringUnit(node);
                 Expression expression = grammar.getExpressionResolution(node
                         .getIdentifierString());
 
@@ -172,7 +172,7 @@ public class Type {
             public void caseAStringUnit(
                     AStringUnit node) {
 
-                grammar.resolveParserStringUnit(node);
+                grammar.resolveStringUnit(node);
                 Expression expression = grammar.getExpressionResolution(node
                         .getString());
 
@@ -193,7 +193,7 @@ public class Type {
             public void caseAEndUnit(
                     AEndUnit node) {
 
-                grammar.resolveParserEndUnit(node);
+                grammar.resolveEndUnit(node);
                 Expression expression = grammar.getExpressionResolution(node
                         .getEndKeyword());
 

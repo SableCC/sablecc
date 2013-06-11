@@ -258,15 +258,15 @@ public class Grammar
         this.declarationResolutionMap.put(nameIdentifier, declaration);
     }
 
-    void resolveParserNameUnit(
+    void resolveTreeNameUnit(
             ANameUnit nameUnit) {
 
         TIdentifier nameIdentifier = nameUnit.getIdentifier();
         String name = nameIdentifier.getText();
-        Declaration declaration = this.parserNameSpace.get(name);
+        Declaration declaration = this.treeNameSpace.get(name);
 
         if (declaration == null) {
-            declaration = this.treeNameSpace.get(name);
+            declaration = this.parserNameSpace.get(name);
 
             if (declaration == null) {
                 throw SemanticException.semanticError("No \"" + name
@@ -274,13 +274,13 @@ public class Grammar
             }
 
             throw SemanticException.semanticError("\"" + name
-                    + "\" is not a parser production.", nameIdentifier);
+                    + "\" is not a tree production.", nameIdentifier);
         }
 
         this.declarationResolutionMap.put(nameIdentifier, declaration);
     }
 
-    void resolveParserIdentifierCharUnit(
+    void resolveIdentifierCharUnit(
             AIdentifierCharUnit identifierCharUnit) {
 
         TIdentifierChar identifierChar = identifierCharUnit.getIdentifierChar();
@@ -289,7 +289,7 @@ public class Grammar
         resolveInlinedExpression(name, identifierChar);
     }
 
-    void resolveParserCharUnit(
+    void resolveCharUnit(
             ACharUnit charUnit) {
 
         TChar charToken = charUnit.getChar();
@@ -297,7 +297,7 @@ public class Grammar
         resolveInlinedExpression(name, charToken);
     }
 
-    void resolveParserIdentifierStringUnit(
+    void resolveIdentifierStringUnit(
             AIdentifierStringUnit identifierStringUnit) {
 
         TIdentifierString identifierString = identifierStringUnit
@@ -307,7 +307,7 @@ public class Grammar
         resolveInlinedExpression(name, identifierString);
     }
 
-    void resolveParserStringUnit(
+    void resolveStringUnit(
             AStringUnit stringUnit) {
 
         TString stringToken = stringUnit.getString();
@@ -315,7 +315,7 @@ public class Grammar
         resolveInlinedExpression(name, stringToken);
     }
 
-    void resolveParserEndUnit(
+    void resolveEndUnit(
             AEndUnit endUnit) {
 
         TEndKeyword endKeyword = endUnit.getEndKeyword();
