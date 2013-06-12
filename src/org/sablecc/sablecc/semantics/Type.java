@@ -88,7 +88,6 @@ public class Type {
             public void caseANameUnit(
                     ANameUnit node) {
 
-                grammar.resolveTreeNameUnit(node);
                 Declaration declaration = grammar.getDeclarationResolution(node
                         .getIdentifier());
 

@@ -276,6 +276,16 @@ public class SemanticVerifier {
             private Set<String> alternativesWithPrecedence;
 
             @Override
+            public void caseAContext(
+                    AContext node) {
+
+                for (PParserProduction parserProduction : node
+                        .getParserProductions()) {
+                    visit(parserProduction);
+                }
+            }
+
+            @Override
             public void caseAParserProduction(
                     AParserProduction node) {
 

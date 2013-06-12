@@ -51,6 +51,9 @@ public class Grammar
             AGrammar declaration) {
 
         this.declaration = declaration;
+        if (this.nodeMap.containsKey(declaration)) {
+            throw new InternalException("it was already added.");
+        }
         this.nodeMap.put(declaration, this);
         this.parserNameSpace.add(this);
         this.treeNameSpace.add(this);
@@ -89,25 +92,25 @@ public class Grammar
     }
 
     public Production getProduction(
-            AParserProduction declaration) {
+            PParserProduction declaration) {
 
         return (Production) this.nodeMap.get(declaration);
     }
 
     public Production getProduction(
-            ATreeProduction declaration) {
+            PTreeProduction declaration) {
 
         return (Production) this.nodeMap.get(declaration);
     }
 
     public Alternative getAlternative(
-            AAlternative declaration) {
+            PAlternative declaration) {
 
         return (Alternative) this.nodeMap.get(declaration);
     }
 
     public Element getElement(
-            AElement declaration) {
+            PElement declaration) {
 
         return (Element) this.nodeMap.get(declaration);
     }
@@ -159,6 +162,9 @@ public class Grammar
 
         Expression expression = new Expression(this, declaration);
         expression.setInternalName(expression.getName());
+        if (this.nodeMap.containsKey(declaration)) {
+            throw new InternalException("it was already added.");
+        }
         this.nodeMap.put(declaration, expression);
         this.parserNameSpace.add(expression);
         this.treeNameSpace.add(expression);
@@ -183,11 +189,17 @@ public class Grammar
         // a normal expression
         if (previousDeclaration == null
                 || previousDeclaration.getLocation() instanceof TIdentifier) {
+            if (this.nodeMap.containsKey(declaration)) {
+                throw new InternalException("it was already added.");
+            }
             this.nodeMap.put(declaration, expression);
             this.parserNameSpace.add(expression);
             this.treeNameSpace.add(expression);
         }
         else {
+            if (this.nodeMap.containsKey(declaration)) {
+                throw new InternalException("it was already added.");
+            }
             this.nodeMap.put(declaration, previousDeclaration);
         }
     }
@@ -197,6 +209,9 @@ public class Grammar
 
         Production production = new Production(this, declaration);
         production.setInternalName(production.getName());
+        if (this.nodeMap.containsKey(declaration)) {
+            throw new InternalException("it was already added.");
+        }
         this.nodeMap.put(declaration, production);
         this.parserNameSpace.add(production);
     }
@@ -206,6 +221,9 @@ public class Grammar
 
         Production production = new Production(this, declaration);
         production.setInternalName(production.getName());
+        if (this.nodeMap.containsKey(declaration)) {
+            throw new InternalException("it was already added.");
+        }
         this.nodeMap.put(declaration, production);
         this.treeNameSpace.add(production);
     }
@@ -215,6 +233,9 @@ public class Grammar
             AAlternative declaration) {
 
         Alternative alternative = new Alternative(this, production, declaration);
+        if (this.nodeMap.containsKey(declaration)) {
+            throw new InternalException("it was already added.");
+        }
         this.nodeMap.put(declaration, alternative);
     }
 
@@ -223,6 +244,9 @@ public class Grammar
             AElement declaration) {
 
         Element element = new Element(this, alternative, declaration);
+        if (this.nodeMap.containsKey(declaration)) {
+            throw new InternalException("it was already added.");
+        }
         this.nodeMap.put(declaration, element);
     }
 
@@ -255,6 +279,9 @@ public class Grammar
                     + "\" is not an expression.", nameIdentifier);
         }
 
+        if (this.declarationResolutionMap.containsKey(nameIdentifier)) {
+            throw new InternalException("it was already resolved.");
+        }
         this.declarationResolutionMap.put(nameIdentifier, declaration);
     }
 
@@ -277,6 +304,9 @@ public class Grammar
                     + "\" is not a tree production.", nameIdentifier);
         }
 
+        if (this.declarationResolutionMap.containsKey(nameIdentifier)) {
+            throw new InternalException("it was already resolved.");
+        }
         this.declarationResolutionMap.put(nameIdentifier, declaration);
     }
 
@@ -346,6 +376,9 @@ public class Grammar
                     + "\" is not a production or an expression.", identifier);
         }
 
+        if (this.declarationResolutionMap.containsKey(identifier)) {
+            throw new InternalException("it was already resolved.");
+        }
         this.declarationResolutionMap.put(identifier, declaration);
     }
 
@@ -373,6 +406,9 @@ public class Grammar
                     + "\" is not a production or an expression.", identifier);
         }
 
+        if (this.declarationResolutionMap.containsKey(identifier)) {
+            throw new InternalException("it was already resolved.");
+        }
         this.declarationResolutionMap.put(identifier, declaration);
     }
 
@@ -404,6 +440,9 @@ public class Grammar
                             + production.getName() + "\".", identifier);
         }
 
+        if (this.alternativeResolutionMap.containsKey(identifier)) {
+            throw new InternalException("it was already resolved.");
+        }
         this.alternativeResolutionMap.put(identifier, alternative);
     }
 
@@ -435,6 +474,9 @@ public class Grammar
                     + "\" is not an expression.", location);
         }
 
+        if (this.inlinedExpressionResolutionMap.containsKey(location)) {
+            throw new InternalException("it was already resolved.");
+        }
         this.inlinedExpressionResolutionMap.put(location,
                 (Expression) declaration);
     }
