@@ -43,6 +43,7 @@ public class SemanticVerifier {
         verifier.collectDeclarations();
         verifier.collectAlternativesAndElements();
         verifier.resolveParserAndTreeReferences();
+        verifier.resolveInlinedExpressions();
         verifier.resolveRemainingReferences();
         verifier.constructTransformations();
 
@@ -263,6 +264,47 @@ public class SemanticVerifier {
                     SemanticVerifier.this.grammar.resolveTreeIdentifier(node
                             .getIdentifier());
                 }
+            }
+        });
+    }
+
+    private void resolveInlinedExpressions() {
+
+        this.ast.apply(new TreeWalker() {
+
+            @Override
+            public void caseAIdentifierCharUnit(
+                    AIdentifierCharUnit node) {
+
+                SemanticVerifier.this.grammar.resolveIdentifierCharUnit(node);
+            }
+
+            @Override
+            public void caseACharUnit(
+                    ACharUnit node) {
+
+                SemanticVerifier.this.grammar.resolveCharUnit(node);
+            }
+
+            @Override
+            public void caseAIdentifierStringUnit(
+                    AIdentifierStringUnit node) {
+
+                SemanticVerifier.this.grammar.resolveIdentifierStringUnit(node);
+            }
+
+            @Override
+            public void caseAStringUnit(
+                    AStringUnit node) {
+
+                SemanticVerifier.this.grammar.resolveStringUnit(node);
+            }
+
+            @Override
+            public void caseAEndUnit(
+                    AEndUnit node) {
+
+                SemanticVerifier.this.grammar.resolveEndUnit(node);
             }
         });
     }

@@ -108,7 +108,6 @@ public class Type {
             public void caseAIdentifierCharUnit(
                     AIdentifierCharUnit node) {
 
-                grammar.resolveIdentifierCharUnit(node);
                 Expression expression = grammar.getExpressionResolution(node
                         .getIdentifierChar());
 
@@ -129,7 +128,6 @@ public class Type {
             public void caseACharUnit(
                     ACharUnit node) {
 
-                grammar.resolveCharUnit(node);
                 Expression expression = grammar.getExpressionResolution(node
                         .getChar());
 
@@ -150,7 +148,6 @@ public class Type {
             public void caseAIdentifierStringUnit(
                     AIdentifierStringUnit node) {
 
-                grammar.resolveIdentifierStringUnit(node);
                 Expression expression = grammar.getExpressionResolution(node
                         .getIdentifierString());
 
@@ -171,7 +168,6 @@ public class Type {
             public void caseAStringUnit(
                     AStringUnit node) {
 
-                grammar.resolveStringUnit(node);
                 Expression expression = grammar.getExpressionResolution(node
                         .getString());
 
@@ -192,7 +188,6 @@ public class Type {
             public void caseAEndUnit(
                     AEndUnit node) {
 
-                grammar.resolveEndUnit(node);
                 Expression expression = grammar.getExpressionResolution(node
                         .getEndKeyword());
 
