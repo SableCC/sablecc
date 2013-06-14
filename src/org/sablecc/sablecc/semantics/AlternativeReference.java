@@ -17,8 +17,42 @@
 
 package org.sablecc.sablecc.semantics;
 
+import org.sablecc.sablecc.syntax3.node.*;
+
 public class AlternativeReference {
 
     private Grammar grammar;
 
+    private Alternative alternative;
+
+    private Token location;
+
+    private AlternativeReference(
+            Grammar grammar,
+            Alternative alternative) {
+
+        this.grammar = grammar;
+        this.alternative = alternative;
+    }
+
+    public Alternative getAlternative() {
+
+        return this.alternative;
+    }
+
+    public Token getLocation() {
+
+        return this.location;
+    }
+
+    static AlternativeReference createDeclaredAlternativeReference(
+            Grammar grammar,
+            Alternative alternative,
+            Token location) {
+
+        AlternativeReference alternativeReference = new AlternativeReference(
+                grammar, alternative);
+        alternativeReference.location = location;
+        return alternativeReference;
+    }
 }

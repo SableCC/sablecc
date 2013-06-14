@@ -69,7 +69,8 @@ public class ProductionTransformation {
         ArrayList<Type> subtreeTypes = new ArrayList<Type>();
         for (PElement pSubtree : this.declaration.getSubtrees()) {
             AElement subtree = (AElement) pSubtree;
-            subtreeTypes.add(new Type(this.grammar, subtree.getElementBody()));
+            subtreeTypes.add(this.grammar.getTypeResolution(subtree
+                    .getElementBody()));
         }
 
         this.signature = new Signature(subtreeTypes);

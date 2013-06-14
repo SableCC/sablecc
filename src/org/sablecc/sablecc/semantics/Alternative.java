@@ -35,6 +35,8 @@ public class Alternative
 
     private LocalNameSpace<Element> localNameSpace;
 
+    private AlternativeTransformation alternativeTransformation;
+
     // Cached values
 
     private boolean nameIsCached;
@@ -222,5 +224,19 @@ public class Alternative
 
         this.elements = elements;
         this.localNameSpace = new LocalNameSpace<Element>(elements);
+    }
+
+    void setDeclaredTransformation(
+            AlternativeTransformation alternativeTransformation) {
+
+        if (this.alternativeTransformation != null) {
+            Token location = this.alternativeTransformation.getLocation();
+            throw SemanticException.semanticError("The alternative "
+                    + getName() + " was already transformed on line "
+                    + location.getLine() + " char " + location.getPos() + ".",
+                    alternativeTransformation.getLocation());
+        }
+
+        this.alternativeTransformation = alternativeTransformation;
     }
 }

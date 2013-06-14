@@ -45,7 +45,8 @@ public class SemanticVerifier {
         verifier.resolveParserAndTreeReferences();
         verifier.resolveInlinedExpressions();
         verifier.resolveRemainingReferences();
-        verifier.constructTransformations();
+        verifier.resolveTypes();
+        verifier.createTransformations();
 
         // TODO: implement
     }
@@ -456,6 +457,8 @@ public class SemanticVerifier {
                             + node.getProduction().getText()
                             + "\" is not a production.", node.getProduction());
                 }
+
+                SemanticVerifier.this.grammar.resolveAlternativeReference(node);
             }
 
             @Override
@@ -485,11 +488,26 @@ public class SemanticVerifier {
                 Production production = (Production) declaration;
                 SemanticVerifier.this.grammar.resolveAlternativeIdentifier(
                         production, node.getAlternative());
+
+                SemanticVerifier.this.grammar.resolveAlternativeReference(node);
             }
         });
     }
 
-    private void constructTransformations() {
+    private void resolveTypes() {
+
+        this.ast.apply(new TreeWalker() {
+
+            @Override
+            public void caseAElement(
+                    AElement node) {
+
+                SemanticVerifier.this.grammar.resolveType(node.getElementBody());
+            }
+        });
+    }
+
+    private void createTransformations() {
 
         this.ast.apply(new TreeWalker() {
 
@@ -499,6 +517,15 @@ public class SemanticVerifier {
 
                 ProductionTransformation
                         .createDeclaredProductionTransformation(
+                                SemanticVerifier.this.grammar, node);
+            }
+
+            @Override
+            public void caseAAlternativeTransformation(
+                    AAlternativeTransformation node) {
+
+                AlternativeTransformation
+                        .createDeclaredAlternativeTransformation(
                                 SemanticVerifier.this.grammar, node);
             }
         });

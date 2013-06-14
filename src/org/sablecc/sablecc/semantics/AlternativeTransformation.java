@@ -17,7 +17,40 @@
 
 package org.sablecc.sablecc.semantics;
 
+import org.sablecc.sablecc.syntax3.node.*;
+
 public class AlternativeTransformation {
 
     private Grammar grammar;
+
+    private AAlternativeTransformation declaration;
+
+    private AlternativeReference alternativeReference;
+
+    private AlternativeTransformation(
+            Grammar grammar,
+            AAlternativeTransformation declaration) {
+
+        this.grammar = grammar;
+        this.declaration = declaration;
+        this.alternativeReference = grammar
+                .getAlternativeReferenceResolution(declaration
+                        .getAlternativeReference());
+    }
+
+    public Token getLocation() {
+
+        return this.alternativeReference.getLocation();
+    }
+
+    static void createDeclaredAlternativeTransformation(
+            Grammar grammar,
+            AAlternativeTransformation node) {
+
+        AlternativeTransformation alternativeTransformation = new AlternativeTransformation(
+                grammar, node);
+
+        alternativeTransformation.alternativeReference.getAlternative()
+                .setDeclaredTransformation(alternativeTransformation);
+    }
 }

@@ -35,6 +35,10 @@ public class Grammar
 
     private Map<TIdentifier, Alternative> alternativeResolutionMap = new HashMap<TIdentifier, Alternative>();
 
+    private Map<PAlternativeReference, AlternativeReference> alternativeReferenceResolutionMap = new HashMap<PAlternativeReference, AlternativeReference>();
+
+    private Map<PElementBody, Type> typeResolutionMap = new HashMap<PElementBody, Type>();
+
     private NameSpace parserNameSpace = new NameSpace();
 
     private NameSpace treeNameSpace = new NameSpace();
@@ -155,6 +159,18 @@ public class Grammar
             TIdentifier identifier) {
 
         return this.alternativeResolutionMap.get(identifier);
+    }
+
+    public AlternativeReference getAlternativeReferenceResolution(
+            PAlternativeReference alternativeReference) {
+
+        return this.alternativeReferenceResolutionMap.get(alternativeReference);
+    }
+
+    public Type getTypeResolution(
+            PElementBody elementBody) {
+
+        return this.typeResolutionMap.get(elementBody);
     }
 
     void addExpression(
@@ -444,6 +460,47 @@ public class Grammar
             throw new InternalException("it was already resolved.");
         }
         this.alternativeResolutionMap.put(identifier, alternative);
+    }
+
+    void resolveAlternativeReference(
+            AUnnamedAlternativeReference node) {
+
+        Production production = (Production) getDeclarationResolution(node
+                .getProduction());
+        Alternative alternative = production.getAlternative("");
+
+        if (alternative == null) {
+            throw SemanticException.semanticError(
+                    "The alternative name is missing.", node.getProduction());
+        }
+
+        if (this.alternativeReferenceResolutionMap.containsKey(node)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.alternativeReferenceResolutionMap.put(node, AlternativeReference
+                .createDeclaredAlternativeReference(this, alternative,
+                        node.getProduction()));
+    }
+
+    void resolveAlternativeReference(
+            ANamedAlternativeReference node) {
+
+        if (this.alternativeReferenceResolutionMap.containsKey(node)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.alternativeReferenceResolutionMap.put(node, AlternativeReference
+                .createDeclaredAlternativeReference(this,
+                        getAlternativeResolution(node.getAlternative()),
+                        node.getProduction()));
+    }
+
+    void resolveType(
+            PElementBody node) {
+
+        if (this.typeResolutionMap.containsKey(node)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.typeResolutionMap.put(node, new Type(this, node));
     }
 
     private void resolveInlinedExpression(
