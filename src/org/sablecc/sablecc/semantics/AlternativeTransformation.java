@@ -104,35 +104,46 @@ public class AlternativeTransformation {
                 ProductionTransformation productionTransformation = ((Production) base)
                         .getTransformation();
                 if (productionTransformation != null) {
-                    Signature signature = productionTransformation
-                            .getSignature();
-                    for (Type subtreeType : signature.getTypes()) {
-                        if (!elementReferenceIterator.hasNext()) {
-                            throw SemanticException.semanticError(
-                                    "The transformation is missing a reference to : "
-                                            + type + "." + subtreeType,
-                                    this.alternativeReference.getLocation());
-                        }
-                        ElementReference elementReference = elementReferenceIterator
-                                .next();
-                        if (elementReference.getSubtree() == null) {
-                            throw SemanticException.semanticError(
-                                    "Expecting : " + type + "." + subtreeType,
-                                    elementReference.getLocation());
-                        }
-                        if (!type.equals(this.grammar
-                                .getTypeResolution(elementReference
-                                        .getElementBody()))) {
-                            throw SemanticException.semanticError(
-                                    "Expecting : " + type + "." + subtreeType,
-                                    elementReference.getLocation());
-                        }
-                        if (!subtreeType.equals(this.grammar
-                                .getTypeResolution(elementReference
-                                        .getSubtree()))) {
-                            throw SemanticException.semanticError(
-                                    "Expecting : " + type + "." + subtreeType,
-                                    elementReference.getLocation());
+                    ArrayList<Type> types = productionTransformation
+                            .getSignature().getTypes();
+                    if (types.size() == 0) {
+                        simpleMatch(type, elementReferenceIterator);
+                    }
+                    else {
+                        for (Type subtreeType : types) {
+                            if (!elementReferenceIterator.hasNext()) {
+                                throw SemanticException
+                                        .semanticError(
+                                                "The transformation is missing a reference to : "
+                                                        + type + "."
+                                                        + subtreeType,
+                                                this.alternativeReference
+                                                        .getLocation());
+                            }
+                            ElementReference elementReference = elementReferenceIterator
+                                    .next();
+                            if (elementReference.getSubtree() == null) {
+                                throw SemanticException.semanticError(
+                                        "Expecting : " + type + "."
+                                                + subtreeType,
+                                        elementReference.getLocation());
+                            }
+                            if (!type.equals(this.grammar
+                                    .getTypeResolution(elementReference
+                                            .getElementBody()))) {
+                                throw SemanticException.semanticError(
+                                        "Expecting : " + type + "."
+                                                + subtreeType,
+                                        elementReference.getLocation());
+                            }
+                            if (!subtreeType.equals(this.grammar
+                                    .getTypeResolution(elementReference
+                                            .getSubtree()))) {
+                                throw SemanticException.semanticError(
+                                        "Expecting : " + type + "."
+                                                + subtreeType,
+                                        elementReference.getLocation());
+                            }
                         }
                     }
                 }
