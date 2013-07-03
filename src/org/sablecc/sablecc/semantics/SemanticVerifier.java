@@ -503,12 +503,19 @@ public class SemanticVerifier {
                     AElement node) {
 
                 SemanticVerifier.this.grammar.resolveType(node.getElementBody());
+                Element element = SemanticVerifier.this.grammar
+                        .getElement(node);
+                if (element != null) {
+                    element.setType(SemanticVerifier.this.grammar
+                            .getTypeResolution(node.getElementBody()));
+                }
             }
         });
     }
 
     private void createTransformations() {
 
+        // create production transformations
         this.ast.apply(new TreeWalker() {
 
             @Override
@@ -519,6 +526,33 @@ public class SemanticVerifier {
                         .createDeclaredProductionTransformation(
                                 SemanticVerifier.this.grammar, node);
             }
+
+        });
+
+        // check that productions that are subject to complex (non-simple)
+        // transformations are not referenced in a complex (non-simple) element.
+
+        this.ast.apply(new TreeWalker() {
+
+            @Override
+            public void caseAGrammar(
+                    AGrammar node) {
+
+                visit(node.getParser());
+            }
+
+            @Override
+            public void caseAElement(
+                    AElement node) {
+
+                Element element = SemanticVerifier.this.grammar
+                        .getElement(node);
+                element.checkTransformation();
+            }
+        });
+
+        // create alternative transformations
+        this.ast.apply(new TreeWalker() {
 
             @Override
             public void caseAAlternativeTransformation(

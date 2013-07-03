@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.semantics;
 
+import java.util.*;
+
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class AlternativeTransformation {
@@ -50,7 +52,130 @@ public class AlternativeTransformation {
         AlternativeTransformation alternativeTransformation = new AlternativeTransformation(
                 grammar, node);
 
+        alternativeTransformation.checkElementReferences();
+        alternativeTransformation.checkTypes();
+
         alternativeTransformation.alternativeReference.getAlternative()
                 .setDeclaredTransformation(alternativeTransformation);
+    }
+
+    private void checkElementReferences() {
+
+        // collect element references
+        final List<ElementReference> elementReferences = new LinkedList<ElementReference>();
+        this.declaration.apply(new TreeWalker() {
+
+            @Override
+            public void caseANaturalElementReference(
+                    ANaturalElementReference node) {
+
+                AlternativeTransformation.this.grammar
+                        .resolveElementReference(node);
+                elementReferences.add(AlternativeTransformation.this.grammar
+                        .getElementReferenceResolution(node));
+            }
+
+            @Override
+            public void caseATransformedElementReference(
+                    ATransformedElementReference node) {
+
+                AlternativeTransformation.this.grammar
+                        .resolveElementReference(node);
+                elementReferences.add(AlternativeTransformation.this.grammar
+                        .getElementReferenceResolution(node));
+            }
+        });
+
+        // check that element references are identical to elements of the
+        // transformed alternative
+        Iterator<ElementReference> elementReferenceIterator = elementReferences
+                .iterator();
+        for (Element element : this.alternativeReference.getAlternative()
+                .getElements()) {
+
+            Type type = element.getType();
+            Declaration base = type.getBase();
+            Declaration separator = type.getSeparator();
+
+            if (separator != null) {
+                simpleMatch(type, elementReferenceIterator);
+            }
+            else if (base instanceof Production) {
+                ProductionTransformation productionTransformation = ((Production) base)
+                        .getTransformation();
+                if (productionTransformation != null) {
+                    Signature signature = productionTransformation
+                            .getSignature();
+                    for (Type subtreeType : signature.getTypes()) {
+                        if (!elementReferenceIterator.hasNext()) {
+                            throw SemanticException.semanticError(
+                                    "The transformation is missing a reference to : "
+                                            + type + "." + subtreeType,
+                                    this.alternativeReference.getLocation());
+                        }
+                        ElementReference elementReference = elementReferenceIterator
+                                .next();
+                        if (elementReference.getSubtree() == null) {
+                            throw SemanticException.semanticError(
+                                    "Expecting : " + type + "." + subtreeType,
+                                    elementReference.getLocation());
+                        }
+                        if (!type.equals(this.grammar
+                                .getTypeResolution(elementReference
+                                        .getElementBody()))) {
+                            throw SemanticException.semanticError(
+                                    "Expecting : " + type + "." + subtreeType,
+                                    elementReference.getLocation());
+                        }
+                        if (!subtreeType.equals(this.grammar
+                                .getTypeResolution(elementReference
+                                        .getSubtree()))) {
+                            throw SemanticException.semanticError(
+                                    "Expecting : " + type + "." + subtreeType,
+                                    elementReference.getLocation());
+                        }
+                    }
+                }
+                else {
+                    simpleMatch(type, elementReferenceIterator);
+                }
+            }
+            else {
+                simpleMatch(type, elementReferenceIterator);
+            }
+        }
+    }
+
+    private void simpleMatch(
+            Type type,
+            Iterator<ElementReference> elementReferenceIterator) {
+
+        if (!elementReferenceIterator.hasNext()) {
+            throw SemanticException.semanticError(
+                    "The transformation is missing a reference to : " + type,
+                    this.alternativeReference.getLocation());
+        }
+        ElementReference elementReference = elementReferenceIterator.next();
+        if (elementReference.getSubtree() != null) {
+            throw SemanticException.semanticError("Expecting : " + type,
+                    elementReference.getLocation());
+        }
+        if (!type.equals(this.grammar.getTypeResolution(elementReference
+                .getElementBody()))) {
+            throw SemanticException.semanticError("Expecting : " + type,
+                    elementReference.getLocation());
+        }
+    }
+
+    private void match(
+            Declaration base,
+            Iterator<ElementReference> elementReferenceIterator) {
+
+    }
+
+    private void checkTypes() {
+
+        // TODO Auto-generated method stub
+
     }
 }

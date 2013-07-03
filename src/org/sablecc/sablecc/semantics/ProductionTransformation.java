@@ -42,6 +42,16 @@ public class ProductionTransformation {
         return this.declaration.getProduction();
     }
 
+    public boolean isSimple() {
+
+        return this.signature.isSimple();
+    }
+
+    public Signature getSignature() {
+
+        return this.signature;
+    }
+
     static void createDeclaredProductionTransformation(
             Grammar grammar,
             AProductionTransformation node) {

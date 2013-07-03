@@ -24,24 +24,29 @@ import org.sablecc.sablecc.syntax3.node.*;
 
 public class Type {
 
-    // can only be null for 0-length lists
+    private boolean isList;
+
     private Declaration base;
 
-    // is null for non-separated lists
     private Declaration separator;
 
-    // 0 or greater
     private BigInteger minMultiplicity;
 
-    // greater or equal to minMultiplicity, or null for no maximum
+    // null for no maximum
     private BigInteger maxMultiplicity;
 
+    // cached values
+
+    private Integer hashCode;
+
     Type(
+            boolean isList,
             Production base,
             Production separator,
             BigInteger minMultiplicity,
             BigInteger maxMultiplicity) {
 
+        this.isList = isList;
         this.base = base;
         this.separator = separator;
         this.minMultiplicity = minMultiplicity;
@@ -218,6 +223,7 @@ public class Type {
 
                 Type.this.minMultiplicity = BigInteger.ZERO;
                 Type.this.maxMultiplicity = null;
+                Type.this.isList = true;
             }
 
             @Override
@@ -226,6 +232,7 @@ public class Type {
 
                 Type.this.minMultiplicity = BigInteger.ONE;
                 Type.this.maxMultiplicity = null;
+                Type.this.isList = true;
             }
 
             @Override
@@ -235,12 +242,7 @@ public class Type {
                 Type.this.minMultiplicity = new BigInteger(node.getNumber()
                         .getText());
                 Type.this.maxMultiplicity = Type.this.minMultiplicity;
-
-                if (Type.this.minMultiplicity.compareTo(BigInteger.ONE) < 0) {
-                    throw SemanticException.semanticError(
-                            "The exponent must be greater or equal to 1.",
-                            node.getNumber());
-                }
+                Type.this.isList = true;
             }
 
             @Override
@@ -251,19 +253,14 @@ public class Type {
                         .getText());
                 Type.this.maxMultiplicity = new BigInteger(node.getTo()
                         .getText());
+                Type.this.isList = true;
 
                 if (Type.this.maxMultiplicity
-                        .compareTo(Type.this.minMultiplicity) < 0) {
+                        .compareTo(Type.this.minMultiplicity) <= 0) {
                     throw SemanticException
                             .semanticError(
-                                    "The upper bound must be greater or equal to the lower bound.",
+                                    "The upper bound must be greater than the lower bound.",
                                     node.getTo());
-                }
-
-                if (Type.this.maxMultiplicity.compareTo(BigInteger.ONE) < 0) {
-                    throw SemanticException.semanticError(
-                            "The upper bound must be greater or equal to 1.",
-                            node.getTo());
                 }
             }
 
@@ -274,10 +271,156 @@ public class Type {
                 Type.this.minMultiplicity = new BigInteger(node.getNumber()
                         .getText());
                 Type.this.maxMultiplicity = null;
+                Type.this.isList = true;
+
+                if (Type.this.minMultiplicity.compareTo(BigInteger.ONE) <= 0) {
+                    throw SemanticException.semanticError(
+                            "The lower bound must be greater or equal to 2.",
+                            node.getNumber());
+                }
             }
         });
 
         validate();
+    }
+
+    public Declaration getBase() {
+
+        return this.base;
+    }
+
+    public Declaration getSeparator() {
+
+        return this.separator;
+    }
+
+    public BigInteger getMinMultiplicity() {
+
+        return this.minMultiplicity;
+    }
+
+    public BigInteger getMaxMultiplicity() {
+
+        return this.maxMultiplicity;
+    }
+
+    public Boolean isSimple() {
+
+        return !this.isList;
+    }
+
+    @Override
+    public String toString() {
+
+        if (!this.isList) {
+            if (this.minMultiplicity.equals(BigInteger.ZERO)) {
+                if (this.maxMultiplicity.equals(BigInteger.ZERO)) {
+                    return "Null";
+                }
+
+                return this.base.getDisplayName() + "?";
+            }
+
+            return this.base.getDisplayName();
+        }
+
+        if (this.base == null) {
+            return "()^0";
+        }
+
+        String name;
+        if (this.separator == null) {
+            name = this.base.getDisplayName();
+        }
+        else {
+            name = "(" + this.base.getDisplayName() + " Separator "
+                    + this.separator.getDisplayName() + ")";
+        }
+
+        if (this.minMultiplicity.equals(this.maxMultiplicity)) {
+            return name + "^" + this.maxMultiplicity;
+        }
+
+        if (this.minMultiplicity.equals(BigInteger.ZERO)) {
+            if (this.maxMultiplicity == null) {
+                return name + "*";
+            }
+
+            return name + "^0.." + this.maxMultiplicity;
+        }
+
+        if (this.minMultiplicity.equals(BigInteger.ONE)) {
+            if (this.maxMultiplicity == null) {
+                return name + "+";
+            }
+
+            return name + "^1.." + this.maxMultiplicity;
+        }
+
+        return name + "^" + this.minMultiplicity + ".." + this.maxMultiplicity;
+    }
+
+    @Override
+    public boolean equals(
+            Object obj) {
+
+        if (obj == this) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        Type type = (Type) obj;
+
+        if (type.isList != this.isList || type.base != this.base
+                || type.separator != this.separator) {
+            return false;
+        }
+
+        if (this.minMultiplicity != null) {
+            if (!this.minMultiplicity.equals(type.minMultiplicity)) {
+                return false;
+            }
+        }
+        else if (type.minMultiplicity != null) {
+            return false;
+        }
+
+        if (this.maxMultiplicity != null) {
+            if (!this.maxMultiplicity.equals(type.maxMultiplicity)) {
+                return false;
+            }
+        }
+        else if (type.maxMultiplicity != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+
+        if (this.hashCode == null) {
+            this.hashCode = this.minMultiplicity.hashCode();
+            if (this.maxMultiplicity != null) {
+                this.hashCode += this.maxMultiplicity.hashCode();
+            }
+            if (this.base != null) {
+                this.hashCode += this.base.hashCode();
+            }
+            if (this.separator != null) {
+                this.hashCode += this.separator.hashCode();
+            }
+        }
+
+        return this.hashCode;
     }
 
     private void validate() {
@@ -289,6 +432,39 @@ public class Type {
 
     private boolean isValid() {
 
+        if (this.minMultiplicity == null) {
+            return false;
+        }
+
+        if (this.minMultiplicity.compareTo(BigInteger.ZERO) < 0) {
+            return false;
+        }
+
+        if (!this.isList) {
+            if (this.separator != null) {
+                return false;
+            }
+
+            if (this.minMultiplicity.compareTo(BigInteger.ONE) > 0
+                    || this.maxMultiplicity == null
+                    || this.maxMultiplicity.compareTo(BigInteger.ZERO) < 0
+                    || this.maxMultiplicity.compareTo(BigInteger.ONE) > 0
+                    || this.maxMultiplicity.compareTo(this.minMultiplicity) < 0) {
+                return false;
+            }
+
+            if (this.base == null) {
+                if (!this.minMultiplicity.equals(BigInteger.ZERO)
+                        || !this.maxMultiplicity.equals(BigInteger.ZERO)) {
+                    return false;
+                }
+
+                return true;
+            }
+
+            return true;
+        }
+
         if (this.base == null) {
             if (this.separator != null
                     || !this.minMultiplicity.equals(BigInteger.ZERO)
@@ -296,21 +472,20 @@ public class Type {
                     || !this.maxMultiplicity.equals(BigInteger.ZERO)) {
                 return false;
             }
+
+            return true;
         }
 
-        if (this.base != null && this.base == this.separator) {
+        if (this.base == this.separator) {
             // base and separator cannot be the same declaration
             return false;
         }
 
-        if (this.minMultiplicity == null
-                || this.minMultiplicity.compareTo(BigInteger.ZERO) < 0) {
-            return false;
-        }
-
-        if (this.maxMultiplicity != null
-                && this.maxMultiplicity.compareTo(this.minMultiplicity) < 0) {
-            return false;
+        if (this.maxMultiplicity != null) {
+            if (this.maxMultiplicity.compareTo(BigInteger.ZERO) < 0
+                    || this.maxMultiplicity.compareTo(this.minMultiplicity) < 0) {
+                return false;
+            }
         }
 
         return true;

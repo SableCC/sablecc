@@ -215,6 +215,11 @@ public class Alternative
         return sb.toString();
     }
 
+    public List<Element> getElements() {
+
+        return this.elements;
+    }
+
     void setElements(
             List<Element> elements) {
 

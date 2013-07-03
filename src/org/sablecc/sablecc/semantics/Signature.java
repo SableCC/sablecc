@@ -23,9 +23,36 @@ public class Signature {
 
     private ArrayList<Type> types;
 
+    // Cached values
+
+    private Boolean isSimple;
+
     public Signature(
             ArrayList<Type> types) {
 
         this.types = types;
+    }
+
+    public boolean isSimple() {
+
+        if (this.isSimple == null) {
+            if (this.types.size() == 0) {
+                this.isSimple = true;
+            }
+            else if (this.types.size() > 1) {
+                this.isSimple = false;
+            }
+            else {
+                Type type = this.types.get(0);
+                this.isSimple = type.isSimple();
+            }
+        }
+
+        return this.isSimple;
+    }
+
+    public ArrayList<Type> getTypes() {
+
+        return this.types;
     }
 }

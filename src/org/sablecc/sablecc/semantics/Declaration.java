@@ -33,6 +33,8 @@ public abstract class Declaration {
         return this.internalName;
     }
 
+    public abstract String getDisplayName();
+
     public abstract Token getLocation();
 
     void setInternalName(

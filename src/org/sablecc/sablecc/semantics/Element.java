@@ -29,6 +29,8 @@ public class Element
 
     private AElement declaration;
 
+    private Type type;
+
     // Cached values
 
     private boolean nameIsCached;
@@ -36,6 +38,8 @@ public class Element
     private String name;
 
     private boolean isSelection;
+
+    private Token location;
 
     Element(
             Grammar grammar,
@@ -162,5 +166,101 @@ public class Element
     public String toString() {
 
         return "[" + getInternalName() + ":]";
+    }
+
+    public AElement getDeclaration() {
+
+        return this.declaration;
+    }
+
+    public Type getType() {
+
+        return this.type;
+    }
+
+    public Token getLocation() {
+
+        if (this.location == null) {
+            this.declaration.getElementBody().apply(new TreeWalker() {
+
+                @Override
+                public void defaultCase(
+                        Node node) {
+
+                    if (Element.this.location == null && node instanceof Token) {
+                        Element.this.location = (Token) node;
+                    }
+                }
+            });
+        }
+
+        return this.location;
+    }
+
+    public void checkTransformation() {
+
+        Declaration base = this.type.getBase();
+        Declaration separator = this.type.getSeparator();
+
+        if (separator != null) {
+            // in alternated lists, neither units can be a transformed
+            // production
+
+            if (base instanceof Production) {
+                ProductionTransformation productionTransformation = ((Production) base)
+                        .getTransformation();
+                if (productionTransformation != null) {
+                    throw SemanticException
+                            .semanticError(
+                                    "This complex transformations is not allowed because of the complex reference on line "
+                                            + getLocation().getLine()
+                                            + " char "
+                                            + getLocation().getPos()
+                                            + ".",
+                                    productionTransformation.getLocation());
+                }
+            }
+
+            if (separator instanceof Production) {
+                ProductionTransformation productionTransformation = ((Production) separator)
+                        .getTransformation();
+                if (productionTransformation != null) {
+                    throw SemanticException
+                            .semanticError(
+                                    "This complex transformations is not allowed because of the complex reference on line "
+                                            + getLocation().getLine()
+                                            + " char "
+                                            + getLocation().getPos()
+                                            + ".",
+                                    productionTransformation.getLocation());
+                }
+            }
+
+            return;
+        }
+
+        if (base instanceof Production) {
+            ProductionTransformation productionTransformation = ((Production) base)
+                    .getTransformation();
+            if (productionTransformation != null
+                    && !productionTransformation.isSimple()) {
+                if (!this.type.isSimple()) {
+                    throw SemanticException
+                            .semanticError(
+                                    "This complex transformations is not allowed because of the complex reference on line "
+                                            + getLocation().getLine()
+                                            + " char "
+                                            + getLocation().getPos()
+                                            + ".",
+                                    productionTransformation.getLocation());
+                }
+            }
+        }
+    }
+
+    void setType(
+            Type type) {
+
+        this.type = type;
     }
 }

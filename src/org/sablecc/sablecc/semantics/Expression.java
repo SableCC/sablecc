@@ -98,6 +98,12 @@ public class Expression
     }
 
     @Override
+    public String getDisplayName() {
+
+        return getLocation().getText();
+    }
+
+    @Override
     public Token getLocation() {
 
         if (this.location == null) {

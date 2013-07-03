@@ -80,6 +80,12 @@ public class Production
     }
 
     @Override
+    public String getDisplayName() {
+
+        return getLocation().getText();
+    }
+
+    @Override
     public Token getLocation() {
 
         if (this.location == null) {
@@ -121,6 +127,11 @@ public class Production
             String name) {
 
         return this.localNameSpace.has(name);
+    }
+
+    public ProductionTransformation getTransformation() {
+
+        return this.productionTransformation;
     }
 
     void setAlternatives(

@@ -37,6 +37,8 @@ public class Grammar
 
     private Map<PAlternativeReference, AlternativeReference> alternativeReferenceResolutionMap = new HashMap<PAlternativeReference, AlternativeReference>();
 
+    private Map<PElementReference, ElementReference> elementReferenceResolutionMap = new HashMap<PElementReference, ElementReference>();
+
     private Map<PElementBody, Type> typeResolutionMap = new HashMap<PElementBody, Type>();
 
     private NameSpace parserNameSpace = new NameSpace();
@@ -77,6 +79,12 @@ public class Grammar
     public String getLookupName() {
 
         return getName();
+    }
+
+    @Override
+    public String getDisplayName() {
+
+        return getLocation().getText();
     }
 
     @Override
@@ -165,6 +173,12 @@ public class Grammar
             PAlternativeReference alternativeReference) {
 
         return this.alternativeReferenceResolutionMap.get(alternativeReference);
+    }
+
+    public ElementReference getElementReferenceResolution(
+            PElementReference elementReference) {
+
+        return this.elementReferenceResolutionMap.get(elementReference);
     }
 
     public Type getTypeResolution(
@@ -463,35 +477,61 @@ public class Grammar
     }
 
     void resolveAlternativeReference(
-            AUnnamedAlternativeReference node) {
+            AUnnamedAlternativeReference alternativeReference) {
 
-        Production production = (Production) getDeclarationResolution(node
+        Production production = (Production) getDeclarationResolution(alternativeReference
                 .getProduction());
         Alternative alternative = production.getAlternative("");
 
         if (alternative == null) {
             throw SemanticException.semanticError(
-                    "The alternative name is missing.", node.getProduction());
+                    "The alternative name is missing.",
+                    alternativeReference.getProduction());
         }
 
-        if (this.alternativeReferenceResolutionMap.containsKey(node)) {
+        if (this.alternativeReferenceResolutionMap
+                .containsKey(alternativeReference)) {
             throw new InternalException("It was already resolved.");
         }
-        this.alternativeReferenceResolutionMap.put(node, AlternativeReference
-                .createDeclaredAlternativeReference(this, alternative,
-                        node.getProduction()));
+        this.alternativeReferenceResolutionMap.put(alternativeReference,
+                AlternativeReference.createDeclaredAlternativeReference(this,
+                        alternative, alternativeReference.getProduction()));
     }
 
     void resolveAlternativeReference(
-            ANamedAlternativeReference node) {
+            ANamedAlternativeReference alternativeReference) {
 
-        if (this.alternativeReferenceResolutionMap.containsKey(node)) {
+        if (this.alternativeReferenceResolutionMap
+                .containsKey(alternativeReference)) {
             throw new InternalException("It was already resolved.");
         }
-        this.alternativeReferenceResolutionMap.put(node, AlternativeReference
-                .createDeclaredAlternativeReference(this,
-                        getAlternativeResolution(node.getAlternative()),
-                        node.getProduction()));
+        this.alternativeReferenceResolutionMap.put(alternativeReference,
+                AlternativeReference.createDeclaredAlternativeReference(this,
+                        getAlternativeResolution(alternativeReference
+                                .getAlternative()), alternativeReference
+                                .getProduction()));
+    }
+
+    void resolveElementReference(
+            ANaturalElementReference elementReference) {
+
+        if (this.elementReferenceResolutionMap.containsKey(elementReference)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.elementReferenceResolutionMap.put(elementReference,
+                ElementReference.createDeclaredElementReference(this,
+                        elementReference));
+    }
+
+    void resolveElementReference(
+            ATransformedElementReference elementReference) {
+
+        if (this.elementReferenceResolutionMap.containsKey(elementReference)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.elementReferenceResolutionMap.put(elementReference,
+                ElementReference.createDeclaredElementReference(this,
+                        elementReference));
     }
 
     void resolveType(
