@@ -77,6 +77,12 @@ public class SemanticVerifier {
             public void inAParserProduction(
                     AParserProduction node) {
 
+                if (node.getAlternatives().size() == 0) {
+                    throw SemanticException
+                            .semanticError(
+                                    "The production has no alternatives. An 'Empty' keyword is probably missing.",
+                                    node.getName());
+                }
                 SemanticVerifier.this.grammar.addProduction(node);
             }
 
@@ -130,6 +136,12 @@ public class SemanticVerifier {
             public void caseATreeProduction(
                     ATreeProduction node) {
 
+                if (node.getAlternatives().size() == 0) {
+                    throw SemanticException
+                            .semanticError(
+                                    "The production has no alternatives. An 'Empty' keyword is probably missing.",
+                                    node.getName());
+                }
                 SemanticVerifier.this.grammar.addProduction(node);
             }
         });
