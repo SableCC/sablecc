@@ -144,6 +144,13 @@ public class AlternativeTransformation {
                 simpleMatch(type, elementReferenceIterator);
             }
         }
+
+        if (elementReferenceIterator.hasNext()) {
+            ElementReference elementReference = elementReferenceIterator.next();
+            throw SemanticException.semanticError(
+                    "Unexpected spurious element reference.",
+                    elementReference.getLocation());
+        }
     }
 
     private void simpleMatch(
