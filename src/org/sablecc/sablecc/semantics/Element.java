@@ -203,13 +203,14 @@ public class Element
         Declaration separator = this.type.getSeparator();
 
         if (separator != null) {
-            // in alternated lists, neither units can be a transformed
+            // in alternated lists, neither units can be a complex-transformed
             // production
 
             if (base instanceof Production) {
                 ProductionTransformation productionTransformation = ((Production) base)
                         .getTransformation();
-                if (productionTransformation != null) {
+                if (productionTransformation != null
+                        && !productionTransformation.isSimple()) {
                     throw SemanticException
                             .semanticError(
                                     "This complex transformations is not allowed because of the complex reference on line "
@@ -224,7 +225,8 @@ public class Element
             if (separator instanceof Production) {
                 ProductionTransformation productionTransformation = ((Production) separator)
                         .getTransformation();
-                if (productionTransformation != null) {
+                if (productionTransformation != null
+                        && !productionTransformation.isSimple()) {
                     throw SemanticException
                             .semanticError(
                                     "This complex transformations is not allowed because of the complex reference on line "

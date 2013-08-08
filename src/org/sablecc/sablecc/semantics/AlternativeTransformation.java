@@ -98,15 +98,20 @@ public class AlternativeTransformation {
             Declaration separator = type.getSeparator();
 
             if (separator != null) {
+                // separated type
                 simpleMatch(type, elementReferenceIterator);
             }
             else if (base instanceof Production) {
+                // non-separated type
                 ProductionTransformation productionTransformation = ((Production) base)
                         .getTransformation();
                 if (productionTransformation != null) {
                     ArrayList<Type> types = productionTransformation
                             .getSignature().getTypes();
                     if (types.size() == 0) {
+                        simpleMatch(type, elementReferenceIterator);
+                    }
+                    else if (types.size() == 1 && types.get(0).isSimple()) {
                         simpleMatch(type, elementReferenceIterator);
                     }
                     else {
@@ -183,12 +188,6 @@ public class AlternativeTransformation {
             throw SemanticException.semanticError("Expecting : " + type,
                     elementReference.getLocation());
         }
-    }
-
-    private void match(
-            Declaration base,
-            Iterator<ElementReference> elementReferenceIterator) {
-
     }
 
     private void checkTypes() {
