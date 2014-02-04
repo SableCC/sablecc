@@ -557,7 +557,7 @@ Productions
     |
       {reference} element_reference
     |
-      {delete} delete_keyword l_par transformation_element r_par
+      {delete} delete_keyword l_par [transformation_elements]:transformation_element* r_par
     |
       {new} new_keyword alternative_reference l_par [transformation_elements]:transformation_element* r_par
     |
@@ -708,7 +708,8 @@ Abstract Syntax Tree
   transformation_element =
     {null} null_keyword |
     {reference} element_reference |
-    {delete} delete_keyword l_par transformation_element r_par |
+    {delete} delete_keyword l_par
+      [transformation_elements]:transformation_element* r_par |
     {new} new_keyword alternative_reference l_par
       [transformation_elements]:transformation_element* r_par |
     {list} list_keyword l_par [transformation_elements]:transformation_element*
