@@ -272,12 +272,6 @@ public class Type {
                         .getText());
                 Type.this.maxMultiplicity = null;
                 Type.this.isList = true;
-
-                if (Type.this.minMultiplicity.compareTo(BigInteger.ONE) <= 0) {
-                    throw SemanticException.semanticError(
-                            "The lower bound must be greater or equal to 2.",
-                            node.getNumber());
-                }
             }
         });
 
