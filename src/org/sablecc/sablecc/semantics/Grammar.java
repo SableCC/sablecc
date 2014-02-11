@@ -41,6 +41,8 @@ public class Grammar
 
     private Map<PElementBody, Type> typeResolutionMap = new HashMap<PElementBody, Type>();
 
+    private Map<PTransformationElement, TransformationElement> transformationElementMap = new HashMap<PTransformationElement, TransformationElement>();
+
     private NameSpace parserNameSpace = new NameSpace();
 
     private NameSpace treeNameSpace = new NameSpace();
@@ -185,6 +187,12 @@ public class Grammar
             PElementBody elementBody) {
 
         return this.typeResolutionMap.get(elementBody);
+    }
+
+    TransformationElement getTransformationElementResolution(
+            PTransformationElement transformationElement) {
+
+        return this.transformationElementMap.get(transformationElement);
     }
 
     void addExpression(
@@ -541,6 +549,76 @@ public class Grammar
             throw new InternalException("It was already resolved.");
         }
         this.typeResolutionMap.put(node, new Type(this, node));
+    }
+
+    void resolveTransformationElement(
+            ANullTransformationElement node) {
+
+        if (this.transformationElementMap.containsKey(node)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.transformationElementMap.put(node, TransformationElement
+                .createDeclaredNullTransformationElement(this, node));
+    }
+
+    void resolveTransformationElement(
+            AReferenceTransformationElement node) {
+
+        if (this.transformationElementMap.containsKey(node)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.transformationElementMap.put(node, TransformationElement
+                .createDeclaredReferenceTransformationElement(this, node));
+    }
+
+    void resolveTransformationElement(
+            ADeleteTransformationElement node) {
+
+        if (this.transformationElementMap.containsKey(node)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.transformationElementMap.put(node, TransformationElement
+                .createDeclaredDeleteTransformationElement(this, node));
+    }
+
+    void resolveTransformationElement(
+            ANewTransformationElement node) {
+
+        if (this.transformationElementMap.containsKey(node)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.transformationElementMap.put(node, TransformationElement
+                .createDeclaredNewTransformationElement(this, node));
+    }
+
+    void resolveTransformationElement(
+            AListTransformationElement node) {
+
+        if (this.transformationElementMap.containsKey(node)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.transformationElementMap.put(node, TransformationElement
+                .createDeclaredListTransformationElement(this, node));
+    }
+
+    void resolveTransformationElement(
+            ALeftTransformationElement node) {
+
+        if (this.transformationElementMap.containsKey(node)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.transformationElementMap.put(node, TransformationElement
+                .createDeclaredLeftTransformationElement(this, node));
+    }
+
+    void resolveTransformationElement(
+            ARightTransformationElement node) {
+
+        if (this.transformationElementMap.containsKey(node)) {
+            throw new InternalException("It was already resolved.");
+        }
+        this.transformationElementMap.put(node, TransformationElement
+                .createDeclaredRightTransformationElement(this, node));
     }
 
     private void resolveInlinedExpression(

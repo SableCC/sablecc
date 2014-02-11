@@ -17,6 +17,8 @@
 
 package org.sablecc.sablecc.semantics;
 
+import java.util.*;
+
 import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
@@ -40,6 +42,8 @@ public class Element
     private boolean isSelection;
 
     private Token location;
+
+    private List<TransformationElement.ReferenceTransformation> referenceTransformations = new LinkedList<TransformationElement.ReferenceTransformation>();
 
     Element(
             Grammar grammar,
@@ -246,7 +250,7 @@ public class Element
                     .getTransformation();
             if (productionTransformation != null
                     && !productionTransformation.isSimple()) {
-                if (!this.type.isSimple()) {
+                if (!this.type.isNotList()) {
                     throw SemanticException
                             .semanticError(
                                     "This complex transformations is not allowed because of the complex reference on line "
@@ -264,5 +268,11 @@ public class Element
             Type type) {
 
         this.type = type;
+    }
+
+    void addReferenceTransformation(
+            TransformationElement.ReferenceTransformation referenceTransformation) {
+
+        this.referenceTransformations.add(referenceTransformation);
     }
 }

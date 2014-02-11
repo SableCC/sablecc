@@ -41,8 +41,8 @@ public class Type {
 
     Type(
             boolean isList,
-            Production base,
-            Production separator,
+            Declaration base,
+            Declaration separator,
             BigInteger minMultiplicity,
             BigInteger maxMultiplicity) {
 
@@ -306,7 +306,18 @@ public class Type {
 
     public Boolean isSimple() {
 
+        return !this.isList
+                && this.minMultiplicity.equals(this.maxMultiplicity);
+    }
+
+    public Boolean isNotList() {
+
         return !this.isList;
+    }
+
+    public Boolean isList() {
+
+        return this.isList;
     }
 
     @Override
@@ -421,6 +432,56 @@ public class Type {
         }
 
         return this.hashCode;
+    }
+
+    public boolean isAssignableTo(
+            Type elementType) {
+
+        if (this.isList != elementType.isList) {
+            return false;
+        }
+
+        if (this.base != null && this.base != elementType.base) {
+            return false;
+        }
+
+        if (this.separator != null && this.separator != elementType.separator) {
+            return false;
+        }
+
+        if (this.minMultiplicity.compareTo(elementType.minMultiplicity) < 0) {
+            return false;
+        }
+
+        if (this.maxMultiplicity == null) {
+            if (elementType.maxMultiplicity != null) {
+                return false;
+            }
+        }
+        else if (elementType.maxMultiplicity != null
+                && this.maxMultiplicity.compareTo(elementType.maxMultiplicity) > 0) {
+            return false;
+        }
+
+        if (this.isList) {
+            if (this.maxMultiplicity != null
+                    && this.maxMultiplicity.compareTo(BigInteger.ONE) == 0) {
+                if (this.base != elementType.base) {
+                    return false;
+                }
+            }
+            else if (this.maxMultiplicity == null
+                    || this.maxMultiplicity.compareTo(BigInteger.ONE) > 0) {
+                if (this.base != elementType.base) {
+                    return false;
+                }
+                if (this.separator != elementType.separator) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private void validate() {

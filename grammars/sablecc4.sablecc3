@@ -563,9 +563,9 @@ Productions
     |
       {list} list_keyword l_par [transformation_elements]:transformation_element* r_par
     |
-      {left_reference} left_keyword l_par transformation_element r_par
+      {left} left_keyword l_par transformation_element r_par
     |
-      {right_reference} right_keyword l_par transformation_element r_par
+      {right} right_keyword l_par transformation_element r_par
     ;
 
   element_reference
@@ -714,8 +714,8 @@ Abstract Syntax Tree
       [transformation_elements]:transformation_element* r_par |
     {list} list_keyword l_par [transformation_elements]:transformation_element*
       r_par |
-    {left_reference} left_keyword l_par transformation_element r_par |
-    {right_reference} right_keyword l_par transformation_element r_par;
+    {left} left_keyword l_par transformation_element r_par |
+    {right} right_keyword l_par transformation_element r_par;
 
   element_reference =
     {natural} element_body |

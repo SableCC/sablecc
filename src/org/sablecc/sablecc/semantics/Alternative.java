@@ -215,6 +215,11 @@ public class Alternative
         return sb.toString();
     }
 
+    public Production getProduction() {
+
+        return this.production;
+    }
+
     public List<Element> getElements() {
 
         return this.elements;

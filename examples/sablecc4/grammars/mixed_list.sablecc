@@ -33,7 +33,8 @@ Parser
     id_list?;
 
   id_list =
-    id id_list_tail?;
+    {one:} id |
+    {many:} id id_list_tail;
 
   id_list_tail =
     {one:} ',' id |
@@ -52,6 +53,7 @@ Transformation
 
   Alternative
     separated -> New separated(id_list?.(id Separator ',')+);
-    id_list -> List(id id_list_tail?.',' id_list_tail?.(id Separator ',')+);
+    id_list.one -> List(id);
+    id_list.many -> List(id id_list_tail.',' id_list_tail.(id Separator ',')+);
     id_list_tail.one -> ',' List(id);
     id_list_tail.many -> id_list_tail.',' List(id_list_tail.(id Separator ',')+ ',' id);

@@ -17,7 +17,745 @@
 
 package org.sablecc.sablecc.semantics;
 
-public class TransformationElement {
+import java.math.*;
+import java.util.*;
 
-    private Grammar grammar;
+import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.node.*;
+
+public abstract class TransformationElement {
+
+    Grammar grammar;
+
+    private Type type;
+
+    private TransformationElement(
+            Grammar grammar) {
+
+        this.grammar = grammar;
+    }
+
+    static TransformationElement createDeclaredNullTransformationElement(
+            Grammar grammar,
+            ANullTransformationElement declaration) {
+
+        return new NullTransformation(grammar, declaration);
+    }
+
+    static TransformationElement createDeclaredReferenceTransformationElement(
+            Grammar grammar,
+            AReferenceTransformationElement declaration) {
+
+        return new ReferenceTransformation(grammar, declaration);
+    }
+
+    static TransformationElement createDeclaredDeleteTransformationElement(
+            Grammar grammar,
+            ADeleteTransformationElement declaration) {
+
+        return new DeleteTransformation(grammar, declaration);
+    }
+
+    static TransformationElement createDeclaredNewTransformationElement(
+            Grammar grammar,
+            ANewTransformationElement declaration) {
+
+        return new NewTransformation(grammar, declaration);
+    }
+
+    static TransformationElement createDeclaredListTransformationElement(
+            Grammar grammar,
+            AListTransformationElement declaration) {
+
+        return new ListTransformation(grammar, declaration);
+    }
+
+    static TransformationElement createDeclaredLeftTransformationElement(
+            Grammar grammar,
+            ALeftTransformationElement declaration) {
+
+        return new LeftTransformation(grammar, declaration);
+    }
+
+    static TransformationElement createDeclaredRightTransformationElement(
+            Grammar grammar,
+            ARightTransformationElement declaration) {
+
+        return new RightTransformation(grammar, declaration);
+    }
+
+    void setType(
+            Type type) {
+
+        this.type = type;
+    }
+
+    public Type getType() {
+
+        return this.type;
+    }
+
+    public abstract Token getLocation();
+
+    public static class NullTransformation
+            extends TransformationElement {
+
+        private ANullTransformationElement declaration;
+
+        private Token location;
+
+        private NullTransformation(
+                Grammar grammar,
+                ANullTransformationElement declaration) {
+
+            super(grammar);
+            this.declaration = declaration;
+
+            this.location = this.declaration.getNullKeyword();
+
+            computeType();
+        }
+
+        private void computeType() {
+
+            setType(new Type(false, null, null, BigInteger.ZERO,
+                    BigInteger.ZERO));
+        }
+
+        @Override
+        public Token getLocation() {
+
+            if (this.declaration == null) {
+                throw new InternalException("synthetic transformation element");
+            }
+
+            return this.location;
+        }
+    }
+
+    public static class ReferenceTransformation
+            extends TransformationElement {
+
+        private AReferenceTransformationElement declaration;
+
+        private Token location;
+
+        private ElementReference elementReference;
+
+        private ReferenceTransformation(
+                Grammar grammar,
+                AReferenceTransformationElement declaration) {
+
+            super(grammar);
+            this.declaration = declaration;
+
+            this.elementReference = this.grammar
+                    .getElementReferenceResolution(this.declaration
+                            .getElementReference());
+
+            this.location = this.elementReference.getLocation();
+
+            Element element = this.elementReference.getAssociateParserElement();
+            element.addReferenceTransformation(this);
+
+            computeType();
+        }
+
+        private void computeType() {
+
+            setType(this.elementReference.getType());
+        }
+
+        @Override
+        public Token getLocation() {
+
+            if (this.declaration == null) {
+                throw new InternalException("synthetic transformation element");
+            }
+
+            return this.location;
+        }
+    }
+
+    public static class DeleteTransformation
+            extends TransformationElement {
+
+        private ADeleteTransformationElement declaration;
+
+        private Token location;
+
+        private final List<TransformationElement> children = new LinkedList<TransformationElement>();
+
+        private DeleteTransformation(
+                Grammar grammar,
+                ADeleteTransformationElement declaration) {
+
+            super(grammar);
+            this.declaration = declaration;
+
+            this.location = this.declaration.getDeleteKeyword();
+
+            for (PTransformationElement pTransformationElement : this.declaration
+                    .getTransformationElements()) {
+                TransformationElement transformationElement = this.grammar
+                        .getTransformationElementResolution(pTransformationElement);
+                this.children.add(transformationElement);
+            }
+
+            computeType();
+        }
+
+        private void computeType() {
+
+            setType(null);
+        }
+
+        @Override
+        public Token getLocation() {
+
+            if (this.declaration == null) {
+                throw new InternalException("synthetic transformation element");
+            }
+
+            return this.location;
+        }
+    }
+
+    public static class NewTransformation
+            extends TransformationElement {
+
+        private ANewTransformationElement declaration;
+
+        private Token location;
+
+        private Alternative alternative;
+
+        private final List<TransformationElement> children = new LinkedList<TransformationElement>();
+
+        private NewTransformation(
+                Grammar grammar,
+                ANewTransformationElement declaration) {
+
+            super(grammar);
+            this.declaration = declaration;
+
+            this.location = this.declaration.getNewKeyword();
+
+            AlternativeReference alternativeReference = this.grammar
+                    .getAlternativeReferenceResolution(this.declaration
+                            .getAlternativeReference());
+            this.alternative = alternativeReference.getAlternative();
+
+            for (PTransformationElement pTransformationElement : this.declaration
+                    .getTransformationElements()) {
+                TransformationElement transformationElement = this.grammar
+                        .getTransformationElementResolution(pTransformationElement);
+                this.children.add(transformationElement);
+            }
+
+            computeType();
+        }
+
+        private void computeType() {
+
+            Iterator<Element> elementIterator = this.alternative.getElements()
+                    .iterator();
+            for (TransformationElement transformationElement : this.children) {
+                Type transformationElementType = transformationElement
+                        .getType();
+                // skip deleted elements (type == null)
+                if (transformationElementType != null) {
+                    if (!elementIterator.hasNext()) {
+                        throw SemanticException.semanticError(
+                                "Unexpected extra transformation element.",
+                                transformationElement.getLocation());
+                    }
+                    Element element = elementIterator.next();
+                    Type elementType = element.getType();
+                    if (!transformationElementType.isAssignableTo(elementType)) {
+                        throw SemanticException.semanticError(
+                                "Expecting a tranformation element of type "
+                                        + elementType + ".",
+                                transformationElement.getLocation());
+                    }
+                }
+            }
+
+            if (elementIterator.hasNext()) {
+                Element element = elementIterator.next();
+                Type elementType = element.getType();
+                throw SemanticException
+                        .semanticError(
+                                "Expecting a tranformation element of type "
+                                        + elementType + ".",
+                                this.declaration.getRPar());
+            }
+
+            setType(new Type(false, this.alternative.getProduction(), null,
+                    BigInteger.ONE, BigInteger.ONE));
+        }
+
+        @Override
+        public Token getLocation() {
+
+            if (this.declaration == null) {
+                throw new InternalException("synthetic transformation element");
+            }
+
+            return this.location;
+        }
+    }
+
+    public static class ListTransformation
+            extends TransformationElement {
+
+        private AListTransformationElement declaration;
+
+        private Token location;
+
+        private final List<TransformationElement> children = new LinkedList<TransformationElement>();
+
+        private ListTransformation(
+                Grammar grammar,
+                AListTransformationElement declaration) {
+
+            super(grammar);
+            this.declaration = declaration;
+
+            this.location = this.declaration.getListKeyword();
+
+            for (PTransformationElement pTransformationElement : this.declaration
+                    .getTransformationElements()) {
+                TransformationElement transformationElement = this.grammar
+                        .getTransformationElementResolution(pTransformationElement);
+                this.children.add(transformationElement);
+            }
+
+            computeType();
+        }
+
+        private void computeType() {
+
+            Declaration base = null;
+            Declaration separator = null;
+            BigInteger minMultiplicity = null;
+            BigInteger maxMultiplicity = null;
+
+            boolean baseAndSeparatorIdentified = false;
+            boolean incompletePair = false;
+
+            for (TransformationElement child : this.children) {
+
+                Type childType = child.getType();
+
+                if (childType != null && childType.getBase() != null) {
+
+                    Declaration childBase = childType.getBase();
+                    Declaration childSeparator = childType.getSeparator();
+                    BigInteger childMinMultiplicity = childType
+                            .getMinMultiplicity();
+                    BigInteger childMaxMultiplicity = childType
+                            .getMaxMultiplicity();
+
+                    if (baseAndSeparatorIdentified) {
+
+                        if (incompletePair || separator == null) {
+
+                            if (childBase != base || childSeparator != null
+                                    && childSeparator != separator) {
+                                throw SemanticException.semanticError(
+                                        "The tranformation element is incompatible with the "
+                                                + new Type(true, base,
+                                                        separator,
+                                                        minMultiplicity,
+                                                        maxMultiplicity)
+                                                + " prefix.", child
+                                                .getLocation());
+                            }
+                        }
+                        else {
+                            // incompletePair == false
+                            // separator != null
+
+                            if (childBase != separator
+                                    || childSeparator != null
+                                    && childSeparator != base) {
+                                throw SemanticException.semanticError(
+                                        "The tranformation element is incompatible with the "
+                                                + new Type(true, base,
+                                                        separator,
+                                                        minMultiplicity,
+                                                        maxMultiplicity)
+                                                + " prefix.", child
+                                                .getLocation());
+                            }
+                        }
+
+                        if (childMaxMultiplicity == null
+                                || childMaxMultiplicity
+                                        .compareTo(BigInteger.ZERO) > 0) {
+
+                            if (childMinMultiplicity.compareTo(BigInteger.ZERO) == 0) {
+                                throw SemanticException.semanticError(
+                                        "The tranformation element is incompatible with the "
+                                                + new Type(true, base,
+                                                        separator,
+                                                        minMultiplicity,
+                                                        maxMultiplicity)
+                                                + " prefix.", child
+                                                .getLocation());
+                            }
+
+                            if (separator != null
+                                    && childSeparator == null
+                                    && (childMaxMultiplicity == null || childMaxMultiplicity
+                                            .compareTo(BigInteger.ONE) > 0)) {
+                                throw SemanticException.semanticError(
+                                        "The tranformation element is incompatible with the "
+                                                + new Type(true, base,
+                                                        separator,
+                                                        minMultiplicity,
+                                                        maxMultiplicity)
+                                                + " prefix.", child
+                                                .getLocation());
+                            }
+
+                            if (incompletePair) {
+                                minMultiplicity = minMultiplicity.add(
+                                        childMinMultiplicity).subtract(
+                                        BigInteger.ONE);
+                                if (maxMultiplicity == null
+                                        || childMaxMultiplicity == null) {
+                                    maxMultiplicity = null;
+                                }
+                                else {
+                                    maxMultiplicity = maxMultiplicity.add(
+                                            childMaxMultiplicity).subtract(
+                                            BigInteger.ONE);
+                                }
+                                incompletePair = false;
+                            }
+                            else {
+                                minMultiplicity = minMultiplicity
+                                        .add(childMinMultiplicity);
+                                if (maxMultiplicity == null
+                                        || childMaxMultiplicity == null) {
+                                    maxMultiplicity = null;
+                                }
+                                else {
+                                    maxMultiplicity = maxMultiplicity
+                                            .add(childMaxMultiplicity);
+                                }
+                                incompletePair = true;
+                            }
+                        }
+                        else {
+                            // childMinMultiplicity == 0
+                            // childMaxMultiplicity == 0
+                        }
+                    }
+                    else if (minMultiplicity != null) {
+                        // base != null
+                        // separator == null
+                        // minMultiplicity == 0 || minMultiplicity == 1
+                        // maxMultiplicity == minMultiplicity
+
+                        if (minMultiplicity.compareTo(BigInteger.ZERO) == 0) {
+                            // minMultiplicity == 0
+                            // maxMultiplicity == 0
+
+                            if (childBase != base) {
+                                throw SemanticException.semanticError(
+                                        "The tranformation element is incompatible with the "
+                                                + new Type(true, base,
+                                                        separator,
+                                                        minMultiplicity,
+                                                        maxMultiplicity)
+                                                + " prefix.", child
+                                                .getLocation());
+                            }
+
+                            separator = childSeparator;
+                            minMultiplicity = childMinMultiplicity;
+                            maxMultiplicity = childMaxMultiplicity;
+
+                            if (separator != null) {
+                                baseAndSeparatorIdentified = true;
+                            }
+                            else if (maxMultiplicity == null) {
+                                baseAndSeparatorIdentified = true;
+                            }
+                            else if (maxMultiplicity.compareTo(BigInteger.ONE) > 0) {
+                                baseAndSeparatorIdentified = true;
+                            }
+                            else if (minMultiplicity.compareTo(maxMultiplicity) < 0) {
+                                baseAndSeparatorIdentified = true;
+                            }
+                        }
+                        else if (childBase == base) {
+                            // minMultiplicity == 1
+                            // maxMultiplicity == 1
+
+                            if (childSeparator != null) {
+                                throw SemanticException.semanticError(
+                                        "The tranformation element is incompatible with the "
+                                                + new Type(true, base,
+                                                        separator,
+                                                        minMultiplicity,
+                                                        maxMultiplicity)
+                                                + " prefix.", child
+                                                .getLocation());
+                            }
+
+                            if (childMaxMultiplicity == null) {
+                                minMultiplicity = minMultiplicity
+                                        .add(childMinMultiplicity);
+                                maxMultiplicity = null;
+                                baseAndSeparatorIdentified = true;
+                            }
+                            else if (childMaxMultiplicity
+                                    .compareTo(BigInteger.ZERO) > 0) {
+                                minMultiplicity = minMultiplicity
+                                        .add(childMinMultiplicity);
+                                maxMultiplicity = maxMultiplicity
+                                        .add(childMaxMultiplicity);
+                                baseAndSeparatorIdentified = true;
+                            }
+                            else {
+                                // childMinMultiplicity == 0
+                                // childMaxMultiplicity == 0
+                            }
+                        }
+                        else if (childSeparator == null) {
+                            // minMultiplicity == 1
+                            // maxMultiplicity == 1
+                            // childBase != base
+
+                            if (childMaxMultiplicity == null
+                                    || childMaxMultiplicity
+                                            .compareTo(BigInteger.ONE) > 0
+                                    || childMinMultiplicity
+                                            .compareTo(childMaxMultiplicity) != 0) {
+                                throw SemanticException.semanticError(
+                                        "The tranformation element is incompatible with the "
+                                                + new Type(true, base,
+                                                        separator,
+                                                        minMultiplicity,
+                                                        maxMultiplicity)
+                                                + " prefix.", child
+                                                .getLocation());
+                            }
+
+                            separator = childBase;
+                            if (minMultiplicity.compareTo(BigInteger.ONE) == 0) {
+                                minMultiplicity = minMultiplicity
+                                        .add(childMinMultiplicity);
+                                maxMultiplicity = maxMultiplicity
+                                        .add(childMaxMultiplicity);
+                                incompletePair = true;
+                            }
+                            baseAndSeparatorIdentified = true;
+                        }
+                        else {
+                            // minMultiplicity == 1
+                            // maxMultiplicity == 1
+                            // childBase != base
+                            // childSeparator != null
+
+                            if (childSeparator != base) {
+                                throw SemanticException.semanticError(
+                                        "The tranformation element is incompatible with the "
+                                                + new Type(true, base,
+                                                        separator,
+                                                        minMultiplicity,
+                                                        maxMultiplicity)
+                                                + " prefix.", child
+                                                .getLocation());
+                            }
+
+                            if (childMaxMultiplicity == null
+                                    || childMaxMultiplicity
+                                            .compareTo(BigInteger.ZERO) > 0) {
+
+                                if (childMinMultiplicity
+                                        .compareTo(BigInteger.ZERO) == 0) {
+                                    throw SemanticException.semanticError(
+                                            "The tranformation element is incompatible with the "
+                                                    + new Type(true, base,
+                                                            separator,
+                                                            minMultiplicity,
+                                                            maxMultiplicity)
+                                                    + " prefix.", child
+                                                    .getLocation());
+                                }
+
+                                separator = childBase;
+                                minMultiplicity = minMultiplicity
+                                        .add(childMinMultiplicity);
+                                maxMultiplicity = maxMultiplicity
+                                        .add(childMaxMultiplicity);
+                                baseAndSeparatorIdentified = true;
+                                incompletePair = true;
+                            }
+                            else {
+                                // childMinMultiplicity = 0
+                                // childMaxMultiplicity = 0
+                                separator = childBase;
+                                baseAndSeparatorIdentified = true;
+                            }
+                        }
+                    }
+                    else {
+                        // base == null
+                        // separator == null
+                        // minMultiplicity == null
+                        // maxMultiplicity == null
+
+                        base = childBase;
+                        separator = childSeparator;
+                        minMultiplicity = childMinMultiplicity;
+                        maxMultiplicity = childMaxMultiplicity;
+
+                        if (separator != null) {
+                            baseAndSeparatorIdentified = true;
+                        }
+                        else if (maxMultiplicity == null) {
+                            baseAndSeparatorIdentified = true;
+                        }
+                        else if (maxMultiplicity.compareTo(BigInteger.ONE) > 0) {
+                            baseAndSeparatorIdentified = true;
+                        }
+                        else if (minMultiplicity.compareTo(maxMultiplicity) < 0) {
+                            baseAndSeparatorIdentified = true;
+                        }
+                    }
+                }
+            }
+
+            if (minMultiplicity == null) {
+                minMultiplicity = BigInteger.ZERO;
+                maxMultiplicity = BigInteger.ZERO;
+            }
+
+            setType(new Type(true, base, separator, minMultiplicity,
+                    maxMultiplicity));
+        }
+
+        @Override
+        public Token getLocation() {
+
+            if (this.declaration == null) {
+                throw new InternalException("synthetic transformation element");
+            }
+
+            return this.location;
+        }
+    }
+
+    public static class LeftTransformation
+            extends TransformationElement {
+
+        private ALeftTransformationElement declaration;
+
+        private Token location;
+
+        private final TransformationElement child;
+
+        private LeftTransformation(
+                Grammar grammar,
+                ALeftTransformationElement declaration) {
+
+            super(grammar);
+            this.declaration = declaration;
+
+            this.location = this.declaration.getLeftKeyword();
+
+            this.child = this.grammar
+                    .getTransformationElementResolution(declaration
+                            .getTransformationElement());
+
+            computeType();
+        }
+
+        private void computeType() {
+
+            Type childType = this.child.getType();
+            if (!childType.isList() || childType.getSeparator() == null) {
+                throw SemanticException
+                        .semanticError("Expecting a separated list.",
+                                this.child.getLocation());
+            }
+            setType(new Type(true, childType.getBase(), null,
+                    childType.getMinMultiplicity(),
+                    childType.getMaxMultiplicity()));
+        }
+
+        @Override
+        public Token getLocation() {
+
+            if (this.declaration == null) {
+                throw new InternalException("synthetic transformation element");
+            }
+
+            return this.location;
+        }
+    }
+
+    public static class RightTransformation
+            extends TransformationElement {
+
+        private ARightTransformationElement declaration;
+
+        private Token location;
+
+        private final TransformationElement child;
+
+        private RightTransformation(
+                Grammar grammar,
+                ARightTransformationElement declaration) {
+
+            super(grammar);
+            this.declaration = declaration;
+
+            this.location = this.declaration.getRightKeyword();
+
+            this.child = this.grammar
+                    .getTransformationElementResolution(declaration
+                            .getTransformationElement());
+
+            computeType();
+        }
+
+        private void computeType() {
+
+            Type childType = this.child.getType();
+            if (!childType.isList() || childType.getSeparator() == null) {
+                throw SemanticException
+                        .semanticError("Expecting a separated list.",
+                                this.child.getLocation());
+            }
+
+            BigInteger min = childType.getMinMultiplicity();
+            if (min.compareTo(BigInteger.ZERO) > 0) {
+                min = min.subtract(BigInteger.ONE);
+            }
+
+            BigInteger max = childType.getMaxMultiplicity();
+            if (max != null && max.compareTo(BigInteger.ZERO) > 0) {
+                max = max.subtract(BigInteger.ONE);
+            }
+
+            setType(new Type(true, childType.getSeparator(), null, min, max));
+        }
+
+        @Override
+        public Token getLocation() {
+
+            if (this.declaration == null) {
+                throw new InternalException("synthetic transformation element");
+            }
+
+            return this.location;
+        }
+    }
 }

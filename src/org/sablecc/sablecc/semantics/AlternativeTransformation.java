@@ -53,7 +53,7 @@ public class AlternativeTransformation {
                 grammar, node);
 
         alternativeTransformation.checkElementReferences();
-        alternativeTransformation.checkTypes();
+        alternativeTransformation.createDeclaredTransformationElements();
 
         alternativeTransformation.alternativeReference.getAlternative()
                 .setDeclaredTransformation(alternativeTransformation);
@@ -99,7 +99,7 @@ public class AlternativeTransformation {
 
             if (separator != null) {
                 // separated type
-                simpleMatch(type, elementReferenceIterator);
+                simpleMatch(type, elementReferenceIterator, element);
             }
             else if (base instanceof Production) {
                 // non-separated type
@@ -109,10 +109,10 @@ public class AlternativeTransformation {
                     ArrayList<Type> types = productionTransformation
                             .getSignature().getTypes();
                     if (types.size() == 0) {
-                        simpleMatch(type, elementReferenceIterator);
+                        simpleMatch(type, elementReferenceIterator, element);
                     }
                     else if (types.size() == 1 && types.get(0).isSimple()) {
-                        simpleMatch(type, elementReferenceIterator);
+                        simpleMatch(type, elementReferenceIterator, element);
                     }
                     else {
                         for (Type subtreeType : types) {
@@ -149,15 +149,17 @@ public class AlternativeTransformation {
                                                 + subtreeType,
                                         elementReference.getLocation());
                             }
+
+                            elementReference.associateTo(element);
                         }
                     }
                 }
                 else {
-                    simpleMatch(type, elementReferenceIterator);
+                    simpleMatch(type, elementReferenceIterator, element);
                 }
             }
             else {
-                simpleMatch(type, elementReferenceIterator);
+                simpleMatch(type, elementReferenceIterator, element);
             }
         }
 
@@ -171,7 +173,8 @@ public class AlternativeTransformation {
 
     private void simpleMatch(
             Type type,
-            Iterator<ElementReference> elementReferenceIterator) {
+            Iterator<ElementReference> elementReferenceIterator,
+            Element element) {
 
         if (!elementReferenceIterator.hasNext()) {
             throw SemanticException.semanticError(
@@ -188,11 +191,69 @@ public class AlternativeTransformation {
             throw SemanticException.semanticError("Expecting : " + type,
                     elementReference.getLocation());
         }
+
+        elementReference.associateTo(element);
     }
 
-    private void checkTypes() {
+    private void createDeclaredTransformationElements() {
 
-        // TODO Auto-generated method stub
+        this.declaration.apply(new TreeWalker() {
 
+            @Override
+            public void outANullTransformationElement(
+                    ANullTransformationElement node) {
+
+                AlternativeTransformation.this.grammar
+                        .resolveTransformationElement(node);
+            }
+
+            @Override
+            public void outAReferenceTransformationElement(
+                    AReferenceTransformationElement node) {
+
+                AlternativeTransformation.this.grammar
+                        .resolveTransformationElement(node);
+            }
+
+            @Override
+            public void outADeleteTransformationElement(
+                    ADeleteTransformationElement node) {
+
+                AlternativeTransformation.this.grammar
+                        .resolveTransformationElement(node);
+            }
+
+            @Override
+            public void outANewTransformationElement(
+                    ANewTransformationElement node) {
+
+                AlternativeTransformation.this.grammar
+                        .resolveTransformationElement(node);
+            }
+
+            @Override
+            public void outAListTransformationElement(
+                    AListTransformationElement node) {
+
+                AlternativeTransformation.this.grammar
+                        .resolveTransformationElement(node);
+            }
+
+            @Override
+            public void outALeftTransformationElement(
+                    ALeftTransformationElement node) {
+
+                AlternativeTransformation.this.grammar
+                        .resolveTransformationElement(node);
+            }
+
+            @Override
+            public void outARightTransformationElement(
+                    ARightTransformationElement node) {
+
+                AlternativeTransformation.this.grammar
+                        .resolveTransformationElement(node);
+            }
+        });
     }
 }
