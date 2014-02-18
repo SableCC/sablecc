@@ -117,13 +117,10 @@ public class AlternativeTransformation {
                     else {
                         for (Type subtreeType : types) {
                             if (!elementReferenceIterator.hasNext()) {
-                                throw SemanticException
-                                        .semanticError(
-                                                "The transformation is missing a reference to : "
-                                                        + type + "."
-                                                        + subtreeType,
-                                                this.alternativeReference
-                                                        .getLocation());
+                                throw SemanticException.semanticError(
+                                        "Expecting : " + type + "."
+                                                + subtreeType,
+                                        this.declaration.getSemicolon());
                             }
                             ElementReference elementReference = elementReferenceIterator
                                     .next();
@@ -166,7 +163,7 @@ public class AlternativeTransformation {
         if (elementReferenceIterator.hasNext()) {
             ElementReference elementReference = elementReferenceIterator.next();
             throw SemanticException.semanticError(
-                    "Unexpected spurious element reference.",
+                    "Unexpected extra element reference.",
                     elementReference.getLocation());
         }
     }
@@ -177,9 +174,8 @@ public class AlternativeTransformation {
             Element element) {
 
         if (!elementReferenceIterator.hasNext()) {
-            throw SemanticException.semanticError(
-                    "The transformation is missing a reference to : " + type,
-                    this.alternativeReference.getLocation());
+            throw SemanticException.semanticError("Expecting : " + type,
+                    this.declaration.getSemicolon());
         }
         ElementReference elementReference = elementReferenceIterator.next();
         if (elementReference.getSubtree() != null) {
@@ -197,6 +193,7 @@ public class AlternativeTransformation {
 
     private void createDeclaredTransformationElements() {
 
+        // create the transformation elements
         this.declaration.apply(new TreeWalker() {
 
             @Override
@@ -255,5 +252,43 @@ public class AlternativeTransformation {
                         .resolveTransformationElement(node);
             }
         });
+
+        // check compatibility with production transformation
+        ProductionTransformation productionTransformation = this.alternativeReference
+                .getAlternative().getProduction().getTransformation();
+        Iterator<Type> signatureTypeIterator = productionTransformation
+                .getSignature().getTypes().iterator();
+
+        for (PTransformationElement pTransformationElement : this.declaration
+                .getTransformationElements()) {
+            TransformationElement transformationElement = this.grammar
+                    .getTransformationElementResolution(pTransformationElement);
+            Type transformationElementType = transformationElement.getType();
+
+            // skip deleted elements (type == null)
+            if (transformationElementType != null) {
+                if (!signatureTypeIterator.hasNext()) {
+                    throw SemanticException.semanticError(
+                            "Unexpected extra transformation element.",
+                            transformationElement.getLocation());
+                }
+                Type signatureType = signatureTypeIterator.next();
+                if (!transformationElementType.isAssignableTo(signatureType)) {
+                    throw SemanticException.semanticError(
+                            "Expecting a tranformation element of type "
+                                    + signatureType + ".",
+                            transformationElement.getLocation());
+                }
+            }
+        }
+
+        if (signatureTypeIterator.hasNext()) {
+            Type signatureType = signatureTypeIterator.next();
+            throw SemanticException.semanticError(
+                    "Expecting a tranformation element of type "
+                            + signatureType + ".",
+                    this.declaration.getSemicolon());
+        }
+
     }
 }
