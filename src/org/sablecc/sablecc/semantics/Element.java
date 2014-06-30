@@ -250,7 +250,7 @@ public class Element
                     .getTransformation();
             if (productionTransformation != null
                     && !productionTransformation.isSimple()) {
-                if (!this.type.isNotList()) {
+                if (this.type.isList()) {
                     throw SemanticException
                             .semanticError(
                                     "This complex transformations is not allowed because of the complex reference on line "
