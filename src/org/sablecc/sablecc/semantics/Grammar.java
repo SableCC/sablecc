@@ -189,10 +189,16 @@ public class Grammar
         return this.typeResolutionMap.get(elementBody);
     }
 
-    TransformationElement getTransformationElementResolution(
+    public TransformationElement getTransformationElementResolution(
             PTransformationElement transformationElement) {
 
         return this.transformationElementMap.get(transformationElement);
+    }
+
+    public Production getTreeProduction(
+            String name) {
+
+        return (Production) this.treeNameSpace.get(name);
     }
 
     void addExpression(

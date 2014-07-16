@@ -17,6 +17,7 @@
 
 package org.sablecc.sablecc.semantics;
 
+import java.math.*;
 import java.util.*;
 
 import org.sablecc.sablecc.syntax3.node.*;
@@ -74,6 +75,30 @@ public class ProductionTransformation {
         production.setDeclaredTransformation(productionTransformation);
     }
 
+    static void createImplicitProductionTransformation(
+            Grammar grammar,
+            Production production) {
+
+        ProductionTransformation productionTransformation = new ProductionTransformation(
+                grammar, null);
+
+        Production treeProduction = grammar.getTreeProduction(production
+                .getLookupName());
+        Signature signature;
+        if (treeProduction == null) {
+            signature = new Signature(new ArrayList<Type>());
+        }
+        else {
+            ArrayList<Type> types = new ArrayList<Type>();
+            types.add(new Type(false, treeProduction, null, BigInteger.ONE,
+                    BigInteger.ONE));
+            signature = new Signature(types);
+        }
+
+        productionTransformation.setSignature(signature);
+        production.setImplicitTransformation(productionTransformation);
+    }
+
     private void computeSignature() {
 
         ArrayList<Type> subtreeTypes = new ArrayList<Type>();
@@ -84,5 +109,11 @@ public class ProductionTransformation {
         }
 
         this.signature = new Signature(subtreeTypes);
+    }
+
+    private void setSignature(
+            Signature signature) {
+
+        this.signature = signature;
     }
 }

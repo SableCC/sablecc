@@ -159,6 +159,16 @@ public class Production
         this.productionTransformation = productionTransformation;
     }
 
+    void setImplicitTransformation(
+            ProductionTransformation productionTransformation) {
+
+        if (this.productionTransformation != null) {
+            throw new InternalException("Already transformed");
+        }
+
+        this.productionTransformation = productionTransformation;
+    }
+
     private void detectQualifiers() {
 
         if (this.declaration instanceof AParserProduction) {

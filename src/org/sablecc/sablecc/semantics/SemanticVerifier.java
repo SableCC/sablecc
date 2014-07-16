@@ -527,7 +527,7 @@ public class SemanticVerifier {
 
     private void createTransformations() {
 
-        // create production transformations
+        // create explicit production transformations
         this.ast.apply(new TreeWalker() {
 
             @Override
@@ -543,7 +543,6 @@ public class SemanticVerifier {
 
         // check that productions that are subject to complex (non-simple)
         // transformations are not referenced in a complex (non-simple) element.
-
         this.ast.apply(new TreeWalker() {
 
             @Override
@@ -563,7 +562,31 @@ public class SemanticVerifier {
             }
         });
 
-        // create alternative transformations
+        // create implicit production transformations
+        this.ast.apply(new TreeWalker() {
+
+            @Override
+            public void caseAGrammar(
+                    AGrammar node) {
+
+                visit(node.getParser());
+            }
+
+            @Override
+            public void caseAParserProduction(
+                    AParserProduction node) {
+
+                Production production = SemanticVerifier.this.grammar
+                        .getProduction(node);
+                if (production.getTransformation() == null) {
+                    ProductionTransformation
+                            .createImplicitProductionTransformation(
+                                    SemanticVerifier.this.grammar, production);
+                }
+            }
+        });
+
+        // create explicit alternative transformations
         this.ast.apply(new TreeWalker() {
 
             @Override
