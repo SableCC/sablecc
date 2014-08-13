@@ -401,7 +401,7 @@ Productions
   parser_production
     =
       [qualifiers]:qualifier* identifier assign alternatives? semicolon precedence_rules?
-        {-> New parser_production([qualifiers], identifier, assign, [alternatives.alternatives], [precedence_rules.precedence_rules]) }
+        {-> New parser_production([qualifiers], identifier, assign, [alternatives.alternatives], semicolon, [precedence_rules.precedence_rules]) }
     ;
 
   qualifier
@@ -514,7 +514,7 @@ Productions
   tree_production
     =
       identifier assign alternatives? semicolon
-        {-> New tree_production(identifier, assign, [alternatives.alternatives]) }
+        {-> New tree_production(identifier, assign, [alternatives.alternatives], semicolon) }
     ;
 
   transformation
@@ -632,7 +632,8 @@ Abstract Syntax Tree
 
   parser_production =
     [qualifiers]:qualifier* [name]:identifier assign
-      [alternatives]:alternative* [precedence_rules]:precedence_rule*;
+      [alternatives]:alternative* semicolon
+      [precedence_rules]:precedence_rule*;
 
   qualifier =
     {root} root_keyword |
@@ -681,7 +682,7 @@ Abstract Syntax Tree
     tree_keyword [tree_productions]:tree_production* transformation?;
 
   tree_production =
-    [name]:identifier assign [alternatives]:alternative*;
+    [name]:identifier assign [alternatives]:alternative* semicolon;
 
   transformation =
     transformation_keyword production_transformations?

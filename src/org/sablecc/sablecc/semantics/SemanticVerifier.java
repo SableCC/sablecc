@@ -81,7 +81,7 @@ public class SemanticVerifier {
                     throw SemanticException
                             .semanticError(
                                     "The production has no alternatives. An 'Empty' keyword is probably missing.",
-                                    node.getName());
+                                    node.getSemicolon());
                 }
                 SemanticVerifier.this.grammar.addProduction(node);
             }
@@ -140,7 +140,7 @@ public class SemanticVerifier {
                     throw SemanticException
                             .semanticError(
                                     "The production has no alternatives. An 'Empty' keyword is probably missing.",
-                                    node.getName());
+                                    node.getSemicolon());
                 }
                 SemanticVerifier.this.grammar.addProduction(node);
             }
