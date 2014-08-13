@@ -325,7 +325,7 @@ public class SableCC {
                         destinationPackage, trace);
                 codeGenerator.run();
             }
-            */
+             */
 
             trace.informativeln();
             trace.informativeln("SableCC has successfully compiled \""
@@ -380,6 +380,6 @@ public class SableCC {
         }
 
         return grammar;
-        */
+         */
     }
 }

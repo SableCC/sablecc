@@ -300,8 +300,8 @@ public class Type {
 
     public Boolean isSimple() {
 
-        return !this.isList
-                && this.minMultiplicity.equals(this.maxMultiplicity);
+        return !this.isList && this.minMultiplicity.equals(BigInteger.ONE)
+                && this.maxMultiplicity.equals(BigInteger.ONE);
     }
 
     public Boolean isNotList() {
@@ -458,18 +458,10 @@ public class Type {
         }
 
         if (this.isList) {
-            if (this.maxMultiplicity != null
-                    && this.maxMultiplicity.compareTo(BigInteger.ONE) == 0) {
-                if (this.base != elementType.base) {
-                    return false;
-                }
-            }
-            else if (this.maxMultiplicity == null
+            if (this.maxMultiplicity == null
                     || this.maxMultiplicity.compareTo(BigInteger.ONE) > 0) {
-                if (this.base != elementType.base) {
-                    return false;
-                }
-                if (this.separator != elementType.separator) {
+
+                if (this.separator == null && elementType.separator != null) {
                     return false;
                 }
             }
@@ -496,13 +488,14 @@ public class Type {
         }
 
         if (!this.isList) {
+            // it's not a list
+
             if (this.separator != null) {
                 return false;
             }
 
             if (this.minMultiplicity.compareTo(BigInteger.ONE) > 0
                     || this.maxMultiplicity == null
-                    || this.maxMultiplicity.compareTo(BigInteger.ZERO) < 0
                     || this.maxMultiplicity.compareTo(BigInteger.ONE) > 0
                     || this.maxMultiplicity.compareTo(this.minMultiplicity) < 0) {
                 return false;
@@ -520,6 +513,8 @@ public class Type {
             return true;
         }
 
+        // it's a list
+
         if (this.base == null) {
             if (this.separator != null
                     || !this.minMultiplicity.equals(BigInteger.ZERO)
@@ -536,11 +531,9 @@ public class Type {
             return false;
         }
 
-        if (this.maxMultiplicity != null) {
-            if (this.maxMultiplicity.compareTo(BigInteger.ZERO) < 0
-                    || this.maxMultiplicity.compareTo(this.minMultiplicity) < 0) {
-                return false;
-            }
+        if (this.maxMultiplicity != null
+                && this.maxMultiplicity.compareTo(this.minMultiplicity) < 0) {
+            return false;
         }
 
         return true;
