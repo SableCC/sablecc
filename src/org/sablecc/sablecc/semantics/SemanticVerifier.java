@@ -541,27 +541,6 @@ public class SemanticVerifier {
 
         });
 
-        // check that productions that are subject to complex (non-simple)
-        // transformations are not referenced in a complex (non-simple) element.
-        this.ast.apply(new TreeWalker() {
-
-            @Override
-            public void caseAGrammar(
-                    AGrammar node) {
-
-                visit(node.getParser());
-            }
-
-            @Override
-            public void caseAElement(
-                    AElement node) {
-
-                Element element = SemanticVerifier.this.grammar
-                        .getElement(node);
-                element.checkTransformation();
-            }
-        });
-
         // create implicit production transformations
         this.ast.apply(new TreeWalker() {
 
@@ -583,6 +562,27 @@ public class SemanticVerifier {
                             .createImplicitProductionTransformation(
                                     SemanticVerifier.this.grammar, production);
                 }
+            }
+        });
+
+        // check that productions that are subject to complex (non-simple)
+        // transformations are not referenced in a complex (non-simple) element.
+        this.ast.apply(new TreeWalker() {
+
+            @Override
+            public void caseAGrammar(
+                    AGrammar node) {
+
+                visit(node.getParser());
+            }
+
+            @Override
+            public void caseAElement(
+                    AElement node) {
+
+                Element element = SemanticVerifier.this.grammar
+                        .getElement(node);
+                element.checkTransformation();
             }
         });
 

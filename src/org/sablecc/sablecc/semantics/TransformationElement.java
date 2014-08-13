@@ -275,7 +275,8 @@ public abstract class TransformationElement {
                     if (!transformationElementType.isAssignableTo(elementType)) {
                         throw SemanticException.semanticError(
                                 "Expecting a tranformation element of type "
-                                        + elementType + ".",
+                                        + elementType + ", instead of "
+                                        + transformationElementType + ".",
                                 transformationElement.getLocation());
                     }
                 }

@@ -213,8 +213,7 @@ public class Element
             if (base instanceof Production) {
                 ProductionTransformation productionTransformation = ((Production) base)
                         .getTransformation();
-                if (productionTransformation != null
-                        && !productionTransformation.isSimple()) {
+                if (!productionTransformation.isSimple()) {
                     throw SemanticException
                             .semanticError(
                                     "This complex transformations is not allowed because of the complex reference on line "
@@ -229,8 +228,7 @@ public class Element
             if (separator instanceof Production) {
                 ProductionTransformation productionTransformation = ((Production) separator)
                         .getTransformation();
-                if (productionTransformation != null
-                        && !productionTransformation.isSimple()) {
+                if (!productionTransformation.isSimple()) {
                     throw SemanticException
                             .semanticError(
                                     "This complex transformations is not allowed because of the complex reference on line "
@@ -248,8 +246,8 @@ public class Element
         if (base instanceof Production) {
             ProductionTransformation productionTransformation = ((Production) base)
                     .getTransformation();
-            if (productionTransformation != null
-                    && !productionTransformation.isSimple()) {
+            if (!productionTransformation.isSimple()) {
+                // only allow complex transformations for non-list elements
                 if (this.type.isList()) {
                     throw SemanticException
                             .semanticError(

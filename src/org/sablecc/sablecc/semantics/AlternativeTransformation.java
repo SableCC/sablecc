@@ -105,54 +105,45 @@ public class AlternativeTransformation {
                 // non-separated type
                 ProductionTransformation productionTransformation = ((Production) base)
                         .getTransformation();
-                if (productionTransformation != null) {
-                    ArrayList<Type> types = productionTransformation
-                            .getSignature().getTypes();
-                    if (types.size() == 0) {
-                        simpleMatch(type, elementReferenceIterator, element);
-                    }
-                    else if (types.size() == 1 && types.get(0).isSimple()) {
-                        simpleMatch(type, elementReferenceIterator, element);
-                    }
-                    else {
-                        for (Type subtreeType : types) {
-                            if (!elementReferenceIterator.hasNext()) {
-                                throw SemanticException.semanticError(
-                                        "Expecting : " + type + "."
-                                                + subtreeType,
-                                        this.declaration.getSemicolon());
-                            }
-                            ElementReference elementReference = elementReferenceIterator
-                                    .next();
-                            if (elementReference.getSubtree() == null) {
-                                throw SemanticException.semanticError(
-                                        "Expecting : " + type + "."
-                                                + subtreeType,
-                                        elementReference.getLocation());
-                            }
-                            if (!type.equals(this.grammar
-                                    .getTypeResolution(elementReference
-                                            .getElementBody()))) {
-                                throw SemanticException.semanticError(
-                                        "Expecting : " + type + "."
-                                                + subtreeType,
-                                        elementReference.getLocation());
-                            }
-                            if (!subtreeType.equals(this.grammar
-                                    .getTypeResolution(elementReference
-                                            .getSubtree()))) {
-                                throw SemanticException.semanticError(
-                                        "Expecting : " + type + "."
-                                                + subtreeType,
-                                        elementReference.getLocation());
-                            }
-
-                            elementReference.associateTo(element);
-                        }
-                    }
+                ArrayList<Type> types = productionTransformation.getSignature()
+                        .getTypes();
+                if (types.size() == 0) {
+                    simpleMatch(type, elementReferenceIterator, element);
+                }
+                else if (types.size() == 1 && types.get(0).isSimple()) {
+                    simpleMatch(type, elementReferenceIterator, element);
                 }
                 else {
-                    simpleMatch(type, elementReferenceIterator, element);
+                    for (Type subtreeType : types) {
+                        if (!elementReferenceIterator.hasNext()) {
+                            throw SemanticException.semanticError(
+                                    "Expecting : " + type + "." + subtreeType,
+                                    this.declaration.getSemicolon());
+                        }
+                        ElementReference elementReference = elementReferenceIterator
+                                .next();
+                        if (elementReference.getSubtree() == null) {
+                            throw SemanticException.semanticError(
+                                    "Expecting : " + type + "." + subtreeType,
+                                    elementReference.getLocation());
+                        }
+                        if (!type.equals(this.grammar
+                                .getTypeResolution(elementReference
+                                        .getElementBody()))) {
+                            throw SemanticException.semanticError(
+                                    "Expecting : " + type + "." + subtreeType,
+                                    elementReference.getLocation());
+                        }
+                        if (!subtreeType.equals(this.grammar
+                                .getTypeResolution(elementReference
+                                        .getSubtree()))) {
+                            throw SemanticException.semanticError(
+                                    "Expecting : " + type + "." + subtreeType,
+                                    elementReference.getLocation());
+                        }
+
+                        elementReference.associateTo(element);
+                    }
                 }
             }
             else {
@@ -276,7 +267,8 @@ public class AlternativeTransformation {
                 if (!transformationElementType.isAssignableTo(signatureType)) {
                     throw SemanticException.semanticError(
                             "Expecting a tranformation element of type "
-                                    + signatureType + ".",
+                                    + signatureType + ", instead of "
+                                    + transformationElementType + ".",
                             transformationElement.getLocation());
                 }
             }

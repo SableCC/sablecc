@@ -18,7 +18,9 @@
 package org.sablecc.sablecc.semantics;
 
 import java.math.*;
+import java.util.*;
 
+import org.sablecc.exception.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class ElementReference {
@@ -30,6 +32,8 @@ public class ElementReference {
     private PElementBody subtree;
 
     private Token location;
+
+    private boolean typeHasBeenComputed;
 
     private Type type;
 
@@ -77,76 +81,143 @@ public class ElementReference {
 
     public Type getType() {
 
-        if (this.type == null) {
+        if (!this.typeHasBeenComputed) {
+
+            if (this.elementBody == null) {
+                throw new InternalException(
+                        "should only be used for semantic verification of explicit transformations");
+            }
+
+            Type bodyType = this.grammar.getTypeResolution(this.elementBody);
+
+            boolean bodyIsList = bodyType.isList();
+            Declaration bodyBase = bodyType.getBase();
+            Declaration bodySeparator = bodyType.getSeparator();
+            BigInteger bodyMinMultiplicity = bodyType.getMinMultiplicity();
+            BigInteger bodyMaxMultiplicity = bodyType.getMaxMultiplicity();
+
+            boolean isList;
+            Declaration base;
+            Declaration separator;
+            BigInteger minMultiplicity;
+            BigInteger maxMultiplicity;
+
             if (this.subtree == null) {
-                Type bodyType = this.grammar
-                        .getTypeResolution(this.elementBody);
-                Declaration base = bodyType.getBase();
-                Declaration separator = bodyType.getSeparator();
-                if (separator == null) {
-                    if (base instanceof Production) {
-                        Production production = (Production) base;
-                        ProductionTransformation productionTransformation = production
-                                .getTransformation();
-                        this.type = productionTransformation.getSignature()
-                                .getTypes().get(0);
+
+                // fill with an initial approximation
+                isList = bodyIsList;
+                base = bodyBase;
+                separator = bodySeparator;
+                minMultiplicity = bodyMinMultiplicity;
+                maxMultiplicity = bodyMaxMultiplicity;
+
+                boolean hasBase = base != null; // should be true
+                boolean hasSeparator = separator != null;
+
+                // override base if it is transformed
+                if (bodyBase instanceof Production) {
+                    Production production = (Production) bodyBase;
+                    ProductionTransformation productionTransformation = production
+                            .getTransformation();
+
+                    // the transformation must be simple, as there is no subree
+
+                    ArrayList<Type> types = productionTransformation
+                            .getSignature().getTypes();
+                    if (types.size() == 0) {
+                        base = null;
+                        hasBase = false;
                     }
                     else {
-                        this.type = bodyType;
+                        Type transformationType = types.get(0);
+                        base = transformationType.getBase();
                     }
                 }
+
+                // override separator if it is transformed
+                if (hasSeparator && bodySeparator instanceof Production) {
+                    Production production = (Production) bodySeparator;
+                    ProductionTransformation productionTransformation = production
+                            .getTransformation();
+
+                    // the transformation must be simple, as there is no subree
+
+                    ArrayList<Type> types = productionTransformation
+                            .getSignature().getTypes();
+                    if (types.size() == 0) {
+                        separator = null;
+                        hasSeparator = false;
+                    }
+                    else {
+                        Type transformationType = types.get(0);
+                        separator = transformationType.getBase();
+                    }
+                }
+
+                if (!hasBase) {
+                    // base has been deleted
+
+                    if (isList && hasSeparator) {
+                        // the separator has survived
+
+                        // make the separator into a base and decrement the
+                        // multiplicity by one
+                        base = separator;
+                        separator = null;
+                        hasBase = true;
+                        hasSeparator = false;
+                        if (minMultiplicity.compareTo(BigInteger.ZERO) > 0) {
+                            minMultiplicity = minMultiplicity
+                                    .subtract(BigInteger.ONE);
+                        }
+                        if (maxMultiplicity != null
+                                && maxMultiplicity.compareTo(BigInteger.ZERO) > 0) {
+                            maxMultiplicity = maxMultiplicity
+                                    .subtract(BigInteger.ONE);
+                        }
+                    }
+                }
+
+                if (hasBase) {
+                    this.type = new Type(isList, base, separator,
+                            minMultiplicity, maxMultiplicity);
+                }
                 else {
-                    Type baseType;
-                    Type separatorType;
-
-                    if (base instanceof Production) {
-                        Production baseProduction = (Production) base;
-                        ProductionTransformation productionTransformation = baseProduction
-                                .getTransformation();
-                        baseType = productionTransformation.getSignature()
-                                .getTypes().get(0);
-                    }
-                    else {
-                        baseType = bodyType;
-                    }
-
-                    if (separator instanceof Production) {
-                        Production separatorProduction = (Production) separator;
-                        ProductionTransformation productionTransformation = separatorProduction
-                                .getTransformation();
-                        separatorType = productionTransformation.getSignature()
-                                .getTypes().get(0);
-                    }
-                    else {
-                        separatorType = bodyType;
-                    }
-
-                    this.type = new Type(true, baseType.getBase(),
-                            separatorType.getBase(),
-                            bodyType.getMinMultiplicity(),
-                            bodyType.getMaxMultiplicity());
+                    this.type = null;
                 }
             }
             else {
-                Type bodyType = this.grammar
-                        .getTypeResolution(this.elementBody);
                 Type subtreeType = this.grammar.getTypeResolution(this.subtree);
 
-                if (bodyType.getMinMultiplicity().equals(BigInteger.ZERO)) {
-                    boolean isList = bodyType.isList() || subtreeType.isList();
-                    BigInteger minMultiplicity = BigInteger.ZERO;
-                    BigInteger maxMultiplicity = maxMultiplicity(
-                            bodyType.getMaxMultiplicity(),
-                            subtreeType.getMaxMultiplicity());
+                boolean subtreeIsList = subtreeType.isList();
+                Declaration subtreeBase = subtreeType.getBase();
+                Declaration subtreeSeparator = subtreeType.getSeparator();
+                BigInteger subtreeMinMultiplicity = subtreeType
+                        .getMinMultiplicity();
+                BigInteger subtreeMaxMultiplicity = subtreeType
+                        .getMaxMultiplicity();
 
-                    this.type = new Type(isList, subtreeType.getBase(),
-                            subtreeType.getSeparator(), minMultiplicity,
-                            maxMultiplicity);
+                // fill with an initial approximation
+                isList = subtreeIsList;
+                base = subtreeBase;
+                separator = subtreeSeparator;
+                minMultiplicity = subtreeMinMultiplicity;
+                maxMultiplicity = subtreeMaxMultiplicity;
+
+                // bodyIsList should be false
+                // bodyBase should be a production
+                // bodySeparator should be null
+                // bodyMinMultiplicity should be 0 or 1
+                // bodyMaxMultiplicity should be 1
+                if (bodyMinMultiplicity.equals(BigInteger.ZERO)) {
+                    minMultiplicity = BigInteger.ZERO;
                 }
-                else {
-                    this.type = subtreeType;
-                }
+
+                this.type = new Type(isList, base, separator, minMultiplicity,
+                        maxMultiplicity);
             }
+
+            this.typeHasBeenComputed = true;
         }
 
         return this.type;
