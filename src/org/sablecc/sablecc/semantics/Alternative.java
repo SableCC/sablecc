@@ -242,8 +242,9 @@ public class Alternative
         if (this.alternativeTransformation != null) {
             Token location = this.alternativeTransformation.getLocation();
             throw SemanticException.semanticError("The alternative "
-                    + getName() + " was already transformed on line "
-                    + location.getLine() + " char " + location.getPos() + ".",
+                    + getProduction().getName() + "." + getName()
+                    + " was already transformed on line " + location.getLine()
+                    + " char " + location.getPos() + ".",
                     alternativeTransformation.getLocation());
         }
 
