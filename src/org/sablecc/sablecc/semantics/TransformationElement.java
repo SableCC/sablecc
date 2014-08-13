@@ -343,12 +343,13 @@ public abstract class TransformationElement {
             BigInteger maxMultiplicity = null;
 
             boolean baseAndSeparatorIdentified = false;
-            boolean incompletePair = false;
+            boolean expectingTrailingBase = false;
 
             for (TransformationElement child : this.children) {
 
                 Type childType = child.getType();
 
+                // skip deleted elements, nulls, and empty lists
                 if (childType != null && childType.getBase() != null) {
 
                     Declaration childBase = childType.getBase();
@@ -360,10 +361,10 @@ public abstract class TransformationElement {
 
                     if (baseAndSeparatorIdentified) {
 
-                        if (incompletePair || separator == null) {
+                        if (separator == null) {
+                            // non-separated list
 
-                            if (childBase != base || childSeparator != null
-                                    && childSeparator != separator) {
+                            if (childBase != base || childSeparator != null) {
                                 throw SemanticException.semanticError(
                                         "The tranformation element is incompatible with the "
                                                 + new Type(true, base,
@@ -373,30 +374,29 @@ public abstract class TransformationElement {
                                                 + " prefix.", child
                                                 .getLocation());
                             }
-                        }
-                        else {
-                            // incompletePair == false
-                            // separator != null
 
-                            if (childBase != separator
+                            minMultiplicity = minMultiplicity
+                                    .add(childMinMultiplicity);
+                            if (childMaxMultiplicity == null) {
+                                maxMultiplicity = null;
+                            }
+                            else if (maxMultiplicity != null) {
+                                maxMultiplicity = maxMultiplicity
+                                        .add(childMaxMultiplicity);
+                            }
+                        }
+                        else if (expectingTrailingBase) {
+                            // separated list
+
+                            expectingTrailingBase = false;
+
+                            if (childMinMultiplicity.equals(BigInteger.ZERO)
+                                    || childBase != base
                                     || childSeparator != null
-                                    && childSeparator != base) {
-                                throw SemanticException.semanticError(
-                                        "The tranformation element is incompatible with the "
-                                                + new Type(true, base,
-                                                        separator,
-                                                        minMultiplicity,
-                                                        maxMultiplicity)
-                                                + " prefix.", child
-                                                .getLocation());
-                            }
-                        }
-
-                        if (childMaxMultiplicity == null
-                                || childMaxMultiplicity
-                                        .compareTo(BigInteger.ZERO) > 0) {
-
-                            if (childMinMultiplicity.compareTo(BigInteger.ZERO) == 0) {
+                                    && childSeparator != separator
+                                    || childSeparator == null
+                                    && !childMaxMultiplicity
+                                            .equals(BigInteger.ONE)) {
                                 throw SemanticException.semanticError(
                                         "The tranformation element is incompatible with the "
                                                 + new Type(true, base,
@@ -407,95 +407,65 @@ public abstract class TransformationElement {
                                                 .getLocation());
                             }
 
-                            if (separator != null
-                                    && childSeparator == null
-                                    && (childMaxMultiplicity == null || childMaxMultiplicity
-                                            .compareTo(BigInteger.ONE) > 0)) {
-                                throw SemanticException.semanticError(
-                                        "The tranformation element is incompatible with the "
-                                                + new Type(true, base,
-                                                        separator,
-                                                        minMultiplicity,
-                                                        maxMultiplicity)
-                                                + " prefix.", child
-                                                .getLocation());
+                            minMultiplicity = minMultiplicity
+                                    .add(childMinMultiplicity
+                                            .subtract(BigInteger.ONE));
+                            if (childMaxMultiplicity == null) {
+                                maxMultiplicity = null;
                             }
-
-                            if (incompletePair) {
-                                minMultiplicity = minMultiplicity.add(
-                                        childMinMultiplicity).subtract(
-                                        BigInteger.ONE);
-                                if (maxMultiplicity == null
-                                        || childMaxMultiplicity == null) {
-                                    maxMultiplicity = null;
-                                }
-                                else {
-                                    maxMultiplicity = maxMultiplicity.add(
-                                            childMaxMultiplicity).subtract(
-                                            BigInteger.ONE);
-                                }
-                                incompletePair = false;
-                            }
-                            else {
-                                minMultiplicity = minMultiplicity
-                                        .add(childMinMultiplicity);
-                                if (maxMultiplicity == null
-                                        || childMaxMultiplicity == null) {
-                                    maxMultiplicity = null;
-                                }
-                                else {
-                                    maxMultiplicity = maxMultiplicity
-                                            .add(childMaxMultiplicity);
-                                }
-                                incompletePair = true;
+                            else if (maxMultiplicity != null) {
+                                maxMultiplicity = maxMultiplicity
+                                        .add(childMaxMultiplicity
+                                                .subtract(BigInteger.ONE));
                             }
                         }
                         else {
-                            // childMinMultiplicity == 0
-                            // childMaxMultiplicity == 0
+                            // separated list
+
+                            // expecting separator
+
+                            expectingTrailingBase = true;
+
+                            if (childMinMultiplicity.equals(BigInteger.ZERO)
+                                    || childBase != separator
+                                    || childSeparator != null
+                                    && childSeparator != base
+                                    || childSeparator == null
+                                    && !childMaxMultiplicity
+                                            .equals(BigInteger.ONE)) {
+                                throw SemanticException.semanticError(
+                                        "The tranformation element is incompatible with the "
+                                                + new Type(true, base,
+                                                        separator,
+                                                        minMultiplicity,
+                                                        maxMultiplicity)
+                                                + " prefix.", child
+                                                .getLocation());
+                            }
+
+                            minMultiplicity = minMultiplicity
+                                    .add(childMinMultiplicity);
+                            if (childMaxMultiplicity == null) {
+                                maxMultiplicity = null;
+                            }
+                            else if (maxMultiplicity != null) {
+                                maxMultiplicity = maxMultiplicity
+                                        .add(childMaxMultiplicity);
+                            }
                         }
                     }
-                    else if (minMultiplicity != null) {
+                    else if (base != null) {
+                        // base and separator have not been identified, yet
+
                         // base != null
                         // separator == null
-                        // minMultiplicity == 0 || minMultiplicity == 1
-                        // maxMultiplicity == minMultiplicity
+                        // minMultiplicity == 1
+                        // maxMultiplicity == 1
 
-                        if (minMultiplicity.compareTo(BigInteger.ZERO) == 0) {
-                            // minMultiplicity == 0
-                            // maxMultiplicity == 0
+                        if (childBase == base) {
+                            // it's a non-separated list
 
-                            if (childBase != base) {
-                                throw SemanticException.semanticError(
-                                        "The tranformation element is incompatible with the "
-                                                + new Type(true, base,
-                                                        separator,
-                                                        minMultiplicity,
-                                                        maxMultiplicity)
-                                                + " prefix.", child
-                                                .getLocation());
-                            }
-
-                            separator = childSeparator;
-                            minMultiplicity = childMinMultiplicity;
-                            maxMultiplicity = childMaxMultiplicity;
-
-                            if (separator != null) {
-                                baseAndSeparatorIdentified = true;
-                            }
-                            else if (maxMultiplicity == null) {
-                                baseAndSeparatorIdentified = true;
-                            }
-                            else if (maxMultiplicity.compareTo(BigInteger.ONE) > 0) {
-                                baseAndSeparatorIdentified = true;
-                            }
-                            else if (minMultiplicity.compareTo(maxMultiplicity) < 0) {
-                                baseAndSeparatorIdentified = true;
-                            }
-                        }
-                        else if (childBase == base) {
-                            // minMultiplicity == 1
-                            // maxMultiplicity == 1
+                            baseAndSeparatorIdentified = true;
 
                             if (childSeparator != null) {
                                 throw SemanticException.semanticError(
@@ -508,35 +478,30 @@ public abstract class TransformationElement {
                                                 .getLocation());
                             }
 
+                            minMultiplicity = minMultiplicity
+                                    .add(childMinMultiplicity);
+
                             if (childMaxMultiplicity == null) {
-                                minMultiplicity = minMultiplicity
-                                        .add(childMinMultiplicity);
                                 maxMultiplicity = null;
-                                baseAndSeparatorIdentified = true;
                             }
-                            else if (childMaxMultiplicity
-                                    .compareTo(BigInteger.ZERO) > 0) {
-                                minMultiplicity = minMultiplicity
-                                        .add(childMinMultiplicity);
+                            else if (maxMultiplicity != null) {
                                 maxMultiplicity = maxMultiplicity
                                         .add(childMaxMultiplicity);
-                                baseAndSeparatorIdentified = true;
-                            }
-                            else {
-                                // childMinMultiplicity == 0
-                                // childMaxMultiplicity == 0
                             }
                         }
                         else if (childSeparator == null) {
-                            // minMultiplicity == 1
-                            // maxMultiplicity == 1
+                            // it's a separated list
+
+                            baseAndSeparatorIdentified = true;
+                            expectingTrailingBase = true;
+                            separator = childBase;
+
                             // childBase != base
 
-                            if (childMaxMultiplicity == null
-                                    || childMaxMultiplicity
-                                            .compareTo(BigInteger.ONE) > 0
-                                    || childMinMultiplicity
-                                            .compareTo(childMaxMultiplicity) != 0) {
+                            if (!childMinMultiplicity.equals(BigInteger.ONE)
+                                    || childMaxMultiplicity == null
+                                    || !childMaxMultiplicity
+                                            .equals(BigInteger.ONE)) {
                                 throw SemanticException.semanticError(
                                         "The tranformation element is incompatible with the "
                                                 + new Type(true, base,
@@ -547,23 +512,23 @@ public abstract class TransformationElement {
                                                 .getLocation());
                             }
 
-                            separator = childBase;
-                            if (minMultiplicity.compareTo(BigInteger.ONE) == 0) {
-                                minMultiplicity = minMultiplicity
-                                        .add(childMinMultiplicity);
-                                maxMultiplicity = maxMultiplicity
-                                        .add(childMaxMultiplicity);
-                                incompletePair = true;
-                            }
-                            baseAndSeparatorIdentified = true;
+                            minMultiplicity = minMultiplicity
+                                    .add(BigInteger.ONE);
+                            maxMultiplicity = maxMultiplicity
+                                    .add(BigInteger.ONE);
                         }
                         else {
-                            // minMultiplicity == 1
-                            // maxMultiplicity == 1
+                            // it's a separated list
+
+                            baseAndSeparatorIdentified = true;
+                            expectingTrailingBase = true;
+                            separator = childBase;
+
                             // childBase != base
                             // childSeparator != null
 
-                            if (childSeparator != base) {
+                            if (childMinMultiplicity.equals(BigInteger.ZERO)
+                                    || childSeparator != base) {
                                 throw SemanticException.semanticError(
                                         "The tranformation element is incompatible with the "
                                                 + new Type(true, base,
@@ -574,39 +539,20 @@ public abstract class TransformationElement {
                                                 .getLocation());
                             }
 
-                            if (childMaxMultiplicity == null
-                                    || childMaxMultiplicity
-                                            .compareTo(BigInteger.ZERO) > 0) {
-
-                                if (childMinMultiplicity
-                                        .compareTo(BigInteger.ZERO) == 0) {
-                                    throw SemanticException.semanticError(
-                                            "The tranformation element is incompatible with the "
-                                                    + new Type(true, base,
-                                                            separator,
-                                                            minMultiplicity,
-                                                            maxMultiplicity)
-                                                    + " prefix.", child
-                                                    .getLocation());
-                                }
-
-                                separator = childBase;
-                                minMultiplicity = minMultiplicity
-                                        .add(childMinMultiplicity);
-                                maxMultiplicity = maxMultiplicity
-                                        .add(childMaxMultiplicity);
-                                baseAndSeparatorIdentified = true;
-                                incompletePair = true;
+                            minMultiplicity = minMultiplicity
+                                    .add(childMinMultiplicity);
+                            if (childMaxMultiplicity == null) {
+                                maxMultiplicity = null;
                             }
                             else {
-                                // childMinMultiplicity = 0
-                                // childMaxMultiplicity = 0
-                                separator = childBase;
-                                baseAndSeparatorIdentified = true;
+                                maxMultiplicity = maxMultiplicity
+                                        .add(childMaxMultiplicity);
                             }
                         }
                     }
                     else {
+                        // base and separator have not been identified, yet
+
                         // base == null
                         // separator == null
                         // minMultiplicity == null
@@ -617,23 +563,29 @@ public abstract class TransformationElement {
                         minMultiplicity = childMinMultiplicity;
                         maxMultiplicity = childMaxMultiplicity;
 
-                        if (separator != null) {
-                            baseAndSeparatorIdentified = true;
+                        // a non-separated list of one element is ambiguous
+                        if (separator == null
+                                && minMultiplicity.equals(BigInteger.ONE)
+                                && maxMultiplicity != null
+                                && maxMultiplicity.equals(BigInteger.ONE)) {
+                            baseAndSeparatorIdentified = false;
                         }
-                        else if (maxMultiplicity == null) {
-                            baseAndSeparatorIdentified = true;
-                        }
-                        else if (maxMultiplicity.compareTo(BigInteger.ONE) > 0) {
-                            baseAndSeparatorIdentified = true;
-                        }
-                        else if (minMultiplicity.compareTo(maxMultiplicity) < 0) {
+                        else {
                             baseAndSeparatorIdentified = true;
                         }
                     }
                 }
             }
 
-            if (minMultiplicity == null) {
+            if (expectingTrailingBase) {
+                throw SemanticException.semanticError(
+                        "Expecting a tranformation element of type "
+                                + new Type(false, base, null, BigInteger.ONE,
+                                        BigInteger.ONE) + ".",
+                        this.declaration.getRPar());
+            }
+
+            if (base == null) {
                 minMultiplicity = BigInteger.ZERO;
                 maxMultiplicity = BigInteger.ZERO;
             }
