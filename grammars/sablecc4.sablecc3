@@ -436,10 +436,10 @@ Productions
   alternative
     =
       {normal} alternative_name? [elements]:element+
-        {-> New alternative(alternative_name, [elements]) }
+        {-> New alternative(alternative_name, [elements], Null) }
     |
       {empty} alternative_name? empty_keyword
-        {-> New alternative(alternative_name, []) }
+        {-> New alternative(alternative_name, [], empty_keyword) }
     ;
 
   element
@@ -644,7 +644,7 @@ Abstract Syntax Tree
     {selection} selection_keyword;
 
   alternative =
-    alternative_name? [elements]:element*;
+    alternative_name? [elements]:element* empty_keyword?;
 
   element =
     selection_keyword? element_name? element_body;

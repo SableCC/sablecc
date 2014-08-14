@@ -20,6 +20,7 @@ package org.sablecc.sablecc.semantics;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.sablecc.syntax3.analysis.*;
 import org.sablecc.sablecc.syntax3.node.*;
 
 public class Alternative
@@ -42,6 +43,8 @@ public class Alternative
     private boolean nameIsCached;
 
     private String name;
+
+    private Token location;
 
     Alternative(
             Grammar grammar,
@@ -223,6 +226,47 @@ public class Alternative
     public List<Element> getElements() {
 
         return this.elements;
+    }
+
+    public Token getLocation() {
+
+        if (this.location == null) {
+            this.location = this.declaration.getAlternativeName();
+            if (this.location == null) {
+                this.location = this.declaration.getEmptyKeyword();
+                if (this.location == null) {
+                    AElement element = (AElement) this.declaration
+                            .getElements().get(0);
+                    this.location = element.getSelectionKeyword();
+                    if (this.location == null) {
+                        this.location = element.getElementName();
+                        if (this.location == null) {
+                            PElementBody pElementBody = element
+                                    .getElementBody();
+                            if (pElementBody instanceof ANormalElementBody) {
+                                ANormalElementBody elementBody = (ANormalElementBody) pElementBody;
+                                PUnit unit = elementBody.getUnit();
+                                unit.apply(new DepthFirstAdapter() {
+
+                                    @Override
+                                    public void defaultCase(
+                                            Node node) {
+
+                                        Alternative.this.location = (Token) node;
+                                    }
+                                });
+                            }
+                            else {
+                                ASeparatedElementBody elementBody = (ASeparatedElementBody) pElementBody;
+                                this.location = elementBody.getLPar();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return this.location;
     }
 
     void setElements(
