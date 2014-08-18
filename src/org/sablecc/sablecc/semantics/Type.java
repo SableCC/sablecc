@@ -362,6 +362,10 @@ public class Type {
             return name + "^1.." + this.maxMultiplicity;
         }
 
+        if (this.maxMultiplicity == null) {
+            return name + "^" + this.minMultiplicity + "...";
+        }
+
         return name + "^" + this.minMultiplicity + ".." + this.maxMultiplicity;
     }
 
