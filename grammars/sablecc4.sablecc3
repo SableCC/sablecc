@@ -101,11 +101,11 @@ Tokens
   empty_keyword = 'Empty';
   end_keyword = 'End';
   except_keyword = 'Except';
+  expression_keyword = 'Expression';
   grammar_keyword = 'Grammar';
   ignored_keyword = 'Ignored';
   incremental_keyword = 'Incremental';
   left_keyword = 'Left';
-  lexer_keyword = 'Lexer';
   list_keyword = 'List';
   longest_keyword = 'Longest';
   lookahead_keyword = 'Lookahead';
@@ -114,7 +114,6 @@ Tokens
   new_keyword = 'New';
   null_keyword = 'Null';
   opportunistic_keyword = 'Opportunistic';
-  parser_keyword = 'Parser';
   precedence_keyword = 'Precedence';
   production_keyword = 'Production';
   rejected_keyword = 'Rejected';
@@ -124,6 +123,7 @@ Tokens
   separator_keyword = 'Separator';
   shortest_keyword = 'Shortest';
   start_keyword = 'Start';
+  syntax_keyword = 'Syntax';
   token_keyword = 'Token';
   transformation_keyword = 'Transformation';
   tree_keyword = 'Tree';
@@ -203,8 +203,8 @@ Productions
 
   lexer
     =
-      lexer_keyword [named_expressions]:named_expression*
-        {-> New lexer(lexer_keyword, [named_expressions]) }
+      expression_keyword [named_expressions]:named_expression*
+        {-> New lexer(expression_keyword, [named_expressions]) }
     ;
 
   named_expression
@@ -349,8 +349,8 @@ Productions
 
   parser
     =
-      parser_keyword head_context? [contexts]:context* tail_context?
-        {-> New parser(parser_keyword, [head_context.context, contexts, tail_context.context]) }
+      syntax_keyword head_context? [contexts]:context* tail_context?
+        {-> New parser(syntax_keyword, [head_context.context, contexts, tail_context.context]) }
     ;
 
   head_context
@@ -581,7 +581,7 @@ Abstract Syntax Tree
     grammar_keyword [name]:identifier lexer? parser tree?;
 
   lexer =
-    lexer_keyword [named_expressions]:named_expression*;
+    expression_keyword [named_expressions]:named_expression*;
 
   named_expression =
     [name]:identifier assign expression?;
@@ -620,7 +620,7 @@ Abstract Syntax Tree
     {hex} hex_char;
 
   parser =
-    parser_keyword [contexts]:context*;
+    syntax_keyword [contexts]:context*;
 
   context =
     [token_lists]:token_list* [parser_productions]:parser_production*;
