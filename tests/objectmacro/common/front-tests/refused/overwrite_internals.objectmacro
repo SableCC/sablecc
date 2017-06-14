@@ -1,0 +1,21 @@
+Macro a
+    Param
+        x : b(y);
+        y : c("lala");
+{Begin}
+{x}
+{End}
+
+Macro b
+    Internal
+        z : c("lala"), separator;
+{Begin}
+{z}
+{End}
+
+Macro c
+    Internal
+        zz : String;
+{Begin}
+{zz}
+{End}

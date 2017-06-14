@@ -18,77 +18,52 @@
 package org.sablecc.objectmacro.launcher;
 
 import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.syntax3.lexer.*;
 import org.sablecc.objectmacro.syntax3.node.*;
 
 public class CustomLexer
         extends Lexer {
 
-    private State previousState = null;
-
-    private int longCommentDepth = 0;
-
-    private int commandDepth = 0;
-
-    public CustomLexer(
-            PushbackReader in) {
-
+    public CustomLexer(PushbackReader in) {
         super(in);
     }
 
+    private List<State> states = new LinkedList<>();
+
     @Override
-    protected void filter()
-            throws LexerException, IOException {
+    protected void filter() throws
+            LexerException, IOException {
 
-        if (this.token instanceof TMacroCommand
-                || this.token instanceof TTextBlockCommand) {
-
-            this.state = State.COMMAND;
-
-            this.commandDepth++;
-        }
-        else if (this.token instanceof TExpandCommand
-                || this.token instanceof TInsertCommand) {
-
-            this.state = State.COMMAND;
-        }
-        else if (this.token instanceof TEndCommand) {
-
-            this.state = State.COMMAND;
-
-            this.commandDepth--;
-        }
-        else if (this.token instanceof TShortCommentCommand) {
-
-            this.state = State.SHORT_COMMENT;
-        }
-        else if (this.token instanceof TCommandTail) {
-
-            if (this.commandDepth == 0) {
-                this.state = State.TOP_LEVEL;
+        if(this.token instanceof TDquote){
+            if(this.state != State.STRING){
+                this.states.add(this.state);
+                this.state = State.STRING;
             }
             else {
-                this.state = State.TEXT;
+                this.state = getLastState();
             }
         }
-        else if (this.token instanceof TLongCommentStart) {
-
-            if (this.longCommentDepth == 0) {
-                this.previousState = this.state;
-                this.state = State.LONG_COMMENT;
-            }
-
-            this.longCommentDepth++;
+        else if(this.token instanceof TInsertCommand){
+            this.states.add(this.state);
+            this.state = State.COMMAND;
         }
-        else if (this.token instanceof TLongCommentEnd) {
-
-            this.longCommentDepth--;
-
-            if (this.longCommentDepth == 0) {
-                this.state = this.previousState;
-                this.previousState = null;
+        else if(this.token instanceof TRBrace){
+            if(this.states.size() == 0){
+                throw new InternalException("There must be at least one state.");
+            }
+            else{
+                this.state = getLastState();
             }
         }
+    }
+
+    private State getLastState(){
+
+        int lastStateIndex = this.states.size() - 1;
+        return this.states.remove(lastStateIndex);
     }
 }

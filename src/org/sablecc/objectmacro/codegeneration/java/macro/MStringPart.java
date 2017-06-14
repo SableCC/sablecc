@@ -4,38 +4,43 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 public class MStringPart {
 
-    private final String pString;
+  private final String pString;
+  private final String pIndexBuilder;
+  private final MStringPart mStringPart = this;
 
-    private final MStringPart mStringPart = this;
+  public MStringPart(String pString, String pIndexBuilder) {
+    if(pString == null) throw new NullPointerException();
+    this.pString = pString;
+    if(pIndexBuilder == null) throw new NullPointerException();
+    this.pIndexBuilder = pIndexBuilder;
+  }
 
-    public MStringPart(
-            String pString) {
+  String pString() {
+    return this.pString;
+  }
 
-        if (pString == null) {
-            throw new NullPointerException();
-        }
-        this.pString = pString;
-    }
+  String pIndexBuilder() {
+    return this.pIndexBuilder;
+  }
 
-    String pString() {
+  private String rIndexBuilder() {
+    return this.mStringPart.pIndexBuilder();
+  }
 
-        return this.pString;
-    }
+  private String rString() {
+    return this.mStringPart.pString();
+  }
 
-    private String rString() {
-
-        return this.mStringPart.pString();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("    sb.append(\"");
-        sb.append(rString());
-        sb.append("\");");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("        sb");
+    sb.append(rIndexBuilder());
+    sb.append(".append(\"");
+    sb.append(rString());
+    sb.append("\");");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
 }

@@ -1,0 +1,142 @@
+# This file is part of SableCC ( http://sablecc.org ).
+#
+# See the NOTICE file distributed with this work for copyright information.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# ========== Separator test ==============
+
+Macro comma_separator
+    Param
+        x : empty_macro, separator=", ";
+{Begin}
+La liste x : {x}
+Corps de semicolon : {Insert: semicolon_separator(x)}.
+{End}
+
+Macro empty_macro
+{Begin}
+empty
+{End}
+
+Macro semicolon_separator
+    Internal
+        x : empty_macro;
+{Begin}
+Le corps de C : {x}
+{End}
+
+# ========== Example for back end tests ==========
+
+Macro a
+    Param
+        x : String;
+        y : b(z), separator="\n";
+        z : c("first argument of c in a", x);
+{Begin}
+============= A ===============
+Y : {y}
+{End}
+
+Macro b
+    Param
+        o : String;
+        s : c(o, o);
+    Internal
+        p : c;
+{Begin}
+============== B ===============
+P : {p}
+S : {s}
+{End}
+
+Macro c
+    Internal
+        q : String;
+        r : String;
+{Begin}
+=============== C ==============
+Q : {q}
+R : {r}
+{End}
+
+Macro d
+{Begin}
+{Insert: e(
+    "y1 {Insert: c("y2 {Insert: c("y3", "yz3")}", "{Insert: c("a", "b")}")}",
+    "{Insert: c("y4", "z4")}",
+    "{Insert: c("y4", "z4")}")
+}
+{End}
+
+Macro e
+    Internal
+        s : String;
+        t : String;
+        u : String;
+{Begin}
+{s}
+{t}
+{u}
+{End}
+
+# ========= Example for cyclic reference ==============
+
+Macro f
+    Param
+        x : g(y);
+        y : h;
+{Begin}
+{y} {x}
+{End}
+
+Macro g
+    Internal
+        z : h;
+{Begin}
+{z}
+{End}
+
+Macro h
+    Param
+        lala : f;
+{Begin}
+{lala}
+{End}
+
+#=========== Example =========
+
+Macro i
+    Param
+        y : k("lala");
+        z : k("On est dans i"), j(y);
+{Begin}
+{y}
+{z}
+{End}
+
+Macro j
+    Internal
+        y : k;
+{Begin}
+{y}
+{End}
+
+Macro k
+    Internal
+        a : String;
+{Begin}
+{a}
+{End}
+
+
