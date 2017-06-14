@@ -72,26 +72,27 @@ Helpers
 
   white_space_not_newline = [ascii_pattern_white_space - [0x000A .. 0x000D]];
 
-  short_comment_char = [[[ascii - ascii_c] + white_space_not_newline] - '$'];
-  long_comment_char = [[[ascii - ascii_c] + ascii_pattern_white_space] - '$'];
+  short_comment_char = [[ascii - ascii_c] + white_space_not_newline];
+  long_comment_char = [[[ascii - ascii_c] + ascii_pattern_white_space] - ['*' + '/']];
 
-  text_char = [[[ascii - ascii_c] + white_space_not_newline] - ['\' + '$']];
-  text_escape = '\' ['\' + '$'];
+  text_char = [[[ascii - ascii_c] + white_space_not_newline] - '{'];
+  text_escape = '{' '{';
 
   string_char = [[[ascii - ascii_c] + white_space_not_newline] -
-                 [['\' + '$'] + '"']];
-  string_escape = '\' [['\' + '$'] + ['"' + 'n']];
+                 [['\' + '{'] + '"']];
+  string_escape = '\' [['\' + '{'] + ['"' + 'n']];
 
   lowercase = ['a'..'z'];
+  uppercase = ['A' .. 'Z'];
   digit = ['0'..'9'];
 
-  normal_part = lowercase (lowercase | digit)*;
+  normal_part = lowercase (lowercase | digit | uppercase)*;
   normal_identifier = normal_part ('_' normal_part)*;
 
   rich_identifier = '<' [ascii_id_start - '_'] [ascii_id_continue - '_']* '>';
 
 States
-  top_level, command, text, short_comment, long_comment, string;
+  top_level, macro_definition, macro_body, command, string;
 
 Tokens
 
