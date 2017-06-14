@@ -96,33 +96,26 @@ States
 
 Tokens
 
-  {top_level, command, text, short_comment}
-  // custom transition: *->command
-  macro_command = '$macro:';
+  {top_level->macro_definition}
+  macro_command = 'Macro';
 
-  {top_level, command, text, short_comment}
-  // custom transition: *->command
-  text_block_command = '$text:';
+  {macro_definition}
+  params_kw = 'Params';
 
-  {top_level, command, text, short_comment}
-  // custom transition: *->command
-  expand_command = '$expand:';
+  {macro_definition}
+  string_kw = 'String';
 
-  {top_level, command, text, short_comment}
-  // custom transition: *->command
-  insert_command = '$insert:';
+  {macro_definition}
+  context_kw = 'Context';
 
-  {top_level, command, text, short_comment}
-  // custom transition: *->command
-  end_command = '$end:';
+  {macro_body->command}
+  insert_command = '{Insert:';
 
-  {top_level, command, text, short_comment}
-  // custom transition: *->short_comment
-  short_comment_command = '$comment:';
+  {macro_definition->macro_body}
+  begin = '{Begin}';
 
-  {top_level, command, text, short_comment}
-  // custom transition: *->previous state
-  command_tail = '$' (white_space_not_newline* ascii_newline)?;
+  {macro_body->top_level}
+  end = '{End}';
 
   {top_level, command, text, short_comment, long_comment}
   // custom transition: *->long_comment
@@ -138,55 +131,46 @@ Tokens
   {top_level, command, text, short_comment}
   invalid_mid_line_no_eol = '$no_eol$';
 
-  {top_level, command, text, short_comment}
-  invalid_command = '$' (lowercase | digit | '_')* (':' | '$');
+  {macro_body}
+  unknown_command = '{' uppercase normal_part* ':';
 
-  {short_comment}
-  short_comment_text = short_comment_char+;
+  {macro_body}
+  macro_body_text = text_char+ | '{';
 
-  {long_comment}
-  long_comment_text = long_comment_char+ | '$';
-
-  {text}
-  text = text_char+;
-
-  {text}
+  {macro_body}
   eol = ascii_newline;
 
-  {text}
+  {macro_body}
   escape = text_escape;
-
-  {top_level, command, text, short_comment}
-  var = '$' (normal_identifier | rich_identifier) |
-        '$(' normal_identifier ')';
 
   {top_level, command, text, short_comment}
   invalid_var = '$' ascii_id_continue+ |
                 '$<' ascii_id_continue* '>'? |
                 '$(' ascii_id_continue* ')'?;
 
-  {top_level, command}
+  {macro_definition, command}
   identifier = normal_identifier | rich_identifier;
 
-  {top_level, command}
-  invalid_identifier = ascii_id_continue+ | '<' ascii_id_continue* '>'?;
+  {top_level, macro_body, string, command, macro_definition}
+  invalid_identifier = ascii_id_start* ('_' digit+ ascii_id_continue*)*;
 
-  {top_level, command}
+  {command, macro_definition}
   l_par = '(';
 
-  {top_level, command}
+  {command, macro_definition}
   r_par = ')';
 
-  {top_level, command}
+  {macro_definition, command}
   comma = ',';
 
-  {top_level, command}
+  {macro_definition}
   assign = '=';
 
-  {top_level, command}
+  {top_level, command, macro_definition}
   blank = ascii_pattern_white_space+;
 
-  {command->string, string->command}
+  {macro_definition, string, command}
+  /* custom transition *->previous state */
   dquote = '"';
 
   {string}
@@ -194,6 +178,12 @@ Tokens
 
   {string}
   string_escape = string_escape;
+
+  {top_level}
+  ignore_macro_start = '{StartIgnoring}';
+
+  {top_level}
+  ignore_macro_end = '{StopIgnoring}';
 
   ctrl_z = 0x001A;
 
