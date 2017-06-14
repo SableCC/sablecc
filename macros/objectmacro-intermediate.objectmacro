@@ -16,131 +16,147 @@ See the License for the specific language governing permissions and
 limitations under the License.
 $end$
 
+$comment: ========= intermediate_representation ============== $
+
 $macro: intermediate_representation $
-$expand: text $
 $expand: macro $
 $end: intermediate_representation $
 
-$macro: text(name, self_ref) $
-text {
-  name = $name;
-$expand: param $
-  self_ref = $self_ref;
-$expand: ancestor_ref $
-$expand: param_ref $
-$expand: string_part, eol_part, param_insert_part, text_insert_part $
-}
-$end: text $
+$comment: ========= macro ============== $
 
-$macro: macro(name, is_public, self_ref) $
-macro {
-  name = $name;
-  is_public = $is_public;
+$macro: macro $
+Macro {
+  Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
 $expand: param $
-  self_ref = $self_ref;
-$expand: ancestor_ref $
-$expand: param_ref $
-$expand: expand $
-$expand: expanded_macro $
-$expand: string_part, eol_part, param_insert_part, text_insert_part, expand_insert_part $
+$expand: internal $
+$expand: initialization_order $
+  MacroBody{
+$expand: string_part, eol_part, param_insert, macro_insert$
+  }
 }
 $end: macro $
 
-$macro: param(name, indent) $
-$indent  param = $name;
+$comment: ========= param ============== $
+
+$macro: param $
+ Param {
+    Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
+$expand: string_type, macro_type$
+$expand: directive, separator=", "$
+ }
 $end: param $
 
-$macro: ancestor_ref(name, indent) $
-$indent  ancestor_ref = $name;
-$end: ancestor_ref $
+$comment: ========= internal ============== $
 
-$macro: param_ref(name, context_name) $
-  param_ref {
-    name = $name;
-    context_name = $context_name;
-  }
-$end: param_ref $
+$macro: internal $
+ Internal {
+ Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
+$expand: string_type, macro_type$
+$expand: directive, separator=", "$
+ }
+$end: internal $
 
-$macro: expand(name, indent) $
-$indent  expand = $name;
-$end: expand $
+$comment: ========= string_type ============== $
 
-$macro: expanded_macro(name) $
-  expanded_macro {
-    name = $name;
-$expand: param $
-$expand: ancestor_ref $
-$expand: expand $
-  }
-$end: expanded_macro $
+$macro: string_type$
+ Type = String $expand: directive, separator=", ", before_one=", "$
+$end: string_type $
+
+$comment: ========= macro_type ============== $
+
+$macro: macro_type$
+ Type {
+$expand: macro_ref $
+$expand: directive, separator=", "$
+ }
+$end: macro_type $
+
+$comment: ========= macro_ref ============== $
+
+$macro: macro_ref$
+ MacroRef {
+ Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
+$expand: args$
+ }
+$end: macro_ref $
+
+$comment: ========= args ============== $
+
+$macro: args$
+ Args {
+$expand: var_argument, text_argument, separator=", "$
+ }
+$end: args$
+
+$comment: ========= var_argument ============== $
+
+$macro: var_argument $
+ Var {
+    $expand: param_name $
+    Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
+ }
+$end: var_argument $
+
+$comment: ========= text_argument ============== $
+
+$macro: text_argument $
+ Value {
+    $expand: param_name $
+$expand: string_part, eol_part, param_insert, macro_insert$
+ }
+$end: text_argument $
+
+$comment: ========== param_name ============== $
+
+$macro: param_name(param_name) $
+    ParamName { Name = '$param_name' }
+$end: param_name $
+
+$comment: ========= string_part ============== $
 
 $macro: string_part(string) $
-  $string;
+  '$string';
 $end: string_part $
+
+$comment: ========= eol_part ============== $
 
 $macro: eol_part $
   eol;
 $end: eol_part $
 
-$macro: param_insert_part(name) $
-  param_insert = $name;
-$end: param_insert_part $
+$comment: ========= macro_insert ============== $
 
-$macro: text_insert_part $
-$expand: text_insert $
-$end: text_insert_part $
+$macro: macro_insert$
+ MacroInsert {
+$expand: macro_ref $
+ };
+$end: macro_insert $
 
-$macro: text_insert(name, indent) $
-$indent  text_insert {
-$indent    name = $name;
-$expand: inline_text_arg, param_insert_arg, text_insert_arg $
-$expand: ancestor_ref $
-$indent  }
-$end: text_insert $
+$comment: ========= param_insert ============== $
 
-$macro: inline_text_arg(indent) $
-$indent    arg = $expand: inline_string, inline_eol, separator=", " $;
-$end: inline_text_arg $
+$macro: param_insert $
+ ParamInsert { Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $ } ;
+$end: param_insert $
 
-$macro: param_insert_arg(name, indent) $
-$indent    arg {
-$indent      param_insert = $name;
-$indent    }
-$end: param_insert_arg $
+$comment: ========= directive ============== $
 
-$macro: text_insert_arg(indent) $
-$indent    arg {
-$expand: text_insert $
-$indent    }
-$end: text_insert_arg $
+$macro: directive $
+ Directive {
+     Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
+     $expand: string_part, eol_part, param_insert, macro_insert$
+ }
+$end: directive $
 
-$macro: expand_insert_part(name) $
-  expand_insert {
-    name = $name;
-$expand: inline_text_option, param_insert_option, text_insert_option $
-  }
-$end: expand_insert_part $
+$comment: ========= simple_name ============== $
 
-$macro: inline_text_option(option) $
-    $option = $expand: inline_string, inline_eol, separator=", " $;
-$end: inline_text_option $
+$macro: simple_name(name) $
+'$name'$no_eol$
+$end: simple_name $
 
-$macro: param_insert_option(option, name) $
-    $option {
-      param_insert = $name;
+$comment: ========= initialization_order ========== $
+
+$macro: initialization_order$
+    Initialization Order{
+        $expand: simple_name $
     }
-$end: param_insert_option $
-
-$macro: text_insert_option(option) $
-    $option {
-$expand: text_insert $
-    }
-$end: text_insert_option $
-
-$macro: inline_string(string) $
-$(string)$comment: no_eol $
-$end: inline_string $
-
-$macro: inline_eol $
-eol$comment: no_eol $
-$end: inline_eol $
+$end: initialization_order $

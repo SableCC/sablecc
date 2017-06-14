@@ -4,38 +4,30 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 public class MPackageDeclaration {
 
-    private final String pPackageName;
+  private final String pPackageName;
+  private final MPackageDeclaration mPackageDeclaration = this;
 
-    private final MPackageDeclaration mPackageDeclaration = this;
+  public MPackageDeclaration(String pPackageName) {
+    if(pPackageName == null) throw new NullPointerException();
+    this.pPackageName = pPackageName;
+  }
 
-    public MPackageDeclaration(
-            String pPackageName) {
+  String pPackageName() {
+    return this.pPackageName;
+  }
 
-        if (pPackageName == null) {
-            throw new NullPointerException();
-        }
-        this.pPackageName = pPackageName;
-    }
+  private String rPackageName() {
+    return this.mPackageDeclaration.pPackageName();
+  }
 
-    String pPackageName() {
-
-        return this.pPackageName;
-    }
-
-    private String rPackageName() {
-
-        return this.mPackageDeclaration.pPackageName();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("package ");
-        sb.append(rPackageName());
-        sb.append(";");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("package ");
+    sb.append(rPackageName());
+    sb.append(";");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
 }

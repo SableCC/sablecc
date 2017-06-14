@@ -1,0 +1,55 @@
+# This file is part of SableCC ( http://sablecc.org ).
+#
+# See the NOTICE file distributed with this work for copyright information.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Tests for ObjectMacro.
+
+Macro a
+    Param
+        comment1 : String;
+        comment2 : String;
+{Begin}
+    {comment1} {comment2}
+{End}
+
+Macro b
+    Param
+        comment1 : String;
+        comment2 : String;
+{Begin}
+    {comment1} {comment2}
+{End}
+
+Macro macro_internals
+    Internal
+        comment1 : b;
+        comment2 : a;
+{Begin}
+    {comment1} {comment2}
+{End}
+
+Macro macro_internals_references
+    Param
+        a : String;
+        b : b;
+        c : a;
+        d : macro_internals(b, "{c}"); #incorrect argument type macro expected string found
+
+{Begin}
+    {a}
+    {b}
+    {c}
+    {d}
+{End}
