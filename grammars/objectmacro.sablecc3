@@ -117,13 +117,12 @@ Tokens
   {macro_body->top_level}
   end = '{End}';
 
-  {top_level, command, text, short_comment, long_comment}
-  // custom transition: *->long_comment
-  long_comment_start = '$comment$';
+  {macro_definition}
+  short_macro_comment = '//' short_comment_char* ascii_newline?;
 
-  {top_level, command, text, short_comment, long_comment}
-  // custom transition: *->previous state
-  long_comment_end = '$end$' (white_space_not_newline* ascii_newline)?;
+  {top_level, macro_definition}
+  long_macro_comment = '/*' [long_comment_char + '/']*
+                       ('*' (long_comment_char [long_comment_char + '/']*)?)* '*/';
 
   {top_level, command, text, short_comment}
   no_eol = '$no_eol$' white_space_not_newline* ascii_newline;
