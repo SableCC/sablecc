@@ -2,7 +2,7 @@ before_script :
 - apt-get update
 
 test3.7:
-  image : openjdk
+  image : frekele/ant
   script:
   - cd ant-files
   - ant development
