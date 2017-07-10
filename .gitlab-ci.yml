@@ -1,0 +1,9 @@
+before_script :
+- apt-get update
+
+test3.7:
+  image : openjdk
+  script:
+  - cd ant-files
+  - ant development
+  - java -jar lib/sablecc.jar grammars/objectmacro.sablecc3 -d src
