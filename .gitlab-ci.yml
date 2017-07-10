@@ -5,5 +5,6 @@ test3.7:
   image : frekele/ant
   script:
   - cd ant-files
+  - mv lib/sablecc.jar $ANT_HOME/lib/sablecc.jar
   - ant development
   - java -jar lib/sablecc.jar grammars/objectmacro.sablecc3 -d src
