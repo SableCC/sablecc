@@ -18,16 +18,19 @@
 package org.sablecc.objectmacro.walker;
 
 import org.sablecc.exception.*;
+import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.structure.*;
 import org.sablecc.objectmacro.syntax3.analysis.*;
 import org.sablecc.objectmacro.syntax3.node.*;
+
+import java.util.List;
 
 public class DeclarationCollector
         extends DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;
 
-    private Scope currentScope;
+    private Macro currentMacro;
 
     public DeclarationCollector(
             GlobalIndex globalIndex) {
@@ -43,11 +46,32 @@ public class DeclarationCollector
     public void inAMacro(
             AMacro node) {
 
-        if (this.currentScope != null) {
-            this.currentScope = ((Macro) this.currentScope).newMacro(node);
+        this.currentMacro = this.globalIndex.newMacro(node);
+    }
+
+    @Override
+    public void caseAMacro(
+            AMacro node) {
+
+        if (node.getBegin().getPos() != 1) {
+            //TODO Exception
+//            throw new CompilerException(
+//                    "Token {Begin} must be at the beginning of the line", node.getBegin());
         }
-        else {
-            this.currentScope = this.globalIndex.newTopMacro(node);
+
+        List<PParam> params = node.getParams();
+        List<PParam> contexts = node.getContexts();
+
+        for (PParam param_production : params) {
+
+            AParam param_node = (AParam) param_production;
+            this.currentMacro.newParam(param_node);
+        }
+
+        for (PParam param_production : contexts) {
+
+            AParam param_node = (AParam) param_production;
+            this.currentMacro.newContext(param_node);
         }
     }
 
@@ -55,33 +79,14 @@ public class DeclarationCollector
     public void outAMacro(
             AMacro node) {
 
-        this.currentScope = this.currentScope.getParent();
-    }
-
-    @Override
-    public void inATextBlock(
-            ATextBlock node) {
-
-        if (this.currentScope != null) {
-            this.currentScope = this.currentScope.newTextBlock(node);
-        }
-        else {
-            this.currentScope = this.globalIndex.newTopTextBlock(node);
-        }
-    }
-
-    @Override
-    public void outATextBlock(
-            ATextBlock node) {
-
-        this.currentScope = this.currentScope.getParent();
+        this.currentMacro = null;
     }
 
     @Override
     public void inAParam(
             AParam node) {
 
-        this.currentScope.newParam(node);
+        this.currentMacro.newParam(node);
     }
 
 }

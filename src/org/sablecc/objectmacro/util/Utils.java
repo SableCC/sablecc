@@ -22,7 +22,7 @@ import org.sablecc.objectmacro.syntax3.node.*;
 public class Utils {
 
     public static String getVarName(
-            TVar var) {
+            TVariable var) {
 
         String text = var.getText();
         if (text.charAt(1) != '(') {
@@ -40,7 +40,7 @@ public class Utils {
     }
 
     public static String toCamelCase(
-            TVar var) {
+            TVariable var) {
 
         String text = getVarName(var);
         return toCamelCase(text);

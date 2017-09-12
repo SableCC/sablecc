@@ -22,34 +22,27 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.objectmacro.util.Utils;
 
-public class Macro
-        extends Scope {
+public class Macro{
+
+    private final GlobalIndex globalIndex;
 
     private final AMacro declaration;
 
-    private final Macro parent;
+    private final Set<Param> allParams = new LinkedHashSet<>();
 
-    private final Set<Macro> macros = new LinkedHashSet<Macro>();
+    private final Map<String, Param> namedParams = new HashMap<>();
 
-    private final Map<String, Macro> macroMap = new HashMap<String, Macro>();
+    private final Set<Param> allContexts = new LinkedHashSet<>();
 
-    private final Set<Macro> explicitlyExpandedMacros = new LinkedHashSet<Macro>();
+    private final Map<String, Param> namedContexts = new HashMap<>();
 
-    private final Set<Macro> implicitlyExpandedMacros = new LinkedHashSet<Macro>();
-
-    private final Set<ExpandSignature> expandSignatures = new LinkedHashSet<ExpandSignature>();
-
-    private boolean isImplicitlyExpanded;
-
-    private ExpandSignature implicitSignature;
+    private Set<Insert> inserts = new LinkedHashSet<>();
 
     Macro(
             GlobalIndex globalIndex,
-            AMacro declaration,
-            Macro parent) {
-
-        super(globalIndex);
+            AMacro declaration) {
 
         if (globalIndex == null) {
             throw new InternalException("globalIndex may not be null");
@@ -59,136 +52,216 @@ public class Macro
             throw new InternalException("declaration may not be null");
         }
 
+        this.globalIndex = globalIndex;
         this.declaration = declaration;
-        this.parent = parent;
-
-        if (!declaration.getRepeatName().getText()
-                .equals(declaration.getName().getText())) {
-            throw CompilerException.endMismatch(declaration.getRepeatName(),
-                    declaration.getName());
-        }
     }
 
-    public Macro newMacro(
-            PMacro pDeclaration) {
+    public Param newParam(
+            AParam param){
 
-        if (pDeclaration == null) {
-            throw new InternalException("pDeclaration may not be null");
+        if(param == null){
+            throw new InternalException("AParam should not be null");
         }
 
-        if (pDeclaration.parent() instanceof AMacroSourceFilePart) {
-            throw new InternalException(
-                    "pDeclaration may not be a top-level macro");
+        TIdentifier name = param.getName();
+        String stringName = name.getText();
+        Param newParam = new Param(param, this);
+
+        if(containsKeyInContexts(stringName) || containsKeyInParams(stringName)){
+            throw CompilerException.duplicateDeclaration(name, getNameDeclaration());
         }
+        this.namedParams.put(stringName, newParam);
+        this.allParams.add(newParam);
 
-        Macro macro = getGlobalIndex().newMacro(pDeclaration, this);
-
-        this.macroMap.put(macro.getName(), macro);
-        this.macros.add(macro);
-
-        return macro;
+        return newParam;
     }
 
-    public Macro getMacro(
-            TIdentifier identifier) {
+    public Param newContext(
+            AParam param){
 
-        if (identifier == null) {
-            throw new InternalException("identifier may not be null");
+        if(param == null){
+            throw new InternalException("AParam should not be null");
         }
 
-        String name = identifier.getText();
+        TIdentifier name = param.getName();
+        String stringName = name.getText();
+        Param newContext = new Param(param, this);
 
-        if (this.macroMap.containsKey(name)) {
-            return this.macroMap.get(name);
+        if(containsKeyInContexts(stringName) || containsKeyInParams(stringName)){
+            throw CompilerException.duplicateDeclaration(name, getNameDeclaration());
         }
+        this.allContexts.add(newContext);
+        this.namedContexts.put(stringName, newContext);
 
-        if (this.parent != null) {
-            return this.parent.getMacro(identifier);
-        }
-
-        return getGlobalIndex().getTopMacro(identifier);
+        return newContext;
     }
 
-    public Expand getExpand(
-            PExpand declaration) {
+    public Insert newInsert(
+            AMacroReference macroReference){
 
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
+        Macro referencedMacro = this.globalIndex.getMacro(macroReference.getName());
+
+        if(referencedMacro == this){
+            throw CompilerException.cyclicReference(
+                    macroReference.getName(), getNameDeclaration());
         }
 
-        Expand expand = getGlobalIndex().getExpand(declaration, this);
+        Insert newInsert = new Insert(
+                referencedMacro, this, macroReference);
 
-        if (expand.getEnclosingMacro() != this) {
-            throw new InternalError(
-                    "getExpand must be called on its enclosing macro");
-        }
+        this.inserts.add(newInsert);
 
-        ExpandSignature signature = expand.getSignature();
-        this.expandSignatures.add(signature);
-
-        for (Macro macro : signature.getMacroSet()) {
-            this.explicitlyExpandedMacros.add(macro);
-            macro.addCaller(this);
-        }
-
-        return expand;
+        return newInsert;
     }
 
-    public void computeImplicitExpansion() {
+    public int getNbStringContexts(){
 
-        this.isImplicitlyExpanded = this.parent != null
-                && !this.parent.explicitlyExpandedMacros.contains(this);
+        int nbString = 0;
 
-        if (this.isImplicitlyExpanded) {
-            Set<Macro> macroSet = new LinkedHashSet<Macro>();
-            macroSet.add(this);
-            this.implicitSignature = getGlobalIndex().getExpandSignature(
-                    macroSet);
-            this.parent.expandSignatures.add(this.implicitSignature);
-            this.parent.implicitlyExpandedMacros.add(this);
-            addCaller(this.parent);
+        for(Param context : getAllContexts()){
+            if(context.getDeclaration().getType() instanceof AStringType){
+                nbString++;
+            }
         }
+
+        return nbString;
     }
+
+    public Param getParam(
+            TIdentifier variable){
+
+        String name = variable.getText();
+        if(containsKeyInParams(name)){
+            return this.namedParams.get(name);
+
+        }else if(containsKeyInContexts(name)){
+            return this.namedContexts.get(name);
+        }
+
+        throw CompilerException.unknownParam(variable);
+    }
+
+    public void setParamUsed(
+            TIdentifier variable){
+
+        String name = variable.getText();
+        if(containsKeyInParams(name)){
+            this.namedParams.get(name).setUsed();
+
+        }else if(containsKeyInContexts(name)){
+            this.namedContexts.get(name).setUsed();
+
+        }
+
+        throw CompilerException.unknownParam(variable);
+    }
+
+    public void setParamToString(
+            TIdentifier variable){
+
+        String name = variable.getText();
+        if(containsKeyInParams(name)){
+            this.namedParams.get(name).setString();
+
+        }else if(containsKeyInContexts(name)){
+            this.namedContexts.get(name).setString();
+
+        }
+
+        throw CompilerException.unknownParam(variable);
+    }
+
 
     public AMacro getDeclaration() {
 
         return this.declaration;
     }
 
-    @Override
     public TIdentifier getNameDeclaration() {
 
         return this.declaration.getName();
     }
 
-    @Override
-    public Macro getParent() {
-
-        return this.parent;
+    GlobalIndex getGlobalIndex(){
+        return this.globalIndex;
     }
 
-    public Set<ExpandSignature> getExpandSignatures() {
+    public String getName(){
 
-        return this.expandSignatures;
+        return this.declaration.getName().getText();
     }
 
-    public Set<Macro> getExplicitlyExpandedMacros() {
+    public Set<Param> getAllParams(){
 
-        return this.explicitlyExpandedMacros;
+        return this.allParams;
     }
 
-    public Set<Macro> getImplicitlyExpandedMacros() {
+    public Set<Param> getAllContexts(){
 
-        return this.implicitlyExpandedMacros;
+        return this.allContexts;
     }
 
-    public boolean isImplicitlyExpanded() {
+    public Set<Insert> getInserts() { return this.inserts; }
 
-        return this.isImplicitlyExpanded;
+    public boolean containsKeyInContexts(
+            String name){
+
+        if(name == null){
+            throw new InternalException("Name should not be null");
+        }
+
+        return this.namedContexts.containsKey(name);
     }
 
-    public ExpandSignature getImplicitSignature() {
+    public boolean containsKeyInParams(
+            String name){
 
-        return this.implicitSignature;
+        if(name == null){
+            throw new InternalException("Name should not be null");
+        }
+
+        return this.namedParams.containsKey(name);
+    }
+
+    public boolean isUsing(
+            Macro macro){
+
+        return isReferencedInParams(macro) || isReferencedInInserts(macro) || isReferencedInContexts(macro);
+    }
+
+    private boolean isReferencedInParams(
+            Macro macro){
+
+        for(Param parameter : getAllParams()){
+            if(parameter.getMacroReferenceOrNull(macro.getName()) != null){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isReferencedInContexts(
+            Macro macro){
+
+        for(Param parameter : getAllContexts()){
+            if(parameter.getMacroReferenceOrNull(macro.getName()) != null){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isReferencedInInserts(
+            Macro macro){
+
+        for(Insert insert : getInserts()){
+            if(insert.getReferencedMacro() == macro){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

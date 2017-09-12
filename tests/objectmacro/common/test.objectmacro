@@ -1,125 +1,70 @@
-$comment$
-This file is part of SableCC ( http://sablecc.org ).
+# This file is part of SableCC ( http://sablecc.org ).
+#
+# See the NOTICE file distributed with this work for copyright information.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-See the NOTICE file distributed with this work for copyright information.
+# Tests for ObjectMacro.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+# ========== test macro : normal identifier ==========
 
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-$end$
-
-$comment$
-  Tests for ObjectMacro.
-$end$
-
-
-$comment: ========== test text : normal identifier ========== $
-
-$text: text_normal_id $
+Macro text_normal_id
+{Begin}
 Hello !!
-$end: text_normal_id  $
+{End}
 
+# ========== test macro : rich identifier ==========
 
-$comment: ========== test text : rich identifier ========== $
-
-$text: <teXTRIChid> $
+Macro teXTRIChid
+{Begin}
 Simples examples for ObjectMacro.
-$end: <teXTRIChid> $
+{End}
 
+# ========== test macro : params ==========
 
-$comment: ========== test text : params ========== $
+Macro text_params
+    Params
+        comment1 : String;
+        comment2 : String;
+{Begin}
+    {comment1} {comment2}
+{End}
 
-$text: text_params(comment1, comment2) $
-$(comment1)$comment2
-$end: text_params $
+Macro textparAMs
+    Params
+        comment1 : String;
+        comment2 : String;
+{Begin}
+    {comment1} {comment2}
+{End}
 
-$text: <textparAMs>(comment1, comment2) $
-$(comment1) ? $(comment2)
-$end: <textparAMs> $
+# ========== test macro : insert ==========
 
+Macro macro_insert_hello
+{Begin}
+    Hello !!
+{End}
 
-$comment: ========== test macro : normal identifier ========== $
+Macro macro_insert_bye
+{Begin}
+    Nice to meet you.
+{End}
 
-$macro: macro_normal_id $
-Hello !!
-$end: macro_normal_id $
-
-
-$comment: ========== test macro : rich identifier ========== $
-
-$macro: <mACrOrIChId> $
-What's your name ?
-$end: <mACrOrIChId> $
-
-
-$comment: ========== test macro : params ========== $
-
-$macro: macro_params(first_name, name) $
-My name is $first_name $(name).
-$end: macro_params $
-
-$macro: <mACROpaRAms>(first_name, name) $
-$first_name $(name) is a beautiful name.
-$end: <mACROpaRAms> $
-
-
-$comment: ========== test macro : macro in macro ========== $
-
-$macro: macro_in_macro(labo) $
-$(labo)'s members :
-
-$macro: macro_in_macro_lv1(name1) $
- $name1
-
-$macro: macro_in_macro_lv2(name2) $
-   - $name2
-$end: macro_in_macro_lv2 $
-
-$end: macro_in_macro_lv1 $
-
-$end: macro_in_macro $
-
-
-$comment: ========== test macro : heritage of params ========== $
-
-$macro: macro_heritage_of_params(labo) $
-$(labo)'s members :
-
-$macro: macro_heritage_of_params_lv1(name1) $
-$macro: macro_heritage_of_params_lv2(name2) $
-   $(labo) - $name2 $name1
-$end: macro_heritage_of_params_lv2 $
-$end: macro_heritage_of_params_lv1 $
-
-$end: macro_heritage_of_params $
-
-
-$comment: ========== test macro : expand ========== $
-
-$macro: macro_expand $
-
-$macro: macro_expand_hello $
-Hello !!
-$end: macro_expand_hello $
-
-$macro: macro_expand_bye $
-Nice to meet you.
-$end: macro_expand_bye $
-
-$expand: macro_normal_id, <mACrOrIChId> $
-$expand: macro_params $
-$expand: macro_expand_bye $
-
-$end: macro_expand $
-
+Macro macro_insert
+{Begin}
+    {Insert: macro_insert_hello}
+    {Insert: macro_insert_bye}
+{End}
 
 $comment: ========== test macro : insert ========== $
 
@@ -169,6 +114,7 @@ $expand: macro_params, before_first=text_normal_id,
                        separator="\n",
                        none="Nobody is here ! \n" $
 $end: <expandHelpers> $
+
 
 
 

@@ -183,8 +183,8 @@ public class CompilerException
     }
 
     public static CompilerException duplicateOption(
-            AOption duplicateOption,
-            AOption firstOption) {
+            ADirective duplicateOption,
+            ADirective firstOption) {
 
         String name = duplicateOption.getName().getText();
         if (!name.equals(firstOption.getName().getText())) {
@@ -198,8 +198,8 @@ public class CompilerException
     }
 
     public static CompilerException conflictingOption(
-            AOption conflictingOption,
-            AOption firstOption) {
+            ADirective conflictingOption,
+            ADirective firstOption) {
 
         String conflictingName = conflictingOption.getName().getText();
         String firstName = conflictingOption.getName().getText();
@@ -212,7 +212,7 @@ public class CompilerException
     }
 
     public static CompilerException unknownOption(
-            AOption option) {
+            ADirective option) {
 
         TIdentifier nameId = option.getName();
         String name = nameId.getText();
@@ -231,9 +231,9 @@ public class CompilerException
     }
 
     public static CompilerException unknownParam(
-            TVar var) {
+            TIdentifier var) {
 
-        String name = Utils.getVarName(var);
+        String name = var.getText();
 
         return new CompilerException(new MUnknownParam(name,
                 var.getLine() + "", var.getPos() + "").toString());
@@ -249,15 +249,6 @@ public class CompilerException
                         + "").toString());
     }
 
-    public static CompilerException unusedTextBlock(
-            TextBlock textBlock) {
-
-        TIdentifier name = textBlock.getNameDeclaration();
-
-        return new CompilerException(new MUnusedTextBlock(name.getText(),
-                name.getLine() + "", name.getPos() + "").toString());
-    }
-
     public static CompilerException unusedParam(
             Param param) {
 
@@ -268,21 +259,23 @@ public class CompilerException
     }
 
     public static CompilerException incorrectArgumentCount(
-            TextInsert textInsert) {
+            AMacroReference declaration, Macro macroReferenced) {
 
-        TIdentifier insertName = textInsert.getDeclaration().getName();
-        TIdentifier textBlockName = textInsert.getInsertedTextBlock()
-                .getNameDeclaration();
-        int argCount = textInsert.getDeclaration().getStaticValues().size();
-        int paramCount = textInsert.getInsertedTextBlock().getDeclaration()
-                .getParams().size();
-
-        return new CompilerException(
-                new MIncorrectArgumentCount(insertName.getLine() + "",
-                        insertName.getPos() + "", argCount + "", textBlockName
-                                .getText(), textBlockName.getLine() + "",
-                        +textBlockName.getPos() + "", paramCount + "")
-                        .toString());
+//        TIdentifier insertName = declaration.getName();
+//        TIdentifier textBlockName = textInsert.getInsertedTextBlock()
+//                .getNameDeclaration();
+//        int argCount = textInsert.getDeclaration().getStaticValues().size();
+//        int paramCount = textInsert.getInsertedTextBlock().getDeclaration()
+//                .getParams().size();
+//
+//        return new CompilerException(
+//                new MIncorrectArgumentCount(insertName.getLine() + "",
+//                        insertName.getPos() + "", argCount + "", textBlockName
+//                                .getText(), textBlockName.getLine() + "",
+//                        +textBlockName.getPos() + "", paramCount + "")
+//                        .toString());
+        //TODO
+        return null;
     }
 
     public static CompilerException cannotCreateDirectory(

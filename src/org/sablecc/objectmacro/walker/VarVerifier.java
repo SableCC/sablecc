@@ -21,13 +21,14 @@ import org.sablecc.exception.*;
 import org.sablecc.objectmacro.structure.*;
 import org.sablecc.objectmacro.syntax3.analysis.*;
 import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.objectmacro.util.Utils;
 
 public class VarVerifier
         extends DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;
 
-    private Scope currentScope;
+    private Macro currentMacro;
 
     public VarVerifier(
             GlobalIndex globalIndex) {
@@ -43,60 +44,27 @@ public class VarVerifier
     public void inAMacro(
             AMacro node) {
 
-        if (this.currentScope != null) {
-            this.currentScope = ((Macro) this.currentScope).getMacro(node
-                    .getName());
-        }
-        else {
-            this.currentScope = this.globalIndex.getTopMacro(node.getName());
-        }
+        this.currentMacro = this.globalIndex.getMacro(node.getName());
     }
 
     @Override
     public void outAMacro(
             AMacro node) {
 
-        this.currentScope = this.currentScope.getParent();
-    }
-
-    @Override
-    public void inATextBlock(
-            ATextBlock node) {
-
-        if (this.currentScope != null) {
-            this.currentScope = this.currentScope.getTextBlock(node.getName());
-        }
-        else {
-            this.currentScope = this.globalIndex
-                    .getTopTextBlock(node.getName());
-        }
-    }
-
-    @Override
-    public void outATextBlock(
-            ATextBlock node) {
-
-        this.currentScope = this.currentScope.getParent();
+        this.currentMacro = null;
     }
 
     @Override
     public void outAVarMacroBodyPart(
             AVarMacroBodyPart node) {
 
-        this.currentScope.getParam(node.getVar());
-    }
-
-    @Override
-    public void outAVarTextBlockBodyPart(
-            AVarTextBlockBodyPart node) {
-
-        this.currentScope.getParam(node.getVar());
+        this.currentMacro.getParam(new TIdentifier(Utils.getVarName(node.getVariable())));
     }
 
     @Override
     public void outAVarStaticValue(
             AVarStaticValue node) {
 
-        this.currentScope.getParam(node.getVar());
+        this.currentMacro.getParam(node.getIdentifier());
     }
 }

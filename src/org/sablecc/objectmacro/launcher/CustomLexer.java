@@ -27,9 +27,7 @@ public class CustomLexer
 
     private State previousState = null;
 
-    private int longCommentDepth = 0;
-
-    private int commandDepth = 0;
+    private int textDepth = 0;
 
     public CustomLexer(
             PushbackReader in) {
@@ -41,53 +39,18 @@ public class CustomLexer
     protected void filter()
             throws LexerException, IOException {
 
-        if (this.token instanceof TMacroCommand
-                || this.token instanceof TTextBlockCommand) {
+        if(this.token instanceof TDquote){
 
-            this.state = State.COMMAND;
-
-            this.commandDepth++;
-        }
-        else if (this.token instanceof TExpandCommand
-                || this.token instanceof TInsertCommand) {
-
-            this.state = State.COMMAND;
-        }
-        else if (this.token instanceof TEndCommand) {
-
-            this.state = State.COMMAND;
-
-            this.commandDepth--;
-        }
-        else if (this.token instanceof TShortCommentCommand) {
-
-            this.state = State.SHORT_COMMENT;
-        }
-        else if (this.token instanceof TCommandTail) {
-
-            if (this.commandDepth == 0) {
-                this.state = State.TOP_LEVEL;
-            }
-            else {
-                this.state = State.TEXT;
-            }
-        }
-        else if (this.token instanceof TLongCommentStart) {
-
-            if (this.longCommentDepth == 0) {
+            if(this.textDepth == 0){
                 this.previousState = this.state;
-                this.state = State.LONG_COMMENT;
+                this.state = State.STRING;
+                this.textDepth++;
+
             }
-
-            this.longCommentDepth++;
-        }
-        else if (this.token instanceof TLongCommentEnd) {
-
-            this.longCommentDepth--;
-
-            if (this.longCommentDepth == 0) {
+            else{
+                this.textDepth--;
                 this.state = this.previousState;
-                this.previousState = null;
+
             }
         }
     }
