@@ -70,6 +70,7 @@ public class Macro{
         if(containsKeyInContexts(stringName) || containsKeyInParams(stringName)){
             throw CompilerException.duplicateDeclaration(name, getNameDeclaration());
         }
+
         this.namedParams.put(stringName, newParam);
         this.allParams.add(newParam);
 
@@ -144,31 +145,13 @@ public class Macro{
     public void setParamUsed(
             TIdentifier variable){
 
-        String name = variable.getText();
-        if(containsKeyInParams(name)){
-            this.namedParams.get(name).setUsed();
-
-        }else if(containsKeyInContexts(name)){
-            this.namedContexts.get(name).setUsed();
-
-        }
-
-        throw CompilerException.unknownParam(variable);
+        this.getParam(variable).setUsed();
     }
 
     public void setParamToString(
             TIdentifier variable){
 
-        String name = variable.getText();
-        if(containsKeyInParams(name)){
-            this.namedParams.get(name).setString();
-
-        }else if(containsKeyInContexts(name)){
-            this.namedContexts.get(name).setString();
-
-        }
-
-        throw CompilerException.unknownParam(variable);
+        this.getParam(variable).setString();
     }
 
 

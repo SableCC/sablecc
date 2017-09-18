@@ -25,11 +25,8 @@ public class Utils {
             TVariable var) {
 
         String text = var.getText();
-        if (text.charAt(1) != '(') {
-            return text.substring(1);
-        }
         int length = text.length();
-        return text.substring(2, length - 1);
+        return text.substring(1, length - 1);
     }
 
     public static String toCamelCase(

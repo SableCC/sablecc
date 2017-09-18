@@ -58,7 +58,11 @@ public class VarVerifier
     public void outAVarMacroBodyPart(
             AVarMacroBodyPart node) {
 
-        this.currentMacro.getParam(new TIdentifier(Utils.getVarName(node.getVariable())));
+        this.currentMacro.getParam(
+                new TIdentifier(
+                        Utils.getVarName(
+                                node.getVariable())));
+
     }
 
     @Override

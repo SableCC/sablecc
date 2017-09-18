@@ -1,5 +1,6 @@
 package org.sablecc.objectmacro.walker;
 
+import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.structure.Insert;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.structure.GlobalIndex;
@@ -48,7 +49,31 @@ public class DefinitionCollector
             AInsertMacroBodyPart node) {
 
         AMacroReference macroReference = (AMacroReference) node.getMacroReference();
-        this.currentMacro.newInsert(macroReference);
+        this.currentInsert = this.currentMacro.newInsert(macroReference);
+    }
+
+    @Override
+    public void inAInsertStringPart(
+            AInsertStringPart node) {
+
+        AMacroReference macroReference = (AMacroReference) node.getMacro();
+        if(this.currentInsert != null){
+            Macro macroReferenced = this.globalIndex.getMacro(
+                    this.currentInsert.getDeclaration().getName());
+
+            this.currentInsert = macroReferenced.newInsert(macroReference);
+        }else{
+
+            this.currentInsert = this.currentMacro.newInsert(macroReference);
+        }
+
+    }
+
+    @Override
+    public void outAInsertMacroBodyPart(
+            AInsertMacroBodyPart node) {
+
+        this.currentInsert = null;
     }
 
     @Override
@@ -71,21 +96,32 @@ public class DefinitionCollector
             AMacroReference node) {
 
         Macro referencedMacro = this.globalIndex.getMacro(node.getName());
-        List<PStaticValue> staticValues = node.getValues();
+        int nbStaticValues = node.getValues().size();
 
-        if(staticValues.size() != referencedMacro.getAllContexts().size()){
+        if(nbStaticValues != referencedMacro.getAllContexts().size()){
             //TODO Exception
 //                throw new CompilerException(
 //                        "Incorrect number of arguments", node.getName());
         }
-        else if(referencedMacro.getNbStringContexts() != staticValues.size()){
-
-//                throw new CompilerException(
-//                        "Incorrect number of string arguments", node.getName());
-        }
+        /**
+         *
+         * TODO verify macro arguments and string arguments if it corresponds by index order?
+         *
+         */
 
         if(this.currentParam != null){
             this.currentParam.addMacroReference(node);
+        }
+
+        //In order to verify if there is a cyclic reference in inserts
+        for(PStaticValue value : node.getValues()){
+            if(value instanceof AStringStaticValue){
+                AStringStaticValue stringStaticValue = (AStringStaticValue) value;
+
+                for(PStringPart stringPart : stringStaticValue.getParts()){
+                    stringPart.apply(this);
+                }
+            }
         }
     }
 

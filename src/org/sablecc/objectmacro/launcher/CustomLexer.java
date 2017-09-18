@@ -18,6 +18,8 @@
 package org.sablecc.objectmacro.launcher;
 
 import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.sablecc.objectmacro.syntax3.lexer.*;
 import org.sablecc.objectmacro.syntax3.node.*;
@@ -25,33 +27,54 @@ import org.sablecc.objectmacro.syntax3.node.*;
 public class CustomLexer
         extends Lexer {
 
-    private State previousState = null;
-
     private int textDepth = 0;
 
-    public CustomLexer(
-            PushbackReader in) {
-
+    public CustomLexer(PushbackReader in) {
         super(in);
     }
 
+    private List<State> states = new LinkedList<>();
+
     @Override
-    protected void filter()
-            throws LexerException, IOException {
+    protected void filter() throws
+            LexerException, IOException {
 
         if(this.token instanceof TDquote){
 
-            if(this.textDepth == 0){
-                this.previousState = this.state;
+            if(this.state != State.STRING){
+
+                this.states.add(this.state);
                 this.state = State.STRING;
                 this.textDepth++;
-
             }
-            else{
-                this.textDepth--;
-                this.state = this.previousState;
+            else if(
+                    this.textDepth > 0
+                            && this.state == State.STRING){
 
+                this.textDepth--;
+                this.state = getLastState();
+            }
+        }else if(this.token instanceof TInsertCommand){
+
+            if(this.state != State.COMMAND){
+
+                this.states.add(this.state);
+                this.state = State.COMMAND;
+            }
+        }else if(this.token instanceof TRBrace){
+
+            if(this.states.size() == 0){
+                //ERROR
+                return;
+            }else{
+                this.state = getLastState();
             }
         }
+    }
+
+    private State getLastState(){
+
+        int lastStateIndex = this.states.size() - 1;
+        return this.states.remove(lastStateIndex);
     }
 }

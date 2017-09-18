@@ -43,21 +43,16 @@ public class DeclarationCollector
     }
 
     @Override
-    public void inAMacro(
-            AMacro node) {
-
-        this.currentMacro = this.globalIndex.newMacro(node);
-    }
-
-    @Override
     public void caseAMacro(
             AMacro node) {
 
         if (node.getBegin().getPos() != 1) {
-            //TODO Exception
+            //TODO EXception
 //            throw new CompilerException(
 //                    "Token {Begin} must be at the beginning of the line", node.getBegin());
         }
+
+        this.currentMacro = this.globalIndex.newMacro(node);
 
         List<PParam> params = node.getParams();
         List<PParam> contexts = node.getContexts();
@@ -73,6 +68,8 @@ public class DeclarationCollector
             AParam param_node = (AParam) param_production;
             this.currentMacro.newContext(param_node);
         }
+
+        this.currentMacro = null;
     }
 
     @Override
@@ -81,12 +78,4 @@ public class DeclarationCollector
 
         this.currentMacro = null;
     }
-
-    @Override
-    public void inAParam(
-            AParam node) {
-
-        this.currentMacro.newParam(node);
-    }
-
 }

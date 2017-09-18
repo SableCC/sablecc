@@ -11,7 +11,7 @@ import org.sablecc.objectmacro.util.Utils;
 /**
  * Created by lam on 07/09/17.
  */
-public class OptionCollector
+public class DirectiveCollector
         extends DepthFirstAdapter {
 
     private GlobalIndex globalIndex;
@@ -22,7 +22,7 @@ public class OptionCollector
 
     private Directive currentDirective;
 
-    public OptionCollector(
+    public DirectiveCollector(
             GlobalIndex globalIndex){
 
         this.globalIndex = globalIndex;

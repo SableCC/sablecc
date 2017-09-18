@@ -9,6 +9,7 @@ import java.util.List;
  * Created by lam on 06/09/17.
  */
 public class Insert {
+
     private Macro referencedMacro;
 
     private Macro parentMacro;

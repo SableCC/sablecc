@@ -107,7 +107,7 @@ Tokens
   {macro_definition}
   context_kw = 'Context';
 
-  {macro_body->command, string->command}
+  /* custom transition *->previous state */
   insert_command = '{Insert:';
 
   {macro_definition->macro_body}
@@ -131,14 +131,14 @@ Tokens
   {macro_body}
   text_escape = text_escape;
 
-  {top_level, command}
-  invalid_var = '{' ascii_id_start* ('_' digit+ ascii_id_continue*)* '}';
+  {top_level, command, macro_body, string}
+  invalid_var = '{' ascii_id_start* ('_' digit+ ascii_id_continue*)+ '}';
 
   {macro_definition, command}
   identifier = normal_identifier | rich_identifier;
 
-  {top_level, macro_body, string, command, macro_definition}
-  invalid_identifier = ascii_id_start* ('_' digit+ ascii_id_continue*)*;
+  {top_level, command, macro_definition}
+  invalid_identifier = ascii_id_start* ('_' digit+ ascii_id_continue*)+;
 
   {command, macro_definition}
   l_par = '(';
@@ -146,7 +146,7 @@ Tokens
   {command, macro_definition}
   r_par = ')';
 
-  {command->macro_body}
+  /* custom transition *->previous state */
   r_brace = '}';
 
   {macro_definition, command}
@@ -225,6 +225,7 @@ Productions
         {-> macro_body_part? }
     =
       {insert} insert_command macro_reference r_brace
+        {-> New macro_body_part.insert(macro_reference)}
     |
       {text} text_part
     |
@@ -326,6 +327,7 @@ Productions
   string_part
     =
       {insert} insert_command macro_reference r_brace
+        {-> New string_part.insert(macro_reference)}
     |
       {text} [text]:string_text
     |
@@ -346,7 +348,7 @@ Abstract Syntax Tree
       macro_kw [name]:identifier [params]:param* [contexts]:param* begin [macro_body_parts]:macro_body_part*;
 
   macro_body_part =
-      {insert} insert_command macro_reference r_brace |
+      {insert} macro_reference |
       {var} variable |
       {text} text_part |
       {eol} eol |
@@ -376,7 +378,7 @@ Abstract Syntax Tree
     [parts]:string_part*;
 
   string_part =
-      {insert} insert_command [macro]:macro_reference r_brace |
+      {insert} [macro]:macro_reference |
       {text} [text]:string_text |
       {escape} string_escape |
       {var} variable;
