@@ -17,130 +17,92 @@ limitations under the License.
 $end$
 
 $macro: intermediate_representation $
-$expand: text $
 $expand: macro $
 $end: intermediate_representation $
 
-$macro: text(name, self_ref) $
-text {
-  name = $name;
+$macro: macro(name) $
+Macro {
+  Name = '$name'
 $expand: param $
-  self_ref = $self_ref;
-$expand: ancestor_ref $
-$expand: param_ref $
-$expand: string_part, eol_part, param_insert_part, text_insert_part $
-}
-$end: text $
-
-$macro: macro(name, is_public, self_ref) $
-macro {
-  name = $name;
-  is_public = $is_public;
-$expand: param $
-  self_ref = $self_ref;
-$expand: ancestor_ref $
-$expand: param_ref $
-$expand: expand $
-$expand: expanded_macro $
-$expand: string_part, eol_part, param_insert_part, text_insert_part, expand_insert_part $
+$expand: context $
+  MacroBody{
+$expand: string_part, eol_part, param_insert, macro_insert$
+  }
 }
 $end: macro $
 
-$macro: param(name, indent) $
-$indent  param = $name;
+$macro: param(name) $
+ Param {
+    Name = '$name'
+$expand: string_type, macro_type$
+$expand: directive, separator=", "$
+ }
 $end: param $
 
-$macro: ancestor_ref(name, indent) $
-$indent  ancestor_ref = $name;
-$end: ancestor_ref $
+$macro: context(name) $
+ Context {
+ Name = '$name'
+$expand: string_type, macro_type$
+$expand: directive, separator=", "$
+ }
+$end: context $
 
-$macro: param_ref(name, context_name) $
-  param_ref {
-    name = $name;
-    context_name = $context_name;
-  }
-$end: param_ref $
+$macro: string_type$
+ Type = String $expand: directive, separator=", ", before_one=", "$
+$end: string_type $
 
-$macro: expand(name, indent) $
-$indent  expand = $name;
-$end: expand $
+$macro: macro_type$
+ Type {
+$expand: macro_ref $
+$expand: directive, separator=", "$
+ }
+$end: macro_type $
 
-$macro: expanded_macro(name) $
-  expanded_macro {
-    name = $name;
-$expand: param $
-$expand: ancestor_ref $
-$expand: expand $
-  }
-$end: expanded_macro $
+$macro: macro_ref(name)$
+ MacroRef {
+ Name = '$name'
+$expand: args$
+ }
+$end: macro_ref $
+
+$macro: args$
+ Args {
+$expand: var_argument, text_argument, separator=", "$
+ }
+$end: args$
+
+$macro: var_argument (name)$
+ Var = '$name'
+$end: var_argument $
+
+$macro: text_argument$
+ Value {
+$expand: string_part, eol_part, param_insert, macro_insert$
+ }
+$end: text_argument$
 
 $macro: string_part(string) $
-  $string;
+  '$string';
 $end: string_part $
 
 $macro: eol_part $
   eol;
 $end: eol_part $
 
-$macro: param_insert_part(name) $
-  param_insert = $name;
-$end: param_insert_part $
+$macro: macro_insert$
+ MacroInsert {
+$expand: macro_ref $
+ };
+$end: macro_insert $
 
-$macro: text_insert_part $
-$expand: text_insert $
-$end: text_insert_part $
+$macro: param_insert(name) $
+ ParamInsert = '$name';
+$end: param_insert $
 
-$macro: text_insert(name, indent) $
-$indent  text_insert {
-$indent    name = $name;
-$expand: inline_text_arg, param_insert_arg, text_insert_arg $
-$expand: ancestor_ref $
-$indent  }
-$end: text_insert $
+$macro: directive(name) $
+ Directive {
+     Name = '$name'
+$expand: text_argument$
+ }
+$end: directive $
 
-$macro: inline_text_arg(indent) $
-$indent    arg = $expand: inline_string, inline_eol, separator=", " $;
-$end: inline_text_arg $
-
-$macro: param_insert_arg(name, indent) $
-$indent    arg {
-$indent      param_insert = $name;
-$indent    }
-$end: param_insert_arg $
-
-$macro: text_insert_arg(indent) $
-$indent    arg {
-$expand: text_insert $
-$indent    }
-$end: text_insert_arg $
-
-$macro: expand_insert_part(name) $
-  expand_insert {
-    name = $name;
-$expand: inline_text_option, param_insert_option, text_insert_option $
-  }
-$end: expand_insert_part $
-
-$macro: inline_text_option(option) $
-    $option = $expand: inline_string, inline_eol, separator=", " $;
-$end: inline_text_option $
-
-$macro: param_insert_option(option, name) $
-    $option {
-      param_insert = $name;
-    }
-$end: param_insert_option $
-
-$macro: text_insert_option(option) $
-    $option {
-$expand: text_insert $
-    }
-$end: text_insert_option $
-
-$macro: inline_string(string) $
-$(string)$comment: no_eol $
-$end: inline_string $
-
-$macro: inline_eol $
-eol$comment: no_eol $
-$end: inline_eol $

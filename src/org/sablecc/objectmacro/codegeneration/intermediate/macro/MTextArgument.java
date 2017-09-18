@@ -4,29 +4,11 @@ package org.sablecc.objectmacro.codegeneration.intermediate.macro;
 
 import java.util.*;
 
-public class MMacro {
+public class MTextArgument {
 
-  private final String pName;
-  private final MMacro mMacro = this;
-  private final List<Object> eParam = new LinkedList<Object>();
-  private final List<Object> eContext = new LinkedList<Object>();
   private final List<Object> eStringPart_EolPart_ParamInsert_MacroInsert = new LinkedList<Object>();
 
-  public MMacro(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
-
-  public MParam newParam(String pName) {
-    MParam lParam = new MParam(pName);
-    this.eParam.add(lParam);
-    return lParam;
-  }
-
-  public MContext newContext(String pName) {
-    MContext lContext = new MContext(pName);
-    this.eContext.add(lContext);
-    return lContext;
+  public MTextArgument() {
   }
 
   public MStringPart newStringPart(String pString) {
@@ -53,37 +35,15 @@ public class MMacro {
     return lMacroInsert;
   }
 
-  String pName() {
-    return this.pName;
-  }
-
-  private String rName() {
-    return this.mMacro.pName();
-  }
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("Macro {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  Name = '");
-    sb.append(rName());
-    sb.append("'");
-    sb.append(System.getProperty("line.separator"));
-    for(Object oParam : this.eParam) {
-      sb.append(oParam.toString());
-    }
-    for(Object oContext : this.eContext) {
-      sb.append(oContext.toString());
-    }
-    sb.append("  MacroBody{");
+    sb.append(" Value {");
     sb.append(System.getProperty("line.separator"));
     for(Object oStringPart_EolPart_ParamInsert_MacroInsert : this.eStringPart_EolPart_ParamInsert_MacroInsert) {
       sb.append(oStringPart_EolPart_ParamInsert_MacroInsert.toString());
     }
-    sb.append("  }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("}");
+    sb.append(" }");
     sb.append(System.getProperty("line.separator"));
     return sb.toString();
   }

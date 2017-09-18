@@ -4,14 +4,14 @@ package org.sablecc.objectmacro.codegeneration.intermediate.macro;
 
 import java.util.*;
 
-public class MParam {
+public class MContext {
 
   private final String pName;
-  private final MParam mParam = this;
+  private final MContext mContext = this;
   private final List<Object> eStringType_MacroType = new LinkedList<Object>();
   private final List<Object> eDirective = new LinkedList<Object>();
 
-  public MParam(String pName) {
+  public MContext(String pName) {
     if(pName == null) throw new NullPointerException();
     this.pName = pName;
   }
@@ -39,15 +39,15 @@ public class MParam {
   }
 
   private String rName() {
-    return this.mParam.pName();
+    return this.mContext.pName();
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(" Param {");
+    sb.append(" Context {");
     sb.append(System.getProperty("line.separator"));
-    sb.append("    Name = '");
+    sb.append(" Name = '");
     sb.append(rName());
     sb.append("'");
     sb.append(System.getProperty("line.separator"));
