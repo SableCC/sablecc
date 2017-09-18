@@ -68,8 +68,8 @@ public class IntermediateCodeGenerator
 
         try {
             FileWriter fw = new FileWriter(getOutputFile());
-            fw.write(walker.getStringRepresentation());
-            fw.close();
+//            fw.write(walker.getStringRepresentation());
+//            fw.close();
         }
         catch (IOException e) {
             throw CompilerException.outputError(getOutputFile().toString(), e);

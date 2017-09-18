@@ -311,48 +311,48 @@ public class ObjectMacro {
         generateIntermediateFile(
                 globalIndex, verbosity);
 
-        PIntermediateRepresentation intermediateAST = generateIntermediateAST(
-                globalIndex, verbosity);
-
-        IntermediateRepresentation ir = new IntermediateRepresentation(
-                intermediateAST, macroFile, destinationDirectory,
-                destinationPackage);
-
-        CodeGenerator codeGenerator;
-
-        if (targetLanguage.equals("java")) {
-            codeGenerator = new JavaCodeGenerator(ir);
-        }
-        else if (targetLanguage.equals("intermediate")) {
-            codeGenerator = new IntermediateCodeGenerator(ir);
-        }
-        else if (targetLanguage.equals("c")) {
-            codeGenerator = new CCodeGenerator(ir);
-        }
-        else if (targetLanguage.equals("scala")) {
-            codeGenerator = new ScalaCodeGenerator(ir);
-        }
-        else {
-            throw new InternalException("unhandled case");
-        }
-
-        switch (verbosity) {
-        case VERBOSE:
-            System.out.println(" Verifying target-specific semantics");
-            break;
-        }
-
-        codeGenerator.verifyTargetSpecificSemantics(strictness);
-
-        if (generateCode) {
-            switch (verbosity) {
-            case VERBOSE:
-                System.out.println(" Generating code");
-                break;
-            }
-
-            codeGenerator.generateCode();
-        }
+//        PIntermediateRepresentation intermediateAST = generateIntermediateAST(
+//                globalIndex, verbosity);
+//
+//        IntermediateRepresentation ir = new IntermediateRepresentation(
+//                intermediateAST, macroFile, destinationDirectory,
+//                destinationPackage);
+//
+//        CodeGenerator codeGenerator;
+//
+//        if (targetLanguage.equals("java")) {
+//            codeGenerator = new JavaCodeGenerator(ir);
+//        }
+//        else if (targetLanguage.equals("intermediate")) {
+//            codeGenerator = new IntermediateCodeGenerator(ir);
+//        }
+//        else if (targetLanguage.equals("c")) {
+//            codeGenerator = new CCodeGenerator(ir);
+//        }
+//        else if (targetLanguage.equals("scala")) {
+//            codeGenerator = new ScalaCodeGenerator(ir);
+//        }
+//        else {
+//            throw new InternalException("unhandled case");
+//        }
+//
+//        switch (verbosity) {
+//        case VERBOSE:
+//            System.out.println(" Verifying target-specific semantics");
+//            break;
+//        }
+//
+//        codeGenerator.verifyTargetSpecificSemantics(strictness);
+//
+//        if (generateCode) {
+//            switch (verbosity) {
+//            case VERBOSE:
+//                System.out.println(" Generating code");
+//                break;
+//            }
+//
+//            codeGenerator.generateCode();
+//        }
     }
 
     private static GlobalIndex verifySemantics(

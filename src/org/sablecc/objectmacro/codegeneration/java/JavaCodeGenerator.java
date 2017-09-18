@@ -70,8 +70,8 @@ public class JavaCodeGenerator
             }
         }
 
-        CodeGenerationWalker walker = new CodeGenerationWalker(getIr(),
-                packageDirectory);
-        getIr().getAST().apply(walker);
+//        CodeGenerationWalker walker = new CodeGenerationWalker(getIr(),
+//                packageDirectory);
+//        getIr().getAST().apply(walker);
     }
 }
