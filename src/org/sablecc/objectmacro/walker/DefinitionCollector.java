@@ -57,15 +57,7 @@ public class DefinitionCollector
             AInsertStringPart node) {
 
         AMacroReference macroReference = (AMacroReference) node.getMacro();
-        if(this.currentInsert != null){
-            Macro macroReferenced = this.globalIndex.getMacro(
-                    this.currentInsert.getDeclaration().getName());
-
-            this.currentInsert = macroReferenced.newInsert(macroReference);
-        }else{
-
-            this.currentInsert = this.currentMacro.newInsert(macroReference);
-        }
+        this.currentInsert = this.currentMacro.newInsert(macroReference);
 
     }
 
