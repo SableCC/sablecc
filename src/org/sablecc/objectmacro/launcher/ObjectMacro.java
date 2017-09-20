@@ -309,7 +309,7 @@ public class ObjectMacro {
         processSemantics(globalIndex, verbosity);
 
         generateIntermediateFile(
-                globalIndex, verbosity);
+                globalIndex, verbosity, destinationDirectory);
 
 //        PIntermediateRepresentation intermediateAST = generateIntermediateAST(
 //                globalIndex, verbosity);
@@ -399,7 +399,8 @@ public class ObjectMacro {
 
     private static void generateIntermediateFile(
             GlobalIndex globalIndex,
-            Verbosity verbosity) {
+            Verbosity verbosity,
+            File destinationDirectory) {
 
         switch (verbosity) {
         case VERBOSE:
@@ -417,7 +418,7 @@ public class ObjectMacro {
 
         }
 
-        File destination = new File("/home/lam/", "test.intermediate");
+        File destination = new File(destinationDirectory, "test.intermediate");
 
         try {
             FileWriter fw = new FileWriter(destination);
