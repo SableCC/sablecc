@@ -9,7 +9,7 @@ public class MMacro {
   private final String pName;
   private final MMacro mMacro = this;
   private final List<Object> eParam = new LinkedList<Object>();
-  private final List<Object> eContext = new LinkedList<Object>();
+  private final List<Object> eInternal = new LinkedList<Object>();
   private final List<Object> eStringPart_EolPart_ParamInsert_MacroInsert = new LinkedList<Object>();
 
   public MMacro(String pName) {
@@ -23,10 +23,10 @@ public class MMacro {
     return lParam;
   }
 
-  public MContext newContext(String pName) {
-    MContext lContext = new MContext(pName);
-    this.eContext.add(lContext);
-    return lContext;
+  public MInternal newInternal(String pName) {
+    MInternal lInternal = new MInternal(pName);
+    this.eInternal.add(lInternal);
+    return lInternal;
   }
 
   public MStringPart newStringPart(String pString) {
@@ -73,8 +73,8 @@ public class MMacro {
     for(Object oParam : this.eParam) {
       sb.append(oParam.toString());
     }
-    for(Object oContext : this.eContext) {
-      sb.append(oContext.toString());
+    for(Object oInternal : this.eInternal) {
+      sb.append(oInternal.toString());
     }
     sb.append("  MacroBody{");
     sb.append(System.getProperty("line.separator"));

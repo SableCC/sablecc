@@ -25,7 +25,7 @@ Tokens
     macro_kw = 'Macro';
     param_kw = 'Param';
     param_insert_kw = 'ParamInsert';
-    context_kw = 'Context';
+    internal_kw = 'Internal';
     directive_kw = 'Directive';
     name_kw = 'Name';
     macro_ref_kw = 'MacroRef';
@@ -72,8 +72,8 @@ Productions
         =
             {param} param_kw l_brace name type directives? r_brace
                 {-> New param.param(name.string, type, [directives.directives])} |
-            {context} context_kw l_brace name type directives? r_brace
-                {-> New param.context(name.string, type, [directives.directives])}
+            {internal} internal_kw l_brace name type directives? r_brace
+                {-> New param.internal(name.string, type, [directives.directives])}
         ;
 
     directives
@@ -206,7 +206,7 @@ Abstract Syntax Tree
 
     param =
         {param} [name]:string type [directives]:directive* |
-        {context} [name]:string type [directives]:directive*;
+        {internal} [name]:string type [directives]:directive*;
 
     type =
         {string} string_kw |

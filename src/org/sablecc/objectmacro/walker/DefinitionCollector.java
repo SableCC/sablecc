@@ -90,7 +90,7 @@ public class DefinitionCollector
         Macro referencedMacro = this.globalIndex.getMacro(node.getName());
         int nbStaticValues = node.getValues().size();
 
-        if(nbStaticValues != referencedMacro.getAllContexts().size()){
+        if(nbStaticValues != referencedMacro.getAllInternals().size()){
             //TODO Exception
 //                throw new CompilerException(
 //                        "Incorrect number of arguments", node.getName());

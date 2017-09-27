@@ -99,13 +99,13 @@ Tokens
   macro_kw = 'Macro';
 
   {macro_definition}
-  params_kw = 'Params';
+  params_kw = 'Param';
 
   {macro_definition}
   string_kw = 'String';
 
   {macro_definition}
-  context_kw = 'Context';
+  internal_kw = 'Internal';
 
   /* custom transition *->previous state */
   insert_command = '{Insert:';
@@ -203,15 +203,15 @@ Productions
     =
       macro_definition macro_body
          {-> New macro(macro_definition.macro_kw, macro_definition.identifier,
-            [macro_definition.params], [macro_definition.contexts],
+            [macro_definition.params], [macro_definition.internals],
              macro_body.begin, [macro_body.macro_body_parts])}
     ;
 
   macro_definition
-        {-> macro_kw identifier [params]:param* [contexts]:param* }
+        {-> macro_kw identifier [params]:param* [internals]:param* }
     =
       macro_kw identifier macro_parameters
-        {-> macro_kw identifier [macro_parameters.params] [macro_parameters.contexts] }
+        {-> macro_kw identifier [macro_parameters.params] [macro_parameters.internals] }
     ;
 
   macro_body
@@ -237,10 +237,10 @@ Productions
     ;
 
   macro_parameters
-        {-> [params]:param* [contexts]:param*}
+        {-> [params]:param* [internals]:param*}
     =
-      [params]:external_args? [contexts]:internal_args?
-        {-> [params.params] [contexts.params] }
+      [params]:external_args? [internals]:internal_args?
+        {-> [params.params] [internals.params] }
     ;
 
   external_args
@@ -252,7 +252,7 @@ Productions
   internal_args
         {-> [params]:param*}
     =
-      context_kw [params]:param+
+      internal_kw [params]:param+
         {-> [params.param]}
     ;
 
@@ -345,7 +345,7 @@ Abstract Syntax Tree
       {macro} macro;
 
   macro =
-      macro_kw [name]:identifier [params]:param* [contexts]:param* begin [macro_body_parts]:macro_body_part*;
+      macro_kw [name]:identifier [params]:param* [internals]:param* begin [macro_body_parts]:macro_body_part*;
 
   macro_body_part =
       {insert} macro_reference |

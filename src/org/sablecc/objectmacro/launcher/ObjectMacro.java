@@ -418,7 +418,7 @@ public class ObjectMacro {
 
         }
 
-        File destination = new File(destinationDirectory, "test.intermediate");
+        File destination = new File(destinationDirectory, "class.objectmacro.intermediate");
 
         try {
             FileWriter fw = new FileWriter(destination);
@@ -434,7 +434,7 @@ public class ObjectMacro {
             Macro macro) {
 
         MMacro mMacro = new MMacro(macro.getName());
-        Set<Param> macro_contexts = macro.getAllContexts();
+        Set<Param> macro_internals = macro.getAllInternals();
         Set<Param> macro_params = macro.getAllParams();
         List<PMacroBodyPart> macroBodyParts = macro.getDeclaration().getMacroBodyParts();
         createMacroBody(mMacro, macroBodyParts);
@@ -445,10 +445,10 @@ public class ObjectMacro {
                     mMacro.newParam(param.getName()), param);
         }
 
-        for(Param context : macro_contexts){
+        for(Param internal : macro_internals){
 
-            createContext(
-                    mMacro.newContext(context.getName()), context);
+            createInternal(
+                    mMacro.newInternal(internal.getName()), internal);
         }
 
         return mMacro;
@@ -561,16 +561,16 @@ public class ObjectMacro {
         }
     }
 
-    private static void createContext(
-            MContext macro_context,
+    private static void createInternal(
+            MInternal macro_internal,
             Param param){
 
         if(param.getDeclaration().getType() instanceof AStringType){
-            macro_context.newStringType();
+            macro_internal.newStringType();
 
         }else if(param.getDeclaration().getType() instanceof AMacrosType){
 
-            MMacroType macro_param_type = macro_context.newMacroType();
+            MMacroType macro_param_type = macro_internal.newMacroType();
             Set<AMacroReference> macroReferences = param.getMacroReferences();
 
             for(AMacroReference l_macroRef : macroReferences){
@@ -586,7 +586,7 @@ public class ObjectMacro {
         Set<Directive> directives = param.getAllDirectives();
         if(directives.size() > 0){
             for(Directive l_directive : directives){
-                MDirective mDirective = macro_context.newDirective(l_directive.getName());
+                MDirective mDirective = macro_internal.newDirective(l_directive.getName());
                 createTextParts(mDirective.newTextArgument(), l_directive.getDeclaration().getParts());
             }
         }

@@ -34,9 +34,9 @@ public class Macro{
 
     private final Map<String, Param> namedParams = new HashMap<>();
 
-    private final Set<Param> allContexts = new LinkedHashSet<>();
+    private final Set<Param> allInternals = new LinkedHashSet<>();
 
-    private final Map<String, Param> namedContexts = new HashMap<>();
+    private final Map<String, Param> namedInternals = new HashMap<>();
 
     private Set<Insert> inserts = new LinkedHashSet<>();
 
@@ -67,7 +67,7 @@ public class Macro{
         String stringName = name.getText();
         Param newParam = new Param(param, this);
 
-        if(containsKeyInContexts(stringName) || containsKeyInParams(stringName)){
+        if(containsKeyInInternals(stringName) || containsKeyInParams(stringName)){
             throw CompilerException.duplicateDeclaration(name, getNameDeclaration());
         }
 
@@ -77,7 +77,7 @@ public class Macro{
         return newParam;
     }
 
-    public Param newContext(
+    public Param newInternal(
             AParam param){
 
         if(param == null){
@@ -86,15 +86,15 @@ public class Macro{
 
         TIdentifier name = param.getName();
         String stringName = name.getText();
-        Param newContext = new Param(param, this);
+        Param newInternal = new Param(param, this);
 
-        if(containsKeyInContexts(stringName) || containsKeyInParams(stringName)){
+        if(containsKeyInInternals(stringName) || containsKeyInParams(stringName)){
             throw CompilerException.duplicateDeclaration(name, getNameDeclaration());
         }
-        this.allContexts.add(newContext);
-        this.namedContexts.put(stringName, newContext);
+        this.allInternals.add(newInternal);
+        this.namedInternals.put(stringName, newInternal);
 
-        return newContext;
+        return newInternal;
     }
 
     public Insert newInsert(
@@ -115,12 +115,12 @@ public class Macro{
         return newInsert;
     }
 
-    public int getNbStringContexts(){
+    public int getNbStringInternals(){
 
         int nbString = 0;
 
-        for(Param context : getAllContexts()){
-            if(context.getDeclaration().getType() instanceof AStringType){
+        for(Param internal : getAllInternals()){
+            if(internal.getDeclaration().getType() instanceof AStringType){
                 nbString++;
             }
         }
@@ -135,8 +135,8 @@ public class Macro{
         if(containsKeyInParams(name)){
             return this.namedParams.get(name);
 
-        }else if(containsKeyInContexts(name)){
-            return this.namedContexts.get(name);
+        }else if(containsKeyInInternals(name)){
+            return this.namedInternals.get(name);
         }
 
         throw CompilerException.unknownParam(variable);
@@ -179,21 +179,21 @@ public class Macro{
         return this.allParams;
     }
 
-    public Set<Param> getAllContexts(){
+    public Set<Param> getAllInternals(){
 
-        return this.allContexts;
+        return this.allInternals;
     }
 
     public Set<Insert> getInserts() { return this.inserts; }
 
-    public boolean containsKeyInContexts(
+    public boolean containsKeyInInternals(
             String name){
 
         if(name == null){
             throw new InternalException("Name should not be null");
         }
 
-        return this.namedContexts.containsKey(name);
+        return this.namedInternals.containsKey(name);
     }
 
     public boolean containsKeyInParams(
@@ -209,7 +209,7 @@ public class Macro{
     public boolean isUsing(
             Macro macro){
 
-        return isReferencedInParams(macro) || isReferencedInInserts(macro) || isReferencedInContexts(macro);
+        return isReferencedInParams(macro) || isReferencedInInserts(macro) || isReferencedInInternals(macro);
     }
 
     private boolean isReferencedInParams(
@@ -224,10 +224,10 @@ public class Macro{
         return false;
     }
 
-    private boolean isReferencedInContexts(
+    private boolean isReferencedInInternals(
             Macro macro){
 
-        for(Param parameter : getAllContexts()){
+        for(Param parameter : getAllInternals()){
             if(parameter.getMacroReferenceOrNull(macro.getName()) != null){
                 return true;
             }

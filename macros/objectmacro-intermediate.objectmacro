@@ -24,7 +24,7 @@ $macro: macro(name) $
 Macro {
   Name = '$name'
 $expand: param $
-$expand: context $
+$expand: internal $
   MacroBody{
 $expand: string_part, eol_part, param_insert, macro_insert$
   }
@@ -39,13 +39,13 @@ $expand: directive, separator=", "$
  }
 $end: param $
 
-$macro: context(name) $
- Context {
+$macro: internal(name) $
+ Internal {
  Name = '$name'
 $expand: string_type, macro_type$
 $expand: directive, separator=", "$
  }
-$end: context $
+$end: internal $
 
 $macro: string_type$
  Type = String $expand: directive, separator=", ", before_one=", "$

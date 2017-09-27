@@ -55,7 +55,7 @@ public class DeclarationCollector
         this.currentMacro = this.globalIndex.newMacro(node);
 
         List<PParam> params = node.getParams();
-        List<PParam> contexts = node.getContexts();
+        List<PParam> internals = node.getInternals();
 
         for (PParam param_production : params) {
 
@@ -63,10 +63,10 @@ public class DeclarationCollector
             this.currentMacro.newParam(param_node);
         }
 
-        for (PParam param_production : contexts) {
+        for (PParam param_production : internals) {
 
             AParam param_node = (AParam) param_production;
-            this.currentMacro.newContext(param_node);
+            this.currentMacro.newInternal(param_node);
         }
 
         this.currentMacro = null;
