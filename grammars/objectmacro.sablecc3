@@ -88,8 +88,6 @@ Helpers
   normal_part = lowercase (lowercase | digit | uppercase)*;
   normal_identifier = normal_part ('_' normal_part)*;
 
-  rich_identifier = '<' [ascii_id_start - '_'] [ascii_id_continue - '_']* '>';
-
 States
   top_level, macro_definition, macro_body, command, string;
 
@@ -135,7 +133,7 @@ Tokens
   invalid_var = '{' ascii_id_start* ('_' digit+ ascii_id_continue*)+ '}';
 
   {macro_definition, command}
-  identifier = normal_identifier | rich_identifier;
+  identifier = normal_identifier;
 
   {top_level, command, macro_definition}
   invalid_identifier = ascii_id_start* ('_' digit+ ascii_id_continue*)+;
