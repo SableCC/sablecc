@@ -358,3 +358,23 @@ The directory "$location" could not be created.
 
 $insert: command_line_error_tail $
 $end: cannot_create_directory $
+
+$comment: ========= begin_token_misused ========== $
+
+$macro: begin_token_misused (line, char) $
+*** SYNTAX ERROR ***
+
+Line: $line
+Char: $char
+The token {Begin} must be at the beginning of the line.
+$end: begin_token_misused $
+
+$comment: =========== duplicate_macro_ref =========== $
+
+$macro: duplicate_macro_ref(param, macro, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Parameter '$param' has already referenced Macro '$macro'.
+$end: duplicate_macro_ref $

@@ -284,4 +284,27 @@ public class CompilerException
         return new CompilerException(
                 new MCannotCreateDirectory(location).toString());
     }
+
+    public static CompilerException beginTokenMisused(
+            Token begin){
+
+        String line = String.valueOf(begin.getLine());
+        String pos = String.valueOf(begin.getPos());
+
+        return new CompilerException(
+                new MBeginTokenMisused(line, pos).toString());
+    }
+
+    public static CompilerException duplicateMacroRef(
+            Token macroRef,
+            Token paramName){
+
+        String line = String.valueOf(macroRef.getLine());
+        String pos = String.valueOf(macroRef.getPos());
+
+        return new CompilerException(
+                new MDuplicateMacroRef(
+                        paramName.getText(), macroRef.getText(), line, pos).toString());
+
+    }
 }

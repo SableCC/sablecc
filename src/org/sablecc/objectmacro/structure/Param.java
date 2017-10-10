@@ -83,15 +83,16 @@ public class Param {
         }
 
         String name = macroRef.getName().getText();
+
         if(this.macroReferencesName.containsKey(name)){
-            return;
-            //TODO Exception
-//            throw new CompilerException(
-//                    "This parameter already references macro of name '" + name + "'", macroRef.getName());
-        }else if(this.isString){
+            throw CompilerException.duplicateMacroRef(macroRef.getName(), getDeclaration().getName());
+        }
+        else if(this.isString){
             //TODO Exception
 //            throw new CompilerException(
 //                    "Cannot reference a macro with a string", macroRef.getName());
+//            throw CompilerException.incorrectArgument(getDeclaration().getName());
+            return;
         }
 
         this.macroReferences.add(macroRef);

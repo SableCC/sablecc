@@ -98,11 +98,9 @@ public class GlobalIndex {
             Token error){
 
         if(referencedMacro == macro){
-
-//            throw new CompilerException("Cannot self reference macro", error);
+            throw CompilerException.cyclicReference(macro.getNameDeclaration(), referencedMacro.getNameDeclaration());
         }else if(referencedMacro.isUsing(macro)) {
-            //TODO EXCEPTION
-//            throw new CompilerException("Cyclic reference of macros", error);
+            throw CompilerException.cyclicReference(macro.getNameDeclaration(), referencedMacro.getNameDeclaration());
         }
     }
 
