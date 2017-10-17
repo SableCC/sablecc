@@ -18,6 +18,7 @@
 package org.sablecc.objectmacro.walker;
 
 import org.sablecc.exception.*;
+import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.structure.*;
 import org.sablecc.objectmacro.syntax3.analysis.*;
 import org.sablecc.objectmacro.syntax3.node.*;
@@ -29,6 +30,12 @@ public class VarVerifier
     private final GlobalIndex globalIndex;
 
     private Macro currentMacro;
+
+    private Param currentParam;
+
+    private Param paramsList[];
+
+    private Integer currentIndex = 0;
 
     public VarVerifier(
             GlobalIndex globalIndex) {
@@ -48,27 +55,77 @@ public class VarVerifier
     }
 
     @Override
-    public void outAMacro(
-            AMacro node) {
+    public void inAParam(
+            AParam node) {
 
-        this.currentMacro = null;
+        this.currentParam = this.currentMacro.getParam(node.getName());
     }
 
     @Override
-    public void outAVarMacroBodyPart(
+    public void outAParam(
+            AParam node) {
+
+        this.currentParam = null;
+    }
+
+    @Override
+    public void inAMacroReference(
+            AMacroReference node) {
+
+        Macro referencedMacro = this.globalIndex.getMacro(node.getName());
+
+        this.paramsList = new Param[referencedMacro.getAllInternals().size()];
+        referencedMacro.getAllInternals().toArray(this.paramsList);
+        this.currentIndex = 0;
+    }
+
+    @Override
+    public void caseAStringStaticValue(
+            AStringStaticValue node) {
+
+        Param param = this.paramsList[this.currentIndex++];
+        AMacroReference macroReference = (AMacroReference) node.parent();
+        if(!param.isString()){
+
+            throw CompilerException.incorrectArgumentType("Macro", "String",
+                    macroReference.getName().getLine(), macroReference.getName().getPos());
+        }
+
+        //Verify type of args if there is an insert
+        Integer tempIndex = this.currentIndex;
+        Param tempParams[] = this.paramsList;
+
+        for(PStringPart value : node.getParts()){
+            value.apply(this);
+        }
+
+        this.currentIndex = tempIndex;
+        this.paramsList = tempParams;
+    }
+
+    @Override
+    public void caseAVarStaticValue(
+            AVarStaticValue node) {
+
+        Param param = this.paramsList[this.currentIndex++];
+        if(param.isString()){
+
+            throw CompilerException.incorrectArgumentType(
+                    "String", "Macro",
+                    node.getIdentifier().getLine(), node.getIdentifier().getPos());
+        }
+
+        this.currentMacro.setParamUsed(node.getIdentifier());
+    }
+
+    @Override
+    public void caseAVarMacroBodyPart(
             AVarMacroBodyPart node) {
 
-        this.currentMacro.getParam(
+        this.currentMacro.setParamUsed(
                 new TIdentifier(
                         Utils.getVarName(
                                 node.getVariable())));
 
-    }
-
-    @Override
-    public void outAVarStaticValue(
-            AVarStaticValue node) {
-
-        this.currentMacro.getParam(node.getIdentifier());
     }
 }

@@ -261,21 +261,26 @@ public class CompilerException
     public static CompilerException incorrectArgumentCount(
             AMacroReference declaration, Macro macroReferenced) {
 
-//        TIdentifier insertName = declaration.getName();
-//        TIdentifier textBlockName = textInsert.getInsertedTextBlock()
-//                .getNameDeclaration();
-//        int argCount = textInsert.getDeclaration().getStaticValues().size();
-//        int paramCount = textInsert.getInsertedTextBlock().getDeclaration()
-//                .getParams().size();
-//
-//        return new CompilerException(
-//                new MIncorrectArgumentCount(insertName.getLine() + "",
-//                        insertName.getPos() + "", argCount + "", textBlockName
-//                                .getText(), textBlockName.getLine() + "",
-//                        +textBlockName.getPos() + "", paramCount + "")
-//                        .toString());
-        //TODO
-        return null;
+        String line = String.valueOf(declaration.getName().getLine());
+        String pos = String.valueOf(declaration.getName().getPos());
+        String expectedCount = String.valueOf(macroReferenced.getAllInternals().size());
+        String currentCount = String.valueOf(declaration.getValues().size());
+
+        return new CompilerException(
+                new MIncorrectArgumentCount(line, pos, expectedCount, currentCount).toString());
+    }
+
+    public static CompilerException incorrectArgumentType(
+            String expected,
+            String found,
+            Integer line,
+            Integer pos){
+
+        String stringLine = String.valueOf(line);
+        String stringPos = String.valueOf(pos);
+
+        return new CompilerException(
+                new MIncorrectArgumentType(expected, found, stringLine, stringPos).toString());
     }
 
     public static CompilerException cannotCreateDirectory(

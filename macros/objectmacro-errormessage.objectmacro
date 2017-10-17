@@ -315,7 +315,7 @@ $insert: semantic_error_head $
 
 Line: $line
 Char: $char
-"$reference" is a cyclic reference to text block "$context" of line $context_line, char $context_char.
+"$reference" is a cyclic reference to "$context" of line $context_line, char $context_char.
 $end: cyclic_reference $
 
 $comment: ========== unused_text_block ========== $
@@ -340,14 +340,23 @@ $end: unused_param $
 
 $comment: ========== incorrect_argument_count ========== $
 
-$macro: incorrect_argument_count(line, char, current_count, name, ref_line, ref_char, expected_count) $
+$macro: incorrect_argument_count(line, char, expected_count, current_count) $
 $insert: semantic_error_head $
 
 Line: $line
 Char: $char
-The insert has $current_count arguments, instead of $expected_count arguments.
-The "$name" text block is defined on line $ref_line, char $ref_char.
+The macro reference has $current_count arguments, instead of $expected_count arguments.
 $end: incorrect_argument_count $
+
+$comment: ========== incorrect_argument_type ========== $
+
+$macro: incorrect_argument_type(expected, found, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The parameter type found is "$found", instead of "$expected";
+$end: incorrect_argument_type $
 
 $comment: ========== cannot_create_directory ========== $
 
