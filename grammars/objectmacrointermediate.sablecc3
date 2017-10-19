@@ -37,7 +37,7 @@ Tokens
     macro_insert_kw = 'MacroInsert';
     var_kw = 'Var';
     macro_body_kw = 'MacroBody';
-    initialization_kw = 'Initialisation Order';
+    initialization_kw = 'Initialization Order';
 
     l_brace = '{';
     r_brace = '}';
