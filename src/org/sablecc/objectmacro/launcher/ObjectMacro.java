@@ -299,8 +299,6 @@ public class ObjectMacro {
 
         GlobalIndex globalIndex = verifySemantics(ast, strictness, verbosity);
 
-        processSemantics(globalIndex, verbosity);
-
         generateIntermediateFile(
                 globalIndex, verbosity, destinationDirectory, macroFile);
 
@@ -336,17 +334,6 @@ public class ObjectMacro {
         }
 
         return globalIndex;
-    }
-
-    private static void processSemantics(
-            GlobalIndex globalIndex,
-            Verbosity verbosity) {
-
-        switch (verbosity) {
-        case VERBOSE:
-            System.out.println(" Processing semantics");
-            break;
-        }
     }
 
     private static void generateIntermediateFile(
@@ -401,6 +388,7 @@ public class ObjectMacro {
 
         Set<Param> macro_internals = macro.getAllInternals();
         Set<Param> macro_params = macro.getAllParams();
+
         List<PMacroBodyPart> macroBodyParts = macro.getDeclaration().getMacroBodyParts();
         createMacroBody(mMacro, macroBodyParts);
 
@@ -414,6 +402,18 @@ public class ObjectMacro {
 
             createInternal(
                     mMacro.newInternal(), internal);
+        }
+
+        Param orderedParams[] = orderParams(macro_params);
+        Param orderedInternals[] = orderParams(macro_internals);
+        MInitializationOrder mInitializationOrder = mMacro.newInitializationOrder();
+
+        for(Param param : orderedParams){
+            mInitializationOrder.newSimpleName(param.getName());
+        }
+
+        for(Param internal : orderedInternals){
+            mInitializationOrder.newSimpleName(internal.getName());
         }
 
         return mMacro;
@@ -639,5 +639,32 @@ public class ObjectMacro {
                 }
             }
         }
+    }
+
+    private static Param[] orderParams(
+            Set<Param> params){
+
+        Param orderedParams[] = new Param[params.size()];
+        params.toArray(orderedParams);
+        boolean paramsOrdered = false;
+        Integer paramsLength = params.size();
+
+        while(!paramsOrdered) {
+            paramsOrdered = true;
+
+            for(int i = 0; i < paramsLength - 1; i++){
+                if(orderedParams[i].references(orderedParams[i + 1].getNameDeclaration())){
+
+                    Param tempParam = orderedParams[i];
+                    orderedParams[i] = orderedParams[i + 1];
+                    orderedParams[i + 1] = tempParam;
+                    paramsOrdered = false;
+                }
+            }
+
+            paramsLength--;
+        }
+
+        return orderedParams;
     }
 }

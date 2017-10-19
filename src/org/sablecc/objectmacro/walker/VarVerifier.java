@@ -31,8 +31,6 @@ public class VarVerifier
 
     private Macro currentMacro;
 
-    private Param currentParam;
-
     private Param paramsList[];
 
     private Integer currentIndex = 0;
@@ -52,20 +50,6 @@ public class VarVerifier
             AMacro node) {
 
         this.currentMacro = this.globalIndex.getMacro(node.getName());
-    }
-
-    @Override
-    public void inAParam(
-            AParam node) {
-
-        this.currentParam = this.currentMacro.getParam(node.getName());
-    }
-
-    @Override
-    public void outAParam(
-            AParam node) {
-
-        this.currentParam = null;
     }
 
     @Override

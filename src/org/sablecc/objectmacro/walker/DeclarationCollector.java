@@ -47,9 +47,7 @@ public class DeclarationCollector
             AMacro node) {
 
         if (node.getBegin().getPos() != 1) {
-            //TODO EXception
-//            throw new CompilerException(
-//                    "Token {Begin} must be at the beginning of the line", node.getBegin());
+            throw CompilerException.beginTokenMisused(node.getBegin());
         }
 
         this.currentMacro = this.globalIndex.newMacro(node);

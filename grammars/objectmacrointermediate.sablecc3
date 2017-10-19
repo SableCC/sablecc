@@ -37,6 +37,7 @@ Tokens
     macro_insert_kw = 'MacroInsert';
     var_kw = 'Var';
     macro_body_kw = 'MacroBody';
+    initialization_kw = 'Initialisation Order';
 
     l_brace = '{';
     r_brace = '}';
@@ -59,8 +60,8 @@ Productions
 
     macro
         =
-            macro_kw l_brace name [params]:param* macro_body r_brace
-                {-> New macro([name.names], [params], [macro_body.macro_parts])};
+            macro_kw l_brace name [params]:param* initialization_order macro_body r_brace
+                {-> New macro([name.names], [params], [initialization_order.names], [macro_body.macro_parts])};
 
     macro_body
             {-> [macro_parts]:macro_part*}
@@ -75,6 +76,14 @@ Productions
             {internal} internal_kw l_brace name type directives? r_brace
                 {-> New param.internal([name.names], type, [directives.directives])}
         ;
+
+    initialization_order
+            {-> [names]:string*}
+        =
+            initialization_kw l_brace [names]:string* r_brace
+                {-> [names]}
+        ;
+
 
     directives
             {-> [directives]:directive*}
@@ -219,7 +228,7 @@ Abstract Syntax Tree
         ;
 
     macro =
-        [names]:string* [params]:param* [macro_parts]:macro_part*;
+        [names]:string* [params]:param* [init_order]:string* [macro_parts]:macro_part*;
 
     param =
         {param} [names]:string* type [directives]:directive* |

@@ -9,6 +9,7 @@ public class MMacro {
   private final List<Object> eSimpleName = new LinkedList<Object>();
   private final List<Object> eParam = new LinkedList<Object>();
   private final List<Object> eInternal = new LinkedList<Object>();
+  private final List<Object> eInitializationOrder = new LinkedList<Object>();
   private final List<Object> eStringPart_EolPart_ParamInsert_MacroInsert = new LinkedList<Object>();
 
   public MMacro() {
@@ -30,6 +31,12 @@ public class MMacro {
     MInternal lInternal = new MInternal();
     this.eInternal.add(lInternal);
     return lInternal;
+  }
+
+  public MInitializationOrder newInitializationOrder() {
+    MInitializationOrder lInitializationOrder = new MInitializationOrder();
+    this.eInitializationOrder.add(lInitializationOrder);
+    return lInitializationOrder;
   }
 
   public MStringPart newStringPart(String pString) {
@@ -85,6 +92,9 @@ public class MMacro {
     }
     for(Object oInternal : this.eInternal) {
       sb.append(oInternal.toString());
+    }
+    for(Object oInitializationOrder : this.eInitializationOrder) {
+      sb.append(oInitializationOrder.toString());
     }
     sb.append("  MacroBody{");
     sb.append(System.getProperty("line.separator"));
