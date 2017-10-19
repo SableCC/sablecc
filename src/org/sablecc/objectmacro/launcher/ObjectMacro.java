@@ -21,10 +21,9 @@ import java.io.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
-import org.sablecc.objectmacro.codegeneration.intermediate.macro.*;
+import org.sablecc.objectmacro.intermediate.macro.*;
 import org.sablecc.objectmacro.errormessage.*;
 import org.sablecc.objectmacro.exception.*;
-import org.sablecc.objectmacro.intermediate.syntax3.node.*;
 import org.sablecc.objectmacro.structure.*;
 import org.sablecc.objectmacro.syntax3.lexer.*;
 import org.sablecc.objectmacro.syntax3.node.*;
@@ -32,10 +31,8 @@ import org.sablecc.objectmacro.syntax3.node.AStringType;
 import org.sablecc.objectmacro.syntax3.node.Start;
 import org.sablecc.objectmacro.syntax3.parser.*;
 import org.sablecc.objectmacro.util.Utils;
-import org.sablecc.objectmacro.walker.DeclarationCollector;
-import org.sablecc.objectmacro.walker.DefinitionCollector;
-import org.sablecc.objectmacro.walker.DirectiveCollector;
-import org.sablecc.objectmacro.walker.VarVerifier;
+import org.sablecc.objectmacro.walker.*;
+
 import org.sablecc.util.*;
 
 /**
@@ -323,7 +320,8 @@ public class ObjectMacro {
         GlobalIndex globalIndex = new GlobalIndex();
 
         ast.apply(new DeclarationCollector(globalIndex));
-        ast.apply(new DefinitionCollector(globalIndex));
+        ast.apply(new MacroReferenceCollector(globalIndex));
+        ast.apply(new ParamReferenceCollector(globalIndex));
         ast.apply(new DirectiveCollector(globalIndex));
         ast.apply(new VarVerifier(globalIndex));
 

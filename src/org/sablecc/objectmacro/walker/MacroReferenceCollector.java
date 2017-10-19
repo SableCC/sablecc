@@ -7,13 +7,14 @@ import org.sablecc.objectmacro.structure.GlobalIndex;
 import org.sablecc.objectmacro.structure.Macro;
 import org.sablecc.objectmacro.structure.Param;
 import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.objectmacro.util.Utils;
 
 import java.util.List;
 
 /**
  * Created by lam on 06/09/17.
  */
-public class DefinitionCollector
+public class MacroReferenceCollector
         extends DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;
@@ -22,9 +23,7 @@ public class DefinitionCollector
 
     private Param currentParam;
 
-    private Insert currentInsert;
-
-    public DefinitionCollector(
+    public MacroReferenceCollector(
             GlobalIndex globalIndex) {
 
         this.globalIndex = globalIndex;
@@ -49,7 +48,7 @@ public class DefinitionCollector
             AInsertMacroBodyPart node) {
 
         AMacroReference macroReference = (AMacroReference) node.getMacroReference();
-        this.currentInsert = this.currentMacro.newInsert(macroReference);
+        this.currentMacro.newInsert(macroReference);
     }
 
     @Override
@@ -57,15 +56,16 @@ public class DefinitionCollector
             AInsertStringPart node) {
 
         AMacroReference macroReference = (AMacroReference) node.getMacro();
-        this.currentInsert = this.currentMacro.newInsert(macroReference);
-
+        this.currentMacro.newInsert(macroReference);
     }
 
     @Override
-    public void outAInsertMacroBodyPart(
-            AInsertMacroBodyPart node) {
+    public void caseAMacroReference(
+            AMacroReference node) {
 
-        this.currentInsert = null;
+        if(this.currentParam != null){
+            this.currentParam.addMacroReference(node);
+        }
     }
 
     @Override
@@ -81,40 +81,6 @@ public class DefinitionCollector
             AParam node) {
 
         this.currentParam = null;
-    }
-
-    @Override
-    public void caseAMacroReference(
-            AMacroReference node) {
-
-        Macro referencedMacro = this.globalIndex.getMacro(node.getName());
-        int nbStaticValues = node.getValues().size();
-
-        if(nbStaticValues != referencedMacro.getAllInternals().size()){
-            //TODO Exception
-//                throw new CompilerException(
-//                        "Incorrect number of arguments", node.getName());
-        }
-        /**
-         *
-         * TODO verify macro arguments and string arguments if it corresponds by index order?
-         *
-         */
-
-        if(this.currentParam != null){
-            this.currentParam.addMacroReference(node);
-        }
-
-        //In order to verify if there is a cyclic reference in inserts
-        for(PStaticValue value : node.getValues()){
-            if(value instanceof AStringStaticValue){
-                AStringStaticValue stringStaticValue = (AStringStaticValue) value;
-
-                for(PStringPart stringPart : stringStaticValue.getParts()){
-                    stringPart.apply(this);
-                }
-            }
-        }
     }
 
     @Override
