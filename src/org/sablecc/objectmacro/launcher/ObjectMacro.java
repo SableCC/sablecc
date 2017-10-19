@@ -599,6 +599,10 @@ public class ObjectMacro {
                     createArgs(macroRef.newArgs(), l_macroRef.getValues());
                 }
 
+                String macroRefNames[] = Utils.splitName(l_macroRef.getName());
+                for(String part : macroRefNames){
+                    macroRef.newSimpleName(part);
+                }
             }
         }
 

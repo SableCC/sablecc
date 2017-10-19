@@ -20,7 +20,9 @@ public class MVarArgument {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(" Var = ");
+    sb.append(" Var {");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    Name = ");
     if(this.eSimpleName.size() > 1) {
       sb.append("{ ");
     }
@@ -39,6 +41,8 @@ public class MVarArgument {
     if(this.eSimpleName.size() > 1) {
       sb.append(" }");
     }
+    sb.append(" }");
+    sb.append(System.getProperty("line.separator"));
     return sb.toString();
   }
 

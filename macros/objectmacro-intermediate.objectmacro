@@ -91,7 +91,9 @@ $end: args$
 $comment: ========= var_argument ============== $
 
 $macro: var_argument $
- Var = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
+ Var {
+    Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
+ }
 $end: var_argument $
 
 $comment: ========= text_argument ============== $
