@@ -21,6 +21,8 @@ import org.sablecc.objectmacro.syntax3.node.*;
 
 public class Utils {
 
+    public static String NAME_SEPARATOR = "_";
+
     public static String getVarName(
             TVariable var) {
 
@@ -43,13 +45,8 @@ public class Utils {
         return toCamelCase(text);
     }
 
-    private static String toCamelCase(
+    public static String toCamelCase(
             String text) {
-
-        if (text.charAt(0) == '<') {
-            int length = text.length();
-            return "_" + text.substring(1, length - 1);
-        }
 
         StringBuilder sb = new StringBuilder();
         boolean upcase = true;
@@ -66,6 +63,12 @@ public class Utils {
             }
         }
         return sb.toString();
+    }
+
+    public static String[] splitName(
+            TIdentifier identifier){
+
+        return identifier.getText().split(NAME_SEPARATOR);
     }
 
 }

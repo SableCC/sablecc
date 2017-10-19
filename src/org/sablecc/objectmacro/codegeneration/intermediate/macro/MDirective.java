@@ -6,13 +6,16 @@ import java.util.*;
 
 public class MDirective {
 
-  private final String pName;
-  private final MDirective mDirective = this;
+  private final List<Object> eSimpleName = new LinkedList<Object>();
   private final List<Object> eTextArgument = new LinkedList<Object>();
 
-  public MDirective(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
+  public MDirective() {
+  }
+
+  public MSimpleName newSimpleName(String pName) {
+    MSimpleName lSimpleName = new MSimpleName(pName);
+    this.eSimpleName.add(lSimpleName);
+    return lSimpleName;
   }
 
   public MTextArgument newTextArgument() {
@@ -21,23 +24,30 @@ public class MDirective {
     return lTextArgument;
   }
 
-  String pName() {
-    return this.pName;
-  }
-
-  private String rName() {
-    return this.mDirective.pName();
-  }
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append(" Directive {");
     sb.append(System.getProperty("line.separator"));
-    sb.append("     Name = '");
-    sb.append(rName());
-    sb.append("'");
-    sb.append(System.getProperty("line.separator"));
+    sb.append("     Name = ");
+    if(this.eSimpleName.size() > 1) {
+      sb.append("{ ");
+    }
+    {
+      boolean first = true;
+      for(Object oSimpleName : this.eSimpleName) {
+        if(first) {
+          first = false;
+        }
+        else {
+          sb.append(", ");
+        }
+        sb.append(oSimpleName.toString());
+      }
+    }
+    if(this.eSimpleName.size() > 1) {
+      sb.append(" }");
+    }
     for(Object oTextArgument : this.eTextArgument) {
       sb.append(oTextArgument.toString());
     }

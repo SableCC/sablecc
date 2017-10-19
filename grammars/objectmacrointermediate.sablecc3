@@ -60,7 +60,7 @@ Productions
     macro
         =
             macro_kw l_brace name [params]:param* macro_body r_brace
-                {-> New macro(name.string, [params], [macro_body.macro_parts])};
+                {-> New macro([name.names], [params], [macro_body.macro_parts])};
 
     macro_body
             {-> [macro_parts]:macro_part*}
@@ -71,9 +71,9 @@ Productions
     param
         =
             {param} param_kw l_brace name type directives? r_brace
-                {-> New param.param(name.string, type, [directives.directives])} |
+                {-> New param.param([name.names], type, [directives.directives])} |
             {internal} internal_kw l_brace name type directives? r_brace
-                {-> New param.internal(name.string, type, [directives.directives])}
+                {-> New param.internal([name.names], type, [directives.directives])}
         ;
 
     directives
@@ -102,13 +102,13 @@ Productions
     directive
         =
             directive_kw l_brace name value r_brace
-                {-> New directive(name.string, value)}
+                {-> New directive([name.names], value)}
         ;
 
     macro_ref
         =
             {identifier} macro_ref_kw l_brace name args? r_brace
-                {-> New macro_ref(name.string, [args.values])}
+                {-> New macro_ref([name.names], [args.values])}
         ;
 
     args
@@ -134,17 +134,34 @@ Productions
 
     value
         =
-            {var} var_kw assign string
-                {-> New value.var(string)}
+            {var} var_kw assign name
+                {-> New value.var([name.names])}
         |
             {string} value_kw l_brace [text_parts]:text_part+ r_brace
                 {-> New value.string([text_parts])}
         ;
 
     name
+            {-> [names]:string*}
+        =
+            {simple} name_kw assign string
+                {-> [string]}
+        |
+            {complex} name_kw assign complex_string
+                {-> [complex_string.names]}
+        ;
+
+    complex_string
+            {-> [names]:string*}
+        =
+            l_brace string [additional_names]:additional_string* r_brace
+                {-> [string, additional_names.string]}
+        ;
+
+    additional_string
             {-> string}
         =
-            name_kw assign string
+            comma string
                 {-> string}
         ;
 
@@ -158,7 +175,7 @@ Productions
                 {-> New macro_part.eol()}
         |
             {var} param_insert semicolon
-                {-> New macro_part.var(param_insert.string)}
+                {-> New macro_part.var([param_insert.names])}
         |
             {insert} macro_insert semicolon
                 {-> New macro_part.insert(macro_insert.macro_ref)}
@@ -178,7 +195,7 @@ Productions
                 {-> New text_part.string(string)}
         |
             {var} param_insert semicolon
-                {-> New text_part.var(param_insert.string)}
+                {-> New text_part.var([param_insert.names])}
         |
             {insert} macro_insert semicolon
                 {-> New text_part.insert(macro_insert.macro_ref)}
@@ -188,10 +205,10 @@ Productions
         ;
 
     param_insert
-            {-> string}
+            {-> [names]:string*}
         =
-            param_insert_kw assign string
-                {-> string}
+            param_insert_kw l_brace name r_brace
+                {-> [name.names]}
         ;
 
 Abstract Syntax Tree
@@ -202,34 +219,34 @@ Abstract Syntax Tree
         ;
 
     macro =
-        [name]:string [params]:param* [macro_parts]:macro_part*;
+        [names]:string* [params]:param* [macro_parts]:macro_part*;
 
     param =
-        {param} [name]:string type [directives]:directive* |
-        {internal} [name]:string type [directives]:directive*;
+        {param} [names]:string* type [directives]:directive* |
+        {internal} [names]:string* type [directives]:directive*;
 
     type =
         {string} string_kw |
         {macro_refs} macro_ref*;
 
     directive =
-        [name]:string value;
+        [names]:string* value;
 
     macro_ref =
-        string [args]:value*;
+        [names]:string* [args]:value*;
 
     value =
-        {var} [name]:string |
+        {var} [names]:string* |
         {string} [parts]:text_part+;
 
     macro_part =
         {string} string |
         {eol} |
-        {var} [name]:string |
+        {var} [names]:string* |
         {insert} macro_ref;
 
     text_part =
         {string} string |
-        {var} [name]:string |
+        {var} [names]:string* |
         {insert} macro_ref |
         {eol} ;

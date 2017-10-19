@@ -23,8 +23,8 @@ public class MTextArgument {
     return lEolPart;
   }
 
-  public MParamInsert newParamInsert(String pName) {
-    MParamInsert lParamInsert = new MParamInsert(pName);
+  public MParamInsert newParamInsert() {
+    MParamInsert lParamInsert = new MParamInsert();
     this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lParamInsert);
     return lParamInsert;
   }

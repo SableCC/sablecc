@@ -11,8 +11,8 @@ public class MStringType {
   public MStringType() {
   }
 
-  public MDirective newDirective(String pName) {
-    MDirective lDirective = new MDirective(pName);
+  public MDirective newDirective() {
+    MDirective lDirective = new MDirective();
     this.eDirective.add(lDirective);
     return lDirective;
   }

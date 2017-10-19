@@ -11,8 +11,8 @@ public class MIntermediateRepresentation {
   public MIntermediateRepresentation() {
   }
 
-  public MMacro newMacro(String pName) {
-    MMacro lMacro = new MMacro(pName);
+  public MMacro newMacro() {
+    MMacro lMacro = new MMacro();
     this.eMacro.add(lMacro);
     return lMacro;
   }

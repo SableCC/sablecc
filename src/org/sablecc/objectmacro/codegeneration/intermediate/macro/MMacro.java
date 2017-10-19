@@ -6,25 +6,28 @@ import java.util.*;
 
 public class MMacro {
 
-  private final String pName;
-  private final MMacro mMacro = this;
+  private final List<Object> eSimpleName = new LinkedList<Object>();
   private final List<Object> eParam = new LinkedList<Object>();
   private final List<Object> eInternal = new LinkedList<Object>();
   private final List<Object> eStringPart_EolPart_ParamInsert_MacroInsert = new LinkedList<Object>();
 
-  public MMacro(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
+  public MMacro() {
   }
 
-  public MParam newParam(String pName) {
-    MParam lParam = new MParam(pName);
+  public MSimpleName newSimpleName(String pName) {
+    MSimpleName lSimpleName = new MSimpleName(pName);
+    this.eSimpleName.add(lSimpleName);
+    return lSimpleName;
+  }
+
+  public MParam newParam() {
+    MParam lParam = new MParam();
     this.eParam.add(lParam);
     return lParam;
   }
 
-  public MInternal newInternal(String pName) {
-    MInternal lInternal = new MInternal(pName);
+  public MInternal newInternal() {
+    MInternal lInternal = new MInternal();
     this.eInternal.add(lInternal);
     return lInternal;
   }
@@ -41,8 +44,8 @@ public class MMacro {
     return lEolPart;
   }
 
-  public MParamInsert newParamInsert(String pName) {
-    MParamInsert lParamInsert = new MParamInsert(pName);
+  public MParamInsert newParamInsert() {
+    MParamInsert lParamInsert = new MParamInsert();
     this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lParamInsert);
     return lParamInsert;
   }
@@ -53,23 +56,30 @@ public class MMacro {
     return lMacroInsert;
   }
 
-  String pName() {
-    return this.pName;
-  }
-
-  private String rName() {
-    return this.mMacro.pName();
-  }
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("Macro {");
     sb.append(System.getProperty("line.separator"));
-    sb.append("  Name = '");
-    sb.append(rName());
-    sb.append("'");
-    sb.append(System.getProperty("line.separator"));
+    sb.append("  Name = ");
+    if(this.eSimpleName.size() > 1) {
+      sb.append("{ ");
+    }
+    {
+      boolean first = true;
+      for(Object oSimpleName : this.eSimpleName) {
+        if(first) {
+          first = false;
+        }
+        else {
+          sb.append(", ");
+        }
+        sb.append(oSimpleName.toString());
+      }
+    }
+    if(this.eSimpleName.size() > 1) {
+      sb.append(" }");
+    }
     for(Object oParam : this.eParam) {
       sb.append(oParam.toString());
     }

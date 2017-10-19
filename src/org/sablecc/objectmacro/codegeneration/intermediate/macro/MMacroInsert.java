@@ -11,8 +11,8 @@ public class MMacroInsert {
   public MMacroInsert() {
   }
 
-  public MMacroRef newMacroRef(String pName) {
-    MMacroRef lMacroRef = new MMacroRef(pName);
+  public MMacroRef newMacroRef() {
+    MMacroRef lMacroRef = new MMacroRef();
     this.eMacroRef.add(lMacroRef);
     return lMacroRef;
   }

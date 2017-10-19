@@ -11,8 +11,8 @@ public class MArgs {
   public MArgs() {
   }
 
-  public MVarArgument newVarArgument(String pName) {
-    MVarArgument lVarArgument = new MVarArgument(pName);
+  public MVarArgument newVarArgument() {
+    MVarArgument lVarArgument = new MVarArgument();
     this.eVarArgument_TextArgument.add(lVarArgument);
     return lVarArgument;
   }

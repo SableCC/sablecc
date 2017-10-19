@@ -20,9 +20,9 @@ $macro: intermediate_representation $
 $expand: macro $
 $end: intermediate_representation $
 
-$macro: macro(name) $
+$macro: macro $
 Macro {
-  Name = '$name'
+  Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
 $expand: param $
 $expand: internal $
   MacroBody{
@@ -31,17 +31,17 @@ $expand: string_part, eol_part, param_insert, macro_insert$
 }
 $end: macro $
 
-$macro: param(name) $
+$macro: param $
  Param {
-    Name = '$name'
+    Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
 $expand: string_type, macro_type$
 $expand: directive, separator=", "$
  }
 $end: param $
 
-$macro: internal(name) $
+$macro: internal $
  Internal {
- Name = '$name'
+ Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
 $expand: string_type, macro_type$
 $expand: directive, separator=", "$
  }
@@ -58,9 +58,9 @@ $expand: directive, separator=", "$
  }
 $end: macro_type $
 
-$macro: macro_ref(name)$
+$macro: macro_ref$
  MacroRef {
- Name = '$name'
+ Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
 $expand: args$
  }
 $end: macro_ref $
@@ -71,15 +71,15 @@ $expand: var_argument, text_argument, separator=", "$
  }
 $end: args$
 
-$macro: var_argument (name)$
- Var = '$name'
+$macro: var_argument $
+ Var = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
 $end: var_argument $
 
-$macro: text_argument$
+$macro: text_argument $
  Value {
 $expand: string_part, eol_part, param_insert, macro_insert$
  }
-$end: text_argument$
+$end: text_argument $
 
 $macro: string_part(string) $
   '$string';
@@ -95,14 +95,17 @@ $expand: macro_ref $
  };
 $end: macro_insert $
 
-$macro: param_insert(name) $
- ParamInsert = '$name';
+$macro: param_insert $
+ ParamInsert { Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $ } ;
 $end: param_insert $
 
-$macro: directive(name) $
+$macro: directive $
  Directive {
-     Name = '$name'
+     Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
 $expand: text_argument$
  }
 $end: directive $
 
+$macro: simple_name(name) $
+'$name'$no_eol$
+$end: simple_name $

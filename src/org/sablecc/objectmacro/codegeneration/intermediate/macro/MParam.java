@@ -6,14 +6,17 @@ import java.util.*;
 
 public class MParam {
 
-  private final String pName;
-  private final MParam mParam = this;
+  private final List<Object> eSimpleName = new LinkedList<Object>();
   private final List<Object> eStringType_MacroType = new LinkedList<Object>();
   private final List<Object> eDirective = new LinkedList<Object>();
 
-  public MParam(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
+  public MParam() {
+  }
+
+  public MSimpleName newSimpleName(String pName) {
+    MSimpleName lSimpleName = new MSimpleName(pName);
+    this.eSimpleName.add(lSimpleName);
+    return lSimpleName;
   }
 
   public MStringType newStringType() {
@@ -28,18 +31,10 @@ public class MParam {
     return lMacroType;
   }
 
-  public MDirective newDirective(String pName) {
-    MDirective lDirective = new MDirective(pName);
+  public MDirective newDirective() {
+    MDirective lDirective = new MDirective();
     this.eDirective.add(lDirective);
     return lDirective;
-  }
-
-  String pName() {
-    return this.pName;
-  }
-
-  private String rName() {
-    return this.mParam.pName();
   }
 
   @Override
@@ -47,10 +42,25 @@ public class MParam {
     StringBuilder sb = new StringBuilder();
     sb.append(" Param {");
     sb.append(System.getProperty("line.separator"));
-    sb.append("    Name = '");
-    sb.append(rName());
-    sb.append("'");
-    sb.append(System.getProperty("line.separator"));
+    sb.append("    Name = ");
+    if(this.eSimpleName.size() > 1) {
+      sb.append("{ ");
+    }
+    {
+      boolean first = true;
+      for(Object oSimpleName : this.eSimpleName) {
+        if(first) {
+          first = false;
+        }
+        else {
+          sb.append(", ");
+        }
+        sb.append(oSimpleName.toString());
+      }
+    }
+    if(this.eSimpleName.size() > 1) {
+      sb.append(" }");
+    }
     for(Object oStringType_MacroType : this.eStringType_MacroType) {
       sb.append(oStringType_MacroType.toString());
     }

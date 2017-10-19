@@ -2,31 +2,43 @@
 
 package org.sablecc.objectmacro.codegeneration.intermediate.macro;
 
+import java.util.*;
+
 public class MVarArgument {
 
-  private final String pName;
-  private final MVarArgument mVarArgument = this;
+  private final List<Object> eSimpleName = new LinkedList<Object>();
 
-  public MVarArgument(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
+  public MVarArgument() {
   }
 
-  String pName() {
-    return this.pName;
-  }
-
-  private String rName() {
-    return this.mVarArgument.pName();
+  public MSimpleName newSimpleName(String pName) {
+    MSimpleName lSimpleName = new MSimpleName(pName);
+    this.eSimpleName.add(lSimpleName);
+    return lSimpleName;
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(" Var = '");
-    sb.append(rName());
-    sb.append("'");
-    sb.append(System.getProperty("line.separator"));
+    sb.append(" Var = ");
+    if(this.eSimpleName.size() > 1) {
+      sb.append("{ ");
+    }
+    {
+      boolean first = true;
+      for(Object oSimpleName : this.eSimpleName) {
+        if(first) {
+          first = false;
+        }
+        else {
+          sb.append(", ");
+        }
+        sb.append(oSimpleName.toString());
+      }
+    }
+    if(this.eSimpleName.size() > 1) {
+      sb.append(" }");
+    }
     return sb.toString();
   }
 

@@ -12,14 +12,14 @@ public class MMacroType {
   public MMacroType() {
   }
 
-  public MMacroRef newMacroRef(String pName) {
-    MMacroRef lMacroRef = new MMacroRef(pName);
+  public MMacroRef newMacroRef() {
+    MMacroRef lMacroRef = new MMacroRef();
     this.eMacroRef.add(lMacroRef);
     return lMacroRef;
   }
 
-  public MDirective newDirective(String pName) {
-    MDirective lDirective = new MDirective(pName);
+  public MDirective newDirective() {
+    MDirective lDirective = new MDirective();
     this.eDirective.add(lDirective);
     return lDirective;
   }

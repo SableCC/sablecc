@@ -6,13 +6,16 @@ import java.util.*;
 
 public class MMacroRef {
 
-  private final String pName;
-  private final MMacroRef mMacroRef = this;
+  private final List<Object> eSimpleName = new LinkedList<Object>();
   private final List<Object> eArgs = new LinkedList<Object>();
 
-  public MMacroRef(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
+  public MMacroRef() {
+  }
+
+  public MSimpleName newSimpleName(String pName) {
+    MSimpleName lSimpleName = new MSimpleName(pName);
+    this.eSimpleName.add(lSimpleName);
+    return lSimpleName;
   }
 
   public MArgs newArgs() {
@@ -21,23 +24,30 @@ public class MMacroRef {
     return lArgs;
   }
 
-  String pName() {
-    return this.pName;
-  }
-
-  private String rName() {
-    return this.mMacroRef.pName();
-  }
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append(" MacroRef {");
     sb.append(System.getProperty("line.separator"));
-    sb.append(" Name = '");
-    sb.append(rName());
-    sb.append("'");
-    sb.append(System.getProperty("line.separator"));
+    sb.append(" Name = ");
+    if(this.eSimpleName.size() > 1) {
+      sb.append("{ ");
+    }
+    {
+      boolean first = true;
+      for(Object oSimpleName : this.eSimpleName) {
+        if(first) {
+          first = false;
+        }
+        else {
+          sb.append(", ");
+        }
+        sb.append(oSimpleName.toString());
+      }
+    }
+    if(this.eSimpleName.size() > 1) {
+      sb.append(" }");
+    }
     for(Object oArgs : this.eArgs) {
       sb.append(oArgs.toString());
     }
