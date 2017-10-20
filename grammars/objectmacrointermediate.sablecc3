@@ -25,6 +25,7 @@ Tokens
     macro_kw = 'Macro';
     param_kw = 'Param';
     param_insert_kw = 'ParamInsert';
+    param_name_kw = 'ParamName';
     internal_kw = 'Internal';
     directive_kw = 'Directive';
     name_kw = 'Name';
@@ -143,12 +144,18 @@ Productions
 
     value
         =
-            {var} var_kw l_brace name r_brace
-                {-> New value.var([name.names])}
+            {var} param_name param_kw var_kw l_brace name r_brace
+                {-> New value.var([param_name.names], [name.names])}
         |
-            {string} value_kw l_brace [text_parts]:text_part+ r_brace
-                {-> New value.string([text_parts])}
+            {string} param_name value_kw l_brace [text_parts]:text_part+ r_brace
+                {-> New value.string([param_name.names], [text_parts])}
         ;
+
+    param_name
+        { -> [names]:string* }
+        =
+            param_name_kw l_brace name r_brace
+                {-> [name.names]};
 
     name
             {-> [names]:string*}
@@ -245,8 +252,8 @@ Abstract Syntax Tree
         [names]:string* [args]:value*;
 
     value =
-        {var} [names]:string* |
-        {string} [parts]:text_part+;
+        {var} [param_name]:string* [names]:string* |
+        {string} [param_name]:string* [parts]:text_part+;
 
     macro_part =
         {string} string |

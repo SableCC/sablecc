@@ -6,9 +6,16 @@ import java.util.*;
 
 public class MTextArgument {
 
+  private final List<Object> eParamName = new LinkedList<Object>();
   private final List<Object> eStringPart_EolPart_ParamInsert_MacroInsert = new LinkedList<Object>();
 
   public MTextArgument() {
+  }
+
+  public MParamName newParamName(String pParamName) {
+    MParamName lParamName = new MParamName(pParamName);
+    this.eParamName.add(lParamName);
+    return lParamName;
   }
 
   public MStringPart newStringPart(String pString) {
@@ -40,6 +47,10 @@ public class MTextArgument {
     StringBuilder sb = new StringBuilder();
     sb.append(" Value {");
     sb.append(System.getProperty("line.separator"));
+    sb.append("    ");
+    for(Object oParamName : this.eParamName) {
+      sb.append(oParamName.toString());
+    }
     for(Object oStringPart_EolPart_ParamInsert_MacroInsert : this.eStringPart_EolPart_ParamInsert_MacroInsert) {
       sb.append(oStringPart_EolPart_ParamInsert_MacroInsert.toString());
     }

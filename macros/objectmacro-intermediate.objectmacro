@@ -92,6 +92,7 @@ $comment: ========= var_argument ============== $
 
 $macro: var_argument $
  Var {
+    $expand: param_name $
     Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
  }
 $end: var_argument $
@@ -100,9 +101,16 @@ $comment: ========= text_argument ============== $
 
 $macro: text_argument $
  Value {
+    $expand: param_name $
 $expand: string_part, eol_part, param_insert, macro_insert$
  }
 $end: text_argument $
+
+$comment: ========== param_name ============== $
+
+$macro: param_name(param_name) $
+    ParamName { '$param_name' }
+$end: param_name $
 
 $comment: ========= string_part ============== $
 

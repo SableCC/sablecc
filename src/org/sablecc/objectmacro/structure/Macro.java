@@ -165,10 +165,6 @@ public class Macro{
         return this.declaration.getName();
     }
 
-    GlobalIndex getGlobalIndex(){
-        return this.globalIndex;
-    }
-
     public String getName(){
 
         return this.declaration.getName().getText();
@@ -246,5 +242,15 @@ public class Macro{
         }
 
         return false;
+    }
+
+    public List<String> getInternalsName(){
+
+        List<String> paramsName = new LinkedList<>();
+        for(Param internal : this.getAllInternals()){
+            paramsName.add(internal.getName());
+        }
+
+        return paramsName;
     }
 }

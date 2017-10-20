@@ -40,6 +40,7 @@ import org.sablecc.util.*;
  */
 public class ObjectMacro {
 
+    private static GlobalIndex globalIndex = null;
     /** Prevents instantiation of this class. */
     private ObjectMacro() {
 
@@ -297,10 +298,10 @@ public class ObjectMacro {
             throw CompilerException.inputError(macroFile.toString(), e);
         }
 
-        GlobalIndex globalIndex = verifySemantics(ast, strictness, verbosity);
+        globalIndex = verifySemantics(ast, strictness, verbosity);
 
         generateIntermediateFile(
-                globalIndex, verbosity, destinationDirectory, macroFile);
+                verbosity, destinationDirectory, macroFile);
 
     }
 
@@ -337,7 +338,6 @@ public class ObjectMacro {
     }
 
     private static void generateIntermediateFile(
-            GlobalIndex globalIndex,
             Verbosity verbosity,
             File destinationDirectory,
             File macroFile) {
@@ -455,7 +455,7 @@ public class ObjectMacro {
                 }
 
                 if(macroRef.getValues().size() > 0){
-                    createArgs(mMacroRef.newArgs(), macroRef.getValues());
+                    createArgs(mMacroRef.newArgs(), macroRef);
                 }
 
             }else if(bodyPart instanceof AVarMacroBodyPart){
@@ -502,7 +502,7 @@ public class ObjectMacro {
                 }
 
                 if(macro_node.getValues().size() > 0){
-                    createArgs(mMacroRef.newArgs(), macro_node.getValues());
+                    createArgs(mMacroRef.newArgs(), macro_node);
                 }
             }else if(stringPart instanceof AVarStringPart){
                 TVariable tVariable = ((AVarStringPart) stringPart).getVariable();
@@ -556,7 +556,7 @@ public class ObjectMacro {
                 }
 
                 if(l_macroRef.getValues().size() > 0){
-                    createArgs(macroRef.newArgs(), l_macroRef.getValues());
+                    createArgs(macroRef.newArgs(), l_macroRef);
                 }
             }
         }
@@ -596,7 +596,7 @@ public class ObjectMacro {
 
                 MMacroRef macroRef = macro_param_type.newMacroRef();
                 if(l_macroRef.getValues().size() > 0){
-                    createArgs(macroRef.newArgs(), l_macroRef.getValues());
+                    createArgs(macroRef.newArgs(), l_macroRef);
                 }
 
                 String macroRefNames[] = Utils.splitName(l_macroRef.getName());
@@ -622,19 +622,26 @@ public class ObjectMacro {
 
     private static void createArgs(
             MArgs macro_args,
-            List<PStaticValue> arguments){
+            AMacroReference aMacroReference){
+
+        Macro macroReferenced = globalIndex.getMacro(aMacroReference.getName());
+        List<String> paramNames = macroReferenced.getInternalsName();
+        List<PStaticValue> arguments = aMacroReference.getValues();
+        int i = 0;
 
         for(PStaticValue argument : arguments){
             if(argument instanceof AStringStaticValue){
 
                 AStringStaticValue aStringStaticValue = (AStringStaticValue) argument;
                 MTextArgument mTextArgument = macro_args.newTextArgument();
+                mTextArgument.newParamName(paramNames.get(i));
                 createTextParts(mTextArgument, aStringStaticValue.getParts());
 
             }else if(argument instanceof AVarStaticValue){
 
                 AVarStaticValue aVarStaticValue = (AVarStaticValue) argument;
                 MVarArgument mVarArgument = macro_args.newVarArgument();
+                mVarArgument.newParamName(paramNames.get(i));
 
                 String macroRefName[] = Utils.splitName(aVarStaticValue.getIdentifier());
                 for(String part : macroRefName){
@@ -642,6 +649,7 @@ public class ObjectMacro {
 
                 }
             }
+            i++;
         }
     }
 
