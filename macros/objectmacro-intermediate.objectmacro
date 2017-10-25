@@ -109,7 +109,7 @@ $end: text_argument $
 $comment: ========== param_name ============== $
 
 $macro: param_name(param_name) $
-    ParamName { '$param_name' }
+    ParamName { Name = '$param_name' }
 $end: param_name $
 
 $comment: ========= string_part ============== $
