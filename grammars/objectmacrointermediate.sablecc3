@@ -144,10 +144,10 @@ Productions
 
     value
         =
-            {var} param_name param_kw var_kw l_brace name r_brace
+            {var} var_kw l_brace param_name name r_brace
                 {-> New value.var([param_name.names], [name.names])}
         |
-            {string} param_name value_kw l_brace [text_parts]:text_part+ r_brace
+            {string} value_kw l_brace param_name [text_parts]:text_part+ r_brace
                 {-> New value.string([param_name.names], [text_parts])}
         ;
 
