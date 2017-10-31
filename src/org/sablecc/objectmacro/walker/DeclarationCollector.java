@@ -56,13 +56,11 @@ public class DeclarationCollector
         List<PParam> internals = node.getInternals();
 
         for (PParam param_production : params) {
-
             AParam param_node = (AParam) param_production;
             this.currentMacro.newParam(param_node);
         }
 
         for (PParam param_production : internals) {
-
             AParam param_node = (AParam) param_production;
             this.currentMacro.newInternal(param_node);
         }

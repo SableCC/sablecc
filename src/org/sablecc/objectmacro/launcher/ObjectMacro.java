@@ -323,6 +323,7 @@ public class ObjectMacro {
         ast.apply(new ParamReferenceCollector(globalIndex));
         ast.apply(new DirectiveCollector(globalIndex));
         ast.apply(new VarVerifier(globalIndex));
+        ast.apply(new CyclicDetector(globalIndex));
 
         if (strictness == Strictness.STRICT) {
             for (Macro macro : globalIndex.getAllMacros()) {

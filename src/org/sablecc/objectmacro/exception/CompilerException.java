@@ -249,6 +249,16 @@ public class CompilerException
                         + "").toString());
     }
 
+    public static CompilerException selfReference(
+            TIdentifier reference,
+            TIdentifier context) {
+
+        return new CompilerException(new MSelfReference(reference.getText(),
+                reference.getLine() + "", reference.getPos() + "",
+                context.getText(), context.getLine() + "", context.getPos()
+                + "").toString());
+    }
+
     public static CompilerException unusedParam(
             Param param) {
 

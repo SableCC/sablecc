@@ -86,27 +86,8 @@ public class GlobalIndex {
 
     }
 
-    public Macro getMacroByReference(
-            AMacroReference macroReference){
-
-        return this.getMacro(macroReference.getName());
-    }
-
-    public void checkReferencedMacro(
-            Macro macro,
-            Macro referencedMacro,
-            Token error){
-
-        if(referencedMacro == macro){
-            throw CompilerException.cyclicReference(macro.getNameDeclaration(), referencedMacro.getNameDeclaration());
-        }else if(referencedMacro.isUsing(macro)) {
-            throw CompilerException.cyclicReference(macro.getNameDeclaration(), referencedMacro.getNameDeclaration());
-        }
-    }
-
     public Set<Macro> getAllMacros() {
 
         return this.allMacros;
     }
-
 }

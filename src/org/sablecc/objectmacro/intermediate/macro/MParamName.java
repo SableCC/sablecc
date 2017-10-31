@@ -23,7 +23,7 @@ public class MParamName {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    ParamName { '");
+    sb.append("    ParamName { Name = '");
     sb.append(rParamName());
     sb.append("' }");
     sb.append(System.getProperty("line.separator"));

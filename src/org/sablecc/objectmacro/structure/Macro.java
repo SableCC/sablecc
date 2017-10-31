@@ -23,6 +23,8 @@ import org.sablecc.exception.*;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.syntax3.node.*;
 import org.sablecc.objectmacro.util.Utils;
+import org.sablecc.util.ComponentFinder;
+import org.sablecc.util.Progeny;
 
 public class Macro{
 
@@ -252,5 +254,37 @@ public class Macro{
         }
 
         return paramsName;
+    }
+
+    public void computeIndirectParamReferences(){
+
+        Progeny<Param> referencedParamProgeny = new Progeny<Param>() {
+
+            @Override
+            protected Set<Param> getChildrenNoCache(
+                    Param param) {
+
+                Set<Param> children = new LinkedHashSet<>();
+                children.addAll(param.getDirectlyParamReferences());
+                return children;
+            }
+        };
+
+        Set<Param> params = new LinkedHashSet<>();
+        params.addAll(this.getAllInternals());
+        params.addAll(this.getAllParams());
+        ComponentFinder<Param> componentFinder =
+                new ComponentFinder<>(params, referencedParamProgeny);
+
+        for(Param param : params){
+            Set<Param> reach = new LinkedHashSet<>();
+            for(Param reachedParam : componentFinder.getReach(
+                    componentFinder.getRepresentative(param))){
+
+                reach.add(reachedParam);
+            }
+
+            param.setIndirectParamReferences(reach);
+        }
     }
 }

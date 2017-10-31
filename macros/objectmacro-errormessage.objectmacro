@@ -318,6 +318,16 @@ Char: $char
 "$reference" is a cyclic reference to "$context" of line $context_line, char $context_char.
 $end: cyclic_reference $
 
+$comment: ========== self_reference ========== $
+
+$macro: self_reference(reference, line, char, context, context_line, context_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$reference" is a self reference to "$context" of line $context_line, char $context_char.
+$end: self_reference $
+
 $comment: ========== unused_text_block ========== $
 
 $macro: unused_text_block(name, line, char) $
