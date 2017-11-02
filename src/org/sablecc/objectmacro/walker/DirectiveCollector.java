@@ -1,5 +1,6 @@
 package org.sablecc.objectmacro.walker;
 
+import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.structure.Directive;
 import org.sablecc.objectmacro.structure.GlobalIndex;
 import org.sablecc.objectmacro.structure.Macro;
@@ -59,6 +60,15 @@ public class DirectiveCollector
     @Override
     public void inADirective(
             ADirective node) {
+
+        String directive_name = node.getName().getText();
+        if(!directive_name.equals("separator")
+                && !directive_name.equals("after_last")
+                && !directive_name.equals("before_first")
+                && !directive_name.equals("none") ){
+
+            throw CompilerException.unknownOption(node);
+        }
 
         this.currentDirective = this.currentParam.newDirective(node);
     }

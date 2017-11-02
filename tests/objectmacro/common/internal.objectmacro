@@ -1,0 +1,31 @@
+Macro a
+    Param
+        y : b("zzzz", "lala"), separator="\n", none="y'a pas de y";
+        lala : b("toto", "titi"), c("haha", y), before_first="===== lala ======";
+        lolo : b("toto {Insert: c("yyyy", y)} {Insert: c("yyyy", y)} {lala}", "titi"),
+                c("cccc", y), after_last="==== lolo ====";
+
+{Begin}
+{lala}
+{Insert: b("lala", "lolo")}
+{lolo}
+{y}
+{End}
+
+Macro b
+    Internal
+        x : String;
+        y : String;
+{Begin}
+{x}
+{y}
+{End}
+
+Macro c
+    Internal
+        z : String;
+        a : b("tata", "tutu");
+{Begin}
+{z}
+{a}
+{End}
