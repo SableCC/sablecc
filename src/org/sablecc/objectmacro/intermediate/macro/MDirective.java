@@ -7,7 +7,7 @@ import java.util.*;
 public class MDirective {
 
   private final List<Object> eSimpleName = new LinkedList<Object>();
-  private final List<Object> eTextArgument = new LinkedList<Object>();
+  private final List<Object> eStringPart_EolPart_ParamInsert_MacroInsert = new LinkedList<Object>();
 
   public MDirective() {
   }
@@ -18,10 +18,28 @@ public class MDirective {
     return lSimpleName;
   }
 
-  public MTextArgument newTextArgument() {
-    MTextArgument lTextArgument = new MTextArgument();
-    this.eTextArgument.add(lTextArgument);
-    return lTextArgument;
+  public MStringPart newStringPart(String pString) {
+    MStringPart lStringPart = new MStringPart(pString);
+    this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lStringPart);
+    return lStringPart;
+  }
+
+  public MEolPart newEolPart() {
+    MEolPart lEolPart = new MEolPart();
+    this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lEolPart);
+    return lEolPart;
+  }
+
+  public MParamInsert newParamInsert() {
+    MParamInsert lParamInsert = new MParamInsert();
+    this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lParamInsert);
+    return lParamInsert;
+  }
+
+  public MMacroInsert newMacroInsert() {
+    MMacroInsert lMacroInsert = new MMacroInsert();
+    this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lMacroInsert);
+    return lMacroInsert;
   }
 
   @Override
@@ -48,8 +66,9 @@ public class MDirective {
     if(this.eSimpleName.size() > 1) {
       sb.append(" }");
     }
-    for(Object oTextArgument : this.eTextArgument) {
-      sb.append(oTextArgument.toString());
+    sb.append("     ");
+    for(Object oStringPart_EolPart_ParamInsert_MacroInsert : this.eStringPart_EolPart_ParamInsert_MacroInsert) {
+      sb.append(oStringPart_EolPart_ParamInsert_MacroInsert.toString());
     }
     sb.append(" }");
     sb.append(System.getProperty("line.separator"));

@@ -143,7 +143,7 @@ $comment: ========= directive ============== $
 $macro: directive $
  Directive {
      Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $
-$expand: text_argument$
+     $expand: string_part, eol_part, param_insert, macro_insert$
  }
 $end: directive $
 

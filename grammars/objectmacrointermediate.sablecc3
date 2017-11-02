@@ -111,8 +111,8 @@ Productions
 
     directive
         =
-            directive_kw l_brace name value r_brace
-                {-> New directive([name.names], value)}
+            directive_kw l_brace name [text_parts]:text_part+ r_brace
+                {-> New directive([name.names], [text_parts])}
         ;
 
     macro_ref
@@ -246,7 +246,7 @@ Abstract Syntax Tree
         {macro_refs} macro_ref*;
 
     directive =
-        [names]:string* value;
+        [names]:string* [parts]:text_part+;
 
     macro_ref =
         [names]:string* [args]:value*;
