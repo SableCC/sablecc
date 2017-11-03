@@ -481,7 +481,7 @@ public class ObjectMacro {
             if(stringPart instanceof ATextStringPart){
                 String stringPartText = ((ATextStringPart) stringPart).getText().getText();
 
-                stringPartText = stringPartText.replaceAll("'", "\\'");
+                stringPartText = stringPartText.replaceAll("'", "\\\\'");
 
                 mTextArgument.newStringPart(stringPartText);
             }
@@ -537,7 +537,7 @@ public class ObjectMacro {
             if(stringPart instanceof ATextStringPart){
                 String stringPartText = ((ATextStringPart) stringPart).getText().getText();
 
-                stringPartText = stringPartText.replaceAll("'", "\\'");
+                stringPartText = stringPartText.replaceAll("'", "\\\\'");
 
                 mDirective.newStringPart(stringPartText);
             }
