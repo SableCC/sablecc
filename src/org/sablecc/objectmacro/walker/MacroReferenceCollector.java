@@ -44,19 +44,25 @@ public class MacroReferenceCollector
     }
 
     @Override
-    public void inAInsertMacroBodyPart(
+    public void caseAInsertMacroBodyPart(
             AInsertMacroBodyPart node) {
 
         AMacroReference macroReference = (AMacroReference) node.getMacroReference();
-        this.currentMacro.newInsert(macroReference);
+
+        if(this.globalIndex.getMacro(macroReference.getName()) == null){
+            throw CompilerException.unknownMacro(macroReference.getName());
+        }
     }
 
     @Override
-    public void inAInsertStringPart(
+    public void caseAInsertStringPart(
             AInsertStringPart node) {
 
         AMacroReference macroReference = (AMacroReference) node.getMacro();
-        this.currentMacro.newInsert(macroReference);
+
+        if(this.globalIndex.getMacro(macroReference.getName()) == null){
+            throw CompilerException.unknownMacro(macroReference.getName());
+        }
     }
 
     @Override

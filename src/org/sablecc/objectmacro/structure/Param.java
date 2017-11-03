@@ -110,12 +110,6 @@ public class Param {
         this.paramReferences.put(name, newParamRef);
     }
 
-    public PMacroReference getMacroReferenceOrNull(
-            String macroName){
-
-        return this.macroReferencesName.get(macroName);
-    }
-
     Param getParamReferenceOrNull(
             TIdentifier paramName){
 
@@ -173,7 +167,7 @@ public class Param {
         this.isString = true;
     }
 
-    public Set<Param> getDirectlyParamReferences(){
+    public Set<Param> getDirectParamReferences(){
 
         Set<Param> directlyParams = new HashSet<>();
         for(Param param : this.paramReferences.values()){

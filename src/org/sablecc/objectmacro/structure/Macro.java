@@ -22,7 +22,6 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.syntax3.node.*;
-import org.sablecc.objectmacro.util.Utils;
 import org.sablecc.util.ComponentFinder;
 import org.sablecc.util.Progeny;
 
@@ -39,8 +38,6 @@ public class Macro{
     private final Set<Param> allInternals = new LinkedHashSet<>();
 
     private final Map<String, Param> namedInternals = new HashMap<>();
-
-    private Set<Insert> inserts = new LinkedHashSet<>();
 
     Macro(
             GlobalIndex globalIndex,
@@ -112,22 +109,7 @@ public class Macro{
         Insert newInsert = new Insert(
                 referencedMacro, this, macroReference);
 
-        this.inserts.add(newInsert);
-
         return newInsert;
-    }
-
-    public int getNbStringInternals(){
-
-        int nbString = 0;
-
-        for(Param internal : getAllInternals()){
-            if(internal.getDeclaration().getType() instanceof AStringType){
-                nbString++;
-            }
-        }
-
-        return nbString;
     }
 
     public Param getParam(
@@ -182,8 +164,6 @@ public class Macro{
         return this.allInternals;
     }
 
-    public Set<Insert> getInserts() { return this.inserts; }
-
     public boolean containsKeyInInternals(
             String name){
 
@@ -202,48 +182,6 @@ public class Macro{
         }
 
         return this.namedParams.containsKey(name);
-    }
-
-    public boolean isUsing(
-            Macro macro){
-
-        return isReferencedInParams(macro) || isReferencedInInserts(macro) || isReferencedInInternals(macro);
-    }
-
-    private boolean isReferencedInParams(
-            Macro macro){
-
-        for(Param parameter : getAllParams()){
-            if(parameter.getMacroReferenceOrNull(macro.getName()) != null){
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean isReferencedInInternals(
-            Macro macro){
-
-        for(Param parameter : getAllInternals()){
-            if(parameter.getMacroReferenceOrNull(macro.getName()) != null){
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean isReferencedInInserts(
-            Macro macro){
-
-        for(Insert insert : getInserts()){
-            if(insert.getReferencedMacro() == macro){
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public List<String> getInternalsName(){
@@ -265,7 +203,7 @@ public class Macro{
                     Param param) {
 
                 Set<Param> children = new LinkedHashSet<>();
-                children.addAll(param.getDirectlyParamReferences());
+                children.addAll(param.getDirectParamReferences());
                 return children;
             }
         };
