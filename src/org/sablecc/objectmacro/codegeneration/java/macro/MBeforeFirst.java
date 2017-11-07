@@ -6,64 +6,49 @@ import java.util.*;
 
 public class MBeforeFirst {
 
-    private final MExpandInsertPart mExpandInsertPart;
+  private final List<Object> eStringPart_ParamInsertPart_EolPart_InsertMacroPart = new LinkedList<Object>();
 
-    private final List<Object> eInlineText_ParamInsert_TextInsert = new LinkedList<Object>();
+  public MBeforeFirst() {
+  }
 
-    MBeforeFirst(
-            MExpandInsertPart mExpandInsertPart) {
+  public MStringPart newStringPart(String pString, String pIndexBuilder) {
+    MStringPart lStringPart = new MStringPart(pString, pIndexBuilder);
+    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lStringPart);
+    return lStringPart;
+  }
 
-        if (mExpandInsertPart == null) {
-            throw new NullPointerException();
-        }
-        this.mExpandInsertPart = mExpandInsertPart;
+  public MParamInsertPart newParamInsertPart(String pParamName, String pIndexBuilder) {
+    MParamInsertPart lParamInsertPart = new MParamInsertPart(pParamName, pIndexBuilder);
+    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lParamInsertPart);
+    return lParamInsertPart;
+  }
+
+  public MEolPart newEolPart(String pIndexBuilder) {
+    MEolPart lEolPart = new MEolPart(pIndexBuilder);
+    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lEolPart);
+    return lEolPart;
+  }
+
+  public MInsertMacroPart newInsertMacroPart(String pName, String pIndexBuilder, String pIndexInsert) {
+    MInsertMacroPart lInsertMacroPart = new MInsertMacroPart(pName, pIndexBuilder, pIndexInsert);
+    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lInsertMacroPart);
+    return lInsertMacroPart;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("if(first){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    ");
+    for(Object oStringPart_ParamInsertPart_EolPart_InsertMacroPart : this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart) {
+      sb.append(oStringPart_ParamInsertPart_EolPart_InsertMacroPart.toString());
     }
-
-    public MInlineText newInlineText() {
-
-        MInlineText lInlineText = new MInlineText();
-        this.eInlineText_ParamInsert_TextInsert.add(lInlineText);
-        return lInlineText;
-    }
-
-    public MParamInsert newParamInsert(
-            String pName) {
-
-        MParamInsert lParamInsert = new MParamInsert(pName);
-        this.eInlineText_ParamInsert_TextInsert.add(lParamInsert);
-        return lParamInsert;
-    }
-
-    public MTextInsert newTextInsert(
-            String pName) {
-
-        MTextInsert lTextInsert = new MTextInsert(pName);
-        this.eInlineText_ParamInsert_TextInsert.add(lTextInsert);
-        return lTextInsert;
-    }
-
-    private String rName() {
-
-        return this.mExpandInsertPart.pName();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("    if(this.e");
-        sb.append(rName());
-        sb.append(".size() > 0) {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("      sb.append(");
-        for (Object oInlineText_ParamInsert_TextInsert : this.eInlineText_ParamInsert_TextInsert) {
-            sb.append(oInlineText_ParamInsert_TextInsert.toString());
-        }
-        sb.append(");");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    }");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
-    }
+    sb.append("    first = false;");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("}");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
 }

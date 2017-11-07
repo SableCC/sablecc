@@ -17,15 +17,7 @@
 
 package org.sablecc.objectmacro.codegeneration.c;
 
-import java.io.*;
-import java.util.*;
-
-import org.sablecc.exception.*;
-import org.sablecc.objectmacro.codegeneration.*;
-import org.sablecc.objectmacro.codegeneration.c.macro.*;
-import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.*;
-import org.sablecc.objectmacro.intermediate.syntax3.node.*;
 
 public class CodeGenerationWalker
         extends DepthFirstAdapter {

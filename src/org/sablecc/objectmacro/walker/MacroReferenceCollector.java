@@ -9,8 +9,6 @@ import org.sablecc.objectmacro.structure.Param;
 import org.sablecc.objectmacro.syntax3.node.*;
 import org.sablecc.objectmacro.util.Utils;
 
-import java.util.List;
-
 /**
  * Created by lam on 06/09/17.
  */

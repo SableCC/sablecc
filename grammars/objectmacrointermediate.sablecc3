@@ -61,8 +61,8 @@ Productions
 
     macro
         =
-            macro_kw l_brace name [params]:param* initialization_order macro_body r_brace
-                {-> New macro([name.names], [params], [initialization_order.names], [macro_body.macro_parts])};
+            macro_kw l_brace name [params]:param* [internals]:internal* initialization_order macro_body r_brace
+                {-> New macro([name.names], [params], [internals], [initialization_order.names], [macro_body.macro_parts])};
 
     macro_body
             {-> [macro_parts]:macro_part*}
@@ -72,10 +72,12 @@ Productions
 
     param
         =
-            {param} param_kw l_brace name type directives? r_brace
-                {-> New param.param([name.names], type, [directives.directives])} |
-            {internal} internal_kw l_brace name type directives? r_brace
-                {-> New param.internal([name.names], type, [directives.directives])}
+            param_kw l_brace name type directives? r_brace
+                {-> New param([name.names], type, [directives.directives])} ;
+    internal
+        =
+            internal_kw l_brace name type directives? r_brace
+                {-> New internal([name.names], type, [directives.directives])}
         ;
 
     initialization_order
@@ -235,11 +237,13 @@ Abstract Syntax Tree
         ;
 
     macro =
-        [names]:string* [params]:param* [init_order]:string* [macro_parts]:macro_part*;
+        [names]:string* [params]:param* [internals]:internal* [init_order]:string* [macro_parts]:macro_part*;
 
     param =
-        {param} [names]:string* type [directives]:directive* |
-        {internal} [names]:string* type [directives]:directive*;
+        [names]:string* type [directives]:directive*;
+
+    internal =
+        [names]:string* type [directives]:directive*;
 
     type =
         {string} string_kw |

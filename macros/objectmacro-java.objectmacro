@@ -16,65 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 $end$
 
-$comment: ========== text ========== $
-
-$macro: text(name) $
-$insert: header $
-$expand: package_declaration, before_first="\n" $
-
-class M$name {
-$expand: param_field, self_ref_text, ancestor_field, before_first="\n" $
-$macro: self_ref_text $
-  private final M$name m$name = this;
-$end: self_ref_text $
-
-  M$name($expand: param_param, ancestor_param, separator=", " $) {
-$expand: param_constructor_init, ancestor_constructor_init $
-  }
-$expand: param, before_first="\n", separator="\n" $
-$expand: param_ref, before_first="\n", separator="\n" $
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-$expand: string_part, eol_part, param_insert_part, text_insert_part $
-    return sb.toString();
-  }
-
-}
-$end: text $
-
-$comment: ========== macro ========== $
-
-$macro: macro(name) $
-$insert: header $
-$expand: package_declaration, before_first="\n" $
-$expand: import_java_util, before_first="\n" $
-
-public class M$name {
-$expand: param_field, self_ref_macro, ancestor_field, expand_field, before_first="\n" $
-$macro: self_ref_macro $
-  private final M$name m$name = this;
-$end: self_ref_macro $
-
-  $expand: public $
-M$name($expand: param_param, ancestor_param, separator=", " $) {
-$expand: param_constructor_init, ancestor_constructor_init $
-  }
-$expand: macro_creator, before_first="\n", separator="\n" $
-$expand: param, before_first="\n", separator="\n" $
-$expand: param_ref, before_first="\n", separator="\n" $
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-$expand: string_part, eol_part, param_insert_part, text_insert_part, expand_insert_part $
-    return sb.toString();
-  }
-
-}
-$end: macro $
-
 $comment: ========== header ========== $
 
 $text: header $
@@ -93,63 +34,312 @@ $macro: import_java_util $
 import java.util.*;
 $end: import_java_util $
 
-$comment: ========== param_field ========== $
+$comment: ========== context ============== $
 
-$macro: param_field(name) $
-  private final String p$name;
-$end: param_field $
+$macro: context $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
 
-$comment: ========== ancestor_field ========== $
+public class Context {
 
-$macro: ancestor_field(name) $
-  private final M$name m$name;
-$end: ancestor_field $
+}
+$end: context $
 
-$comment: ========== expand_field ========== $
+$comment: ========== internals_initializer ========= $
 
-$macro: expand_field(name) $
-  private final List<Object> e$name = new LinkedList<Object>();
-$end: expand_field $
+$macro: internals_initializer $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+$expand: import_java_util $
 
-$comment: ========== macro_creator ========== $
+public class InternalsInitializer {
 
-$macro: macro_creator(name) $
-  public M$name new$name($expand: param_param, separator=", " $) {
-    M$name l$name = new M$name($expand: param_arg, ancestor_arg, separator=", " $);
-$macro: add_to_expand(signature) $
-    this.e$signature.add(l$name);
-$end: add_to_expand $
-    return l$name;
-  }
-$end: macro_creator $
+    private final String _paramName;
 
-$comment: ========== param ========== $
+    InternalsInitializer(String paramName){
+        this._paramName = paramName;
+    }
 
-$macro: param(name) $
-  String p$name() {
-    return this.p$name;
-  }
-$end: param $
+$expand: parent_internals_setter, separator="\n" $
 
-$comment: ========== param_ref ========== $
+}
 
-$macro: param_ref(name, context) $
-  private String r$name() {
-    return this.m$context.p$name();
-  }
-$end: param_ref $
+$end: internals_initializer $
 
-$comment: ========== param_param ========== $
+$comment: ========== parent_internals_setter ========= $
 
-$macro: param_param(name) $
+$macro: parent_internals_setter(name) $
+    void set$name(M$name m$name){
+        throw ObjectMacroException.incorrectType("M$name", this._paramName);
+    }
+$end: parent_internals_setter $
+
+$comment: ========== super_macro ========== $
+
+$macro: super_macro $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+$expand: import_java_util $
+
+public abstract class Macro {
+
+    public final static String LINE_SEPARATOR = System.getProperty("line.separator");
+
+    public String expansion;
+
+    public Map<Context, String> expansions = new LinkedHashMap<>();
+
+    public String build(){
+
+        throw new RuntimeException("build cannot be invoked here");
+    }
+
+    String build(
+            Context context){
+
+        throw new RuntimeException("build cannot be invoked here");
+    }
+
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        throw new RuntimeException("apply cannot be called here");
+    }
+
+}
+$end: super_macro $
+
+$comment: ========== macro ========== $
+
+$macro: macro(name) $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+$expand: import_java_util, before_first="\n" $
+
+public class M$name extends Macro{
+$expand: param_macro_field, param_string_field, internal_macro_field, internal_string_field, separator="\n", before_first="\n" $
+$expand: context_field, before_first="\n" $
+$expand: constructor, before_first="\n" $
+$expand: param_string_setter, param_macro_setter, internal_string_setter, internal_macro_setter, before_first="\n", separator="\n" $
+$expand: param_string_ref, param_macro_ref, separator="\n", before_first="\n" $
+
+$expand: redefined_apply_initializer $
+$expand: macro_builder, before_first="\n" $
+
+}
+$end: macro $
+
+$comment: ========== macro_builder ======= $
+
+$macro: macro_builder $
+    @Override
+    $expand: public $ String build($expand: context_param $){
+
+        String local_expansion = $expand: context_expansion, none="this.expansion"$;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+$expand: string_part, param_insert_part, eol_part, insert_macro_part $
+
+        local_expansion = sb0.toString();
+        $expand: new_context_expansion, none="this.expansion = local_expansion" $;
+        return local_expansion;
+    }
+$end: macro_builder $
+
+$comment: ========= public ============= $
+
+$macro: public $
+public$no_eol$
+$end: public $
+
+$comment: ========== context_expansion ======= $
+
+$macro: context_expansion $
+this.expansions.get(context)$no_eol$
+$end: context_expansion $
+
+$comment: ========== new_context_expansion ========= $
+
+$macro: new_context_expansion $
+this.expansions.put(context, local_expansion)$no_eol$
+$end: new_context_expansion $
+
+$comment: ========= redefined_apply_initializer ======= $
+
+$macro: redefined_apply_initializer(name) $
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.set$name(this);
+    }
+$end: redefined_apply_initializer $
+
+$comment: ========== param_macro_field ========== $
+
+$macro: param_macro_field(name) $
+    private Macro list_$name[];
+$end: param_macro_field $
+
+$comment: ========== param_string_field ========== $
+
+$macro: param_string_field(name) $
+    private String field_$name;
+$end: param_string_field $
+
+$comment: ========== internal_macro_field ========== $
+
+$macro: internal_macro_field(name) $
+    private Map<Context, Macro[]> list_$name = new LinkedHashMap<>();
+$end: internal_macro_field $
+
+$comment: ========== internal_string_field ========== $
+
+$macro: internal_string_field(name) $
+    private Map<Context, String> field_$name = new LinkedHashMap<>();
+$end: internal_string_field $
+
+$comment: ========== context_field ========= $
+
+$macro: context_field(name) $
+    private final Context $(name)Context = new Context();
+$end: context_field $
+
+$comment: ========== constructor ========== $
+
+$macro: constructor(name) $
+    public M$name($expand: string_param, macro_param, separator=", "$){
+$expand: set_param, before_first="\n" $
+$expand: init_macro_internal, init_string_internal, before_first="\n" $
+    }
+$end: constructor $
+
+$comment: ========== string_param ========== $
+
+$macro: string_param(name) $
 String p$(name)$no_eol$
-$end: param_param $
+$end: string_param $
 
-$comment: ========== ancestor_param ========== $
+$comment: ========== macro_param ========== $
 
-$macro: ancestor_param(name) $
-M$name m$(name)$no_eol$
-$end: ancestor_param $
+$macro: macro_param(name) $
+Macro p$(name)[]$no_eol$
+$end: macro_param $
+
+$comment: =========== param_string_setter ========= $
+
+$macro: param_string_setter(name) $
+    private void setP$name($expand: string_param $){
+        if($expand: param_arg $ == null){
+            throw ObjectMacroException.parameterNull("$name");
+        }
+
+        this.field_$name = $expand: param_arg $;
+    }
+$end: param_string_setter $
+
+$comment: ========= param_macro_setter =========== $
+
+$macro: param_macro_setter(name) $
+    private void setP$name($expand: macro_param $){
+        if($expand: param_arg $ == null){
+            throw ObjectMacroException.parameterNull("$name");
+        }
+
+        Macro macros[] = $expand: param_arg $;
+        this.list_$name = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "$name");
+            }
+
+            $expand: apply_internals_initializer $
+
+            this.list_$name[i++] = macro;
+
+        }
+    }
+$end: param_macro_setter $
+
+$comment: ========= internal_macro_setter ========= $
+
+$macro: internal_macro_setter(name) $
+    void set$name(
+            Context context,
+            Macro macros[]) {
+
+        if(macros == null){
+            throw new RuntimeException("macros cannot be null here");
+        }
+
+        Macro[] tempMacros = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "$name");
+            }
+
+            $expand: apply_internals_initializer $
+
+            tempMacros[i++] = macro;
+        }
+
+        this.list_$name.put(context, tempMacros);
+    }
+$end: internal_macro_setter $
+
+
+$comment: ========== apply_internals_initializer ======= $
+
+$macro: apply_internals_initializer(param_name) $
+macro.apply(new InternalsInitializer("$param_name"){
+    $expand: redefined_internals_setter $
+});
+$end: apply_internals_initializer $
+
+$comment: ========== redefined_internals_setter ========= $
+
+$macro: redefined_internals_setter(name) $
+    @Override
+    void set$name(M$name m$name){
+
+        $expand: init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part, separator="\n" $
+        $expand: set_internal $
+    }
+$end: redefined_internals_setter $
+
+$comment: ========== string_value ======== $
+
+$macro: string_value(string) $
+"$string"$no_eol$
+$end: string_value $
+
+$comment: =========== macro_arg ========== $
+
+$macro: macro_arg(name) $
+list_$(name)$no_eol$
+$end: macro_arg $
+
+$comment: =========== string_arg ========= $
+
+$macro: string_arg(name) $
+field_$(name)$no_eol$
+$end: string_arg $
+
+$comment: ========== set_param ========== $
+
+$macro: set_param(name) $
+        this.setP$name($expand: param_arg$);
+$end: set_param $
 
 $comment: ========== param_arg ========== $
 
@@ -157,147 +347,400 @@ $macro: param_arg(name) $
 p$(name)$no_eol$
 $end: param_arg $
 
-$comment: ========== ancestor_arg ========== $
+$comment: ========= string_part ================= $
 
-$macro: ancestor_arg(name) $
-m$(name)$no_eol$
-$end: ancestor_arg $
-
-$comment: ========== param_constructor_init ========== $
-
-$macro: param_constructor_init(name) $
-    if(p$name == null) throw new NullPointerException();
-    this.p$name = p$name;
-$end: param_constructor_init $
-
-$comment: ========== ancestor_constructor_init ========== $
-
-$macro: ancestor_constructor_init(name) $
-    if(m$name == null) throw new NullPointerException();
-    this.m$name = m$name;
-$end: ancestor_constructor_init $
-
-$comment: ========== string_part ========== $
-
-$macro: string_part(string) $
-    sb.append("$string");
+$macro: string_part(string, index_builder) $
+        sb$index_builder.append("$string");
 $end: string_part $
 
-$comment: ========== eol_part ========== $
+$comment: ========= eol_part =================== $
 
-$macro: eol_part $
-    sb.append(System.getProperty("line.separator"));
+$macro: eol_part(index_builder) $
+        sb$index_builder.append(LINE_SEPARATOR);
 $end: eol_part $
 
 $comment: ========== param_insert_part ========== $
 
-$macro: param_insert_part(name) $
-    sb.append(r$name());
+$macro:  param_insert_part(param_name, index_builder) $
+        sb$index_builder.append(build$param_name($expand: context_arg $));
 $end: param_insert_part $
 
-$comment: ========== text_insert_part ========== $
+$comment: ========= init_string_builder ========= $
 
-$macro: text_insert_part $
-    sb.append($expand: text_insert $);
-$end: text_insert_part $
+$macro: init_string_builder(index_builder) $
+        StringBuilder sb$index_builder = new StringBuilder();
+$end: init_string_builder $
 
-$comment: ========== expand_insert_part ========== $
+$comment: ========== insert_macro_part =============== $
 
-$macro: expand_insert_part(name) $
+$macro: insert_macro_part(name, index_builder, index_insert) $
+        M$name minsert_$index_insert = new M$name();
+        $expand: init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part $
+        $expand: set_internal $
+        sb$index_builder.append(minsert_$index_insert.build(null));
+$end: insert_macro_part $
+
+$comment: ========== set_internal ================== $
+
+$macro: set_internal(macro_name, param_name, context)   $
+        m$macro_name.set$param_name($context, $expand: macro_arg, string_builder_build $);
+$end: set_internal $
+
+$comment: ========== string_builder_build ========== $
+
+$macro: string_builder_build(index_builder) $
+sb$index_builder.toString()$no_eol$
+$end: string_builder_build $
+
+$comment: ========== param_macro_ref ================== $
+
+$macro: param_macro_ref(name, index_builder) $
+    private String build$name(
+            $expand: context_param $){
+
+        StringBuilder sb$index_builder = new StringBuilder();
+        Context local_context = $expand: context_name, none="context"$;
+        Macro macros[] = this.list_$(name)$expand: get_internal_tail $;
+        $expand: none $
+        boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+            $expand: before_first $
+            $expand: separator $
+
+            sb$index_builder.append(macro.build(local_context));
+            i++;
+
+            $expand: after_last $
+        }
+
+        return sb$index_builder.toString();
+    }
+$end: param_macro_ref $
+
+$comment: =========== context_name ============= $
+
+$macro: context_name(context_name) $
+$(context_name)$no_eol$
+$end: context_name $
+
+$comment: =========== none ============ $
+
 $macro: none $
-    if(this.e$name.size() == 0) {
-      sb.append($expand: inline_text, param_insert, text_insert $);
-    }
+if(macros.length == 0){
+    $expand: string_part, param_insert_part, eol_part, insert_macro_part $
+}
 $end: none $
+
+$comment: ========== before_first ========= $
+
 $macro: before_first $
-    if(this.e$name.size() > 0) {
-      sb.append($expand: inline_text, param_insert, text_insert $);
-    }
+if(first){
+    $expand: string_part, param_insert_part, eol_part, insert_macro_part $
+    first = false;
+}
 $end: before_first $
-$macro: before_one $
-    if(this.e$name.size() == 1) {
-      sb.append($expand: inline_text, param_insert, text_insert $);
-    }
-$end: before_one $
-$macro: before_many $
-    if(this.e$name.size() > 1) {
-      sb.append($expand: inline_text, param_insert, text_insert $);
-    }
-$end: before_many $
-$macro: separator $
-    {
-      boolean first = true;
-      for(Object o$name : this.e$name) {
-        if(first) {
-          first = false;
-        }
-        else {
-          sb.append($expand: inline_text, param_insert, text_insert $);
-        }
-        sb.append(o$name.toString());
-      }
-    }
-$end: separator $
-$macro: no_separator $
-    for(Object o$name : this.e$name) {
-      sb.append(o$name.toString());
-    }
-$end: no_separator $
+
+$comment: ========== after_last ========== $
+
 $macro: after_last $
-    if(this.e$name.size() > 0) {
-      sb.append($expand: inline_text, param_insert, text_insert $);
-    }
+if(i == macros.length){
+    $expand: string_part, param_insert_part, eol_part, insert_macro_part $
+}
 $end: after_last $
-$macro: after_one $
-    if(this.e$name.size() == 1) {
-      sb.append($expand: inline_text, param_insert, text_insert $);
+
+$comment: ======== separator =========== $
+
+$macro: separator $
+if(first) {
+  first = false;
+}
+else {
+   $expand: string_part, param_insert_part, eol_part, insert_macro_part $
+}
+$end: separator $
+
+$comment: =========== param_string_ref ============= $
+
+$macro: param_string_ref(name) $
+    private String build$name(
+            $expand: context_param$){
+
+        return this.field_$(name)$expand: get_internal_tail $;
     }
-$end: after_one $
-$macro: after_many $
-    if(this.e$name.size() > 1) {
-      sb.append($expand: inline_text, param_insert, text_insert $);
+$end: param_string_ref $
+
+$comment: =========== get_internal_tail ============ $
+
+$macro: get_internal_tail $
+.get(context)$no_eol$
+$end: get_internal_tail $
+
+$comment: ========== context_verifier ============ $
+
+$macro: context_verifier $
+        if(context == null){
+            throw new RuntimeException("context cannot be null here");
+        }
+$end: context_verifier $
+
+$comment: ======== context_param ============ $
+
+$macro: context_param $
+Context context$no_eol$
+$end: context_param $
+
+$comment: ========= context_arg ============ $
+
+$macro: context_arg $
+context$no_eol$
+$end: context_arg $
+
+$comment: ========= internal_string_setter ========= $
+
+$macro: internal_string_setter(name) $
+    public void set$name(
+            Context context,
+            String value) {
+
+        if(value == null){
+            throw new RuntimeException("value cannot be null here");
+        }
+
+        this.field_$name.put(context, value);
     }
-$end: after_many $
-$end: expand_insert_part $
+$end: internal_string_setter $
 
-$comment: ========== text_insert ========== $
+$comment: ========== init_macro_internal =========== $
 
-$macro: text_insert(name) $
-new M$name($expand: inline_text, param_insert, text_insert, text_insert_ancestor, separator=", " $).toString()$no_eol$
-$end: text_insert $
+$macro: init_macro_internal(name) $
+    this.list_$name = new LinkedHashMap<>();
+$end: init_macro_internal $
 
-$comment: ========== inline_text ========== $
+$comment: ========== init_string_internal =========== $
 
-$macro: inline_text $
-$expand: inline_string, inline_eol, separator=" + " $
-$end: inline_text $
+$macro: init_string_internal(name) $
+    this.field_$name = new LinkedHashMap<>();
+$end: init_string_internal $
 
-$comment: ========== inline_string ========== $
+$comment: ============ EXCEPTIONS ============ $
 
-$macro: inline_string(string) $
-"$string"$no_eol$
-$end: inline_string $
+$comment: ============ object_macro_exception =========== $
 
-$comment: ========== inline_eol ========== $
+$macro: object_macro_exception $
+$insert: header $
+$expand: package_declaration, before_first="\n"$
 
-$macro: inline_eol $
-System.getProperty("line.separator")$no_eol$
-$end: inline_eol $
+public class ObjectMacroException
+        extends RuntimeException{
 
-$comment: ========== param_insert ========== $
+    private ObjectMacroException(
+            String message){
 
-$macro: param_insert(name) $
-r$name()$no_eol$
-$end: param_insert $
+        super(message);
 
-$comment: ========== text_insert_ancestor ========== $
+        if(message == null){
+            throw new RuntimeException("message may not be null");
+        }
+    }
 
-$macro: text_insert_ancestor(name) $
-this.m$(name)$no_eol$
-$end: text_insert_ancestor $
+    private ObjectMacroException(
+            String message,
+            Throwable cause) {
 
-$comment: ========== public ========== $
+        super(message, cause);
 
-$macro: public $
-public $no_eol$
-$end: public $
+        if (message == null) {
+            throw new RuntimeException("message may not be null");
+        }
+
+        if (cause == null) {
+            throw new RuntimeException("cause may not be null");
+        }
+    }
+
+    static ObjectMacroException incorrectType(
+            String type,
+            String param_name){
+
+
+        return new ObjectMacroException(
+                new MIncorrectType(type, param_name).toString());
+    }
+
+    static ObjectMacroException macroNull(
+            Integer index,
+            String paramName){
+
+        return new ObjectMacroException(
+                new MMacroNullInList(String.valueOf(index), paramName).toString());
+    }
+
+    static ObjectMacroException parameterNull(
+            String paramName){
+
+        return new ObjectMacroException(new MParameterNull(paramName).toString());
+    }
+
+}
+$end: object_macro_exception $
+
+$macro: incorrect_type $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+
+public class MIncorrectType {
+
+  private final String pType;
+  private final String pParamName;
+  private final MIncorrectType mIncorrectType = this;
+
+  public MIncorrectType(String pType, String pParamName) {
+    if(pType == null) throw new NullPointerException();
+    this.pType = pType;
+    if(pParamName == null) throw new NullPointerException();
+    this.pParamName = pParamName;
+  }
+
+  String pType() {
+    return this.pType;
+  }
+
+  String pParamName() {
+    return this.pParamName;
+  }
+
+  private String rType() {
+    return this.mIncorrectType.pType();
+  }
+
+  private String rParamName() {
+    return this.mIncorrectType.pParamName();
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MObjectMacroErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append(rType());
+    sb.append(" was not expected in parameter '");
+    sb.append(rParamName());
+    sb.append("'.");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
+
+}
+$end: incorrect_type $
+
+$comment: ============== object_macro_error_head =========== $
+
+$macro: object_macro_error_head $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+
+class MObjectMacroErrorHead {
+
+  MObjectMacroErrorHead() {
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("*** OBJECT MACRO ERROR ***");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
+
+}
+$end: object_macro_error_head $
+
+$comment: =============== parameter_null ============== $
+
+$macro: parameter_null $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+
+public class MParameterNull {
+
+  private final String pParamName;
+  private final MParameterNull mParameterNull = this;
+
+  public MParameterNull(String pParamName) {
+    if(pParamName == null) throw new NullPointerException();
+    this.pParamName = pParamName;
+  }
+
+  String pParamName() {
+    return this.pParamName;
+  }
+
+  private String rParamName() {
+    return this.mParameterNull.pParamName();
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Parameter '");
+    sb.append(rParamName());
+    sb.append("' cannot be null.");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
+
+}
+
+$end: parameter_null $
+
+$comment: ============ macro_null_in_list ============ $
+
+$macro: macro_null_in_list $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+
+public class MMacroNullInList {
+
+  private final String pIndex;
+  private final String pParamName;
+  private final MMacroNullInList mMacroNullInList = this;
+
+  public MMacroNullInList(String pIndex, String pParamName) {
+    if(pIndex == null) throw new NullPointerException();
+    this.pIndex = pIndex;
+    if(pParamName == null) throw new NullPointerException();
+    this.pParamName = pParamName;
+  }
+
+  String pIndex() {
+    return this.pIndex;
+  }
+
+  String pParamName() {
+    return this.pParamName;
+  }
+
+  private String rIndex() {
+    return this.mMacroNullInList.pIndex();
+  }
+
+  private String rParamName() {
+    return this.mMacroNullInList.pParamName();
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("A macro is null at index ");
+    sb.append(rIndex());
+    sb.append(" in the list '");
+    sb.append(rParamName());
+    sb.append("'.");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
+
+}
+$end: macro_null_in_list $

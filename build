@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+rm -f src/org/sablecc/objectmacro/codegeneration/java/macro2/*.java
+rm -f src/org/sablecc/objectmacro/codegeneration/java/macro/*.java
+java -jar ../lib/objectmacro.jar -d src -p org.sablecc.objectmacro.codegeneration.java.macro macros/objectmacro-java.objectmacro
+ant -f ant-files/build.xml
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/ tests/objectmacro/common/internal.objectmacro
+java -jar lib/objectmacro-BACK.jar -d src -p org.sablecc.objectmacro.codegeneration.java.macro2 tests/objectmacro/common/internal.intermediate

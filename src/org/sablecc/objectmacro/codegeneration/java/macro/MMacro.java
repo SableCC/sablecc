@@ -6,331 +6,219 @@ import java.util.*;
 
 public class MMacro {
 
-    private final String pName;
+  private final String pName;
+  private final MMacro mMacro = this;
+  private final List<Object> ePackageDeclaration = new LinkedList<Object>();
+  private final List<Object> eImportJavaUtil = new LinkedList<Object>();
+  private final List<Object> eParamMacroField_ParamStringField_InternalMacroField_InternalStringField = new LinkedList<Object>();
+  private final List<Object> eContextField = new LinkedList<Object>();
+  private final List<Object> eConstructor = new LinkedList<Object>();
+  private final List<Object> eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter = new LinkedList<Object>();
+  private final List<Object> eParamStringRef_ParamMacroRef = new LinkedList<Object>();
+  private final List<Object> eRedefinedApplyInitializer = new LinkedList<Object>();
+  private final List<Object> eMacroBuilder = new LinkedList<Object>();
 
-    private final MMacro mMacro = this;
+  public MMacro(String pName) {
+    if(pName == null) throw new NullPointerException();
+    this.pName = pName;
+  }
 
-    private final List<Object> ePackageDeclaration = new LinkedList<Object>();
+  public MPackageDeclaration newPackageDeclaration(String pPackageName) {
+    MPackageDeclaration lPackageDeclaration = new MPackageDeclaration(pPackageName);
+    this.ePackageDeclaration.add(lPackageDeclaration);
+    return lPackageDeclaration;
+  }
 
-    private final List<Object> eImportJavaUtil = new LinkedList<Object>();
+  public MImportJavaUtil newImportJavaUtil() {
+    MImportJavaUtil lImportJavaUtil = new MImportJavaUtil();
+    this.eImportJavaUtil.add(lImportJavaUtil);
+    return lImportJavaUtil;
+  }
 
-    private final List<Object> eParamField_SelfRefMacro_AncestorField_ExpandField = new LinkedList<Object>();
+  public MParamMacroField newParamMacroField(String pName) {
+    MParamMacroField lParamMacroField = new MParamMacroField(pName);
+    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField.add(lParamMacroField);
+    return lParamMacroField;
+  }
 
-    private final List<Object> ePublic = new LinkedList<Object>();
+  public MParamStringField newParamStringField(String pName) {
+    MParamStringField lParamStringField = new MParamStringField(pName);
+    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField.add(lParamStringField);
+    return lParamStringField;
+  }
 
-    private final List<Object> eParamParam_AncestorParam = new LinkedList<Object>();
+  public MInternalMacroField newInternalMacroField(String pName) {
+    MInternalMacroField lInternalMacroField = new MInternalMacroField(pName);
+    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField.add(lInternalMacroField);
+    return lInternalMacroField;
+  }
 
-    private final List<Object> eParamConstructorInit_AncestorConstructorInit = new LinkedList<Object>();
+  public MInternalStringField newInternalStringField(String pName) {
+    MInternalStringField lInternalStringField = new MInternalStringField(pName);
+    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField.add(lInternalStringField);
+    return lInternalStringField;
+  }
 
-    private final List<Object> eMacroCreator = new LinkedList<Object>();
+  public MContextField newContextField(String pName) {
+    MContextField lContextField = new MContextField(pName);
+    this.eContextField.add(lContextField);
+    return lContextField;
+  }
 
-    private final List<Object> eParam = new LinkedList<Object>();
+  public MConstructor newConstructor(String pName) {
+    MConstructor lConstructor = new MConstructor(pName);
+    this.eConstructor.add(lConstructor);
+    return lConstructor;
+  }
 
-    private final List<Object> eParamRef = new LinkedList<Object>();
+  public MParamStringSetter newParamStringSetter(String pName) {
+    MParamStringSetter lParamStringSetter = new MParamStringSetter(pName);
+    this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.add(lParamStringSetter);
+    return lParamStringSetter;
+  }
 
-    private final List<Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart = new LinkedList<Object>();
+  public MParamMacroSetter newParamMacroSetter(String pName) {
+    MParamMacroSetter lParamMacroSetter = new MParamMacroSetter(pName);
+    this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.add(lParamMacroSetter);
+    return lParamMacroSetter;
+  }
 
-    public MMacro(
-            String pName) {
+  public MInternalStringSetter newInternalStringSetter(String pName) {
+    MInternalStringSetter lInternalStringSetter = new MInternalStringSetter(pName);
+    this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.add(lInternalStringSetter);
+    return lInternalStringSetter;
+  }
 
-        if (pName == null) {
-            throw new NullPointerException();
+  public MInternalMacroSetter newInternalMacroSetter(String pName) {
+    MInternalMacroSetter lInternalMacroSetter = new MInternalMacroSetter(pName);
+    this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.add(lInternalMacroSetter);
+    return lInternalMacroSetter;
+  }
+
+  public MParamStringRef newParamStringRef(String pName) {
+    MParamStringRef lParamStringRef = new MParamStringRef(pName);
+    this.eParamStringRef_ParamMacroRef.add(lParamStringRef);
+    return lParamStringRef;
+  }
+
+  public MParamMacroRef newParamMacroRef(String pName, String pIndexBuilder) {
+    MParamMacroRef lParamMacroRef = new MParamMacroRef(pName, pIndexBuilder);
+    this.eParamStringRef_ParamMacroRef.add(lParamMacroRef);
+    return lParamMacroRef;
+  }
+
+  public MRedefinedApplyInitializer newRedefinedApplyInitializer(String pName) {
+    MRedefinedApplyInitializer lRedefinedApplyInitializer = new MRedefinedApplyInitializer(pName);
+    this.eRedefinedApplyInitializer.add(lRedefinedApplyInitializer);
+    return lRedefinedApplyInitializer;
+  }
+
+  public MMacroBuilder newMacroBuilder() {
+    MMacroBuilder lMacroBuilder = new MMacroBuilder();
+    this.eMacroBuilder.add(lMacroBuilder);
+    return lMacroBuilder;
+  }
+
+  String pName() {
+    return this.pName;
+  }
+
+  private String rName() {
+    return this.mMacro.pName();
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MHeader().toString());
+    if(this.ePackageDeclaration.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
+    for(Object oPackageDeclaration : this.ePackageDeclaration) {
+      sb.append(oPackageDeclaration.toString());
+    }
+    if(this.eImportJavaUtil.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
+    for(Object oImportJavaUtil : this.eImportJavaUtil) {
+      sb.append(oImportJavaUtil.toString());
+    }
+    sb.append(System.getProperty("line.separator"));
+    sb.append("public class M");
+    sb.append(rName());
+    sb.append(" extends Macro{");
+    sb.append(System.getProperty("line.separator"));
+    if(this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
+    {
+      boolean first = true;
+      for(Object oParamMacroField_ParamStringField_InternalMacroField_InternalStringField : this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField) {
+        if(first) {
+          first = false;
         }
-        this.pName = pName;
-    }
-
-    public MPackageDeclaration newPackageDeclaration(
-            String pPackageName) {
-
-        MPackageDeclaration lPackageDeclaration = new MPackageDeclaration(
-                pPackageName);
-        this.ePackageDeclaration.add(lPackageDeclaration);
-        return lPackageDeclaration;
-    }
-
-    public MImportJavaUtil newImportJavaUtil() {
-
-        MImportJavaUtil lImportJavaUtil = new MImportJavaUtil();
-        this.eImportJavaUtil.add(lImportJavaUtil);
-        return lImportJavaUtil;
-    }
-
-    public MParamField newParamField(
-            String pName) {
-
-        MParamField lParamField = new MParamField(pName);
-        this.eParamField_SelfRefMacro_AncestorField_ExpandField
-                .add(lParamField);
-        return lParamField;
-    }
-
-    public MSelfRefMacro newSelfRefMacro() {
-
-        MSelfRefMacro lSelfRefMacro = new MSelfRefMacro(this.mMacro);
-        this.eParamField_SelfRefMacro_AncestorField_ExpandField
-                .add(lSelfRefMacro);
-        return lSelfRefMacro;
-    }
-
-    public MAncestorField newAncestorField(
-            String pName) {
-
-        MAncestorField lAncestorField = new MAncestorField(pName);
-        this.eParamField_SelfRefMacro_AncestorField_ExpandField
-                .add(lAncestorField);
-        return lAncestorField;
-    }
-
-    public MExpandField newExpandField(
-            String pName) {
-
-        MExpandField lExpandField = new MExpandField(pName);
-        this.eParamField_SelfRefMacro_AncestorField_ExpandField
-                .add(lExpandField);
-        return lExpandField;
-    }
-
-    public MPublic newPublic() {
-
-        MPublic lPublic = new MPublic();
-        this.ePublic.add(lPublic);
-        return lPublic;
-    }
-
-    public MParamParam newParamParam(
-            String pName) {
-
-        MParamParam lParamParam = new MParamParam(pName);
-        this.eParamParam_AncestorParam.add(lParamParam);
-        return lParamParam;
-    }
-
-    public MAncestorParam newAncestorParam(
-            String pName) {
-
-        MAncestorParam lAncestorParam = new MAncestorParam(pName);
-        this.eParamParam_AncestorParam.add(lAncestorParam);
-        return lAncestorParam;
-    }
-
-    public MParamConstructorInit newParamConstructorInit(
-            String pName) {
-
-        MParamConstructorInit lParamConstructorInit = new MParamConstructorInit(
-                pName);
-        this.eParamConstructorInit_AncestorConstructorInit
-                .add(lParamConstructorInit);
-        return lParamConstructorInit;
-    }
-
-    public MAncestorConstructorInit newAncestorConstructorInit(
-            String pName) {
-
-        MAncestorConstructorInit lAncestorConstructorInit = new MAncestorConstructorInit(
-                pName);
-        this.eParamConstructorInit_AncestorConstructorInit
-                .add(lAncestorConstructorInit);
-        return lAncestorConstructorInit;
-    }
-
-    public MMacroCreator newMacroCreator(
-            String pName) {
-
-        MMacroCreator lMacroCreator = new MMacroCreator(pName);
-        this.eMacroCreator.add(lMacroCreator);
-        return lMacroCreator;
-    }
-
-    public MParam newParam(
-            String pName) {
-
-        MParam lParam = new MParam(pName);
-        this.eParam.add(lParam);
-        return lParam;
-    }
-
-    public MParamRef newParamRef(
-            String pName,
-            String pContext) {
-
-        MParamRef lParamRef = new MParamRef(pName, pContext);
-        this.eParamRef.add(lParamRef);
-        return lParamRef;
-    }
-
-    public MStringPart newStringPart(
-            String pString) {
-
-        MStringPart lStringPart = new MStringPart(pString);
-        this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                .add(lStringPart);
-        return lStringPart;
-    }
-
-    public MEolPart newEolPart() {
-
-        MEolPart lEolPart = new MEolPart();
-        this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                .add(lEolPart);
-        return lEolPart;
-    }
-
-    public MParamInsertPart newParamInsertPart(
-            String pName) {
-
-        MParamInsertPart lParamInsertPart = new MParamInsertPart(pName);
-        this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                .add(lParamInsertPart);
-        return lParamInsertPart;
-    }
-
-    public MTextInsertPart newTextInsertPart() {
-
-        MTextInsertPart lTextInsertPart = new MTextInsertPart();
-        this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                .add(lTextInsertPart);
-        return lTextInsertPart;
-    }
-
-    public MExpandInsertPart newExpandInsertPart(
-            String pName) {
-
-        MExpandInsertPart lExpandInsertPart = new MExpandInsertPart(pName);
-        this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                .add(lExpandInsertPart);
-        return lExpandInsertPart;
-    }
-
-    String pName() {
-
-        return this.pName;
-    }
-
-    private String rName() {
-
-        return this.mMacro.pName();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MHeader().toString());
-        if (this.ePackageDeclaration.size() > 0) {
-            sb.append(System.getProperty("line.separator"));
+        else {
+          sb.append(System.getProperty("line.separator"));
         }
-        for (Object oPackageDeclaration : this.ePackageDeclaration) {
-            sb.append(oPackageDeclaration.toString());
-        }
-        if (this.eImportJavaUtil.size() > 0) {
-            sb.append(System.getProperty("line.separator"));
-        }
-        for (Object oImportJavaUtil : this.eImportJavaUtil) {
-            sb.append(oImportJavaUtil.toString());
-        }
-        sb.append(System.getProperty("line.separator"));
-        sb.append("public class M");
-        sb.append(rName());
-        sb.append(" {");
-        sb.append(System.getProperty("line.separator"));
-        if (this.eParamField_SelfRefMacro_AncestorField_ExpandField.size() > 0) {
-            sb.append(System.getProperty("line.separator"));
-        }
-        for (Object oParamField_SelfRefMacro_AncestorField_ExpandField : this.eParamField_SelfRefMacro_AncestorField_ExpandField) {
-            sb.append(oParamField_SelfRefMacro_AncestorField_ExpandField
-                    .toString());
-        }
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  ");
-        for (Object oPublic : this.ePublic) {
-            sb.append(oPublic.toString());
-        }
-        sb.append("M");
-        sb.append(rName());
-        sb.append("(");
-        {
-            boolean first = true;
-            for (Object oParamParam_AncestorParam : this.eParamParam_AncestorParam) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    sb.append(", ");
-                }
-                sb.append(oParamParam_AncestorParam.toString());
-            }
-        }
-        sb.append(") {");
-        sb.append(System.getProperty("line.separator"));
-        for (Object oParamConstructorInit_AncestorConstructorInit : this.eParamConstructorInit_AncestorConstructorInit) {
-            sb.append(oParamConstructorInit_AncestorConstructorInit.toString());
-        }
-        sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        if (this.eMacroCreator.size() > 0) {
-            sb.append(System.getProperty("line.separator"));
-        }
-        {
-            boolean first = true;
-            for (Object oMacroCreator : this.eMacroCreator) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    sb.append(System.getProperty("line.separator"));
-                }
-                sb.append(oMacroCreator.toString());
-            }
-        }
-        if (this.eParam.size() > 0) {
-            sb.append(System.getProperty("line.separator"));
-        }
-        {
-            boolean first = true;
-            for (Object oParam : this.eParam) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    sb.append(System.getProperty("line.separator"));
-                }
-                sb.append(oParam.toString());
-            }
-        }
-        if (this.eParamRef.size() > 0) {
-            sb.append(System.getProperty("line.separator"));
-        }
-        {
-            boolean first = true;
-            for (Object oParamRef : this.eParamRef) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    sb.append(System.getProperty("line.separator"));
-                }
-                sb.append(oParamRef.toString());
-            }
-        }
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  @Override");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  public String toString() {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    StringBuilder sb = new StringBuilder();");
-        sb.append(System.getProperty("line.separator"));
-        for (Object oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart : this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart) {
-            sb.append(oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                    .toString());
-        }
-        sb.append("    return sb.toString();");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("}");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+        sb.append(oParamMacroField_ParamStringField_InternalMacroField_InternalStringField.toString());
+      }
     }
+    if(this.eContextField.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
+    for(Object oContextField : this.eContextField) {
+      sb.append(oContextField.toString());
+    }
+    if(this.eConstructor.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
+    for(Object oConstructor : this.eConstructor) {
+      sb.append(oConstructor.toString());
+    }
+    if(this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
+    {
+      boolean first = true;
+      for(Object oParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter : this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter) {
+        if(first) {
+          first = false;
+        }
+        else {
+          sb.append(System.getProperty("line.separator"));
+        }
+        sb.append(oParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.toString());
+      }
+    }
+    if(this.eParamStringRef_ParamMacroRef.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
+    {
+      boolean first = true;
+      for(Object oParamStringRef_ParamMacroRef : this.eParamStringRef_ParamMacroRef) {
+        if(first) {
+          first = false;
+        }
+        else {
+          sb.append(System.getProperty("line.separator"));
+        }
+        sb.append(oParamStringRef_ParamMacroRef.toString());
+      }
+    }
+    sb.append(System.getProperty("line.separator"));
+    for(Object oRedefinedApplyInitializer : this.eRedefinedApplyInitializer) {
+      sb.append(oRedefinedApplyInitializer.toString());
+    }
+    if(this.eMacroBuilder.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
+    for(Object oMacroBuilder : this.eMacroBuilder) {
+      sb.append(oMacroBuilder.toString());
+    }
+    sb.append(System.getProperty("line.separator"));
+    sb.append("}");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
 }
