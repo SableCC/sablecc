@@ -397,3 +397,13 @@ Line: $line
 Char: $char
 Parameter '$param' has already referenced Macro '$macro'.
 $end: duplicate_macro_ref $
+
+$comment: ========== incorrect_macro_type ============ $
+
+$macro: incorrect_macro_type(expected, found, index, line, char) $
+$insert: semantic_error_head $
+
+Line : $line
+Char : $char
+You provided a wrong argument type at index $index. (expected : $expected, found : $found)
+$end: incorrect_macro_type $

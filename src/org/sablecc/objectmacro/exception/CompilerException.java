@@ -23,6 +23,8 @@ import org.sablecc.objectmacro.structure.*;
 import org.sablecc.objectmacro.syntax3.node.*;
 import org.sablecc.objectmacro.util.*;
 
+import java.util.Set;
+
 @SuppressWarnings("serial")
 public class CompilerException
         extends RuntimeException {
@@ -321,5 +323,30 @@ public class CompilerException
                 new MDuplicateMacroRef(
                         paramName.getText(), macroRef.getText(), line, pos).toString());
 
+    }
+
+    public static CompilerException incorrectMacroType(
+            Set<String> expectedMacros,
+            Set<String> providedMacros,
+            Integer index,
+            Token parameter_name){
+
+        StringBuilder expectedBuilder = new StringBuilder();
+
+        for(String l_expected : expectedMacros){
+            expectedBuilder.append(l_expected);
+        }
+
+        StringBuilder providedBuilder = new StringBuilder();
+
+        for(String l_provided : providedMacros){
+            providedBuilder.append(l_provided);
+        }
+
+        return new CompilerException(
+                new MIncorrectMacroType(
+                        expectedBuilder.toString(), providedBuilder.toString(),
+                        String.valueOf(index), String.valueOf(parameter_name.getLine()),
+                        String.valueOf(parameter_name.getPos())).toString());
     }
 }

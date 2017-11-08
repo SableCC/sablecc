@@ -24,6 +24,9 @@ import org.sablecc.objectmacro.syntax3.analysis.*;
 import org.sablecc.objectmacro.syntax3.node.*;
 import org.sablecc.objectmacro.util.Utils;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class VarVerifier
         extends DepthFirstAdapter {
 
@@ -67,15 +70,17 @@ public class VarVerifier
     public void caseAStringStaticValue(
             AStringStaticValue node) {
 
-        Param param = this.paramsList[this.currentIndex++];
+        Param currentParam = this.paramsList[this.currentIndex++];
         AMacroReference macroReference = (AMacroReference) node.parent();
-        if(!param.isString()){
+
+        //Among the internals of the referenced macro, the parameter must be of type String here
+        if(!currentParam.isString()){
 
             throw CompilerException.incorrectArgumentType("Macro", "String",
                     macroReference.getName().getLine(), macroReference.getName().getPos());
         }
 
-        //Verify type of args if there is an insert
+        //Apply to each part in case of insert
         Integer tempIndex = this.currentIndex;
         Param tempParams[] = this.paramsList;
 
@@ -91,12 +96,30 @@ public class VarVerifier
     public void caseAVarStaticValue(
             AVarStaticValue node) {
 
-        Param param = this.paramsList[this.currentIndex++];
-        if(param.isString()){
+        Param expectedParam = this.paramsList[this.currentIndex++];
+        Param providedParam = this.currentMacro.getParam(node.getIdentifier());
+        Set<String> expectedMacrosType = new HashSet<>();
+        Set<String> providedMacrosType = new HashSet<>();
 
+        if(expectedParam.isString()){
             throw CompilerException.incorrectArgumentType(
                     "String", "Macro",
                     node.getIdentifier().getLine(), node.getIdentifier().getPos());
+        }
+
+        for(AMacroReference macroReference : expectedParam.getMacroReferences()){
+            expectedMacrosType.add(macroReference.getName().getText());
+        }
+
+        for(AMacroReference macroReference : providedParam.getMacroReferences()){
+            providedMacrosType.add(macroReference.getName().getText());
+        }
+
+        if(!expectedMacrosType.containsAll(providedMacrosType)){
+
+            throw CompilerException.incorrectMacroType(
+                    expectedMacrosType,
+                    providedMacrosType, currentIndex, node.getIdentifier());
         }
 
         this.currentMacro.setParamUsed(node.getIdentifier());
