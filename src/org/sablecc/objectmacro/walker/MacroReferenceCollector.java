@@ -1,13 +1,11 @@
 package org.sablecc.objectmacro.walker;
 
 import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.structure.Insert;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.structure.GlobalIndex;
 import org.sablecc.objectmacro.structure.Macro;
 import org.sablecc.objectmacro.structure.Param;
 import org.sablecc.objectmacro.syntax3.node.*;
-import org.sablecc.objectmacro.util.Utils;
 
 /**
  * Created by lam on 06/09/17.
@@ -42,25 +40,21 @@ public class MacroReferenceCollector
     }
 
     @Override
-    public void caseAInsertMacroBodyPart(
+    public void inAInsertMacroBodyPart(
             AInsertMacroBodyPart node) {
 
+        //Call to verify if the macro exist
         AMacroReference macroReference = (AMacroReference) node.getMacroReference();
-
-        if(this.globalIndex.getMacro(macroReference.getName()) == null){
-            throw CompilerException.unknownMacro(macroReference.getName());
-        }
+        this.globalIndex.getMacro(macroReference.getName());
     }
 
     @Override
-    public void caseAInsertStringPart(
+    public void inAInsertStringPart(
             AInsertStringPart node) {
 
+        //Call to verify if the macro exist
         AMacroReference macroReference = (AMacroReference) node.getMacro();
-
-        if(this.globalIndex.getMacro(macroReference.getName()) == null){
-            throw CompilerException.unknownMacro(macroReference.getName());
-        }
+        this.globalIndex.getMacro(macroReference.getName());
     }
 
     @Override
