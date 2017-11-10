@@ -100,8 +100,8 @@ public class ObjectMacroBack {
             String[] arguments)
             throws ParserException, LexerException {
 
-        // default target is java
-        String targetLanguage = "java";
+        // default target is java-constructor
+        String targetLanguage = "java-constructor";
 
         // default destination directory is current working directory
         File destinationDirectory = new File(System.getProperty("user.dir"));
@@ -126,10 +126,7 @@ public class ObjectMacroBack {
 
             case LIST_TARGETS:
                 System.out.println("Available targets:");
-                System.out.println(" java (default)");
-                System.out.println(" c");
-                System.out.println(" scala");
-                System.out.println(" intermediate");
+                System.out.println(" java-constructor (default)");
                 return;
 
             case TARGET:
@@ -179,7 +176,7 @@ public class ObjectMacroBack {
 
             case HELP:
                 System.out.println("Usage: objectmacro "
-                        + Option.getShortHelpMessage() + " file.objectmacro");
+                        + Option.getShortHelpMessage() + " file.intermediate");
                 System.out.println("Options:");
                 System.out.println(Option.getLongHelpMessage());
                 return;
@@ -205,7 +202,7 @@ public class ObjectMacroBack {
         // handle text arguments
         if (argumentCollection.getTextArguments().size() == 0) {
             System.out.println("Usage: objectmacro "
-                    + Option.getShortHelpMessage() + " file.objectmacro");
+                    + Option.getShortHelpMessage() + " file.intermediate");
             return;
         }
         else if (argumentCollection.getTextArguments().size() > 1) {
@@ -213,9 +210,7 @@ public class ObjectMacroBack {
         }
 
         // check target
-        if (!(targetLanguage.equals("java")
-                || targetLanguage.equals("intermediate")
-                || targetLanguage.equals("c") || targetLanguage.equals("scala"))) {
+        if (!(targetLanguage.equals("java-constructor"))) {
             throw CompilerException.unknownTarget(targetLanguage);
         }
 
@@ -224,6 +219,10 @@ public class ObjectMacroBack {
                 .get(0);
 
         File macroFile = new File(textArgument.getText());
+
+        if (!textArgument.getText().endsWith(".intermediate")) {
+            throw CompilerException.invalidSuffix(textArgument.getText());
+        }
 
         if (!macroFile.exists()) {
             throw CompilerException.missingMacroFile(textArgument.getText());
@@ -287,38 +286,29 @@ public class ObjectMacroBack {
         CodeGenerator codeGenerator = new JavaCodeGenerator(ir);
         codeGenerator.generateCode();
 
-//        if (targetLanguage.equals("java")) {
-//            codeGenerator = new JavaCodeGenerator(ir);
-//        }
-//        else if (targetLanguage.equals("intermediate")) {
-//            codeGenerator = new IntermediateCodeGenerator(ir);
-//        }
-//        else if (targetLanguage.equals("c")) {
-//            codeGenerator = new CCodeGenerator(ir);
-//        }
-//        else if (targetLanguage.equals("scala")) {
-//            codeGenerator = new ScalaCodeGenerator(ir);
-//        }
-//        else {
-//            throw new InternalException("unhandled case");
-//        }
-//
-//        switch (verbosity) {
-//        case VERBOSE:
-//            System.out.println(" Verifying target-specific semantics");
-//            break;
-//        }
-//
-//        codeGenerator.verifyTargetSpecificSemantics(strictness);
-//
-//        if (generateCode) {
-//            switch (verbosity) {
-//            case VERBOSE:
-//                System.out.println(" Generating code");
-//                break;
-//            }
-//
-//            codeGenerator.generateCode();
-//        }
+        if (targetLanguage.equals("java-constructor")) {
+            codeGenerator = new JavaCodeGenerator(ir);
+        }
+        else {
+            throw new InternalException("unhandled case");
+        }
+
+        switch (verbosity) {
+        case VERBOSE:
+            System.out.println(" Verifying target-specific semantics");
+            break;
+        }
+
+        codeGenerator.verifyTargetSpecificSemantics(strictness);
+
+        if (generateCode) {
+            switch (verbosity) {
+            case VERBOSE:
+                System.out.println(" Generating code");
+                break;
+            }
+
+            codeGenerator.generateCode();
+        }
     }
 }

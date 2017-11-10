@@ -1,6 +1,5 @@
 package org.sablecc.objectmacro.walker;
 
-import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.structure.GlobalIndex;
 import org.sablecc.objectmacro.structure.Macro;

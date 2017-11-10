@@ -22,7 +22,6 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.syntax3.node.*;
-import org.sablecc.util.*;
 
 public class GlobalIndex {
 
@@ -44,9 +43,8 @@ public class GlobalIndex {
 
         Macro firstMacro = getMacroOrNull(duplicateDeclaration);
         if (firstMacro != null) {
-            TIdentifier firstDeclaration = firstMacro.getNameDeclaration();
             throw CompilerException.duplicateDeclaration(duplicateDeclaration,
-                    firstDeclaration);
+                    firstMacro.getNameDeclaration());
         }
 
         Macro macro = new Macro(this, declaration);
@@ -64,9 +62,7 @@ public class GlobalIndex {
             throw new InternalException("identifier may not be null");
         }
 
-        String name = identifier.getText();
-
-        return this.macroMap.get(name);
+        return this.macroMap.get(identifier.getText());
     }
 
     public Macro getMacro(

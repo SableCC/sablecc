@@ -20,7 +20,6 @@ package org.sablecc.objectmacro.structure;
 import org.sablecc.exception.*;
 import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.syntax3.node.*;
-import org.sablecc.objectmacro.util.*;
 
 import java.util.*;
 
@@ -39,8 +38,6 @@ public class Param {
     private final Map<String, Directive> directives = new HashMap<>();
 
     private final Set<Directive> allDirectives = new LinkedHashSet<>();
-
-    private final Set<Param> indirectParamReferences = new LinkedHashSet<>();
 
     private boolean isUsed;
 
@@ -71,7 +68,7 @@ public class Param {
                     directive, this.directives.get(optionName).getDeclaration());
         }
 
-        Directive newDirective = new Directive(directive);
+        Directive newDirective = new Directive(directive, this);
         this.directives.put(
                 optionName, newDirective);
         this.allDirectives.add(newDirective);
@@ -110,60 +107,39 @@ public class Param {
         this.paramReferences.put(name, newParamRef);
     }
 
-    Param getParamReferenceOrNull(
-            TIdentifier paramName){
-
-        return this.paramReferences.get(paramName.getText());
-    }
-
-    public boolean references(
-            TIdentifier paramName){
-
-        return this.getParamReferenceOrNull(paramName) != null;
-    }
-
     public Set<Directive> getAllDirectives(){
-
         return this.allDirectives;
     }
 
     public Set<AMacroReference> getMacroReferences(){
-
         return this.macroReferences;
     }
 
     public TIdentifier getNameDeclaration() {
-
         return this.declaration.getName();
     }
 
     public String getName() {
-
         return this.declaration.getName().getText();
     }
 
     public AParam getDeclaration(){
-
         return this.declaration;
     }
 
     public boolean isUsed() {
-
         return this.isUsed;
     }
 
     void setUsed() {
-
         this.isUsed = true;
     }
 
     public boolean isString(){
-
         return this.isString;
     }
 
     void setString(){
-
         this.isString = true;
     }
 
@@ -177,14 +153,7 @@ public class Param {
         return Collections.unmodifiableSet(directlyParams);
     }
 
-    public Set<Param> getIndirectParamReferences(){
-
-        return this.indirectParamReferences;
-    }
-
-    void setIndirectParamReferences(
-            Set<Param> params){
-
-        this.indirectParamReferences.addAll(params);
+    public Macro getParent(){
+        return this.parent;
     }
 }

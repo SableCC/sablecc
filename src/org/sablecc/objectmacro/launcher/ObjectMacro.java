@@ -93,15 +93,6 @@ public class ObjectMacro {
             System.err.flush();
             System.exit(1);
         }
-        catch (Throwable e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            pw.flush();
-            System.err.print(new MInternalError(sw.toString(), e.getMessage()));
-            System.err.flush();
-            System.exit(1);
-        }
 
         // finish gracefully
         System.exit(0);
@@ -113,9 +104,6 @@ public class ObjectMacro {
     public static void compile(
             String[] arguments)
             throws ParserException, LexerException {
-
-        // default target is java
-        String targetLanguage = "java";
 
         // default destination directory is current working directory
         File destinationDirectory = new File(System.getProperty("user.dir"));
@@ -137,18 +125,6 @@ public class ObjectMacro {
                 .getOptionArguments()) {
 
             switch (optionArgument.getOption()) {
-
-            case LIST_TARGETS:
-                System.out.println("Available targets:");
-                System.out.println(" java (default)");
-                System.out.println(" c");
-                System.out.println(" scala");
-                System.out.println(" intermediate");
-                return;
-
-            case TARGET:
-                targetLanguage = optionArgument.getOperand();
-                break;
 
             case DESTINATION:
                 destinationDirectory = new File(optionArgument.getOperand());
@@ -226,13 +202,6 @@ public class ObjectMacro {
             throw CompilerException.invalidArgumentCount();
         }
 
-        // check target
-        if (!(targetLanguage.equals("java")
-                || targetLanguage.equals("intermediate")
-                || targetLanguage.equals("c") || targetLanguage.equals("scala"))) {
-            throw CompilerException.unknownTarget(targetLanguage);
-        }
-
         // check argument
         TextArgument textArgument = argumentCollection.getTextArguments()
                 .get(0);
@@ -251,7 +220,7 @@ public class ObjectMacro {
             throw CompilerException.macroNotFile(textArgument.getText());
         }
 
-        compile(macroFile, targetLanguage, destinationDirectory,
+        compile(macroFile, destinationDirectory,
                 destinationPackage, generateCode, strictness, verbosity);
     }
 
@@ -260,7 +229,6 @@ public class ObjectMacro {
      */
     private static void compile(
             File macroFile,
-            String targetLanguage,
             File destinationDirectory,
             String destinationPackage,
             boolean generateCode,
@@ -300,8 +268,10 @@ public class ObjectMacro {
 
         globalIndex = verifySemantics(ast, strictness, verbosity);
 
-        generateIntermediateFile(
-                verbosity, destinationDirectory, macroFile);
+        if(generateCode){
+            generateIntermediateFile(
+                    verbosity, destinationDirectory, macroFile);
+        }
 
     }
 
@@ -341,6 +311,7 @@ public class ObjectMacro {
             }
         }
 
+
         return globalIndex;
     }
 
@@ -358,11 +329,9 @@ public class ObjectMacro {
         StringBuilder macros_string = new StringBuilder();
 
         for (Macro macro : globalIndex.getAllMacros()) {
-
             MMacro macro_macro = createMacro(macro);
             macros_string.append(macro_macro.toString());
             macros_string.append(System.getProperty("line.separator"));
-
         }
 
         String macroFileName = macroFile.getName();
@@ -390,7 +359,6 @@ public class ObjectMacro {
         String macroNames[] = Utils.splitName(macro.getNameDeclaration());
         for(String part : macroNames){
             mMacro.newSimpleName(part);
-
         }
 
         Set<Param> macro_internals = macro.getAllInternals();
@@ -400,13 +368,11 @@ public class ObjectMacro {
         createMacroBody(mMacro, macroBodyParts);
 
         for(Param param : macro_params){
-
             createParam(
                     mMacro.newParam(), param);
         }
 
         for(Param internal : macro_internals){
-
             createInternal(
                     mMacro.newInternal(), internal);
         }
@@ -709,7 +675,6 @@ public class ObjectMacro {
                 String macroRefName[] = Utils.splitName(aVarStaticValue.getIdentifier());
                 for(String part : macroRefName){
                     mVarArgument.newSimpleName(part);
-
                 }
             }
             i++;

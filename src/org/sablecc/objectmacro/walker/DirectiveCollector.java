@@ -79,31 +79,4 @@ public class DirectiveCollector
 
         this.currentDirective = null;
     }
-
-    @Override
-    public void caseAVarStaticValue(
-            AVarStaticValue node) {
-
-        if(this.currentDirective == null){
-            return;
-        }
-
-        Param param = this.currentMacro.getParam(node.getIdentifier());
-        this.currentDirective.addReferencedParam(param);
-    }
-
-    @Override
-    public void caseAVarStringPart(
-            AVarStringPart node) {
-
-        if(this.currentDirective == null){
-            return;
-        }
-
-        String name = Utils.getVarName(node.getVariable());
-        TIdentifier varName = new TIdentifier(name);
-        Param param = this.currentMacro.getParam(varName);
-
-        this.currentDirective.addReferencedParam(param);
-    }
 }

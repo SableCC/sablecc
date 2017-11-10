@@ -82,7 +82,7 @@ public class CodeGenerationWalker
 
     private List<String> createdBuilders = new ArrayList<>();
 
-    private boolean isCurrentMacroPackageProtected = false;
+    private boolean currentMacroContainsInternals = false;
 
     private List<String> currentParameters = new ArrayList<>();
 
@@ -211,7 +211,6 @@ public class CodeGenerationWalker
             this.superMacro.newPackageDeclaration(destinationPackage);
             this.mInternalsInitializer.newPackageDeclaration(destinationPackage);
             this.mContext.newPackageDeclaration(destinationPackage);
-
         }
 
         this.superMacro.newImportJavaUtil();
@@ -263,16 +262,14 @@ public class CodeGenerationWalker
         }
 
         if (!this.ir.getDestinationPackage().equals("")) {
-
             this.currentMacro.newPackageDeclaration(this.ir.getDestinationPackage());
         }
 
-        this.currentConstructor
-                = this.currentMacro.newConstructor(macroName);
+        this.currentConstructor = this.currentMacro.newConstructor(macroName);
         this.currentMacroBuilder = this.currentMacro.newMacroBuilder();
 
         if(node.getInternals().size() > 0){
-            isCurrentMacroPackageProtected = true;
+            currentMacroContainsInternals = true;
             this.mInternalsInitializer.newParentInternalsSetter(macroName);
             this.currentMacro.newRedefinedApplyInitializer(macroName);
             this.currentMacroBuilder.newContextParam();
@@ -293,18 +290,15 @@ public class CodeGenerationWalker
         this.indexBuilder = 0;
 
         if(node.getType() instanceof AStringType){
-            this.currentMacro
-                    .newInternalStringField(paramName);
+            this.currentMacro.newInternalStringField(paramName);
             this.currentMacro.newInternalStringSetter(paramName);
+
             MParamStringRef mParamStringRef = this.currentMacro.newParamStringRef(paramName);
             mParamStringRef.newContextParam();
             mParamStringRef.newGetInternalTail();
-
         }
         else if(node.getType() instanceof AMacroRefsType){
-
-            this.currentMacro
-                    .newInternalMacroField(paramName);
+            this.currentMacro.newInternalMacroField(paramName);
             this.currentMacro.newContextField(paramName);
 
             this.currentParamMacroRef = this.currentMacro.newParamMacroRef(paramName, String.valueOf(this.indexBuilder));
@@ -352,13 +346,11 @@ public class CodeGenerationWalker
         String paramName = buildNameCamelCase(node.getNames());
 
         if(node.getType() instanceof AStringType){
-
             this.currentMacro.newParamStringField(paramName);
             this.currentMacro.newParamStringRef(paramName);
             this.currentMacro.newParamStringSetter(paramName);
 
             this.currentConstructor.newStringParam(paramName);
-
         }
         else if(node.getType() instanceof AMacroRefsType){
 
@@ -409,21 +401,27 @@ public class CodeGenerationWalker
             ADirective node) {
 
         String directive_name = buildName(node.getNames());
+        switch (directive_name) {
 
-        if(directive_name.equals(SEPARATOR_DIRECTIVE)){
-            this.currentSeparator = this.currentParamMacroRef.newSeparator();
-        }
-        else if(directive_name.equals(AFTER_LAST_DIRECTIVE)){
-            this.currentAfterLast = this.currentParamMacroRef.newAfterLast();
-        }
-        else if(directive_name.equals(BEFORE_FIRST_DIRECTIVE)){
-            this.currentBeforeFirst = this.currentParamMacroRef.newBeforeFirst();
-        }
-        else if(directive_name.equals(NONE_DIRECTIVE)){
-            this.currentNone = this.currentParamMacroRef.newNone();
-        }
-        else{
-            throw new InternalException("case unhandled");
+            case SEPARATOR_DIRECTIVE:
+                this.currentSeparator = this.currentParamMacroRef.newSeparator();
+                break;
+
+            case AFTER_LAST_DIRECTIVE:
+                this.currentAfterLast = this.currentParamMacroRef.newAfterLast();
+                break;
+
+            case BEFORE_FIRST_DIRECTIVE:
+                this.currentBeforeFirst = this.currentParamMacroRef
+                        .newBeforeFirst();
+                break;
+
+            case NONE_DIRECTIVE:
+                this.currentNone = this.currentParamMacroRef.newNone();
+                break;
+
+            default:
+                throw new InternalException("case unhandled");
         }
     }
 
@@ -443,13 +441,10 @@ public class CodeGenerationWalker
 
         this.currentMacroName = buildNameCamelCase(node.getNames());
 
-        if(this.currentContext == null){
-            return;
-        }
-
-        this.currentRedefinedInternalsSetter = this.currentApplyInitializer.newRedefinedInternalsSetter(
+        if(this.currentContext != null){
+            this.currentRedefinedInternalsSetter = this.currentApplyInitializer.newRedefinedInternalsSetter(
                     currentMacroName);
-
+        }
     }
 
     @Override
@@ -479,13 +474,13 @@ public class CodeGenerationWalker
 
             index_builder = getLetterFromInteger(this.indexBuilder);
 
+            //Avoid declaring stringbuilder of the same name
             if(this.createdBuilders.contains(index_builder)){
                 this.indexBuilder++;
                 index_builder = getLetterFromInteger(this.indexBuilder);
             }
 
             this.currentInsertMacroPart.newInitStringBuilder(index_builder);
-
             this.currentInsertMacroPart.newSetInternal(
                     INSERT_VAR_NAME.concat(String.valueOf(this.indexInsert)),
                     buildNameCamelCase(node.getParamName()),
@@ -523,18 +518,18 @@ public class CodeGenerationWalker
                 this.currentNone.newStringPart(
                         string,
                         index_builder);
-
-            }else if(this.currentBeforeFirst != null){
+            }
+            else if(this.currentBeforeFirst != null){
                 this.currentBeforeFirst.newStringPart(
                         string,
                         index_builder);
-
-            }else if(this.currentAfterLast != null){
+            }
+            else if(this.currentAfterLast != null){
                 this.currentAfterLast.newStringPart(
                         string,
                         index_builder);
-
-            }else if(this.currentSeparator != null){
+            }
+            else if(this.currentSeparator != null){
                 this.currentSeparator.newStringPart(
                         string,
                         index_builder);
@@ -569,18 +564,18 @@ public class CodeGenerationWalker
                 this.currentNone.newParamInsertPart(
                         param_name,
                         index_builder);
-
-            }else if(this.currentBeforeFirst != null){
+            }
+            else if(this.currentBeforeFirst != null){
                 this.currentBeforeFirst.newParamInsertPart(
                         param_name,
                         index_builder);
-
-            }else if(this.currentAfterLast != null){
+            }
+            else if(this.currentAfterLast != null){
                 this.currentAfterLast.newParamInsertPart(
                         param_name,
                         index_builder);
-
-            }else if(this.currentSeparator != null){
+            }
+            else if(this.currentSeparator != null){
                 this.currentSeparator.newParamInsertPart(
                         param_name,
                         index_builder);
@@ -729,7 +724,7 @@ public class CodeGenerationWalker
         this.contextNames = null;
         this.currentMacro = null;
         this.currentConstructor = null;
-        this.isCurrentMacroPackageProtected = false;
+        this.currentMacroContainsInternals = false;
         this.currentParameters.clear();
     }
 
@@ -777,7 +772,7 @@ public class CodeGenerationWalker
                     buildNameCamelCase(node.getNames()),
                     String.valueOf(indexBuilder));
 
-        if(this.isCurrentMacroPackageProtected){
+        if(this.currentMacroContainsInternals){
             mParamInsertPart.newContextArg();
         }
     }

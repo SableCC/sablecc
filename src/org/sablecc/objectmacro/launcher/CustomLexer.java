@@ -21,6 +21,7 @@ import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.syntax3.lexer.*;
 import org.sablecc.objectmacro.syntax3.node.*;
 
@@ -40,33 +41,30 @@ public class CustomLexer
             LexerException, IOException {
 
         if(this.token instanceof TDquote){
-
             if(this.state != State.STRING){
-
                 this.states.add(this.state);
                 this.state = State.STRING;
                 this.textDepth++;
             }
-            else if(
-                    this.textDepth > 0
+            else if(this.textDepth > 0
                             && this.state == State.STRING){
 
                 this.textDepth--;
                 this.state = getLastState();
             }
-        }else if(this.token instanceof TInsertCommand){
-
+        }
+        else if(this.token instanceof TInsertCommand){
             if(this.state != State.COMMAND){
-
                 this.states.add(this.state);
                 this.state = State.COMMAND;
             }
-        }else if(this.token instanceof TRBrace){
+        }
+        else if(this.token instanceof TRBrace){
 
             if(this.states.size() == 0){
-                //ERROR
-                return;
-            }else{
+                throw new InternalException("There must be at least one state.");
+            }
+            else{
                 this.state = getLastState();
             }
         }
