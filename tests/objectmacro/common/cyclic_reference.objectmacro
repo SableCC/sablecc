@@ -1,0 +1,27 @@
+Macro a
+    Param
+        x : c(k);
+        y : b("a {x}");
+        k : b("b {y}");
+{Begin}
+{x}
+{y}
+{k}
+{End}
+
+Macro b
+    Internal
+        i : String;
+{Begin}
+{i}
+{End}
+
+Macro c
+    Param
+        zzz : c(l);
+    Internal
+        l : b("a {zzz}");
+{Begin}
+{zzz}e
+{l}
+{End}
