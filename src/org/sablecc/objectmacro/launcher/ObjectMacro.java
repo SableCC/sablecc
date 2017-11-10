@@ -326,8 +326,14 @@ public class ObjectMacro {
         ast.apply(new CyclicDetector(globalIndex));
 
         if (strictness == Strictness.STRICT) {
+
+        if(strictness == Strictness.STRICT){
             for (Macro macro : globalIndex.getAllMacros()) {
-                for (Param param : macro.getAllParams()) {
+                Set<Param> allParamsInternals = new LinkedHashSet<>();
+                allParamsInternals.addAll(macro.getAllInternals());
+                allParamsInternals.addAll(macro.getAllParams());
+
+                for (Param param : allParamsInternals) {
                     if (!param.isUsed()) {
                         throw CompilerException.unusedParam(param);
                     }
