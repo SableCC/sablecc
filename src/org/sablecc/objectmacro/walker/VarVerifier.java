@@ -61,9 +61,16 @@ public class VarVerifier
 
         Macro referencedMacro = this.globalIndex.getMacro(node.getName());
 
-        this.paramsList = new Param[referencedMacro.getAllInternals().size()];
+        int internalsSize = referencedMacro.getAllInternals().size();
+        if(node.getValues().size() != internalsSize){
+            throw CompilerException.incorrectArgumentCount(node, referencedMacro);
+        }
+
+        this.paramsList = new Param[internalsSize];
         referencedMacro.getAllInternals().toArray(this.paramsList);
         this.currentIndex = 0;
+
+
     }
 
     @Override
@@ -75,7 +82,6 @@ public class VarVerifier
 
         //The internal corresponding to currentIndex must be of type String here
         if(!currentParam.isString()){
-
             throw CompilerException.incorrectArgumentType("Macro", "String",
                     macroReference.getName().getLine(), macroReference.getName().getPos());
         }
@@ -118,7 +124,6 @@ public class VarVerifier
         }
 
         if(!expectedMacrosType.containsAll(providedMacrosType)){
-
             throw CompilerException.incorrectMacroType(
                     expectedMacrosType,
                     providedMacrosType, currentIndex, node.getIdentifier());
