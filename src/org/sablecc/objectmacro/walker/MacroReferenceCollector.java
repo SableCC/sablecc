@@ -52,7 +52,7 @@ public class MacroReferenceCollector
     }
 
     @Override
-    public void inAInsertMacroBodyPart(
+    public void caseAInsertMacroBodyPart(
             AInsertMacroBodyPart node) {
 
         //Call to verify if the macro exist
@@ -61,12 +61,19 @@ public class MacroReferenceCollector
     }
 
     @Override
-    public void inAInsertStringPart(
+    public void caseAInsertStringPart(
             AInsertStringPart node) {
 
         //Call to verify if the macro exist
         AMacroReference macroReference = (AMacroReference) node.getMacro();
         this.globalIndex.getMacro(macroReference.getName());
+
+        Param tempParam = this.currentParam;
+        this.currentParam = null;
+
+        node.getMacro().apply(this);
+
+        this.currentParam = tempParam;
     }
 
     @Override
