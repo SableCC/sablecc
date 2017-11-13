@@ -142,4 +142,14 @@ public class VarVerifier
                                     node.getVariable().getLine(), node.getVariable().getPos()));
 
     }
+
+    @Override
+    public void caseAVarStringPart(
+            AVarStringPart node) {
+
+        this.currentMacro.setParamUsed(
+                new TIdentifier(Utils.getVarName(
+                                    node.getVariable()),
+                                    node.getVariable().getLine(), node.getVariable().getPos()));
+    }
 }
