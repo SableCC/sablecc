@@ -78,15 +78,14 @@ public class VarVerifier
             AStringStaticValue node) {
 
         Param currentParam = this.paramsList[this.currentIndex++];
-        AMacroReference macroReference = (AMacroReference) node.parent();
 
         //The internal corresponding to currentIndex must be of type String here
         if(!currentParam.isString()){
             throw CompilerException.incorrectArgumentType("Macro", "String",
-                    macroReference.getName().getLine(), macroReference.getName().getPos());
+                    node.getLDquote().getLine(), node.getLDquote().getPos());
         }
 
-        //Apply to each part in case of insert
+        //Apply to each part in case of another insert inside the string
         Integer tempIndex = this.currentIndex;
         Param tempParams[] = this.paramsList;
 

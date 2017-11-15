@@ -263,7 +263,7 @@ Productions
   directive
     =
       comma identifier assign string
-        {-> New directive(identifier, [string.string])}
+        {-> New directive(identifier, string.dquote, [string.string])}
     ;
 
   macro_reference
@@ -277,7 +277,7 @@ Productions
       {var} identifier
     |
       {string} string
-        {-> New static_value.string([string.string])}
+        {-> New static_value.string(string.dquote, [string.string])}
     ;
 
   type
@@ -316,10 +316,10 @@ Productions
         {-> static_value};
 
   string
-        {-> [string]:string_part*}
+        {-> dquote [string]:string_part*}
     =
       [l_dquote]:dquote [parts]:string_part* [r_dquote]:dquote
-        {-> [parts.string_part]}
+        {-> l_dquote [parts.string_part]}
     ;
 
   string_part
@@ -356,14 +356,14 @@ Abstract Syntax Tree
       [name]:identifier type [directives]:directive*;
 
   directive =
-      [name]:identifier [parts]:string_part*;
+      [name]:identifier [l_dquote]:dquote [parts]:string_part*;
 
   macro_reference =
       [name]:identifier [values]:static_value*;
 
   static_value =
       {var} identifier |
-      {string} [parts]:string_part*;
+      {string} [l_dquote]:dquote [parts]:string_part*;
 
   type =
       {string} string_kw |
@@ -371,9 +371,6 @@ Abstract Syntax Tree
 
   call =
       [static_values]:static_value+;
-
-  string =
-    [parts]:string_part*;
 
   string_part =
       {insert} [macro]:macro_reference |
