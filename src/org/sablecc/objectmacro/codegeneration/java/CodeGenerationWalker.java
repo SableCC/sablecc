@@ -300,7 +300,6 @@ public class CodeGenerationWalker
             AInternal node) {
 
         String paramName = buildNameCamelCase(node.getNames());
-        this.indexBuilder = 0;
 
         if(node.getType() instanceof AStringType){
             this.currentMacroToBuild.newInternalStringField(paramName);
@@ -359,7 +358,7 @@ public class CodeGenerationWalker
         this.indexBuilder = 0;
         this.indexInsert = 0;
         this.currentParamMacroRefBuilder = null;
-        this.createdBuilders.clear();
+        this.createdBuilders = new ArrayList<>();
     }
 
     @Override
@@ -420,7 +419,7 @@ public class CodeGenerationWalker
         this.currentApplyInitializer = null;
         this.indexBuilder = 0;
         this.indexInsert = 0;
-        this.createdBuilders.clear();
+        this.createdBuilders = new ArrayList<>();
         this.currentParamMacroRefBuilder = null;
     }
 
@@ -503,7 +502,7 @@ public class CodeGenerationWalker
             index_builder = getLetterFromInteger(this.indexBuilder);
 
             //Avoid declaring stringbuilder of the same name
-            if(this.createdBuilders.contains(index_builder)){
+            while(this.createdBuilders.contains(index_builder)){
                 this.indexBuilder++;
                 index_builder = getLetterFromInteger(this.indexBuilder);
             }
@@ -665,11 +664,14 @@ public class CodeGenerationWalker
 
         }else{
             if(tempInsertMacroPart != null){
+                index_builder = getLetterFromInteger(this.indexBuilder);
+
                 this.currentInsertMacroPart =
                         tempInsertMacroPart.newInsertMacroPart(
                                 macro_name,
                                 index_builder,
                                 index_insert);
+
             }
             else if(this.currentNone != null){
                 this.currentInsertMacroPart =
