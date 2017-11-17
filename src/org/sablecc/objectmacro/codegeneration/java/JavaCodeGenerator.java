@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.sablecc.objectmacro.codegeneration.*;
-import org.sablecc.objectmacro.codegeneration.java.macro.MMacro;
+import org.sablecc.objectmacro.codegeneration.java.structure.Macro;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.util.*;
 
@@ -73,7 +73,7 @@ public class JavaCodeGenerator
             }
         }
 
-        Map<String, MMacro> macros = new LinkedHashMap<>();
+        Map<String, Macro> macros = new LinkedHashMap<>();
 
         MacroCollector macroCollector = new MacroCollector(macros);
         getIr().getAST().apply(macroCollector);

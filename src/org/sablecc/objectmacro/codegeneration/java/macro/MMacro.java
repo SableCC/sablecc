@@ -14,6 +14,7 @@ public class MMacro {
   private final List<Object> eContextField = new LinkedList<Object>();
   private final List<Object> eConstructor = new LinkedList<Object>();
   private final List<Object> eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter = new LinkedList<Object>();
+  private final List<Object> eParamStringRefBuilder_ParamMacroRefBuilder = new LinkedList<Object>();
   private final List<Object> eParamStringRef_ParamMacroRef = new LinkedList<Object>();
   private final List<Object> eRedefinedApplyInitializer = new LinkedList<Object>();
   private final List<Object> eMacroBuilder = new LinkedList<Object>();
@@ -95,14 +96,26 @@ public class MMacro {
     return lInternalMacroSetter;
   }
 
+  public MParamStringRefBuilder newParamStringRefBuilder(String pName) {
+    MParamStringRefBuilder lParamStringRefBuilder = new MParamStringRefBuilder(pName);
+    this.eParamStringRefBuilder_ParamMacroRefBuilder.add(lParamStringRefBuilder);
+    return lParamStringRefBuilder;
+  }
+
+  public MParamMacroRefBuilder newParamMacroRefBuilder(String pName, String pIndexBuilder) {
+    MParamMacroRefBuilder lParamMacroRefBuilder = new MParamMacroRefBuilder(pName, pIndexBuilder);
+    this.eParamStringRefBuilder_ParamMacroRefBuilder.add(lParamMacroRefBuilder);
+    return lParamMacroRefBuilder;
+  }
+
   public MParamStringRef newParamStringRef(String pName) {
     MParamStringRef lParamStringRef = new MParamStringRef(pName);
     this.eParamStringRef_ParamMacroRef.add(lParamStringRef);
     return lParamStringRef;
   }
 
-  public MParamMacroRef newParamMacroRef(String pName, String pIndexBuilder) {
-    MParamMacroRef lParamMacroRef = new MParamMacroRef(pName, pIndexBuilder);
+  public MParamMacroRef newParamMacroRef(String pName) {
+    MParamMacroRef lParamMacroRef = new MParamMacroRef(pName);
     this.eParamStringRef_ParamMacroRef.add(lParamMacroRef);
     return lParamMacroRef;
   }
@@ -188,6 +201,21 @@ public class MMacro {
           sb.append(System.getProperty("line.separator"));
         }
         sb.append(oParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.toString());
+      }
+    }
+    if(this.eParamStringRefBuilder_ParamMacroRefBuilder.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
+    {
+      boolean first = true;
+      for(Object oParamStringRefBuilder_ParamMacroRefBuilder : this.eParamStringRefBuilder_ParamMacroRefBuilder) {
+        if(first) {
+          first = false;
+        }
+        else {
+          sb.append(System.getProperty("line.separator"));
+        }
+        sb.append(oParamStringRefBuilder_ParamMacroRefBuilder.toString());
       }
     }
     if(this.eParamStringRef_ParamMacroRef.size() > 0) {

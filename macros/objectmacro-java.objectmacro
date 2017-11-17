@@ -121,6 +121,7 @@ $expand: param_macro_field, param_string_field, internal_macro_field, internal_s
 $expand: context_field, before_first="\n" $
 $expand: constructor, before_first="\n" $
 $expand: param_string_setter, param_macro_setter, internal_string_setter, internal_macro_setter, before_first="\n", separator="\n" $
+$expand: param_string_ref_builder, param_macro_ref_builder, separator="\n", before_first="\n" $
 $expand: param_string_ref, param_macro_ref, separator="\n", before_first="\n" $
 
 $expand: redefined_apply_initializer $
@@ -302,19 +303,19 @@ $comment: ========== apply_internals_initializer ======= $
 
 $macro: apply_internals_initializer(param_name) $
 macro.apply(new InternalsInitializer("$param_name"){
-    $expand: redefined_internals_setter $
+$expand: redefined_internals_setter $
 });
 $end: apply_internals_initializer $
 
 $comment: ========== redefined_internals_setter ========= $
 
 $macro: redefined_internals_setter(name) $
-    @Override
-    void set$name(M$name m$name){
+@Override
+void set$name(M$name m$name){
 
-        $expand: init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part, separator="\n" $
-        $expand: set_internal $
-    }
+    $expand: init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part, separator="\n" $
+    $expand: set_internal $
+}
 $end: redefined_internals_setter $
 
 $comment: ========== string_value ======== $
@@ -383,7 +384,7 @@ $end: insert_macro_part $
 $comment: ========== set_internal ================== $
 
 $macro: set_internal(macro_name, param_name, context)   $
-        m$macro_name.set$param_name($context, $expand: macro_arg, string_builder_build $);
+        m$macro_name.set$param_name($context, $expand: param_ref, string_builder_build $);
 $end: set_internal $
 
 $comment: ========== string_builder_build ========== $
@@ -392,11 +393,10 @@ $macro: string_builder_build(index_builder) $
 sb$index_builder.toString()$no_eol$
 $end: string_builder_build $
 
-$comment: ========== param_macro_ref ================== $
+$comment: ========== param_macro_ref_builder ================== $
 
-$macro: param_macro_ref(name, index_builder) $
-    private String build$name(
-            $expand: context_param $){
+$macro: param_macro_ref_builder(name, index_builder) $
+    private String build$name($expand: context_param $){
 
         StringBuilder sb$index_builder = new StringBuilder();
         Context local_context = $expand: context_name, none="context"$;
@@ -417,7 +417,40 @@ $macro: param_macro_ref(name, index_builder) $
 
         return sb$index_builder.toString();
     }
+$end: param_macro_ref_builder $
+
+$comment: =========== param_string_ref_builder ============= $
+
+$macro: param_string_ref_builder(name) $
+    private String build$name($expand: context_param$){
+
+        return this.field_$(name)$expand: get_internal_tail $;
+    }
+$end: param_string_ref_builder $
+
+$comment: ========== param_macro_ref ============== $
+
+$macro: param_macro_ref(name) $
+    private Macro[] get$name($expand: context_param $){
+
+        return this.list_$(name)$expand: get_internal_tail $;
+    }
 $end: param_macro_ref $
+
+$comment: ========== param_string_ref ============== $
+
+$macro: param_string_ref(name) $
+    private String get$name($expand: context_param $){
+
+        return this.field_$(name)$expand: get_internal_tail $;
+    }
+$end: param_string_ref $
+
+$comment: =========== param_ref =========== $
+
+$macro: param_ref(name) $
+get$name($expand: context_arg, context_name$)$no_eol$
+$end: param_ref $
 
 $comment: =========== context_name ============= $
 
@@ -461,16 +494,6 @@ else {
 }
 $end: separator $
 
-$comment: =========== param_string_ref ============= $
-
-$macro: param_string_ref(name) $
-    private String build$name(
-            $expand: context_param$){
-
-        return this.field_$(name)$expand: get_internal_tail $;
-    }
-$end: param_string_ref $
-
 $comment: =========== get_internal_tail ============ $
 
 $macro: get_internal_tail $
@@ -500,7 +523,7 @@ $end: context_arg $
 $comment: ========= internal_string_setter ========= $
 
 $macro: internal_string_setter(name) $
-    public void set$name(
+    void set$name(
             Context context,
             String value) {
 
@@ -524,7 +547,11 @@ $macro: init_string_internal(name) $
     this.field_$name = new LinkedHashMap<>();
 $end: init_string_internal $
 
-$comment: ============ EXCEPTIONS ============ $
+$comment$
+=========================================================
+=====================  EXCEPTIONS =======================
+=========================================================
+$end$
 
 $comment: ============ object_macro_exception =========== $
 

@@ -23,7 +23,7 @@ public class MInternalStringSetter {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    public void set");
+    sb.append("    void set");
     sb.append(rName());
     sb.append("(");
     sb.append(System.getProperty("line.separator"));

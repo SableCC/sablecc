@@ -36,7 +36,6 @@ public class MApplyInternalsInitializer {
     sb.append(rParamName());
     sb.append("\"){");
     sb.append(System.getProperty("line.separator"));
-    sb.append("    ");
     for(Object oRedefinedInternalsSetter : this.eRedefinedInternalsSetter) {
       sb.append(oRedefinedInternalsSetter.toString());
     }

@@ -63,9 +63,9 @@ public class MRedefinedInternalsSetter {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    @Override");
+    sb.append("@Override");
     sb.append(System.getProperty("line.separator"));
-    sb.append("    void set");
+    sb.append("void set");
     sb.append(rName());
     sb.append("(M");
     sb.append(rName());
@@ -74,7 +74,7 @@ public class MRedefinedInternalsSetter {
     sb.append("){");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("        ");
+    sb.append("    ");
     {
       boolean first = true;
       for(Object oInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart : this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart) {
@@ -87,11 +87,11 @@ public class MRedefinedInternalsSetter {
         sb.append(oInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.toString());
       }
     }
-    sb.append("        ");
+    sb.append("    ");
     for(Object oSetInternal : this.eSetInternal) {
       sb.append(oSetInternal.toString());
     }
-    sb.append("    }");
+    sb.append("}");
     sb.append(System.getProperty("line.separator"));
     return sb.toString();
   }

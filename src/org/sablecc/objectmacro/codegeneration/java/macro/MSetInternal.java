@@ -10,7 +10,7 @@ public class MSetInternal {
   private final String pParamName;
   private final String pContext;
   private final MSetInternal mSetInternal = this;
-  private final List<Object> eMacroArg_StringBuilderBuild = new LinkedList<Object>();
+  private final List<Object> eParamRef_StringBuilderBuild = new LinkedList<Object>();
 
   public MSetInternal(String pMacroName, String pParamName, String pContext) {
     if(pMacroName == null) throw new NullPointerException();
@@ -21,15 +21,15 @@ public class MSetInternal {
     this.pContext = pContext;
   }
 
-  public MMacroArg newMacroArg(String pName) {
-    MMacroArg lMacroArg = new MMacroArg(pName);
-    this.eMacroArg_StringBuilderBuild.add(lMacroArg);
-    return lMacroArg;
+  public MParamRef newParamRef(String pName) {
+    MParamRef lParamRef = new MParamRef(pName);
+    this.eParamRef_StringBuilderBuild.add(lParamRef);
+    return lParamRef;
   }
 
   public MStringBuilderBuild newStringBuilderBuild(String pIndexBuilder) {
     MStringBuilderBuild lStringBuilderBuild = new MStringBuilderBuild(pIndexBuilder);
-    this.eMacroArg_StringBuilderBuild.add(lStringBuilderBuild);
+    this.eParamRef_StringBuilderBuild.add(lStringBuilderBuild);
     return lStringBuilderBuild;
   }
 
@@ -67,8 +67,8 @@ public class MSetInternal {
     sb.append("(");
     sb.append(rContext());
     sb.append(", ");
-    for(Object oMacroArg_StringBuilderBuild : this.eMacroArg_StringBuilderBuild) {
-      sb.append(oMacroArg_StringBuilderBuild.toString());
+    for(Object oParamRef_StringBuilderBuild : this.eParamRef_StringBuilderBuild) {
+      sb.append(oParamRef_StringBuilderBuild.toString());
     }
     sb.append(");");
     sb.append(System.getProperty("line.separator"));

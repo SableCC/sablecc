@@ -4,14 +4,14 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MParamMacroRef {
+public class MParamStringRefBuilder {
 
   private final String pName;
-  private final MParamMacroRef mParamMacroRef = this;
+  private final MParamStringRefBuilder mParamStringRefBuilder = this;
   private final List<Object> eContextParam = new LinkedList<Object>();
   private final List<Object> eGetInternalTail = new LinkedList<Object>();
 
-  public MParamMacroRef(String pName) {
+  public MParamStringRefBuilder(String pName) {
     if(pName == null) throw new NullPointerException();
     this.pName = pName;
   }
@@ -33,13 +33,13 @@ public class MParamMacroRef {
   }
 
   private String rName() {
-    return this.mParamMacroRef.pName();
+    return this.mParamStringRefBuilder.pName();
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    private Macro[] get");
+    sb.append("    private String build");
     sb.append(rName());
     sb.append("(");
     for(Object oContextParam : this.eContextParam) {
@@ -48,7 +48,7 @@ public class MParamMacroRef {
     sb.append("){");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("        return this.list_");
+    sb.append("        return this.field_");
     sb.append(rName());
     for(Object oGetInternalTail : this.eGetInternalTail) {
       sb.append(oGetInternalTail.toString());

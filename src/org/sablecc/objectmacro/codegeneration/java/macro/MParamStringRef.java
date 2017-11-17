@@ -39,11 +39,9 @@ public class MParamStringRef {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    private String build");
+    sb.append("    private String get");
     sb.append(rName());
     sb.append("(");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            ");
     for(Object oContextParam : this.eContextParam) {
       sb.append(oContextParam.toString());
     }
