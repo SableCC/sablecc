@@ -16,6 +16,7 @@
  */
 package org.sablecc.objectmacro.walker;
 
+import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.structure.GlobalIndex;
 import org.sablecc.objectmacro.structure.Macro;
@@ -55,9 +56,12 @@ public class MacroReferenceCollector
     public void caseAInsertMacroBodyPart(
             AInsertMacroBodyPart node) {
 
-        //Call to verify if the macro exist
         AMacroReference macroReference = (AMacroReference) node.getMacroReference();
-        this.globalIndex.getMacro(macroReference.getName());
+        if(!this.globalIndex.getMacro(macroReference.getName())
+                .getAllParams().isEmpty()){
+
+            throw CompilerException.invalidInsert(macroReference.getName());
+        }
     }
 
     @Override

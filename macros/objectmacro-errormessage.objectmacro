@@ -417,3 +417,13 @@ Line : $line
 Char : $char
 You provided a wrong argument type at index $index. (expected : $expected, found : $found)
 $end: incorrect_macro_type $
+
+$comment: ========== invalid_insert ========== $
+
+$macro: invalid_insert(line, char, name) $
+$insert: semantic_error_head $
+
+Line : $line
+Char : $char
+Macro '$name' cannot be inserted because '$name' does not only have internals.
+$end: invalid_insert $

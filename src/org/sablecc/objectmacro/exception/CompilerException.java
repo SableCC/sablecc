@@ -355,4 +355,13 @@ public class CompilerException
                         String.valueOf(index), String.valueOf(parameter_name.getLine()),
                         String.valueOf(parameter_name.getPos())).toString());
     }
+
+    public static CompilerException invalidInsert(
+            Token name){
+
+        String line = String.valueOf(name.getLine());
+        String pos = String.valueOf(name.getPos());
+
+        return new CompilerException(new MInvalidInsert(line, pos, name.getText()).toString());
+    }
 }
