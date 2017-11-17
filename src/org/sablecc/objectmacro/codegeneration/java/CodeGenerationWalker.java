@@ -31,6 +31,7 @@ import org.sablecc.objectmacro.codegeneration.java.structure.Macro;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.*;
 import org.sablecc.objectmacro.intermediate.syntax3.node.*;
+import org.sablecc.objectmacro.syntax3.node.PStringPart;
 import org.sablecc.objectmacro.util.Utils;
 
 public class CodeGenerationWalker
@@ -482,7 +483,7 @@ public class CodeGenerationWalker
     }
 
     @Override
-    public void inAStringValue(
+    public void caseAStringValue(
             AStringValue node) {
 
         this.indexBuilder++;
@@ -496,6 +497,10 @@ public class CodeGenerationWalker
                     this.currentMacroName,
                     buildNameCamelCase(node.getParamName()),
                     this.currentContext).newStringBuilderBuild(index_builder);
+
+            for(PTextPart part : node.getParts()){
+                part.apply(this);
+            }
         }
         else{
 
@@ -508,12 +513,24 @@ public class CodeGenerationWalker
             }
 
             this.currentInsertMacroPart.newInitStringBuilder(index_builder);
+            this.createdBuilders.add(index_builder);
+
+            //To avoid modification on indexes
+            Integer tempIndexBuilder = this.indexBuilder;
+            Integer tempIndexInsert = this.indexInsert;
+
+            for(PTextPart part : node.getParts()){
+                part.apply(this);
+            }
+
+            this.indexBuilder = tempIndexBuilder;
+            this.indexInsert = tempIndexInsert;
+
             this.currentInsertMacroPart.newSetInternal(
                     INSERT_VAR_NAME.concat(String.valueOf(this.indexInsert)),
                     buildNameCamelCase(node.getParamName()),
                     "null").newStringBuilderBuild(index_builder);
 
-            this.createdBuilders.add(index_builder);
         }
     }
 
@@ -702,11 +719,13 @@ public class CodeGenerationWalker
         String tempContext = this.currentContext;
         String tempMacroName = this.currentMacroName;
         Integer tempIndex = this.indexBuilder;
+        Integer tempIndexInsert = this.indexInsert;
         this.currentContext = null;
 
         node.getMacroRef().apply(this);
 
         this.indexBuilder = tempIndex;
+        this.indexInsert = tempIndexInsert;
         this.currentContext = tempContext;
         this.currentMacroName = tempMacroName;
         this.currentInsertMacroPart = tempInsertMacroPart;
@@ -785,9 +804,11 @@ public class CodeGenerationWalker
                         macro_name, String.valueOf(indexBuilder), String.valueOf(indexInsert));
 
         Integer tempIndexBuilder = this.indexBuilder;
+        Integer tempIndexInsert = this.indexInsert;
 
         node.getMacroRef().apply(this);
 
+        this.indexInsert = tempIndexInsert;
         this.indexBuilder = tempIndexBuilder;
         this.currentInsertMacroPart = null;
     }
