@@ -120,10 +120,16 @@ public class CompilerException
         return new CompilerException(new MInvalidArgumentCount().toString());
     }
 
-    public static CompilerException invalidSuffix(
+    public static CompilerException invalidObjectmacroSuffix(
             String fileName) {
 
-        return new CompilerException(new MInvalidSuffix(fileName).toString());
+        return new CompilerException(new MInvalidObjectmacroSuffix(fileName).toString());
+    }
+
+    public static CompilerException invalidIntermediateSuffix(
+            String fileName) {
+
+        return new CompilerException(new MInvalidIntermediateSuffix(fileName).toString());
     }
 
     public static CompilerException missingMacroFile(

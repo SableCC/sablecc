@@ -207,7 +207,7 @@ public class ObjectMacro {
                 .get(0);
 
         if (!textArgument.getText().endsWith(".objectmacro")) {
-            throw CompilerException.invalidSuffix(textArgument.getText());
+            throw CompilerException.invalidObjectmacroSuffix(textArgument.getText());
         }
 
         File macroFile = new File(textArgument.getText());

@@ -172,15 +172,25 @@ A single macro file must be provided.
 $insert: command_line_error_tail $
 $end: invalid_argument_count $
 
-$comment: ========== invalid_suffix ========== $
+$comment: ========== invalid_objectmacro_suffix ========== $
 
-$macro: invalid_suffix(file_name) $
+$macro: invalid_objectmacro_suffix(file_name) $
 $insert: command_line_error_head $
 
 The macro file, "$file_name", does not have a .objectmacro suffix.
 
 $insert: command_line_error_tail $
-$end: invalid_suffix $
+$end: invalid_objectmacro_suffix $
+
+$comment: ========== invalid_intermediate_suffix ========== $
+
+$macro: invalid_intermediate_suffix(file_name) $
+$insert: command_line_error_head $
+
+The macro file, "$file_name", does not have a .intermediate suffix.
+
+$insert: command_line_error_tail $
+$end: invalid_intermediate_suffix $
 
 $comment: ========== missing_macro_file ========== $
 

@@ -170,12 +170,12 @@ public class ObjectMacroBack {
                 break;
 
             case VERSION:
-                System.out.println("ObjectMacroBack, part of SableCC version "
+                System.out.println("ObjectMacro-back, part of SableCC version "
                         + Version.VERSION);
                 return;
 
             case HELP:
-                System.out.println("Usage: objectmacro "
+                System.out.println("Usage: objectmacro backend "
                         + Option.getShortHelpMessage() + " file.intermediate");
                 System.out.println("Options:");
                 System.out.println(Option.getLongHelpMessage());
@@ -221,7 +221,7 @@ public class ObjectMacroBack {
         File macroFile = new File(textArgument.getText());
 
         if (!textArgument.getText().endsWith(".intermediate")) {
-            throw CompilerException.invalidSuffix(textArgument.getText());
+            throw CompilerException.invalidIntermediateSuffix(textArgument.getText());
         }
 
         if (!macroFile.exists()) {
