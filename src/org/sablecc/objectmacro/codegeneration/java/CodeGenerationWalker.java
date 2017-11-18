@@ -293,6 +293,7 @@ public class CodeGenerationWalker
         }
         else{
             this.currentMacroBuilder.newPublic();
+            this.currentMacroToBuild.newEmptyBuilderWithContext();
         }
     }
 

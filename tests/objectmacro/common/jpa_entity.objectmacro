@@ -30,6 +30,7 @@ Macro entity
         accessors : setter, getter, separator="\n";
 {Begin}
 {package}
+
 @Entity
 {Insert: annotation_table(name)}
 public class {name} {
@@ -59,7 +60,7 @@ Macro attribute
     Param
         name : String;
         type : String;
-        id : primary_key, id_incrementation_strategy;
+        id : primary_key, id_incrementation_strategy, separator="\n";
         not_null : not_null;
 {Begin}
 {id}

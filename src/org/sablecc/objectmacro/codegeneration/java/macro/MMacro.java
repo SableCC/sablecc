@@ -18,6 +18,7 @@ public class MMacro {
   private final List<Object> eParamStringRef_ParamMacroRef = new LinkedList<Object>();
   private final List<Object> eRedefinedApplyInitializer = new LinkedList<Object>();
   private final List<Object> eMacroBuilder = new LinkedList<Object>();
+  private final List<Object> eEmptyBuilderWithContext = new LinkedList<Object>();
 
   public MMacro(String pName) {
     if(pName == null) throw new NullPointerException();
@@ -132,6 +133,12 @@ public class MMacro {
     return lMacroBuilder;
   }
 
+  public MEmptyBuilderWithContext newEmptyBuilderWithContext() {
+    MEmptyBuilderWithContext lEmptyBuilderWithContext = new MEmptyBuilderWithContext();
+    this.eEmptyBuilderWithContext.add(lEmptyBuilderWithContext);
+    return lEmptyBuilderWithContext;
+  }
+
   String pName() {
     return this.pName;
   }
@@ -243,7 +250,12 @@ public class MMacro {
     for(Object oMacroBuilder : this.eMacroBuilder) {
       sb.append(oMacroBuilder.toString());
     }
-    sb.append(System.getProperty("line.separator"));
+    if(this.eEmptyBuilderWithContext.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
+    for(Object oEmptyBuilderWithContext : this.eEmptyBuilderWithContext) {
+      sb.append(oEmptyBuilderWithContext.toString());
+    }
     sb.append("}");
     sb.append(System.getProperty("line.separator"));
     return sb.toString();

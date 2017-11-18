@@ -126,7 +126,7 @@ $expand: param_string_ref, param_macro_ref, separator="\n", before_first="\n" $
 
 $expand: redefined_apply_initializer $
 $expand: macro_builder, before_first="\n" $
-
+$expand: empty_builder_with_context, before_first="\n"$
 }
 $end: macro $
 
@@ -151,6 +151,15 @@ $expand: string_part, param_insert_part, eol_part, insert_macro_part $
         return local_expansion;
     }
 $end: macro_builder $
+
+$comment: ============ empty_builder_with_context ============ $
+
+$macro: empty_builder_with_context $
+    @Override
+    String build(Context context) {
+        return build();
+    }
+$end: empty_builder_with_context$
 
 $comment: ========= public ============= $
 
