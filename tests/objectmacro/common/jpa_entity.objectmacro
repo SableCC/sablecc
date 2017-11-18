@@ -1,0 +1,200 @@
+# This file is part of SableCC ( http://sablecc.org ).
+#
+# See the NOTICE file distributed with this work for copyright information.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+Macro package_declaration
+    Param
+        package_name : String;
+{Begin}
+package {package_name};
+{End}
+
+Macro entity
+    Param
+        name : String;
+        package : package_declaration;
+        attributes : attribute, separator="\n";
+        relationships : relationship, separator="\n";
+        accessors : setter, getter, separator="\n";
+{Begin}
+{package}
+@Entity
+{Insert: annotation_table(name)}
+public class {name} {
+   {attributes}
+
+   {relationships}
+
+   {accessors}
+}
+{End}
+
+Macro annotation_table
+    Internal
+        name : String;
+{Begin}
+@Table(name="{name}")
+{End}
+
+Macro column
+    Internal
+        name : String;
+{Begin}
+@Column(name="{name}")
+{End}
+
+Macro attribute
+    Param
+        name : String;
+        type : String;
+        id : primary_key, id_incrementation_strategy;
+        not_null : not_null;
+{Begin}
+{id}
+{not_null}
+{Insert: column(name)}
+private {type} {name};
+{End}
+
+Macro primary_key
+{Begin}
+@Id
+{End}
+
+Macro id_incrementation_strategy
+    Param
+        strategy : String;
+{Begin}
+@GeneratedValue(strategy=GenerationType.{strategy})
+{End}
+
+Macro not_null
+{Begin}
+@NotNull
+{End}
+
+Macro setter
+    Param
+        name : String;
+        type : String;
+{Begin}
+public void set{name}({type} {name}){
+    this.{name} = {name};
+}
+{End}
+
+Macro getter
+    Param
+        name : String;
+        type : String;
+{Begin}
+public {type} set{name}(){
+    return this.{name};
+}
+{End}
+
+Macro relationship
+    Param
+        name : String;
+        fetch_type : String;
+        relation : one_to_one(directives), many_to_many(directives), many_to_one(directives), one_to_many(directives);
+        attribute_type : list(entity_referenced), none="{entity_referenced}";
+        directives : fetch_strategy(fetch_type), mapped_by;
+        entity_referenced : String;
+{Begin}
+{relation}
+private {attribute_type} {name};
+{End}
+
+Macro list
+    Internal
+        entity_name : String;
+{Begin}
+List<{entity_name}>
+{End}
+
+Macro one_to_one
+    Param
+        fetch_type : String;
+        column : String;
+        join_column : join_column(column);
+    Internal
+        directives : fetch_strategy(fetch_type), mapped_by, separator=", ";
+{Begin}
+@OneToOne({directives})
+{join_column}
+{End}
+
+Macro many_to_many
+    Param
+        fetch_type : String;
+    Internal
+        directives : fetch_strategy(fetch_type), mapped_by, separator=", ";
+{Begin}
+@ManyToMany({directives})
+{End}
+
+Macro many_to_one
+    Param
+        fetch_type : String;
+    Internal
+        directives : fetch_strategy(fetch_type), mapped_by, separator=", ";
+{Begin}
+@ManyToOne({directives})
+{End}
+
+Macro one_to_many
+    Param
+        fetch_type : String;
+    Internal
+        directives : fetch_strategy(fetch_type), mapped_by, separator=", ";
+{Begin}
+@OneToMany({directives})
+{End}
+
+Macro fetch_strategy
+    Internal
+        fetch_type : String;
+{Begin}
+fetch=FetchType.{fetch_type}
+{End}
+
+Macro join_column
+    Internal
+        column_name : String;
+{Begin}
+@JoinColumn(name="{column_name}")
+{End}
+
+Macro mapped_by
+    Param
+        parameter_name : String;
+{Begin}
+mappedBy="{parameter_name}"
+{End}
+
+Macro cascade
+    Param
+        types : cascade_type, separator=", ";
+{Begin}
+cascade={{ {types} }
+{End}
+
+Macro cascade_type
+    Param
+        type_name : String;
+{Begin}
+CascadeType.{type_name}
+{End}
