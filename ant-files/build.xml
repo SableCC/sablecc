@@ -176,7 +176,7 @@ public class Version {
 
     </jar>
 
-    <jar destfile="${lib.dir}/objectmacro-BACK.jar"
+    <jar destfile="${lib.dir}/objectmacro-back.jar"
          manifest="${manifest.dir}/OBJECTMACRO-BACK.MF"
          index="true"
          compress="true"
