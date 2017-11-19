@@ -364,4 +364,9 @@ public class CompilerException
 
         return new CompilerException(new MInvalidInsert(line, pos, name.getText()).toString());
     }
+
+    public static CompilerException minimumMacroError(){
+
+        return new CompilerException(new MMinimumMacroError().toString());
+    }
 }

@@ -287,6 +287,7 @@ public class ObjectMacro {
         }
 
         GlobalIndex globalIndex = new GlobalIndex();
+        boolean withoutInternals = false;
 
         ast.apply(new DeclarationCollector(globalIndex));
         ast.apply(new MacroReferenceCollector(globalIndex));
@@ -295,11 +296,15 @@ public class ObjectMacro {
         ast.apply(new VarVerifier(globalIndex));
 
         for(Macro macro : globalIndex.getAllMacros()){
-            Set<Param> allParamsInternals = new LinkedHashSet<>();
-            allParamsInternals.addAll(macro.getAllInternals());
-            allParamsInternals.addAll(macro.getAllParams());
-
             macro.detectParamsCyclicReference();
+
+            if(macro.getAllInternals().isEmpty()){
+                withoutInternals = true;
+            }
+        }
+
+        if(!withoutInternals){
+            throw CompilerException.minimumMacroError();
         }
 
         if(strictness == Strictness.STRICT){
