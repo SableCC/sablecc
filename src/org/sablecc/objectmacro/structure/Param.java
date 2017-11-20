@@ -25,6 +25,8 @@ import java.util.*;
 
 public class Param {
 
+    private final GlobalIndex globalIndex;
+
     private final AParam declaration;
 
     private final Macro parent;
@@ -45,7 +47,8 @@ public class Param {
 
     Param(
             AParam declaration,
-            Macro macro) {
+            Macro macro,
+            GlobalIndex globalIndex) {
 
         if (declaration == null) {
             throw new InternalException("declaration may not be null");
@@ -55,8 +58,13 @@ public class Param {
             throw new InternalException("scope may not be null");
         }
 
+        if(globalIndex == null){
+            throw new InternalException("globalIndex may not be null");
+        }
+
         this.declaration = declaration;
         this.parent = macro;
+        this.globalIndex = globalIndex;
     }
 
     public Directive newDirective(
@@ -83,14 +91,18 @@ public class Param {
             throw new InternalException("Macro reference cannot be null");
         }
 
-        String name = macroRef.getName().getText();
+        TIdentifier identifier = macroRef.getName();
 
-        if(this.macroReferencesName.containsKey(name)){
+        if(this.globalIndex.getMacro(identifier) == null){
+            throw CompilerException.unknownMacro(identifier);
+        }
+
+        if(this.macroReferencesName.containsKey(identifier.getText())){
             throw CompilerException.duplicateMacroRef(macroRef.getName(), getDeclaration().getName());
         }
 
         this.macroReferences.add(macroRef);
-        this.macroReferencesName.put(name, macroRef);
+        this.macroReferencesName.put(identifier.getText(), macroRef);
 
     }
 
@@ -103,6 +115,10 @@ public class Param {
 
         String name = paramName.getText();
         Param newParamRef = this.parent.getParam(paramName);
+
+        if(newParamRef == null){
+            throw new InternalException("parameter may not be null");
+        }
 
         this.paramReferences.put(name, newParamRef);
     }
