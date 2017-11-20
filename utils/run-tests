@@ -18,10 +18,20 @@
 
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/accepted/test.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/cyclic_reference.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/test1.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/test2.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/double_macro_declaration.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/escape.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/escape2.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/incorrect_argument_type.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/incorrect_macro_type.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/invalid_identifier1.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/invalid_identifier2.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/invalid_identifier3.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/minimum_macro.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/refused/unknwon_command.objectmacro
 
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/jpa_entity.objectmacro
 java -jar lib/objectmacro-back.jar -d tests/objectmacro/java -p entity tests/objectmacro/intermediate/jpa_entity.intermediate
+javac -cp tests/objectmacro/java/ -d classes/ tests/objectmacro/java/entity/*.java
+java -cp classes/ entity.Main
 
 
