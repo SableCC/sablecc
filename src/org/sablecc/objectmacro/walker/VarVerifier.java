@@ -69,8 +69,6 @@ public class VarVerifier
         this.paramsList = new Param[internalsSize];
         referencedMacro.getAllInternals().toArray(this.paramsList);
         this.currentIndex = 0;
-
-
     }
 
     @Override
@@ -79,13 +77,13 @@ public class VarVerifier
 
         Param currentParam = this.paramsList[this.currentIndex++];
 
-        //The internal corresponding to currentIndex must be of type String here
+        //The internal corresponding to currentIndex must be of type String
         if(!currentParam.isString()){
             throw CompilerException.incorrectArgumentType("Macro", "String",
                     node.getLDquote().getLine(), node.getLDquote().getPos());
         }
 
-        //Apply to each part in case of another insert inside the string
+        //Apply to each part in case of recursive insert
         Integer tempIndex = this.currentIndex;
         Param tempParams[] = this.paramsList;
 

@@ -34,8 +34,6 @@ public class DirectiveCollector
 
     private Param currentParam;
 
-    private Directive currentDirective;
-
     public DirectiveCollector(
             GlobalIndex globalIndex){
 
@@ -83,13 +81,6 @@ public class DirectiveCollector
             throw CompilerException.unknownOption(node);
         }
 
-        this.currentDirective = this.currentParam.newDirective(node);
-    }
-
-    @Override
-    public void outADirective(
-            ADirective node) {
-
-        this.currentDirective = null;
+        this.currentParam.newDirective(node);
     }
 }
