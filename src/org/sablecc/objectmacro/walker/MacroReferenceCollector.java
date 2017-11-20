@@ -57,11 +57,17 @@ public class MacroReferenceCollector
             AInsertMacroBodyPart node) {
 
         AMacroReference macroReference = (AMacroReference) node.getMacroReference();
-        if(!this.globalIndex.getMacro(macroReference.getName())
-                .getAllParams().isEmpty()){
-
+        if(!this.globalIndex.getMacro(macroReference.getName()).getAllParams().isEmpty()){
             throw CompilerException.invalidInsert(macroReference.getName());
         }
+
+        //Delete currentParam reference to verify macro references in the children and avoiding adding duplicate macro references
+        Param tempParam = this.currentParam;
+        this.currentParam = null;
+
+        node.getMacroReference().apply(this);
+
+        this.currentParam = tempParam;
     }
 
     @Override
@@ -70,8 +76,11 @@ public class MacroReferenceCollector
 
         //Call to verify if the macro exist
         AMacroReference macroReference = (AMacroReference) node.getMacro();
-        this.globalIndex.getMacro(macroReference.getName());
+        if(!this.globalIndex.getMacro(macroReference.getName()).getAllParams().isEmpty()){
+            throw CompilerException.invalidInsert(macroReference.getName());
+        }
 
+        //Delete currentParam reference to verify macro references in the children and avoiding adding duplicate macro references
         Param tempParam = this.currentParam;
         this.currentParam = null;
 
@@ -81,7 +90,7 @@ public class MacroReferenceCollector
     }
 
     @Override
-    public void caseAMacroReference(
+    public void inAMacroReference(
             AMacroReference node) {
 
         if(this.currentParam != null){
