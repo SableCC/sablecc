@@ -1,5 +1,7 @@
 package entity;
 
+import entity.macro.*;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,6 +12,11 @@ public class Main {
             String[] args){
 
         MEntity entity = createEntity("Person");
+        File entities_directory = new File("tests/objectmacro/java/entities");
+        if(!entities_directory.exists()){
+            entities_directory.mkdir();
+        }
+
         File destination = new File("tests/objectmacro/java/entities", "Person.java");
         writeFile(destination, entity.build());
         entity = createEntity("Book");
@@ -45,14 +52,14 @@ public class Main {
         accessors[1] = getter;
 
         attributes[1] = createAttribute("A", Integer.class.getSimpleName());
-        setter = new MSetter("A" + entity_name, Integer.class.getSimpleName());
-        getter = new MGetter("A" + entity_name, Integer.class.getSimpleName());
+        setter = new MSetter("A", Integer.class.getSimpleName());
+        getter = new MGetter("A", Integer.class.getSimpleName());
         accessors[2] = setter;
         accessors[3] = getter;
 
         attributes[2] = createAttribute("B", String.class.getSimpleName());
-        setter = new MSetter("B" + entity_name, String.class.getSimpleName());
-        getter = new MGetter("B" + entity_name, String.class.getSimpleName());
+        setter = new MSetter("B", String.class.getSimpleName());
+        getter = new MGetter("B", String.class.getSimpleName());
         accessors[4] = setter;
         accessors[5] = getter;
 
