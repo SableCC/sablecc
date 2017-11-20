@@ -415,7 +415,7 @@ $insert: semantic_error_head $
 
 Line : $line
 Char : $char
-You provided a wrong argument type at index $index. (expected : $expected, found : $found)
+Incorrect macro type at index $index. (expected : $expected, found : $found)
 $end: incorrect_macro_type $
 
 $comment: ========== invalid_insert ========== $
