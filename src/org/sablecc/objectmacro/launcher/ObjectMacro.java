@@ -286,7 +286,6 @@ public class ObjectMacro {
         }
 
         GlobalIndex globalIndex = new GlobalIndex();
-        boolean withoutInternals = false;
 
         ast.apply(new DeclarationCollector(globalIndex));
         ast.apply(new MacroReferenceCollector(globalIndex));
@@ -296,15 +295,6 @@ public class ObjectMacro {
 
         for(Macro macro : globalIndex.getAllMacros()){
             macro.detectParamsCyclicReference();
-
-            if(macro.getAllInternals().isEmpty()){
-                withoutInternals = true;
-            }
-        }
-
-        //At least one macro does not have any internal
-        if(!withoutInternals){
-            throw CompilerException.minimumMacroError();
         }
 
         if(strictness == Strictness.STRICT){

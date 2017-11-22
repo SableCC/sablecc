@@ -137,7 +137,6 @@ public class VarVerifier
                 new TIdentifier(Utils.getVarName(
                                     node.getVariable()),
                                     node.getVariable().getLine(), node.getVariable().getPos()));
-
     }
 
     @Override
