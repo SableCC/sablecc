@@ -114,6 +114,11 @@ public class Param {
         }
 
         String name = paramName.getText();
+
+        if(name.equals(getName())){
+            throw CompilerException.selfReference(paramName, getNameDeclaration());
+        }
+
         Param newParamRef = this.parent.getParam(paramName);
 
         if(newParamRef == null){
