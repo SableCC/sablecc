@@ -58,6 +58,15 @@ Macro macro_internals
     {a} {b}
 {End}
 
+Macro macro_text_macro_internal
+    Internal
+        a : text_params;
+        b : String;
+{Begin}
+{a}
+{b}
+{End}
+
 Macro macro_internals_references
     Param
         a : String;
@@ -75,13 +84,22 @@ Macro macro_internals_references
 Macro macro_params_internals_references
     Param
         a : macro_internals(c, b);
+        d : text_internals("a", "b");
     Internal
         b : text_params;
-        c : text_internals("a", "b");
+        c : String;
 {Begin}
 {a}
 {b}
 {c}
+{d}
+{End}
+
+Macro macro_test_params_internals
+    Param
+        a : text_params;
+{Begin}
+{Insert: macro_text_macro_internal(a, "String")}
 {End}
 
 # ========== insert ==========
