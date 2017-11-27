@@ -55,9 +55,7 @@ public class MInvalidInsert {
     sb.append(System.getProperty("line.separator"));
     sb.append("Macro '");
     sb.append(rName());
-    sb.append("' cannot be inserted because '");
-    sb.append(rName());
-    sb.append("' does not only have internals.");
+    sb.append("' cannot be inserted because it also has parameters.");
     sb.append(System.getProperty("line.separator"));
     return sb.toString();
   }

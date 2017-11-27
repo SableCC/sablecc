@@ -167,14 +167,6 @@ public class CompilerException
                 identifier.getLine() + "", identifier.getPos() + "").toString());
     }
 
-    public static CompilerException unknownTextBlock(
-            TIdentifier identifier) {
-
-        return new CompilerException(new MUnknownTextBlock(
-                identifier.getText(), identifier.getLine() + "",
-                identifier.getPos() + "").toString());
-    }
-
     public static CompilerException duplicateDeclaration(
             TIdentifier duplicateDeclaration,
             TIdentifier firstDeclaration) {

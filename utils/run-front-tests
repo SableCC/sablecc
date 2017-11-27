@@ -18,20 +18,16 @@
 
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/accepted/test.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/cyclic_reference.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/double_macro_declaration.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/double_parameter_declaration.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/escape.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/escape2.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/incorrect_argument_count.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/incorrect_argument_type.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/incorrect_macro_type.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier1.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier2.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier3.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/minimum_macro.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier4.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_insert.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/unknown_command.objectmacro
-
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/jpa_entity.objectmacro
-java -jar lib/objectmacro-back.jar -d tests/objectmacro/java -p entity.macro tests/objectmacro/intermediate/jpa_entity.intermediate
-javac -cp tests/objectmacro/java/ -d classes/ tests/objectmacro/java/entity/*.java
-java -cp classes/ entity.Main
-
 

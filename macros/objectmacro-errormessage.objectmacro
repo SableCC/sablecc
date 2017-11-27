@@ -425,5 +425,5 @@ $insert: semantic_error_head $
 
 Line : $line
 Char : $char
-Macro '$name' cannot be inserted because '$name' does not only have internals.
+Macro '$name' cannot be inserted because it also has parameters.
 $end: invalid_insert $
