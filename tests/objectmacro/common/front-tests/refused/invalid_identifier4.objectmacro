@@ -13,3 +13,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+Macro x
+    Param
+        a : String;
+        b : y, Before_first="test";
+{Begin}
+{a}
+{b}
+{End}
+
+Macro y
+    Param
+        a : String;
+{Begin}
+{a}
+{End}
