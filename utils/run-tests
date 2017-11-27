@@ -27,7 +27,7 @@ java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmac
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier2.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier3.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/minimum_macro.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/unknwon_command.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/unknown_command.objectmacro
 
 java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/jpa_entity.objectmacro
 java -jar lib/objectmacro-back.jar -d tests/objectmacro/java -p entity.macro tests/objectmacro/intermediate/jpa_entity.intermediate
