@@ -88,8 +88,9 @@ public class Macro{
         TIdentifier name = param.getName();
         String stringName = name.getText();
 
-        if(containsKeyInInternals(stringName) || containsKeyInParams(stringName)){
-            throw CompilerException.duplicateDeclaration(name, getNameDeclaration());
+        Param duplicateDeclaration = getParamOrNull(name);
+        if(duplicateDeclaration != null){
+            throw CompilerException.duplicateDeclaration(name, duplicateDeclaration.getNameDeclaration());
         }
 
         Param newInternal = new Param(param, this, this.globalIndex);
@@ -97,6 +98,22 @@ public class Macro{
         this.namedInternals.put(stringName, newInternal);
 
         return newInternal;
+    }
+
+    private Param getParamOrNull(
+            TIdentifier var){
+
+        Param toReturn = null;
+        String name = var.getText();
+        if(containsKeyInParams(name)){
+            toReturn = this.namedParams.get(name);
+        }
+
+        if(containsKeyInInternals(name)){
+            toReturn = this.namedInternals.get(name);
+        }
+
+        return toReturn;
     }
 
     public Param getParam(
