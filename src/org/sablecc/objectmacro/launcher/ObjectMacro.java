@@ -402,7 +402,7 @@ public class ObjectMacro {
             else if(bodyPart instanceof ATextMacroBodyPart){
                 ATextMacroBodyPart textBodyPart = ((ATextMacroBodyPart) bodyPart);
 
-                String macroTextPart = textBodyPart.getTextPart().getText().replaceAll("'","\\\\");
+                String macroTextPart = textBodyPart.getTextPart().getText().replaceAll("'","\\\\'");
                 mMacro.newStringPart(macroTextPart);
             }
             else if(bodyPart instanceof AInsertMacroBodyPart){
