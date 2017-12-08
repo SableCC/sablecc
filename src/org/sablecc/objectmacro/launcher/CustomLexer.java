@@ -54,10 +54,8 @@ public class CustomLexer
             }
         }
         else if(this.token instanceof TInsertCommand){
-            if(this.state != State.COMMAND){
-                this.states.add(this.state);
-                this.state = State.COMMAND;
-            }
+            this.states.add(this.state);
+            this.state = State.COMMAND;
         }
         else if(this.token instanceof TRBrace){
 
