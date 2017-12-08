@@ -28,8 +28,6 @@ import org.sablecc.objectmacro.syntax3.node.*;
 public class CustomLexer
         extends Lexer {
 
-    private int textDepth = 0;
-
     public CustomLexer(PushbackReader in) {
         super(in);
     }
@@ -44,12 +42,8 @@ public class CustomLexer
             if(this.state != State.STRING){
                 this.states.add(this.state);
                 this.state = State.STRING;
-                this.textDepth++;
             }
-            else if(this.textDepth > 0
-                            && this.state == State.STRING){
-
-                this.textDepth--;
+            else {
                 this.state = getLastState();
             }
         }
