@@ -87,6 +87,8 @@ public class CodeGenerationWalker
 
     private List<String> createdBuilders = new ArrayList<>();
 
+    private List<Integer> createdInserts = new ArrayList<>();
+
     private MSeparator currentSeparator;
 
     private MAfterLast currentAfterLast;
@@ -361,6 +363,7 @@ public class CodeGenerationWalker
         this.indexInsert = 0;
         this.currentParamMacroRefBuilder = null;
         this.createdBuilders = new ArrayList<>();
+        this.createdInserts = new ArrayList<>();
     }
 
     @Override
@@ -422,6 +425,7 @@ public class CodeGenerationWalker
         this.indexBuilder = 0;
         this.indexInsert = 0;
         this.createdBuilders = new ArrayList<>();
+        this.createdInserts = new ArrayList<>();
         this.currentParamMacroRefBuilder = null;
     }
 
@@ -531,7 +535,6 @@ public class CodeGenerationWalker
                     INSERT_VAR_NAME.concat(String.valueOf(this.indexInsert)),
                     buildNameCamelCase(node.getParamName()),
                     "null").newStringBuilderBuild(index_builder);
-
         }
     }
 
@@ -669,7 +672,11 @@ public class CodeGenerationWalker
         String macro_name = buildNameCamelCase(macroRef.getNames());
         String index_builder = String.valueOf(this.indexBuilder);
 
-        this.indexInsert++;
+        //Avoid declaring insert of the same name
+        while(this.createdInserts.contains(this.indexInsert)){
+            this.indexInsert++;
+        }
+
         String index_insert = String.valueOf(this.indexInsert);
 
         if(this.currentContext != null
@@ -716,6 +723,7 @@ public class CodeGenerationWalker
                             index_insert);
             }
         }
+        this.createdInserts.add(this.indexInsert);
 
         String tempContext = this.currentContext;
         String tempMacroName = this.currentMacroName;
@@ -804,6 +812,7 @@ public class CodeGenerationWalker
                 this.currentMacroBuilder.newInsertMacroPart(
                         macro_name, String.valueOf(indexBuilder), String.valueOf(indexInsert));
 
+        this.createdInserts.add(this.indexInsert);
         Integer tempIndexBuilder = this.indexBuilder;
         Integer tempIndexInsert = this.indexInsert;
 
