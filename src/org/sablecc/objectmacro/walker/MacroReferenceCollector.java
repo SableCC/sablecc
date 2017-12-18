@@ -56,8 +56,11 @@ public class MacroReferenceCollector
     public void caseAInsertMacroBodyPart(
             AInsertMacroBodyPart node) {
 
+        //Call to verify if the macro exist
         AMacroReference macroReference = (AMacroReference) node.getMacroReference();
-        if(!this.globalIndex.getMacro(macroReference.getName()).getAllParams().isEmpty()){
+        Macro referenced_macro = this.globalIndex.getMacro(macroReference.getName());
+
+        if(!referenced_macro.getAllParams().isEmpty()){
             throw CompilerException.invalidInsert(macroReference.getName());
         }
 
@@ -76,7 +79,9 @@ public class MacroReferenceCollector
 
         //Call to verify if the macro exist
         AMacroReference macroReference = (AMacroReference) node.getMacro();
-        if(!this.globalIndex.getMacro(macroReference.getName()).getAllParams().isEmpty()){
+        Macro referenced_macro = this.globalIndex.getMacro(macroReference.getName());
+
+        if(!referenced_macro.getAllParams().isEmpty()){
             throw CompilerException.invalidInsert(macroReference.getName());
         }
 

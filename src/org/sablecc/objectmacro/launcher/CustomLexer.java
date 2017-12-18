@@ -52,7 +52,6 @@ public class CustomLexer
             this.state = State.COMMAND;
         }
         else if(this.token instanceof TRBrace){
-
             if(this.states.size() == 0){
                 throw new InternalException("There must be at least one state.");
             }

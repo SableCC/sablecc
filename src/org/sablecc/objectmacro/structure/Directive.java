@@ -43,19 +43,11 @@ public class Directive {
 
     }
 
-    public void addParamReference(
-            TIdentifier name){
-
-        this.parent.getParent().getParam(name);
-    }
-
     public ADirective getDeclaration(){
-
         return this.declaration;
     }
 
     public String getName(){
-
         return this.declaration.getName().getText();
     }
 }

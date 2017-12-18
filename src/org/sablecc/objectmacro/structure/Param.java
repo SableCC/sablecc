@@ -114,13 +114,11 @@ public class Param {
         }
 
         String name = paramName.getText();
-
         if(name.equals(getName())){
             throw CompilerException.selfReference(paramName, getNameDeclaration());
         }
 
         Param newParamRef = this.parent.getParam(paramName);
-
         if(newParamRef == null){
             throw new InternalException("parameter may not be null");
         }
@@ -164,7 +162,7 @@ public class Param {
         this.isString = true;
     }
 
-    public Set<Param> getDirectParamReferences(){
+    Set<Param> getDirectParamReferences(){
 
         Set<Param> directlyParams = new HashSet<>();
         for(Param param : this.paramReferences.values()){

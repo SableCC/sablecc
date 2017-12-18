@@ -73,7 +73,6 @@ public class GlobalIndex {
         }
 
         Macro macro = getMacroOrNull(identifier);
-
         if (macro == null) {
             throw CompilerException.unknownMacro(identifier);
         }
@@ -83,7 +82,6 @@ public class GlobalIndex {
     }
 
     public Set<Macro> getAllMacros() {
-
         return this.allMacros;
     }
 }

@@ -119,16 +119,12 @@ public class Macro{
     public Param getParam(
             TIdentifier variable){
 
-        String name = variable.getText();
-        if(containsKeyInParams(name)){
-            return this.namedParams.get(name);
+        Param param = getParamOrNull(variable);
+        if(param == null){
+            throw CompilerException.unknownParam(variable);
         }
 
-        if(containsKeyInInternals(name)){
-            return this.namedInternals.get(name);
-        }
-
-        throw CompilerException.unknownParam(variable);
+        return param;
     }
 
     public void setParamUsed(
@@ -145,27 +141,22 @@ public class Macro{
 
 
     public AMacro getDeclaration() {
-
         return this.declaration;
     }
 
     public TIdentifier getNameDeclaration() {
-
         return this.declaration.getName();
     }
 
     public String getName(){
-
         return this.declaration.getName().getText();
     }
 
     public Set<Param> getAllParams(){
-
         return this.allParams;
     }
 
     public Set<Param> getAllInternals(){
-
         return this.allInternals;
     }
 
@@ -190,7 +181,6 @@ public class Macro{
     }
 
     public List<String> getInternalsName(){
-
         List<String> paramsName = new LinkedList<>();
         for(Param internal : this.getAllInternals()){
             paramsName.add(internal.getName());
@@ -200,7 +190,6 @@ public class Macro{
     }
 
     public void detectParamsCyclicReference(){
-
         Progeny<Param> referencedParamProgeny = new Progeny<Param>() {
 
             @Override
@@ -226,6 +215,7 @@ public class Macro{
             }
         }
     }
+
     public ComponentFinder<Param> getComponentFinder(){
         return this.paramsComponentFinder;
     }
