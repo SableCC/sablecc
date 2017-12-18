@@ -18,8 +18,10 @@ set -e
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/back-tests/back.objectmacro
-java -jar lib/objectmacro-back.jar -d tests/objectmacro/java -p back.macro tests/objectmacro/intermediate/back.intermediate
+mkdir -p tests/objectmacro/common/intermediate
+
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/back-tests/back.objectmacro
+java -jar lib/objectmacro-back.jar -d tests/objectmacro/java -p back.macro tests/objectmacro/common/intermediate/back.intermediate
 javac -cp tests/objectmacro/java/ -d classes/ tests/objectmacro/java/back/*.java
 
 # Refused tests

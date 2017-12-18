@@ -16,18 +16,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/accepted/test.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/cyclic_reference.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/double_parameter_declaration.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/escape.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/escape2.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/incorrect_argument_count.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/incorrect_argument_type.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/incorrect_macro_type.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier1.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier2.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier3.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier4.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_insert.objectmacro
-java -jar lib/objectmacro.jar -d tests/objectmacro/intermediate/ tests/objectmacro/common/front-tests/refused/unknown_command.objectmacro
+mkdir -p tests/objectmacro/common/intermediate
+
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/accepted/test.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/cyclic_reference.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/double_parameter_declaration.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/escape.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/escape2.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/incorrect_argument_count.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/incorrect_argument_type.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/incorrect_macro_type.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier1.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier2.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier3.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier4.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_insert.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/unknown_command.objectmacro
 
