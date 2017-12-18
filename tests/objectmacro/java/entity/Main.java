@@ -17,6 +17,11 @@ public class Main {
             entities_directory.mkdir();
         }
 
+        File directory = new File("tests/objectmacro/java/entities");
+        if(!directory.exists()){
+            directory.mkdir();
+        }
+
         File destination = new File("tests/objectmacro/java/entities", "Person.java");
         writeFile(destination, entity.build());
         entity = createEntity("Book");
