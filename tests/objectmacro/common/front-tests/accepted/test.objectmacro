@@ -177,3 +177,20 @@ Macro macro_escape_string
 {text : this is also text}
 {Insert: macro_escape("\{")}
 {End}
+
+# =============== lexer test ============
+
+Macro lexer_a
+{Begin}
+{Insert: lexer_b("{Insert: lexer_a}")}
+{End}
+
+Macro lexer_b
+    Internal
+        a : String;
+{Begin}
+{a}
+{End}
+
+
+
