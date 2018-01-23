@@ -38,17 +38,19 @@ public class MInternalMacroSetter {
     sb.append(System.getProperty("line.separator"));
     sb.append("            Context context,");
     sb.append(System.getProperty("line.separator"));
-    sb.append("            Macro macros[]) {");
+    sb.append("            List<Macro> macros) {");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("        if(macros == null){");
     sb.append(System.getProperty("line.separator"));
-    sb.append("            throw new RuntimeException(\"macros cannot be null here\");");
+    sb.append("            throw new RuntimeException(\"macros provided to ");
+    sb.append(rName());
+    sb.append(" cannot be null\");");
     sb.append(System.getProperty("line.separator"));
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("        Macro[] tempMacros = new Macro[macros.length];");
+    sb.append("        List<Macro> tempMacros = new ArrayList<>();");
     sb.append(System.getProperty("line.separator"));
     sb.append("        int i = 0;");
     sb.append(System.getProperty("line.separator"));
@@ -70,7 +72,7 @@ public class MInternalMacroSetter {
       sb.append(oApplyInternalsInitializer.toString());
     }
     sb.append(System.getProperty("line.separator"));
-    sb.append("            tempMacros[i++] = macro;");
+    sb.append("            tempMacros.add(macro);");
     sb.append(System.getProperty("line.separator"));
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));

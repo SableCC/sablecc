@@ -279,19 +279,20 @@ public class CodeGenerationWalker
         this.mInternalsInitializer.newParentInternalsSetter(macroName);
         this.currentMacroToBuild.newRedefinedApplyInitializer(macroName);
 
-        for(TString string : node.getInitOrder()){
-            String param_name = Utils.toCamelCase(string(string));
-            if(this.currentMacro.getParameters().contains(param_name)){
-                this.currentConstructor.newSetParam(param_name).newParamArg(param_name);
-            }
-        }
+//TODO to remove in frontEnd
+//        for(TString string : node.getInitOrder()){
+//            String param_name = Utils.toCamelCase(string(string));
+//            if(this.currentMacro.getParameters().contains(param_name)){
+//                this.currentConstructor.newSetParam(param_name).newParamArg(param_name);
+//            }
+//        }
+        this.currentMacroToBuild.newImportJavaUtil();
 
         if(node.getInternals().size() > 0){
             //method build is package protected so a context parameter to build the current macro
             this.currentMacroBuilder.newContextParam();
             this.currentMacroBuilder.newContextExpansion();
             this.currentMacroBuilder.newNewContextExpansion();
-            this.currentMacroToBuild.newImportJavaUtil();
         }
         else{
             this.currentMacroBuilder.newPublic();
@@ -344,7 +345,6 @@ public class CodeGenerationWalker
             this.currentApplyInitializer =
                     this.currentMacroToBuild.newInternalMacroSetter(paramName)
                             .newApplyInternalsInitializer(paramName);
-
         }
         else{
             throw new InternalException("case unhandled");
@@ -381,8 +381,8 @@ public class CodeGenerationWalker
             mParamStringSetter.newParamArg(paramName);
             mParamStringSetter.newStringParam(paramName);
 
-
             this.currentConstructor.newStringParam(paramName);
+            this.currentConstructor.newSetParam(paramName).newParamArg(paramName);
         }
         else if(node.getType() instanceof AMacroRefsType){
 
@@ -403,9 +403,8 @@ public class CodeGenerationWalker
 
             MParamMacroSetter mParamMacroSetter = this.currentMacroToBuild.newParamMacroSetter(paramName);
             mParamMacroSetter.newParamArg(paramName);
-            mParamMacroSetter.newMacroParam(paramName);
+            mParamMacroSetter.newListMacroParam(paramName);
 
-            this.currentConstructor.newMacroParam(paramName);
             this.currentApplyInitializer = mParamMacroSetter.newApplyInternalsInitializer(paramName);
             this.contextNames.add(currentContext);
         }

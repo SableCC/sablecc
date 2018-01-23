@@ -8,7 +8,7 @@ public class MConstructor {
 
   private final String pName;
   private final MConstructor mConstructor = this;
-  private final List<Object> eStringParam_MacroParam = new LinkedList<Object>();
+  private final List<Object> eStringParam = new LinkedList<Object>();
   private final List<Object> eSetParam = new LinkedList<Object>();
   private final List<Object> eInitMacroInternal_InitStringInternal = new LinkedList<Object>();
 
@@ -19,14 +19,8 @@ public class MConstructor {
 
   public MStringParam newStringParam(String pName) {
     MStringParam lStringParam = new MStringParam(pName);
-    this.eStringParam_MacroParam.add(lStringParam);
+    this.eStringParam.add(lStringParam);
     return lStringParam;
-  }
-
-  public MMacroParam newMacroParam(String pName) {
-    MMacroParam lMacroParam = new MMacroParam(pName);
-    this.eStringParam_MacroParam.add(lMacroParam);
-    return lMacroParam;
   }
 
   public MSetParam newSetParam(String pName) {
@@ -63,14 +57,14 @@ public class MConstructor {
     sb.append("(");
     {
       boolean first = true;
-      for(Object oStringParam_MacroParam : this.eStringParam_MacroParam) {
+      for(Object oStringParam : this.eStringParam) {
         if(first) {
           first = false;
         }
         else {
           sb.append(", ");
         }
-        sb.append(oStringParam_MacroParam.toString());
+        sb.append(oStringParam.toString());
       }
     }
     sb.append("){");

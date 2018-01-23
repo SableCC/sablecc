@@ -39,7 +39,7 @@ public class MParamMacroRef {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    private Macro[] get");
+    sb.append("    private List<Macro> get");
     sb.append(rName());
     sb.append("(");
     for(Object oContextParam : this.eContextParam) {

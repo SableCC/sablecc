@@ -8,7 +8,7 @@ public class MParamMacroSetter {
 
   private final String pName;
   private final MParamMacroSetter mParamMacroSetter = this;
-  private final List<Object> eMacroParam = new LinkedList<Object>();
+  private final List<Object> eListMacroParam = new LinkedList<Object>();
   private final List<Object> eParamArg = new LinkedList<Object>();
   private final List<Object> eApplyInternalsInitializer = new LinkedList<Object>();
 
@@ -17,10 +17,10 @@ public class MParamMacroSetter {
     this.pName = pName;
   }
 
-  public MMacroParam newMacroParam(String pName) {
-    MMacroParam lMacroParam = new MMacroParam(pName);
-    this.eMacroParam.add(lMacroParam);
-    return lMacroParam;
+  public MListMacroParam newListMacroParam(String pName) {
+    MListMacroParam lListMacroParam = new MListMacroParam(pName);
+    this.eListMacroParam.add(lListMacroParam);
+    return lListMacroParam;
   }
 
   public MParamArg newParamArg(String pName) {
@@ -46,11 +46,11 @@ public class MParamMacroSetter {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    private void setP");
+    sb.append("    public void setP");
     sb.append(rName());
     sb.append("(");
-    for(Object oMacroParam : this.eMacroParam) {
-      sb.append(oMacroParam.toString());
+    for(Object oListMacroParam : this.eListMacroParam) {
+      sb.append(oListMacroParam.toString());
     }
     sb.append("){");
     sb.append(System.getProperty("line.separator"));
@@ -67,7 +67,7 @@ public class MParamMacroSetter {
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("        Macro macros[] = ");
+    sb.append("        List<Macro> macros = ");
     for(Object oParamArg : this.eParamArg) {
       sb.append(oParamArg.toString());
     }
@@ -75,7 +75,7 @@ public class MParamMacroSetter {
     sb.append(System.getProperty("line.separator"));
     sb.append("        this.list_");
     sb.append(rName());
-    sb.append(" = new Macro[macros.length];");
+    sb.append(" = new ArrayList<>();");
     sb.append(System.getProperty("line.separator"));
     sb.append("        int i = 0;");
     sb.append(System.getProperty("line.separator"));
@@ -98,10 +98,46 @@ public class MParamMacroSetter {
     sb.append(System.getProperty("line.separator"));
     sb.append("            this.list_");
     sb.append(rName());
-    sb.append("[i++] = macro;");
+    sb.append(".add(macro);");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("        }");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    }");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    public void addP");
+    sb.append(rName());
+    sb.append("(Macro macro){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        if(macro == null){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            throw ObjectMacroException.parameterNull(\"");
+    sb.append(rName());
+    sb.append("\");");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        }");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        if(this.list_");
+    sb.append(rName());
+    sb.append(" == null){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            this.list_");
+    sb.append(rName());
+    sb.append(" = new ArrayList<>();");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        }");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        ");
+    for(Object oApplyInternalsInitializer : this.eApplyInternalsInitializer) {
+      sb.append(oApplyInternalsInitializer.toString());
+    }
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        this.list_");
+    sb.append(rName());
+    sb.append(".add(macro);");
     sb.append(System.getProperty("line.separator"));
     sb.append("    }");
     sb.append(System.getProperty("line.separator"));

@@ -23,9 +23,9 @@ public class MParamMacroField {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    private Macro list_");
+    sb.append("    private List<Macro> list_");
     sb.append(rName());
-    sb.append("[];");
+    sb.append(";");
     sb.append(System.getProperty("line.separator"));
     return sb.toString();
   }

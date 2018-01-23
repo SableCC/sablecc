@@ -2,12 +2,12 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MInternalMacroField {
+public class MListMacroParam {
 
   private final String pName;
-  private final MInternalMacroField mInternalMacroField = this;
+  private final MListMacroParam mListMacroParam = this;
 
-  public MInternalMacroField(String pName) {
+  public MListMacroParam(String pName) {
     if(pName == null) throw new NullPointerException();
     this.pName = pName;
   }
@@ -17,16 +17,14 @@ public class MInternalMacroField {
   }
 
   private String rName() {
-    return this.mInternalMacroField.pName();
+    return this.mListMacroParam.pName();
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    private Map<Context, List<Macro>> list_");
+    sb.append("List<Macro> p");
     sb.append(rName());
-    sb.append(" = new LinkedHashMap<>();");
-    sb.append(System.getProperty("line.separator"));
     return sb.toString();
   }
 

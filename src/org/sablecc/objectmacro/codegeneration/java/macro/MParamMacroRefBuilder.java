@@ -107,7 +107,7 @@ public class MParamMacroRefBuilder {
     }
     sb.append(";");
     sb.append(System.getProperty("line.separator"));
-    sb.append("        Macro macros[] = this.list_");
+    sb.append("        List<Macro> macros = this.list_");
     sb.append(rName());
     for(Object oGetInternalTail : this.eGetInternalTail) {
       sb.append(oGetInternalTail.toString());

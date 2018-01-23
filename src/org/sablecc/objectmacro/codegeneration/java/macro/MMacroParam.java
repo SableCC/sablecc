@@ -25,7 +25,6 @@ public class MMacroParam {
     StringBuilder sb = new StringBuilder();
     sb.append("Macro p");
     sb.append(rName());
-    sb.append("[]");
     return sb.toString();
   }
 

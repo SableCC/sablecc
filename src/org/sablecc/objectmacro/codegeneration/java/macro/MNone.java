@@ -38,7 +38,7 @@ public class MNone {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("if(macros.length == 0){");
+    sb.append("if(macros.size() == 0){");
     sb.append(System.getProperty("line.separator"));
     sb.append("    ");
     for(Object oStringPart_ParamInsertPart_EolPart_InsertMacroPart : this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart) {

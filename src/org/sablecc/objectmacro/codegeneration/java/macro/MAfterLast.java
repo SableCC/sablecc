@@ -38,7 +38,7 @@ public class MAfterLast {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("if(i == macros.length){");
+    sb.append("if(i == macros.size()){");
     sb.append(System.getProperty("line.separator"));
     sb.append("    ");
     for(Object oStringPart_ParamInsertPart_EolPart_InsertMacroPart : this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart) {
