@@ -18,23 +18,25 @@ package back;
 
 import back.macro.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
 
     public static void main(
             String[] args){
 
-        Macro[] macros = new Macro[3];
-        macros[0] = new MB("First argument in MB0");
-        macros[1] = new MB("First argument in MB1");
-        macros[2] = new MB("First argument in MB2");
-
-        Macro[] macros1 = new Macro[2];
-        macros1[0] = new MC();
-        macros1[1] = new MC();
+        MA ma = new MA("First argument of MA");
+        List<Macro> macros = new ArrayList<>();
+        macros.add(new MB("First argument in MB0"));
+        macros.add(new MB("First argument in MB1"));
+        macros.add(new MB("First argument in MB2"));
 
         try{
-            MA ma = new MA("First argument of MA", macros, macros1);
-            macros[0] = new  MC();
+            //Z must be added before Y because Y depends on Z
+            ma.addPZ(new MC());
+            ma.addPZ(new MC());
+            ma.setPY(macros);
             System.out.println(ma.build());
         }
         catch(ObjectMacroException e){

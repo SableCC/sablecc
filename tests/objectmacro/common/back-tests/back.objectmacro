@@ -49,19 +49,19 @@ Macro a
 
 Macro b
     Param
-        x : String;
+        o : String;
     Internal
-        y : c("first argument of c in b", x), separator="\n";
+        p : c("first argument of c in b", o), separator="\n";
 {Begin}
-{y}
+{p}
 {End}
 
 Macro c
     Internal
-        y : String;
-        z : String;
+        q : String;
+        r : String;
 {Begin}
-{y} {z}
+{q} {r}
 {End}
 
 Macro d
@@ -75,13 +75,11 @@ Macro d
 
 Macro e
     Internal
-        x : String;
-        y : String;
-        z : String;
+        s : String;
+        t : String;
+        u : String;
 {Begin}
-{x}
-{y}
-{z}
+{s}
+{t}
+{u}
 {End}
-
-#{Insert: c("y2 ", "")}
