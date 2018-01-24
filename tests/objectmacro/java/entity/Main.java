@@ -84,8 +84,6 @@ public class Main {
         mEntity.addPAccessors(setter);
         mEntity.addPAccessors(getter);
 
-        mEntity.setPRelationships(new ArrayList<>());
-
         return mEntity;
     }
 
@@ -122,11 +120,7 @@ public class Main {
         if(notNull) {
             mAttribute.addPNotNull(new MNotNull());
         }
-        else {
-            mAttribute.setPNotNull(new ArrayList<>());
-        }
 
-        mAttribute.setPId(new ArrayList<>());
         return mAttribute;
     }
 

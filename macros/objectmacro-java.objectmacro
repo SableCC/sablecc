@@ -83,13 +83,13 @@ $expand: import_java_util $
 
 public abstract class Macro {
 
-    public final static String LINE_SEPARATOR = System.getProperty("line.separator");
+    final static String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    public String expansion;
+    String expansion;
 
-    public boolean built = false;
+    boolean built = false;
 
-    public Map<Context, String> expansions = new LinkedHashMap<>();
+    Map<Context, String> expansions = new LinkedHashMap<>();
 
     public String build(){
 
