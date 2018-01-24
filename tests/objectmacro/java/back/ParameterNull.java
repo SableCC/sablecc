@@ -35,7 +35,7 @@ public class ParameterNull {
 
         try{
             ma.addPZ(null);
-            ma.setPY(macros);
+            ma.addAllPY(macros);
             ma.build();
             System.err.println("It should throw an exception here");
             System.exit(1);

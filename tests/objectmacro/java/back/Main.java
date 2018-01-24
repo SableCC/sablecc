@@ -26,6 +26,7 @@ public class Main {
     public static void main(
             String[] args){
 
+        System.out.print("======== Main Test ===========\n");
         MA ma = new MA("First argument of MA");
         List<Macro> macros = new ArrayList<>();
         macros.add(new MB("First argument in MB0"));
@@ -33,10 +34,9 @@ public class Main {
         macros.add(new MB("First argument in MB2"));
 
         try{
-            //Z must be added before Y because Y depends on Z
             ma.addPZ(new MC());
+            ma.addAllPY(macros);
             ma.addPZ(new MC());
-            ma.setPY(macros);
             System.out.println(ma.build());
         }
         catch(ObjectMacroException e){

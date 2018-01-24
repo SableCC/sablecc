@@ -83,3 +83,30 @@ Macro e
 {t}
 {u}
 {End}
+
+# ========= Example for cyclic reference ==============
+
+Macro f
+    Param
+        x : g(y);
+        y : h("a");
+{Begin}
+{y} {x}
+{End}
+
+Macro g
+    Internal
+        z : h("lala");
+{Begin}
+{z}
+{End}
+
+Macro h
+    Param
+        lala : f;
+    Internal
+        la : String;
+{Begin}
+{la}
+{lala}
+{End}

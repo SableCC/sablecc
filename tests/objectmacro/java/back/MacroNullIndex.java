@@ -34,8 +34,10 @@ public class MacroNullIndex {
         macros.add(new MB("First argument in MB2"));
 
         try{
-            ma.setPZ(new ArrayList<>());
-            ma.setPY(macros);
+            MC mc = new MC();
+            ma.addPZ(mc);
+            ma.addPZ(mc);
+            ma.addAllPY(macros);
             ma.build();
             System.err.println("It should throw an exception here");
             System.exit(1);

@@ -34,8 +34,8 @@ public class IncorrectType {
 
         try{
             MA ma = new MA("First argument of MA");
-            ma.setPZ(macros);
-            ma.setPY(macros);
+            ma.addAllPZ(macros);
+            ma.addAllPY(macros);
             ma.build();
             System.err.println("It should throw an exception here");
             System.exit(1);
