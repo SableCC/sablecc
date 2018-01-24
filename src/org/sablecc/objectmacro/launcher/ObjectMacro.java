@@ -378,7 +378,9 @@ public class ObjectMacro {
         MInitializationOrder mInitializationOrder = mMacro.newInitializationOrder();
 
         for(Param param : macro.getComponentFinder().getLinearization()){
-            mInitializationOrder.newSimpleName(param.getName());
+            if(!param.isString()){
+                mInitializationOrder.newSimpleName(param.getName());
+            }
         }
 
         return mMacro;
