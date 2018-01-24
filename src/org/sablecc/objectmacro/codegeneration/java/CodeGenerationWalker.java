@@ -25,13 +25,11 @@ import java.util.Map;
 
 import org.sablecc.exception.*;
 import org.sablecc.objectmacro.codegeneration.*;
-import org.sablecc.objectmacro.codegeneration.c.macro.MParam;
 import org.sablecc.objectmacro.codegeneration.java.macro.*;
 import org.sablecc.objectmacro.codegeneration.java.structure.Macro;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.*;
 import org.sablecc.objectmacro.intermediate.syntax3.node.*;
-import org.sablecc.objectmacro.syntax3.node.PStringPart;
 import org.sablecc.objectmacro.util.Utils;
 
 public class CodeGenerationWalker
@@ -67,15 +65,21 @@ public class CodeGenerationWalker
 
     private MMacroBuilder currentMacroBuilder;
 
+    //Macro inside init_internals_method
     private MApplyInternalsInitializer currentApplyInitializer;
 
+    //Macro in add and addAll to only do type verification
+    private MApplyInternalsInitializer currentEmptyApplyInitializer;
+
     private MRedefinedInternalsSetter currentRedefinedInternalsSetter;
+
+    private MRedefinedInternalsSetter currentEmptyRedefinedInternalsSetter;
 
     private Integer indexBuilder = 0;
 
     private Integer indexInsert = 0;
 
-    private String currentMacroName;
+    private String currentMacroRefName;
 
     private final Map<String, Macro> macros;
 
@@ -233,6 +237,8 @@ public class CodeGenerationWalker
         MIncorrectType mIncorrectType = new MIncorrectType();
         MObjectMacroErrorHead mObjectMacroErrorHead = new MObjectMacroErrorHead();
         MMacroNullInList mMacroNullInList = new MMacroNullInList();
+        MCyclicReference mCyclicReference = new MCyclicReference();
+        MCannotModify mCannotModify = new MCannotModify();
         MObjectMacroException mObjectMacroException = new MObjectMacroException();
 
         if(!this.ir.getDestinationPackage().equals("")){
@@ -241,6 +247,8 @@ public class CodeGenerationWalker
             mParameterNull.newPackageDeclaration(destinationPackage);
             mObjectMacroErrorHead.newPackageDeclaration(destinationPackage);
             mMacroNullInList.newPackageDeclaration(destinationPackage);
+            mCyclicReference.newPackageDeclaration(destinationPackage);
+            mCannotModify.newPackageDeclaration(destinationPackage);
             mObjectMacroException.newPackageDeclaration(destinationPackage);
 
         }
@@ -249,6 +257,8 @@ public class CodeGenerationWalker
         writeFile("MParameterNull.java", mParameterNull.toString());
         writeFile("MObjectMacroErrorHead.java", mObjectMacroErrorHead.toString());
         writeFile("MMacroNullInList.java", mMacroNullInList.toString());
+        writeFile("MCyclicReference.java", mCyclicReference.toString());
+        writeFile("MCannotModify.java", mCannotModify.toString());
         writeFile("ObjectMacroException.java", mObjectMacroException.toString());
     }
 
@@ -279,13 +289,14 @@ public class CodeGenerationWalker
         this.mInternalsInitializer.newParentInternalsSetter(macroName);
         this.currentMacroToBuild.newRedefinedApplyInitializer(macroName);
 
-//TODO to remove in frontEnd
-//        for(TString string : node.getInitOrder()){
-//            String param_name = Utils.toCamelCase(string(string));
-//            if(this.currentMacro.getParameters().contains(param_name)){
-//                this.currentConstructor.newSetParam(param_name).newParamArg(param_name);
-//            }
-//        }
+        for(TString string : node.getInitOrder()){
+            String param_name = Utils.toCamelCase(string(string));
+            //Verify if parameter exist
+            if(this.currentMacro.getParameters().contains(param_name)){
+                this.currentMacroBuilder.newInitInternalsCall(param_name);
+            }
+        }
+
         this.currentMacroToBuild.newImportJavaUtil();
 
         if(node.getInternals().size() > 0){
@@ -297,6 +308,7 @@ public class CodeGenerationWalker
         else{
             this.currentMacroBuilder.newPublic();
             this.currentMacroToBuild.newEmptyBuilderWithContext();
+            this.currentMacroBuilder.newBuildVerification(macroName);
         }
     }
 
@@ -401,12 +413,13 @@ public class CodeGenerationWalker
             this.currentContext = paramName.concat(CONTEXT_STRING);
             this.indexBuilder = 0;
 
-            MParamMacroSetter mParamMacroSetter = this.currentMacroToBuild.newParamMacroSetter(paramName);
-            mParamMacroSetter.newParamArg(paramName);
-            mParamMacroSetter.newListMacroParam(paramName);
+            MParamMacroSetter mParamMacroSetter = this.currentMacroToBuild.newParamMacroSetter(paramName, this.currentMacro.getName());
 
-            this.currentApplyInitializer = mParamMacroSetter.newApplyInternalsInitializer(paramName);
+            this.currentEmptyApplyInitializer = mParamMacroSetter.newApplyInternalsInitializer(paramName);
+            this.currentApplyInitializer = this.currentMacroToBuild.newInitInternalsMethod(paramName)
+                            .newApplyInternalsInitializer(paramName);
             this.contextNames.add(currentContext);
+            this.currentConstructor.newInitMacroParam(paramName);
         }
         else{
             throw new InternalException("case unhandled");
@@ -421,6 +434,7 @@ public class CodeGenerationWalker
 
         this.currentContext = null;
         this.currentApplyInitializer = null;
+        this.currentEmptyApplyInitializer = null;
         this.indexBuilder = 0;
         this.indexInsert = 0;
         this.createdBuilders = new ArrayList<>();
@@ -471,11 +485,18 @@ public class CodeGenerationWalker
     public void inAMacroRef(
             AMacroRef node) {
 
-        this.currentMacroName = buildNameCamelCase(node.getNames());
+        this.currentMacroRefName = buildNameCamelCase(node.getNames());
 
         if(this.currentContext != null){
-            this.currentRedefinedInternalsSetter = this.currentApplyInitializer.newRedefinedInternalsSetter(
-                    currentMacroName);
+            this.currentRedefinedInternalsSetter =
+                    this.currentApplyInitializer.newRedefinedInternalsSetter(
+                            currentMacroRefName);
+        }
+
+        if(this.currentEmptyApplyInitializer != null){
+            this.currentEmptyRedefinedInternalsSetter =
+                    this.currentEmptyApplyInitializer.newRedefinedInternalsSetter(
+                            currentMacroRefName);
         }
     }
 
@@ -483,7 +504,7 @@ public class CodeGenerationWalker
     public void outAMacroRef(
             AMacroRef node) {
 
-        this.currentMacroName = null;
+        this.currentMacroRefName = null;
     }
 
     @Override
@@ -498,7 +519,7 @@ public class CodeGenerationWalker
             this.currentRedefinedInternalsSetter.newInitStringBuilder(index_builder);
 
             this.currentRedefinedInternalsSetter.newSetInternal(
-                    this.currentMacroName,
+                    this.currentMacroRefName,
                     buildNameCamelCase(node.getParamName()),
                     this.currentContext).newStringBuilderBuild(index_builder);
 
@@ -725,7 +746,7 @@ public class CodeGenerationWalker
         this.createdInserts.add(this.indexInsert);
 
         String tempContext = this.currentContext;
-        String tempMacroName = this.currentMacroName;
+        String tempMacroName = this.currentMacroRefName;
         Integer tempIndex = this.indexBuilder;
         Integer tempIndexInsert = this.indexInsert;
         this.currentContext = null;
@@ -735,7 +756,7 @@ public class CodeGenerationWalker
         this.indexBuilder = tempIndex;
         this.indexInsert = tempIndexInsert;
         this.currentContext = tempContext;
-        this.currentMacroName = tempMacroName;
+        this.currentMacroRefName = tempMacroName;
         this.currentInsertMacroPart = tempInsertMacroPart;
 
     }
@@ -747,8 +768,9 @@ public class CodeGenerationWalker
         String var_name = buildNameCamelCase(node.getNames());
 
         if(this.currentContext != null){
+
             MParamRef paramRef = this.currentRedefinedInternalsSetter.newSetInternal(
-                    this.currentMacroName,
+                    this.currentMacroRefName,
                     buildNameCamelCase(node.getParamName()),
                     this.currentContext)
                         .newParamRef(var_name);

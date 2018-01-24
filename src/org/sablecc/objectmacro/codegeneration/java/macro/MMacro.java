@@ -16,6 +16,7 @@ public class MMacro {
   private final List<Object> eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter = new LinkedList<Object>();
   private final List<Object> eParamStringRefBuilder_ParamMacroRefBuilder = new LinkedList<Object>();
   private final List<Object> eParamStringRef_ParamMacroRef = new LinkedList<Object>();
+  private final List<Object> eInitInternalsMethod = new LinkedList<Object>();
   private final List<Object> eRedefinedApplyInitializer = new LinkedList<Object>();
   private final List<Object> eMacroBuilder = new LinkedList<Object>();
   private final List<Object> eEmptyBuilderWithContext = new LinkedList<Object>();
@@ -79,8 +80,8 @@ public class MMacro {
     return lParamStringSetter;
   }
 
-  public MParamMacroSetter newParamMacroSetter(String pName) {
-    MParamMacroSetter lParamMacroSetter = new MParamMacroSetter(pName);
+  public MParamMacroSetter newParamMacroSetter(String pParamName, String pMacroName) {
+    MParamMacroSetter lParamMacroSetter = new MParamMacroSetter(pParamName, pMacroName);
     this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.add(lParamMacroSetter);
     return lParamMacroSetter;
   }
@@ -91,8 +92,8 @@ public class MMacro {
     return lInternalStringSetter;
   }
 
-  public MInternalMacroSetter newInternalMacroSetter(String pName) {
-    MInternalMacroSetter lInternalMacroSetter = new MInternalMacroSetter(pName);
+  public MInternalMacroSetter newInternalMacroSetter(String pParamName) {
+    MInternalMacroSetter lInternalMacroSetter = new MInternalMacroSetter(pParamName);
     this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.add(lInternalMacroSetter);
     return lInternalMacroSetter;
   }
@@ -119,6 +120,12 @@ public class MMacro {
     MParamMacroRef lParamMacroRef = new MParamMacroRef(pName);
     this.eParamStringRef_ParamMacroRef.add(lParamMacroRef);
     return lParamMacroRef;
+  }
+
+  public MInitInternalsMethod newInitInternalsMethod(String pName) {
+    MInitInternalsMethod lInitInternalsMethod = new MInitInternalsMethod(pName);
+    this.eInitInternalsMethod.add(lInitInternalsMethod);
+    return lInitInternalsMethod;
   }
 
   public MRedefinedApplyInitializer newRedefinedApplyInitializer(String pName) {
@@ -238,6 +245,18 @@ public class MMacro {
           sb.append(System.getProperty("line.separator"));
         }
         sb.append(oParamStringRef_ParamMacroRef.toString());
+      }
+    }
+    {
+      boolean first = true;
+      for(Object oInitInternalsMethod : this.eInitInternalsMethod) {
+        if(first) {
+          first = false;
+        }
+        else {
+          sb.append(System.getProperty("line.separator"));
+        }
+        sb.append(oInitInternalsMethod.toString());
       }
     }
     sb.append(System.getProperty("line.separator"));

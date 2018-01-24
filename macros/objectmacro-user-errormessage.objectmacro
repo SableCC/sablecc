@@ -48,3 +48,19 @@ $macro: object_macro_error(stack_trace) $
 $insert: object_macro_error_head $
 $stack_trace
 $end: object_macro_error $
+
+$comment: =========== object_macro_cyclic_reference ========== $
+
+$macro: object_macro_cyclic_reference(macro_name) $
+$insert: object_macro_error_head $
+
+An instance of "$macro_name" is a cyclic reference to the same instance.
+$end: object_macro_cyclic_reference $
+
+$comment: ========== cannot_modify ============ $
+
+$macro: cannot_modify(macro_name) $
+$insert: object_macro_error_head $
+
+Instance of M$macro_name cannot be updated after calling the method built.
+$end: cannot_modify $

@@ -6,27 +6,16 @@ import java.util.*;
 
 public class MParamMacroSetter {
 
-  private final String pName;
+  private final String pParamName;
+  private final String pMacroName;
   private final MParamMacroSetter mParamMacroSetter = this;
-  private final List<Object> eListMacroParam = new LinkedList<Object>();
-  private final List<Object> eParamArg = new LinkedList<Object>();
   private final List<Object> eApplyInternalsInitializer = new LinkedList<Object>();
 
-  public MParamMacroSetter(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
-
-  public MListMacroParam newListMacroParam(String pName) {
-    MListMacroParam lListMacroParam = new MListMacroParam(pName);
-    this.eListMacroParam.add(lListMacroParam);
-    return lListMacroParam;
-  }
-
-  public MParamArg newParamArg(String pName) {
-    MParamArg lParamArg = new MParamArg(pName);
-    this.eParamArg.add(lParamArg);
-    return lParamArg;
+  public MParamMacroSetter(String pParamName, String pMacroName) {
+    if(pParamName == null) throw new NullPointerException();
+    this.pParamName = pParamName;
+    if(pMacroName == null) throw new NullPointerException();
+    this.pMacroName = pMacroName;
   }
 
   public MApplyInternalsInitializer newApplyInternalsInitializer(String pParamName) {
@@ -35,47 +24,45 @@ public class MParamMacroSetter {
     return lApplyInternalsInitializer;
   }
 
-  String pName() {
-    return this.pName;
+  String pParamName() {
+    return this.pParamName;
   }
 
-  private String rName() {
-    return this.mParamMacroSetter.pName();
+  String pMacroName() {
+    return this.pMacroName;
+  }
+
+  private String rParamName() {
+    return this.mParamMacroSetter.pParamName();
+  }
+
+  private String rMacroName() {
+    return this.mParamMacroSetter.pMacroName();
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    public void setP");
-    sb.append(rName());
-    sb.append("(");
-    for(Object oListMacroParam : this.eListMacroParam) {
-      sb.append(oListMacroParam.toString());
-    }
-    sb.append("){");
+    sb.append("    public void addAllP");
+    sb.append(rParamName());
+    sb.append("(List<Macro> macros){");
     sb.append(System.getProperty("line.separator"));
-    sb.append("        if(");
-    for(Object oParamArg : this.eParamArg) {
-      sb.append(oParamArg.toString());
-    }
-    sb.append(" == null){");
+    sb.append("        if(macros == null){");
     sb.append(System.getProperty("line.separator"));
     sb.append("            throw ObjectMacroException.parameterNull(\"");
-    sb.append(rName());
+    sb.append(rParamName());
     sb.append("\");");
     sb.append(System.getProperty("line.separator"));
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));
+    sb.append("        if(this.built){");
     sb.append(System.getProperty("line.separator"));
-    sb.append("        List<Macro> macros = ");
-    for(Object oParamArg : this.eParamArg) {
-      sb.append(oParamArg.toString());
-    }
-    sb.append(";");
+    sb.append("            throw ObjectMacroException.cannotModify(\"");
+    sb.append(rMacroName());
+    sb.append("\");");
     sb.append(System.getProperty("line.separator"));
-    sb.append("        this.list_");
-    sb.append(rName());
-    sb.append(" = new ArrayList<>();");
+    sb.append("        }");
+    sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("        int i = 0;");
     sb.append(System.getProperty("line.separator"));
@@ -85,7 +72,7 @@ public class MParamMacroSetter {
     sb.append("            if(macro == null){");
     sb.append(System.getProperty("line.separator"));
     sb.append("                throw ObjectMacroException.macroNull(i, \"");
-    sb.append(rName());
+    sb.append(rParamName());
     sb.append("\");");
     sb.append(System.getProperty("line.separator"));
     sb.append("            }");
@@ -97,9 +84,10 @@ public class MParamMacroSetter {
     }
     sb.append(System.getProperty("line.separator"));
     sb.append("            this.list_");
-    sb.append(rName());
+    sb.append(rParamName());
     sb.append(".add(macro);");
     sb.append(System.getProperty("line.separator"));
+    sb.append("            i++;");
     sb.append(System.getProperty("line.separator"));
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));
@@ -107,25 +95,22 @@ public class MParamMacroSetter {
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("    public void addP");
-    sb.append(rName());
+    sb.append(rParamName());
     sb.append("(Macro macro){");
     sb.append(System.getProperty("line.separator"));
     sb.append("        if(macro == null){");
     sb.append(System.getProperty("line.separator"));
     sb.append("            throw ObjectMacroException.parameterNull(\"");
-    sb.append(rName());
+    sb.append(rParamName());
     sb.append("\");");
     sb.append(System.getProperty("line.separator"));
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));
+    sb.append("        if(this.built){");
     sb.append(System.getProperty("line.separator"));
-    sb.append("        if(this.list_");
-    sb.append(rName());
-    sb.append(" == null){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            this.list_");
-    sb.append(rName());
-    sb.append(" = new ArrayList<>();");
+    sb.append("            throw ObjectMacroException.cannotModify(\"");
+    sb.append(rMacroName());
+    sb.append("\");");
     sb.append(System.getProperty("line.separator"));
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));
@@ -136,7 +121,7 @@ public class MParamMacroSetter {
     }
     sb.append(System.getProperty("line.separator"));
     sb.append("        this.list_");
-    sb.append(rName());
+    sb.append(rParamName());
     sb.append(".add(macro);");
     sb.append(System.getProperty("line.separator"));
     sb.append("    }");

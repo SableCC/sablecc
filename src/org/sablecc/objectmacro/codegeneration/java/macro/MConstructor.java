@@ -10,7 +10,7 @@ public class MConstructor {
   private final MConstructor mConstructor = this;
   private final List<Object> eStringParam = new LinkedList<Object>();
   private final List<Object> eSetParam = new LinkedList<Object>();
-  private final List<Object> eInitMacroInternal_InitStringInternal = new LinkedList<Object>();
+  private final List<Object> eInitMacroParam_InitMacroInternal_InitStringInternal = new LinkedList<Object>();
 
   public MConstructor(String pName) {
     if(pName == null) throw new NullPointerException();
@@ -29,15 +29,21 @@ public class MConstructor {
     return lSetParam;
   }
 
+  public MInitMacroParam newInitMacroParam(String pName) {
+    MInitMacroParam lInitMacroParam = new MInitMacroParam(pName);
+    this.eInitMacroParam_InitMacroInternal_InitStringInternal.add(lInitMacroParam);
+    return lInitMacroParam;
+  }
+
   public MInitMacroInternal newInitMacroInternal(String pName) {
     MInitMacroInternal lInitMacroInternal = new MInitMacroInternal(pName);
-    this.eInitMacroInternal_InitStringInternal.add(lInitMacroInternal);
+    this.eInitMacroParam_InitMacroInternal_InitStringInternal.add(lInitMacroInternal);
     return lInitMacroInternal;
   }
 
   public MInitStringInternal newInitStringInternal(String pName) {
     MInitStringInternal lInitStringInternal = new MInitStringInternal(pName);
-    this.eInitMacroInternal_InitStringInternal.add(lInitStringInternal);
+    this.eInitMacroParam_InitMacroInternal_InitStringInternal.add(lInitStringInternal);
     return lInitStringInternal;
   }
 
@@ -75,11 +81,11 @@ public class MConstructor {
     for(Object oSetParam : this.eSetParam) {
       sb.append(oSetParam.toString());
     }
-    if(this.eInitMacroInternal_InitStringInternal.size() > 0) {
+    if(this.eInitMacroParam_InitMacroInternal_InitStringInternal.size() > 0) {
       sb.append(System.getProperty("line.separator"));
     }
-    for(Object oInitMacroInternal_InitStringInternal : this.eInitMacroInternal_InitStringInternal) {
-      sb.append(oInitMacroInternal_InitStringInternal.toString());
+    for(Object oInitMacroParam_InitMacroInternal_InitStringInternal : this.eInitMacroParam_InitMacroInternal_InitStringInternal) {
+      sb.append(oInitMacroParam_InitMacroInternal_InitStringInternal.toString());
     }
     sb.append("    }");
     sb.append(System.getProperty("line.separator"));

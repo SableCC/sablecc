@@ -25,6 +25,8 @@ public class Macro {
 
     private final MMacro macro;
 
+    private final String name;
+
     private final List<String> parameters;
 
     private final List<String> internals;
@@ -32,25 +34,28 @@ public class Macro {
     public Macro(
             MMacro macro,
             List<String> parameters,
-            List<String> internals){
+            List<String> internals,
+            String name){
 
         this.macro = macro;
         this.parameters = parameters;
         this.internals = internals;
+        this.name = name;
     }
 
     public List<String> getInternals() {
-
-        return internals;
+        return this.internals;
     }
 
     public List<String> getParameters() {
-
-        return parameters;
+        return this.parameters;
     }
 
     public MMacro getMacro() {
+        return this.macro;
+    }
 
-        return macro;
+    public String getName(){
+        return this.name;
     }
 }

@@ -87,6 +87,8 @@ public abstract class Macro {
 
     public String expansion;
 
+    public boolean built = false;
+
     public Map<Context, String> expansions = new LinkedHashMap<>();
 
     public String build(){
@@ -123,6 +125,7 @@ $expand: constructor, before_first="\n" $
 $expand: param_string_setter, param_macro_setter, internal_string_setter, internal_macro_setter, before_first="\n", separator="\n" $
 $expand: param_string_ref_builder, param_macro_ref_builder, separator="\n", before_first="\n" $
 $expand: param_string_ref, param_macro_ref, separator="\n", before_first="\n" $
+$expand: init_internals_method, separator="\n" $
 
 $expand: redefined_apply_initializer $
 $expand: macro_builder, before_first="\n" $
@@ -142,6 +145,10 @@ $macro: macro_builder $
             return local_expansion;
         }
 
+        $expand: build_verification $
+
+        $expand: init_internals_call $
+
         StringBuilder sb0 = new StringBuilder();
 
 $expand: string_part, param_insert_part, eol_part, insert_macro_part $
@@ -151,6 +158,15 @@ $expand: string_part, param_insert_part, eol_part, insert_macro_part $
         return local_expansion;
     }
 $end: macro_builder $
+
+$comment: ============ build_verification ============ $
+
+$macro: build_verification(macro_name) $
+        if(this.built){
+            throw ObjectMacroException.cyclicReference("$macro_name");
+        }
+        this.built = true;
+$end: build_verification $
 
 $comment: ============ empty_builder_with_context ============ $
 
@@ -190,10 +206,26 @@ $macro: redefined_apply_initializer(name) $
     }
 $end: redefined_apply_initializer $
 
+$comment: ========= init_internals_method ======== $
+
+$macro: init_internals_method(name) $
+    private void init$(name)Internals(){
+        for(Macro macro : this.list_$name){
+            $expand: apply_internals_initializer $
+        }
+    }
+$end: init_internals_method $
+
+$comment: =========== init_internals_call ======== $
+
+$macro: init_internals_call(param_name) $
+init$(param_name)Internals();
+$end: init_internals_call $
+
 $comment: ========== param_macro_field ========== $
 
 $macro: param_macro_field(name) $
-    private List<Macro> list_$name;
+    private final List<Macro> list_$name;
 $end: param_macro_field $
 
 $comment: ========== param_string_field ========== $
@@ -225,7 +257,7 @@ $comment: ========== constructor ========== $
 $macro: constructor(name) $
     public M$name($expand: string_param, separator=", "$){
 $expand: set_param, before_first="\n" $
-$expand: init_macro_internal, init_string_internal, before_first="\n" $
+$expand: init_macro_param, init_macro_internal, init_string_internal, before_first="\n" $
     }
 $end: constructor $
 
@@ -261,61 +293,61 @@ $end: param_string_setter $
 
 $comment: ========= param_macro_setter =========== $
 
-$macro: param_macro_setter(name) $
-    public void setP$name($expand: list_macro_param $){
-        if($expand: param_arg $ == null){
-            throw ObjectMacroException.parameterNull("$name");
+$macro: param_macro_setter(param_name, macro_name) $
+    public void addAllP$param_name(List<Macro> macros){
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("$param_name");
+        }
+        if(this.built){
+            throw ObjectMacroException.cannotModify("$macro_name");
         }
 
-        List<Macro> macros = $expand: param_arg $;
-        this.list_$name = new ArrayList<>();
         int i = 0;
 
         for(Macro macro : macros){
             if(macro == null){
-                throw ObjectMacroException.macroNull(i, "$name");
+                throw ObjectMacroException.macroNull(i, "$param_name");
             }
 
             $expand: apply_internals_initializer $
 
-            this.list_$name.add(macro);
-
+            this.list_$param_name.add(macro);
+            i++;
         }
     }
 
-    public void addP$name(Macro macro){
+    public void addP$param_name(Macro macro){
         if(macro == null){
-            throw ObjectMacroException.parameterNull("$name");
+            throw ObjectMacroException.parameterNull("$param_name");
         }
-
-        if(this.list_$name == null){
-            this.list_$name = new ArrayList<>();
+        if(this.built){
+            throw ObjectMacroException.cannotModify("$macro_name");
         }
 
         $expand: apply_internals_initializer $
 
-        this.list_$name.add(macro);
+        this.list_$param_name.add(macro);
     }
 $end: param_macro_setter $
 
 $comment: ========= internal_macro_setter ========= $
 
-$macro: internal_macro_setter(name) $
-    void set$name(
+$macro: internal_macro_setter(param_name) $
+    void set$param_name(
             Context context,
             List<Macro> macros) {
 
         if(macros == null){
-            throw new RuntimeException("macros provided to $name cannot be null");
+            throw new RuntimeException("macros cannot be null");
         }
 
-        List<Macro> tempMacros = new ArrayList<>();
+        final List<Macro> tempMacros = new ArrayList<>();
         int i = 0;
 
         for(Macro macro : macros){
 
             if(macro == null){
-                throw ObjectMacroException.macroNull(i, "$name");
+                throw ObjectMacroException.macroNull(i, "param_name");
             }
 
             $expand: apply_internals_initializer $
@@ -323,7 +355,7 @@ $macro: internal_macro_setter(name) $
             tempMacros.add(macro);
         }
 
-        this.list_$name.put(context, tempMacros);
+        this.list_$param_name.put(context, tempMacros);
     }
 $end: internal_macro_setter $
 
@@ -570,6 +602,12 @@ $macro: init_macro_internal(name) $
     this.list_$name = new LinkedHashMap<>();
 $end: init_macro_internal $
 
+$comment: ========== init_macro_param =========== $
+
+$macro: init_macro_param(name) $
+    this.list_$name = new ArrayList<>();
+$end: init_macro_param $
+
 $comment: ========== init_string_internal =========== $
 
 $macro: init_string_internal(name) $
@@ -637,6 +675,18 @@ public class ObjectMacroException
             String paramName){
 
         return new ObjectMacroException(new MParameterNull(paramName).toString());
+    }
+
+    static ObjectMacroException cyclicReference(
+            String macroName){
+
+        return new ObjectMacroException(new MCyclicReference(macroName).toString());
+    }
+
+    static ObjectMacroException cannotModify(
+            String macroName){
+
+        return new ObjectMacroException(new MCannotModify(macroName).toString());
     }
 
 }
@@ -800,3 +850,81 @@ public class MMacroNullInList {
 
 }
 $end: macro_null_in_list $
+
+$comment: ============ cannot_modify ============ $
+
+$macro: cannot_modify $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+
+public class MCannotModify {
+
+  private final String pMacroName;
+  private final MCannotModify mCannotModify = this;
+
+  public MCannotModify(String pMacroName) {
+    if(pMacroName == null) throw new NullPointerException();
+    this.pMacroName = pMacroName;
+  }
+
+  String pMacroName() {
+    return this.pMacroName;
+  }
+
+  private String rMacroName() {
+    return this.mCannotModify.pMacroName();
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MObjectMacroErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("Instance of M");
+    sb.append(rMacroName());
+    sb.append(" cannot be updated after calling the method built.");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
+
+}
+$end: cannot_modify $
+
+$comment: ============ cyclic_reference ============ $
+
+$macro: cyclic_reference $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+
+public class MCyclicReference {
+
+  private final String pMacroName;
+  private final MCyclicReference mCyclicReference = this;
+
+  public MCyclicReference(String pMacroName) {
+    if(pMacroName == null) throw new NullPointerException();
+    this.pMacroName = pMacroName;
+  }
+
+  String pMacroName() {
+    return this.pMacroName;
+  }
+
+  private String rMacroName() {
+    return this.mCyclicReference.pMacroName();
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MObjectMacroErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("An instance of \\"");
+    sb.append(rMacroName());
+    sb.append("\\" is a cyclic reference to the same instance.");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
+
+}
+$end: cyclic_reference $

@@ -2,12 +2,12 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MParamMacroField {
+public class MInitMacroParam {
 
   private final String pName;
-  private final MParamMacroField mParamMacroField = this;
+  private final MInitMacroParam mInitMacroParam = this;
 
-  public MParamMacroField(String pName) {
+  public MInitMacroParam(String pName) {
     if(pName == null) throw new NullPointerException();
     this.pName = pName;
   }
@@ -17,15 +17,15 @@ public class MParamMacroField {
   }
 
   private String rName() {
-    return this.mParamMacroField.pName();
+    return this.mInitMacroParam.pName();
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    private final List<Macro> list_");
+    sb.append("    this.list_");
     sb.append(rName());
-    sb.append(";");
+    sb.append(" = new ArrayList<>();");
     sb.append(System.getProperty("line.separator"));
     return sb.toString();
   }
