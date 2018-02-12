@@ -19,7 +19,7 @@ package org.sablecc.objectmacro.codegeneration.java.structure;
 
 import org.sablecc.objectmacro.codegeneration.java.macro.MMacro;
 
-import java.util.List;
+import java.util.*;
 
 public class Macro {
 
@@ -27,28 +27,28 @@ public class Macro {
 
     private final String name;
 
-    private final List<String> parameters;
+    private final List<String> parametersName;
 
-    private final List<String> internals;
+    private final List<String> internalsName;
 
     public Macro(
             MMacro macro,
-            List<String> parameters,
-            List<String> internals,
+            List<String> parametersName,
+            List<String> internalsName,
             String name){
 
         this.macro = macro;
-        this.parameters = parameters;
-        this.internals = internals;
+        this.parametersName = parametersName;
+        this.internalsName = internalsName;
         this.name = name;
     }
 
-    public List<String> getInternals() {
-        return this.internals;
+    public List<String> getInternalsName() {
+        return this.internalsName;
     }
 
-    public List<String> getParameters() {
-        return this.parameters;
+    public List<String> getParametersName() {
+        return this.parametersName;
     }
 
     public MMacro getMacro() {

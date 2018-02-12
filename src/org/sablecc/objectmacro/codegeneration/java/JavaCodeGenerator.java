@@ -80,6 +80,9 @@ public class JavaCodeGenerator
 
         CodeGenerationWalker walker = new CodeGenerationWalker(getIr(),
                 packageDirectory, macros);
+        UtilsGenerationWalker utilsGenerationWalker = new UtilsGenerationWalker(getIr(), packageDirectory);
+
         getIr().getAST().apply(walker);
+        getIr().getAST().apply(utilsGenerationWalker);
     }
 }
