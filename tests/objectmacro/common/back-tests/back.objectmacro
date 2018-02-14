@@ -31,7 +31,7 @@ empty
 
 Macro semicolon_separator
     Internal
-        x : empty_macro, separator="; ";
+        x : empty_macro;
 {Begin}
 Le corps de C : {x}
 {End}
@@ -44,16 +44,20 @@ Macro a
         y : b(z), separator="\n";
         z : c("first argument of c in a", x);
 {Begin}
+============= A ===============
 {y}
 {End}
 
 Macro b
     Param
         o : String;
+        s : c(o, o);
     Internal
-        p : c("first argument of c in b", o), separator="\n";
+        p : c;
 {Begin}
+============== B ===============
 {p}
+{s}
 {End}
 
 Macro c
@@ -61,7 +65,9 @@ Macro c
         q : String;
         r : String;
 {Begin}
-{q} {r}
+=============== C ==============
+{q}
+{r}
 {End}
 
 Macro d
@@ -96,7 +102,7 @@ Macro f
 
 Macro g
     Internal
-        z : h("lala");
+        z : h;
 {Begin}
 {z}
 {End}
@@ -110,3 +116,29 @@ Macro h
 {la}
 {lala}
 {End}
+
+#=========== Example =========
+
+Macro i
+    Param
+        y : j(z);
+        z : k("On est dans i");
+{Begin}
+{y}
+{End}
+
+Macro j
+    Internal
+        y : k;
+{Begin}
+{y}
+{End}
+
+Macro k
+    Internal
+        a : String;
+{Begin}
+{a}
+{End}
+
+
