@@ -111,6 +111,45 @@ public abstract class Macro {
 }
 $end: super_macro $
 
+$comment: =============== class_macros_list_value ========= $
+
+$macro: class_macros_list_value $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+$expand: import_java_util, before_first="\n" $
+
+class MacrosValue {
+
+    private final List<Macro> macros;
+
+    private final Context context;
+
+    MacrosValue(
+            List<Macro> macros,
+            Context context){
+
+        this.macros = macros;
+        this.context = context;
+    }
+
+    String build(){
+
+        StringBuilder sb = new StringBuilder();
+
+        for(Macro macro : this.macros){
+            sb.append(macro.build(this.context));
+        }
+
+        return sb.toString();
+    }
+
+    List<Macro> getMacros(){
+        return this.macros;
+    }
+}
+
+$end: class_macros_list_value $
+
 $comment: ========== macro ========== $
 
 $macro: macro(name) $
@@ -252,6 +291,7 @@ $macro: context_field(name) $
     private final Context $(name)Context = new Context();
 $end: context_field $
 
+$comment: =========== param_macros_value_field ======== $
 $comment: ========== constructor ========== $
 
 $macro: constructor(name) $
@@ -261,6 +301,9 @@ $expand: init_macro_param, init_macro_internal, init_string_internal, before_fir
     }
 $end: constructor $
 
+$macro: param_macros_value_field(param_name) $
+    private final MacrosValue $param_nameValue;
+$end: param_macros_value_field $
 $comment: ========== string_param ========== $
 
 $macro: string_param(name) $
