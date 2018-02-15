@@ -13,10 +13,9 @@ public class MMacro {
   private final List<Object> eParamMacroField_ParamStringField_InternalMacroField_InternalStringField = new LinkedList<Object>();
   private final List<Object> eContextField = new LinkedList<Object>();
   private final List<Object> eConstructor = new LinkedList<Object>();
-  private final List<Object> eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter = new LinkedList<Object>();
+  private final List<Object> eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter = new LinkedList<Object>();
   private final List<Object> eParamStringRefBuilder_ParamMacroRefBuilder = new LinkedList<Object>();
   private final List<Object> eParamStringRef_ParamMacroRef = new LinkedList<Object>();
-  private final List<Object> eInitInternalsMethod = new LinkedList<Object>();
   private final List<Object> eRedefinedApplyInitializer = new LinkedList<Object>();
   private final List<Object> eMacroBuilder = new LinkedList<Object>();
   private final List<Object> eEmptyBuilderWithContext = new LinkedList<Object>();
@@ -76,25 +75,31 @@ public class MMacro {
 
   public MParamStringSetter newParamStringSetter(String pName) {
     MParamStringSetter lParamStringSetter = new MParamStringSetter(pName);
-    this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.add(lParamStringSetter);
+    this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter.add(lParamStringSetter);
     return lParamStringSetter;
   }
 
-  public MParamMacroSetter newParamMacroSetter(String pParamName, String pMacroName) {
-    MParamMacroSetter lParamMacroSetter = new MParamMacroSetter(pParamName, pMacroName);
-    this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.add(lParamMacroSetter);
-    return lParamMacroSetter;
+  public MAddAll newAddAll(String pParamName) {
+    MAddAll lAddAll = new MAddAll(pParamName);
+    this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter.add(lAddAll);
+    return lAddAll;
+  }
+
+  public MSingleAdd newSingleAdd(String pMacroName, String pParamName) {
+    MSingleAdd lSingleAdd = new MSingleAdd(pMacroName, pParamName);
+    this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter.add(lSingleAdd);
+    return lSingleAdd;
   }
 
   public MInternalStringSetter newInternalStringSetter(String pName) {
     MInternalStringSetter lInternalStringSetter = new MInternalStringSetter(pName);
-    this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.add(lInternalStringSetter);
+    this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter.add(lInternalStringSetter);
     return lInternalStringSetter;
   }
 
   public MInternalMacroSetter newInternalMacroSetter(String pParamName) {
     MInternalMacroSetter lInternalMacroSetter = new MInternalMacroSetter(pParamName);
-    this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.add(lInternalMacroSetter);
+    this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter.add(lInternalMacroSetter);
     return lInternalMacroSetter;
   }
 
@@ -120,12 +125,6 @@ public class MMacro {
     MParamMacroRef lParamMacroRef = new MParamMacroRef(pName);
     this.eParamStringRef_ParamMacroRef.add(lParamMacroRef);
     return lParamMacroRef;
-  }
-
-  public MInitInternalsMethod newInitInternalsMethod(String pName) {
-    MInitInternalsMethod lInitInternalsMethod = new MInitInternalsMethod(pName);
-    this.eInitInternalsMethod.add(lInitInternalsMethod);
-    return lInitInternalsMethod;
   }
 
   public MRedefinedApplyInitializer newRedefinedApplyInitializer(String pName) {
@@ -202,19 +201,19 @@ public class MMacro {
     for(Object oConstructor : this.eConstructor) {
       sb.append(oConstructor.toString());
     }
-    if(this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.size() > 0) {
+    if(this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter.size() > 0) {
       sb.append(System.getProperty("line.separator"));
     }
     {
       boolean first = true;
-      for(Object oParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter : this.eParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter) {
+      for(Object oParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter : this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter) {
         if(first) {
           first = false;
         }
         else {
           sb.append(System.getProperty("line.separator"));
         }
-        sb.append(oParamStringSetter_ParamMacroSetter_InternalStringSetter_InternalMacroSetter.toString());
+        sb.append(oParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter.toString());
       }
     }
     if(this.eParamStringRefBuilder_ParamMacroRefBuilder.size() > 0) {
@@ -245,18 +244,6 @@ public class MMacro {
           sb.append(System.getProperty("line.separator"));
         }
         sb.append(oParamStringRef_ParamMacroRef.toString());
-      }
-    }
-    {
-      boolean first = true;
-      for(Object oInitInternalsMethod : this.eInitInternalsMethod) {
-        if(first) {
-          first = false;
-        }
-        else {
-          sb.append(System.getProperty("line.separator"));
-        }
-        sb.append(oInitInternalsMethod.toString());
       }
     }
     sb.append(System.getProperty("line.separator"));
