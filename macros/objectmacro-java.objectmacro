@@ -171,6 +171,33 @@ $expand: empty_builder_with_context, before_first="\n"$
 }
 $end: macro $
 
+$comment$
+================================================================
+===================== MACRO FUNCTIONS ==========================
+================================================================
+$end$
+
+$comment: ========== constructor ========== $
+
+$macro: constructor(name) $
+    public M$name($expand: string_param, separator=", "$){
+$expand: set_param, before_first="\n" $
+$expand: init_macro_param, init_macro_internal, init_string_internal, init_param_value, before_first="\n" $
+    }
+$end: constructor $
+
+$comment: =========== param_string_setter ========= $
+
+$macro: param_string_setter(name) $
+    private void setP$name($expand: string_param $){
+        if($expand: param_arg $ == null){
+            throw ObjectMacroException.parameterNull("$name");
+        }
+
+        this.field_$name = $expand: param_arg $;
+    }
+$end: param_string_setter $
+
 $comment: ========= add_all =========== $
 
 $macro: add_all(param_name) $
@@ -210,6 +237,93 @@ $macro: single_add(macro_name, param_name) $
         this.list_$param_name.add(macro);
     }
 $end: single_add $
+
+$comment: ========== param_macro_ref_builder ================== $
+
+$macro: param_macro_ref_builder(name, index_builder) $
+    private String build$name($expand: context_param $){
+
+        StringBuilder sb$index_builder = new StringBuilder();
+        Context local_context = $expand: context_name, none="context"$;
+        List<Macro> macros = this.list_$(name)$expand: get_internal_tail $;
+        $expand: none $
+        boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+            $expand: before_first $
+            $expand: separator $
+
+            sb$index_builder.append(macro.build(local_context));
+            i++;
+
+            $expand: after_last $
+        }
+
+        return sb$index_builder.toString();
+    }
+$end: param_macro_ref_builder $
+
+$comment: ========= internal_macro_setter ========= $
+
+$macro: internal_macro_setter(param_name) $
+    void set$param_name(
+            Context context,
+            List<Macro> macros) {
+
+        if(macros == null){
+            throw new RuntimeException("macros cannot be null");
+        }
+
+        this.list_$param_name.put(context, macros);
+    }
+$end: internal_macro_setter $
+
+$comment: ========== param_macro_ref ============== $
+
+$macro: param_macro_ref(name) $
+    private List<Macro> get$name($expand: context_param $){
+
+        return this.list_$(name)$expand: get_internal_tail $;
+    }
+$end: param_macro_ref $
+
+$comment: ========== param_string_ref ============== $
+
+$macro: param_string_ref(name) $
+    private String get$name($expand: context_param $){
+
+        return this.field_$(name)$expand: get_internal_tail $;
+    }
+$end: param_string_ref $
+
+$comment: ========= internal_string_setter ========= $
+
+$macro: internal_string_setter(name) $
+    void set$name(
+            Context context,
+            String value) {
+
+        if(value == null){
+            throw new RuntimeException("value cannot be null here");
+        }
+
+        this.field_$name.put(context, value);
+    }
+$end: internal_string_setter $
+
+$comment$
+============================================
+============== MACRO BUILDER ===============
+============================================
+$end$
+
+$comment: ========= public ============= $
+
+$macro: public $
+public$no_eol$
+$end: public $
+
 $comment: ========== macro_builder ======= $
 
 $macro: macro_builder $
@@ -252,12 +366,6 @@ $macro: empty_builder_with_context $
     }
 $end: empty_builder_with_context$
 
-$comment: ========= public ============= $
-
-$macro: public $
-public$no_eol$
-$end: public $
-
 $comment: ========== context_expansion ======= $
 
 $macro: context_expansion $
@@ -281,21 +389,11 @@ $macro: redefined_apply_initializer(name) $
     }
 $end: redefined_apply_initializer $
 
-$comment: ========= init_internals_method ======== $
-
-$macro: init_internals_method(name) $
-    private void init$(name)Internals(){
-        for(Macro macro : this.list_$name){
-            $expand: apply_internals_initializer $
-        }
-    }
-$end: init_internals_method $
-
-$comment: =========== init_internals_call ======== $
-
-$macro: init_internals_call(param_name) $
-init$(param_name)Internals();
-$end: init_internals_call $
+$comment$
+===================================================
+================= MACRO FIELDS ====================
+===================================================
+$end$
 
 $comment: ========== param_macro_field ========== $
 
@@ -328,86 +426,46 @@ $macro: context_field(name) $
 $end: context_field $
 
 $comment: =========== param_macros_value_field ======== $
-$comment: ========== constructor ========== $
-
-$macro: constructor(name) $
-    public M$name($expand: string_param, separator=", "$){
-$expand: set_param, before_first="\n" $
-$expand: init_macro_param, init_macro_internal, init_string_internal, before_first="\n" $
-    }
-$end: constructor $
 
 $macro: param_macros_value_field(param_name) $
     private final MacrosValue $param_nameValue;
 $end: param_macros_value_field $
+
+$comment: ========== init_macro_internal =========== $
+
+$macro: init_macro_internal(name) $
+    this.list_$name = new LinkedHashMap<>();
+$end: init_macro_internal $
+
+$comment: ========== init_macro_param =========== $
+
+$macro: init_macro_param(name) $
+    this.list_$name = new ArrayList<>();
+$end: init_macro_param $
+
+$comment: ========== init_string_internal =========== $
+
+$macro: init_string_internal(name) $
+    this.field_$name = new LinkedHashMap<>();
+$end: init_string_internal $
+
+
+
+
+
 $comment: ========== string_param ========== $
 
 $macro: string_param(name) $
 String p$(name)$no_eol$
 $end: string_param $
 
-$comment: ========== list_macro_param ========== $
+$comment: =========== is_built =========== $
 
-$macro: list_macro_param(name) $
-List<Macro> p$(name)$no_eol$
-$end: list_macro_param $
-
-$comment: ========== macro_param ========== $
-
-$macro: macro_param(name) $
-Macro p$(name)$no_eol$
-$end: macro_param $
-
-$comment: =========== param_string_setter ========= $
-
-$macro: param_string_setter(name) $
-    private void setP$name($expand: string_param $){
-        if($expand: param_arg $ == null){
-            throw ObjectMacroException.parameterNull("$name");
-        }
-
-        this.field_$name = $expand: param_arg $;
-    }
-$end: param_string_setter $
-
-
-
-
-
-
-
+$macro: is_built(macro_name) $
+        if(this.isBuilt){
             throw ObjectMacroException.cannotModify("$macro_name");
         }
-
-$comment: ========= internal_macro_setter ========= $
-
-$macro: internal_macro_setter(param_name) $
-    void set$param_name(
-            Context context,
-            List<Macro> macros) {
-
-        if(macros == null){
-            throw new RuntimeException("macros cannot be null");
-        }
-
-        final List<Macro> tempMacros = new ArrayList<>();
-        int i = 0;
-
-        for(Macro macro : macros){
-
-            if(macro == null){
-                throw ObjectMacroException.macroNull(i, "param_name");
-            }
-
-            $expand: apply_internals_initializer $
-
-            tempMacros.add(macro);
-        }
-
-        this.list_$param_name.put(context, tempMacros);
-    }
-$end: internal_macro_setter $
-
+$end: is_built $
 
 $comment: ========== apply_internals_initializer ======= $
 
@@ -458,6 +516,10 @@ $macro: param_arg(name) $
 p$(name)$no_eol$
 $end: param_arg $
 
+===================================================
+=============== MACRO / TEXT PARTS ================
+===================================================
+
 $comment: ========= string_part ================= $
 
 $macro: string_part(string, index_builder) $
@@ -476,12 +538,6 @@ $macro:  param_insert_part(param_name, index_builder) $
         sb$index_builder.append(build$param_name($expand: context_arg $));
 $end: param_insert_part $
 
-$comment: ========= init_string_builder ========= $
-
-$macro: init_string_builder(index_builder) $
-        StringBuilder sb$index_builder = new StringBuilder();
-$end: init_string_builder $
-
 $comment: ========== insert_macro_part =============== $
 
 $macro: insert_macro_part(name, index_builder, index_insert) $
@@ -490,6 +546,12 @@ $macro: insert_macro_part(name, index_builder, index_insert) $
         $expand: set_internal $
         sb$index_builder.append(minsert_$index_insert.build(null));
 $end: insert_macro_part $
+
+$comment: ========= init_string_builder ========= $
+
+$macro: init_string_builder(index_builder) $
+        StringBuilder sb$index_builder = new StringBuilder();
+$end: init_string_builder $
 
 $comment: ========== set_internal ================== $
 
@@ -502,59 +564,6 @@ $comment: ========== string_builder_build ========== $
 $macro: string_builder_build(index_builder) $
 sb$index_builder.toString()$no_eol$
 $end: string_builder_build $
-
-$comment: ========== param_macro_ref_builder ================== $
-
-$macro: param_macro_ref_builder(name, index_builder) $
-    private String build$name($expand: context_param $){
-
-        StringBuilder sb$index_builder = new StringBuilder();
-        Context local_context = $expand: context_name, none="context"$;
-        List<Macro> macros = this.list_$(name)$expand: get_internal_tail $;
-        $expand: none $
-        boolean first = true;
-        int i = 0;
-
-        for(Macro macro : macros){
-            $expand: before_first $
-            $expand: separator $
-
-            sb$index_builder.append(macro.build(local_context));
-            i++;
-
-            $expand: after_last $
-        }
-
-        return sb$index_builder.toString();
-    }
-$end: param_macro_ref_builder $
-
-$comment: =========== param_string_ref_builder ============= $
-
-$macro: param_string_ref_builder(name) $
-    private String build$name($expand: context_param$){
-
-        return this.field_$(name)$expand: get_internal_tail $;
-    }
-$end: param_string_ref_builder $
-
-$comment: ========== param_macro_ref ============== $
-
-$macro: param_macro_ref(name) $
-    private List<Macro> get$name($expand: context_param $){
-
-        return this.list_$(name)$expand: get_internal_tail $;
-    }
-$end: param_macro_ref $
-
-$comment: ========== param_string_ref ============== $
-
-$macro: param_string_ref(name) $
-    private String get$name($expand: context_param $){
-
-        return this.field_$(name)$expand: get_internal_tail $;
-    }
-$end: param_string_ref $
 
 $comment: =========== param_ref =========== $
 
@@ -629,39 +638,6 @@ $comment: ========= context_arg ============ $
 $macro: context_arg $
 context$no_eol$
 $end: context_arg $
-
-$comment: ========= internal_string_setter ========= $
-
-$macro: internal_string_setter(name) $
-    void set$name(
-            Context context,
-            String value) {
-
-        if(value == null){
-            throw new RuntimeException("value cannot be null here");
-        }
-
-        this.field_$name.put(context, value);
-    }
-$end: internal_string_setter $
-
-$comment: ========== init_macro_internal =========== $
-
-$macro: init_macro_internal(name) $
-    this.list_$name = new LinkedHashMap<>();
-$end: init_macro_internal $
-
-$comment: ========== init_macro_param =========== $
-
-$macro: init_macro_param(name) $
-    this.list_$name = new ArrayList<>();
-$end: init_macro_param $
-
-$comment: ========== init_string_internal =========== $
-
-$macro: init_string_internal(name) $
-    this.field_$name = new LinkedHashMap<>();
-$end: init_string_internal $
 
 $comment$
 =========================================================
