@@ -164,6 +164,7 @@ $expand: constructor, before_first="\n" $
 $expand: param_string_setter, add_all, single_add, internal_string_setter, internal_macro_setter, before_first="\n", separator="\n" $
 $expand: param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, separator="\n", before_first="\n" $
 $expand: param_string_ref, param_macro_ref, internal_macro_ref, separator="\n", before_first="\n" $
+$expand: init_internals_method, separator="\n" $
 
 $expand: redefined_apply_initializer $
 $expand: macro_builder, before_first="\n" $
@@ -255,10 +256,6 @@ $macro: single_add(macro_name, param_name) $
             throw ObjectMacroException.parameterNull("$param_name");
         }
 
-        $expand: is_built$
-        $expand: init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part, separator="\n" $
-        $expand: set_internal $
-
         this.list_$param_name.add(macro);
     }
 $end: single_add $
@@ -271,6 +268,7 @@ $macro: param_string_ref_builder(name) $
         return this.field_$(name)$expand: get_internal_tail $;
     }
 $end: param_string_ref_builder $
+
 $comment: ========== param_macro_ref_builder ================== $
 
 $macro: param_macro_ref_builder(name, index_builder) $
@@ -374,6 +372,17 @@ $macro: internal_string_setter(name) $
     }
 $end: internal_string_setter $
 
+$comment: ========= init_internals_method ======== $
+
+$macro: init_internals_method(name) $
+    private void init$(name)Internals(Context context){
+        for(Macro macro : this.list_$name){
+            $expand: apply_internals_initializer $
+        }
+    }
+$end: init_internals_method $
+
+
 $comment$
 ============================================
 ============== MACRO BUILDER ===============
@@ -399,6 +408,8 @@ $macro: macro_builder $
         }
 
         $expand: build_verification $
+
+        $expand: init_internals_call $
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -450,6 +461,12 @@ $macro: redefined_apply_initializer(name) $
         internalsInitializer.set$name(this);
     }
 $end: redefined_apply_initializer $
+
+$comment: =========== init_internals_call ======== $
+
+$macro: init_internals_call(param_name) $
+init$(param_name)Internals($expand: context_arg, none="null"$);
+$end: init_internals_call $
 
 $comment$
 ===================================================
