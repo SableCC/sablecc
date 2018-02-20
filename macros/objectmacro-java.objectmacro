@@ -111,20 +111,20 @@ public abstract class Macro {
 }
 $end: super_macro $
 
-$comment: =============== class_macros_list_value ========= $
+$comment: =============== class_internal_value ========= $
 
-$macro: class_macros_list_value $
+$macro: class_internal_value $
 $insert: header $
 $expand: package_declaration, before_first="\n" $
 $expand: import_java_util, before_first="\n" $
 
-class MacrosValue {
+class InternalValue {
 
     private final List<Macro> macros;
 
     private final Context context;
 
-    MacrosValue(
+    InternalValue(
             List<Macro> macros,
             Context context){
 
@@ -148,7 +148,7 @@ class MacrosValue {
     }
 }
 
-$end: class_macros_list_value $
+$end: class_internal_value $
 
 $comment: ========== macro ========== $
 
@@ -158,12 +158,12 @@ $expand: package_declaration, before_first="\n" $
 $expand: import_java_util, before_first="\n" $
 
 public class M$name extends Macro{
-$expand: param_macro_field, param_string_field, internal_macro_field, internal_string_field, separator="\n", before_first="\n" $
+$expand: param_macro_field, param_string_field, internal_macro_field, internal_string_field, internal_macros_value_field, separator="\n", before_first="\n" $
 $expand: context_field, before_first="\n" $
 $expand: constructor, before_first="\n" $
 $expand: param_string_setter, add_all, single_add, internal_string_setter, internal_macro_setter, before_first="\n", separator="\n" $
-$expand: param_string_ref_builder, param_macro_ref_builder, separator="\n", before_first="\n" $
-$expand: param_string_ref, param_macro_ref, separator="\n", before_first="\n" $
+$expand: param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, separator="\n", before_first="\n" $
+$expand: param_string_ref, param_macro_ref, internal_macro_ref, separator="\n", before_first="\n" $
 
 $expand: redefined_apply_initializer $
 $expand: macro_builder, before_first="\n" $
@@ -172,9 +172,9 @@ $expand: empty_builder_with_context, before_first="\n"$
 $end: macro $
 
 $comment$
-================================================================
-===================== MACRO FUNCTIONS ==========================
-================================================================
+======================================================
+===================== CONSTRUCTOR ====================
+======================================================
 $end$
 
 $comment: ========== constructor ========== $
@@ -182,21 +182,46 @@ $comment: ========== constructor ========== $
 $macro: constructor(name) $
     public M$name($expand: string_param, separator=", "$){
 $expand: set_param, before_first="\n" $
-$expand: init_macro_param, init_macro_internal, init_string_internal, init_param_value, before_first="\n" $
+$expand: init_macro_param, init_macro_internal, init_string_internal, before_first="\n" $
+$expand: init_internal_value, before_first="\n"$
     }
 $end: constructor $
 
-$comment: =========== param_string_setter ========= $
+$comment: ========== init_macro_internal =========== $
 
-$macro: param_string_setter(name) $
-    private void setP$name($expand: string_param $){
-        if($expand: param_arg $ == null){
-            throw ObjectMacroException.parameterNull("$name");
-        }
+$macro: init_macro_internal(name) $
+    this.list_$name = new LinkedHashMap<>();
+$end: init_macro_internal $
 
-        this.field_$name = $expand: param_arg $;
-    }
-$end: param_string_setter $
+$comment: ========== init_macro_param =========== $
+
+$macro: init_macro_param(name) $
+    this.list_$name = new ArrayList<>();
+$end: init_macro_param $
+
+$comment: ========== init_string_internal =========== $
+
+$macro: init_string_internal(name) $
+    this.field_$name = new LinkedHashMap<>();
+$end: init_string_internal $
+
+$comment: ========== init_internal_value ============ $
+
+$macro: init_internal_value(param_name) $
+    this.$(param_name)Value = new InternalValue(this.list_$param_name, $(param_name)Context);
+$end: init_internal_value $
+
+$comment: ========== set_param ========== $
+
+$macro: set_param(name) $
+        this.setP$name($expand: param_arg$);
+$end: set_param $
+
+$comment$
+================================================================
+===================== MACRO FUNCTIONS ==========================
+================================================================
+$end$
 
 $comment: ========= add_all =========== $
 
@@ -238,14 +263,22 @@ $macro: single_add(macro_name, param_name) $
     }
 $end: single_add $
 
+$comment: =========== param_string_ref_builder ============= $
+
+$macro: param_string_ref_builder(name) $
+    private String build$name($expand: context_param$){
+
+        return this.field_$(name)$expand: get_internal_tail $;
+    }
+$end: param_string_ref_builder $
 $comment: ========== param_macro_ref_builder ================== $
 
 $macro: param_macro_ref_builder(name, index_builder) $
-    private String build$name($expand: context_param $){
+    private String build$name(){
 
         StringBuilder sb$index_builder = new StringBuilder();
         Context local_context = $expand: context_name, none="context"$;
-        List<Macro> macros = this.list_$(name)$expand: get_internal_tail $;
+        List<Macro> macros = this.list_$name;
         $expand: none $
         boolean first = true;
         int i = 0;
@@ -264,29 +297,58 @@ $macro: param_macro_ref_builder(name, index_builder) $
     }
 $end: param_macro_ref_builder $
 
+$comment: =========== internal_macro_ref_builder ================ $
+
+$macro: internal_macro_ref_builder(internal_name) $
+    private String build$internal_name(Context context){
+
+        InternalValue macros = this.list_$(internal_name).get(context);
+        return macros.build();
+    }
+$end: internal_macro_ref_builder $
+
 $comment: ========= internal_macro_setter ========= $
 
 $macro: internal_macro_setter(param_name) $
     void set$param_name(
             Context context,
-            List<Macro> macros) {
+            InternalValue internal_value) {
 
-        if(macros == null){
+        if(internal_value == null){
             throw new RuntimeException("macros cannot be null");
         }
 
-        this.list_$param_name.put(context, macros);
+        this.list_$param_name.put(context, internal_value);
     }
 $end: internal_macro_setter $
+
+$comment: =========== param_string_setter ========= $
+
+$macro: param_string_setter(name) $
+    private void setP$name($expand: string_param $){
+        if($expand: param_arg $ == null){
+            throw ObjectMacroException.parameterNull("$name");
+        }
+
+        this.field_$name = $expand: param_arg $;
+    }
+$end: param_string_setter $
 
 $comment: ========== param_macro_ref ============== $
 
 $macro: param_macro_ref(name) $
-    private List<Macro> get$name($expand: context_param $){
-
-        return this.list_$(name)$expand: get_internal_tail $;
+    private InternalValue get$name(){
+        return this.$(name)Value;
     }
 $end: param_macro_ref $
+
+$comment: ========== internal_macro_ref =========== $
+
+$macro: internal_macro_ref(param_name) $
+    private InternalValue get$param_name(Context context){
+        return this.list_$(param_name).get(context);
+    }
+$end: internal_macro_ref $
 
 $comment: ========== param_string_ref ============== $
 
@@ -410,7 +472,7 @@ $end: param_string_field $
 $comment: ========== internal_macro_field ========== $
 
 $macro: internal_macro_field(name) $
-    private Map<Context, List<Macro>> list_$name = new LinkedHashMap<>();
+    private Map<Context, InternalValue> list_$name = new LinkedHashMap<>();
 $end: internal_macro_field $
 
 $comment: ========== internal_string_field ========== $
@@ -425,33 +487,11 @@ $macro: context_field(name) $
     private final Context $(name)Context = new Context();
 $end: context_field $
 
-$comment: =========== param_macros_value_field ======== $
+$comment: =========== internal_macros_value_field ======== $
 
-$macro: param_macros_value_field(param_name) $
-    private final MacrosValue $param_nameValue;
-$end: param_macros_value_field $
-
-$comment: ========== init_macro_internal =========== $
-
-$macro: init_macro_internal(name) $
-    this.list_$name = new LinkedHashMap<>();
-$end: init_macro_internal $
-
-$comment: ========== init_macro_param =========== $
-
-$macro: init_macro_param(name) $
-    this.list_$name = new ArrayList<>();
-$end: init_macro_param $
-
-$comment: ========== init_string_internal =========== $
-
-$macro: init_string_internal(name) $
-    this.field_$name = new LinkedHashMap<>();
-$end: init_string_internal $
-
-
-
-
+$macro: internal_macros_value_field(param_name) $
+    private final InternalValue $(param_name)Value;
+$end: internal_macros_value_field $
 
 $comment: ========== string_param ========== $
 
@@ -504,21 +544,17 @@ $macro: string_arg(name) $
 field_$(name)$no_eol$
 $end: string_arg $
 
-$comment: ========== set_param ========== $
-
-$macro: set_param(name) $
-        this.setP$name($expand: param_arg$);
-$end: set_param $
-
 $comment: ========== param_arg ========== $
 
 $macro: param_arg(name) $
 p$(name)$no_eol$
 $end: param_arg $
 
+$comment$
 ===================================================
 =============== MACRO / TEXT PARTS ================
 ===================================================
+$end$
 
 $comment: ========= string_part ================= $
 

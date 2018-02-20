@@ -11,6 +11,7 @@ public class MConstructor {
   private final List<Object> eStringParam = new LinkedList<Object>();
   private final List<Object> eSetParam = new LinkedList<Object>();
   private final List<Object> eInitMacroParam_InitMacroInternal_InitStringInternal = new LinkedList<Object>();
+  private final List<Object> eInitInternalValue = new LinkedList<Object>();
 
   public MConstructor(String pName) {
     if(pName == null) throw new NullPointerException();
@@ -45,6 +46,12 @@ public class MConstructor {
     MInitStringInternal lInitStringInternal = new MInitStringInternal(pName);
     this.eInitMacroParam_InitMacroInternal_InitStringInternal.add(lInitStringInternal);
     return lInitStringInternal;
+  }
+
+  public MInitInternalValue newInitInternalValue(String pParamName) {
+    MInitInternalValue lInitInternalValue = new MInitInternalValue(pParamName);
+    this.eInitInternalValue.add(lInitInternalValue);
+    return lInitInternalValue;
   }
 
   String pName() {
@@ -86,6 +93,12 @@ public class MConstructor {
     }
     for(Object oInitMacroParam_InitMacroInternal_InitStringInternal : this.eInitMacroParam_InitMacroInternal_InitStringInternal) {
       sb.append(oInitMacroParam_InitMacroInternal_InitStringInternal.toString());
+    }
+    if(this.eInitInternalValue.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
+    for(Object oInitInternalValue : this.eInitInternalValue) {
+      sb.append(oInitInternalValue.toString());
     }
     sb.append("    }");
     sb.append(System.getProperty("line.separator"));

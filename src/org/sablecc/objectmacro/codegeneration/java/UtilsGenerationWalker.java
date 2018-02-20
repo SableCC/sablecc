@@ -52,6 +52,8 @@ public class UtilsGenerationWalker
         MCyclicReference mCyclicReference = new MCyclicReference();
         MCannotModify mCannotModify = new MCannotModify();
         MObjectMacroException mObjectMacroException = new MObjectMacroException();
+        MClassInternalValue mClassInternalValue = new MClassInternalValue();
+        mClassInternalValue.newImportJavaUtil();
 
         if(!this.ir.getDestinationPackage().equals("")){
             String destinationPackage = this.ir.getDestinationPackage();
@@ -63,6 +65,7 @@ public class UtilsGenerationWalker
             mCyclicReference.newPackageDeclaration(destinationPackage);
             mCannotModify.newPackageDeclaration(destinationPackage);
             mObjectMacroException.newPackageDeclaration(destinationPackage);
+            mClassInternalValue.newPackageDeclaration(destinationPackage);
         }
 
         GenerationUtils.writeFile(this.packageDirectory,"Context.java", mContext.toString());
@@ -75,6 +78,7 @@ public class UtilsGenerationWalker
         GenerationUtils.writeFile(this.packageDirectory,"MCannotModify.java", mCannotModify.toString());
         GenerationUtils
                 .writeFile(this.packageDirectory,"ObjectMacroException.java", mObjectMacroException.toString());
+        GenerationUtils.writeFile(this.packageDirectory, "InternalValue.java", mClassInternalValue.toString());
 
     }
 }

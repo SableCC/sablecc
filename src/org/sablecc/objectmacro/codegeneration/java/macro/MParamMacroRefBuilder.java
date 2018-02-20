@@ -9,9 +9,7 @@ public class MParamMacroRefBuilder {
   private final String pName;
   private final String pIndexBuilder;
   private final MParamMacroRefBuilder mParamMacroRefBuilder = this;
-  private final List<Object> eContextParam = new LinkedList<Object>();
   private final List<Object> eContextName = new LinkedList<Object>();
-  private final List<Object> eGetInternalTail = new LinkedList<Object>();
   private final List<Object> eNone = new LinkedList<Object>();
   private final List<Object> eBeforeFirst = new LinkedList<Object>();
   private final List<Object> eSeparator = new LinkedList<Object>();
@@ -24,22 +22,10 @@ public class MParamMacroRefBuilder {
     this.pIndexBuilder = pIndexBuilder;
   }
 
-  public MContextParam newContextParam() {
-    MContextParam lContextParam = new MContextParam();
-    this.eContextParam.add(lContextParam);
-    return lContextParam;
-  }
-
   public MContextName newContextName(String pContextName) {
     MContextName lContextName = new MContextName(pContextName);
     this.eContextName.add(lContextName);
     return lContextName;
-  }
-
-  public MGetInternalTail newGetInternalTail() {
-    MGetInternalTail lGetInternalTail = new MGetInternalTail();
-    this.eGetInternalTail.add(lGetInternalTail);
-    return lGetInternalTail;
   }
 
   public MNone newNone() {
@@ -87,11 +73,7 @@ public class MParamMacroRefBuilder {
     StringBuilder sb = new StringBuilder();
     sb.append("    private String build");
     sb.append(rName());
-    sb.append("(");
-    for(Object oContextParam : this.eContextParam) {
-      sb.append(oContextParam.toString());
-    }
-    sb.append("){");
+    sb.append("(){");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("        StringBuilder sb");
@@ -109,9 +91,6 @@ public class MParamMacroRefBuilder {
     sb.append(System.getProperty("line.separator"));
     sb.append("        List<Macro> macros = this.list_");
     sb.append(rName());
-    for(Object oGetInternalTail : this.eGetInternalTail) {
-      sb.append(oGetInternalTail.toString());
-    }
     sb.append(";");
     sb.append(System.getProperty("line.separator"));
     sb.append("        ");

@@ -2,64 +2,17 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
 public class MSingleAdd {
 
   private final String pMacroName;
   private final String pParamName;
   private final MSingleAdd mSingleAdd = this;
-  private final List<Object> eIsBuilt = new LinkedList<Object>();
-  private final List<Object> eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart = new LinkedList<Object>();
-  private final List<Object> eSetInternal = new LinkedList<Object>();
 
   public MSingleAdd(String pMacroName, String pParamName) {
     if(pMacroName == null) throw new NullPointerException();
     this.pMacroName = pMacroName;
     if(pParamName == null) throw new NullPointerException();
     this.pParamName = pParamName;
-  }
-
-  public MIsBuilt newIsBuilt(String pMacroName) {
-    MIsBuilt lIsBuilt = new MIsBuilt(pMacroName);
-    this.eIsBuilt.add(lIsBuilt);
-    return lIsBuilt;
-  }
-
-  public MInitStringBuilder newInitStringBuilder(String pIndexBuilder) {
-    MInitStringBuilder lInitStringBuilder = new MInitStringBuilder(pIndexBuilder);
-    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lInitStringBuilder);
-    return lInitStringBuilder;
-  }
-
-  public MStringPart newStringPart(String pString, String pIndexBuilder) {
-    MStringPart lStringPart = new MStringPart(pString, pIndexBuilder);
-    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lStringPart);
-    return lStringPart;
-  }
-
-  public MParamInsertPart newParamInsertPart(String pParamName, String pIndexBuilder) {
-    MParamInsertPart lParamInsertPart = new MParamInsertPart(pParamName, pIndexBuilder);
-    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lParamInsertPart);
-    return lParamInsertPart;
-  }
-
-  public MEolPart newEolPart(String pIndexBuilder) {
-    MEolPart lEolPart = new MEolPart(pIndexBuilder);
-    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lEolPart);
-    return lEolPart;
-  }
-
-  public MInsertMacroPart newInsertMacroPart(String pName, String pIndexBuilder, String pIndexInsert) {
-    MInsertMacroPart lInsertMacroPart = new MInsertMacroPart(pName, pIndexBuilder, pIndexInsert);
-    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lInsertMacroPart);
-    return lInsertMacroPart;
-  }
-
-  public MSetInternal newSetInternal(String pMacroName, String pParamName, String pContext) {
-    MSetInternal lSetInternal = new MSetInternal(pMacroName, pParamName, pContext);
-    this.eSetInternal.add(lSetInternal);
-    return lSetInternal;
   }
 
   String pMacroName() {
@@ -95,28 +48,6 @@ public class MSingleAdd {
     sb.append(System.getProperty("line.separator"));
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        ");
-    for(Object oIsBuilt : this.eIsBuilt) {
-      sb.append(oIsBuilt.toString());
-    }
-    sb.append("        ");
-    {
-      boolean first = true;
-      for(Object oInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart : this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart) {
-        if(first) {
-          first = false;
-        }
-        else {
-          sb.append(System.getProperty("line.separator"));
-        }
-        sb.append(oInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.toString());
-      }
-    }
-    sb.append("        ");
-    for(Object oSetInternal : this.eSetInternal) {
-      sb.append(oSetInternal.toString());
-    }
     sb.append(System.getProperty("line.separator"));
     sb.append("        this.list_");
     sb.append(rParamName());

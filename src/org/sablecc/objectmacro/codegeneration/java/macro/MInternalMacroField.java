@@ -23,7 +23,7 @@ public class MInternalMacroField {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    private Map<Context, List<Macro>> list_");
+    sb.append("    private Map<Context, InternalValue> list_");
     sb.append(rName());
     sb.append(" = new LinkedHashMap<>();");
     sb.append(System.getProperty("line.separator"));

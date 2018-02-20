@@ -45,7 +45,7 @@ Macro a
         z : c("first argument of c in a", x);
 {Begin}
 ============= A ===============
-{y}
+Y : {y}
 {End}
 
 Macro b
@@ -56,8 +56,8 @@ Macro b
         p : c;
 {Begin}
 ============== B ===============
-{p}
-{s}
+P : {p}
+S : {s}
 {End}
 
 Macro c
@@ -66,8 +66,8 @@ Macro c
         r : String;
 {Begin}
 =============== C ==============
-{q}
-{r}
+Q : {q}
+R : {r}
 {End}
 
 Macro d
@@ -121,10 +121,11 @@ Macro h
 
 Macro i
     Param
-        y : j(z);
-        z : k("On est dans i");
+        y : k("lala");
+        z : k("On est dans i"), j(y);
 {Begin}
 {y}
+{z}
 {End}
 
 Macro j
