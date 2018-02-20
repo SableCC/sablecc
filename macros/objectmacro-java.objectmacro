@@ -85,11 +85,9 @@ public abstract class Macro {
 
     final static String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    String expansion;
+    BuildState build_state = null;
 
-    boolean built = false;
-
-    Map<Context, String> expansions = new LinkedHashMap<>();
+    final Map<Context, BuildState> build_states = new LinkedHashMap<>();
 
     public String build(){
 
@@ -149,6 +147,29 @@ class InternalValue {
 }
 
 $end: class_internal_value $
+
+$comment: =============== class_build_state ========= $
+
+$macro: class_build_state $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+
+class BuildState {
+
+    private String expansion = null;
+
+    public String getExpansion() {
+        return expansion;
+    }
+
+    public void setExpansion(
+            String expansion) {
+
+        this.expansion = expansion;
+    }
+}
+
+$end: class_build_state $
 
 $comment: ========== macro ========== $
 
@@ -255,6 +276,7 @@ $macro: single_add(macro_name, param_name) $
         if(macro == null){
             throw ObjectMacroException.parameterNull("$param_name");
         }
+        $expand: is_built $
 
         this.list_$param_name.add(macro);
     }
@@ -397,17 +419,22 @@ $end: public $
 
 $comment: ========== macro_builder ======= $
 
-$macro: macro_builder $
+$macro: macro_builder(macro_name) $
     @Override
     $expand: public $ String build($expand: context_param $){
 
-        String local_expansion = $expand: context_expansion, none="this.expansion"$;
+        BuildState buildState = $expand: context_build_state, none="this.build_state"$;
 
-        if(local_expansion != null){
-            return local_expansion;
+        if(buildState == null){
+            buildState = new BuildState();
         }
-
-        $expand: build_verification $
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("$macro_name");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        $expand: new_build_state, none="this.build_state = buildState" $;
 
         $expand: init_internals_call $
 
@@ -415,20 +442,10 @@ $macro: macro_builder $
 
 $expand: string_part, param_insert_part, eol_part, insert_macro_part $
 
-        local_expansion = sb0.toString();
-        $expand: new_context_expansion, none="this.expansion = local_expansion" $;
-        return local_expansion;
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 $end: macro_builder $
-
-$comment: ============ build_verification ============ $
-
-$macro: build_verification(macro_name) $
-        if(this.built){
-            throw ObjectMacroException.cyclicReference("$macro_name");
-        }
-        this.built = true;
-$end: build_verification $
 
 $comment: ============ empty_builder_with_context ============ $
 
@@ -439,17 +456,17 @@ $macro: empty_builder_with_context $
     }
 $end: empty_builder_with_context$
 
-$comment: ========== context_expansion ======= $
+$comment: ========== context_build_state ======= $
 
-$macro: context_expansion $
-this.expansions.get(context)$no_eol$
-$end: context_expansion $
+$macro: context_build_state $
+this.build_states.get(context)$no_eol$
+$end: context_build_state $
 
-$comment: ========== new_context_expansion ========= $
+$comment: ========== new_build_state ========= $
 
-$macro: new_context_expansion $
-this.expansions.put(context, local_expansion)$no_eol$
-$end: new_context_expansion $
+$macro: new_build_state $
+this.build_states.put(context, buildState)$no_eol$
+$end: new_build_state $
 
 $comment: ========= redefined_apply_initializer ======= $
 
@@ -519,7 +536,7 @@ $end: string_param $
 $comment: =========== is_built =========== $
 
 $macro: is_built(macro_name) $
-        if(this.isBuilt){
+        if(this.build_state != null){
             throw ObjectMacroException.cannotModify("$macro_name");
         }
 $end: is_built $

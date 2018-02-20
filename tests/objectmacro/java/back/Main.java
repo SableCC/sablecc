@@ -29,14 +29,19 @@ public class Main {
         System.out.print("======== Main Test ===========\n");
         MA ma = new MA("First argument of MA");
         List<Macro> macros = new ArrayList<>();
-        macros.add(new MB("First argument in MB0"));
+        MB mb = new MB("la");
+        MB mb2 = new MB("First argument in MB0");
+        macros.add(mb2);
         macros.add(new MB("First argument in MB1"));
         macros.add(new MB("First argument in MB2"));
 
         try{
+            mb.addPS(new MC());
             ma.addPZ(new MC());
             ma.addAllPY(macros);
+            ma.addPY(mb);
             ma.addPZ(new MC());
+            mb2.addPS(new MC());
             System.out.println(ma.build());
         }
         catch(ObjectMacroException e){

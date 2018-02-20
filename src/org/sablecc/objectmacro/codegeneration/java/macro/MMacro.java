@@ -158,8 +158,8 @@ public class MMacro {
     return lRedefinedApplyInitializer;
   }
 
-  public MMacroBuilder newMacroBuilder() {
-    MMacroBuilder lMacroBuilder = new MMacroBuilder();
+  public MMacroBuilder newMacroBuilder(String pMacroName) {
+    MMacroBuilder lMacroBuilder = new MMacroBuilder(pMacroName);
     this.eMacroBuilder.add(lMacroBuilder);
     return lMacroBuilder;
   }

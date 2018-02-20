@@ -6,15 +6,18 @@ import java.util.*;
 
 public class MMacroBuilder {
 
+  private final String pMacroName;
+  private final MMacroBuilder mMacroBuilder = this;
   private final List<Object> ePublic = new LinkedList<Object>();
   private final List<Object> eContextParam = new LinkedList<Object>();
-  private final List<Object> eContextExpansion = new LinkedList<Object>();
-  private final List<Object> eBuildVerification = new LinkedList<Object>();
+  private final List<Object> eContextBuildState = new LinkedList<Object>();
+  private final List<Object> eNewBuildState = new LinkedList<Object>();
   private final List<Object> eInitInternalsCall = new LinkedList<Object>();
   private final List<Object> eStringPart_ParamInsertPart_EolPart_InsertMacroPart = new LinkedList<Object>();
-  private final List<Object> eNewContextExpansion = new LinkedList<Object>();
 
-  public MMacroBuilder() {
+  public MMacroBuilder(String pMacroName) {
+    if(pMacroName == null) throw new NullPointerException();
+    this.pMacroName = pMacroName;
   }
 
   public MPublic newPublic() {
@@ -29,16 +32,16 @@ public class MMacroBuilder {
     return lContextParam;
   }
 
-  public MContextExpansion newContextExpansion() {
-    MContextExpansion lContextExpansion = new MContextExpansion();
-    this.eContextExpansion.add(lContextExpansion);
-    return lContextExpansion;
+  public MContextBuildState newContextBuildState() {
+    MContextBuildState lContextBuildState = new MContextBuildState();
+    this.eContextBuildState.add(lContextBuildState);
+    return lContextBuildState;
   }
 
-  public MBuildVerification newBuildVerification(String pMacroName) {
-    MBuildVerification lBuildVerification = new MBuildVerification(pMacroName);
-    this.eBuildVerification.add(lBuildVerification);
-    return lBuildVerification;
+  public MNewBuildState newNewBuildState() {
+    MNewBuildState lNewBuildState = new MNewBuildState();
+    this.eNewBuildState.add(lNewBuildState);
+    return lNewBuildState;
   }
 
   public MInitInternalsCall newInitInternalsCall(String pParamName) {
@@ -71,10 +74,12 @@ public class MMacroBuilder {
     return lInsertMacroPart;
   }
 
-  public MNewContextExpansion newNewContextExpansion() {
-    MNewContextExpansion lNewContextExpansion = new MNewContextExpansion();
-    this.eNewContextExpansion.add(lNewContextExpansion);
-    return lNewContextExpansion;
+  String pMacroName() {
+    return this.pMacroName;
+  }
+
+  private String rMacroName() {
+    return this.mMacroBuilder.pMacroName();
   }
 
   @Override
@@ -93,27 +98,45 @@ public class MMacroBuilder {
     sb.append("){");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("        String local_expansion = ");
-    if(this.eContextExpansion.size() == 0) {
-      sb.append("this.expansion");
+    sb.append("        BuildState buildState = ");
+    if(this.eContextBuildState.size() == 0) {
+      sb.append("this.build_state");
     }
-    for(Object oContextExpansion : this.eContextExpansion) {
-      sb.append(oContextExpansion.toString());
+    for(Object oContextBuildState : this.eContextBuildState) {
+      sb.append(oContextBuildState.toString());
     }
     sb.append(";");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("        if(local_expansion != null){");
+    sb.append("        if(buildState == null){");
     sb.append(System.getProperty("line.separator"));
-    sb.append("            return local_expansion;");
+    sb.append("            buildState = new BuildState();");
     sb.append(System.getProperty("line.separator"));
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));
+    sb.append("        else if(buildState.getExpansion() == null){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            throw ObjectMacroException.cyclicReference(\"");
+    sb.append(rMacroName());
+    sb.append("\");");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        }");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        else{");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            return buildState.getExpansion();");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        }");
     sb.append(System.getProperty("line.separator"));
     sb.append("        ");
-    for(Object oBuildVerification : this.eBuildVerification) {
-      sb.append(oBuildVerification.toString());
+    if(this.eNewBuildState.size() == 0) {
+      sb.append("this.build_state = buildState");
     }
+    for(Object oNewBuildState : this.eNewBuildState) {
+      sb.append(oNewBuildState.toString());
+    }
+    sb.append(";");
+    sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("        ");
     for(Object oInitInternalsCall : this.eInitInternalsCall) {
@@ -127,18 +150,9 @@ public class MMacroBuilder {
       sb.append(oStringPart_ParamInsertPart_EolPart_InsertMacroPart.toString());
     }
     sb.append(System.getProperty("line.separator"));
-    sb.append("        local_expansion = sb0.toString();");
+    sb.append("        buildState.setExpansion(sb0.toString());");
     sb.append(System.getProperty("line.separator"));
-    sb.append("        ");
-    if(this.eNewContextExpansion.size() == 0) {
-      sb.append("this.expansion = local_expansion");
-    }
-    for(Object oNewContextExpansion : this.eNewContextExpansion) {
-      sb.append(oNewContextExpansion.toString());
-    }
-    sb.append(";");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        return local_expansion;");
+    sb.append("        return sb0.toString();");
     sb.append(System.getProperty("line.separator"));
     sb.append("    }");
     sb.append(System.getProperty("line.separator"));

@@ -2,12 +2,12 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MBuildVerification {
+public class MIsBuilt {
 
   private final String pMacroName;
-  private final MBuildVerification mBuildVerification = this;
+  private final MIsBuilt mIsBuilt = this;
 
-  public MBuildVerification(String pMacroName) {
+  public MIsBuilt(String pMacroName) {
     if(pMacroName == null) throw new NullPointerException();
     this.pMacroName = pMacroName;
   }
@@ -17,21 +17,19 @@ public class MBuildVerification {
   }
 
   private String rMacroName() {
-    return this.mBuildVerification.pMacroName();
+    return this.mIsBuilt.pMacroName();
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("        if(this.built){");
+    sb.append("        if(this.build_state != null){");
     sb.append(System.getProperty("line.separator"));
-    sb.append("            throw ObjectMacroException.cyclicReference(\"");
+    sb.append("            throw ObjectMacroException.cannotModify(\"");
     sb.append(rMacroName());
     sb.append("\");");
     sb.append(System.getProperty("line.separator"));
     sb.append("        }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        this.built = true;");
     sb.append(System.getProperty("line.separator"));
     return sb.toString();
   }

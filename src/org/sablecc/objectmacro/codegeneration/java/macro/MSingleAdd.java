@@ -2,17 +2,26 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
+import java.util.*;
+
 public class MSingleAdd {
 
   private final String pMacroName;
   private final String pParamName;
   private final MSingleAdd mSingleAdd = this;
+  private final List<Object> eIsBuilt = new LinkedList<Object>();
 
   public MSingleAdd(String pMacroName, String pParamName) {
     if(pMacroName == null) throw new NullPointerException();
     this.pMacroName = pMacroName;
     if(pParamName == null) throw new NullPointerException();
     this.pParamName = pParamName;
+  }
+
+  public MIsBuilt newIsBuilt(String pMacroName) {
+    MIsBuilt lIsBuilt = new MIsBuilt(pMacroName);
+    this.eIsBuilt.add(lIsBuilt);
+    return lIsBuilt;
   }
 
   String pMacroName() {
@@ -48,6 +57,10 @@ public class MSingleAdd {
     sb.append(System.getProperty("line.separator"));
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));
+    sb.append("        ");
+    for(Object oIsBuilt : this.eIsBuilt) {
+      sb.append(oIsBuilt.toString());
+    }
     sb.append(System.getProperty("line.separator"));
     sb.append("        this.list_");
     sb.append(rParamName());

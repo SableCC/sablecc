@@ -2,15 +2,15 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MNewContextExpansion {
+public class MContextBuildState {
 
-  public MNewContextExpansion() {
+  public MContextBuildState() {
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("this.expansions.put(context, local_expansion)");
+    sb.append("this.build_states.get(context)");
     return sb.toString();
   }
 

@@ -44,13 +44,10 @@ public class MSuperMacro {
     sb.append("    final static String LINE_SEPARATOR = System.getProperty(\"line.separator\");");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("    String expansion;");
+    sb.append("    BuildState build_state = null;");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("    boolean built = false;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    Map<Context, String> expansions = new LinkedHashMap<>();");
+    sb.append("    final Map<Context, BuildState> build_states = new LinkedHashMap<>();");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("    public String build(){");

@@ -152,7 +152,7 @@ public class CodeGenerationWalker
         }
 
         this.currentConstructor = this.currentMacroToBuild.newConstructor(macroName);
-        this.currentMacroBuilder = this.currentMacroToBuild.newMacroBuilder();
+        this.currentMacroBuilder = this.currentMacroToBuild.newMacroBuilder(macroName);
 
         this.mInternalsInitializer.newParentInternalsSetter(macroName);
         this.currentMacroToBuild.newRedefinedApplyInitializer(macroName);
@@ -163,13 +163,12 @@ public class CodeGenerationWalker
         if(this.currentMacroHasInternals){
             //method build is package protected so a context parameter to build the current macro
             this.currentMacroBuilder.newContextParam();
-            this.currentMacroBuilder.newContextExpansion();
-            this.currentMacroBuilder.newNewContextExpansion();
+            this.currentMacroBuilder.newContextBuildState();
+            this.currentMacroBuilder.newNewBuildState();
         }
         else{
             this.currentMacroBuilder.newPublic();
             this.currentMacroToBuild.newEmptyBuilderWithContext();
-            this.currentMacroBuilder.newBuildVerification(macroName);
         }
     }
 
@@ -251,10 +250,6 @@ public class CodeGenerationWalker
             this.currentMacroToBuild.newInternalMacrosValueField(paramName);
             MInitInternalsCall mInitInternalsCall = this.currentMacroBuilder.newInitInternalsCall(paramName);
 
-            if(this.currentMacroHasInternals){
-                mInitInternalsCall.newContextArg();
-            }
-
             this.currentParamMacroRefBuilder = this.currentMacroToBuild.newParamMacroRefBuilder(
                     paramName, String.valueOf(this.indexBuilder));
             this.currentParamMacroRefBuilder.newContextName(paramName.concat(
@@ -277,6 +272,13 @@ public class CodeGenerationWalker
             this.contextNames.add(currentContextName);
             this.currentConstructor.newInitMacroParam(paramName);
             this.currentConstructor.newInitInternalValue(paramName);
+
+            if(this.currentMacroHasInternals){
+                mInitInternalsCall.newContextArg();
+            }
+            else{
+                mAddAll.newIsBuilt(this.currentMacro.getName());
+            }
         }
         else{
             throw new InternalException("case unhandled");
@@ -350,7 +352,11 @@ public class CodeGenerationWalker
             this.currentRedefinedInternalsSetter =
                     this.currentApplyInitializer.newRedefinedInternalsSetter(macro_ref_name);
 
-            this.currentMacroToBuild.newSingleAdd(macro_ref_name, this.currentParamName);
+            MSingleAdd mSingleAdd = this.currentMacroToBuild.newSingleAdd(macro_ref_name, this.currentParamName);
+            if(!this.currentMacroHasInternals){
+                mSingleAdd.newIsBuilt(this.currentMacro.getName());
+            }
+
             this.currentAddAllApplyInitializer.newRedefinedInternalsSetter(macro_ref_name);
         }
     }
@@ -657,6 +663,7 @@ public class CodeGenerationWalker
         this.currentMacroToBuild = null;
         this.currentConstructor = null;
         this.currentMacro = null;
+        this.currentMacroHasInternals = false;
     }
 
     @Override

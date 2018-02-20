@@ -40,12 +40,6 @@ class GenerationUtils {
 
     static final String BEFORE_FIRST_DIRECTIVE = "beforefirst";
 
-    /**
-     * Example : SetInternal needs a macroName, but adder does not need a macro because the parameter is always macro
-     * Therefore instead of macroName we give to set internal 'acro' to form 'macro'
-     */
-    static final String MACRO_NAME_FOR_ADDER = "acro";
-
     static String string(
             TString tString) {
 
