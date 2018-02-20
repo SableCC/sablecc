@@ -32,5 +32,6 @@ java -cp classes/ back.Cycle
 
 # Accepted tests
 java -cp classes/ back.Main
+java -cp classes/ back.Inserts
 java -cp classes/ back.Separator
 
