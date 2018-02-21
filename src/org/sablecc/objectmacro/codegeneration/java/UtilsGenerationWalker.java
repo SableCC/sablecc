@@ -54,6 +54,7 @@ public class UtilsGenerationWalker
         MObjectMacroException mObjectMacroException = new MObjectMacroException();
         MClassInternalValue mClassInternalValue = new MClassInternalValue();
         mClassInternalValue.newImportJavaUtil();
+        MClassBuildState mClassBuildState = new MClassBuildState();
 
         if(!this.ir.getDestinationPackage().equals("")){
             String destinationPackage = this.ir.getDestinationPackage();
@@ -66,6 +67,7 @@ public class UtilsGenerationWalker
             mCannotModify.newPackageDeclaration(destinationPackage);
             mObjectMacroException.newPackageDeclaration(destinationPackage);
             mClassInternalValue.newPackageDeclaration(destinationPackage);
+            mClassBuildState.newPackageDeclaration(destinationPackage);
         }
 
         GenerationUtils.writeFile(this.packageDirectory,"Context.java", mContext.toString());
@@ -80,5 +82,6 @@ public class UtilsGenerationWalker
                 .writeFile(this.packageDirectory,"ObjectMacroException.java", mObjectMacroException.toString());
         GenerationUtils.writeFile(this.packageDirectory, "InternalValue.java", mClassInternalValue.toString());
 
+        GenerationUtils.writeFile(this.packageDirectory, "BuildState.java", mClassBuildState.toString());
     }
 }
