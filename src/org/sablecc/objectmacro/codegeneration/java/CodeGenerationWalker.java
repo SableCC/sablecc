@@ -70,15 +70,13 @@ public class CodeGenerationWalker
 
     private List<Integer> createdInserts = new ArrayList<>();
 
-    private MSeparator currentSeparator;
-
-    private MAfterLast currentAfterLast;
-
-    private MBeforeFirst currentBeforeFirst;
-
-    private MNone currentNone;
-
     private MParamMacroRefBuilder currentParamMacroRefBuilder;
+
+    private MInitDirectives currentInitDirectives;
+
+    private MNewDirective currentDirective;
+
+    private MSetNoneDirective mSetNoneDirective;
 
     //Used only to check whether its a parameter or an internal, for parameter its set but for internal its null
     private String currentParamName;
@@ -93,14 +91,6 @@ public class CodeGenerationWalker
         this.ir = ir;
         this.packageDirectory = packageDirectory;
         this.macros = macros;
-    }
-
-
-
-    private String getLetterFromInteger(
-            Integer i){
-
-        return i > 0 && i < 27 ? String.valueOf((char) (i + 64)) : null;
     }
 
     @Override
@@ -197,11 +187,6 @@ public class CodeGenerationWalker
             this.currentMacroToBuild.newInternalMacroRefBuilder(paramName);
             this.currentMacroToBuild.newInternalMacroRef(paramName);
 
-            //Initialize directives before type because of conflicts with stringBuilder
-            for (PDirective directive : node.getDirectives()) {
-                directive.apply(this);
-            }
-
             this.indexBuilder = 0;
             this.currentMacroToBuild.newInternalMacroSetter(paramName);
         }
@@ -247,14 +232,16 @@ public class CodeGenerationWalker
 
             this.currentMacroToBuild.newParamMacroField(paramName);
             this.currentMacroToBuild.newContextField(paramName);
+            this.currentMacroToBuild.newDirectivesField(paramName);
             this.currentMacroToBuild.newInternalMacrosValueField(paramName);
-            MInitInternalsCall mInitInternalsCall = this.currentMacroBuilder.newInitInternalsCall(paramName);
 
             this.currentParamMacroRefBuilder = this.currentMacroToBuild.newParamMacroRefBuilder(
                     paramName, String.valueOf(this.indexBuilder));
             this.currentParamMacroRefBuilder.newContextName(paramName.concat(
                     GenerationUtils.CONTEXT_STRING));
             this.currentMacroToBuild.newParamMacroRef(paramName);
+
+            this.currentInitDirectives = this.currentMacroToBuild.newInitDirectives(paramName);
 
             for (PDirective directive : node.getDirectives()) {
                 directive.apply(this);
@@ -263,15 +250,17 @@ public class CodeGenerationWalker
             this.currentContextName = paramName.concat(GenerationUtils.CONTEXT_STRING);
             this.indexBuilder = 0;
 
+            MInitInternalsCall mInitInternalsCall = this.currentMacroBuilder.newInitInternalsCall(paramName);
             MAddAll mAddAll = this.currentMacroToBuild.newAddAll(paramName);
 
             this.currentAddAllApplyInitializer = mAddAll.newApplyInternalsInitializer(paramName);
             this.currentApplyInitializer = this.currentMacroToBuild.newInitInternalsMethod(paramName)
                                                 .newApplyInternalsInitializer(paramName);
 
-            this.contextNames.add(currentContextName);
+            this.contextNames.add(this.currentContextName);
             this.currentConstructor.newInitMacroParam(paramName);
             this.currentConstructor.newInitInternalValue(paramName);
+            this.currentMacroBuilder.newInitDirectivesCall(paramName);
 
             if(this.currentMacroHasInternals){
                 mInitInternalsCall.newContextArg();
@@ -301,34 +290,24 @@ public class CodeGenerationWalker
         this.createdBuilders = new ArrayList<>();
         this.createdInserts = new ArrayList<>();
         this.currentParamMacroRefBuilder = null;
+        this.currentInitDirectives = null;
     }
 
     @Override
     public void inADirective(
             ADirective node) {
 
-        String directive_name = GenerationUtils.buildName(node.getNames());
-        switch (directive_name) {
+        String directive_name = GenerationUtils.buildNameCamelCase(node.getNames());
 
-            case GenerationUtils.SEPARATOR_DIRECTIVE:
-                this.currentSeparator = this.currentParamMacroRefBuilder.newSeparator();
-                break;
-
-            case GenerationUtils.AFTER_LAST_DIRECTIVE:
-                this.currentAfterLast = this.currentParamMacroRefBuilder.newAfterLast();
-                break;
-
-            case GenerationUtils.BEFORE_FIRST_DIRECTIVE:
-                this.currentBeforeFirst = this.currentParamMacroRefBuilder
-                        .newBeforeFirst();
-                break;
-
-            case GenerationUtils.NONE_DIRECTIVE:
-                this.currentNone = this.currentParamMacroRefBuilder.newNone();
-                break;
-
-            default:
-                throw new InternalException("case unhandled");
+        if(directive_name.equals(GenerationUtils.NONE_DIRECTIVE)){
+            this.currentMacroToBuild.newNoneDirectiveField(this.currentParamName);
+            this.currentParamMacroRefBuilder.newApplyNoneDirective();
+            this.mSetNoneDirective = this.currentInitDirectives
+                    .newSetNoneDirective(this.currentParamName, this.indexBuilder.toString());
+        }
+        else{
+            this.currentDirective = this.currentInitDirectives
+                    .newNewDirective(this.currentParamName, directive_name, this.indexBuilder.toString());
         }
     }
 
@@ -336,10 +315,9 @@ public class CodeGenerationWalker
     public void outADirective(
             ADirective node) {
 
-        this.currentSeparator = null;
-        this.currentAfterLast = null;
-        this.currentBeforeFirst = null;
-        this.currentNone = null;
+        this.indexBuilder++;
+        this.currentDirective = null;
+        this.mSetNoneDirective = null;
     }
 
     @Override
@@ -389,12 +367,12 @@ public class CodeGenerationWalker
             }
         }
         else{
-            index_builder = getLetterFromInteger(this.indexBuilder);
+            index_builder = GenerationUtils.getLetterFromInteger(this.indexBuilder);
 
             //Avoid declaring stringbuilder of the same name
             while(this.createdBuilders.contains(index_builder)){
                 this.indexBuilder++;
-                index_builder = getLetterFromInteger(this.indexBuilder);
+                index_builder = GenerationUtils.getLetterFromInteger(this.indexBuilder);
             }
 
             this.currentInsertMacroPart.newInitStringBuilder(index_builder);
@@ -435,28 +413,18 @@ public class CodeGenerationWalker
             String string = GenerationUtils.escapedString(node.getString());
 
             if(this.currentInsertMacroPart != null){
-                index_builder = getLetterFromInteger(this.indexBuilder);
+                index_builder = GenerationUtils.getLetterFromInteger(this.indexBuilder);
                 this.currentInsertMacroPart.newStringPart(
                         string,
                         index_builder);
             }
-            else if(this.currentNone != null){
-                this.currentNone.newStringPart(
+            else if(this.currentDirective != null){
+                this.currentDirective.newStringPart(
                         string,
                         index_builder);
             }
-            else if(this.currentBeforeFirst != null){
-                this.currentBeforeFirst.newStringPart(
-                        string,
-                        index_builder);
-            }
-            else if(this.currentAfterLast != null){
-                this.currentAfterLast.newStringPart(
-                        string,
-                        index_builder);
-            }
-            else if(this.currentSeparator != null){
-                this.currentSeparator.newStringPart(
+            else if(this.mSetNoneDirective != null){
+                this.mSetNoneDirective.newStringPart(
                         string,
                         index_builder);
             }
@@ -478,28 +446,18 @@ public class CodeGenerationWalker
         }
         else {
             if(this.currentInsertMacroPart != null){
-                index_builder = getLetterFromInteger(this.indexBuilder);
+                index_builder = GenerationUtils.getLetterFromInteger(this.indexBuilder);
                 this.currentInsertMacroPart.newParamInsertPart(
                         param_name,
                         index_builder);
             }
-            else if(this.currentNone != null){
-                this.currentNone.newParamInsertPart(
+            else if(this.currentDirective != null){
+                this.currentDirective.newParamInsertPart(
                         param_name,
                         index_builder);
             }
-            else if(this.currentBeforeFirst != null){
-                this.currentBeforeFirst.newParamInsertPart(
-                        param_name,
-                        index_builder);
-            }
-            else if(this.currentAfterLast != null){
-                this.currentAfterLast.newParamInsertPart(
-                        param_name,
-                        index_builder);
-            }
-            else if(this.currentSeparator != null){
-                this.currentSeparator.newParamInsertPart(
+            else if(this.mSetNoneDirective != null){
+                this.mSetNoneDirective.newParamInsertPart(
                         param_name,
                         index_builder);
             }
@@ -520,21 +478,15 @@ public class CodeGenerationWalker
         else {
 
             if(this.currentInsertMacroPart != null){
-                index_builder = getLetterFromInteger(this.indexBuilder);
+                index_builder = GenerationUtils.getLetterFromInteger(this.indexBuilder);
                 this.currentInsertMacroPart.newEolPart(
                         index_builder);
             }
-            else if(this.currentNone != null){
-                this.currentNone.newEolPart(index_builder);
+            else if(this.currentDirective != null){
+                this.currentDirective.newEolPart(index_builder);
             }
-            else if(this.currentBeforeFirst != null){
-                this.currentBeforeFirst.newEolPart(index_builder);
-            }
-            else if(this.currentAfterLast != null){
-                this.currentAfterLast.newEolPart(index_builder);
-            }
-            else if(this.currentSeparator != null){
-                this.currentSeparator.newEolPart(index_builder);
+            else if(this.mSetNoneDirective != null){
+                this.mSetNoneDirective.newEolPart(index_builder);
             }
         }
     }
@@ -566,7 +518,7 @@ public class CodeGenerationWalker
         }
         else{
             if(tempInsertMacroPart != null){
-                index_builder = getLetterFromInteger(this.indexBuilder);
+                index_builder = GenerationUtils.getLetterFromInteger(this.indexBuilder);
 
                 this.currentInsertMacroPart =
                         tempInsertMacroPart.newInsertMacroPart(
@@ -575,32 +527,18 @@ public class CodeGenerationWalker
                                 index_insert);
 
             }
-            else if(this.currentNone != null){
+            else if(this.currentDirective != null){
                 this.currentInsertMacroPart =
-                    this.currentNone.newInsertMacroPart(macro_name,
+                    this.currentDirective.newInsertMacroPart(macro_name,
                             index_builder,
                             index_insert);
 
             }
-            else if(this.currentBeforeFirst != null){
+            else if(this.mSetNoneDirective != null){
                 this.currentInsertMacroPart =
-                        this.currentBeforeFirst.newInsertMacroPart(macro_name,
-                            index_builder,
-                            index_insert);
-
-            }
-            else if(this.currentAfterLast != null){
-                this.currentInsertMacroPart =
-                    this.currentAfterLast.newInsertMacroPart(macro_name,
-                            index_builder,
-                            index_insert);
-
-            }
-            else if(this.currentSeparator != null){
-                this.currentInsertMacroPart =
-                    this.currentSeparator.newInsertMacroPart(macro_name,
-                            index_builder,
-                            index_insert);
+                        this.mSetNoneDirective.newInsertMacroPart(macro_name,
+                                index_builder,
+                                index_insert);
             }
         }
         this.createdInserts.add(this.indexInsert);

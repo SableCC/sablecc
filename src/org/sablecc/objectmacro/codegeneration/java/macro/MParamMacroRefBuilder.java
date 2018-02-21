@@ -10,10 +10,7 @@ public class MParamMacroRefBuilder {
   private final String pIndexBuilder;
   private final MParamMacroRefBuilder mParamMacroRefBuilder = this;
   private final List<Object> eContextName = new LinkedList<Object>();
-  private final List<Object> eNone = new LinkedList<Object>();
-  private final List<Object> eBeforeFirst = new LinkedList<Object>();
-  private final List<Object> eSeparator = new LinkedList<Object>();
-  private final List<Object> eAfterLast = new LinkedList<Object>();
+  private final List<Object> eApplyNoneDirective = new LinkedList<Object>();
 
   public MParamMacroRefBuilder(String pName, String pIndexBuilder) {
     if(pName == null) throw new NullPointerException();
@@ -22,34 +19,16 @@ public class MParamMacroRefBuilder {
     this.pIndexBuilder = pIndexBuilder;
   }
 
+  public MApplyNoneDirective newApplyNoneDirective() {
+    MApplyNoneDirective lApplyNoneDirective = new MApplyNoneDirective(mParamMacroRefBuilder);
+    this.eApplyNoneDirective.add(lApplyNoneDirective);
+    return lApplyNoneDirective;
+  }
+
   public MContextName newContextName(String pContextName) {
     MContextName lContextName = new MContextName(pContextName);
     this.eContextName.add(lContextName);
     return lContextName;
-  }
-
-  public MNone newNone() {
-    MNone lNone = new MNone();
-    this.eNone.add(lNone);
-    return lNone;
-  }
-
-  public MBeforeFirst newBeforeFirst() {
-    MBeforeFirst lBeforeFirst = new MBeforeFirst();
-    this.eBeforeFirst.add(lBeforeFirst);
-    return lBeforeFirst;
-  }
-
-  public MSeparator newSeparator() {
-    MSeparator lSeparator = new MSeparator();
-    this.eSeparator.add(lSeparator);
-    return lSeparator;
-  }
-
-  public MAfterLast newAfterLast() {
-    MAfterLast lAfterLast = new MAfterLast();
-    this.eAfterLast.add(lAfterLast);
-    return lAfterLast;
   }
 
   String pName() {
@@ -75,7 +54,6 @@ public class MParamMacroRefBuilder {
     sb.append(rName());
     sb.append("(){");
     sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
     sb.append("        StringBuilder sb");
     sb.append(rIndexBuilder());
     sb.append(" = new StringBuilder();");
@@ -93,37 +71,38 @@ public class MParamMacroRefBuilder {
     sb.append(rName());
     sb.append(";");
     sb.append(System.getProperty("line.separator"));
-    sb.append("        ");
-    for(Object oNone : this.eNone) {
-      sb.append(oNone.toString());
-    }
-    sb.append("        boolean first = true;");
     sb.append(System.getProperty("line.separator"));
     sb.append("        int i = 0;");
     sb.append(System.getProperty("line.separator"));
+    sb.append("        int nb_macros = macros.size();");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        String expansion = null;");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        ");
+    for(Object oApplyNoneDirective : this.eApplyNoneDirective) {
+      sb.append(oApplyNoneDirective.toString());
+    }
     sb.append(System.getProperty("line.separator"));
     sb.append("        for(Macro macro : macros){");
     sb.append(System.getProperty("line.separator"));
-    sb.append("            ");
-    for(Object oBeforeFirst : this.eBeforeFirst) {
-      sb.append(oBeforeFirst.toString());
-    }
-    sb.append("            ");
-    for(Object oSeparator : this.eSeparator) {
-      sb.append(oSeparator.toString());
-    }
+    sb.append("            expansion = macro.build(local_context);");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            for(Directive directive : this.");
+    sb.append(rName());
+    sb.append("Directives){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("                expansion = directive.apply(i, expansion, nb_macros);");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            }");
+    sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("            sb");
     sb.append(rIndexBuilder());
-    sb.append(".append(macro.build(local_context));");
+    sb.append(".append(expansion);");
     sb.append(System.getProperty("line.separator"));
     sb.append("            i++;");
     sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            ");
-    for(Object oAfterLast : this.eAfterLast) {
-      sb.append(oAfterLast.toString());
-    }
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));

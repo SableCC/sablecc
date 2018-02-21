@@ -10,7 +10,7 @@ public class MInitInternalsCall {
   private final MInitInternalsCall mInitInternalsCall = this;
   private final List<Object> eContextArg = new LinkedList<Object>();
 
-  public MInitInternalsCall(String pParamName) {
+  MInitInternalsCall(String pParamName) {
     if(pParamName == null) throw new NullPointerException();
     this.pParamName = pParamName;
   }
@@ -32,7 +32,7 @@ public class MInitInternalsCall {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("init");
+    sb.append("        init");
     sb.append(rParamName());
     sb.append("Internals(");
     if(this.eContextArg.size() == 0) {
@@ -43,6 +43,7 @@ public class MInitInternalsCall {
     }
     sb.append(");");
     sb.append(System.getProperty("line.separator"));
+    sb.append("        ");
     return sb.toString();
   }
 

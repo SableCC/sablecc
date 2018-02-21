@@ -4,11 +4,18 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MBeforeFirst {
+public class MSetNoneDirective {
 
+  private final String pParamName;
+  private final String pIndexBuilder;
+  private final MSetNoneDirective mSetNoneDirective = this;
   private final List<Object> eStringPart_ParamInsertPart_EolPart_InsertMacroPart = new LinkedList<Object>();
 
-  public MBeforeFirst() {
+  public MSetNoneDirective(String pParamName, String pIndexBuilder) {
+    if(pParamName == null) throw new NullPointerException();
+    this.pParamName = pParamName;
+    if(pIndexBuilder == null) throw new NullPointerException();
+    this.pIndexBuilder = pIndexBuilder;
   }
 
   public MStringPart newStringPart(String pString, String pIndexBuilder) {
@@ -35,18 +42,43 @@ public class MBeforeFirst {
     return lInsertMacroPart;
   }
 
+  String pParamName() {
+    return this.pParamName;
+  }
+
+  String pIndexBuilder() {
+    return this.pIndexBuilder;
+  }
+
+  private String rIndexBuilder() {
+    return this.mSetNoneDirective.pIndexBuilder();
+  }
+
+  private String rParamName() {
+    return this.mSetNoneDirective.pParamName();
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("if(first){");
+    sb.append("        StringBuilder sb");
+    sb.append(rIndexBuilder());
+    sb.append(" = new StringBuilder();");
     sb.append(System.getProperty("line.separator"));
-    sb.append("    ");
     for(Object oStringPart_ParamInsertPart_EolPart_InsertMacroPart : this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart) {
       sb.append(oStringPart_ParamInsertPart_EolPart_InsertMacroPart.toString());
     }
-    sb.append("    first = false;");
+    sb.append("        this.");
+    sb.append(rParamName());
+    sb.append("Value.setNone(new DNone(sb");
+    sb.append(rIndexBuilder());
+    sb.append(".toString()));");
     sb.append(System.getProperty("line.separator"));
-    sb.append("}");
+    sb.append("        this.");
+    sb.append(rParamName());
+    sb.append("None = new DNone(sb");
+    sb.append(rIndexBuilder());
+    sb.append(".toString());");
     sb.append(System.getProperty("line.separator"));
     return sb.toString();
   }

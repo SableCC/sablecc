@@ -4,11 +4,21 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MNone {
+public class MNewDirective {
 
+  private final String pParamName;
+  private final String pDirectiveName;
+  private final String pIndexBuilder;
+  private final MNewDirective mNewDirective = this;
   private final List<Object> eStringPart_ParamInsertPart_EolPart_InsertMacroPart = new LinkedList<Object>();
 
-  public MNone() {
+  public MNewDirective(String pParamName, String pDirectiveName, String pIndexBuilder) {
+    if(pParamName == null) throw new NullPointerException();
+    this.pParamName = pParamName;
+    if(pDirectiveName == null) throw new NullPointerException();
+    this.pDirectiveName = pDirectiveName;
+    if(pIndexBuilder == null) throw new NullPointerException();
+    this.pIndexBuilder = pIndexBuilder;
   }
 
   public MStringPart newStringPart(String pString, String pIndexBuilder) {
@@ -35,16 +45,47 @@ public class MNone {
     return lInsertMacroPart;
   }
 
+  String pParamName() {
+    return this.pParamName;
+  }
+
+  String pDirectiveName() {
+    return this.pDirectiveName;
+  }
+
+  String pIndexBuilder() {
+    return this.pIndexBuilder;
+  }
+
+  private String rIndexBuilder() {
+    return this.mNewDirective.pIndexBuilder();
+  }
+
+  private String rParamName() {
+    return this.mNewDirective.pParamName();
+  }
+
+  private String rDirectiveName() {
+    return this.mNewDirective.pDirectiveName();
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("if(macros.size() == 0){");
+    sb.append("        StringBuilder sb");
+    sb.append(rIndexBuilder());
+    sb.append(" = new StringBuilder();");
     sb.append(System.getProperty("line.separator"));
-    sb.append("    ");
     for(Object oStringPart_ParamInsertPart_EolPart_InsertMacroPart : this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart) {
       sb.append(oStringPart_ParamInsertPart_EolPart_InsertMacroPart.toString());
     }
-    sb.append("}");
+    sb.append("        this.");
+    sb.append(rParamName());
+    sb.append("Directives.add(new D");
+    sb.append(rDirectiveName());
+    sb.append("(sb");
+    sb.append(rIndexBuilder());
+    sb.append(".toString()));");
     sb.append(System.getProperty("line.separator"));
     return sb.toString();
   }

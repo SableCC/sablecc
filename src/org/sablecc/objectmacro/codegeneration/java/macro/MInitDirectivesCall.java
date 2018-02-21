@@ -2,12 +2,12 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MInitInternalValue {
+public class MInitDirectivesCall {
 
   private final String pParamName;
-  private final MInitInternalValue mInitInternalValue = this;
+  private final MInitDirectivesCall mInitDirectivesCall = this;
 
-  public MInitInternalValue(String pParamName) {
+  MInitDirectivesCall(String pParamName) {
     if(pParamName == null) throw new NullPointerException();
     this.pParamName = pParamName;
   }
@@ -17,22 +17,17 @@ public class MInitInternalValue {
   }
 
   private String rParamName() {
-    return this.mInitInternalValue.pParamName();
+    return this.mInitDirectivesCall.pParamName();
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    this.");
+    sb.append("        init");
     sb.append(rParamName());
-    sb.append("Value = new InternalValue(this.list_");
-    sb.append(rParamName());
-    sb.append(", this.");
-    sb.append(rParamName());
-    sb.append("Context, this.");
-    sb.append(rParamName());
-    sb.append("Directives);");
+    sb.append("Directives();");
     sb.append(System.getProperty("line.separator"));
+    sb.append("        ");
     return sb.toString();
   }
 

@@ -20,6 +20,7 @@ package org.sablecc.objectmacro.codegeneration.java;
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.intermediate.syntax3.node.TString;
+import org.sablecc.objectmacro.util.Utils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -32,13 +33,13 @@ class GenerationUtils {
 
     static final String INSERT_VAR_NAME = "insert_";
 
-    static final String SEPARATOR_DIRECTIVE = "separator";
+    static final String SEPARATOR_DIRECTIVE = "Separator";
 
-    static final String AFTER_LAST_DIRECTIVE = "afterlast";
+    static final String AFTER_LAST_DIRECTIVE = "AfterLast";
 
-    static final String NONE_DIRECTIVE = "none";
+    static final String NONE_DIRECTIVE = "None";
 
-    static final String BEFORE_FIRST_DIRECTIVE = "beforefirst";
+    static final String BEFORE_FIRST_DIRECTIVE = "BeforeFirst";
 
     static String string(
             TString tString) {
@@ -93,7 +94,7 @@ class GenerationUtils {
 
         StringBuilder macroName = new StringBuilder();
         for(TString partName : name_parts){
-            macroName.append(org.sablecc.objectmacro.util.Utils.toCamelCase(string(partName)));
+            macroName.append(Utils.toCamelCase(string(partName)));
         }
 
         return macroName.toString();
@@ -125,5 +126,11 @@ class GenerationUtils {
         catch (IOException e) {
             throw CompilerException.outputError(destination.toString(), e);
         }
+    }
+
+    static String getLetterFromInteger(
+            Integer i){
+
+        return i > 0 && i < 27 ? String.valueOf((char) (i + 64)) : null;
     }
 }

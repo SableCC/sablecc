@@ -12,12 +12,25 @@ public class MMacroBuilder {
   private final List<Object> eContextParam = new LinkedList<Object>();
   private final List<Object> eContextBuildState = new LinkedList<Object>();
   private final List<Object> eNewBuildState = new LinkedList<Object>();
-  private final List<Object> eInitInternalsCall = new LinkedList<Object>();
   private final List<Object> eStringPart_ParamInsertPart_EolPart_InsertMacroPart = new LinkedList<Object>();
+  private final List<Object> eInitDirectivesCall = new LinkedList<Object>();
+  private final List<Object> eInitInternalsCall = new LinkedList<Object>();
 
   public MMacroBuilder(String pMacroName) {
     if(pMacroName == null) throw new NullPointerException();
     this.pMacroName = pMacroName;
+  }
+
+  public MInitDirectivesCall newInitDirectivesCall(String pParamName) {
+    MInitDirectivesCall lInitDirectivesCall = new MInitDirectivesCall(pParamName);
+    this.eInitDirectivesCall.add(lInitDirectivesCall);
+    return lInitDirectivesCall;
+  }
+
+  public MInitInternalsCall newInitInternalsCall(String pParamName) {
+    MInitInternalsCall lInitInternalsCall = new MInitInternalsCall(pParamName);
+    this.eInitInternalsCall.add(lInitInternalsCall);
+    return lInitInternalsCall;
   }
 
   public MPublic newPublic() {
@@ -42,12 +55,6 @@ public class MMacroBuilder {
     MNewBuildState lNewBuildState = new MNewBuildState();
     this.eNewBuildState.add(lNewBuildState);
     return lNewBuildState;
-  }
-
-  public MInitInternalsCall newInitInternalsCall(String pParamName) {
-    MInitInternalsCall lInitInternalsCall = new MInitInternalsCall(pParamName);
-    this.eInitInternalsCall.add(lInitInternalsCall);
-    return lInitInternalsCall;
   }
 
   public MStringPart newStringPart(String pString, String pIndexBuilder) {
@@ -137,6 +144,11 @@ public class MMacroBuilder {
     }
     sb.append(";");
     sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        ");
+    for(Object oInitDirectivesCall : this.eInitDirectivesCall) {
+      sb.append(oInitDirectivesCall.toString());
+    }
     sb.append(System.getProperty("line.separator"));
     sb.append("        ");
     for(Object oInitInternalsCall : this.eInitInternalsCall) {

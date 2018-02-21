@@ -56,6 +56,12 @@ public class UtilsGenerationWalker
         mClassInternalValue.newImportJavaUtil();
         MClassBuildState mClassBuildState = new MClassBuildState();
 
+        MSuperDirective mSuperDirective = new MSuperDirective();
+        MClassAfterLast mClassAfterLast = new MClassAfterLast();
+        MClassBeforeFirst mClassBeforeFirst = new MClassBeforeFirst();
+        MClassNone mClassNone = new MClassNone();
+        MClassSeparator mClassSeparator = new MClassSeparator();
+
         if(!this.ir.getDestinationPackage().equals("")){
             String destinationPackage = this.ir.getDestinationPackage();
             mContext.newPackageDeclaration(destinationPackage);
@@ -67,6 +73,11 @@ public class UtilsGenerationWalker
             mCannotModify.newPackageDeclaration(destinationPackage);
             mObjectMacroException.newPackageDeclaration(destinationPackage);
             mClassInternalValue.newPackageDeclaration(destinationPackage);
+            mSuperDirective.newPackageDeclaration(destinationPackage);
+            mClassAfterLast.newPackageDeclaration(destinationPackage);
+            mClassBeforeFirst.newPackageDeclaration(destinationPackage);
+            mClassNone.newPackageDeclaration(destinationPackage);
+            mClassSeparator.newPackageDeclaration(destinationPackage);
             mClassBuildState.newPackageDeclaration(destinationPackage);
         }
 
@@ -81,6 +92,11 @@ public class UtilsGenerationWalker
         GenerationUtils
                 .writeFile(this.packageDirectory,"ObjectMacroException.java", mObjectMacroException.toString());
         GenerationUtils.writeFile(this.packageDirectory, "InternalValue.java", mClassInternalValue.toString());
+        GenerationUtils.writeFile(this.packageDirectory, "Directive.java", mSuperDirective.toString());
+        GenerationUtils.writeFile(this.packageDirectory, "DAfterLast.java", mClassAfterLast.toString());
+        GenerationUtils.writeFile(this.packageDirectory, "DBeforeFirst.java", mClassBeforeFirst.toString());
+        GenerationUtils.writeFile(this.packageDirectory, "DNone.java", mClassNone.toString());
+        GenerationUtils.writeFile(this.packageDirectory, "DSeparator.java", mClassSeparator.toString());
 
         GenerationUtils.writeFile(this.packageDirectory, "BuildState.java", mClassBuildState.toString());
     }
