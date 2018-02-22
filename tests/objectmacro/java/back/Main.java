@@ -36,12 +36,12 @@ public class Main {
         macros.add(new MB("First argument in MB2"));
 
         try{
-            mb.addPS(new MC());
-            ma.addPZ(new MC());
-            ma.addAllPY(macros);
-            ma.addPY(mb);
-            ma.addPZ(new MC());
-            mb2.addPS(new MC());
+            mb.addS(new MC());
+            ma.addZ(new MC());
+            ma.addAllY(macros);
+            ma.addY(mb);
+            ma.addZ(new MC());
+            mb2.addS(new MC());
             System.out.println(ma.build());
         }
         catch(ObjectMacroException e){

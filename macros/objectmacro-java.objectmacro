@@ -290,7 +290,7 @@ $end$
 $comment: ========= add_all =========== $
 
 $macro: add_all(param_name) $
-    public void addAllP$param_name(List<Macro> macros){
+    public void addAll$param_name(List<Macro> macros){
         if(macros == null){
             throw ObjectMacroException.parameterNull("$param_name");
         }
@@ -314,7 +314,7 @@ $end: add_all $
 $comment: ========= single_add =========== $
 
 $macro: single_add(macro_name, param_name) $
-    public void addP$param_name(M$macro_name macro){
+    public void add$param_name(M$macro_name macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("$param_name");
         }

@@ -27,10 +27,10 @@ public class Cycle {
         MF f = new MF();
         MG g = new MG();
         MH h = new MH();
-        f.addPY(h);
-        f.addPX(g);
-        f.addPX(g);
-        h.addPLala(f);
+        f.addY(h);
+        f.addX(g);
+        f.addX(g);
+        h.addLala(f);
 
         try{
             System.out.print(f.build());

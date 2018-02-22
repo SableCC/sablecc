@@ -34,8 +34,8 @@ public class ParameterNull {
         macros.add(new MB("First argument in MB2"));
 
         try{
-            ma.addPZ(null);
-            ma.addAllPY(macros);
+            ma.addZ(null);
+            ma.addAllY(macros);
             ma.build();
             System.err.println("It should throw an exception here");
             System.exit(1);

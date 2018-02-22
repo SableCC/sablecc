@@ -43,7 +43,7 @@ public class MSingleAdd {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("    public void addP");
+    sb.append("    public void add");
     sb.append(rParamName());
     sb.append("(M");
     sb.append(rMacroName());

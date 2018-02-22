@@ -64,25 +64,25 @@ public class Main {
             String entity_name){
 
         MEntity mEntity = new MEntity(entity_name);
-        mEntity.addPPackage(new MPackageDeclaration("entities"));
+        mEntity.addPackage(new MPackageDeclaration("entities"));
         MSetter setter = new MSetter("id_" + entity_name.toLowerCase(), Integer.class.getSimpleName());
         MGetter getter = new MGetter("id_" + entity_name.toLowerCase(), Integer.class.getSimpleName());
 
-        mEntity.addPAttributes(createId("id_" + entity_name.toLowerCase(), "AUTO"));
-        mEntity.addPAccessors(setter);
-        mEntity.addPAccessors(getter);
+        mEntity.addAttributes(createId("id_" + entity_name.toLowerCase(), "AUTO"));
+        mEntity.addAccessors(setter);
+        mEntity.addAccessors(getter);
 
-        mEntity.addPAttributes(createAttribute("A", Integer.class.getSimpleName(), false));
+        mEntity.addAttributes(createAttribute("A", Integer.class.getSimpleName(), false));
         setter = new MSetter("A", Integer.class.getSimpleName());
         getter = new MGetter("A", Integer.class.getSimpleName());
-        mEntity.addPAccessors(setter);
-        mEntity.addPAccessors(getter);
+        mEntity.addAccessors(setter);
+        mEntity.addAccessors(getter);
 
-        mEntity.addPAttributes(createAttribute("B", String.class.getSimpleName(), true));
+        mEntity.addAttributes(createAttribute("B", String.class.getSimpleName(), true));
         setter = new MSetter("B", String.class.getSimpleName());
         getter = new MGetter("B", String.class.getSimpleName());
-        mEntity.addPAccessors(setter);
-        mEntity.addPAccessors(getter);
+        mEntity.addAccessors(setter);
+        mEntity.addAccessors(getter);
 
         return mEntity;
     }
@@ -98,14 +98,14 @@ public class Main {
             mIdIncrementationStrategy = new MIdIncrementationStrategy(generation_strategy);
         }
 
-        mAttribute.addPNotNull(new MNotNull());
+        mAttribute.addNotNull(new MNotNull());
 
         if (mIdIncrementationStrategy == null) {
-            mAttribute.addPId(mPrimaryKey);
+            mAttribute.addId(mPrimaryKey);
         }
         else{
-            mAttribute.addPId(mPrimaryKey);
-            mAttribute.addPId(mIdIncrementationStrategy);
+            mAttribute.addId(mPrimaryKey);
+            mAttribute.addId(mIdIncrementationStrategy);
         }
 
         return mAttribute;
@@ -118,7 +118,7 @@ public class Main {
 
         MAttribute mAttribute = new MAttribute(name, type);
         if(notNull) {
-            mAttribute.addPNotNull(new MNotNull());
+            mAttribute.addNotNull(new MNotNull());
         }
 
         return mAttribute;

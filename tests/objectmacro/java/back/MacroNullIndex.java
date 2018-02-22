@@ -35,9 +35,9 @@ public class MacroNullIndex {
 
         try{
             MC mc = new MC();
-            ma.addPZ(mc);
-            ma.addPZ(mc);
-            ma.addAllPY(macros);
+            ma.addZ(mc);
+            ma.addZ(mc);
+            ma.addAllY(macros);
             ma.build();
             System.err.println("It should throw an exception here");
             System.exit(1);

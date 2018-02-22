@@ -28,9 +28,9 @@ public class Separator {
 
         MEmptyMacro mEmptyMacro = new MEmptyMacro();
         MCommaSeparator mCommaSeparator = new MCommaSeparator();
-        mCommaSeparator.addPX(mEmptyMacro);
-        mCommaSeparator.addPX(mEmptyMacro);
-        mCommaSeparator.addPX(mEmptyMacro);
+        mCommaSeparator.addX(mEmptyMacro);
+        mCommaSeparator.addX(mEmptyMacro);
+        mCommaSeparator.addX(mEmptyMacro);
         System.out.println(mCommaSeparator.build());
     }
 
