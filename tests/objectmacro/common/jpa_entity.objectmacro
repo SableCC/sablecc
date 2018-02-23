@@ -128,32 +128,39 @@ List<{entity_name}>
 
 Macro one_to_one
     Param
+        fetch_type : String;
         column : String;
         join_column : join_column(column);
     Internal
-        directives : fetch_strategy, mapped_by;
+        directives : fetch_strategy(fetch_type), mapped_by, separator=", ";
 {Begin}
 @OneToOne({directives})
 {join_column}
 {End}
 
 Macro many_to_many
+    Param
+        fetch_type : String;
     Internal
-        directives : fetch_strategy, mapped_by;
+        directives : fetch_strategy(fetch_type), mapped_by, separator=", ";
 {Begin}
 @ManyToMany({directives})
 {End}
 
 Macro many_to_one
+    Param
+        fetch_type : String;
     Internal
-        directives : fetch_strategy, mapped_by;
+        directives : fetch_strategy(fetch_type), mapped_by, separator=", ";
 {Begin}
 @ManyToOne({directives})
 {End}
 
 Macro one_to_many
+    Param
+        fetch_type : String;
     Internal
-        directives : fetch_strategy, mapped_by;
+        directives : fetch_strategy(fetch_type), mapped_by, separator=", ";
 {Begin}
 @OneToMany({directives})
 {End}

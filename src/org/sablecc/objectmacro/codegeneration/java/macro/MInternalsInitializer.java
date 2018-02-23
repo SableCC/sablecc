@@ -2,79 +2,183 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+public class MInternalsInitializer extends Macro{
 
-public class MInternalsInitializer {
+    private Macro list_ListPackage[];
 
-  private final List<Object> ePackageDeclaration = new LinkedList<Object>();
-  private final List<Object> eImportJavaUtil = new LinkedList<Object>();
-  private final List<Object> eParentInternalsSetter = new LinkedList<Object>();
+    private Macro list_ListParentInternalSetters[];
 
-  public MInternalsInitializer() {
-  }
+    private final Context ListPackageContext = new Context();
+    private final Context ListParentInternalSettersContext = new Context();
 
-  public MPackageDeclaration newPackageDeclaration(String pPackageName) {
-    MPackageDeclaration lPackageDeclaration = new MPackageDeclaration(pPackageName);
-    this.ePackageDeclaration.add(lPackageDeclaration);
-    return lPackageDeclaration;
-  }
+    public MInternalsInitializer(Macro pListPackage[], Macro pListParentInternalSetters[]){
 
-  public MImportJavaUtil newImportJavaUtil() {
-    MImportJavaUtil lImportJavaUtil = new MImportJavaUtil();
-    this.eImportJavaUtil.add(lImportJavaUtil);
-    return lImportJavaUtil;
-  }
-
-  public MParentInternalsSetter newParentInternalsSetter(String pName) {
-    MParentInternalsSetter lParentInternalsSetter = new MParentInternalsSetter(pName);
-    this.eParentInternalsSetter.add(lParentInternalsSetter);
-    return lParentInternalsSetter;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MHeader().toString());
-    if(this.ePackageDeclaration.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
+        this.setPListPackage(pListPackage);
+        this.setPListParentInternalSetters(pListParentInternalSetters);
     }
-    for(Object oPackageDeclaration : this.ePackageDeclaration) {
-      sb.append(oPackageDeclaration.toString());
-    }
-    for(Object oImportJavaUtil : this.eImportJavaUtil) {
-      sb.append(oImportJavaUtil.toString());
-    }
-    sb.append(System.getProperty("line.separator"));
-    sb.append("public class InternalsInitializer {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    private final String _paramName;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    InternalsInitializer(String paramName){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        this._paramName = paramName;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    {
-      boolean first = true;
-      for(Object oParentInternalsSetter : this.eParentInternalsSetter) {
-        if(first) {
-          first = false;
+
+    private void setPListPackage(Macro pListPackage[]){
+        if(pListPackage == null){
+            throw ObjectMacroException.parameterNull("ListPackage");
         }
-        else {
-          sb.append(System.getProperty("line.separator"));
-        }
-        sb.append(oParentInternalsSetter.toString());
-      }
-    }
-    sb.append(System.getProperty("line.separator"));
-    sb.append("}");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
+        Macro macros[] = pListPackage;
+        this.list_ListPackage = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "ListPackage");
+            }
+
+            macro.apply(new InternalsInitializer("ListPackage"){
+@Override
+void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
+
+        }
+});
+
+            this.list_ListPackage[i++] = macro;
+
+        }
+    }
+
+    private void setPListParentInternalSetters(Macro pListParentInternalSetters[]){
+        if(pListParentInternalSetters == null){
+            throw ObjectMacroException.parameterNull("ListParentInternalSetters");
+        }
+
+        Macro macros[] = pListParentInternalSetters;
+        this.list_ListParentInternalSetters = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "ListParentInternalSetters");
+            }
+
+            macro.apply(new InternalsInitializer("ListParentInternalSetters"){
+@Override
+void setParentInternalsSetter(MParentInternalsSetter mParentInternalsSetter){
+
+        }
+});
+
+            this.list_ListParentInternalSetters[i++] = macro;
+
+        }
+    }
+
+    private String buildListPackage(){
+
+        StringBuilder sb0 = new StringBuilder();
+        Context local_context = ListPackageContext;
+        Macro macros[] = this.list_ListPackage;
+                boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(first){
+            sb0.append(LINE_SEPARATOR);
+    first = false;
+}
+            
+            sb0.append(macro.build(local_context));
+            i++;
+
+                    }
+
+        return sb0.toString();
+    }
+
+    private String buildListParentInternalSetters(){
+
+        StringBuilder sb0 = new StringBuilder();
+        Context local_context = ListParentInternalSettersContext;
+        Macro macros[] = this.list_ListParentInternalSetters;
+                boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+                        if(first) {
+  first = false;
+}
+else {
+           sb0.append(LINE_SEPARATOR);
+}
+
+            sb0.append(macro.build(local_context));
+            i++;
+
+                    }
+
+        return sb0.toString();
+    }
+
+    private Macro[] getListPackage(){
+
+        return this.list_ListPackage;
+    }
+
+    private Macro[] getListParentInternalSetters(){
+
+        return this.list_ListParentInternalSetters;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setInternalsInitializer(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MHeader minsert_1 = new MHeader();
+                        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(buildListPackage());
+        sb0.append(LINE_SEPARATOR);
+        MImportJavaUtil minsert_2 = new MImportJavaUtil();
+                        sb0.append(minsert_2.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("public class InternalsInitializer ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    private final String _paramName;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    InternalsInitializer(String paramName)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        this._paramName = paramName;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(buildListParentInternalSetters());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("}");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

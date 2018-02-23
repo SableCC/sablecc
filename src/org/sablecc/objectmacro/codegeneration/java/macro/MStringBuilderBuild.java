@@ -2,31 +2,62 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MStringBuilderBuild {
+public class MStringBuilderBuild extends Macro{
 
-  private final String pIndexBuilder;
-  private final MStringBuilderBuild mStringBuilderBuild = this;
+    private String field_IndexBuilder;
 
-  public MStringBuilderBuild(String pIndexBuilder) {
-    if(pIndexBuilder == null) throw new NullPointerException();
-    this.pIndexBuilder = pIndexBuilder;
-  }
+    public MStringBuilderBuild(String pIndexBuilder){
 
-  String pIndexBuilder() {
-    return this.pIndexBuilder;
-  }
+        this.setPIndexBuilder(pIndexBuilder);
+    }
 
-  private String rIndexBuilder() {
-    return this.mStringBuilderBuild.pIndexBuilder();
-  }
+    private void setPIndexBuilder(String pIndexBuilder){
+        if(pIndexBuilder == null){
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("sb");
-    sb.append(rIndexBuilder());
-    sb.append(".toString()");
-    return sb.toString();
-  }
+        this.field_IndexBuilder = pIndexBuilder;
+    }
 
+    private String buildIndexBuilder(){
+
+        return this.field_IndexBuilder;
+    }
+
+    private String getIndexBuilder(){
+
+        return this.field_IndexBuilder;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setStringBuilderBuild(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("sb");
+        sb0.append(buildIndexBuilder());
+        sb0.append(".toString()");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

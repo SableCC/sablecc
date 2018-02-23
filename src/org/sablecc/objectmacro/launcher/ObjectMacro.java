@@ -361,26 +361,24 @@ public class ObjectMacro {
             mMacro.newSimpleName(part);
         }
 
-        Set<Internal> macro_internals = macro.getAllInternals();
-        Set<External> macro_params = macro.getAllParams();
+        Set<Param> macro_internals = macro.getAllInternals();
+        Set<Param> macro_params = macro.getAllParams();
 
         List<PMacroBodyPart> macroBodyParts = macro.getDeclaration().getMacroBodyParts();
         createMacroBody(mMacro, macroBodyParts);
 
-        for(External param : macro_params){
+        for(Param param : macro_params){
             createParam(mMacro.newParam(), param);
         }
 
-        for(Internal internal : macro_internals){
+        for(Param internal : macro_internals){
             createInternal(mMacro.newInternal(), internal);
         }
 
         MInitializationOrder mInitializationOrder = mMacro.newInitializationOrder();
 
         for(Param param : macro.getComponentFinder().getLinearization()){
-            if(!param.isString()){
-                mInitializationOrder.newSimpleName(param.getName());
-            }
+            mInitializationOrder.newSimpleName(param.getName());
         }
 
         return mMacro;
@@ -560,7 +558,7 @@ public class ObjectMacro {
 
     private static void createParam(
             MParam macro_param,
-            External param){
+            Param param){
 
         String paramNames[] = Utils.splitName(param.getNameDeclaration());
         for(String part : paramNames){
@@ -604,17 +602,17 @@ public class ObjectMacro {
 
     private static void createInternal(
             MInternal macro_internal,
-            Internal param){
+            Param param){
 
         String paramNames[] = Utils.splitName(param.getNameDeclaration());
         for(String part : paramNames){
             macro_internal.newSimpleName(part);
         }
 
-        if(param.getDeclaration().getType() instanceof AStringInternalType){
+        if(param.getDeclaration().getType() instanceof AStringType){
             macro_internal.newStringType();
         }
-        else if(param.getDeclaration().getType() instanceof AIdentifiersInternalType){
+        else if(param.getDeclaration().getType() instanceof AMacrosType){
             MMacroType macro_param_type = macro_internal.newMacroType();
 
             Set<AMacroReference> macroReferences = param.getMacroReferences();
@@ -622,11 +620,28 @@ public class ObjectMacro {
             for(AMacroReference l_macroRef : macroReferences){
                 MMacroRef macroRef = macro_param_type.newMacroRef();
 
+                if(l_macroRef.getValues().size() > 0){
+                    createArgs(macroRef.newArgs(), l_macroRef);
+                }
+
                 String splittedMacroName[] = Utils.splitName(l_macroRef.getName());
                 for(String part : splittedMacroName){
                     macroRef.newSimpleName(part);
                 }
             }
+        }
+
+        Set<Directive> directives = param.getAllDirectives();
+
+        for(Directive l_directive : directives){
+            MDirective mDirective = macro_internal.newDirective();
+
+            String directiveNames[] = Utils.splitName(l_directive.getDeclaration().getName());
+            for(String part : directiveNames){
+                mDirective.newSimpleName(part);
+            }
+
+            createDirectiveParts(mDirective, l_directive.getDeclaration().getParts());
         }
     }
 

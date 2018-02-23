@@ -206,7 +206,7 @@ Productions
     ;
 
   macro_definition
-        {-> macro_kw identifier [params]:param* [internals]:internal* }
+        {-> macro_kw identifier [params]:param* [internals]:param* }
     =
       macro_kw identifier macro_parameters
         {-> macro_kw identifier [macro_parameters.params] [macro_parameters.internals] }
@@ -235,7 +235,7 @@ Productions
     ;
 
   macro_parameters
-        {-> [params]:param* [internals]:internal*}
+        {-> [params]:param* [internals]:param*}
     =
       [params]:external_args? [internals]:internal_args?
         {-> [params.params] [internals.params] }
@@ -248,22 +248,16 @@ Productions
         {-> [params.param]};
 
   internal_args
-        {-> [params]:internal*}
+        {-> [params]:param*}
     =
-      internal_kw [params]:internal+
-        {-> [params.internal]}
+      internal_kw [params]:param+
+        {-> [params.param]}
     ;
 
   param
     =
       [name]:identifier colon type [directives]:directive* semi_colon
         {-> New param(name, type, [directives])}
-    ;
-
-  internal
-    =
-      [name]:identifier colon internal_type semi_colon
-        {-> New internal(name, internal_type)}
     ;
 
   directive
@@ -289,26 +283,9 @@ Productions
   type
     =
       {string} string_kw
-        {-> New type.string(string_kw)}
-    |
+        {-> New type.string(string_kw)}|
       {macros} macro_reference [additional_macros_reference]:additional_macro_reference*
         {-> New type.macros([macro_reference, additional_macros_reference.macro_reference])}
-    ;
-
-  internal_type
-    =
-      {string} string_kw
-        {-> New internal_type.string(string_kw)}
-    |
-      {identifiers} identifier [additionals]:additional_identifier*
-        {-> New internal_type.identifiers([identifier, additionals.identifier])}
-    ;
-
-  additional_identifier
-        {-> identifier}
-    =
-      comma identifier
-        {-> identifier}
     ;
 
   additional_macro_reference
@@ -366,7 +343,7 @@ Abstract Syntax Tree
       {macro} macro;
 
   macro =
-      macro_kw [name]:identifier [params]:param* [internals]:internal* begin [macro_body_parts]:macro_body_part*;
+      macro_kw [name]:identifier [params]:param* [internals]:param* begin [macro_body_parts]:macro_body_part*;
 
   macro_body_part =
       {insert} macro_reference |
@@ -377,9 +354,6 @@ Abstract Syntax Tree
 
   param =
       [name]:identifier type [directives]:directive*;
-
-  internal =
-      [name]:identifier [type]:internal_type;
 
   directive =
       [name]:identifier [l_dquote]:dquote [parts]:string_part*;
@@ -393,11 +367,7 @@ Abstract Syntax Tree
 
   type =
       {string} string_kw |
-      {macros} [macros]:macro_reference+;
-
-  internal_type =
-      {string} string_kw |
-      {identifiers} [macros]:identifier+;
+      {macros} macro_reference+;
 
   call =
       [static_values]:static_value+;

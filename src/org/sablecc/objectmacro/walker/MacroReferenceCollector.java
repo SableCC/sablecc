@@ -23,9 +23,6 @@ import org.sablecc.objectmacro.structure.Macro;
 import org.sablecc.objectmacro.structure.Param;
 import org.sablecc.objectmacro.syntax3.node.*;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
 public class MacroReferenceCollector
         extends DepthFirstAdapter {
 
@@ -107,21 +104,11 @@ public class MacroReferenceCollector
     }
 
     @Override
-    public void caseTIdentifier(
-            TIdentifier node) {
-
-        if(node.parent() instanceof AIdentifiersInternalType){
-            AMacroReference aMacroReference = new AMacroReference(node, new ArrayList<>());
-            this.currentParam.addMacroReference(aMacroReference);
-        }
-    }
-
-    @Override
     public void inAParam(
             AParam node) {
 
-        this.currentParam =
-                this.currentMacro.getParam(node.getName());
+        this.currentParam = this.currentMacro
+                .getParam(node.getName());
     }
 
     @Override
@@ -132,31 +119,8 @@ public class MacroReferenceCollector
     }
 
     @Override
-    public void inAInternal(
-            AInternal node) {
-
-        this.currentParam =
-                this.currentMacro.getParam(node.getName());
-    }
-
-    @Override
-    public void outAInternal(
-            AInternal node) {
-
-        this.currentParam = null;
-    }
-
-    @Override
     public void caseAStringType(
             AStringType node) {
-
-        this.currentMacro.setParamToString(
-                this.currentParam.getNameDeclaration());
-    }
-
-    @Override
-    public void caseAStringInternalType(
-            AStringInternalType node) {
 
         this.currentMacro.setParamToString(
                 this.currentParam.getNameDeclaration());

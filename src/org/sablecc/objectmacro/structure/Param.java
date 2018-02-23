@@ -18,7 +18,7 @@
 package org.sablecc.objectmacro.structure;
 
 import org.sablecc.exception.*;
-import org.sablecc.objectmacro.exception.*;
+import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.syntax3.node.*;
 
 import java.util.*;
@@ -26,6 +26,8 @@ import java.util.*;
 public class Param {
 
     private final GlobalIndex globalIndex;
+
+    private final AParam declaration;
 
     private final Macro parent;
 
@@ -35,13 +37,22 @@ public class Param {
 
     private final Map<String, Param> paramReferences = new LinkedHashMap<>();
 
+    private final Map<String, Directive> directives = new HashMap<>();
+
+    private final Set<Directive> allDirectives = new LinkedHashSet<>();
+
     private boolean isUsed;
 
     private boolean isString;
 
     Param(
+            AParam declaration,
             Macro macro,
             GlobalIndex globalIndex) {
+
+        if (declaration == null) {
+            throw new InternalException("declaration may not be null");
+        }
 
         if (macro == null) {
             throw new InternalException("scope may not be null");
@@ -51,8 +62,26 @@ public class Param {
             throw new InternalException("globalIndex may not be null");
         }
 
+        this.declaration = declaration;
         this.parent = macro;
         this.globalIndex = globalIndex;
+    }
+
+    public Directive newDirective(
+            ADirective directive) {
+
+        String optionName = directive.getName().getText();
+        if (this.directives.containsKey(optionName)) {
+            throw CompilerException.duplicateOption(
+                    directive, this.directives.get(optionName).getDeclaration());
+        }
+
+        Directive newDirective = new Directive(directive, this);
+        this.directives.put(
+                optionName, newDirective);
+        this.allDirectives.add(newDirective);
+
+        return newDirective;
     }
 
     public void addMacroReference(
@@ -69,11 +98,12 @@ public class Param {
         }
 
         if(this.macroReferencesName.containsKey(identifier.getText())){
-            throw CompilerException.duplicateMacroRef(macroRef.getName(), getNameDeclaration());
+            throw CompilerException.duplicateMacroRef(macroRef.getName(), getDeclaration().getName());
         }
 
         this.macroReferences.add(macroRef);
         this.macroReferencesName.put(identifier.getText(), macroRef);
+
     }
 
     public void addParamReference(
@@ -96,16 +126,24 @@ public class Param {
         this.paramReferences.put(name, newParamRef);
     }
 
+    public Set<Directive> getAllDirectives(){
+        return this.allDirectives;
+    }
+
     public Set<AMacroReference> getMacroReferences(){
         return this.macroReferences;
     }
 
-    public TIdentifier getNameDeclaration(){
-        return null;
+    public TIdentifier getNameDeclaration() {
+        return this.declaration.getName();
     }
 
     public String getName() {
-        return null;
+        return this.declaration.getName().getText();
+    }
+
+    public AParam getDeclaration(){
+        return this.declaration;
     }
 
     public boolean isUsed() {

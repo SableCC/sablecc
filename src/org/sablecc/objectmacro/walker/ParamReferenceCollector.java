@@ -89,17 +89,10 @@ public class ParamReferenceCollector
     }
 
     @Override
-    public void inAInternal(
-            AInternal node) {
+    public void caseAStringType(
+            AStringType node) {
 
-        this.currentParam = this.currentMacro
-                .getParam(node.getName());
-    }
-
-    @Override
-    public void outAInternal(
-            AInternal node) {
-
-        this.currentParam = null;
+        this.currentMacro.setParamToString(
+                this.currentParam.getNameDeclaration());
     }
 }

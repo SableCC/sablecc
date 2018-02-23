@@ -17,7 +17,10 @@
 package org.sablecc.objectmacro.walker;
 
 import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.structure.*;
+import org.sablecc.objectmacro.structure.Directive;
+import org.sablecc.objectmacro.structure.GlobalIndex;
+import org.sablecc.objectmacro.structure.Macro;
+import org.sablecc.objectmacro.structure.Param;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.syntax3.node.*;
 import org.sablecc.objectmacro.util.Utils;
@@ -29,7 +32,7 @@ public class DirectiveCollector
 
     private Macro currentMacro;
 
-    private External currentParam;
+    private Param currentParam;
 
     public DirectiveCollector(
             GlobalIndex globalIndex){
@@ -55,7 +58,7 @@ public class DirectiveCollector
     public void inAParam(
             AParam node) {
 
-        this.currentParam = (External) this.currentMacro.getParam(node.getName());
+        this.currentParam = this.currentMacro.getParam(node.getName());
     }
 
     @Override

@@ -2,32 +2,62 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MContextField {
+public class MContextField extends Macro{
 
-  private final String pName;
-  private final MContextField mContextField = this;
+    private String field_Name;
 
-  public MContextField(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
+    public MContextField(String pName){
 
-  String pName() {
-    return this.pName;
-  }
+        this.setPName(pName);
+    }
 
-  private String rName() {
-    return this.mContextField.pName();
-  }
+    private void setPName(String pName){
+        if(pName == null){
+            throw ObjectMacroException.parameterNull("Name");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    private final Context ");
-    sb.append(rName());
-    sb.append("Context = new Context();");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.field_Name = pName;
+    }
 
+    private String buildName(){
+
+        return this.field_Name;
+    }
+
+    private String getName(){
+
+        return this.field_Name;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setContextField(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    private final Context ");
+        sb0.append(buildName());
+        sb0.append("Context = new Context();");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

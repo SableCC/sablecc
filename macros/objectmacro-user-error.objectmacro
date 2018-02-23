@@ -1,0 +1,50 @@
+$comment$
+This file is part of SableCC ( http://sablecc.org ).
+
+See the NOTICE file distributed with this work for copyright information.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+$end$
+
+$comment: ============ object_macro_error_head ====== $
+
+$text: object_macro_error_head $
+*** OBJECT MACRO ERROR ***
+$end: object_macro_error_head $
+
+$comment: ============ incorrect_type =========== $
+
+$macro: incorrect_type(type, param_name) $
+$insert: object_macro_error_head $
+
+$type was not expected in parameter '$param_name'.
+$end: incorrect_type $
+
+$comment: =========== macro_null_in_list ======== $
+
+$macro: macro_null_in_list(index, param_name) $
+A macro is null at index $index in the list '$param_name'.
+$end: macro_null_in_list $
+
+$comment: =========== parameter_null ========== $
+
+$macro: parameter_null(param_name) $
+Parameter '$param_name' cannot be null.
+$end: parameter_null$
+
+$comment: ========== object_macro_error ========= $
+
+$macro: object_macro_error(stack_trace) $
+$insert: object_macro_error_head $
+$stack_trace
+$end: object_macro_error $

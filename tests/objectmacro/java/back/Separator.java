@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package back;
 
 import back.macro.MCommaSeparator;
@@ -27,10 +26,8 @@ public class Separator {
                 String[] args){
 
         MEmptyMacro mEmptyMacro = new MEmptyMacro();
-        MCommaSeparator mCommaSeparator = new MCommaSeparator();
-        mCommaSeparator.addX(mEmptyMacro);
-        mCommaSeparator.addX(mEmptyMacro);
-        mCommaSeparator.addX(mEmptyMacro);
+        MCommaSeparator mCommaSeparator = new MCommaSeparator(new Macro[]{mEmptyMacro, mEmptyMacro, mEmptyMacro});
+
         System.out.println(mCommaSeparator.build());
     }
 

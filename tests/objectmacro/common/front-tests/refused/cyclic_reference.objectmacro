@@ -36,7 +36,7 @@ Macro c
     Param
         zzz : c(l);
     Internal
-        l : b;
+        l : b("a {zzz}");
 {Begin}
 {zzz}e
 {l}

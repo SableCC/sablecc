@@ -31,7 +31,7 @@ empty
 
 Macro semicolon_separator
     Internal
-        x : empty_macro;
+        x : empty_macro, separator="; ";
 {Begin}
 Le corps de C : {x}
 {End}
@@ -44,30 +44,24 @@ Macro a
         y : b(z), separator="\n";
         z : c("first argument of c in a", x);
 {Begin}
-============= A ===============
-Y : {y}
+{y}
 {End}
 
 Macro b
     Param
-        o : String;
-        s : c(o, o);
+        x : String;
     Internal
-        p : c;
+        y : c("first argument of c in b", x), separator="\n";
 {Begin}
-============== B ===============
-P : {p}
-S : {s}
+{y}
 {End}
 
 Macro c
     Internal
-        q : String;
-        r : String;
+        y : String;
+        z : String;
 {Begin}
-=============== C ==============
-Q : {q}
-R : {r}
+{y} {z}
 {End}
 
 Macro d
@@ -81,65 +75,13 @@ Macro d
 
 Macro e
     Internal
-        s : String;
-        t : String;
-        u : String;
+        x : String;
+        y : String;
+        z : String;
 {Begin}
-{s}
-{t}
-{u}
-{End}
-
-# ========= Example for cyclic reference ==============
-
-Macro f
-    Param
-        x : g(y);
-        y : h("a");
-{Begin}
-{y} {x}
-{End}
-
-Macro g
-    Internal
-        z : h;
-{Begin}
-{z}
-{End}
-
-Macro h
-    Param
-        lala : f;
-    Internal
-        la : String;
-{Begin}
-{la}
-{lala}
-{End}
-
-#=========== Example =========
-
-Macro i
-    Param
-        y : k("lala");
-        z : k("On est dans i"), j(y);
-{Begin}
+{x}
 {y}
 {z}
 {End}
 
-Macro j
-    Internal
-        y : k;
-{Begin}
-{y}
-{End}
-
-Macro k
-    Internal
-        a : String;
-{Begin}
-{a}
-{End}
-
-
+#{Insert: c("y2 ", "")}

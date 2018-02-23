@@ -52,7 +52,7 @@ Macro macro_params
 
 Macro macro_internals
     Internal
-        a : text_internals;
+        a : text_internals("a", "b");
         b : text_params;
 {Begin}
     {a} {b}
