@@ -95,7 +95,7 @@ Macro e
 Macro f
     Param
         x : g(y);
-        y : h("a");
+        y : h;
 {Begin}
 {y} {x}
 {End}
@@ -110,10 +110,7 @@ Macro g
 Macro h
     Param
         lala : f;
-    Internal
-        la : String;
 {Begin}
-{la}
 {lala}
 {End}
 

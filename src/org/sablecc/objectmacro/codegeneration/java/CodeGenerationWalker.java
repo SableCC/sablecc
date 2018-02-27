@@ -34,53 +34,126 @@ public class CodeGenerationWalker
 
     private final File packageDirectory;
 
-    private MMacro currentMacroToBuild;
-
-    private Macro currentMacro;
-
-    private MConstructor currentConstructor;
-
-    private MSuperMacro superMacro;
-
-    private MInternalsInitializer mInternalsInitializer;
-
-    private MMacroBuilder currentMacroBuilder;
-
-    private MApplyInternalsInitializer currentApplyInitializer;
-
-    private MApplyInternalsInitializer currentAddAllApplyInitializer;
-
-    private MRedefinedInternalsSetter currentRedefinedInternalsSetter;
-
-    private Integer indexBuilder = 0;
-
-    private Integer indexInsert = 0;
-
-    private String currentMacroRefName;
-
+    /**
+     * List of macros in the file
+     */
     private final Map<String, Macro> macros;
 
-    private String currentContextName;
+    /**
+     * Object Macro with name and list of internals and parameters
+     */
+    private Macro currentMacro;
 
-    private MInsertMacroPart currentInsertMacroPart;
-
-    private List<String> contextNames = new ArrayList<>();
-
-    private List<String> createdBuilders = new ArrayList<>();
-
-    private List<Integer> createdInserts = new ArrayList<>();
-
-    private MParamMacroRefBuilder currentParamMacroRefBuilder;
-
-    private MInitDirectives currentInitDirectives;
-
-    private MNewDirective currentDirective;
-
-    private MSetNoneDirective mSetNoneDirective;
-
-    //Used only to check whether its a parameter or an internal, for parameter its set but for internal its null
+    /**
+     * Current parameter name
+     */
     private String currentParamName;
 
+    /**
+     * Macro representing the super class Macro
+     */
+    private MSuperMacro superMacro;
+
+    /**
+     * Macro representing an internal initializer super class
+     */
+    private MInternalsInitializer mInternalsInitializer;
+
+    /**
+     * Macro representing the class macro
+     */
+    private MMacro currentMacroToBuild;
+
+    /**
+     * Macro representing the constructor of a macro
+     */
+    private MConstructor currentConstructor;
+
+    /**
+     * Macro representing the method builder
+     */
+    private MMacroBuilder currentMacroBuilder;
+
+    /**
+     * Macro representing the apply internal initializer inside the method init internals
+     */
+    private MApplyInternalsInitializer currentApplyInitializer;
+
+    /**
+     * Macro representing the apply internal initializer inside the method addAll
+     */
+    private MApplyInternalsInitializer currentAddAllApplyInitializer;
+
+    /**
+     * Macro representing the redefined internals setter inside in apply initializer
+     */
+    private MRedefinedInternalsSetter currentRedefinedInternalsSetter;
+
+    /**
+     * Index of the current builder to avoid creating 2 StringBuilder of the same name
+     */
+    private Integer indexBuilder = 0;
+
+    /**
+     * Index of the current builder to avoid creating 2 macro objects for inserts of the same name
+     */
+    private Integer indexInsert = 0;
+
+    /**
+     * Created StringBuilders in the children of a AParameter node or AInternal node
+     * This list is reset in the internal or parameter node's out
+     */
+    private List<String> createdBuilders = new ArrayList<>();
+
+    /**
+     * Created macro objects for inserts in the children of a AParameter node or AInternal node
+     * This list is reset in the internal or parameter node's out
+     */
+    private List<Integer> createdInserts = new ArrayList<>();
+
+    /**
+     * Name of the current macro which is referenced
+     */
+    private String currentMacroRefName;
+
+    /**
+     * Name of the current context
+     */
+    private String currentContextName;
+
+    /**
+     * Names of all contexts created for the current Macro
+     */
+    private List<String> contextNames = new ArrayList<>();
+
+    /**
+     * Macro representing an insert in a macro body
+     */
+    private MInsertMacroPart currentInsertMacroPart;
+
+    /**
+     * Macro representing a parameter's builder
+     */
+    private MParamMacroRefBuilder currentParamMacroRefBuilder;
+
+    /**
+     * Macro representing the method to initialize directives
+     */
+    private MInitDirectives currentInitDirectives;
+
+    /**
+     * Macro representing the creation of an object Directive
+     */
+    private MNewDirective currentDirective;
+
+    /**
+     * Macro representing the creation of an object of the directive None
+     */
+    private MSetNoneDirective mSetNoneDirective;
+
+    /**
+     * Boolean to test whether the macro has or does not have internals
+     */
     private boolean currentMacroHasInternals;
 
     public CodeGenerationWalker(
