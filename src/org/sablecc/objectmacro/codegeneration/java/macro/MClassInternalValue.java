@@ -56,6 +56,9 @@ public class MClassInternalValue {
     sb.append("    private final Context context;");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
+    sb.append("    private String cache;");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
     sb.append("    InternalValue(");
     sb.append(System.getProperty("line.separator"));
     sb.append("            List<Macro> macros,");
@@ -75,6 +78,13 @@ public class MClassInternalValue {
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("    String build(){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        if(this.cache != null){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            return this.cache;");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        }");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("        StringBuilder sb = new StringBuilder();");
@@ -109,7 +119,9 @@ public class MClassInternalValue {
     sb.append("        }");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("        return sb.toString();");
+    sb.append("        this.cache = sb.toString();");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        return this.cache;");
     sb.append(System.getProperty("line.separator"));
     sb.append("    }");
     sb.append(System.getProperty("line.separator"));

@@ -146,6 +146,8 @@ class InternalValue {
 
     private final Context context;
 
+    private String cache;
+
     InternalValue(
             List<Macro> macros,
             Context context,
@@ -157,6 +159,10 @@ class InternalValue {
     }
 
     String build(){
+
+        if(this.cache != null){
+            return this.cache;
+        }
 
         StringBuilder sb = new StringBuilder();
         int i = 0;
@@ -176,7 +182,8 @@ class InternalValue {
             i++;
         }
 
-        return sb.toString();
+        this.cache = sb.toString();
+        return this.cache;
     }
 
     List<Macro> getMacros(){
