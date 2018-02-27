@@ -22,34 +22,28 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.util.ComponentFinder;
+import org.sablecc.util.Progeny;
 
-public class Macro
-        extends Scope {
+public class Macro{
+
+    private final GlobalIndex globalIndex;
 
     private final AMacro declaration;
 
-    private final Macro parent;
+    private final Set<External> allParams = new LinkedHashSet<>();
 
-    private final Set<Macro> macros = new LinkedHashSet<Macro>();
+    private final Map<String, External> namedParams = new HashMap<>();
 
-    private final Map<String, Macro> macroMap = new HashMap<String, Macro>();
+    private final Set<Internal> allInternals = new LinkedHashSet<>();
 
-    private final Set<Macro> explicitlyExpandedMacros = new LinkedHashSet<Macro>();
+    private final Map<String, Internal> namedInternals = new HashMap<>();
 
-    private final Set<Macro> implicitlyExpandedMacros = new LinkedHashSet<Macro>();
-
-    private final Set<ExpandSignature> expandSignatures = new LinkedHashSet<ExpandSignature>();
-
-    private boolean isImplicitlyExpanded;
-
-    private ExpandSignature implicitSignature;
+    private ComponentFinder<Param> paramsComponentFinder;
 
     Macro(
             GlobalIndex globalIndex,
-            AMacro declaration,
-            Macro parent) {
-
-        super(globalIndex);
+            AMacro declaration) {
 
         if (globalIndex == null) {
             throw new InternalException("globalIndex may not be null");
@@ -59,136 +53,170 @@ public class Macro
             throw new InternalException("declaration may not be null");
         }
 
+        this.globalIndex = globalIndex;
         this.declaration = declaration;
-        this.parent = parent;
-
-        if (!declaration.getRepeatName().getText()
-                .equals(declaration.getName().getText())) {
-            throw CompilerException.endMismatch(declaration.getRepeatName(),
-                    declaration.getName());
-        }
     }
 
-    public Macro newMacro(
-            PMacro pDeclaration) {
+    public Param newParam(
+            AParam param){
 
-        if (pDeclaration == null) {
-            throw new InternalException("pDeclaration may not be null");
+        if(param == null){
+            throw new InternalException("AParam should not be null");
         }
 
-        if (pDeclaration.parent() instanceof AMacroSourceFilePart) {
-            throw new InternalException(
-                    "pDeclaration may not be a top-level macro");
+        TIdentifier name = param.getName();
+        String stringName = name.getText();
+
+        if(containsKeyInInternals(stringName) || containsKeyInParams(stringName)){
+            throw CompilerException.duplicateDeclaration(name, getNameDeclaration());
         }
 
-        Macro macro = getGlobalIndex().newMacro(pDeclaration, this);
+        External newParam = new External(param, this, this.globalIndex);
+        this.namedParams.put(stringName, newParam);
+        this.allParams.add(newParam);
 
-        this.macroMap.put(macro.getName(), macro);
-        this.macros.add(macro);
-
-        return macro;
+        return newParam;
     }
 
-    public Macro getMacro(
-            TIdentifier identifier) {
+    public Param newInternal(
+            AInternal param){
 
-        if (identifier == null) {
-            throw new InternalException("identifier may not be null");
+        if(param == null){
+            throw new InternalException("AParam should not be null");
         }
 
-        String name = identifier.getText();
+        TIdentifier name = param.getName();
+        String stringName = name.getText();
 
-        if (this.macroMap.containsKey(name)) {
-            return this.macroMap.get(name);
+        Param duplicateDeclaration = getParamOrNull(name);
+        if(duplicateDeclaration != null){
+            throw CompilerException.duplicateDeclaration(name, duplicateDeclaration.getNameDeclaration());
         }
 
-        if (this.parent != null) {
-            return this.parent.getMacro(identifier);
-        }
+        Internal newInternal = new Internal(param, this, this.globalIndex);
+        this.allInternals.add(newInternal);
+        this.namedInternals.put(stringName, newInternal);
 
-        return getGlobalIndex().getTopMacro(identifier);
+        return newInternal;
     }
 
-    public Expand getExpand(
-            PExpand declaration) {
+    private Param getParamOrNull(
+            TIdentifier var){
 
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
+        Param toReturn = null;
+        String name = var.getText();
+        if(containsKeyInParams(name)){
+            toReturn = this.namedParams.get(name);
         }
 
-        Expand expand = getGlobalIndex().getExpand(declaration, this);
-
-        if (expand.getEnclosingMacro() != this) {
-            throw new InternalError(
-                    "getExpand must be called on its enclosing macro");
+        if(containsKeyInInternals(name)){
+            toReturn = this.namedInternals.get(name);
         }
 
-        ExpandSignature signature = expand.getSignature();
-        this.expandSignatures.add(signature);
-
-        for (Macro macro : signature.getMacroSet()) {
-            this.explicitlyExpandedMacros.add(macro);
-            macro.addCaller(this);
-        }
-
-        return expand;
+        return toReturn;
     }
 
-    public void computeImplicitExpansion() {
+    public Param getParam(
+            TIdentifier variable){
 
-        this.isImplicitlyExpanded = this.parent != null
-                && !this.parent.explicitlyExpandedMacros.contains(this);
-
-        if (this.isImplicitlyExpanded) {
-            Set<Macro> macroSet = new LinkedHashSet<Macro>();
-            macroSet.add(this);
-            this.implicitSignature = getGlobalIndex().getExpandSignature(
-                    macroSet);
-            this.parent.expandSignatures.add(this.implicitSignature);
-            this.parent.implicitlyExpandedMacros.add(this);
-            addCaller(this.parent);
+        Param param = getParamOrNull(variable);
+        if(param == null){
+            throw CompilerException.unknownParam(variable);
         }
+
+        return param;
     }
+
+    public void setParamUsed(
+            TIdentifier variable){
+
+        this.getParam(variable).setUsed();
+    }
+
+    public void setParamToString(
+            TIdentifier variable){
+
+        this.getParam(variable).setString();
+    }
+
 
     public AMacro getDeclaration() {
-
         return this.declaration;
     }
 
-    @Override
     public TIdentifier getNameDeclaration() {
-
         return this.declaration.getName();
     }
 
-    @Override
-    public Macro getParent() {
-
-        return this.parent;
+    public String getName(){
+        return this.declaration.getName().getText();
     }
 
-    public Set<ExpandSignature> getExpandSignatures() {
-
-        return this.expandSignatures;
+    public Set<External> getAllParams(){
+        return this.allParams;
     }
 
-    public Set<Macro> getExplicitlyExpandedMacros() {
-
-        return this.explicitlyExpandedMacros;
+    public Set<Internal> getAllInternals(){
+        return this.allInternals;
     }
 
-    public Set<Macro> getImplicitlyExpandedMacros() {
+    private boolean containsKeyInInternals(
+            String name){
 
-        return this.implicitlyExpandedMacros;
+        if(name == null){
+            throw new InternalException("Name should not be null");
+        }
+
+        return this.namedInternals.containsKey(name);
     }
 
-    public boolean isImplicitlyExpanded() {
+    private boolean containsKeyInParams(
+            String name){
 
-        return this.isImplicitlyExpanded;
+        if(name == null){
+            throw new InternalException("Name should not be null");
+        }
+
+        return this.namedParams.containsKey(name);
     }
 
-    public ExpandSignature getImplicitSignature() {
+    public List<String> getInternalsName(){
+        List<String> paramsName = new LinkedList<>();
+        for(Param internal : this.getAllInternals()){
+            paramsName.add(internal.getName());
+        }
 
-        return this.implicitSignature;
+        return paramsName;
+    }
+
+    public void detectParamsCyclicReference(){
+        Progeny<Param> referencedParamProgeny = new Progeny<Param>() {
+
+            @Override
+            protected Set<Param> getChildrenNoCache(
+                    Param param) {
+
+                Set<Param> children = new LinkedHashSet<>();
+                children.addAll(param.getDirectParamReferences());
+                return children;
+            }
+        };
+
+        Set<Param> params = new LinkedHashSet<>();
+        params.addAll(this.getAllInternals());
+        params.addAll(this.getAllParams());
+        this.paramsComponentFinder =
+                new ComponentFinder<>(params, referencedParamProgeny);
+
+        for(Param param : params){
+            Param representative = this.paramsComponentFinder.getRepresentative(param);
+            if(param != representative){
+                throw CompilerException.cyclicReference(param.getNameDeclaration(), representative.getNameDeclaration());
+            }
+        }
+    }
+
+    public ComponentFinder<Param> getComponentFinder(){
+        return this.paramsComponentFinder;
     }
 }

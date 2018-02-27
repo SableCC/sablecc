@@ -4,16 +4,14 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 public class MPublic {
 
-    public MPublic() {
+  public MPublic() {
+  }
 
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("public ");
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("public");
+    return sb.toString();
+  }
 
 }
