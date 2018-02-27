@@ -10,7 +10,7 @@ public class MMacro {
   private final MMacro mMacro = this;
   private final List<Object> ePackageDeclaration = new LinkedList<Object>();
   private final List<Object> eImportJavaUtil = new LinkedList<Object>();
-  private final List<Object> eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField = new LinkedList<Object>();
+  private final List<Object> eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields = new LinkedList<Object>();
   private final List<Object> eContextField = new LinkedList<Object>();
   private final List<Object> eConstructor = new LinkedList<Object>();
   private final List<Object> eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter = new LinkedList<Object>();
@@ -41,44 +41,38 @@ public class MMacro {
 
   public MParamMacroField newParamMacroField(String pName) {
     MParamMacroField lParamMacroField = new MParamMacroField(pName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField.add(lParamMacroField);
+    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lParamMacroField);
     return lParamMacroField;
   }
 
   public MParamStringField newParamStringField(String pName) {
     MParamStringField lParamStringField = new MParamStringField(pName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField.add(lParamStringField);
+    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lParamStringField);
     return lParamStringField;
   }
 
   public MInternalMacroField newInternalMacroField(String pName) {
     MInternalMacroField lInternalMacroField = new MInternalMacroField(pName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField.add(lInternalMacroField);
+    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lInternalMacroField);
     return lInternalMacroField;
   }
 
   public MInternalStringField newInternalStringField(String pName) {
     MInternalStringField lInternalStringField = new MInternalStringField(pName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField.add(lInternalStringField);
+    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lInternalStringField);
     return lInternalStringField;
   }
 
   public MInternalMacrosValueField newInternalMacrosValueField(String pParamName) {
     MInternalMacrosValueField lInternalMacrosValueField = new MInternalMacrosValueField(pParamName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField.add(lInternalMacrosValueField);
+    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lInternalMacrosValueField);
     return lInternalMacrosValueField;
   }
 
-  public MDirectivesField newDirectivesField(String pParamName) {
-    MDirectivesField lDirectivesField = new MDirectivesField(pParamName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField.add(lDirectivesField);
-    return lDirectivesField;
-  }
-
-  public MNoneDirectiveField newNoneDirectiveField(String pParamName) {
-    MNoneDirectiveField lNoneDirectiveField = new MNoneDirectiveField(pParamName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField.add(lNoneDirectiveField);
-    return lNoneDirectiveField;
+  public MDirectiveFields newDirectiveFields(String pParamName) {
+    MDirectiveFields lDirectiveFields = new MDirectiveFields(pParamName);
+    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lDirectiveFields);
+    return lDirectiveFields;
   }
 
   public MContextField newContextField(String pName) {
@@ -129,8 +123,8 @@ public class MMacro {
     return lParamStringRefBuilder;
   }
 
-  public MParamMacroRefBuilder newParamMacroRefBuilder(String pName, String pIndexBuilder) {
-    MParamMacroRefBuilder lParamMacroRefBuilder = new MParamMacroRefBuilder(pName, pIndexBuilder);
+  public MParamMacroRefBuilder newParamMacroRefBuilder(String pName) {
+    MParamMacroRefBuilder lParamMacroRefBuilder = new MParamMacroRefBuilder(pName);
     this.eParamStringRefBuilder_ParamMacroRefBuilder_InternalMacroRefBuilder.add(lParamMacroRefBuilder);
     return lParamMacroRefBuilder;
   }
@@ -218,19 +212,19 @@ public class MMacro {
     sb.append(rName());
     sb.append(" extends Macro{");
     sb.append(System.getProperty("line.separator"));
-    if(this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField.size() > 0) {
+    if(this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.size() > 0) {
       sb.append(System.getProperty("line.separator"));
     }
     {
       boolean first = true;
-      for(Object oParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField : this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField) {
+      for(Object oParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields : this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields) {
         if(first) {
           first = false;
         }
         else {
           sb.append(System.getProperty("line.separator"));
         }
-        sb.append(oParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectivesField_NoneDirectiveField.toString());
+        sb.append(oParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.toString());
       }
     }
     if(this.eContextField.size() > 0) {
