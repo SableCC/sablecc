@@ -147,11 +147,6 @@ public class CodeGenerationWalker
     private MNewDirective currentDirective;
 
     /**
-     * Macro representing the creation of an object of the directive None
-     */
-    private MSetNoneDirective mSetNoneDirective;
-
-    /**
      * Boolean to test whether the macro has or does not have internals
      */
     private boolean currentMacroHasInternals;
@@ -317,12 +312,11 @@ public class CodeGenerationWalker
 
             this.currentMacroToBuild.newParamMacroField(paramName);
             this.currentMacroToBuild.newContextField(paramName);
-            this.currentMacroToBuild.newDirectivesField(paramName);
+            this.currentMacroToBuild.newDirectiveFields(paramName);
             this.currentMacroToBuild.newInternalMacrosValueField(paramName);
 
-            this.currentParamMacroRefBuilder
-                    = this.currentMacroToBuild.newParamMacroRefBuilder(
-                            paramName, String.valueOf(this.indexBuilder));
+            this.currentParamMacroRefBuilder = this.currentMacroToBuild
+                    .newParamMacroRefBuilder(paramName);
             this.currentParamMacroRefBuilder.newContextName(
                     paramName.concat(GenerationUtils.CONTEXT_STRING));
             this.currentMacroToBuild.newParamMacroRef(paramName);
@@ -391,19 +385,8 @@ public class CodeGenerationWalker
         String directive_name
                 = GenerationUtils.buildNameCamelCase(node.getNames());
 
-        if (directive_name.equals(GenerationUtils.NONE_DIRECTIVE)) {
-            this.currentMacroToBuild
-                    .newNoneDirectiveField(this.currentParamName);
-            this.currentParamMacroRefBuilder.newApplyNoneDirective();
-            this.mSetNoneDirective = this.currentInitDirectives
-                    .newSetNoneDirective(this.currentParamName,
-                            this.indexBuilder.toString());
-        }
-        else {
-            this.currentDirective = this.currentInitDirectives.newNewDirective(
-                    this.currentParamName, directive_name,
-                    this.indexBuilder.toString());
-        }
+        this.currentDirective = this.currentInitDirectives
+                .newNewDirective(directive_name, this.indexBuilder.toString());
     }
 
     @Override
@@ -412,7 +395,6 @@ public class CodeGenerationWalker
 
         this.indexBuilder++;
         this.currentDirective = null;
-        this.mSetNoneDirective = null;
     }
 
     @Override
@@ -525,9 +507,6 @@ public class CodeGenerationWalker
             else if (this.currentDirective != null) {
                 this.currentDirective.newStringPart(string, index_builder);
             }
-            else if (this.mSetNoneDirective != null) {
-                this.mSetNoneDirective.newStringPart(string, index_builder);
-            }
         }
     }
 
@@ -554,10 +533,6 @@ public class CodeGenerationWalker
                 this.currentDirective.newParamInsertPart(param_name,
                         index_builder);
             }
-            else if (this.mSetNoneDirective != null) {
-                this.mSetNoneDirective.newParamInsertPart(param_name,
-                        index_builder);
-            }
         }
     }
 
@@ -581,9 +556,6 @@ public class CodeGenerationWalker
             }
             else if (this.currentDirective != null) {
                 this.currentDirective.newEolPart(index_builder);
-            }
-            else if (this.mSetNoneDirective != null) {
-                this.mSetNoneDirective.newEolPart(index_builder);
             }
         }
     }
@@ -627,11 +599,6 @@ public class CodeGenerationWalker
                         = this.currentDirective.newInsertMacroPart(macro_name,
                                 index_builder, index_insert);
 
-            }
-            else if (this.mSetNoneDirective != null) {
-                this.currentInsertMacroPart
-                        = this.mSetNoneDirective.newInsertMacroPart(macro_name,
-                                index_builder, index_insert);
             }
         }
         this.createdInserts.add(this.indexInsert);

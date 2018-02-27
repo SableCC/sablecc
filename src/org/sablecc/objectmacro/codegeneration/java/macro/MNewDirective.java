@@ -6,26 +6,22 @@ import java.util.*;
 
 public class MNewDirective {
 
-    private final String pParamName;
-
     private final String pDirectiveName;
 
     private final String pIndexBuilder;
 
     private final MNewDirective mNewDirective = this;
 
+    private final MInitDirectives mInitDirectives;
+
     private final List<Object> eStringPart_ParamInsertPart_EolPart_InsertMacroPart
             = new LinkedList<>();
 
-    public MNewDirective(
-            String pParamName,
+    MNewDirective(
             String pDirectiveName,
-            String pIndexBuilder) {
+            String pIndexBuilder,
+            MInitDirectives mInitDirectives) {
 
-        if (pParamName == null) {
-            throw new NullPointerException();
-        }
-        this.pParamName = pParamName;
         if (pDirectiveName == null) {
             throw new NullPointerException();
         }
@@ -34,6 +30,10 @@ public class MNewDirective {
             throw new NullPointerException();
         }
         this.pIndexBuilder = pIndexBuilder;
+        if (mInitDirectives == null) {
+            throw new NullPointerException();
+        }
+        this.mInitDirectives = mInitDirectives;
     }
 
     public MStringPart newStringPart(
@@ -77,11 +77,6 @@ public class MNewDirective {
         return lInsertMacroPart;
     }
 
-    String pParamName() {
-
-        return this.pParamName;
-    }
-
     String pDirectiveName() {
 
         return this.pDirectiveName;
@@ -99,7 +94,7 @@ public class MNewDirective {
 
     private String rParamName() {
 
-        return this.mNewDirective.pParamName();
+        return this.mInitDirectives.pParamName();
     }
 
     private String rDirectiveName() {
@@ -111,22 +106,35 @@ public class MNewDirective {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
+        sb.append(System.getProperty("line.separator"));
         sb.append("        StringBuilder sb");
         sb.append(rIndexBuilder());
         sb.append(" = new StringBuilder();");
         sb.append(System.getProperty("line.separator"));
+        sb.append("        ");
         for (Object oStringPart_ParamInsertPart_EolPart_InsertMacroPart : this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart) {
             sb.append(oStringPart_ParamInsertPart_EolPart_InsertMacroPart
                     .toString());
         }
         sb.append("        this.");
         sb.append(rParamName());
-        sb.append("Directives.add(new D");
+        sb.append(rDirectiveName());
+        sb.append(" = new D");
         sb.append(rDirectiveName());
         sb.append("(sb");
         sb.append(rIndexBuilder());
-        sb.append(".toString()));");
+        sb.append(".toString());");
         sb.append(System.getProperty("line.separator"));
+        sb.append("        this.");
+        sb.append(rParamName());
+        sb.append("Value.set");
+        sb.append(rDirectiveName());
+        sb.append("(this.");
+        sb.append(rParamName());
+        sb.append(rDirectiveName());
+        sb.append(");");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("        ");
         return sb.toString();
     }
 

@@ -37,9 +37,7 @@ public class MInitInternalValue {
         sb.append(rParamName());
         sb.append(", this.");
         sb.append(rParamName());
-        sb.append("Context, this.");
-        sb.append(rParamName());
-        sb.append("Directives);");
+        sb.append("Context);");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

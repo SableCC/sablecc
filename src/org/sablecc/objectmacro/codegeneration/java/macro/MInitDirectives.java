@@ -10,8 +10,7 @@ public class MInitDirectives {
 
     private final MInitDirectives mInitDirectives = this;
 
-    private final List<Object> eNewDirective_SetNoneDirective
-            = new LinkedList<>();
+    private final List<Object> eNewDirective = new LinkedList<>();
 
     public MInitDirectives(
             String pParamName) {
@@ -23,24 +22,13 @@ public class MInitDirectives {
     }
 
     public MNewDirective newNewDirective(
-            String pParamName,
             String pDirectiveName,
             String pIndexBuilder) {
 
-        MNewDirective lNewDirective
-                = new MNewDirective(pParamName, pDirectiveName, pIndexBuilder);
-        this.eNewDirective_SetNoneDirective.add(lNewDirective);
+        MNewDirective lNewDirective = new MNewDirective(pDirectiveName,
+                pIndexBuilder, this.mInitDirectives);
+        this.eNewDirective.add(lNewDirective);
         return lNewDirective;
-    }
-
-    public MSetNoneDirective newSetNoneDirective(
-            String pParamName,
-            String pIndexBuilder) {
-
-        MSetNoneDirective lSetNoneDirective
-                = new MSetNoneDirective(pParamName, pIndexBuilder);
-        this.eNewDirective_SetNoneDirective.add(lSetNoneDirective);
-        return lSetNoneDirective;
     }
 
     String pParamName() {
@@ -62,8 +50,8 @@ public class MInitDirectives {
         sb.append("Directives(){");
         sb.append(System.getProperty("line.separator"));
         sb.append("        ");
-        for (Object oNewDirective_SetNoneDirective : this.eNewDirective_SetNoneDirective) {
-            sb.append(oNewDirective_SetNoneDirective.toString());
+        for (Object oNewDirective : this.eNewDirective) {
+            sb.append(oNewDirective.toString());
         }
         sb.append("    }");
         sb.append(System.getProperty("line.separator"));

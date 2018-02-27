@@ -57,7 +57,7 @@ public class MClassSeparator {
         sb.append("            Integer list_size) {");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("        if(list_size == 0 || index == list_size - 1){");
+        sb.append("        if(index == list_size - 1){");
         sb.append(System.getProperty("line.separator"));
         sb.append("            return macro;");
         sb.append(System.getProperty("line.separator"));
