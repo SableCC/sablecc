@@ -4,15 +4,36 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 public class MEolPart {
 
-    public MEolPart() {
+    private final String pIndexBuilder;
 
+    private final MEolPart mEolPart = this;
+
+    public MEolPart(
+            String pIndexBuilder) {
+
+        if (pIndexBuilder == null) {
+            throw new NullPointerException();
+        }
+        this.pIndexBuilder = pIndexBuilder;
+    }
+
+    String pIndexBuilder() {
+
+        return this.pIndexBuilder;
+    }
+
+    private String rIndexBuilder() {
+
+        return this.mEolPart.pIndexBuilder();
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("    sb.append(System.getProperty(\"line.separator\"));");
+        sb.append("        sb");
+        sb.append(rIndexBuilder());
+        sb.append(".append(LINE_SEPARATOR);");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

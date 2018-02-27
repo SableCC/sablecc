@@ -126,7 +126,7 @@ public class MCyclicReference {
         sb.append(System.getProperty("line.separator"));
         sb.append("\"");
         sb.append(rReference());
-        sb.append("\" is a cyclic reference to text block \"");
+        sb.append("\" is a cyclic reference to \"");
         sb.append(rContext());
         sb.append("\" of line ");
         sb.append(rContextLine());

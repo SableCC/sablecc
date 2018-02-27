@@ -71,8 +71,8 @@ public class ScalaCodeGenerator
             }
         }
 
-        CodeGenerationWalker walker
-                = new CodeGenerationWalker(getIr(), packageDirectory);
-        getIr().getAST().apply(walker);
+        //        CodeGenerationWalker walker = new CodeGenerationWalker(getIr(),
+        //                packageDirectory);
+        //        getIr().getAST().apply(walker);
     }
 }

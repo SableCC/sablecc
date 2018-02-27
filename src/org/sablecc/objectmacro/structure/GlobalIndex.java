@@ -22,43 +22,15 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.syntax3.node.*;
-import org.sablecc.util.*;
 
 public class GlobalIndex {
 
     private final Set<Macro> allMacros = new LinkedHashSet<>();
 
-    private final Set<TextBlock> allTextBlocks = new LinkedHashSet<>();
-
     private final SortedMap<String, Macro> macroMap = new TreeMap<>();
 
-    private final SortedMap<String, TextBlock> textBlockMap = new TreeMap<>();
-
-    private final Map<PExpand, Expand> expandMap = new HashMap<>();
-
-    private final Map<PTextInsert, TextInsert> textInsertMap = new HashMap<>();
-
-    private final Map<Set<Macro>, ExpandSignature> expandSignatureMap
-            = new HashMap<>();
-
-    public Macro newTopMacro(
+    public Macro newMacro(
             PMacro pDeclaration) {
-
-        if (pDeclaration == null) {
-            throw new InternalException("pDeclaration may not be null");
-        }
-
-        if (!(pDeclaration.parent() instanceof AMacroSourceFilePart)) {
-            throw new InternalException(
-                    "pDeclaration must be a top-level macro");
-        }
-
-        return newMacro(pDeclaration, null);
-    }
-
-    Macro newMacro(
-            PMacro pDeclaration,
-            Macro parent) {
 
         if (pDeclaration == null) {
             throw new InternalException("pDeclaration may not be null");
@@ -71,19 +43,11 @@ public class GlobalIndex {
 
         Macro firstMacro = getMacroOrNull(duplicateDeclaration);
         if (firstMacro != null) {
-            TIdentifier firstDeclaration = firstMacro.getNameDeclaration();
             throw CompilerException.duplicateDeclaration(duplicateDeclaration,
-                    firstDeclaration);
+                    firstMacro.getNameDeclaration());
         }
 
-        TextBlock firstTextBlock = getTextBlockOrNull(duplicateDeclaration);
-        if (firstTextBlock != null) {
-            TIdentifier firstDeclaration = firstTextBlock.getNameDeclaration();
-            throw CompilerException.duplicateDeclaration(duplicateDeclaration,
-                    firstDeclaration);
-        }
-
-        Macro macro = new Macro(this, declaration, parent);
+        Macro macro = new Macro(this, declaration);
 
         this.allMacros.add(macro);
         this.macroMap.put(name, macro);
@@ -98,13 +62,10 @@ public class GlobalIndex {
             throw new InternalException("identifier may not be null");
         }
 
-        String name = identifier.getText();
-        Macro macro = this.macroMap.get(name);
-
-        return macro;
+        return this.macroMap.get(identifier.getText());
     }
 
-    public Macro getTopMacro(
+    public Macro getMacro(
             TIdentifier identifier) {
 
         if (identifier == null) {
@@ -112,8 +73,7 @@ public class GlobalIndex {
         }
 
         Macro macro = getMacroOrNull(identifier);
-
-        if (macro == null || macro.getParent() != null) {
+        if (macro == null) {
             throw CompilerException.unknownMacro(identifier);
         }
 
@@ -121,174 +81,8 @@ public class GlobalIndex {
 
     }
 
-    public TextBlock newTopTextBlock(
-            PTextBlock pDeclaration) {
-
-        if (pDeclaration == null) {
-            throw new InternalException("pDeclaration may not be null");
-        }
-
-        if (!(pDeclaration.parent() instanceof ATextBlockSourceFilePart)) {
-            throw new InternalException(
-                    "pDeclaration must be a top-level macro");
-        }
-
-        return newTextBlock(pDeclaration, null);
-    }
-
-    TextBlock newTextBlock(
-            PTextBlock pDeclaration,
-            Scope parent) {
-
-        if (pDeclaration == null) {
-            throw new InternalException("pDeclaration may not be null");
-        }
-
-        ATextBlock declaration = (ATextBlock) pDeclaration;
-        String name = declaration.getName().getText();
-
-        TIdentifier duplicateDeclaration = declaration.getName();
-
-        Macro firstMacro = getMacroOrNull(duplicateDeclaration);
-        if (firstMacro != null) {
-            TIdentifier firstDeclaration = firstMacro.getNameDeclaration();
-            throw CompilerException.duplicateDeclaration(duplicateDeclaration,
-                    firstDeclaration);
-        }
-
-        TextBlock firstTextBlock = getTextBlockOrNull(duplicateDeclaration);
-        if (firstTextBlock != null) {
-            TIdentifier firstDeclaration = firstTextBlock.getNameDeclaration();
-            throw CompilerException.duplicateDeclaration(duplicateDeclaration,
-                    firstDeclaration);
-        }
-
-        TextBlock textBlock = new TextBlock(this, declaration, parent);
-
-        this.allTextBlocks.add(textBlock);
-        this.textBlockMap.put(name, textBlock);
-
-        return textBlock;
-    }
-
-    private TextBlock getTextBlockOrNull(
-            TIdentifier identifier) {
-
-        if (identifier == null) {
-            throw new InternalException("identifier may not be null");
-        }
-
-        String name = identifier.getText();
-        TextBlock textBlock = this.textBlockMap.get(name);
-
-        return textBlock;
-    }
-
-    public TextBlock getTopTextBlock(
-            TIdentifier identifier) {
-
-        if (identifier == null) {
-            throw new InternalException("identifier may not be null");
-        }
-
-        TextBlock textBlock = getTextBlockOrNull(identifier);
-
-        if (textBlock == null || textBlock.getParent() != null) {
-            throw CompilerException.unknownTextBlock(identifier);
-        }
-
-        return textBlock;
-    }
-
-    Expand getExpand(
-            PExpand declaration,
-            Macro macro) {
-
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
-        }
-
-        Expand expand = this.expandMap.get(declaration);
-        if (expand == null) {
-            expand = new Expand(this, (AExpand) declaration, macro);
-            this.expandMap.put(declaration, expand);
-        }
-
-        return expand;
-    }
-
-    TextInsert getTextInsert(
-            PTextInsert declaration,
-            Scope scope) {
-
-        if (declaration == null) {
-            throw new InternalException("declaration may not be null");
-        }
-
-        TextInsert textInsert = this.textInsertMap.get(declaration);
-        if (textInsert == null) {
-            textInsert = new TextInsert((ATextInsert) declaration, scope);
-            this.textInsertMap.put(declaration, textInsert);
-        }
-
-        return textInsert;
-    }
-
-    ExpandSignature getExpandSignature(
-            Set<Macro> macroSet) {
-
-        if (macroSet == null) {
-            throw new InternalException("macroSet may not be null");
-        }
-
-        ExpandSignature expandSignature = this.expandSignatureMap.get(macroSet);
-        if (expandSignature == null) {
-            expandSignature = new ExpandSignature(macroSet);
-            this.expandSignatureMap.put(macroSet, expandSignature);
-        }
-
-        return expandSignature;
-    }
-
-    public void computeIndirectlyReferencedTextBlocks() {
-
-        Progeny<Scope> referencedTextBlockProgeny = new Progeny<Scope>() {
-
-            @Override
-            protected Set<Scope> getChildrenNoCache(
-                    Scope scope) {
-
-                Set<Scope> children = new LinkedHashSet<>();
-                children.addAll(scope.getDirectlyReferencedTextBlocks());
-                return children;
-            }
-        };
-
-        Set<Scope> scopes = new LinkedHashSet<>();
-        scopes.addAll(this.allMacros);
-        scopes.addAll(this.allTextBlocks);
-        scopes = Collections.unmodifiableSet(scopes);
-
-        ComponentFinder<Scope> componentFinder
-                = new ComponentFinder<>(scopes, referencedTextBlockProgeny);
-        for (Scope scope : scopes) {
-            Set<TextBlock> reach = new LinkedHashSet<>();
-            for (Scope reachedTextBlock : componentFinder
-                    .getReach(componentFinder.getRepresentative(scope))) {
-                reach.add((TextBlock) reachedTextBlock);
-            }
-
-            scope.setIndirectlyReferencedTextBlocks(reach);
-        }
-    }
-
     public Set<Macro> getAllMacros() {
 
         return this.allMacros;
-    }
-
-    public Set<TextBlock> getAllTextBlocks() {
-
-        return this.allTextBlocks;
     }
 }

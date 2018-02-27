@@ -6,20 +6,37 @@ public class MStringPart {
 
     private final String pString;
 
+    private final String pIndexBuilder;
+
     private final MStringPart mStringPart = this;
 
     public MStringPart(
-            String pString) {
+            String pString,
+            String pIndexBuilder) {
 
         if (pString == null) {
             throw new NullPointerException();
         }
         this.pString = pString;
+        if (pIndexBuilder == null) {
+            throw new NullPointerException();
+        }
+        this.pIndexBuilder = pIndexBuilder;
     }
 
     String pString() {
 
         return this.pString;
+    }
+
+    String pIndexBuilder() {
+
+        return this.pIndexBuilder;
+    }
+
+    private String rIndexBuilder() {
+
+        return this.mStringPart.pIndexBuilder();
     }
 
     private String rString() {
@@ -31,7 +48,9 @@ public class MStringPart {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("    sb.append(\"");
+        sb.append("        sb");
+        sb.append(rIndexBuilder());
+        sb.append(".append(\"");
         sb.append(rString());
         sb.append("\");");
         sb.append(System.getProperty("line.separator"));

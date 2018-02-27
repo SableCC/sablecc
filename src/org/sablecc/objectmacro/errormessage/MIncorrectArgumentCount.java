@@ -8,26 +8,17 @@ public class MIncorrectArgumentCount {
 
     private final String pChar;
 
-    private final String pCurrentCount;
-
-    private final String pName;
-
-    private final String pRefLine;
-
-    private final String pRefChar;
-
     private final String pExpectedCount;
+
+    private final String pCurrentCount;
 
     private final MIncorrectArgumentCount mIncorrectArgumentCount = this;
 
     public MIncorrectArgumentCount(
             String pLine,
             String pChar,
-            String pCurrentCount,
-            String pName,
-            String pRefLine,
-            String pRefChar,
-            String pExpectedCount) {
+            String pExpectedCount,
+            String pCurrentCount) {
 
         if (pLine == null) {
             throw new NullPointerException();
@@ -37,26 +28,14 @@ public class MIncorrectArgumentCount {
             throw new NullPointerException();
         }
         this.pChar = pChar;
-        if (pCurrentCount == null) {
-            throw new NullPointerException();
-        }
-        this.pCurrentCount = pCurrentCount;
-        if (pName == null) {
-            throw new NullPointerException();
-        }
-        this.pName = pName;
-        if (pRefLine == null) {
-            throw new NullPointerException();
-        }
-        this.pRefLine = pRefLine;
-        if (pRefChar == null) {
-            throw new NullPointerException();
-        }
-        this.pRefChar = pRefChar;
         if (pExpectedCount == null) {
             throw new NullPointerException();
         }
         this.pExpectedCount = pExpectedCount;
+        if (pCurrentCount == null) {
+            throw new NullPointerException();
+        }
+        this.pCurrentCount = pCurrentCount;
     }
 
     String pLine() {
@@ -69,29 +48,14 @@ public class MIncorrectArgumentCount {
         return this.pChar;
     }
 
-    String pCurrentCount() {
-
-        return this.pCurrentCount;
-    }
-
-    String pName() {
-
-        return this.pName;
-    }
-
-    String pRefLine() {
-
-        return this.pRefLine;
-    }
-
-    String pRefChar() {
-
-        return this.pRefChar;
-    }
-
     String pExpectedCount() {
 
         return this.pExpectedCount;
+    }
+
+    String pCurrentCount() {
+
+        return this.pCurrentCount;
     }
 
     private String rLine() {
@@ -114,21 +78,6 @@ public class MIncorrectArgumentCount {
         return this.mIncorrectArgumentCount.pExpectedCount();
     }
 
-    private String rName() {
-
-        return this.mIncorrectArgumentCount.pName();
-    }
-
-    private String rRefLine() {
-
-        return this.mIncorrectArgumentCount.pRefLine();
-    }
-
-    private String rRefChar() {
-
-        return this.mIncorrectArgumentCount.pRefChar();
-    }
-
     @Override
     public String toString() {
 
@@ -141,19 +90,11 @@ public class MIncorrectArgumentCount {
         sb.append("Char: ");
         sb.append(rChar());
         sb.append(System.getProperty("line.separator"));
-        sb.append("The insert has ");
+        sb.append("The macro reference has ");
         sb.append(rCurrentCount());
         sb.append(" arguments, instead of ");
         sb.append(rExpectedCount());
         sb.append(" arguments.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The \"");
-        sb.append(rName());
-        sb.append("\" text block is defined on line ");
-        sb.append(rRefLine());
-        sb.append(", char ");
-        sb.append(rRefChar());
-        sb.append(".");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

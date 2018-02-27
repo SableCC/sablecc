@@ -17,11 +17,12 @@
 
 package org.sablecc.objectmacro.exception;
 
+import java.util.*;
+
 import org.sablecc.exception.*;
 import org.sablecc.objectmacro.errormessage.*;
 import org.sablecc.objectmacro.structure.*;
 import org.sablecc.objectmacro.syntax3.node.*;
-import org.sablecc.objectmacro.util.*;
 
 @SuppressWarnings("serial")
 public class CompilerException
@@ -122,10 +123,18 @@ public class CompilerException
         return new CompilerException(new MInvalidArgumentCount().toString());
     }
 
-    public static CompilerException invalidSuffix(
+    public static CompilerException invalidObjectmacroSuffix(
             String fileName) {
 
-        return new CompilerException(new MInvalidSuffix(fileName).toString());
+        return new CompilerException(
+                new MInvalidObjectmacroSuffix(fileName).toString());
+    }
+
+    public static CompilerException invalidIntermediateSuffix(
+            String fileName) {
+
+        return new CompilerException(
+                new MInvalidIntermediateSuffix(fileName).toString());
     }
 
     public static CompilerException missingMacroFile(
@@ -167,14 +176,6 @@ public class CompilerException
                         .toString());
     }
 
-    public static CompilerException unknownTextBlock(
-            TIdentifier identifier) {
-
-        return new CompilerException(new MUnknownTextBlock(identifier.getText(),
-                identifier.getLine() + "", identifier.getPos() + "")
-                        .toString());
-    }
-
     public static CompilerException duplicateDeclaration(
             TIdentifier duplicateDeclaration,
             TIdentifier firstDeclaration) {
@@ -192,8 +193,8 @@ public class CompilerException
     }
 
     public static CompilerException duplicateOption(
-            AOption duplicateOption,
-            AOption firstOption) {
+            ADirective duplicateOption,
+            ADirective firstOption) {
 
         String name = duplicateOption.getName().getText();
         if (!name.equals(firstOption.getName().getText())) {
@@ -208,8 +209,8 @@ public class CompilerException
     }
 
     public static CompilerException conflictingOption(
-            AOption conflictingOption,
-            AOption firstOption) {
+            ADirective conflictingOption,
+            ADirective firstOption) {
 
         String conflictingName = conflictingOption.getName().getText();
         String firstName = conflictingOption.getName().getText();
@@ -222,7 +223,7 @@ public class CompilerException
     }
 
     public static CompilerException unknownOption(
-            AOption option) {
+            ADirective option) {
 
         TIdentifier nameId = option.getName();
         String name = nameId.getText();
@@ -241,9 +242,9 @@ public class CompilerException
     }
 
     public static CompilerException unknownParam(
-            TVar var) {
+            TIdentifier var) {
 
-        String name = Utils.getVarName(var);
+        String name = var.getText();
 
         return new CompilerException(
                 new MUnknownParam(name, var.getLine() + "", var.getPos() + "")
@@ -260,13 +261,14 @@ public class CompilerException
                 context.getPos() + "").toString());
     }
 
-    public static CompilerException unusedTextBlock(
-            TextBlock textBlock) {
+    public static CompilerException selfReference(
+            TIdentifier reference,
+            TIdentifier context) {
 
-        TIdentifier name = textBlock.getNameDeclaration();
-
-        return new CompilerException(new MUnusedTextBlock(name.getText(),
-                name.getLine() + "", name.getPos() + "").toString());
+        return new CompilerException(new MSelfReference(reference.getText(),
+                reference.getLine() + "", reference.getPos() + "",
+                context.getText(), context.getLine() + "",
+                context.getPos() + "").toString());
     }
 
     public static CompilerException unusedParam(
@@ -279,21 +281,30 @@ public class CompilerException
     }
 
     public static CompilerException incorrectArgumentCount(
-            TextInsert textInsert) {
+            AMacroReference declaration,
+            Macro macroReferenced) {
 
-        TIdentifier insertName = textInsert.getDeclaration().getName();
-        TIdentifier textBlockName
-                = textInsert.getInsertedTextBlock().getNameDeclaration();
-        int argCount = textInsert.getDeclaration().getStaticValues().size();
-        int paramCount = textInsert.getInsertedTextBlock().getDeclaration()
-                .getParams().size();
+        String line = String.valueOf(declaration.getName().getLine());
+        String pos = String.valueOf(declaration.getName().getPos());
+        String expectedCount
+                = String.valueOf(macroReferenced.getAllInternals().size());
+        String currentCount = String.valueOf(declaration.getValues().size());
 
-        return new CompilerException(
-                new MIncorrectArgumentCount(insertName.getLine() + "",
-                        insertName.getPos() + "", argCount + "",
-                        textBlockName.getText(), textBlockName.getLine() + "",
-                        +textBlockName.getPos() + "", paramCount + "")
-                                .toString());
+        return new CompilerException(new MIncorrectArgumentCount(line, pos,
+                expectedCount, currentCount).toString());
+    }
+
+    public static CompilerException incorrectArgumentType(
+            String expected,
+            String found,
+            Integer line,
+            Integer pos) {
+
+        String stringLine = String.valueOf(line);
+        String stringPos = String.valueOf(pos);
+
+        return new CompilerException(new MIncorrectArgumentType(expected, found,
+                stringLine, stringPos).toString());
     }
 
     public static CompilerException cannotCreateDirectory(
@@ -301,5 +312,61 @@ public class CompilerException
 
         return new CompilerException(
                 new MCannotCreateDirectory(location).toString());
+    }
+
+    public static CompilerException beginTokenMisused(
+            Token begin) {
+
+        String line = String.valueOf(begin.getLine());
+        String pos = String.valueOf(begin.getPos());
+
+        return new CompilerException(
+                new MBeginTokenMisused(line, pos).toString());
+    }
+
+    public static CompilerException duplicateMacroRef(
+            Token macroRef,
+            Token paramName) {
+
+        String line = String.valueOf(macroRef.getLine());
+        String pos = String.valueOf(macroRef.getPos());
+
+        return new CompilerException(new MDuplicateMacroRef(paramName.getText(),
+                macroRef.getText(), line, pos).toString());
+
+    }
+
+    public static CompilerException incorrectMacroType(
+            Set<String> expectedMacros,
+            Set<String> providedMacros,
+            Integer index,
+            Token parameter_name) {
+
+        StringBuilder expectedBuilder = new StringBuilder();
+
+        for (String l_expected : expectedMacros) {
+            expectedBuilder.append(l_expected);
+        }
+
+        StringBuilder providedBuilder = new StringBuilder();
+
+        for (String l_provided : providedMacros) {
+            providedBuilder.append(l_provided);
+        }
+
+        return new CompilerException(new MIncorrectMacroType(
+                expectedBuilder.toString(), providedBuilder.toString(),
+                String.valueOf(index), String.valueOf(parameter_name.getLine()),
+                String.valueOf(parameter_name.getPos())).toString());
+    }
+
+    public static CompilerException invalidInsert(
+            Token name) {
+
+        String line = String.valueOf(name.getLine());
+        String pos = String.valueOf(name.getPos());
+
+        return new CompilerException(
+                new MInvalidInsert(line, pos, name.getText()).toString());
     }
 }

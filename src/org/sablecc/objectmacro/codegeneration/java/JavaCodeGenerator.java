@@ -18,8 +18,10 @@
 package org.sablecc.objectmacro.codegeneration.java;
 
 import java.io.*;
+import java.util.*;
 
 import org.sablecc.objectmacro.codegeneration.*;
+import org.sablecc.objectmacro.codegeneration.java.structure.*;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.util.*;
 
@@ -71,8 +73,17 @@ public class JavaCodeGenerator
             }
         }
 
+        Map<String, Macro> macros = new LinkedHashMap<>();
+
+        MacroCollector macroCollector = new MacroCollector(macros);
+        getIr().getAST().apply(macroCollector);
+
         CodeGenerationWalker walker
-                = new CodeGenerationWalker(getIr(), packageDirectory);
+                = new CodeGenerationWalker(getIr(), packageDirectory, macros);
+        UtilsGenerationWalker utilsGenerationWalker
+                = new UtilsGenerationWalker(getIr(), packageDirectory);
+
         getIr().getAST().apply(walker);
+        getIr().getAST().apply(utilsGenerationWalker);
     }
 }
