@@ -2,65 +2,50 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
+import java.util.*;
+
 public class MParamRef {
 
-    private final String pName;
+  private final String pName;
+  private final MParamRef mParamRef = this;
+  private final List<Object> eContextArg_ContextName = new LinkedList<Object>();
 
-    private final String pContext;
+  public MParamRef(String pName) {
+    if(pName == null) throw new NullPointerException();
+    this.pName = pName;
+  }
 
-    private final MParamRef mParamRef = this;
+  public MContextArg newContextArg() {
+    MContextArg lContextArg = new MContextArg();
+    this.eContextArg_ContextName.add(lContextArg);
+    return lContextArg;
+  }
 
-    public MParamRef(
-            String pName,
-            String pContext) {
+  public MContextName newContextName(String pContextName) {
+    MContextName lContextName = new MContextName(pContextName);
+    this.eContextArg_ContextName.add(lContextName);
+    return lContextName;
+  }
 
-        if (pName == null) {
-            throw new NullPointerException();
-        }
-        this.pName = pName;
-        if (pContext == null) {
-            throw new NullPointerException();
-        }
-        this.pContext = pContext;
+  String pName() {
+    return this.pName;
+  }
+
+  private String rName() {
+    return this.mParamRef.pName();
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("get");
+    sb.append(rName());
+    sb.append("(");
+    for(Object oContextArg_ContextName : this.eContextArg_ContextName) {
+      sb.append(oContextArg_ContextName.toString());
     }
-
-    String pName() {
-
-        return this.pName;
-    }
-
-    String pContext() {
-
-        return this.pContext;
-    }
-
-    private String rName() {
-
-        return this.mParamRef.pName();
-    }
-
-    private String rContext() {
-
-        return this.mParamRef.pContext();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("  private String r");
-        sb.append(rName());
-        sb.append("() {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    return this.m");
-        sb.append(rContext());
-        sb.append(".p");
-        sb.append(rName());
-        sb.append("();");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
-    }
+    sb.append(")");
+    return sb.toString();
+  }
 
 }

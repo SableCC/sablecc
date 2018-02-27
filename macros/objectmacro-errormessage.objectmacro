@@ -172,15 +172,25 @@ A single macro file must be provided.
 $insert: command_line_error_tail $
 $end: invalid_argument_count $
 
-$comment: ========== invalid_suffix ========== $
+$comment: ========== invalid_objectmacro_suffix ========== $
 
-$macro: invalid_suffix(file_name) $
+$macro: invalid_objectmacro_suffix(file_name) $
 $insert: command_line_error_head $
 
 The macro file, "$file_name", does not have a .objectmacro suffix.
 
 $insert: command_line_error_tail $
-$end: invalid_suffix $
+$end: invalid_objectmacro_suffix $
+
+$comment: ========== invalid_intermediate_suffix ========== $
+
+$macro: invalid_intermediate_suffix(file_name) $
+$insert: command_line_error_head $
+
+The macro file, "$file_name", does not have a .intermediate suffix.
+
+$insert: command_line_error_tail $
+$end: invalid_intermediate_suffix $
 
 $comment: ========== missing_macro_file ========== $
 
@@ -315,8 +325,18 @@ $insert: semantic_error_head $
 
 Line: $line
 Char: $char
-"$reference" is a cyclic reference to text block "$context" of line $context_line, char $context_char.
+"$reference" is a cyclic reference to "$context" of line $context_line, char $context_char.
 $end: cyclic_reference $
+
+$comment: ========== self_reference ========== $
+
+$macro: self_reference(reference, line, char, context, context_line, context_char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+"$reference" is a self reference to "$context" of line $context_line, char $context_char.
+$end: self_reference $
 
 $comment: ========== unused_text_block ========== $
 
@@ -340,14 +360,23 @@ $end: unused_param $
 
 $comment: ========== incorrect_argument_count ========== $
 
-$macro: incorrect_argument_count(line, char, current_count, name, ref_line, ref_char, expected_count) $
+$macro: incorrect_argument_count(line, char, expected_count, current_count) $
 $insert: semantic_error_head $
 
 Line: $line
 Char: $char
-The insert has $current_count arguments, instead of $expected_count arguments.
-The "$name" text block is defined on line $ref_line, char $ref_char.
+The macro reference has $current_count arguments, instead of $expected_count arguments.
 $end: incorrect_argument_count $
+
+$comment: ========== incorrect_argument_type ========== $
+
+$macro: incorrect_argument_type(expected, found, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+The parameter type found is "$found", instead of "$expected";
+$end: incorrect_argument_type $
 
 $comment: ========== cannot_create_directory ========== $
 
@@ -358,3 +387,43 @@ The directory "$location" could not be created.
 
 $insert: command_line_error_tail $
 $end: cannot_create_directory $
+
+$comment: ========= begin_token_misused ========== $
+
+$macro: begin_token_misused (line, char) $
+*** SYNTAX ERROR ***
+
+Line: $line
+Char: $char
+The token {Begin} must be at the beginning of the line.
+$end: begin_token_misused $
+
+$comment: =========== duplicate_macro_ref =========== $
+
+$macro: duplicate_macro_ref(param, macro, line, char) $
+$insert: semantic_error_head $
+
+Line: $line
+Char: $char
+Parameter '$param' has already referenced Macro '$macro'.
+$end: duplicate_macro_ref $
+
+$comment: ========== incorrect_macro_type ============ $
+
+$macro: incorrect_macro_type(expected, found, index, line, char) $
+$insert: semantic_error_head $
+
+Line : $line
+Char : $char
+Incorrect macro type at index $index. (expected : $expected, found : $found)
+$end: incorrect_macro_type $
+
+$comment: ========== invalid_insert ========== $
+
+$macro: invalid_insert(line, char, name) $
+$insert: semantic_error_head $
+
+Line : $line
+Char : $char
+Macro '$name' cannot be inserted because it also has parameters.
+$end: invalid_insert $
