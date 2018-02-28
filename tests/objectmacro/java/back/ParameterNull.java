@@ -28,15 +28,9 @@ public class ParameterNull {
 
         System.out.println("---------- Parameter null ----------");
         MA ma = new MA("First argument of MA");
-        List<Macro> macros = new ArrayList<>();
-        macros.add(new MB("First argument in MB0"));
-        macros.add(new MB("First argument in MB1"));
-        macros.add(new MB("First argument in MB2"));
 
         try{
             ma.addZ(null);
-            ma.addAllY(macros);
-            ma.build();
             System.err.println("It should throw an exception here");
             System.exit(1);
         }
