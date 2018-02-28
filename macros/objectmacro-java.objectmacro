@@ -258,7 +258,7 @@ public class M$name extends Macro{
 $expand: param_macro_field, param_string_field, internal_macro_field, internal_string_field, internal_macros_value_field, directive_fields, separator="\n", before_first="\n" $
 $expand: context_field, before_first="\n" $
 $expand: constructor, before_first="\n" $
-$expand: param_string_setter, add_all, single_add, internal_string_setter, internal_macro_setter, before_first="\n", separator="\n" $
+$expand: param_string_setter, single_add, internal_string_setter, internal_macro_setter, before_first="\n", separator="\n" $
 $expand: param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, separator="\n", before_first="\n" $
 $expand: param_string_ref, param_macro_ref, internal_macro_ref, separator="\n", before_first="\n" $
 $expand: init_internals_method, separator="\n" $
@@ -320,30 +320,6 @@ $comment$
 ===================== MACRO FUNCTIONS ==========================
 ================================================================
 $end$
-
-$comment: ========= add_all =========== $
-
-$macro: add_all(param_name) $
-    public void addAll$param_name(List<Macro> macros){
-        if(macros == null){
-            throw ObjectMacroException.parameterNull("$param_name");
-        }
-        $expand: is_built$
-
-        int i = 0;
-
-        for(Macro macro : macros){
-            if(macro == null){
-                throw ObjectMacroException.macroNull(i, "$param_name");
-            }
-
-            $expand: apply_internals_initializer $
-
-            this.list_$param_name.add(macro);
-            i++;
-        }
-    }
-$end: add_all $
 
 $comment: ========= single_add =========== $
 
