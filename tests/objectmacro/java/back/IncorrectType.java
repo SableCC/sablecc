@@ -27,15 +27,17 @@ public class IncorrectType {
             String[] args){
 
         System.out.println("---------- Incorrect type ----------");
-        List<Macro> macros = new ArrayList<>();
+        List<MB> macros = new ArrayList<>();
         macros.add(new MB("First argument in MB0"));
         macros.add(new MB("First argument in MB1"));
         macros.add(new MB("First argument in MB2"));
 
         try{
             MA ma = new MA("First argument of MA");
-            ma.addAllZ(macros);
-            ma.addAllY(macros);
+            for(MB macro : macros){
+                ma.addY(macro);
+            }
+
             ma.build();
             System.err.println("It should throw an exception here");
             System.exit(1);

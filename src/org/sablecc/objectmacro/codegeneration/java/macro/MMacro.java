@@ -21,7 +21,7 @@ public class MMacro {
 
     private final List<Object> eConstructor = new LinkedList<>();
 
-    private final List<Object> eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter
+    private final List<Object> eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter
             = new LinkedList<>();
 
     private final List<Object> eParamStringRefBuilder_ParamMacroRefBuilder_InternalMacroRefBuilder
@@ -142,18 +142,9 @@ public class MMacro {
             String pName) {
 
         MParamStringSetter lParamStringSetter = new MParamStringSetter(pName);
-        this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter
+        this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter
                 .add(lParamStringSetter);
         return lParamStringSetter;
-    }
-
-    public MAddAll newAddAll(
-            String pParamName) {
-
-        MAddAll lAddAll = new MAddAll(pParamName);
-        this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter
-                .add(lAddAll);
-        return lAddAll;
     }
 
     public MSingleAdd newSingleAdd(
@@ -161,7 +152,7 @@ public class MMacro {
             String pParamName) {
 
         MSingleAdd lSingleAdd = new MSingleAdd(pMacroName, pParamName);
-        this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter
+        this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter
                 .add(lSingleAdd);
         return lSingleAdd;
     }
@@ -171,7 +162,7 @@ public class MMacro {
 
         MInternalStringSetter lInternalStringSetter
                 = new MInternalStringSetter(pName);
-        this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter
+        this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter
                 .add(lInternalStringSetter);
         return lInternalStringSetter;
     }
@@ -181,7 +172,7 @@ public class MMacro {
 
         MInternalMacroSetter lInternalMacroSetter
                 = new MInternalMacroSetter(pParamName);
-        this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter
+        this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter
                 .add(lInternalMacroSetter);
         return lInternalMacroSetter;
     }
@@ -346,13 +337,13 @@ public class MMacro {
         for (Object oConstructor : this.eConstructor) {
             sb.append(oConstructor.toString());
         }
-        if (this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter
+        if (this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter
                 .size() > 0) {
             sb.append(System.getProperty("line.separator"));
         }
         {
             boolean first = true;
-            for (Object oParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter : this.eParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter) {
+            for (Object oParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter : this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter) {
                 if (first) {
                     first = false;
                 }
@@ -360,7 +351,7 @@ public class MMacro {
                     sb.append(System.getProperty("line.separator"));
                 }
                 sb.append(
-                        oParamStringSetter_AddAll_SingleAdd_InternalStringSetter_InternalMacroSetter
+                        oParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter
                                 .toString());
             }
         }
