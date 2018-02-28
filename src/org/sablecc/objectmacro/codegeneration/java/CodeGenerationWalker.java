@@ -80,11 +80,6 @@ public class CodeGenerationWalker
     private MApplyInternalsInitializer currentApplyInitializer;
 
     /**
-     * Macro representing the apply internal initializer inside the method addAll
-     */
-    private MApplyInternalsInitializer currentAddAllApplyInitializer;
-
-    /**
      * Macro representing the redefined internals setter inside in apply initializer
      */
     private MRedefinedInternalsSetter currentRedefinedInternalsSetter;
@@ -318,9 +313,7 @@ public class CodeGenerationWalker
             this.indexBuilder = 0;
 
             MInitInternalsCall mInitInternalsCall = this.currentMacroBuilder.newInitInternalsCall(paramName);
-            MAddAll mAddAll = this.currentMacroToBuild.newAddAll(paramName);
 
-            this.currentAddAllApplyInitializer = mAddAll.newApplyInternalsInitializer(paramName);
             this.currentApplyInitializer = this.currentMacroToBuild.newInitInternalsMethod(paramName)
                                                 .newApplyInternalsInitializer(paramName);
 
@@ -331,9 +324,6 @@ public class CodeGenerationWalker
 
             if(this.currentMacroHasInternals){
                 mInitInternalsCall.newContextArg();
-            }
-            else{
-                mAddAll.newIsBuilt(this.currentMacro.getName());
             }
         }
         else{
@@ -392,8 +382,6 @@ public class CodeGenerationWalker
             if(!this.currentMacroHasInternals){
                 mSingleAdd.newIsBuilt(this.currentMacro.getName());
             }
-
-            this.currentAddAllApplyInitializer.newRedefinedInternalsSetter(macro_ref_name);
         }
     }
 
