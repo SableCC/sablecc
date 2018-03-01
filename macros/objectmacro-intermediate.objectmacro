@@ -31,7 +31,7 @@ $expand: param $
 $expand: internal $
 $expand: initialization_order $
   MacroBody{
-$expand: string_part, eol_part, param_insert, macro_insert$
+$expand: string_part, eol_part, param_insert, macro_insert, indent_part, end_indent_part$
   }
 }
 $end: macro $
@@ -137,6 +137,20 @@ $comment: ========= param_insert ============== $
 $macro: param_insert $
  ParamInsert { Name = $expand: simple_name, separator=", ", before_many="{ ", after_many=" }" $ } ;
 $end: param_insert $
+
+$comment: ========== indent_part ================ $
+
+$macro: indent_part $
+ Indent {
+$expand: string_part, eol_part, param_insert, macro_insert$
+ };
+$end: indent_part $
+
+$comment: =========== end_indent_part ============== $
+
+$macro: end_indent_part $
+ EndIndent;
+$end: end_indent_part $
 
 $comment: ========= directive ============== $
 

@@ -17,7 +17,7 @@
 Macro package_declaration
     Param
         package_name : String;
-{Begin}
+{Body}
 package {package_name};
 {End}
 
@@ -27,8 +27,8 @@ Macro entity
         package : package_declaration;
         attributes : attribute, separator="\n";
         relationships : relationship, separator="\n";
-        accessors : setter, getter, separator="\n";
-{Begin}
+        accessors : setter, getter, separator="\n\n";
+{Body}
 {package}
 
 @Entity
@@ -38,21 +38,21 @@ public class {name} {
 {attributes}
 {relationships}
 {accessors}
-{Indent}
+{End}
 }
 {End}
 
 Macro annotation_table
     Internal
         name : String;
-{Begin}
+{Body}
 @Table(name="{name}")
 {End}
 
 Macro column
     Internal
         name : String;
-{Begin}
+{Body}
 @Column(name="{name}")
 {End}
 
@@ -67,22 +67,23 @@ Macro attribute
 {not_null}
 {Insert: column(name)}
 private {type} {name};
+
 {End}
 
 Macro primary_key
-{Begin}
+{Body}
 @Id
 {End}
 
 Macro id_incrementation_strategy
     Param
         strategy : String;
-{Begin}
+{Body}
 @GeneratedValue(strategy=GenerationType.{strategy})
 {End}
 
 Macro not_null
-{Begin}
+{Body}
 @NotNull
 {End}
 
@@ -90,7 +91,7 @@ Macro setter
     Param
         name : String;
         type : String;
-{Begin}
+{Body}
 public void set{name}({type} {name}){
     this.{name} = {name};
 }
@@ -100,7 +101,7 @@ Macro getter
     Param
         name : String;
         type : String;
-{Begin}
+{Body}
 public {type} set{name}(){
     return this.{name};
 }
@@ -114,7 +115,7 @@ Macro relationship
         attribute_type : list(entity_referenced), none="{entity_referenced}";
         directives : fetch_strategy(fetch_type), mapped_by;
         entity_referenced : String;
-{Begin}
+{Body}
 {relation}
 private {attribute_type} {name};
 {End}
@@ -122,7 +123,7 @@ private {attribute_type} {name};
 Macro list
     Internal
         entity_name : String;
-{Begin}
+{Body}
 List<{entity_name}>
 {End}
 
@@ -132,7 +133,7 @@ Macro one_to_one
         join_column : join_column(column);
     Internal
         directives : fetch_strategy, mapped_by;
-{Begin}
+{Body}
 @OneToOne({directives})
 {join_column}
 {End}
@@ -140,55 +141,55 @@ Macro one_to_one
 Macro many_to_many
     Internal
         directives : fetch_strategy, mapped_by;
-{Begin}
+{Body}
 @ManyToMany({directives})
 {End}
 
 Macro many_to_one
     Internal
         directives : fetch_strategy, mapped_by;
-{Begin}
+{Body}
 @ManyToOne({directives})
 {End}
 
 Macro one_to_many
     Internal
         directives : fetch_strategy, mapped_by;
-{Begin}
+{Body}
 @OneToMany({directives})
 {End}
 
 Macro fetch_strategy
     Internal
         fetch_type : String;
-{Begin}
+{Body}
 fetch=FetchType.{fetch_type}
 {End}
 
 Macro join_column
     Internal
         column_name : String;
-{Begin}
+{Body}
 @JoinColumn(name="{column_name}")
 {End}
 
 Macro mapped_by
     Param
         parameter_name : String;
-{Begin}
+{Body}
 mappedBy="{parameter_name}"
 {End}
 
 Macro cascade
     Param
         types : cascade_type, separator=", ";
-{Begin}
+{Body}
 cascade={{ {types} }
 {End}
 
 Macro cascade_type
     Param
         type_name : String;
-{Begin}
+{Body}
 CascadeType.{type_name}
 {End}
