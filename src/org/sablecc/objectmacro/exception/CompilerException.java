@@ -300,14 +300,24 @@ public class CompilerException
                 new MCannotCreateDirectory(location).toString());
     }
 
-    public static CompilerException beginTokenMisused(
-            Token begin){
+    public static CompilerException bodyTokenMisused(
+            Token body){
 
-        String line = String.valueOf(begin.getLine());
-        String pos = String.valueOf(begin.getPos());
+        String line = String.valueOf(body.getLine());
+        String pos = String.valueOf(body.getPos());
 
         return new CompilerException(
-                new MBeginTokenMisused(line, pos).toString());
+                new MBodyTokenMisused(line, pos).toString());
+    }
+
+    public static CompilerException indentTokenMisused(
+            Token indent){
+
+        String line = String.valueOf(indent.getLine());
+        String pos = String.valueOf(indent.getPos());
+
+        return new CompilerException(
+                new MIndentTokenMisused(line, pos).toString());
     }
 
     public static CompilerException duplicateMacroRef(

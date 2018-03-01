@@ -111,7 +111,6 @@ Macro h
     Param
         lala : f;
 {Body}
-{la}
 {lala}
 {End}
 
@@ -138,6 +137,45 @@ Macro k
         a : String;
 {Body}
 {a}
+{End}
+
+#=========== Indentation ==========
+
+Macro final_output
+    Param
+        authors : author, before_first="=================\n=== COMPOSERS ===\n=================\n", separator="\n\n";
+{Body}
+{Indent: "  "}
+{authors}
+{End}
+{End}
+
+Macro author
+    Param
+        name : String;
+        details : detail, separator="\n";
+{Body}
+{Indent: "  - "}
+{details}
+{Indent: "\t"}
+Composer : {name}
+{End}
+{End}
+{End}
+
+Macro detail
+    Param
+        attribute : String;
+        value : String;
+{Body}
+{attribute} : {value}
+{End}
+
+Macro end
+{Body}
+=================
+=== COMPOSERS ===
+=================
 {End}
 
 

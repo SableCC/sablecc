@@ -398,6 +398,16 @@ Char: $char
 The token {Body} must be at the beginning of the line.
 $end: body_token_misused $
 
+$comment: ========= indent_token_misused ========== $
+
+$macro: indent_token_misused (line, char) $
+*** SYNTAX ERROR ***
+
+Line: $line
+Char: $char
+The token {Indent} must be at the beginning of the line.
+$end: indent_token_misused $
+
 $comment: =========== duplicate_macro_ref =========== $
 
 $macro: duplicate_macro_ref(param, macro, line, char) $
