@@ -62,5 +62,18 @@ public class DeclarationCollector
             AInternal param_node = (AInternal) param_production;
             macro.newInternal(param_node);
         }
+
+        for(PMacroBodyPart pMacroBodyPart : node.getMacroBodyParts()){
+            pMacroBodyPart.apply(this);
+        }
+    }
+
+    @Override
+    public void caseAIndentMacroBodyPart(
+            AIndentMacroBodyPart node) {
+
+        if(node.getCommand().getPos() != 1){
+            throw CompilerException.indentTokenMisused(node.getCommand());
+        }
     }
 }

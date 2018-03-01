@@ -79,7 +79,7 @@ Helpers
 
   string_char = [[[ascii - ascii_c] + white_space_not_newline] -
                  [['\' + '{'] + '"']];
-  string_escape = '\' [['\' + '{'] + ['"' + 'n']];
+  string_escape = '\' [['\' + '{'] + [['"' + 'n'] + 't']];
 
   lowercase = ['a'..'z'];
   uppercase = ['A' .. 'Z'];
@@ -108,10 +108,13 @@ Tokens
   /* custom transition *->previous state */
   insert_command = '{Insert:';
 
+  {macro_body}
+  indent_command = '{Indent:';
+
   {macro_definition->macro_body}
   body = '{Body}';
 
-  {macro_body->top_level}
+  /* custom transition *->previous state */
   end = '{End}';
 
   {macro_definition, top_level, macro_body}
@@ -156,7 +159,7 @@ Tokens
   {top_level, command, macro_definition}
   blank = ascii_pattern_white_space+;
 
-  {macro_definition, string, command}
+  {macro_definition, string, command, top_level}
   /* custom transition *->previous state */
   dquote = '"';
 
@@ -169,7 +172,7 @@ Tokens
   {macro_body, string}
   variable = '{' normal_identifier '}';
 
-  {macro_definition, command}
+  {macro_definition, command, top_level}
   colon = ':';
 
   {macro_definition}
@@ -202,7 +205,7 @@ Productions
       macro_definition macro_body
          {-> New macro(macro_definition.macro_kw, macro_definition.identifier,
             [macro_definition.params], [macro_definition.internals],
-             macro_body.begin, [macro_body.macro_body_parts])}
+             macro_body.body, [macro_body.macro_body_parts])}
     ;
 
   macro_definition
@@ -213,10 +216,10 @@ Productions
     ;
 
   macro_body
-        {-> begin [macro_body_parts]:macro_body_part* }
+        {-> body [macro_body_parts]:macro_body_part* }
     =
-      begin [begin_eol]:eol [macro_body_parts]:macro_body_part* [end_eol]:eol end
-        {-> begin [macro_body_parts.macro_body_part]}
+      body [begin_eol]:eol [macro_body_parts]:macro_body_part* [end_eol]:eol end
+        {-> body [macro_body_parts.macro_body_part]}
     ;
 
   macro_body_part
@@ -232,6 +235,9 @@ Productions
       {escape} text_escape
     |
       {var} variable
+    |
+      {indent} indent_command string r_brace [begin_eol]:eol [parts]:macro_body_part* [end_eol]:eol end
+        {-> New macro_body_part.indent(indent_command, [string.string], [parts.macro_body_part])}
     ;
 
   macro_parameters
@@ -364,7 +370,7 @@ Abstract Syntax Tree
 
   source_file_part =
       {macro} macro;
-
+      
   macro =
       macro_kw [name]:identifier [params]:param* [internals]:internal* body [macro_body_parts]:macro_body_part*;
 
@@ -373,7 +379,8 @@ Abstract Syntax Tree
       {var} variable |
       {text} text_part |
       {eol} eol |
-      {escape} text_escape;
+      {escape} text_escape |
+      {indent} [command]:indent_command string_part* macro_body_part*;
 
   param =
       [name]:identifier type [directives]:directive*;
