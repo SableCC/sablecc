@@ -14,7 +14,7 @@ public class MMacro {
 
     private final List<Object> eInitializationOrder = new LinkedList<>();
 
-    private final List<Object> eStringPart_EolPart_ParamInsert_MacroInsert
+    private final List<Object> eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
             = new LinkedList<>();
 
     public MMacro() {
@@ -54,29 +54,49 @@ public class MMacro {
             String pString) {
 
         MStringPart lStringPart = new MStringPart(pString);
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lStringPart);
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lStringPart);
         return lStringPart;
     }
 
     public MEolPart newEolPart() {
 
         MEolPart lEolPart = new MEolPart();
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lEolPart);
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lEolPart);
         return lEolPart;
     }
 
     public MParamInsert newParamInsert() {
 
         MParamInsert lParamInsert = new MParamInsert();
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lParamInsert);
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lParamInsert);
         return lParamInsert;
     }
 
     public MMacroInsert newMacroInsert() {
 
         MMacroInsert lMacroInsert = new MMacroInsert();
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lMacroInsert);
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lMacroInsert);
         return lMacroInsert;
+    }
+
+    public MIndentPart newIndentPart() {
+
+        MIndentPart lIndentPart = new MIndentPart();
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lIndentPart);
+        return lIndentPart;
+    }
+
+    public MEndIndentPart newEndIndentPart() {
+
+        MEndIndentPart lEndIndentPart = new MEndIndentPart();
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lEndIndentPart);
+        return lEndIndentPart;
     }
 
     @Override
@@ -115,8 +135,10 @@ public class MMacro {
         }
         sb.append("  MacroBody{");
         sb.append(System.getProperty("line.separator"));
-        for (Object oStringPart_EolPart_ParamInsert_MacroInsert : this.eStringPart_EolPart_ParamInsert_MacroInsert) {
-            sb.append(oStringPart_EolPart_ParamInsert_MacroInsert.toString());
+        for (Object oStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart : this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart) {
+            sb.append(
+                    oStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                            .toString());
         }
         sb.append("  }");
         sb.append(System.getProperty("line.separator"));

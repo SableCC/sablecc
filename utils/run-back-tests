@@ -25,7 +25,6 @@ java -jar lib/objectmacro-back.jar -d tests/objectmacro/java -p back.macro tests
 javac -cp tests/objectmacro/java/ -d classes/ tests/objectmacro/java/back/*.java
 
 # Refused tests
-java -cp classes/ back.IncorrectType
 java -cp classes/ back.MacroNullIndex
 java -cp classes/ back.ParameterNull
 java -cp classes/ back.Cycle
@@ -34,4 +33,5 @@ java -cp classes/ back.Cycle
 java -cp classes/ back.Main
 java -cp classes/ back.Inserts
 java -cp classes/ back.Separator
+java -cp classes/ back.Indentation
 

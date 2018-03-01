@@ -39,6 +39,8 @@ public class ObjectMacro {
 
     private static GlobalIndex globalIndex = null;
 
+    private static String DEFAULT_TABULATION = "    ";
+
     /** Prevents instantiation of this class. */
     private ObjectMacro() {
 
@@ -426,7 +428,6 @@ public class ObjectMacro {
                         = Utils.splitName(macroReference.getName());
                 for (String part : macroRefName) {
                     mMacroRef.newSimpleName(part);
-
                 }
 
                 if (macroReference.getValues().size() > 0) {
@@ -445,12 +446,22 @@ public class ObjectMacro {
 
                 for (String part : varNames) {
                     mParamInsert.newSimpleName(part);
-
                 }
             }
             else if (bodyPart instanceof AEolMacroBodyPart) {
                 mMacro.newEolPart();
             }
+            else if (bodyPart instanceof AIndentMacroBodyPart) {
+                AIndentMacroBodyPart indentPart
+                        = (AIndentMacroBodyPart) bodyPart;
+                createIndentTextParts(mMacro.newIndentPart(),
+                        indentPart.getStringPart());
+                createMacroBody(mMacro, indentPart.getMacroBodyPart());
+                mMacro.newEndIndentPart();
+            }
+            //            else if(bodyPart instanceof AEndIndentMacroBodyPart){
+            //                mMacro.newEndIndentPart();
+            //            }
             else {
                 throw new InternalException("case unhandled");
             }
@@ -480,7 +491,6 @@ public class ObjectMacro {
                 String macroRefName[] = Utils.splitName(macro_node.getName());
                 for (String part : macroRefName) {
                     macro_ref.newSimpleName(part);
-
                 }
 
                 if (macro_node.getValues().size() > 0) {
@@ -509,8 +519,79 @@ public class ObjectMacro {
                 else if (text.equals("\\n")) {
                     mTextArgument.newEolPart();
                 }
+                else if (text.equals("\\t")) {
+                    mTextArgument.newStringPart(DEFAULT_TABULATION);
+                }
                 else if (text.startsWith("\\")) {
                     mTextArgument
+                            .newStringPart(text.substring(text.length() - 1));
+                }
+                else {
+                    throw new InternalException("case unhandled");
+                }
+            }
+            else {
+                throw new InternalException("case unhandled");
+            }
+        }
+    }
+
+    private static void createIndentTextParts(
+            MIndentPart mIndentPart,
+            List<PStringPart> stringParts) {
+
+        for (PStringPart stringPart : stringParts) {
+            if (stringPart instanceof ATextStringPart) {
+                ATextStringPart textPart = (ATextStringPart) stringPart;
+
+                String text
+                        = textPart.getText().getText().replaceAll("'", "\\\\'");
+                mIndentPart.newStringPart(text);
+            }
+            else if (stringPart instanceof AInsertStringPart) {
+                AMacroReference macro_node
+                        = (AMacroReference) ((AInsertStringPart) stringPart)
+                                .getMacro();
+
+                MMacroRef macro_ref
+                        = mIndentPart.newMacroInsert().newMacroRef();
+
+                String macroRefName[] = Utils.splitName(macro_node.getName());
+                for (String part : macroRefName) {
+                    macro_ref.newSimpleName(part);
+                }
+
+                if (macro_node.getValues().size() > 0) {
+                    createArgs(macro_ref.newArgs(), macro_node);
+                }
+            }
+            else if (stringPart instanceof AVarStringPart) {
+                TVariable var_token
+                        = ((AVarStringPart) stringPart).getVariable();
+                MParamInsert mParamInsert = mIndentPart.newParamInsert();
+
+                String splittedVarName[] = Utils.getVarName(var_token)
+                        .split(Utils.NAME_SEPARATOR);
+                for (String part : splittedVarName) {
+                    mParamInsert.newSimpleName(part);
+                }
+            }
+            else if (stringPart instanceof AEscapeStringPart) {
+                AEscapeStringPart escapeStringPart
+                        = (AEscapeStringPart) stringPart;
+
+                String text = escapeStringPart.getStringEscape().getText();
+                if (text.equals("\\\\")) {
+                    mIndentPart.newStringPart("\\");
+                }
+                else if (text.equals("\\n")) {
+                    mIndentPart.newEolPart();
+                }
+                else if (text.equals("\\t")) {
+                    mIndentPart.newStringPart(DEFAULT_TABULATION);
+                }
+                else if (text.startsWith("\\")) {
+                    mIndentPart
                             .newStringPart(text.substring(text.length() - 1));
                 }
                 else {

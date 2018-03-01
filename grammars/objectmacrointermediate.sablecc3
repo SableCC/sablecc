@@ -39,6 +39,8 @@ Tokens
     var_kw = 'Var';
     macro_body_kw = 'MacroBody';
     initialization_kw = 'Initialization Order';
+    indent_kw = 'Indent';
+    end_indent_kw = 'EndIndent';
 
     l_brace = '{';
     r_brace = '}';
@@ -197,6 +199,19 @@ Productions
         |
             {insert} macro_insert semicolon
                 {-> New macro_part.insert(macro_insert.macro_ref)}
+        |
+            {indent}  indent semicolon
+                {-> New macro_part.indent([indent.value])}
+        |
+            {end_indent} end_indent_kw semicolon
+                {-> New macro_part.end_indent(end_indent_kw)}
+        ;
+
+    indent
+            {-> [value]:text_part+}
+        =
+            indent_kw l_brace [text_parts]:text_part+ r_brace
+                {-> [text_parts]}
         ;
 
     macro_insert
@@ -263,7 +278,9 @@ Abstract Syntax Tree
         {string} string |
         {eol} |
         {var} [names]:string* |
-        {insert} macro_ref;
+        {insert} macro_ref |
+        {indent} text_part+ |
+        {end_indent} end_indent_kw;
 
     text_part =
         {string} string |

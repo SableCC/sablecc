@@ -35,6 +35,8 @@ public class CustomLexer
 
     private List<State> states = new LinkedList<>();
 
+    private List<Token> tokens_command = new LinkedList<>();
+
     @Override
     protected void filter()
             throws LexerException, IOException {
@@ -52,6 +54,11 @@ public class CustomLexer
             this.states.add(this.state);
             this.state = State.COMMAND;
         }
+        else if (this.token instanceof TIndentCommand) {
+            this.states.add(this.state);
+            this.state = State.COMMAND;
+            this.tokens_command.add(this.token);
+        }
         else if (this.token instanceof TRBrace) {
             if (this.states.size() == 0) {
                 throw new InternalException(
@@ -61,11 +68,27 @@ public class CustomLexer
                 this.state = getLastState();
             }
         }
+        else if (this.token instanceof TEnd) {
+            if (this.tokens_command.size() > 0 && this.state == State.MACRO_BODY
+                    && getLastToken() instanceof TBody) {
+
+                this.state = State.TOP_LEVEL;
+            }
+        }
+        else if (this.token instanceof TBody) {
+            this.tokens_command.add(this.token);
+        }
     }
 
     private State getLastState() {
 
         int lastStateIndex = this.states.size() - 1;
         return this.states.remove(lastStateIndex);
+    }
+
+    private Token getLastToken() {
+
+        int lastTokenIndex = this.tokens_command.size() - 1;
+        return this.tokens_command.remove(lastTokenIndex);
     }
 }
