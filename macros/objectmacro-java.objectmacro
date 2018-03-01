@@ -266,6 +266,30 @@ $expand: init_directives, separator="\n", before_first="\n"$
 $expand: redefined_apply_initializer $
 $expand: macro_builder, before_first="\n" $
 $expand: empty_builder_with_context, before_first="\n"$
+
+    private String applyIndent(
+                        String macro,
+                        String indent){
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split( "\\n");
+
+        if(lines.length > 1){
+            for(int i = 0; i < lines.length; i++){
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if(i < lines.length - 1){
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else{
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
+    }
 }
 $end: macro $
 
@@ -529,6 +553,8 @@ $macro: macro_builder(macro_name) $
             return buildState.getExpansion();
         }
         $expand: new_build_state, none="this.build_state = buildState" $;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
 
         $macro: init_directives_call(param_name) $
         init$(param_name)Directives();
@@ -539,8 +565,7 @@ $macro: macro_builder(macro_name) $
         $end: init_internals_call $
 
         StringBuilder sb0 = new StringBuilder();
-
-$expand: string_part, param_insert_part, eol_part, insert_macro_part $
+$expand: init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part, add_indent, indent_part $
 
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
@@ -682,6 +707,12 @@ $macro:  param_insert_part(param_name, index_builder) $
         sb$index_builder.append(build$param_name($expand: context_arg $));
 $end: param_insert_part $
 
+$comment: ========== indent_part =========== $
+
+$macro: indent_part(index_builder, index_indent) $
+        sb$index_builder.append(applyIndent(sb$index_indent.toString(), indentations.remove(indentations.size() - 1)));
+$end: indent_part $
+
 $comment: ========== insert_macro_part =============== $
 
 $macro: insert_macro_part(name, index_builder, index_insert) $
@@ -714,6 +745,14 @@ $comment: =========== param_ref =========== $
 $macro: param_ref(name) $
 get$name($expand: context_arg, context_name$)$no_eol$
 $end: param_ref $
+
+$comment: ========= add_indent =================== $
+
+$macro: add_indent $
+        sbIndentation = new StringBuilder();
+$expand: init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part $
+        indentations.add(sbIndentation.toString());
+$end: add_indent $
 
 $comment$
 ===================================================

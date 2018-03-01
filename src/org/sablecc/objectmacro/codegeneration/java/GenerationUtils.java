@@ -33,6 +33,8 @@ class GenerationUtils {
 
     static final String INSERT_VAR_NAME = "insert_";
 
+    static final String INDENTATION = "Indentation";
+
     static final String SEPARATOR_DIRECTIVE = "Separator";
 
     static final String AFTER_LAST_DIRECTIVE = "AfterLast";

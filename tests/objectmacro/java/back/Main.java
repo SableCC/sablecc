@@ -38,7 +38,6 @@ public class Main {
         try{
             mb.addS(new MC());
             ma.addZ(new MC());
-            ma.addAllY(macros);
             ma.addY(mb);
             ma.addZ(new MC());
             mb2.addS(new MC());

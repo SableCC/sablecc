@@ -14,36 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package back;
 
 import back.macro.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class IncorrectType {
+public class Indentation {
 
     public static void main(
             String[] args){
 
-        System.out.println("---------- Incorrect type ----------");
-        List<MB> macros = new ArrayList<>();
-        macros.add(new MB("First argument in MB0"));
-        macros.add(new MB("First argument in MB1"));
-        macros.add(new MB("First argument in MB2"));
+        MFinalOutput mFinalOutput = new MFinalOutput();
 
-        try{
-            MA ma = new MA("First argument of MA");
-            for(MB macro : macros){
-                ma.addY(macro);
-            }
+        MAuthor mAuthor = new MAuthor("Johann Sebastian Bach");
+        mAuthor.addDetails(new MDetail("BIRTH", "1685"));
+        mAuthor.addDetails(new MDetail("DEATH", "1750"));
 
-            ma.build();
-            System.err.println("It should throw an exception here");
-            System.exit(1);
-        }
-        catch(ObjectMacroException e){
-            System.out.println(e.getMessage());
-        }
+        mFinalOutput.addAuthors(mAuthor);
+
+        mAuthor = new MAuthor("George Frideric Handel");
+        mAuthor.addDetails(new MDetail("BIRTH", "1685"));
+        mAuthor.addDetails(new MDetail("DEATH", "1759"));
+
+        mFinalOutput.addAuthors(mAuthor);
+
+        mAuthor = new MAuthor("Wolfgang Amadeus Mozart");
+        mAuthor.addDetails(new MDetail("BIRTH", "1756"));
+        mAuthor.addDetails(new MDetail("DEATH", "1791"));
+
+        mFinalOutput.addAuthors(mAuthor);
+
+        System.out.println(mFinalOutput.build());
     }
 }
