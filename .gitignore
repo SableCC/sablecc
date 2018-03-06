@@ -33,3 +33,7 @@
 /t/out/
 /t/alt/
 /t/src/
+/.idea/
+/sablecc.org.iml
+/tests/objectmacro/java/*/macro/
+/tests/objectmacro/common/intermediate/

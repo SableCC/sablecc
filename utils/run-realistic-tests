@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+mkdir -p tests/objectmacro/common/intermediate
+
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/jpa_entity.objectmacro
+java -jar lib/objectmacro-back.jar -d tests/objectmacro/java -p entity.macro tests/objectmacro/common/intermediate/jpa_entity.intermediate
+javac -cp tests/objectmacro/java/ -d classes/ tests/objectmacro/java/entity/*.java
+java -cp classes/ entity.Main
