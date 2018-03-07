@@ -20,7 +20,7 @@ Macro a
     Param
         comment1 : String;
         comment2 : String;
-{Begin}
+{Body}
     {comment1} {comment2}
 {End}
 
@@ -28,7 +28,7 @@ Macro b
     Param
         comment1 : String;
         comment2 : String;
-{Begin}
+{Body}
     {comment1} {comment2}
 {End}
 
@@ -36,7 +36,7 @@ Macro macro_internals
     Internal
         comment1 : b;
         comment2 : a;
-{Begin}
+{Body}
     {comment1} {comment2}
 {End}
 
@@ -47,7 +47,7 @@ Macro macro_internals_references
         c : a;
         d : macro_internals(b, "{c}"); #incorrect argument type macro expected string found
 
-{Begin}
+{Body}
     {a}
     {b}
     {c}

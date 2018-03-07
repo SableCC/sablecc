@@ -1,0 +1,18 @@
+Macro a
+{Body}
+# semantic error because Indent is not at pos 1
+a{Indent: ""}
+
+{End}
+
+{End}
+
+Macro b
+{Body}
+
+{Indent: ""}
+
+# syntax error
+ss{End}
+
+{End}

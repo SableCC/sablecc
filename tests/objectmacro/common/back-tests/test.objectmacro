@@ -1,0 +1,34 @@
+Macro a
+    Param
+        lala : a, separator="SEPARATOR", none="NONE LALA";
+        x : b(y), separator=", ";
+        y : c("lala"), none="NONE Y", separator="// ", before_first="\n============= Y ==============\n", after_last="\n=============== END Y ============\n";
+{Body}
+{x}
+{lala}
+{End}
+
+Macro b
+    Param
+        p : d(z);
+    Internal
+        z : c;
+{Body}
+{p}
+{End}
+
+Macro c
+    Internal
+        zz : String;
+{Body}
+{zz}
+{End}
+
+Macro d
+    Internal
+        w : c;
+{Body}
+{w}
+{End}
+
+
