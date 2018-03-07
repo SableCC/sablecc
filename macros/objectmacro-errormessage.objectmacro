@@ -388,15 +388,15 @@ The directory "$location" could not be created.
 $insert: command_line_error_tail $
 $end: cannot_create_directory $
 
-$comment: ========= begin_token_misused ========== $
+$comment: ========= body_token_misused ========== $
 
-$macro: begin_token_misused (line, char) $
+$macro: body_token_misused (line, char) $
 *** SYNTAX ERROR ***
 
 Line: $line
 Char: $char
-The token {Begin} must be at the beginning of the line.
-$end: begin_token_misused $
+The token {Body} must be at the beginning of the line.
+$end: body_token_misused $
 
 $comment: =========== duplicate_macro_ref =========== $
 

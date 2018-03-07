@@ -34,11 +34,11 @@ Macro entity
 @Entity
 {Insert: annotation_table(name)}
 public class {name} {
-   {attributes}
-
-   {relationships}
-
-   {accessors}
+{Indent: "\t"}
+{attributes}
+{relationships}
+{accessors}
+{Indent}
 }
 {End}
 
@@ -62,7 +62,7 @@ Macro attribute
         type : String;
         id : primary_key, id_incrementation_strategy, separator="\n";
         not_null : not_null;
-{Begin}
+{Body}
 {id}
 {not_null}
 {Insert: column(name)}

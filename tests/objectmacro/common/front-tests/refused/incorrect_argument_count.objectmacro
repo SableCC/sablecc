@@ -19,14 +19,14 @@
 Macro a
     Param
         x : String;
-{Begin}
+{Body}
     {x}
 {End}
 
 Macro b
     Param
         x : String;
-{Begin}
+{Body}
     {x}
 {End}
 
@@ -34,7 +34,7 @@ Macro macro_internals
     Internal
         x : b;
         y : a;
-{Begin}
+{Body}
     {x} {y}
 {End}
 
@@ -45,7 +45,7 @@ Macro macro_internals_references
         c : a;
         d : macro_internals(b); #incorrect number of argument
 
-{Begin}
+{Body}
     {a}
     {b}
     {c}
