@@ -44,8 +44,8 @@ public class DeclarationCollector
     public void caseAMacro(
             AMacro node) {
 
-        if (node.getBegin().getPos() != 1) {
-            throw CompilerException.beginTokenMisused(node.getBegin());
+        if (node.getBody().getPos() != 1) {
+            throw CompilerException.bodyTokenMisused(node.getBody());
         }
 
         Macro macro = this.globalIndex.newMacro(node);

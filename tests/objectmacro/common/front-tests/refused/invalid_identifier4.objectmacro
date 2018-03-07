@@ -18,7 +18,7 @@ Macro x
     Param
         a : String;
         b : y, Before_first="test";
-{Begin}
+{Body}
 {a}
 {b}
 {End}
@@ -26,6 +26,6 @@ Macro x
 Macro y
     Param
         a : String;
-{Begin}
+{Body}
 {a}
 {End}

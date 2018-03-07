@@ -19,11 +19,11 @@ Macro a
         b : String;
     Internal
         c : String;
-{Begin}
+{Body}
 {b}{c}
 {End}
 
 Macro b
-{Begin}
+{Body}
 {Insert: a("c")}
 {End}
