@@ -314,14 +314,14 @@ public class CompilerException
                 new MCannotCreateDirectory(location).toString());
     }
 
-    public static CompilerException beginTokenMisused(
+    public static CompilerException bodyTokenMisused(
             Token begin) {
 
         String line = String.valueOf(begin.getLine());
         String pos = String.valueOf(begin.getPos());
 
         return new CompilerException(
-                new MBeginTokenMisused(line, pos).toString());
+                new MBodyTokenMisused(line, pos).toString());
     }
 
     public static CompilerException duplicateMacroRef(

@@ -18,13 +18,13 @@ Macro a
     Param
         x : b("a {x}");
         y : b("a {y}");
-{Begin}
+{Body}
 {x}
 {End}
 
 Macro b
     Internal
         i : String;
-{Begin}
+{Body}
 {i}
 {End}

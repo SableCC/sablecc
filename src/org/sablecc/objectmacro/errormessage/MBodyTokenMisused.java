@@ -2,15 +2,15 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MBeginTokenMisused {
+public class MBodyTokenMisused {
 
     private final String pLine;
 
     private final String pChar;
 
-    private final MBeginTokenMisused mBeginTokenMisused = this;
+    private final MBodyTokenMisused mBodyTokenMisused = this;
 
-    public MBeginTokenMisused(
+    public MBodyTokenMisused(
             String pLine,
             String pChar) {
 
@@ -36,12 +36,12 @@ public class MBeginTokenMisused {
 
     private String rLine() {
 
-        return this.mBeginTokenMisused.pLine();
+        return this.mBodyTokenMisused.pLine();
     }
 
     private String rChar() {
 
-        return this.mBeginTokenMisused.pChar();
+        return this.mBodyTokenMisused.pChar();
     }
 
     @Override
@@ -57,7 +57,7 @@ public class MBeginTokenMisused {
         sb.append("Char: ");
         sb.append(rChar());
         sb.append(System.getProperty("line.separator"));
-        sb.append("The token {Begin} must be at the beginning of the line.");
+        sb.append("The token {Body} must be at the beginning of the line.");
         sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }

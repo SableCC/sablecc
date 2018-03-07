@@ -20,7 +20,7 @@ Macro a
     Param
         x : String;
         y : String;
-{Begin}
+{Body}
     {x} {y}
 {End}
 
@@ -28,7 +28,7 @@ Macro b
     Param
         x : String;
         y : String;
-{Begin}
+{Body}
     {x} {y}
 {End}
 
@@ -36,7 +36,7 @@ Macro macro_internals
     Internal
         x : b;
         y : a;
-{Begin}
+{Body}
     {x} {y}
 {End}
 
@@ -47,7 +47,7 @@ Macro macro_internals_references
         c : b;
         d : macro_internals(b, c); #incorrect macro type here
 
-{Begin}
+{Body}
     {a}
     {b}
     {c}
