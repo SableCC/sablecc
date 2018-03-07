@@ -17,11 +17,11 @@
 Macro a
     Internal
         a : String;
-{Begin}
+{Body}
 {a}
 {End}
 
 Macro b
-{Begin}
+{Body}
 {Insert: a("\{Insert: a("test")}")} #escape token \{ ==> no swapping state ==> unknown token "test"
 {End}

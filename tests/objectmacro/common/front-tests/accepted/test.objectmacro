@@ -19,7 +19,7 @@
 # ========== normal identifier ==========
 
 Macro text_normal_id
-{Begin}
+{Body}
 Hello !!
 {End}
 
@@ -29,7 +29,7 @@ Macro text_params
     Param
         a : String;
         b : String;
-{Begin}
+{Body}
     {a} {b}
 {End}
 
@@ -37,7 +37,7 @@ Macro text_internals
     Internal
         a : String;
         b : String;
-{Begin}
+{Body}
 {a}
 {b}
 {End}
@@ -46,7 +46,7 @@ Macro macro_params
     Param
         a : text_params;
         b : text_internals("a", "b");
-{Begin}
+{Body}
     {a} {b}
 {End}
 
@@ -54,7 +54,7 @@ Macro macro_internals
     Internal
         a : text_internals;
         b : text_params;
-{Begin}
+{Body}
     {a} {b}
 {End}
 
@@ -62,7 +62,7 @@ Macro macro_text_macro_internal
     Internal
         a : text_params;
         b : String;
-{Begin}
+{Body}
 {a}
 {b}
 {End}
@@ -74,7 +74,7 @@ Macro macro_internals_references
         c : text_internals("a", "b");
         d : macro_internals(c, b);
 
-{Begin}
+{Body}
 {a}
 {b}
 {c}
@@ -88,7 +88,7 @@ Macro macro_params_internals_references
     Internal
         b : text_params;
         c : String;
-{Begin}
+{Body}
 {a}
 {b}
 {c}
@@ -98,19 +98,19 @@ Macro macro_params_internals_references
 Macro macro_test_params_internals
     Param
         a : text_params;
-{Begin}
+{Body}
 {Insert: macro_text_macro_internal(a, "String")}
 {End}
 
 # ========== insert ==========
 
 Macro macro_insert_hello
-{Begin}
+{Body}
     Hello !!
 {End}
 
 Macro macro_insert_bye
-{Begin}
+{Body}
     Nice to meet you.
 {End}
 
@@ -119,7 +119,7 @@ Macro macro_insert_internals
         a : String;
         b : String;
         c : macro_insert_bye;
-{Begin}
+{Body}
 {a}
 {b}
 {c}
@@ -129,7 +129,7 @@ Macro macro_insert
     Param
         a : macro_insert_bye;
         b : macro_insert_hello;
-{Begin}
+{Body}
     {Insert: macro_insert_hello}
     {Insert: macro_insert_bye}
     {Insert: macro_insert_internals("StringA", "StringB", a)}
@@ -139,7 +139,7 @@ Macro macro_insert
 Macro macro_insert_recursive
     Param
         a : macro_insert_bye;
-{Begin}
+{Body}
 {a}
 {Insert: macro_insert_internals("{Insert: macro_insert_internals("A", "B", a)}", "StringB", a)}
 {End}
@@ -147,7 +147,7 @@ Macro macro_insert_recursive
 # ========= directives =========
 
 Macro macro_hello
-{Begin}
+{Body}
 Hello
 {End}
 
@@ -158,7 +158,7 @@ Macro macro_directives
                          none="No one is respectful",
                          after_last="Thanks for saying hello {Insert: macro_hello}";
         b : String;
-{Begin}
+{Body}
 {a}
 {End}
 
@@ -167,13 +167,13 @@ Macro macro_directives
 Macro macro_escape
     Internal
         a : String;
-{Begin}
+{Body}
 {a}
 {{End}
 {End}
 
 Macro macro_escape_string
-{Begin}
+{Body}
 {text : this is also text}
 {Insert: macro_escape("\{")}
 {End}
@@ -181,14 +181,14 @@ Macro macro_escape_string
 # =============== lexer test ============
 
 Macro lexer_a
-{Begin}
+{Body}
 {Insert: lexer_b("{Insert: lexer_a}")}
 {End}
 
 Macro lexer_b
     Internal
         a : String;
-{Begin}
+{Body}
 {a}
 {End}
 

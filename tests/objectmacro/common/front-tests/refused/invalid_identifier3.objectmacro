@@ -15,5 +15,5 @@
 # limitations under the License.
 
 Macro Btest
-{Begin}
+{Body}
 {End}

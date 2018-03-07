@@ -109,7 +109,7 @@ Tokens
   insert_command = '{Insert:';
 
   {macro_definition->macro_body}
-  begin = '{Begin}';
+  body = '{Body}';
 
   {macro_body->top_level}
   end = '{End}';
@@ -366,7 +366,7 @@ Abstract Syntax Tree
       {macro} macro;
 
   macro =
-      macro_kw [name]:identifier [params]:param* [internals]:internal* begin [macro_body_parts]:macro_body_part*;
+      macro_kw [name]:identifier [params]:param* [internals]:internal* body [macro_body_parts]:macro_body_part*;
 
   macro_body_part =
       {insert} macro_reference |

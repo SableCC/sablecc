@@ -19,20 +19,20 @@
 Macro comma_separator
     Param
         x : empty_macro, separator=", ";
-{Begin}
+{Body}
 La liste x : {x}
 Corps de semicolon : {Insert: semicolon_separator(x)}.
 {End}
 
 Macro empty_macro
-{Begin}
+{Body}
 empty
 {End}
 
 Macro semicolon_separator
     Internal
         x : empty_macro;
-{Begin}
+{Body}
 Le corps de C : {x}
 {End}
 
@@ -43,7 +43,7 @@ Macro a
         x : String;
         y : b(z), separator="\n";
         z : c("first argument of c in a", x);
-{Begin}
+{Body}
 ============= A ===============
 Y : {y}
 {End}
@@ -54,7 +54,7 @@ Macro b
         s : c(o, o);
     Internal
         p : c;
-{Begin}
+{Body}
 ============== B ===============
 P : {p}
 S : {s}
@@ -64,14 +64,14 @@ Macro c
     Internal
         q : String;
         r : String;
-{Begin}
+{Body}
 =============== C ==============
 Q : {q}
 R : {r}
 {End}
 
 Macro d
-{Begin}
+{Body}
 {Insert: e(
     "y1 {Insert: c("y2 {Insert: c("y3", "yz3")}", "{Insert: c("a", "b")}")}",
     "{Insert: c("y4", "z4")}",
@@ -84,7 +84,7 @@ Macro e
         s : String;
         t : String;
         u : String;
-{Begin}
+{Body}
 {s}
 {t}
 {u}
@@ -96,21 +96,22 @@ Macro f
     Param
         x : g(y);
         y : h;
-{Begin}
+{Body}
 {y} {x}
 {End}
 
 Macro g
     Internal
         z : h;
-{Begin}
+{Body}
 {z}
 {End}
 
 Macro h
     Param
         lala : f;
-{Begin}
+{Body}
+{la}
 {lala}
 {End}
 
@@ -120,7 +121,7 @@ Macro i
     Param
         y : k("lala");
         z : k("On est dans i"), j(y);
-{Begin}
+{Body}
 {y}
 {z}
 {End}
@@ -128,14 +129,14 @@ Macro i
 Macro j
     Internal
         y : k;
-{Begin}
+{Body}
 {y}
 {End}
 
 Macro k
     Internal
         a : String;
-{Begin}
+{Body}
 {a}
 {End}
 

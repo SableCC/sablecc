@@ -19,6 +19,6 @@ Macro a
         a : String;
     Internal
         a : String;
-{Begin}
+{Body}
 {a}
 {End}

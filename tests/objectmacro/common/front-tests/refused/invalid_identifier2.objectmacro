@@ -19,6 +19,6 @@
 Macro a
     Param
         s_1 : String;
-{Begin}
+{Body}
 {As}
 {End}
