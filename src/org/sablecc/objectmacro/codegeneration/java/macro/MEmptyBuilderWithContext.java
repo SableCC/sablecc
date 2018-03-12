@@ -2,45 +2,23 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MEmptyBuilderWithContext extends Macro{
+public class MEmptyBuilderWithContext {
 
-    public MEmptyBuilderWithContext(){
-    }
+  public MEmptyBuilderWithContext() {
+  }
 
-    @Override
-    void apply(
-            InternalsInitializer internalsInitializer){
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("    @Override");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    String build(Context context) {");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        return build();");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    }");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
-        internalsInitializer.setEmptyBuilderWithContext(this);
-    }
-
-    @Override
-    public String build(){
-
-        String local_expansion = this.expansion;
-
-        if(local_expansion != null){
-            return local_expansion;
-        }
-
-        StringBuilder sb0 = new StringBuilder();
-
-        sb0.append("    @Override");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    String build(Context context) ");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        return build();");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    }");
-
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
-    }
-
-    @Override
-    String build(Context context) {
-        return build();
-    }
 }

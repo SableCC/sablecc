@@ -1,4 +1,15 @@
 language: java
+before_install:
+    - wget --no-check-certificate https://www.apache.org/dist/ant/binaries/apache-ant-1.10.2-bin.tar.gz
+    - tar -xzvf apache-ant-1.10.2-bin.tar.gz
+    - mv apache-ant-1.10.2 apache-ant
+    - export PATH=apache-ant/bin:$PATH
+    - export ANT_HOME=apache-ant
+
+install:
+  - wget https://sourceforge.net/projects/sablecc/files/SableCC/3.7/sablecc-3.7.zip
+  - unzip sablecc-3.7.zip
+  - mv sablecc-3.7/lib/sablecc.jar $ANT_HOME/lib
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -9,4 +20,4 @@ cache:
     - $HOME/.gradle/wrapper/
 
 script:
-  - ant -f ant-files/build.xml
+  - ./utils/run-all-tests

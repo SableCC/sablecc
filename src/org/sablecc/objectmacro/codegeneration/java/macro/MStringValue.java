@@ -2,62 +2,31 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MStringValue extends Macro{
+public class MStringValue {
 
-    private String field_String;
+  private final String pString;
+  private final MStringValue mStringValue = this;
 
-    public MStringValue(String pString){
+  public MStringValue(String pString) {
+    if(pString == null) throw new NullPointerException();
+    this.pString = pString;
+  }
 
-        this.setPString(pString);
-    }
+  String pString() {
+    return this.pString;
+  }
 
-    private void setPString(String pString){
-        if(pString == null){
-            throw ObjectMacroException.parameterNull("String");
-        }
+  private String rString() {
+    return this.mStringValue.pString();
+  }
 
-        this.field_String = pString;
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("\"");
+    sb.append(rString());
+    sb.append("\"");
+    return sb.toString();
+  }
 
-    private String buildString(){
-
-        return this.field_String;
-    }
-
-    private String getString(){
-
-        return this.field_String;
-    }
-
-    @Override
-    void apply(
-            InternalsInitializer internalsInitializer){
-
-        internalsInitializer.setStringValue(this);
-    }
-
-    @Override
-    public String build(){
-
-        String local_expansion = this.expansion;
-
-        if(local_expansion != null){
-            return local_expansion;
-        }
-
-        StringBuilder sb0 = new StringBuilder();
-
-        sb0.append("\"");
-        sb0.append(buildString());
-        sb0.append("\"");
-
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
-    }
-
-    @Override
-    String build(Context context) {
-        return build();
-    }
 }

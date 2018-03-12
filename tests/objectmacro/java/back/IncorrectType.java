@@ -18,19 +18,24 @@ package back;
 
 import back.macro.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class IncorrectType {
 
     public static void main(
             String[] args){
 
         System.out.println("---------- Incorrect type ----------");
-        Macro[] macros = new Macro[3];
-        macros[0] = new MB("First argument in MB0");
-        macros[1] = new MB("First argument in MB1");
-        macros[2] = new MB("First argument in MB2");
+        List<Macro> macros = new ArrayList<>();
+        macros.add(new MB("First argument in MB0"));
+        macros.add(new MB("First argument in MB1"));
+        macros.add(new MB("First argument in MB2"));
 
         try{
-            MA ma = new MA("First argument of MA", macros, macros);
+            MA ma = new MA("First argument of MA");
+            ma.addAllZ(macros);
+            ma.addAllY(macros);
             ma.build();
             System.err.println("It should throw an exception here");
             System.exit(1);

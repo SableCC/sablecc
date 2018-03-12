@@ -2,38 +2,16 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MGetInternalTail extends Macro{
+public class MGetInternalTail {
 
-    public MGetInternalTail(){
-    }
+  public MGetInternalTail() {
+  }
 
-    @Override
-    void apply(
-            InternalsInitializer internalsInitializer){
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(".get(context)");
+    return sb.toString();
+  }
 
-        internalsInitializer.setGetInternalTail(this);
-    }
-
-    @Override
-    public String build(){
-
-        String local_expansion = this.expansion;
-
-        if(local_expansion != null){
-            return local_expansion;
-        }
-
-        StringBuilder sb0 = new StringBuilder();
-
-        sb0.append(".get(context)");
-
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
-    }
-
-    @Override
-    String build(Context context) {
-        return build();
-    }
 }

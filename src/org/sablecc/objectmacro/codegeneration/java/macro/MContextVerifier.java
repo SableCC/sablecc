@@ -2,43 +2,21 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MContextVerifier extends Macro{
+public class MContextVerifier {
 
-    public MContextVerifier(){
-    }
+  public MContextVerifier() {
+  }
 
-    @Override
-    void apply(
-            InternalsInitializer internalsInitializer){
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("        if(context == null){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            throw new RuntimeException(\"context cannot be null here\");");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        }");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
-        internalsInitializer.setContextVerifier(this);
-    }
-
-    @Override
-    public String build(){
-
-        String local_expansion = this.expansion;
-
-        if(local_expansion != null){
-            return local_expansion;
-        }
-
-        StringBuilder sb0 = new StringBuilder();
-
-        sb0.append("        if(context == null)");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("            throw new RuntimeException(\"context cannot be null here\");");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        }");
-
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
-    }
-
-    @Override
-    String build(Context context) {
-        return build();
-    }
 }

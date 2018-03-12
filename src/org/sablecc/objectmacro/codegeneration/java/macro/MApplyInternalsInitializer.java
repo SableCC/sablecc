@@ -2,121 +2,46 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MApplyInternalsInitializer extends Macro{
+import java.util.*;
 
-    private String field_ParamName;
+public class MApplyInternalsInitializer {
 
-    private Macro list_ListRedefinedInternalsSetter[];
+  private final String pParamName;
+  private final MApplyInternalsInitializer mApplyInternalsInitializer = this;
+  private final List<Object> eRedefinedInternalsSetter = new LinkedList<Object>();
 
-    private final Context ListRedefinedInternalsSetterContext = new Context();
+  public MApplyInternalsInitializer(String pParamName) {
+    if(pParamName == null) throw new NullPointerException();
+    this.pParamName = pParamName;
+  }
 
-    public MApplyInternalsInitializer(String pParamName, Macro pListRedefinedInternalsSetter[]){
+  public MRedefinedInternalsSetter newRedefinedInternalsSetter(String pName) {
+    MRedefinedInternalsSetter lRedefinedInternalsSetter = new MRedefinedInternalsSetter(pName);
+    this.eRedefinedInternalsSetter.add(lRedefinedInternalsSetter);
+    return lRedefinedInternalsSetter;
+  }
 
-        this.setPParamName(pParamName);
-        this.setPListRedefinedInternalsSetter(pListRedefinedInternalsSetter);
+  String pParamName() {
+    return this.pParamName;
+  }
+
+  private String rParamName() {
+    return this.mApplyInternalsInitializer.pParamName();
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("macro.apply(new InternalsInitializer(\"");
+    sb.append(rParamName());
+    sb.append("\"){");
+    sb.append(System.getProperty("line.separator"));
+    for(Object oRedefinedInternalsSetter : this.eRedefinedInternalsSetter) {
+      sb.append(oRedefinedInternalsSetter.toString());
     }
+    sb.append("});");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
-    private void setPParamName(String pParamName){
-        if(pParamName == null){
-            throw ObjectMacroException.parameterNull("ParamName");
-        }
-
-        this.field_ParamName = pParamName;
-    }
-
-    private void setPListRedefinedInternalsSetter(Macro pListRedefinedInternalsSetter[]){
-        if(pListRedefinedInternalsSetter == null){
-            throw ObjectMacroException.parameterNull("ListRedefinedInternalsSetter");
-        }
-
-        Macro macros[] = pListRedefinedInternalsSetter;
-        this.list_ListRedefinedInternalsSetter = new Macro[macros.length];
-        int i = 0;
-
-        for(Macro macro : macros){
-            if(macro == null){
-                throw ObjectMacroException.macroNull(i, "ListRedefinedInternalsSetter");
-            }
-
-            macro.apply(new InternalsInitializer("ListRedefinedInternalsSetter"){
-@Override
-void setRedefinedInternalsSetter(MRedefinedInternalsSetter mRedefinedInternalsSetter){
-
-        }
-});
-
-            this.list_ListRedefinedInternalsSetter[i++] = macro;
-
-        }
-    }
-
-    private String buildParamName(){
-
-        return this.field_ParamName;
-    }
-
-    private String buildListRedefinedInternalsSetter(){
-
-        StringBuilder sb0 = new StringBuilder();
-        Context local_context = ListRedefinedInternalsSetterContext;
-        Macro macros[] = this.list_ListRedefinedInternalsSetter;
-                boolean first = true;
-        int i = 0;
-
-        for(Macro macro : macros){
-                        
-            sb0.append(macro.build(local_context));
-            i++;
-
-                    }
-
-        return sb0.toString();
-    }
-
-    private String getParamName(){
-
-        return this.field_ParamName;
-    }
-
-    private Macro[] getListRedefinedInternalsSetter(){
-
-        return this.list_ListRedefinedInternalsSetter;
-    }
-
-    @Override
-    void apply(
-            InternalsInitializer internalsInitializer){
-
-        internalsInitializer.setApplyInternalsInitializer(this);
-    }
-
-    @Override
-    public String build(){
-
-        String local_expansion = this.expansion;
-
-        if(local_expansion != null){
-            return local_expansion;
-        }
-
-        StringBuilder sb0 = new StringBuilder();
-
-        sb0.append("macro.apply(new InternalsInitializer(\"");
-        sb0.append(buildParamName());
-        sb0.append("\")");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(buildListRedefinedInternalsSetter());
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("});");
-
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
-    }
-
-    @Override
-    String build(Context context) {
-        return build();
-    }
 }

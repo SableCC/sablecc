@@ -2,38 +2,16 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MContextParam extends Macro{
+public class MContextParam {
 
-    public MContextParam(){
-    }
+  public MContextParam() {
+  }
 
-    @Override
-    void apply(
-            InternalsInitializer internalsInitializer){
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Context context");
+    return sb.toString();
+  }
 
-        internalsInitializer.setContextParam(this);
-    }
-
-    @Override
-    public String build(){
-
-        String local_expansion = this.expansion;
-
-        if(local_expansion != null){
-            return local_expansion;
-        }
-
-        StringBuilder sb0 = new StringBuilder();
-
-        sb0.append("Context context");
-
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
-    }
-
-    @Override
-    String build(Context context) {
-        return build();
-    }
 }

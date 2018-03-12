@@ -2,150 +2,85 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MSuperMacro extends Macro{
+import java.util.*;
 
-    private Macro list_ListPackage[];
+public class MSuperMacro {
 
-    private final Context ListPackageContext = new Context();
+  private final List<Object> ePackageDeclaration = new LinkedList<Object>();
+  private final List<Object> eImportJavaUtil = new LinkedList<Object>();
 
-    public MSuperMacro(Macro pListPackage[]){
+  public MSuperMacro() {
+  }
 
-        this.setPListPackage(pListPackage);
+  public MPackageDeclaration newPackageDeclaration(String pPackageName) {
+    MPackageDeclaration lPackageDeclaration = new MPackageDeclaration(pPackageName);
+    this.ePackageDeclaration.add(lPackageDeclaration);
+    return lPackageDeclaration;
+  }
+
+  public MImportJavaUtil newImportJavaUtil() {
+    MImportJavaUtil lImportJavaUtil = new MImportJavaUtil();
+    this.eImportJavaUtil.add(lImportJavaUtil);
+    return lImportJavaUtil;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MHeader().toString());
+    if(this.ePackageDeclaration.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
     }
-
-    private void setPListPackage(Macro pListPackage[]){
-        if(pListPackage == null){
-            throw ObjectMacroException.parameterNull("ListPackage");
-        }
-
-        Macro macros[] = pListPackage;
-        this.list_ListPackage = new Macro[macros.length];
-        int i = 0;
-
-        for(Macro macro : macros){
-            if(macro == null){
-                throw ObjectMacroException.macroNull(i, "ListPackage");
-            }
-
-            macro.apply(new InternalsInitializer("ListPackage"){
-@Override
-void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
-
-        }
-});
-
-            this.list_ListPackage[i++] = macro;
-
-        }
+    for(Object oPackageDeclaration : this.ePackageDeclaration) {
+      sb.append(oPackageDeclaration.toString());
     }
-
-    private String buildListPackage(){
-
-        StringBuilder sb0 = new StringBuilder();
-        Context local_context = ListPackageContext;
-        Macro macros[] = this.list_ListPackage;
-                boolean first = true;
-        int i = 0;
-
-        for(Macro macro : macros){
-            if(first){
-            sb0.append(LINE_SEPARATOR);
-    first = false;
-}
-            
-            sb0.append(macro.build(local_context));
-            i++;
-
-                    }
-
-        return sb0.toString();
+    for(Object oImportJavaUtil : this.eImportJavaUtil) {
+      sb.append(oImportJavaUtil.toString());
     }
+    sb.append(System.getProperty("line.separator"));
+    sb.append("public abstract class Macro {");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    final static String LINE_SEPARATOR = System.getProperty(\"line.separator\");");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    BuildState build_state = null;");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    final Map<Context, BuildState> build_states = new LinkedHashMap<>();");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    public String build(){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        throw new RuntimeException(\"build cannot be invoked here\");");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    }");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    String build(");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            Context context){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        throw new RuntimeException(\"build cannot be invoked here\");");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    }");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    void apply(");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            InternalsInitializer internalsInitializer){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        throw new RuntimeException(\"apply cannot be called here\");");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("    }");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("}");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
-    private Macro[] getListPackage(){
-
-        return this.list_ListPackage;
-    }
-
-    @Override
-    void apply(
-            InternalsInitializer internalsInitializer){
-
-        internalsInitializer.setSuperMacro(this);
-    }
-
-    @Override
-    public String build(){
-
-        String local_expansion = this.expansion;
-
-        if(local_expansion != null){
-            return local_expansion;
-        }
-
-        StringBuilder sb0 = new StringBuilder();
-
-        MHeader minsert_1 = new MHeader();
-                        sb0.append(minsert_1.build(null));
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(buildListPackage());
-        sb0.append(LINE_SEPARATOR);
-        MImportJavaUtil minsert_2 = new MImportJavaUtil();
-                        sb0.append(minsert_2.build(null));
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("public abstract class Macro ");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    public final static String LINE_SEPARATOR = System.getProperty(\"line.separator\");");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    public String expansion;");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    public Map<Context, String> expansions = new LinkedHashMap<>();");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    public String build()");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        throw new RuntimeException(\"build cannot be invoked here\");");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    }");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    String build(");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("            Context context)");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        throw new RuntimeException(\"build cannot be invoked here\");");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    }");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    void apply(");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("            InternalsInitializer internalsInitializer)");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        throw new RuntimeException(\"apply cannot be called here\");");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    }");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("}");
-
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
-    }
-
-    @Override
-    String build(Context context) {
-        return build();
-    }
 }

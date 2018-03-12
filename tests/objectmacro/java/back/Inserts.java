@@ -20,9 +20,12 @@ import back.macro.*;
 
 public class Inserts {
 
-    public static void main(String[] args){
+    public static void main(
+            String[] args){
+
+        System.out.print("======== Inserts Test ===========\n");
         Macro d = new MD();
-        d.build();
+        System.out.println(d.build());
     }
 
 }

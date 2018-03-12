@@ -32,4 +32,5 @@ java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/ob
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_identifier4.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_insert.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/unknown_command.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/overwrite_internals.objectmacro
 

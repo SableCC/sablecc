@@ -2,62 +2,32 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MParamMacroField extends Macro{
+public class MParamMacroField {
 
-    private String field_Name;
+  private final String pName;
+  private final MParamMacroField mParamMacroField = this;
 
-    public MParamMacroField(String pName){
+  public MParamMacroField(String pName) {
+    if(pName == null) throw new NullPointerException();
+    this.pName = pName;
+  }
 
-        this.setPName(pName);
-    }
+  String pName() {
+    return this.pName;
+  }
 
-    private void setPName(String pName){
-        if(pName == null){
-            throw ObjectMacroException.parameterNull("Name");
-        }
+  private String rName() {
+    return this.mParamMacroField.pName();
+  }
 
-        this.field_Name = pName;
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("    private final List<Macro> list_");
+    sb.append(rName());
+    sb.append(";");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
-    private String buildName(){
-
-        return this.field_Name;
-    }
-
-    private String getName(){
-
-        return this.field_Name;
-    }
-
-    @Override
-    void apply(
-            InternalsInitializer internalsInitializer){
-
-        internalsInitializer.setParamMacroField(this);
-    }
-
-    @Override
-    public String build(){
-
-        String local_expansion = this.expansion;
-
-        if(local_expansion != null){
-            return local_expansion;
-        }
-
-        StringBuilder sb0 = new StringBuilder();
-
-        sb0.append("    private Macro list_");
-        sb0.append(buildName());
-        sb0.append("[];");
-
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
-    }
-
-    @Override
-    String build(Context context) {
-        return build();
-    }
 }

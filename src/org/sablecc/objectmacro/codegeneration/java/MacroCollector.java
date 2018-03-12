@@ -13,20 +13,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
-
+ */
 package org.sablecc.objectmacro.codegeneration.java;
 
 import org.sablecc.objectmacro.codegeneration.java.macro.MMacro;
 import org.sablecc.objectmacro.codegeneration.java.structure.Macro;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AInternal;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AMacro;
-import org.sablecc.objectmacro.intermediate.syntax3.node.AParam;
-import org.sablecc.objectmacro.intermediate.syntax3.node.TString;
-import org.sablecc.objectmacro.util.Utils;
+import org.sablecc.objectmacro.intermediate.syntax3.node.*;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -46,25 +40,6 @@ public class MacroCollector
         this.macros = macros;
     }
 
-    private String string(
-            TString tString) {
-
-        String string = tString.getText();
-        int length = string.length();
-        return string.substring(1, length - 1);
-    }
-
-    private String buildNameCamelCase(
-            LinkedList<TString> names){
-
-        StringBuilder paramName = new StringBuilder();
-        for(TString partName : names){
-            paramName.append(Utils.toCamelCase(string(partName)));
-        }
-
-        return paramName.toString();
-    }
-
     @Override
     public void inAMacro(
             AMacro node) {
@@ -77,9 +52,9 @@ public class MacroCollector
     public void outAMacro(
             AMacro node) {
 
-        String macro_name = buildNameCamelCase(node.getNames());
+        String macro_name = GenerationUtils.buildNameCamelCase(node.getNames());
         this.macros.put(macro_name,
-                new Macro(new MMacro(macro_name), this.currentParameters, this.currentInternals));
+                new Macro(new MMacro(macro_name), this.currentParameters, this.currentInternals, macro_name));
 
     }
 
@@ -87,7 +62,7 @@ public class MacroCollector
     public void caseAParam(
             AParam node) {
 
-        String param_name = buildNameCamelCase(node.getNames());
+        String param_name = GenerationUtils.buildNameCamelCase(node.getNames());
         this.currentParameters.add(param_name);
     }
 
@@ -95,9 +70,8 @@ public class MacroCollector
     public void caseAInternal(
             AInternal node) {
 
-        String param_name = buildNameCamelCase(node.getNames());
+        String param_name = GenerationUtils.buildNameCamelCase(node.getNames());
         this.currentInternals.add(param_name);
     }
 
 }
-*/

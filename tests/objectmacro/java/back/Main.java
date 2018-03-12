@@ -18,23 +18,30 @@ package back;
 
 import back.macro.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
 
     public static void main(
             String[] args){
 
-        Macro[] macros = new Macro[3];
-        macros[0] = new MB("First argument in MB0");
-        macros[1] = new MB("First argument in MB1");
-        macros[2] = new MB("First argument in MB2");
-
-        Macro[] macros1 = new Macro[2];
-        macros1[0] = new MC();
-        macros1[1] = new MC();
+        System.out.print("======== Main Test ===========\n");
+        MA ma = new MA("First argument of MA");
+        List<Macro> macros = new ArrayList<>();
+        MB mb = new MB("la");
+        MB mb2 = new MB("First argument in MB0");
+        macros.add(mb2);
+        macros.add(new MB("First argument in MB1"));
+        macros.add(new MB("First argument in MB2"));
 
         try{
-            MA ma = new MA("First argument of MA", macros, macros1);
-            macros[0] = new  MC();
+            mb.addS(new MC());
+            ma.addZ(new MC());
+            ma.addAllY(macros);
+            ma.addY(mb);
+            ma.addZ(new MC());
+            mb2.addS(new MC());
             System.out.println(ma.build());
         }
         catch(ObjectMacroException e){

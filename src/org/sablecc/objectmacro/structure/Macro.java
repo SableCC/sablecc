@@ -31,13 +31,13 @@ public class Macro{
 
     private final AMacro declaration;
 
-    private final Set<Param> allParams = new LinkedHashSet<>();
+    private final Set<External> allParams = new LinkedHashSet<>();
 
-    private final Map<String, Param> namedParams = new HashMap<>();
+    private final Map<String, External> namedParams = new HashMap<>();
 
-    private final Set<Param> allInternals = new LinkedHashSet<>();
+    private final Set<Internal> allInternals = new LinkedHashSet<>();
 
-    private final Map<String, Param> namedInternals = new HashMap<>();
+    private final Map<String, Internal> namedInternals = new HashMap<>();
 
     private ComponentFinder<Param> paramsComponentFinder;
 
@@ -71,7 +71,7 @@ public class Macro{
             throw CompilerException.duplicateDeclaration(name, getNameDeclaration());
         }
 
-        Param newParam = new Param(param, this, this.globalIndex);
+        External newParam = new External(param, this, this.globalIndex);
         this.namedParams.put(stringName, newParam);
         this.allParams.add(newParam);
 
@@ -79,7 +79,7 @@ public class Macro{
     }
 
     public Param newInternal(
-            AParam param){
+            AInternal param){
 
         if(param == null){
             throw new InternalException("AParam should not be null");
@@ -93,7 +93,7 @@ public class Macro{
             throw CompilerException.duplicateDeclaration(name, duplicateDeclaration.getNameDeclaration());
         }
 
-        Param newInternal = new Param(param, this, this.globalIndex);
+        Internal newInternal = new Internal(param, this, this.globalIndex);
         this.allInternals.add(newInternal);
         this.namedInternals.put(stringName, newInternal);
 
@@ -152,11 +152,11 @@ public class Macro{
         return this.declaration.getName().getText();
     }
 
-    public Set<Param> getAllParams(){
+    public Set<External> getAllParams(){
         return this.allParams;
     }
 
-    public Set<Param> getAllInternals(){
+    public Set<Internal> getAllInternals(){
         return this.allInternals;
     }
 

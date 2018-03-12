@@ -51,15 +51,15 @@ public class DeclarationCollector
         Macro macro = this.globalIndex.newMacro(node);
 
         List<PParam> params = node.getParams();
-        List<PParam> internals = node.getInternals();
+        List<PInternal> internals = node.getInternals();
 
         for (PParam param_production : params) {
             AParam param_node = (AParam) param_production;
             macro.newParam(param_node);
         }
 
-        for (PParam param_production : internals) {
-            AParam param_node = (AParam) param_production;
+        for (PInternal param_production : internals) {
+            AInternal param_node = (AInternal) param_production;
             macro.newInternal(param_node);
         }
     }

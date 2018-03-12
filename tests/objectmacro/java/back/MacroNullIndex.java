@@ -18,23 +18,26 @@ package back;
 
 import back.macro.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MacroNullIndex {
 
     public static void main(
             String[] args){
 
         System.out.println("---------- Macro null at a certain index ----------");
-
-        Macro[] macros = new Macro[3];
-        macros[0] = new MB("First argument in MB0");
-        macros[1] = null;
-        macros[2] = new MB("First argument in MB2");
-
-        Macro[] macros1 = new Macro[1];
-        macros1[0] = new MC();
+        MA ma = new MA("First argument of MA");
+        List<Macro> macros = new ArrayList<>();
+        macros.add(new MB("First argument in MB0"));
+        macros.add(null);
+        macros.add(new MB("First argument in MB2"));
 
         try{
-            MA ma = new MA("First argument of MA", macros, macros1);
+            MC mc = new MC();
+            ma.addZ(mc);
+            ma.addZ(mc);
+            ma.addAllY(macros);
             ma.build();
             System.err.println("It should throw an exception here");
             System.exit(1);
