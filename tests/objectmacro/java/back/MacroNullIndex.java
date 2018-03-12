@@ -28,7 +28,7 @@ public class MacroNullIndex {
 
         System.out.println("---------- Macro null at a certain index ----------");
         MA ma = new MA("First argument of MA");
-        List<Macro> macros = new ArrayList<>();
+        List<MB> macros = new ArrayList<>();
         macros.add(new MB("First argument in MB0"));
         macros.add(null);
         macros.add(new MB("First argument in MB2"));
@@ -37,7 +37,10 @@ public class MacroNullIndex {
             MC mc = new MC();
             ma.addZ(mc);
             ma.addZ(mc);
-            ma.addAllY(macros);
+            for(MB mb : macros){
+                ma.addY(mb);
+            }
+
             ma.build();
             System.err.println("It should throw an exception here");
             System.exit(1);

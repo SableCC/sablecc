@@ -140,23 +140,31 @@ class InternalValue {
 
     private final List<Macro> macros;
 
-    private final List<Directive> directives;
+    private DAfterLast dAfterLast;
+
+    private DBeforeFirst dBeforeFirst;
+
+    private DSeparator dSeparator;
 
     private DNone dNone;
 
     private final Context context;
 
+    private String cache;
+
     InternalValue(
             List<Macro> macros,
-            Context context,
-            List<Directive> directives){
+            Context context){
 
         this.macros = macros;
         this.context = context;
-        this.directives = directives;
     }
 
     String build(){
+
+        if(this.cache != null){
+            return this.cache;
+        }
 
         StringBuilder sb = new StringBuilder();
         int i = 0;
@@ -169,22 +177,48 @@ class InternalValue {
         for(Macro macro : this.macros){
             String expansion = macro.build(this.context);
 
-            for(Directive directive : this.directives){
-                expansion = directive.apply(i, expansion, nb_macros);
+            if(this.dBeforeFirst != null){
+                expansion = dBeforeFirst.apply(i, expansion, nb_macros);
             }
+
+            if(dAfterLast != null){
+                expansion = dAfterLast.apply(i, expansion, nb_macros);
+            }
+
+            if(this.dSeparator != null){
+                expansion = dSeparator.apply(i, expansion, nb_macros);
+            }
+
             sb.append(expansion);
             i++;
         }
 
-        return sb.toString();
+        this.cache = sb.toString();
+        return this.cache;
     }
 
-    List<Macro> getMacros(){
-        return this.macros;
-    }
+    void setNone(
+                DNone none){
 
-    void setNone(DNone none){
         this.dNone = none;
+    }
+
+    void setBeforeFirst(
+            DBeforeFirst dBeforeFirst){
+
+        this.dBeforeFirst = dBeforeFirst;
+    }
+
+    void setAfterLast(
+            DAfterLast dAfterLast){
+
+        this.dAfterLast = dAfterLast;
+    }
+
+    void setSeparator(
+            DSeparator dSeparator){
+
+        this.dSeparator = dSeparator;
     }
 }
 
@@ -221,10 +255,10 @@ $expand: package_declaration, before_first="\n" $
 $expand: import_java_util, before_first="\n" $
 
 public class M$name extends Macro{
-$expand: param_macro_field, param_string_field, internal_macro_field, internal_string_field, internal_macros_value_field, directives_field, none_directive_field, separator="\n", before_first="\n" $
+$expand: param_macro_field, param_string_field, internal_macro_field, internal_string_field, internal_macros_value_field, directive_fields, separator="\n", before_first="\n" $
 $expand: context_field, before_first="\n" $
 $expand: constructor, before_first="\n" $
-$expand: param_string_setter, add_all, single_add, internal_string_setter, internal_macro_setter, before_first="\n", separator="\n" $
+$expand: param_string_setter, single_add, internal_string_setter, internal_macro_setter, before_first="\n", separator="\n" $
 $expand: param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, separator="\n", before_first="\n" $
 $expand: param_string_ref, param_macro_ref, internal_macro_ref, separator="\n", before_first="\n" $
 $expand: init_internals_method, separator="\n" $
@@ -272,7 +306,7 @@ $end: init_string_internal $
 $comment: ========== init_internal_value ============ $
 
 $macro: init_internal_value(param_name) $
-    this.$(param_name)Value = new InternalValue(this.list_$param_name, this.$(param_name)Context, this.$(param_name)Directives);
+    this.$(param_name)Value = new InternalValue(this.list_$param_name, this.$(param_name)Context);
 $end: init_internal_value $
 
 $comment: ========== set_param ========== $
@@ -286,30 +320,6 @@ $comment$
 ===================== MACRO FUNCTIONS ==========================
 ================================================================
 $end$
-
-$comment: ========= add_all =========== $
-
-$macro: add_all(param_name) $
-    public void addAll$param_name(List<Macro> macros){
-        if(macros == null){
-            throw ObjectMacroException.parameterNull("$param_name");
-        }
-        $expand: is_built$
-
-        int i = 0;
-
-        for(Macro macro : macros){
-            if(macro == null){
-                throw ObjectMacroException.macroNull(i, "$param_name");
-            }
-
-            $expand: apply_internals_initializer $
-
-            this.list_$param_name.add(macro);
-            i++;
-        }
-    }
-$end: add_all $
 
 $comment: ========= single_add =========== $
 
@@ -343,9 +353,9 @@ $end: param_string_ref_builder $
 
 $comment: ========== param_macro_ref_builder ================== $
 
-$macro: param_macro_ref_builder(name, index_builder) $
+$macro: param_macro_ref_builder(name) $
     private String build$name(){
-        StringBuilder sb$index_builder = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         Context local_context = $expand: context_name, none="context"$;
         List<Macro> macros = this.list_$name;
 
@@ -353,23 +363,30 @@ $macro: param_macro_ref_builder(name, index_builder) $
         int nb_macros = macros.size();
         String expansion = null;
 
-        $macro: apply_none_directive $
         if(this.$(name)None != null){
-            sb$index_builder.append(this.$(name)None.apply(i, "", nb_macros));
+            sb.append(this.$(name)None.apply(i, "", nb_macros));
         }
-        $end: apply_none_directive $
 
         for(Macro macro : macros){
             expansion = macro.build(local_context);
-            for(Directive directive : this.$(name)Directives){
-                expansion = directive.apply(i, expansion, nb_macros);
+
+            if(this.$(name)BeforeFirst != null){
+                expansion = this.$(name)BeforeFirst.apply(i, expansion, nb_macros);
             }
 
-            sb$index_builder.append(expansion);
+            if(this.$(name)AfterLast != null){
+                expansion = this.$(name)AfterLast.apply(i, expansion, nb_macros);
+            }
+
+            if(this.$(name)Separator != null){
+                expansion = this.$(name)Separator.apply(i, expansion, nb_macros);
+            }
+
+            sb.append(expansion);
             i++;
         }
 
-        return sb$index_builder.toString();
+        return sb.toString();
     }
 $end: param_macro_ref_builder $
 
@@ -472,26 +489,15 @@ $comment: =========== init_directives =========== $
 
 $macro: init_directives(param_name) $
     private void init$(param_name)Directives(){
-        $expand: new_directive, set_none_directive $
+        $macro: new_directive(directive_name, index_builder) $
+
+        StringBuilder sb$index_builder = new StringBuilder();
+        $expand: string_part, param_insert_part, eol_part, insert_macro_part $
+        this.$(param_name)$(directive_name) = new D$(directive_name)(sb$index_builder.toString());
+        this.$(param_name)Value.set$directive_name(this.$(param_name)$(directive_name));
+        $end: new_directive $
     }
 $end: init_directives $
-
-$comment: =========== new_directive ============ $
-
-$macro: new_directive(param_name, directive_name, index_builder) $
-        StringBuilder sb$index_builder = new StringBuilder();
-$expand: string_part, param_insert_part, eol_part, insert_macro_part $
-        this.$(param_name)Directives.add(new D$(directive_name)(sb$index_builder.toString()));
-$end: new_directive $
-
-$comment: =========== set_none_directive ======== $
-
-$macro: set_none_directive(param_name, index_builder) $
-        StringBuilder sb$index_builder = new StringBuilder();
-$expand: string_part, param_insert_part, eol_part, insert_macro_part $
-        this.$(param_name)Value.setNone(new DNone(sb$index_builder.toString()));
-        this.$(param_name)None = new DNone(sb$index_builder.toString());
-$end: set_none_directive $
 
 $comment$
 ============================================
@@ -615,23 +621,17 @@ $macro: internal_macros_value_field(param_name) $
     private final InternalValue $(param_name)Value;
 $end: internal_macros_value_field $
 
-$comment: ========== string_param ========== $
+$comment: ========== directive_fields ========== $
 
-$macro: string_param(name) $
-String p$(name)$no_eol$
-$end: string_param $
+$macro: directive_fields(param_name) $
+    private DSeparator $(param_name)Separator;
 
-$comment: ========== directives_field ========= $
+    private DBeforeFirst $(param_name)BeforeFirst;
 
-$macro: directives_field(param_name) $
-    private final List<Directive> $(param_name)Directives = new ArrayList<>();
-$end: directives_field $
+    private DAfterLast $(param_name)AfterLast;
 
-$comment: ========== none_directive_field ========= $
-
-$macro: none_directive_field(param_name) $
     private DNone $(param_name)None;
-$end: none_directive_field $
+$end: directive_fields $
 
 $comment$
 ============================================
@@ -769,6 +769,13 @@ $macro: get_internal_tail $
 .get(context)$no_eol$
 $end: get_internal_tail $
 
+$comment: ========== string_param ========== $
+
+$macro: string_param(name) $
+String p$(name)$no_eol$
+$end: string_param $
+
+
 $comment$
 ===================================================
 ===================== DIRECTIVES ==================
@@ -881,7 +888,7 @@ class DSeparator
             String macro,
             Integer list_size) {
 
-        if(list_size == 0 || index == list_size - 1){
+        if(index == list_size - 1){
             return macro;
         }
 

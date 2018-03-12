@@ -34,53 +34,116 @@ public class CodeGenerationWalker
 
     private final File packageDirectory;
 
-    private MMacro currentMacroToBuild;
-
-    private Macro currentMacro;
-
-    private MConstructor currentConstructor;
-
-    private MSuperMacro superMacro;
-
-    private MInternalsInitializer mInternalsInitializer;
-
-    private MMacroBuilder currentMacroBuilder;
-
-    private MApplyInternalsInitializer currentApplyInitializer;
-
-    private MApplyInternalsInitializer currentAddAllApplyInitializer;
-
-    private MRedefinedInternalsSetter currentRedefinedInternalsSetter;
-
-    private Integer indexBuilder = 0;
-
-    private Integer indexInsert = 0;
-
-    private String currentMacroRefName;
-
+    /**
+     * List of macros in the file
+     */
     private final Map<String, Macro> macros;
 
-    private String currentContextName;
+    /**
+     * Object Macro with name and list of internals and parameters
+     */
+    private Macro currentMacro;
 
-    private MInsertMacroPart currentInsertMacroPart;
-
-    private List<String> contextNames = new ArrayList<>();
-
-    private List<String> createdBuilders = new ArrayList<>();
-
-    private List<Integer> createdInserts = new ArrayList<>();
-
-    private MParamMacroRefBuilder currentParamMacroRefBuilder;
-
-    private MInitDirectives currentInitDirectives;
-
-    private MNewDirective currentDirective;
-
-    private MSetNoneDirective mSetNoneDirective;
-
-    //Used only to check whether its a parameter or an internal, for parameter its set but for internal its null
+    /**
+     * Current parameter name
+     */
     private String currentParamName;
 
+    /**
+     * Macro representing the super class Macro
+     */
+    private MSuperMacro superMacro;
+
+    /**
+     * Macro representing an internal initializer super class
+     */
+    private MInternalsInitializer mInternalsInitializer;
+
+    /**
+     * Macro representing the class macro
+     */
+    private MMacro currentMacroToBuild;
+
+    /**
+     * Macro representing the constructor of a macro
+     */
+    private MConstructor currentConstructor;
+
+    /**
+     * Macro representing the method builder
+     */
+    private MMacroBuilder currentMacroBuilder;
+
+    /**
+     * Macro representing the apply internal initializer inside the method init internals
+     */
+    private MApplyInternalsInitializer currentApplyInitializer;
+
+    /**
+     * Macro representing the redefined internals setter inside in apply initializer
+     */
+    private MRedefinedInternalsSetter currentRedefinedInternalsSetter;
+
+    /**
+     * Index of the current builder to avoid creating 2 StringBuilder of the same name
+     */
+    private Integer indexBuilder = 0;
+
+    /**
+     * Index of the current builder to avoid creating 2 macro objects for inserts of the same name
+     */
+    private Integer indexInsert = 0;
+
+    /**
+     * Created StringBuilders in the children of a AParameter node or AInternal node
+     * This list is reset in the internal or parameter node's out
+     */
+    private List<String> createdBuilders = new ArrayList<>();
+
+    /**
+     * Created macro objects for inserts in the children of a AParameter node or AInternal node
+     * This list is reset in the internal or parameter node's out
+     */
+    private List<Integer> createdInserts = new ArrayList<>();
+
+    /**
+     * Name of the current macro which is referenced
+     */
+    private String currentMacroRefName;
+
+    /**
+     * Name of the current context
+     */
+    private String currentContextName;
+
+    /**
+     * Names of all contexts created for the current Macro
+     */
+    private List<String> contextNames = new ArrayList<>();
+
+    /**
+     * Macro representing an insert in a macro body
+     */
+    private MInsertMacroPart currentInsertMacroPart;
+
+    /**
+     * Macro representing a parameter's builder
+     */
+    private MParamMacroRefBuilder currentParamMacroRefBuilder;
+
+    /**
+     * Macro representing the method to initialize directives
+     */
+    private MInitDirectives currentInitDirectives;
+
+    /**
+     * Macro representing the creation of an object Directive
+     */
+    private MNewDirective currentDirective;
+
+    /**
+     * Boolean to test whether the macro has or does not have internals
+     */
     private boolean currentMacroHasInternals;
 
     public CodeGenerationWalker(
@@ -232,11 +295,10 @@ public class CodeGenerationWalker
 
             this.currentMacroToBuild.newParamMacroField(paramName);
             this.currentMacroToBuild.newContextField(paramName);
-            this.currentMacroToBuild.newDirectivesField(paramName);
+            this.currentMacroToBuild.newDirectiveFields(paramName);
             this.currentMacroToBuild.newInternalMacrosValueField(paramName);
 
-            this.currentParamMacroRefBuilder = this.currentMacroToBuild.newParamMacroRefBuilder(
-                    paramName, String.valueOf(this.indexBuilder));
+            this.currentParamMacroRefBuilder = this.currentMacroToBuild.newParamMacroRefBuilder(paramName);
             this.currentParamMacroRefBuilder.newContextName(paramName.concat(
                     GenerationUtils.CONTEXT_STRING));
             this.currentMacroToBuild.newParamMacroRef(paramName);
@@ -251,9 +313,7 @@ public class CodeGenerationWalker
             this.indexBuilder = 0;
 
             MInitInternalsCall mInitInternalsCall = this.currentMacroBuilder.newInitInternalsCall(paramName);
-            MAddAll mAddAll = this.currentMacroToBuild.newAddAll(paramName);
 
-            this.currentAddAllApplyInitializer = mAddAll.newApplyInternalsInitializer(paramName);
             this.currentApplyInitializer = this.currentMacroToBuild.newInitInternalsMethod(paramName)
                                                 .newApplyInternalsInitializer(paramName);
 
@@ -264,9 +324,6 @@ public class CodeGenerationWalker
 
             if(this.currentMacroHasInternals){
                 mInitInternalsCall.newContextArg();
-            }
-            else{
-                mAddAll.newIsBuilt(this.currentMacro.getName());
             }
         }
         else{
@@ -299,16 +356,8 @@ public class CodeGenerationWalker
 
         String directive_name = GenerationUtils.buildNameCamelCase(node.getNames());
 
-        if(directive_name.equals(GenerationUtils.NONE_DIRECTIVE)){
-            this.currentMacroToBuild.newNoneDirectiveField(this.currentParamName);
-            this.currentParamMacroRefBuilder.newApplyNoneDirective();
-            this.mSetNoneDirective = this.currentInitDirectives
-                    .newSetNoneDirective(this.currentParamName, this.indexBuilder.toString());
-        }
-        else{
-            this.currentDirective = this.currentInitDirectives
-                    .newNewDirective(this.currentParamName, directive_name, this.indexBuilder.toString());
-        }
+        this.currentDirective = this.currentInitDirectives
+                .newNewDirective(directive_name, this.indexBuilder.toString());
     }
 
     @Override
@@ -317,7 +366,6 @@ public class CodeGenerationWalker
 
         this.indexBuilder++;
         this.currentDirective = null;
-        this.mSetNoneDirective = null;
     }
 
     @Override
@@ -334,8 +382,6 @@ public class CodeGenerationWalker
             if(!this.currentMacroHasInternals){
                 mSingleAdd.newIsBuilt(this.currentMacro.getName());
             }
-
-            this.currentAddAllApplyInitializer.newRedefinedInternalsSetter(macro_ref_name);
         }
     }
 
@@ -423,11 +469,6 @@ public class CodeGenerationWalker
                         string,
                         index_builder);
             }
-            else if(this.mSetNoneDirective != null){
-                this.mSetNoneDirective.newStringPart(
-                        string,
-                        index_builder);
-            }
         }
     }
 
@@ -456,11 +497,6 @@ public class CodeGenerationWalker
                         param_name,
                         index_builder);
             }
-            else if(this.mSetNoneDirective != null){
-                this.mSetNoneDirective.newParamInsertPart(
-                        param_name,
-                        index_builder);
-            }
         }
     }
 
@@ -484,9 +520,6 @@ public class CodeGenerationWalker
             }
             else if(this.currentDirective != null){
                 this.currentDirective.newEolPart(index_builder);
-            }
-            else if(this.mSetNoneDirective != null){
-                this.mSetNoneDirective.newEolPart(index_builder);
             }
         }
     }
@@ -533,12 +566,6 @@ public class CodeGenerationWalker
                             index_builder,
                             index_insert);
 
-            }
-            else if(this.mSetNoneDirective != null){
-                this.currentInsertMacroPart =
-                        this.mSetNoneDirective.newInsertMacroPart(macro_name,
-                                index_builder,
-                                index_insert);
             }
         }
         this.createdInserts.add(this.indexInsert);
