@@ -2,41 +2,72 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MInternalMacroRefBuilder {
+public class MInternalMacroRefBuilder extends Macro{
 
-  private final String pInternalName;
-  private final MInternalMacroRefBuilder mInternalMacroRefBuilder = this;
+    private String field_InternalName;
 
-  public MInternalMacroRefBuilder(String pInternalName) {
-    if(pInternalName == null) throw new NullPointerException();
-    this.pInternalName = pInternalName;
-  }
+    public MInternalMacroRefBuilder(String pInternalName){
 
-  String pInternalName() {
-    return this.pInternalName;
-  }
+        this.setPInternalName(pInternalName);
+    }
 
-  private String rInternalName() {
-    return this.mInternalMacroRefBuilder.pInternalName();
-  }
+    private void setPInternalName(String pInternalName){
+        if(pInternalName == null){
+            throw ObjectMacroException.parameterNull("InternalName");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    private String build");
-    sb.append(rInternalName());
-    sb.append("(Context context){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        InternalValue macros = this.list_");
-    sb.append(rInternalName());
-    sb.append(".get(context);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        return macros.build();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.field_InternalName = pInternalName;
+    }
 
+    private String buildInternalName(){
+
+        return this.field_InternalName;
+    }
+
+    private String getInternalName(){
+
+        return this.field_InternalName;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setInternalMacroRefBuilder(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    private String build");
+        sb0.append(buildInternalName());
+        sb0.append("(Context context)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        InternalValue macros = this.list_");
+        sb0.append(buildInternalName());
+        sb0.append(".get(context);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        return macros.build();");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

@@ -2,89 +2,162 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+public class MCyclicReference extends Macro{
 
-public class MCyclicReference {
+    private Macro list_PackageDeclaration[];
 
-  private final List<Object> ePackageDeclaration = new LinkedList<Object>();
+    private final Context PackageDeclarationContext = new Context();
 
-  public MCyclicReference() {
-  }
+    public MCyclicReference(Macro pPackageDeclaration[]){
 
-  public MPackageDeclaration newPackageDeclaration(String pPackageName) {
-    MPackageDeclaration lPackageDeclaration = new MPackageDeclaration(pPackageName);
-    this.ePackageDeclaration.add(lPackageDeclaration);
-    return lPackageDeclaration;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MHeader().toString());
-    if(this.ePackageDeclaration.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
+        this.setPPackageDeclaration(pPackageDeclaration);
     }
-    for(Object oPackageDeclaration : this.ePackageDeclaration) {
-      sb.append(oPackageDeclaration.toString());
-    }
-    sb.append(System.getProperty("line.separator"));
-    sb.append("public class MCyclicReference {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  private final String pMacroName;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  private final MCyclicReference mCyclicReference = this;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  public MCyclicReference(String pMacroName) {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    if(pMacroName == null) throw new NullPointerException();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    this.pMacroName = pMacroName;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  String pMacroName() {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    return this.pMacroName;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  private String rMacroName() {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    return this.mCyclicReference.pMacroName();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  @Override");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  public String toString() {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    StringBuilder sb = new StringBuilder();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(new MObjectMacroErrorHead().toString());");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(System.getProperty(\"line.separator\"));");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(\"An instance of \\\"\");");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(rMacroName());");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(\"\\\" is a cyclic reference to the same instance.\");");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(System.getProperty(\"line.separator\"));");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    return sb.toString();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("}");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
+    private void setPPackageDeclaration(Macro pPackageDeclaration[]){
+        if(pPackageDeclaration == null){
+            throw ObjectMacroException.parameterNull("PackageDeclaration");
+        }
+
+        Macro macros[] = pPackageDeclaration;
+        this.list_PackageDeclaration = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "PackageDeclaration");
+            }
+
+            macro.apply(new InternalsInitializer("PackageDeclaration"){
+@Override
+void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
+
+        }
+});
+
+            this.list_PackageDeclaration[i++] = macro;
+
+        }
+    }
+
+    private String buildPackageDeclaration(){
+
+        StringBuilder sb0 = new StringBuilder();
+        Context local_context = PackageDeclarationContext;
+        Macro macros[] = this.list_PackageDeclaration;
+                boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(first){
+            sb0.append(LINE_SEPARATOR);
+    first = false;
+}
+            
+            sb0.append(macro.build(local_context));
+            i++;
+
+                    }
+
+        return sb0.toString();
+    }
+
+    private Macro[] getPackageDeclaration(){
+
+        return this.list_PackageDeclaration;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setCyclicReference(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MHeader minsert_1 = new MHeader();
+                        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(buildPackageDeclaration());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("public class MCyclicReference ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  private final String pMacroName;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  private final MCyclicReference mCyclicReference = this;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  public MCyclicReference(String pMacroName) ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    if(pMacroName == null) throw new NullPointerException();");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    this.pMacroName = pMacroName;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  String pMacroName() ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    return this.pMacroName;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  private String rMacroName() ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    return this.mCyclicReference.pMacroName();");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  @Override");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  public String toString() ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    StringBuilder sb = new StringBuilder();");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    sb.append(new MObjectMacroErrorHead().toString());");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    sb.append(System.getProperty(\"line.separator\"));");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    sb.append(\"An instance of \\\"\");");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    sb.append(rMacroName());");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    sb.append(\"\\\" is a cyclic reference to the same instance.\");");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    sb.append(System.getProperty(\"line.separator\"));");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    return sb.toString();");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("}");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

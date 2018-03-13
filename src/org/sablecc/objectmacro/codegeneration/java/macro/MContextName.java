@@ -2,29 +2,60 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MContextName {
+public class MContextName extends Macro{
 
-  private final String pContextName;
-  private final MContextName mContextName = this;
+    private String field_ContextName;
 
-  public MContextName(String pContextName) {
-    if(pContextName == null) throw new NullPointerException();
-    this.pContextName = pContextName;
-  }
+    public MContextName(String pContextName){
 
-  String pContextName() {
-    return this.pContextName;
-  }
+        this.setPContextName(pContextName);
+    }
 
-  private String rContextName() {
-    return this.mContextName.pContextName();
-  }
+    private void setPContextName(String pContextName){
+        if(pContextName == null){
+            throw ObjectMacroException.parameterNull("ContextName");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(rContextName());
-    return sb.toString();
-  }
+        this.field_ContextName = pContextName;
+    }
 
+    private String buildContextName(){
+
+        return this.field_ContextName;
+    }
+
+    private String getContextName(){
+
+        return this.field_ContextName;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setContextName(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(buildContextName());
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }
