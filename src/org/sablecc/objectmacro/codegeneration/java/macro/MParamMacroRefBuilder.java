@@ -2,124 +2,203 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+public class MParamMacroRefBuilder extends Macro{
 
-public class MParamMacroRefBuilder {
+    private String field_Name;
 
-  private final String pName;
-  private final MParamMacroRefBuilder mParamMacroRefBuilder = this;
-  private final List<Object> eContextName = new LinkedList<Object>();
+    private Macro list_ContextName[];
 
-  public MParamMacroRefBuilder(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
+    private final Context ContextNameContext = new Context();
 
-  public MContextName newContextName(String pContextName) {
-    MContextName lContextName = new MContextName(pContextName);
-    this.eContextName.add(lContextName);
-    return lContextName;
-  }
+    public MParamMacroRefBuilder(String pName, Macro pContextName[]){
 
-  String pName() {
-    return this.pName;
-  }
-
-  private String rName() {
-    return this.mParamMacroRefBuilder.pName();
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    private String build");
-    sb.append(rName());
-    sb.append("(){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        StringBuilder sb = new StringBuilder();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        Context local_context = ");
-    if(this.eContextName.size() == 0) {
-      sb.append("context");
+        this.setPName(pName);
+        this.setPContextName(pContextName);
     }
-    for(Object oContextName : this.eContextName) {
-      sb.append(oContextName.toString());
-    }
-    sb.append(";");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        List<Macro> macros = this.list_");
-    sb.append(rName());
-    sb.append(";");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        int i = 0;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        int nb_macros = macros.size();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        String expansion = null;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        if(this.");
-    sb.append(rName());
-    sb.append("None != null){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            sb.append(this.");
-    sb.append(rName());
-    sb.append("None.apply(i, \"\", nb_macros));");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        for(Macro macro : macros){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            expansion = macro.build(local_context);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            if(this.");
-    sb.append(rName());
-    sb.append("BeforeFirst != null){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("                expansion = this.");
-    sb.append(rName());
-    sb.append("BeforeFirst.apply(i, expansion, nb_macros);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            if(this.");
-    sb.append(rName());
-    sb.append("AfterLast != null){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("                expansion = this.");
-    sb.append(rName());
-    sb.append("AfterLast.apply(i, expansion, nb_macros);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            if(this.");
-    sb.append(rName());
-    sb.append("Separator != null){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("                expansion = this.");
-    sb.append(rName());
-    sb.append("Separator.apply(i, expansion, nb_macros);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            sb.append(expansion);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            i++;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        return sb.toString();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
+    private void setPName(String pName){
+        if(pName == null){
+            throw ObjectMacroException.parameterNull("Name");
+        }
+
+        this.field_Name = pName;
+    }
+
+    private void setPContextName(Macro pContextName[]){
+        if(pContextName == null){
+            throw ObjectMacroException.parameterNull("ContextName");
+        }
+
+        Macro macros[] = pContextName;
+        this.list_ContextName = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "ContextName");
+            }
+
+            macro.apply(new InternalsInitializer("ContextName"){
+@Override
+void setContextName(MContextName mContextName){
+
+        }
+});
+
+            this.list_ContextName[i++] = macro;
+
+        }
+    }
+
+    private String buildName(){
+
+        return this.field_Name;
+    }
+
+    private String buildContextName(){
+
+        StringBuilder sb0 = new StringBuilder();
+        Context local_context = ContextNameContext;
+        Macro macros[] = this.list_ContextName;
+        if(macros.length == 0){
+            sb0.append("context");
+}
+        boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+                        
+            sb0.append(macro.build(local_context));
+            i++;
+
+                    }
+
+        return sb0.toString();
+    }
+
+    private String getName(){
+
+        return this.field_Name;
+    }
+
+    private Macro[] getContextName(){
+
+        return this.list_ContextName;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setParamMacroRefBuilder(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    private String build");
+        sb0.append(buildName());
+        sb0.append("()");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        StringBuilder sb = new StringBuilder();");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        Context local_context = ");
+        sb0.append(buildContextName());
+        sb0.append(";");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        List<Macro> macros = this.list_");
+        sb0.append(buildName());
+        sb0.append(";");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        int i = 0;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        int nb_macros = macros.size();");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        String expansion = null;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        if(this.");
+        sb0.append(buildName());
+        sb0.append("None != null)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            sb.append(this.");
+        sb0.append(buildName());
+        sb0.append("None.apply(i, \"\", nb_macros));");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        for(Macro macro : macros)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            expansion = macro.build(local_context);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            if(this.");
+        sb0.append(buildName());
+        sb0.append("BeforeFirst != null)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("                expansion = this.");
+        sb0.append(buildName());
+        sb0.append("BeforeFirst.apply(i, expansion, nb_macros);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            if(this.");
+        sb0.append(buildName());
+        sb0.append("AfterLast != null)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("                expansion = this.");
+        sb0.append(buildName());
+        sb0.append("AfterLast.apply(i, expansion, nb_macros);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            if(this.");
+        sb0.append(buildName());
+        sb0.append("Separator != null)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("                expansion = this.");
+        sb0.append(buildName());
+        sb0.append("Separator.apply(i, expansion, nb_macros);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            sb.append(expansion);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            i++;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        return sb.toString();");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

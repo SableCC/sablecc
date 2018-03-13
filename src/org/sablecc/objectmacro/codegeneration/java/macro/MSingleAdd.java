@@ -2,73 +2,160 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+public class MSingleAdd extends Macro{
 
-public class MSingleAdd {
+    private String field_MacroName;
 
-  private final String pMacroName;
-  private final String pParamName;
-  private final MSingleAdd mSingleAdd = this;
-  private final List<Object> eIsBuilt = new LinkedList<Object>();
+    private String field_ParamName;
 
-  public MSingleAdd(String pMacroName, String pParamName) {
-    if(pMacroName == null) throw new NullPointerException();
-    this.pMacroName = pMacroName;
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    private Macro list_IsBuilt[];
 
-  public MIsBuilt newIsBuilt(String pMacroName) {
-    MIsBuilt lIsBuilt = new MIsBuilt(pMacroName);
-    this.eIsBuilt.add(lIsBuilt);
-    return lIsBuilt;
-  }
+    private final Context IsBuiltContext = new Context();
 
-  String pMacroName() {
-    return this.pMacroName;
-  }
+    public MSingleAdd(String pMacroName, String pParamName, Macro pIsBuilt[]){
 
-  String pParamName() {
-    return this.pParamName;
-  }
-
-  private String rParamName() {
-    return this.mSingleAdd.pParamName();
-  }
-
-  private String rMacroName() {
-    return this.mSingleAdd.pMacroName();
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    public void add");
-    sb.append(rParamName());
-    sb.append("(M");
-    sb.append(rMacroName());
-    sb.append(" macro){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        if(macro == null){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            throw ObjectMacroException.parameterNull(\"");
-    sb.append(rParamName());
-    sb.append("\");");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        ");
-    for(Object oIsBuilt : this.eIsBuilt) {
-      sb.append(oIsBuilt.toString());
+        this.setPMacroName(pMacroName);
+        this.setPParamName(pParamName);
+        this.setPIsBuilt(pIsBuilt);
     }
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        this.list_");
-    sb.append(rParamName());
-    sb.append(".add(macro);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
+    private void setPMacroName(String pMacroName){
+        if(pMacroName == null){
+            throw ObjectMacroException.parameterNull("MacroName");
+        }
+
+        this.field_MacroName = pMacroName;
+    }
+
+    private void setPParamName(String pParamName){
+        if(pParamName == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+
+        this.field_ParamName = pParamName;
+    }
+
+    private void setPIsBuilt(Macro pIsBuilt[]){
+        if(pIsBuilt == null){
+            throw ObjectMacroException.parameterNull("IsBuilt");
+        }
+
+        Macro macros[] = pIsBuilt;
+        this.list_IsBuilt = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "IsBuilt");
+            }
+
+            macro.apply(new InternalsInitializer("IsBuilt"){
+@Override
+void setIsBuilt(MIsBuilt mIsBuilt){
+
+                mIsBuilt.setMacroName(IsBuiltContext, getMacroName());
+}
+});
+
+            this.list_IsBuilt[i++] = macro;
+
+        }
+    }
+
+    private String buildMacroName(){
+
+        return this.field_MacroName;
+    }
+
+    private String buildParamName(){
+
+        return this.field_ParamName;
+    }
+
+    private String buildIsBuilt(){
+
+        StringBuilder sb0 = new StringBuilder();
+        Context local_context = IsBuiltContext;
+        Macro macros[] = this.list_IsBuilt;
+                boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+                        
+            sb0.append(macro.build(local_context));
+            i++;
+
+                    }
+
+        return sb0.toString();
+    }
+
+    private String getMacroName(){
+
+        return this.field_MacroName;
+    }
+
+    private String getParamName(){
+
+        return this.field_ParamName;
+    }
+
+    private Macro[] getIsBuilt(){
+
+        return this.list_IsBuilt;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setSingleAdd(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    public void add");
+        sb0.append(buildParamName());
+        sb0.append("(M");
+        sb0.append(buildMacroName());
+        sb0.append(" macro)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        if(macro == null)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            throw ObjectMacroException.parameterNull(\"");
+        sb0.append(buildParamName());
+        sb0.append("\");");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        ");
+        sb0.append(buildIsBuilt());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        this.list_");
+        sb0.append(buildParamName());
+        sb0.append(".add(macro);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

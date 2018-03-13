@@ -2,36 +2,66 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MInitInternalValue {
+public class MInitInternalValue extends Macro{
 
-  private final String pParamName;
-  private final MInitInternalValue mInitInternalValue = this;
+    private String field_ParamName;
 
-  public MInitInternalValue(String pParamName) {
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    public MInitInternalValue(String pParamName){
 
-  String pParamName() {
-    return this.pParamName;
-  }
+        this.setPParamName(pParamName);
+    }
 
-  private String rParamName() {
-    return this.mInitInternalValue.pParamName();
-  }
+    private void setPParamName(String pParamName){
+        if(pParamName == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    this.");
-    sb.append(rParamName());
-    sb.append("Value = new InternalValue(this.list_");
-    sb.append(rParamName());
-    sb.append(", this.");
-    sb.append(rParamName());
-    sb.append("Context);");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.field_ParamName = pParamName;
+    }
 
+    private String buildParamName(){
+
+        return this.field_ParamName;
+    }
+
+    private String getParamName(){
+
+        return this.field_ParamName;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setInitInternalValue(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    this.");
+        sb0.append(buildParamName());
+        sb0.append("Value = new InternalValue(this.list_");
+        sb0.append(buildParamName());
+        sb0.append(", this.");
+        sb0.append(buildParamName());
+        sb0.append("Context);");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

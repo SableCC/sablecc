@@ -2,30 +2,61 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MMacroArg {
+public class MMacroArg extends Macro{
 
-  private final String pName;
-  private final MMacroArg mMacroArg = this;
+    private String field_Name;
 
-  public MMacroArg(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
+    public MMacroArg(String pName){
 
-  String pName() {
-    return this.pName;
-  }
+        this.setPName(pName);
+    }
 
-  private String rName() {
-    return this.mMacroArg.pName();
-  }
+    private void setPName(String pName){
+        if(pName == null){
+            throw ObjectMacroException.parameterNull("Name");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("list_");
-    sb.append(rName());
-    return sb.toString();
-  }
+        this.field_Name = pName;
+    }
 
+    private String buildName(){
+
+        return this.field_Name;
+    }
+
+    private String getName(){
+
+        return this.field_Name;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setMacroArg(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("list_");
+        sb0.append(buildName());
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

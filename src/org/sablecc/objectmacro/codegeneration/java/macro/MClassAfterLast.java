@@ -2,69 +2,142 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+public class MClassAfterLast extends Macro{
 
-public class MClassAfterLast {
+    private Macro list_PackageDeclaration[];
 
-  private final List<Object> ePackageDeclaration = new LinkedList<Object>();
+    private final Context PackageDeclarationContext = new Context();
 
-  public MClassAfterLast() {
-  }
+    public MClassAfterLast(Macro pPackageDeclaration[]){
 
-  public MPackageDeclaration newPackageDeclaration(String pPackageName) {
-    MPackageDeclaration lPackageDeclaration = new MPackageDeclaration(pPackageName);
-    this.ePackageDeclaration.add(lPackageDeclaration);
-    return lPackageDeclaration;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MHeader().toString());
-    if(this.ePackageDeclaration.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
+        this.setPPackageDeclaration(pPackageDeclaration);
     }
-    for(Object oPackageDeclaration : this.ePackageDeclaration) {
-      sb.append(oPackageDeclaration.toString());
-    }
-    sb.append(System.getProperty("line.separator"));
-    sb.append("class DAfterLast");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        extends Directive {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    DAfterLast(String value) {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        super(value);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    @Override");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    String apply(");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            Integer index,");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            String macro,");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            Integer list_size) {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        if(index == list_size - 1){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            return macro.concat(this.value);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        return macro;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("}");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
+    private void setPPackageDeclaration(Macro pPackageDeclaration[]){
+        if(pPackageDeclaration == null){
+            throw ObjectMacroException.parameterNull("PackageDeclaration");
+        }
+
+        Macro macros[] = pPackageDeclaration;
+        this.list_PackageDeclaration = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "PackageDeclaration");
+            }
+
+            macro.apply(new InternalsInitializer("PackageDeclaration"){
+@Override
+void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
+
+        }
+});
+
+            this.list_PackageDeclaration[i++] = macro;
+
+        }
+    }
+
+    private String buildPackageDeclaration(){
+
+        StringBuilder sb0 = new StringBuilder();
+        Context local_context = PackageDeclarationContext;
+        Macro macros[] = this.list_PackageDeclaration;
+                boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(first){
+            sb0.append(LINE_SEPARATOR);
+    first = false;
+}
+            
+            sb0.append(macro.build(local_context));
+            i++;
+
+                    }
+
+        return sb0.toString();
+    }
+
+    private Macro[] getPackageDeclaration(){
+
+        return this.list_PackageDeclaration;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setClassAfterLast(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MHeader minsert_1 = new MHeader();
+                        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(buildPackageDeclaration());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("class DAfterLast");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        extends Directive ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    DAfterLast(String value) ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        super(value);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    @Override");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    String apply(");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            Integer index,");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            String macro,");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            Integer list_size) ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        if(index == list_size - 1)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            return macro.concat(this.value);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        return macro;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("}");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }
