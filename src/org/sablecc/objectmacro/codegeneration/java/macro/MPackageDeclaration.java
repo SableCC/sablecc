@@ -2,40 +2,62 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MPackageDeclaration {
+public class MPackageDeclaration extends Macro{
 
-    private final String pPackageName;
+    private String field_PackageName;
 
-    private final MPackageDeclaration mPackageDeclaration = this;
+    public MPackageDeclaration(String pPackageName){
 
-    public MPackageDeclaration(
-            String pPackageName) {
+        this.setPPackageName(pPackageName);
+    }
 
-        if (pPackageName == null) {
-            throw new NullPointerException();
+    private void setPPackageName(String pPackageName){
+        if(pPackageName == null){
+            throw ObjectMacroException.parameterNull("PackageName");
         }
-        this.pPackageName = pPackageName;
+
+        this.field_PackageName = pPackageName;
     }
 
-    String pPackageName() {
+    private String buildPackageName(){
 
-        return this.pPackageName;
+        return this.field_PackageName;
     }
 
-    private String rPackageName() {
+    private String getPackageName(){
 
-        return this.mPackageDeclaration.pPackageName();
+        return this.field_PackageName;
     }
 
     @Override
-    public String toString() {
+    void apply(
+            InternalsInitializer internalsInitializer){
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("package ");
-        sb.append(rPackageName());
-        sb.append(";");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+        internalsInitializer.setPackageDeclaration(this);
     }
 
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("package ");
+        sb0.append(buildPackageName());
+        sb0.append(";");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

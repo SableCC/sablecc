@@ -2,40 +2,141 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MParamInsertPart {
+public class MParamInsertPart extends Macro{
 
-    private final String pName;
+    private String field_ParamName;
 
-    private final MParamInsertPart mParamInsertPart = this;
+    private String field_IndexBuilder;
 
-    public MParamInsertPart(
-            String pName) {
+    private Macro list_ContextArg[];
 
-        if (pName == null) {
-            throw new NullPointerException();
+    private final Context ContextArgContext = new Context();
+
+    public MParamInsertPart(String pParamName, String pIndexBuilder, Macro pContextArg[]){
+
+        this.setPParamName(pParamName);
+        this.setPIndexBuilder(pIndexBuilder);
+        this.setPContextArg(pContextArg);
+    }
+
+    private void setPParamName(String pParamName){
+        if(pParamName == null){
+            throw ObjectMacroException.parameterNull("ParamName");
         }
-        this.pName = pName;
+
+        this.field_ParamName = pParamName;
     }
 
-    String pName() {
+    private void setPIndexBuilder(String pIndexBuilder){
+        if(pIndexBuilder == null){
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
 
-        return this.pName;
+        this.field_IndexBuilder = pIndexBuilder;
     }
 
-    private String rName() {
+    private void setPContextArg(Macro pContextArg[]){
+        if(pContextArg == null){
+            throw ObjectMacroException.parameterNull("ContextArg");
+        }
 
-        return this.mParamInsertPart.pName();
+        Macro macros[] = pContextArg;
+        this.list_ContextArg = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "ContextArg");
+            }
+
+            macro.apply(new InternalsInitializer("ContextArg"){
+@Override
+void setContextArg(MContextArg mContextArg){
+
+        }
+});
+
+            this.list_ContextArg[i++] = macro;
+
+        }
+    }
+
+    private String buildParamName(){
+
+        return this.field_ParamName;
+    }
+
+    private String buildIndexBuilder(){
+
+        return this.field_IndexBuilder;
+    }
+
+    private String buildContextArg(){
+
+        StringBuilder sb0 = new StringBuilder();
+        Context local_context = ContextArgContext;
+        Macro macros[] = this.list_ContextArg;
+                boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+                        
+            sb0.append(macro.build(local_context));
+            i++;
+
+                    }
+
+        return sb0.toString();
+    }
+
+    private String getParamName(){
+
+        return this.field_ParamName;
+    }
+
+    private String getIndexBuilder(){
+
+        return this.field_IndexBuilder;
+    }
+
+    private Macro[] getContextArg(){
+
+        return this.list_ContextArg;
     }
 
     @Override
-    public String toString() {
+    void apply(
+            InternalsInitializer internalsInitializer){
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("    sb.append(r");
-        sb.append(rName());
-        sb.append("());");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+        internalsInitializer.setParamInsertPart(this);
     }
 
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("        sb");
+        sb0.append(buildIndexBuilder());
+        sb0.append(".append(build");
+        sb0.append(buildParamName());
+        sb0.append("(");
+        sb0.append(buildContextArg());
+        sb0.append("));");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

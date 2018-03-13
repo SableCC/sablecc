@@ -2,19 +2,62 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MEolPart {
+public class MEolPart extends Macro{
 
-    public MEolPart() {
+    private String field_IndexBuilder;
 
+    public MEolPart(String pIndexBuilder){
+
+        this.setPIndexBuilder(pIndexBuilder);
+    }
+
+    private void setPIndexBuilder(String pIndexBuilder){
+        if(pIndexBuilder == null){
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+
+        this.field_IndexBuilder = pIndexBuilder;
+    }
+
+    private String buildIndexBuilder(){
+
+        return this.field_IndexBuilder;
+    }
+
+    private String getIndexBuilder(){
+
+        return this.field_IndexBuilder;
     }
 
     @Override
-    public String toString() {
+    void apply(
+            InternalsInitializer internalsInitializer){
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("    sb.append(System.getProperty(\"line.separator\"));");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+        internalsInitializer.setEolPart(this);
     }
 
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("        sb");
+        sb0.append(buildIndexBuilder());
+        sb0.append(".append(LINE_SEPARATOR);");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

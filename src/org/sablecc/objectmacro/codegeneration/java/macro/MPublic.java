@@ -2,18 +2,38 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MPublic {
+public class MPublic extends Macro{
 
-    public MPublic() {
-
+    public MPublic(){
     }
 
     @Override
-    public String toString() {
+    void apply(
+            InternalsInitializer internalsInitializer){
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("public ");
-        return sb.toString();
+        internalsInitializer.setPublic(this);
     }
 
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("public");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

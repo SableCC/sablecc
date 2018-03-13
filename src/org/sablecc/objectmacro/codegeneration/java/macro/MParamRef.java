@@ -2,65 +2,122 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MParamRef {
+public class MParamRef extends Macro{
 
-    private final String pName;
+    private String field_Name;
 
-    private final String pContext;
+    private Macro list_ListContextArg[];
 
-    private final MParamRef mParamRef = this;
+    private final Context ListContextArgContext = new Context();
 
-    public MParamRef(
-            String pName,
-            String pContext) {
+    public MParamRef(String pName, Macro pListContextArg[]){
 
-        if (pName == null) {
-            throw new NullPointerException();
+        this.setPName(pName);
+        this.setPListContextArg(pListContextArg);
+    }
+
+    private void setPName(String pName){
+        if(pName == null){
+            throw ObjectMacroException.parameterNull("Name");
         }
-        this.pName = pName;
-        if (pContext == null) {
-            throw new NullPointerException();
+
+        this.field_Name = pName;
+    }
+
+    private void setPListContextArg(Macro pListContextArg[]){
+        if(pListContextArg == null){
+            throw ObjectMacroException.parameterNull("ListContextArg");
         }
-        this.pContext = pContext;
+
+        Macro macros[] = pListContextArg;
+        this.list_ListContextArg = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "ListContextArg");
+            }
+
+            macro.apply(new InternalsInitializer("ListContextArg"){
+@Override
+void setContextArg(MContextArg mContextArg){
+
+        }
+@Override
+void setContextName(MContextName mContextName){
+
+        }
+});
+
+            this.list_ListContextArg[i++] = macro;
+
+        }
     }
 
-    String pName() {
+    private String buildName(){
 
-        return this.pName;
+        return this.field_Name;
     }
 
-    String pContext() {
+    private String buildListContextArg(){
 
-        return this.pContext;
+        StringBuilder sb0 = new StringBuilder();
+        Context local_context = ListContextArgContext;
+        Macro macros[] = this.list_ListContextArg;
+                boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+                        
+            sb0.append(macro.build(local_context));
+            i++;
+
+                    }
+
+        return sb0.toString();
     }
 
-    private String rName() {
+    private String getName(){
 
-        return this.mParamRef.pName();
+        return this.field_Name;
     }
 
-    private String rContext() {
+    private Macro[] getListContextArg(){
 
-        return this.mParamRef.pContext();
+        return this.list_ListContextArg;
     }
 
     @Override
-    public String toString() {
+    void apply(
+            InternalsInitializer internalsInitializer){
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("  private String r");
-        sb.append(rName());
-        sb.append("() {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    return this.m");
-        sb.append(rContext());
-        sb.append(".p");
-        sb.append(rName());
-        sb.append("();");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("  }");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+        internalsInitializer.setParamRef(this);
     }
 
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("get");
+        sb0.append(buildName());
+        sb0.append("(");
+        sb0.append(buildListContextArg());
+        sb0.append(")");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }
