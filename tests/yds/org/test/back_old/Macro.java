@@ -5,11 +5,11 @@ import java.util.*;
 
 public abstract class Macro {
 
-    final static String LINE_SEPARATOR = System.getProperty("line.separator");
+    public final static String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    BuildState build_state = null;
+    public String expansion;
 
-    final Map<Context, BuildState> build_states = new LinkedHashMap<>();
+    public Map<Context, String> expansions = new LinkedHashMap<>();
 
     public String build(){
 

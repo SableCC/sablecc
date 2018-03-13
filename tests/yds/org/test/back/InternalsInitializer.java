@@ -11,47 +11,8 @@ public class InternalsInitializer {
         this._paramName = paramName;
     }
 
-  void setCommaSeparator(MCommaSeparator mCommaSeparator){
-      throw ObjectMacroException.incorrectType("MCommaSeparator", this._paramName);
-  }
-  void setEmptyMacro(MEmptyMacro mEmptyMacro){
-      throw ObjectMacroException.incorrectType("MEmptyMacro", this._paramName);
-  }
-  void setSemicolonSeparator(MSemicolonSeparator mSemicolonSeparator){
-      throw ObjectMacroException.incorrectType("MSemicolonSeparator", this._paramName);
-  }
-  void setA(MA mA){
-      throw ObjectMacroException.incorrectType("MA", this._paramName);
-  }
-  void setB(MB mB){
-      throw ObjectMacroException.incorrectType("MB", this._paramName);
-  }
-  void setC(MC mC){
-      throw ObjectMacroException.incorrectType("MC", this._paramName);
-  }
-  void setD(MD mD){
-      throw ObjectMacroException.incorrectType("MD", this._paramName);
-  }
   void setE(ME mE){
       throw ObjectMacroException.incorrectType("ME", this._paramName);
-  }
-  void setF(MF mF){
-      throw ObjectMacroException.incorrectType("MF", this._paramName);
-  }
-  void setG(MG mG){
-      throw ObjectMacroException.incorrectType("MG", this._paramName);
-  }
-  void setH(MH mH){
-      throw ObjectMacroException.incorrectType("MH", this._paramName);
-  }
-  void setI(MI mI){
-      throw ObjectMacroException.incorrectType("MI", this._paramName);
-  }
-  void setJ(MJ mJ){
-      throw ObjectMacroException.incorrectType("MJ", this._paramName);
-  }
-  void setK(MK mK){
-      throw ObjectMacroException.incorrectType("MK", this._paramName);
   }
 
 }

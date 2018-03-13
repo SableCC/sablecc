@@ -2,128 +2,108 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
 public class MParamInsertPart extends Macro{
 
     private String field_ParamName;
+
     private String field_IndexBuilder;
-    private final List<Macro> list_ContextArg;
-    private DSeparator ContextArgSeparator;
 
-    private DBeforeFirst ContextArgBeforeFirst;
-
-    private DAfterLast ContextArgAfterLast;
-
-    private DNone ContextArgNone;
-    private final InternalValue ContextArgValue;
+    private Macro list_ContextArg[];
 
     private final Context ContextArgContext = new Context();
 
-    public MParamInsertPart(String pParamName, String pIndexBuilder){
+    public MParamInsertPart(String pParamName, String pIndexBuilder, Macro pContextArg[]){
 
-        this.setPParamName(pParamName);        this.setPIndexBuilder(pIndexBuilder);
-
-    this.list_ContextArg = new ArrayList<>();
-
-    this.ContextArgValue = new InternalValue(this.list_ContextArg, this.ContextArgContext);
+        this.setPParamName(pParamName);
+        this.setPIndexBuilder(pIndexBuilder);
+        this.setPContextArg(pContextArg);
     }
 
-    private void setPParamName( String pParamName ){
+    private void setPParamName(String pParamName){
         if(pParamName == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
 
         this.field_ParamName = pParamName;
     }
-    private void setPIndexBuilder( String pIndexBuilder ){
+
+    private void setPIndexBuilder(String pIndexBuilder){
         if(pIndexBuilder == null){
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
 
         this.field_IndexBuilder = pIndexBuilder;
     }
-    public void addContextArg(MContextArg macro){
-        if(macro == null){
+
+    private void setPContextArg(Macro pContextArg[]){
+        if(pContextArg == null){
             throw ObjectMacroException.parameterNull("ContextArg");
         }
-                if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ContextArg");
-        }
 
-        this.list_ContextArg.add(macro);
+        Macro macros[] = pContextArg;
+        this.list_ContextArg = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "ContextArg");
+            }
+
+            macro.apply(new InternalsInitializer("ContextArg"){
+@Override
+void setContextArg(MContextArg mContextArg){
+
+        }
+});
+
+            this.list_ContextArg[i++] = macro;
+
+        }
     }
 
     private String buildParamName(){
 
         return this.field_ParamName;
     }
+
     private String buildIndexBuilder(){
 
         return this.field_IndexBuilder;
     }
+
     private String buildContextArg(){
-        StringBuilder sb = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
         Context local_context = ContextArgContext;
-        List<Macro> macros = this.list_ContextArg;
-
+        Macro macros[] = this.list_ContextArg;
+                boolean first = true;
         int i = 0;
-        int nb_macros = macros.size();
-        String expansion = null;
-
-        if(this.ContextArgNone != null){
-            sb.append(this.ContextArgNone.apply(i, "", nb_macros));
-        }
 
         for(Macro macro : macros){
-            expansion = macro.build(local_context);
-
-            if(this.ContextArgBeforeFirst != null){
-                expansion = this.ContextArgBeforeFirst.apply(i, expansion, nb_macros);
-            }
-
-            if(this.ContextArgAfterLast != null){
-                expansion = this.ContextArgAfterLast.apply(i, expansion, nb_macros);
-            }
-
-            if(this.ContextArgSeparator != null){
-                expansion = this.ContextArgSeparator.apply(i, expansion, nb_macros);
-            }
-
-            sb.append(expansion);
+                        
+            sb0.append(macro.build(local_context));
             i++;
-        }
 
-        return sb.toString();
+                    }
+
+        return sb0.toString();
     }
 
     private String getParamName(){
 
         return this.field_ParamName;
     }
+
     private String getIndexBuilder(){
 
         return this.field_IndexBuilder;
     }
-    private InternalValue getContextArg(){
-        return this.ContextArgValue;
-    }
-    private void initContextArgInternals(Context context){
-        for(Macro macro : this.list_ContextArg){
-            macro.apply(new InternalsInitializer("ContextArg"){
-@Override
-void setContextArg(MContextArg mContextArg){
 
-    
-    
-}
-});
-        }
+    private Macro[] getContextArg(){
+
+        return this.list_ContextArg;
     }
 
-    private void initContextArgDirectives(){
-        
-    }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -131,25 +111,14 @@ void setContextArg(MContextArg mContextArg){
         internalsInitializer.setParamInsertPart(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        String local_expansion = this.expansion;
 
-        if(buildState == null){
-            buildState = new BuildState();
+        if(local_expansion != null){
+            return local_expansion;
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("ParamInsertPart");
-        }
-        else{
-            return buildState.getExpansion();
-        }
-        this.build_state = buildState;
-
-        initContextArgDirectives();
-
-        initContextArgInternals(null);
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -161,8 +130,9 @@ void setContextArg(MContextArg mContextArg){
         sb0.append(buildContextArg());
         sb0.append("));");
 
-        buildState.setExpansion(sb0.toString());
-        return sb0.toString();
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
     }
 
     @Override

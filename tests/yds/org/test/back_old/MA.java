@@ -2,48 +2,22 @@
 
 package org.test.back_old;
 
-import java.util.*;
-
 public class MA extends Macro{
 
     private String field_X;
 
-    private final List<Macro> list_Y;
+    private Macro list_Y[];
 
-    private DSeparator YSeparator;
-
-    private DBeforeFirst YBeforeFirst;
-
-    private DAfterLast YAfterLast;
-
-    private DNone YNone;
-
-    private final InternalValue YValue;
-
-    private final List<Macro> list_Z;
-
-    private DSeparator ZSeparator;
-
-    private DBeforeFirst ZBeforeFirst;
-
-    private DAfterLast ZAfterLast;
-
-    private DNone ZNone;
-
-    private final InternalValue ZValue;
+    private Macro list_Z[];
 
     private final Context YContext = new Context();
     private final Context ZContext = new Context();
 
-    public MA(String pX){
+    public MA(String pX, Macro pY[], Macro pZ[]){
 
         this.setPX(pX);
-
-    this.list_Y = new ArrayList<>();
-    this.list_Z = new ArrayList<>();
-
-    this.YValue = new InternalValue(this.list_Y, this.YContext);
-    this.ZValue = new InternalValue(this.list_Z, this.ZContext);
+        this.setPZ(pZ);
+        this.setPY(pY);
     }
 
     private void setPX(String pX){
@@ -54,26 +28,58 @@ public class MA extends Macro{
         this.field_X = pX;
     }
 
-    public void addY(MB macro){
-        if(macro == null){
+    private void setPY(Macro pY[]){
+        if(pY == null){
             throw ObjectMacroException.parameterNull("Y");
         }
-                if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("A");
-        }
 
-        this.list_Y.add(macro);
+        Macro macros[] = pY;
+        this.list_Y = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "Y");
+            }
+
+            macro.apply(new InternalsInitializer("Y"){
+ 
+});
+
+            this.list_Y[i++] = macro;
+
+        }
     }
 
-    public void addZ(MC macro){
-        if(macro == null){
+    private void setPZ(Macro pZ[]){
+        if(pZ == null){
             throw ObjectMacroException.parameterNull("Z");
         }
-                if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("A");
-        }
 
-        this.list_Z.add(macro);
+        Macro macros[] = pZ;
+        this.list_Z = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "Z");
+            }
+
+            macro.apply(new InternalsInitializer("Z"){
+@Override
+void setC(MC mC){
+
+            StringBuilder sb1 = new StringBuilder();
+
+        sb1.append("first argument of c in a");
+            mC.setY(ZContext, sb1.toString());
+        mC.setZ(ZContext, getX());
+}
+});
+
+            this.list_Z[i++] = macro;
+
+        }
     }
 
     private String buildX(){
@@ -82,73 +88,45 @@ public class MA extends Macro{
     }
 
     private String buildY(){
-        StringBuilder sb = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
         Context local_context = YContext;
-        List<Macro> macros = this.list_Y;
-
+        Macro macros[] = this.list_Y;
+                boolean first = true;
         int i = 0;
-        int nb_macros = macros.size();
-        String expansion = null;
-
-        if(this.YNone != null){
-            sb.append(this.YNone.apply(i, "", nb_macros));
-        }
 
         for(Macro macro : macros){
-            expansion = macro.build(local_context);
+                        if(first) {
+  first = false;
+}
+else {
+           sb0.append(LINE_SEPARATOR);
+}
 
-            if(this.YBeforeFirst != null){
-                expansion = this.YBeforeFirst.apply(i, expansion, nb_macros);
-            }
-
-            if(this.YAfterLast != null){
-                expansion = this.YAfterLast.apply(i, expansion, nb_macros);
-            }
-
-            if(this.YSeparator != null){
-                expansion = this.YSeparator.apply(i, expansion, nb_macros);
-            }
-
-            sb.append(expansion);
+            sb0.append(macro.build(local_context));
             i++;
-        }
 
-        return sb.toString();
+                    }
+
+        return sb0.toString();
     }
 
     private String buildZ(){
-        StringBuilder sb = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
         Context local_context = ZContext;
-        List<Macro> macros = this.list_Z;
-
+        Macro macros[] = this.list_Z;
+                boolean first = true;
         int i = 0;
-        int nb_macros = macros.size();
-        String expansion = null;
-
-        if(this.ZNone != null){
-            sb.append(this.ZNone.apply(i, "", nb_macros));
-        }
 
         for(Macro macro : macros){
-            expansion = macro.build(local_context);
 
-            if(this.ZBeforeFirst != null){
-                expansion = this.ZBeforeFirst.apply(i, expansion, nb_macros);
-            }
-
-            if(this.ZAfterLast != null){
-                expansion = this.ZAfterLast.apply(i, expansion, nb_macros);
-            }
-
-            if(this.ZSeparator != null){
-                expansion = this.ZSeparator.apply(i, expansion, nb_macros);
-            }
-
-            sb.append(expansion);
+            sb0.append(macro.build(local_context));
             i++;
-        }
 
-        return sb.toString();
+                    }
+
+        return sb0.toString();
     }
 
     private String getX(){
@@ -156,51 +134,16 @@ public class MA extends Macro{
         return this.field_X;
     }
 
-    private InternalValue getY(){
-        return this.YValue;
+    private Macro[] getY(){
+
+        return this.list_Y;
     }
 
-    private InternalValue getZ(){
-        return this.ZValue;
-    }
-    private void initYInternals(Context context){
-        for(Macro macro : this.list_Y){
-            macro.apply(new InternalsInitializer("Y"){
-@Override
-void setB(MB mB){
+    private Macro[] getZ(){
 
-                mB.setP(YContext, getZ());
-}
-});
-        }
+        return this.list_Z;
     }
 
-    private void initZInternals(Context context){
-        for(Macro macro : this.list_Z){
-            macro.apply(new InternalsInitializer("Z"){
-@Override
-void setC(MC mC){
-
-            StringBuilder sb1 = new StringBuilder();
-
-        sb1.append("first argument of c in a");
-            mC.setQ(ZContext, sb1.toString());
-        mC.setR(ZContext, getX());
-}
-});
-        }
-    }
-
-    private void initYDirectives(){
-        
-        StringBuilder sb0 = new StringBuilder();
-                sb0.append(LINE_SEPARATOR);
-        this.YSeparator = new DSeparator(sb0.toString());
-        this.YValue.setSeparator(this.YSeparator);
-            }
-
-    private void initZDirectives(){
-            }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -211,34 +154,19 @@ void setC(MC mC){
     @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        String local_expansion = this.expansion;
 
-        if(buildState == null){
-            buildState = new BuildState();
+        if(local_expansion != null){
+            return local_expansion;
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("A");
-        }
-        else{
-            return buildState.getExpansion();
-        }
-        this.build_state = buildState;
 
-                initYDirectives();
-                initZDirectives();
-        
-                initYInternals(null);
-                initZInternals(null);
-        
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append("============= A ===============");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("Y : ");
         sb0.append(buildY());
 
-        buildState.setExpansion(sb0.toString());
-        return sb0.toString();
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
     }
 
     @Override

@@ -2,21 +2,10 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
 public class MContextParam extends Macro{
 
-
-
     public MContextParam(){
-
-
-
     }
-
-
-
-
 
     @Override
     void apply(
@@ -25,32 +14,22 @@ public class MContextParam extends Macro{
         internalsInitializer.setContextParam(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        String local_expansion = this.expansion;
 
-        if(buildState == null){
-            buildState = new BuildState();
+        if(local_expansion != null){
+            return local_expansion;
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("ContextParam");
-        }
-        else{
-            return buildState.getExpansion();
-        }
-        this.build_state = buildState;
-
-        
-
-        
 
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("Context context");
 
-        buildState.setExpansion(sb0.toString());
-        return sb0.toString();
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
     }
 
     @Override

@@ -53,16 +53,4 @@ public class ObjectMacroException
         return new ObjectMacroException(new MParameterNull(paramName).toString());
     }
 
-    static ObjectMacroException cyclicReference(
-            String macroName){
-
-        return new ObjectMacroException(new MCyclicReference(macroName).toString());
-    }
-
-    static ObjectMacroException cannotModify(
-            String macroName){
-
-        return new ObjectMacroException(new MCannotModify(macroName).toString());
-    }
-
 }

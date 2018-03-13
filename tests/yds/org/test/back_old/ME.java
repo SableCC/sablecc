@@ -6,16 +6,16 @@ import java.util.*;
 
 public class ME extends Macro{
 
-    private Map<Context, String> field_S = new LinkedHashMap<>();
+    private Map<Context, String> field_X = new LinkedHashMap<>();
 
-    private Map<Context, String> field_T = new LinkedHashMap<>();
+    private Map<Context, String> field_Y = new LinkedHashMap<>();
 
-    private Map<Context, String> field_U = new LinkedHashMap<>();
+    private Map<Context, String> field_Z = new LinkedHashMap<>();
 
     public ME(){
     }
 
-    void setS(
+    void setX(
             Context context,
             String value) {
 
@@ -23,10 +23,10 @@ public class ME extends Macro{
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_S.put(context, value);
+        this.field_X.put(context, value);
     }
 
-    void setT(
+    void setY(
             Context context,
             String value) {
 
@@ -34,10 +34,10 @@ public class ME extends Macro{
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_T.put(context, value);
+        this.field_Y.put(context, value);
     }
 
-    void setU(
+    void setZ(
             Context context,
             String value) {
 
@@ -45,38 +45,39 @@ public class ME extends Macro{
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_U.put(context, value);
+        this.field_Z.put(context, value);
     }
 
-    private String buildS(Context context){
+    private String buildX(Context context){
 
-        return this.field_S.get(context);
+        return this.field_X.get(context);
     }
 
-    private String buildT(Context context){
+    private String buildY(Context context){
 
-        return this.field_T.get(context);
+        return this.field_Y.get(context);
     }
 
-    private String buildU(Context context){
+    private String buildZ(Context context){
 
-        return this.field_U.get(context);
+        return this.field_Z.get(context);
     }
 
-    private String getS(Context context){
+    private String getX(Context context){
 
-        return this.field_S.get(context);
+        return this.field_X.get(context);
     }
 
-    private String getT(Context context){
+    private String getY(Context context){
 
-        return this.field_T.get(context);
+        return this.field_Y.get(context);
     }
 
-    private String getU(Context context){
+    private String getZ(Context context){
 
-        return this.field_U.get(context);
+        return this.field_Z.get(context);
     }
+
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -87,30 +88,22 @@ public class ME extends Macro{
     @Override
      String build(Context context){
 
-        BuildState buildState = this.build_states.get(context);
+        String local_expansion = this.expansions.get(context);
 
-        if(buildState == null){
-            buildState = new BuildState();
+        if(local_expansion != null){
+            return local_expansion;
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("E");
-        }
-        else{
-            return buildState.getExpansion();
-        }
-        this.build_states.put(context, buildState);
 
-        
-        
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(buildS(context));
+        sb0.append(buildX(context));
         sb0.append(LINE_SEPARATOR);
-        sb0.append(buildT(context));
+        sb0.append(buildY(context));
         sb0.append(LINE_SEPARATOR);
-        sb0.append(buildU(context));
+        sb0.append(buildZ(context));
 
-        buildState.setExpansion(sb0.toString());
-        return sb0.toString();
+        local_expansion = sb0.toString();
+        this.expansions.put(context, local_expansion);
+        return local_expansion;
     }
 }

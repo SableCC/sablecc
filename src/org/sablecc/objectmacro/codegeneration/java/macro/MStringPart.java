@@ -2,29 +2,27 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
 public class MStringPart extends Macro{
 
     private String field_String;
-    private String field_IndexBuilder;
 
+    private String field_IndexBuilder;
 
     public MStringPart(String pString, String pIndexBuilder){
 
-        this.setPString(pString);        this.setPIndexBuilder(pIndexBuilder);
-
-
+        this.setPString(pString);
+        this.setPIndexBuilder(pIndexBuilder);
     }
 
-    private void setPString( String pString ){
+    private void setPString(String pString){
         if(pString == null){
             throw ObjectMacroException.parameterNull("String");
         }
 
         this.field_String = pString;
     }
-    private void setPIndexBuilder( String pIndexBuilder ){
+
+    private void setPIndexBuilder(String pIndexBuilder){
         if(pIndexBuilder == null){
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
@@ -36,6 +34,7 @@ public class MStringPart extends Macro{
 
         return this.field_String;
     }
+
     private String buildIndexBuilder(){
 
         return this.field_IndexBuilder;
@@ -45,11 +44,11 @@ public class MStringPart extends Macro{
 
         return this.field_String;
     }
+
     private String getIndexBuilder(){
 
         return this.field_IndexBuilder;
     }
-
 
     @Override
     void apply(
@@ -58,25 +57,14 @@ public class MStringPart extends Macro{
         internalsInitializer.setStringPart(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        String local_expansion = this.expansion;
 
-        if(buildState == null){
-            buildState = new BuildState();
+        if(local_expansion != null){
+            return local_expansion;
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("StringPart");
-        }
-        else{
-            return buildState.getExpansion();
-        }
-        this.build_state = buildState;
-
-        
-
-        
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -86,8 +74,9 @@ public class MStringPart extends Macro{
         sb0.append(buildString());
         sb0.append("\");");
 
-        buildState.setExpansion(sb0.toString());
-        return sb0.toString();
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
     }
 
     @Override

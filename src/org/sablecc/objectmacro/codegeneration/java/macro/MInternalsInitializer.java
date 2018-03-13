@@ -2,172 +2,129 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
 public class MInternalsInitializer extends Macro{
 
-    private final List<Macro> list_PackageDeclaration;
-    private DSeparator PackageDeclarationSeparator;
+    private Macro list_PackageDeclaration[];
 
-    private DBeforeFirst PackageDeclarationBeforeFirst;
+    private Macro list_ListParentInternalSetters[];
 
-    private DAfterLast PackageDeclarationAfterLast;
+    private final Context PackageDeclarationContext = new Context();
+    private final Context ListParentInternalSettersContext = new Context();
 
-    private DNone PackageDeclarationNone;
-    private final InternalValue PackageDeclarationValue;
-    private final List<Macro> list_ListParentInternalSetters;
-    private DSeparator ListParentInternalSettersSeparator;
+    public MInternalsInitializer(Macro pPackageDeclaration[], Macro pListParentInternalSetters[]){
 
-    private DBeforeFirst ListParentInternalSettersBeforeFirst;
-
-    private DAfterLast ListParentInternalSettersAfterLast;
-
-    private DNone ListParentInternalSettersNone;
-    private final InternalValue ListParentInternalSettersValue;
-
-    private final Context PackageDeclarationContext = new Context();    private final Context ListParentInternalSettersContext = new Context();
-
-    public MInternalsInitializer(){
-
-
-    this.list_PackageDeclaration = new ArrayList<>();    this.list_ListParentInternalSetters = new ArrayList<>();
-
-    this.PackageDeclarationValue = new InternalValue(this.list_PackageDeclaration, this.PackageDeclarationContext);    this.ListParentInternalSettersValue = new InternalValue(this.list_ListParentInternalSetters, this.ListParentInternalSettersContext);
+        this.setPPackageDeclaration(pPackageDeclaration);
+        this.setPListParentInternalSetters(pListParentInternalSetters);
     }
 
-    public void addPackageDeclaration(MPackageDeclaration macro){
-        if(macro == null){
+    private void setPPackageDeclaration(Macro pPackageDeclaration[]){
+        if(pPackageDeclaration == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-                if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("PackageDeclaration");
-        }
 
-        this.list_PackageDeclaration.add(macro);
-    }
-    public void addListParentInternalSetters(MParentInternalsSetter macro){
-        if(macro == null){
-            throw ObjectMacroException.parameterNull("ListParentInternalSetters");
-        }
-                if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ParentInternalsSetter");
-        }
-
-        this.list_ListParentInternalSetters.add(macro);
-    }
-
-    private String buildPackageDeclaration(){
-        StringBuilder sb = new StringBuilder();
-        Context local_context = PackageDeclarationContext;
-        List<Macro> macros = this.list_PackageDeclaration;
-
+        Macro macros[] = pPackageDeclaration;
+        this.list_PackageDeclaration = new Macro[macros.length];
         int i = 0;
-        int nb_macros = macros.size();
-        String expansion = null;
-
-        if(this.PackageDeclarationNone != null){
-            sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
-        }
 
         for(Macro macro : macros){
-            expansion = macro.build(local_context);
-
-            if(this.PackageDeclarationBeforeFirst != null){
-                expansion = this.PackageDeclarationBeforeFirst.apply(i, expansion, nb_macros);
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "PackageDeclaration");
             }
 
-            if(this.PackageDeclarationAfterLast != null){
-                expansion = this.PackageDeclarationAfterLast.apply(i, expansion, nb_macros);
-            }
-
-            if(this.PackageDeclarationSeparator != null){
-                expansion = this.PackageDeclarationSeparator.apply(i, expansion, nb_macros);
-            }
-
-            sb.append(expansion);
-            i++;
-        }
-
-        return sb.toString();
-    }
-    private String buildListParentInternalSetters(){
-        StringBuilder sb = new StringBuilder();
-        Context local_context = ListParentInternalSettersContext;
-        List<Macro> macros = this.list_ListParentInternalSetters;
-
-        int i = 0;
-        int nb_macros = macros.size();
-        String expansion = null;
-
-        if(this.ListParentInternalSettersNone != null){
-            sb.append(this.ListParentInternalSettersNone.apply(i, "", nb_macros));
-        }
-
-        for(Macro macro : macros){
-            expansion = macro.build(local_context);
-
-            if(this.ListParentInternalSettersBeforeFirst != null){
-                expansion = this.ListParentInternalSettersBeforeFirst.apply(i, expansion, nb_macros);
-            }
-
-            if(this.ListParentInternalSettersAfterLast != null){
-                expansion = this.ListParentInternalSettersAfterLast.apply(i, expansion, nb_macros);
-            }
-
-            if(this.ListParentInternalSettersSeparator != null){
-                expansion = this.ListParentInternalSettersSeparator.apply(i, expansion, nb_macros);
-            }
-
-            sb.append(expansion);
-            i++;
-        }
-
-        return sb.toString();
-    }
-
-    private InternalValue getPackageDeclaration(){
-        return this.PackageDeclarationValue;
-    }
-    private InternalValue getListParentInternalSetters(){
-        return this.ListParentInternalSettersValue;
-    }
-    private void initPackageDeclarationInternals(Context context){
-        for(Macro macro : this.list_PackageDeclaration){
             macro.apply(new InternalsInitializer("PackageDeclaration"){
 @Override
 void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
 
-    
-    
-}
+        }
 });
+
+            this.list_PackageDeclaration[i++] = macro;
+
         }
     }
-    private void initListParentInternalSettersInternals(Context context){
-        for(Macro macro : this.list_ListParentInternalSetters){
+
+    private void setPListParentInternalSetters(Macro pListParentInternalSetters[]){
+        if(pListParentInternalSetters == null){
+            throw ObjectMacroException.parameterNull("ListParentInternalSetters");
+        }
+
+        Macro macros[] = pListParentInternalSetters;
+        this.list_ListParentInternalSetters = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "ListParentInternalSetters");
+            }
+
             macro.apply(new InternalsInitializer("ListParentInternalSetters"){
 @Override
 void setParentInternalsSetter(MParentInternalsSetter mParentInternalsSetter){
 
-    
-    
-}
+        }
 });
+
+            this.list_ListParentInternalSetters[i++] = macro;
+
         }
     }
 
-    private void initPackageDeclarationDirectives(){
+    private String buildPackageDeclaration(){
+
         StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb0.toString());
-this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
+        Context local_context = PackageDeclarationContext;
+        Macro macros[] = this.list_PackageDeclaration;
+                boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(first){
+            sb0.append(LINE_SEPARATOR);
+    first = false;
+}
+            
+            sb0.append(macro.build(local_context));
+            i++;
+
+                    }
+
+        return sb0.toString();
     }
-    private void initListParentInternalSettersDirectives(){
+
+    private String buildListParentInternalSetters(){
+
         StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-this.ListParentInternalSettersSeparator = new DSeparator(sb0.toString());
-this.ListParentInternalSettersValue.setSeparator(this.ListParentInternalSettersSeparator);
+        Context local_context = ListParentInternalSettersContext;
+        Macro macros[] = this.list_ListParentInternalSetters;
+                boolean first = true;
+        int i = 0;
+
+        for(Macro macro : macros){
+                        if(first) {
+  first = false;
+}
+else {
+           sb0.append(LINE_SEPARATOR);
+}
+
+            sb0.append(macro.build(local_context));
+            i++;
+
+                    }
+
+        return sb0.toString();
     }
+
+    private Macro[] getPackageDeclaration(){
+
+        return this.list_PackageDeclaration;
+    }
+
+    private Macro[] getListParentInternalSetters(){
+
+        return this.list_ListParentInternalSetters;
+    }
+
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -175,41 +132,24 @@ this.ListParentInternalSettersValue.setSeparator(this.ListParentInternalSettersS
         internalsInitializer.setInternalsInitializer(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        String local_expansion = this.expansion;
 
-        if(buildState == null){
-            buildState = new BuildState();
+        if(local_expansion != null){
+            return local_expansion;
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("InternalsInitializer");
-        }
-        else{
-            return buildState.getExpansion();
-        }
-        this.build_state = buildState;
-
-        initPackageDeclarationDirectives();
-initListParentInternalSettersDirectives();
-
-        initPackageDeclarationInternals(null);
-initListParentInternalSettersInternals(null);
 
         StringBuilder sb0 = new StringBuilder();
 
         MHeader minsert_1 = new MHeader();
-        
-        
-        sb0.append(minsert_1.build(null));
+                        sb0.append(minsert_1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(buildPackageDeclaration());
         sb0.append(LINE_SEPARATOR);
         MImportJavaUtil minsert_2 = new MImportJavaUtil();
-        
-        
-        sb0.append(minsert_2.build(null));
+                        sb0.append(minsert_2.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("public class InternalsInitializer ");
@@ -232,8 +172,9 @@ initListParentInternalSettersInternals(null);
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
 
-        buildState.setExpansion(sb0.toString());
-        return sb0.toString();
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
     }
 
     @Override

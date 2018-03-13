@@ -10,7 +10,7 @@ Macro {
   Name = { 'package', 'declaration' } Param {
     Name = { 'package', 'name' } Type = String  }
     Initialization Order{
-            }
+        'package_name'    }
   MacroBody{
   'package ';
  ParamInsert { Name = { 'package', 'name' } } ;
@@ -116,7 +116,7 @@ Macro {
   Name = { 'parent', 'internals', 'setter' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '  void set';
  ParamInsert { Name = 'name' } ;
@@ -564,8 +564,6 @@ Macro {
  Name = { 'param', 'string', 'ref', 'builder' } }
  MacroRef {
  Name = { 'param', 'macro', 'ref', 'builder' } }
- MacroRef {
- Name = { 'internal', 'macro', 'ref', 'builder' } }
  }
  Directive {
      Name = 'separator'       eol;
@@ -636,7 +634,7 @@ Macro {
  }
  }
     Initialization Order{
-        'package_declaration''list_field''list_context_field''list_constructor''list_setter''list_builder''list_ref''list_init_internals_method''list_init_directives''list_redefined_apply_initializer''list_macro_builder''list_empty_builder_with_context'    }
+        'name''package_declaration''list_field''list_context_field''list_constructor''list_setter''list_builder''list_ref''list_init_internals_method''list_init_directives''list_redefined_apply_initializer''list_macro_builder''list_empty_builder_with_context'    }
   MacroBody{
  MacroInsert {
  MacroRef {
@@ -727,7 +725,7 @@ Macro {
  }
  }
     Initialization Order{
-        'list_set_param''list_string_param''list_init''list_internal'    }
+        'name''list_set_param''list_string_param''list_init''list_internal'    }
   MacroBody{
   '    public M';
  ParamInsert { Name = 'name' } ;
@@ -750,7 +748,7 @@ Macro {
   Name = { 'init', 'macro', 'internal' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '    this.list_';
  ParamInsert { Name = 'name' } ;
@@ -762,7 +760,7 @@ Macro {
   Name = { 'init', 'macro', 'param' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '    this.list_';
  ParamInsert { Name = 'name' } ;
@@ -774,7 +772,7 @@ Macro {
   Name = { 'init', 'string', 'internal' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '    this.field_';
  ParamInsert { Name = 'name' } ;
@@ -786,7 +784,7 @@ Macro {
   Name = { 'init', 'internal', 'value' } Param {
     Name = { 'param', 'name' } Type = String  }
     Initialization Order{
-            }
+        'param_name'    }
   MacroBody{
   '    this.';
  ParamInsert { Name = { 'param', 'name' } } ;
@@ -808,7 +806,7 @@ Macro {
  }
  }
     Initialization Order{
-        'list_param_arg'    }
+        'name''list_param_arg'    }
   MacroBody{
   '        this.setP';
  ParamInsert { Name = 'name' } ;
@@ -835,7 +833,7 @@ Macro {
  }
  }
     Initialization Order{
-        'is_built'    }
+        'macro_name''param_name''is_built'    }
   MacroBody{
   '    public void add';
  ParamInsert { Name = { 'param', 'name' } } ;
@@ -869,7 +867,7 @@ Macro {
   Name = { 'is', 'built' } Internal {
  Name = { 'macro', 'name' } Type = String  }
     Initialization Order{
-            }
+        'macro_name'    }
   MacroBody{
   '        if(this.build_state != null)';
   '{';
@@ -898,7 +896,7 @@ Macro {
  }
  }
     Initialization Order{
-        'list_context_param''list_get_internal_tail'    }
+        'name''list_context_param''list_get_internal_tail'    }
   MacroBody{
   '    private String build';
  ParamInsert { Name = 'name' } ;
@@ -930,7 +928,7 @@ Macro {
  }
  }
     Initialization Order{
-        'context_name'    }
+        'name''context_name'    }
   MacroBody{
   '    private String build';
  ParamInsert { Name = 'name' } ;
@@ -1026,7 +1024,7 @@ Macro {
   Name = { 'internal', 'macro', 'ref', 'builder' } Param {
     Name = { 'internal', 'name' } Type = String  }
     Initialization Order{
-            }
+        'internal_name'    }
   MacroBody{
   '    private String build';
  ParamInsert { Name = { 'internal', 'name' } } ;
@@ -1048,7 +1046,7 @@ Macro {
   Name = { 'internal', 'macro', 'setter' } Param {
     Name = { 'param', 'name' } Type = String  }
     Initialization Order{
-            }
+        'param_name'    }
   MacroBody{
   '    void set';
  ParamInsert { Name = { 'param', 'name' } } ;
@@ -1092,7 +1090,7 @@ Macro {
  }
  }
     Initialization Order{
-        'list_string_param''list_param_arg'    }
+        'name''list_string_param''list_param_arg'    }
   MacroBody{
   '    private void setP';
  ParamInsert { Name = 'name' } ;
@@ -1127,7 +1125,7 @@ Macro {
   Name = { 'param', 'macro', 'ref' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '    private InternalValue get';
  ParamInsert { Name = 'name' } ;
@@ -1146,7 +1144,7 @@ Macro {
   Name = { 'internal', 'macro', 'ref' } Param {
     Name = { 'param', 'name' } Type = String  }
     Initialization Order{
-            }
+        'param_name'    }
   MacroBody{
   '    private InternalValue get';
  ParamInsert { Name = { 'param', 'name' } } ;
@@ -1177,7 +1175,7 @@ Macro {
  }
  }
     Initialization Order{
-        'context_param''get_internal_tail'    }
+        'name''context_param''get_internal_tail'    }
   MacroBody{
   '    private String get';
  ParamInsert { Name = 'name' } ;
@@ -1200,7 +1198,7 @@ Macro {
   Name = { 'internal', 'string', 'setter' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '    void set';
  ParamInsert { Name = 'name' } ;
@@ -1238,7 +1236,7 @@ Macro {
  }
  }
     Initialization Order{
-        'apply_internals_initializer'    }
+        'name''apply_internals_initializer'    }
   MacroBody{
   '    private void init';
  ParamInsert { Name = 'name' } ;
@@ -1287,7 +1285,7 @@ Macro {
  }
  }
     Initialization Order{
-        'new_directive'    }
+        'param_name''new_directive'    }
   MacroBody{
   '    private void init';
  ParamInsert { Name = { 'param', 'name' } } ;
@@ -1321,7 +1319,7 @@ Macro {
  Internal {
  Name = { 'param', 'name' } Type = String  }
     Initialization Order{
-        'list_parts'    }
+        'param_name''directive_name''index_builder''list_parts'    }
   MacroBody{
   'StringBuilder sb';
  ParamInsert { Name = { 'index', 'builder' } } ;
@@ -1418,7 +1416,7 @@ Macro {
  }
  }
     Initialization Order{
-        'list_context_param''context_build_state''new_build_state''init_directive_call''init_internals_call''list_part'    }
+        'macro_name''list_context_param''context_build_state''new_build_state''init_directive_call''init_internals_call''list_part'    }
   MacroBody{
   '   @Override';
   eol;
@@ -1492,7 +1490,7 @@ Macro {
   Name = { 'init', 'directive', 'call' } Param {
     Name = { 'param', 'name' } Type = String  }
     Initialization Order{
-            }
+        'param_name'    }
   MacroBody{
   'init';
  ParamInsert { Name = { 'param', 'name' } } ;
@@ -1513,7 +1511,7 @@ Macro {
  }
  }
     Initialization Order{
-        'context_arg'    }
+        'param_name''context_arg'    }
   MacroBody{
   'init';
  ParamInsert { Name = { 'param', 'name' } } ;
@@ -1558,7 +1556,7 @@ Macro {
   Name = { 'redefined', 'apply', 'initializer' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '    @Override';
   eol;
@@ -1580,7 +1578,7 @@ Macro {
   Name = { 'param', 'macro', 'field' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '    private final List<Macro> list_';
  ParamInsert { Name = 'name' } ;
@@ -1592,7 +1590,7 @@ Macro {
   Name = { 'param', 'string', 'field' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '    private String field_';
  ParamInsert { Name = 'name' } ;
@@ -1604,7 +1602,7 @@ Macro {
   Name = { 'internal', 'macro', 'field' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '    private Map<Context, InternalValue> list_';
  ParamInsert { Name = 'name' } ;
@@ -1616,7 +1614,7 @@ Macro {
   Name = { 'internal', 'string', 'field' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '    private Map<Context, String> field_';
  ParamInsert { Name = 'name' } ;
@@ -1628,7 +1626,7 @@ Macro {
   Name = { 'context', 'field' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   '    private final Context ';
  ParamInsert { Name = 'name' } ;
@@ -1640,7 +1638,7 @@ Macro {
   Name = { 'internal', 'macros', 'value', 'field' } Param {
     Name = { 'param', 'name' } Type = String  }
     Initialization Order{
-            }
+        'param_name'    }
   MacroBody{
   '    private final InternalValue ';
  ParamInsert { Name = { 'param', 'name' } } ;
@@ -1652,7 +1650,7 @@ Macro {
   Name = { 'directive', 'fields' } Param {
     Name = { 'param', 'name' } Type = String  }
     Initialization Order{
-            }
+        'param_name'    }
   MacroBody{
   '    private DSeparator ';
  ParamInsert { Name = { 'param', 'name' } } ;
@@ -1685,7 +1683,7 @@ Macro {
  }
  }
     Initialization Order{
-        'list_redefined_internals_setter'    }
+        'param_name''list_redefined_internals_setter'    }
   MacroBody{
   'macro.apply(new InternalsInitializer("';
  ParamInsert { Name = { 'param', 'name' } } ;
@@ -1725,7 +1723,7 @@ Macro {
  }
  }
     Initialization Order{
-        'list_part''list_set_internal'    }
+        'name''list_part''list_set_internal'    }
   MacroBody{
   '@Override';
   eol;
@@ -1755,7 +1753,7 @@ Macro {
  Param {
     Name = { 'index', 'builder' } Type = String  }
     Initialization Order{
-            }
+        'string''index_builder'    }
   MacroBody{
   '        sb';
  ParamInsert { Name = { 'index', 'builder' } } ;
@@ -1769,7 +1767,7 @@ Macro {
   Name = { 'eol', 'part' } Param {
     Name = { 'index', 'builder' } Type = String  }
     Initialization Order{
-            }
+        'index_builder'    }
   MacroBody{
   '        sb';
  ParamInsert { Name = { 'index', 'builder' } } ;
@@ -1789,7 +1787,7 @@ Macro {
  }
  }
     Initialization Order{
-        'context_arg'    }
+        'param_name''index_builder''context_arg'    }
   MacroBody{
   '        sb';
  ParamInsert { Name = { 'index', 'builder' } } ;
@@ -1829,7 +1827,7 @@ Macro {
  }
  }
     Initialization Order{
-        'list_part''list_set_internal'    }
+        'name''index_builder''index_insert''list_part''list_set_internal'    }
   MacroBody{
   '        M';
  ParamInsert { Name = 'name' } ;
@@ -1857,7 +1855,7 @@ Macro {
   Name = { 'init', 'string', 'builder' } Param {
     Name = { 'index', 'builder' } Type = String  }
     Initialization Order{
-            }
+        'index_builder'    }
   MacroBody{
   '        StringBuilder sb';
  ParamInsert { Name = { 'index', 'builder' } } ;
@@ -1881,7 +1879,7 @@ Macro {
  }
  }
     Initialization Order{
-        'list_param'    }
+        'macro_name''param_name''context''list_param'    }
   MacroBody{
   '        m';
  ParamInsert { Name = { 'macro', 'name' } } ;
@@ -1899,7 +1897,7 @@ Macro {
   Name = { 'string', 'builder', 'build' } Param {
     Name = { 'index', 'builder' } Type = String  }
     Initialization Order{
-            }
+        'index_builder'    }
   MacroBody{
   'sb';
  ParamInsert { Name = { 'index', 'builder' } } ;
@@ -1919,7 +1917,7 @@ Macro {
  }
  }
     Initialization Order{
-        'list_context_arg'    }
+        'name''list_context_arg'    }
   MacroBody{
   'get';
  ParamInsert { Name = 'name' } ;
@@ -1933,7 +1931,7 @@ Macro {
   Name = { 'string', 'value' } Param {
     Name = 'string' Type = String  }
     Initialization Order{
-            }
+        'string'    }
   MacroBody{
   '"';
  ParamInsert { Name = 'string' } ;
@@ -1945,7 +1943,7 @@ Macro {
   Name = { 'macro', 'arg' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   'list_';
  ParamInsert { Name = 'name' } ;
@@ -1956,7 +1954,7 @@ Macro {
   Name = { 'string', 'arg' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   'field_';
  ParamInsert { Name = 'name' } ;
@@ -1967,7 +1965,7 @@ Macro {
   Name = { 'param', 'arg' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   'p';
  ParamInsert { Name = 'name' } ;
@@ -1978,7 +1976,7 @@ Macro {
   Name = { 'context', 'name' } Param {
     Name = { 'context', 'name' } Type = String  }
     Initialization Order{
-            }
+        'context_name'    }
   MacroBody{
  ParamInsert { Name = { 'context', 'name' } } ;
   }
@@ -2012,7 +2010,7 @@ Macro {
   Name = { 'string', 'param' } Param {
     Name = 'name' Type = String  }
     Initialization Order{
-            }
+        'name'    }
   MacroBody{
   'String p';
  ParamInsert { Name = 'name' } ;
@@ -2435,10 +2433,8 @@ Macro {
     Initialization Order{
         'package_declaration'    }
   MacroBody{
- MacroInsert {
- MacroRef {
- Name = 'header' }
- };
+  '{';
+  'Insert : header}';
   eol;
  ParamInsert { Name = { 'package', 'declaration' } } ;
   eol;
@@ -2769,7 +2765,7 @@ Macro {
 }
 
 Macro {
-  Name = { 'ex', 'cannot', 'modify' } Param {
+  Name = { 'cannot', 'modify' } Param {
     Name = { 'package', 'declaration' } Type {
  MacroRef {
  Name = { 'package', 'declaration' } }
@@ -2853,7 +2849,7 @@ Macro {
 }
 
 Macro {
-  Name = { 'ex', 'cyclic', 'reference' } Param {
+  Name = { 'cyclic', 'reference' } Param {
     Name = { 'package', 'declaration' } Type {
  MacroRef {
  Name = { 'package', 'declaration' } }

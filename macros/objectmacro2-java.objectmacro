@@ -269,7 +269,7 @@ Macro macro
     list_context_field : context_field, before_first="\n";
     list_constructor : constructor, before_first="\n";
     list_setter : param_string_setter, single_add, internal_string_setter, internal_macro_setter, separator="\n", before_first="\n";
-    list_builder : param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, separator="\n", before_first="\n";
+    list_builder : param_string_ref_builder, param_macro_ref_builder, separator="\n", before_first="\n";
     list_ref : param_string_ref, param_macro_ref, internal_macro_ref, separator="\n", before_first="\n";
     list_init_internals_method: init_internals_method, separator="\n";
     list_init_directives: init_directives, separator="\n", before_first="\n";
@@ -1156,7 +1156,7 @@ Macro ex_incorrect_type
   Param
     package_declaration : package_declaration, before_first="\n";
 {Begin}
-{Insert: header}
+{Insert : header}
 {package_declaration}
 
 public class MIncorrectType {
@@ -1320,8 +1320,8 @@ public class MMacroNullInList {
 }
 {End}
 
-#============ ex_cannot_modify ============
-Macro ex_cannot_modify
+#============ cannot_modify ============
+Macro cannot_modify
     Param
         package_declaration: package_declaration, before_first="\n";
 {Begin}
@@ -1361,9 +1361,9 @@ public class MCannotModify {
 }
 {End}
 
-#============ ex_cyclic_reference ============
+#============ cyclic_reference ============
 
-Macro ex_cyclic_reference
+Macro cyclic_reference
     Param
         package_declaration: package_declaration, before_first="\n";
 {Begin}

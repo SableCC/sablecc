@@ -2,21 +2,16 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
 public class MStringArg extends Macro{
 
     private String field_Name;
 
-
     public MStringArg(String pName){
 
         this.setPName(pName);
-
-
     }
 
-    private void setPName( String pName ){
+    private void setPName(String pName){
         if(pName == null){
             throw ObjectMacroException.parameterNull("Name");
         }
@@ -34,7 +29,6 @@ public class MStringArg extends Macro{
         return this.field_Name;
     }
 
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -42,33 +36,23 @@ public class MStringArg extends Macro{
         internalsInitializer.setStringArg(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        String local_expansion = this.expansion;
 
-        if(buildState == null){
-            buildState = new BuildState();
+        if(local_expansion != null){
+            return local_expansion;
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("StringArg");
-        }
-        else{
-            return buildState.getExpansion();
-        }
-        this.build_state = buildState;
-
-        
-
-        
 
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("field_");
         sb0.append(buildName());
 
-        buildState.setExpansion(sb0.toString());
-        return sb0.toString();
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
     }
 
     @Override

@@ -42,6 +42,9 @@ Macro {
  MacroRef {
  Name = { 'empty', 'macro' } }
  }
+ Directive {
+     Name = 'separator'       '; ';
+ }
  }
     Initialization Order{
         'x'    }
@@ -59,7 +62,7 @@ Macro {
  MacroRef {
  Name = 'b' Args {
  Var {
-        ParamName { Name = 'p' }
+        ParamName { Name = 'y' }
     Name = 'z' }
  }
  }
@@ -73,77 +76,62 @@ Macro {
  MacroRef {
  Name = 'c' Args {
  Value {
-        ParamName { Name = 'q' }
+        ParamName { Name = 'y' }
   'first argument of c in a';
  }
 ,  Var {
-        ParamName { Name = 'r' }
+        ParamName { Name = 'z' }
     Name = 'x' }
  }
  }
  }
  }
     Initialization Order{
-        'z''y'    }
+        'x''z''y'    }
   MacroBody{
-  '============= A ===============';
-  eol;
-  'Y : ';
  ParamInsert { Name = 'y' } ;
   }
 }
 
 Macro {
   Name = 'b' Param {
-    Name = 'o' Type = String  }
- Param {
-    Name = 's' Type {
+    Name = 'x' Type = String  }
+ Internal {
+ Name = 'y' Type {
  MacroRef {
  Name = 'c' Args {
- Var {
-        ParamName { Name = 'q' }
-    Name = 'o' }
+ Value {
+        ParamName { Name = 'y' }
+  'first argument of c in b';
+ }
 ,  Var {
-        ParamName { Name = 'r' }
-    Name = 'o' }
+        ParamName { Name = 'z' }
+    Name = 'x' }
  }
  }
  }
- }
- Internal {
- Name = 'p' Type {
- MacroRef {
- Name = 'c' }
+ Directive {
+     Name = 'separator'       eol;
  }
  }
     Initialization Order{
-        'p''s'    }
+        'x''y'    }
   MacroBody{
-  '============== B ===============';
-  eol;
-  'P : ';
- ParamInsert { Name = 'p' } ;
-  eol;
-  'S : ';
- ParamInsert { Name = 's' } ;
+ ParamInsert { Name = 'y' } ;
   }
 }
 
 Macro {
   Name = 'c' Internal {
- Name = 'q' Type = String  }
+ Name = 'y' Type = String  }
  Internal {
- Name = 'r' Type = String  }
+ Name = 'z' Type = String  }
     Initialization Order{
-            }
+        'y''z'    }
   MacroBody{
-  '=============== C ==============';
-  eol;
-  'Q : ';
- ParamInsert { Name = 'q' } ;
-  eol;
-  'R : ';
- ParamInsert { Name = 'r' } ;
+ ParamInsert { Name = 'y' } ;
+  ' ';
+ ParamInsert { Name = 'z' } ;
   }
 }
 
@@ -155,23 +143,23 @@ Macro {
  MacroRef {
  Name = 'e' Args {
  Value {
-        ParamName { Name = 's' }
+        ParamName { Name = 'x' }
   'y1 ';
  MacroInsert {
  MacroRef {
  Name = 'c' Args {
  Value {
-        ParamName { Name = 'q' }
+        ParamName { Name = 'y' }
   'y2 ';
  MacroInsert {
  MacroRef {
  Name = 'c' Args {
  Value {
-        ParamName { Name = 'q' }
+        ParamName { Name = 'y' }
   'y3';
  }
 ,  Value {
-        ParamName { Name = 'r' }
+        ParamName { Name = 'z' }
   'yz3';
  }
  }
@@ -179,16 +167,16 @@ Macro {
  };
  }
 ,  Value {
-        ParamName { Name = 'r' }
+        ParamName { Name = 'z' }
  MacroInsert {
  MacroRef {
  Name = 'c' Args {
  Value {
-        ParamName { Name = 'q' }
+        ParamName { Name = 'y' }
   'a';
  }
 ,  Value {
-        ParamName { Name = 'r' }
+        ParamName { Name = 'z' }
   'b';
  }
  }
@@ -200,16 +188,16 @@ Macro {
  };
  }
 ,  Value {
-        ParamName { Name = 't' }
+        ParamName { Name = 'y' }
  MacroInsert {
  MacroRef {
  Name = 'c' Args {
  Value {
-        ParamName { Name = 'q' }
+        ParamName { Name = 'y' }
   'y4';
  }
 ,  Value {
-        ParamName { Name = 'r' }
+        ParamName { Name = 'z' }
   'z4';
  }
  }
@@ -217,16 +205,16 @@ Macro {
  };
  }
 ,  Value {
-        ParamName { Name = 'u' }
+        ParamName { Name = 'z' }
  MacroInsert {
  MacroRef {
  Name = 'c' Args {
  Value {
-        ParamName { Name = 'q' }
+        ParamName { Name = 'y' }
   'y4';
  }
 ,  Value {
-        ParamName { Name = 'r' }
+        ParamName { Name = 'z' }
   'z4';
  }
  }
@@ -241,139 +229,19 @@ Macro {
 
 Macro {
   Name = 'e' Internal {
- Name = 's' Type = String  }
+ Name = 'x' Type = String  }
  Internal {
- Name = 't' Type = String  }
+ Name = 'y' Type = String  }
  Internal {
- Name = 'u' Type = String  }
+ Name = 'z' Type = String  }
     Initialization Order{
-            }
+        'x''y''z'    }
   MacroBody{
- ParamInsert { Name = 's' } ;
-  eol;
- ParamInsert { Name = 't' } ;
-  eol;
- ParamInsert { Name = 'u' } ;
-  }
-}
-
-Macro {
-  Name = 'f' Param {
-    Name = 'x' Type {
- MacroRef {
- Name = 'g' Args {
- Var {
-        ParamName { Name = 'z' }
-    Name = 'y' }
- }
- }
- }
- }
- Param {
-    Name = 'y' Type {
- MacroRef {
- Name = 'h' }
- }
- }
-    Initialization Order{
-        'y''x'    }
-  MacroBody{
- ParamInsert { Name = 'y' } ;
-  ' ';
  ParamInsert { Name = 'x' } ;
-  }
-}
-
-Macro {
-  Name = 'g' Internal {
- Name = 'z' Type {
- MacroRef {
- Name = 'h' }
- }
- }
-    Initialization Order{
-        'z'    }
-  MacroBody{
- ParamInsert { Name = 'z' } ;
-  }
-}
-
-Macro {
-  Name = 'h' Param {
-    Name = 'lala' Type {
- MacroRef {
- Name = 'f' }
- }
- }
-    Initialization Order{
-        'lala'    }
-  MacroBody{
- ParamInsert { Name = 'lala' } ;
-  }
-}
-
-Macro {
-  Name = 'i' Param {
-    Name = 'y' Type {
- MacroRef {
- Name = 'k' Args {
- Value {
-        ParamName { Name = 'a' }
-  'lala';
- }
- }
- }
- }
- }
- Param {
-    Name = 'z' Type {
- MacroRef {
- Name = 'k' Args {
- Value {
-        ParamName { Name = 'a' }
-  'On est dans i';
- }
- }
- }
- MacroRef {
- Name = 'j' Args {
- Var {
-        ParamName { Name = 'y' }
-    Name = 'y' }
- }
- }
- }
- }
-    Initialization Order{
-        'y''z'    }
-  MacroBody{
+  eol;
  ParamInsert { Name = 'y' } ;
   eol;
  ParamInsert { Name = 'z' } ;
-  }
-}
-
-Macro {
-  Name = 'j' Internal {
- Name = 'y' Type {
- MacroRef {
- Name = 'k' }
- }
- }
-    Initialization Order{
-        'y'    }
-  MacroBody{
- ParamInsert { Name = 'y' } ;
-  }
-}
-
-Macro {
-  Name = 'k' Internal {
- Name = 'a' Type = String  }
-    Initialization Order{
-            }
-  MacroBody{
- ParamInsert { Name = 'a' } ;
   }
 }
 

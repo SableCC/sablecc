@@ -7,75 +7,76 @@ import java.util.*;
 public class MNewDirective extends Macro{
 
     private String field_DirectiveName;
+
     private String field_IndexBuilder;
-    private final List<Macro> list_ListParts;
-    private DSeparator ListPartsSeparator;
 
-    private DBeforeFirst ListPartsBeforeFirst;
+    private Macro list_ListParts[];
 
-    private DAfterLast ListPartsAfterLast;
-
-    private DNone ListPartsNone;
-    private final InternalValue ListPartsValue;
     private Map<Context, String> field_ParamName = new LinkedHashMap<>();
 
     private final Context ListPartsContext = new Context();
 
-    public MNewDirective(String pDirectiveName, String pIndexBuilder){
+    public MNewDirective(String pDirectiveName, String pIndexBuilder, Macro pListParts[]){
 
-        this.setPDirectiveName(pDirectiveName);        this.setPIndexBuilder(pIndexBuilder);
-
-    this.list_ListParts = new ArrayList<>();
-
-    this.ListPartsValue = new InternalValue(this.list_ListParts, this.ListPartsContext);
+        this.setPDirectiveName(pDirectiveName);
+        this.setPIndexBuilder(pIndexBuilder);
+        this.setPListParts(pListParts);
     }
 
-    private void setPDirectiveName( String pDirectiveName ){
+    private void setPDirectiveName(String pDirectiveName){
         if(pDirectiveName == null){
             throw ObjectMacroException.parameterNull("DirectiveName");
         }
 
         this.field_DirectiveName = pDirectiveName;
     }
-    private void setPIndexBuilder( String pIndexBuilder ){
+
+    private void setPIndexBuilder(String pIndexBuilder){
         if(pIndexBuilder == null){
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
 
         this.field_IndexBuilder = pIndexBuilder;
     }
-    public void addListParts(MStringPart macro){
-        if(macro == null){
+
+    private void setPListParts(Macro pListParts[]){
+        if(pListParts == null){
             throw ObjectMacroException.parameterNull("ListParts");
         }
-        
 
-        this.list_ListParts.add(macro);
-    }
-    public void addListParts(MParamInsertPart macro){
-        if(macro == null){
-            throw ObjectMacroException.parameterNull("ListParts");
+        Macro macros[] = pListParts;
+        this.list_ListParts = new Macro[macros.length];
+        int i = 0;
+
+        for(Macro macro : macros){
+            if(macro == null){
+                throw ObjectMacroException.macroNull(i, "ListParts");
+            }
+
+            macro.apply(new InternalsInitializer("ListParts"){
+@Override
+void setStringPart(MStringPart mStringPart){
+
         }
-        
+@Override
+void setParamInsertPart(MParamInsertPart mParamInsertPart){
 
-        this.list_ListParts.add(macro);
-    }
-    public void addListParts(MEolPart macro){
-        if(macro == null){
-            throw ObjectMacroException.parameterNull("ListParts");
         }
-        
+@Override
+void setEolPart(MEolPart mEolPart){
 
-        this.list_ListParts.add(macro);
-    }
-    public void addListParts(MInsertMacroPart macro){
-        if(macro == null){
-            throw ObjectMacroException.parameterNull("ListParts");
         }
-        
+@Override
+void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
 
-        this.list_ListParts.add(macro);
+        }
+});
+
+            this.list_ListParts[i++] = macro;
+
+        }
     }
+
     void setParamName(
             Context context,
             String value) {
@@ -91,44 +92,30 @@ public class MNewDirective extends Macro{
 
         return this.field_DirectiveName;
     }
+
     private String buildIndexBuilder(){
 
         return this.field_IndexBuilder;
     }
+
     private String buildListParts(){
-        StringBuilder sb = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
         Context local_context = ListPartsContext;
-        List<Macro> macros = this.list_ListParts;
-
+        Macro macros[] = this.list_ListParts;
+                boolean first = true;
         int i = 0;
-        int nb_macros = macros.size();
-        String expansion = null;
-
-        if(this.ListPartsNone != null){
-            sb.append(this.ListPartsNone.apply(i, "", nb_macros));
-        }
 
         for(Macro macro : macros){
-            expansion = macro.build(local_context);
-
-            if(this.ListPartsBeforeFirst != null){
-                expansion = this.ListPartsBeforeFirst.apply(i, expansion, nb_macros);
-            }
-
-            if(this.ListPartsAfterLast != null){
-                expansion = this.ListPartsAfterLast.apply(i, expansion, nb_macros);
-            }
-
-            if(this.ListPartsSeparator != null){
-                expansion = this.ListPartsSeparator.apply(i, expansion, nb_macros);
-            }
-
-            sb.append(expansion);
+                        
+            sb0.append(macro.build(local_context));
             i++;
-        }
 
-        return sb.toString();
+                    }
+
+        return sb0.toString();
     }
+
     private String buildParamName(Context context){
 
         return this.field_ParamName.get(context);
@@ -138,48 +125,22 @@ public class MNewDirective extends Macro{
 
         return this.field_DirectiveName;
     }
+
     private String getIndexBuilder(){
 
         return this.field_IndexBuilder;
     }
-    private InternalValue getListParts(){
-        return this.ListPartsValue;
+
+    private Macro[] getListParts(){
+
+        return this.list_ListParts;
     }
+
     private String getParamName(Context context){
 
         return this.field_ParamName.get(context);
     }
-    private void initListPartsInternals(Context context){
-        for(Macro macro : this.list_ListParts){
-            macro.apply(new InternalsInitializer("ListParts"){
-@Override
-void setStringPart(MStringPart mStringPart){
 
-    
-    
-}@Override
-void setParamInsertPart(MParamInsertPart mParamInsertPart){
-
-    
-    
-}@Override
-void setEolPart(MEolPart mEolPart){
-
-    
-    
-}@Override
-void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
-
-    
-    
-}
-});
-        }
-    }
-
-    private void initListPartsDirectives(){
-        
-    }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -187,25 +148,14 @@ void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
         internalsInitializer.setNewDirective(this);
     }
 
-   @Override
-    public String build(Context context){
+    @Override
+     String build(Context context){
 
-        BuildState buildState = this.build_states.get(context);
+        String local_expansion = this.expansions.get(context);
 
-        if(buildState == null){
-            buildState = new BuildState();
+        if(local_expansion != null){
+            return local_expansion;
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("NewDirective");
-        }
-        else{
-            return buildState.getExpansion();
-        }
-        this.build_states.put(context, buildState);
-
-        initListPartsDirectives();
-
-        initListPartsInternals(context);
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -233,8 +183,8 @@ void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
         sb0.append(buildDirectiveName());
         sb0.append(");");
 
-        buildState.setExpansion(sb0.toString());
-        return sb0.toString();
+        local_expansion = sb0.toString();
+        this.expansions.put(context, local_expansion);
+        return local_expansion;
     }
-
 }

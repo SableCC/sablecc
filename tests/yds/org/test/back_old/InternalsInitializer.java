@@ -43,29 +43,5 @@ public class InternalsInitializer {
         throw ObjectMacroException.incorrectType("ME", this._paramName);
     }
 
-    void setF(MF mF){
-        throw ObjectMacroException.incorrectType("MF", this._paramName);
-    }
-
-    void setG(MG mG){
-        throw ObjectMacroException.incorrectType("MG", this._paramName);
-    }
-
-    void setH(MH mH){
-        throw ObjectMacroException.incorrectType("MH", this._paramName);
-    }
-
-    void setI(MI mI){
-        throw ObjectMacroException.incorrectType("MI", this._paramName);
-    }
-
-    void setJ(MJ mJ){
-        throw ObjectMacroException.incorrectType("MJ", this._paramName);
-    }
-
-    void setK(MK mK){
-        throw ObjectMacroException.incorrectType("MK", this._paramName);
-    }
-
 }
 

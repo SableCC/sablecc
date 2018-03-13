@@ -2,21 +2,10 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
 public class MContextArg extends Macro{
 
-
-
     public MContextArg(){
-
-
-
     }
-
-
-
-
 
     @Override
     void apply(
@@ -25,32 +14,22 @@ public class MContextArg extends Macro{
         internalsInitializer.setContextArg(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        String local_expansion = this.expansion;
 
-        if(buildState == null){
-            buildState = new BuildState();
+        if(local_expansion != null){
+            return local_expansion;
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("ContextArg");
-        }
-        else{
-            return buildState.getExpansion();
-        }
-        this.build_state = buildState;
-
-        
-
-        
 
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("context");
 
-        buildState.setExpansion(sb0.toString());
-        return sb0.toString();
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
     }
 
     @Override

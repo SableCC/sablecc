@@ -2,9 +2,9 @@
 
 package org.test.back;
 
-class MObjectMacroErrorHead {
+public class MObjectMacroErrorHead {
 
-  MObjectMacroErrorHead() {
+  public MObjectMacroErrorHead() {
   }
 
   @Override
