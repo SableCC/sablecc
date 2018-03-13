@@ -2,45 +2,85 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MStringPart {
+public class MStringPart extends Macro{
 
-  private final String pString;
-  private final String pIndexBuilder;
-  private final MStringPart mStringPart = this;
+    private String field_String;
 
-  public MStringPart(String pString, String pIndexBuilder) {
-    if(pString == null) throw new NullPointerException();
-    this.pString = pString;
-    if(pIndexBuilder == null) throw new NullPointerException();
-    this.pIndexBuilder = pIndexBuilder;
-  }
+    private String field_IndexBuilder;
 
-  String pString() {
-    return this.pString;
-  }
+    public MStringPart(String pString, String pIndexBuilder){
 
-  String pIndexBuilder() {
-    return this.pIndexBuilder;
-  }
+        this.setPString(pString);
+        this.setPIndexBuilder(pIndexBuilder);
+    }
 
-  private String rIndexBuilder() {
-    return this.mStringPart.pIndexBuilder();
-  }
+    private void setPString(String pString){
+        if(pString == null){
+            throw ObjectMacroException.parameterNull("String");
+        }
 
-  private String rString() {
-    return this.mStringPart.pString();
-  }
+        this.field_String = pString;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("        sb");
-    sb.append(rIndexBuilder());
-    sb.append(".append(\"");
-    sb.append(rString());
-    sb.append("\");");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+    private void setPIndexBuilder(String pIndexBuilder){
+        if(pIndexBuilder == null){
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
 
+        this.field_IndexBuilder = pIndexBuilder;
+    }
+
+    private String buildString(){
+
+        return this.field_String;
+    }
+
+    private String buildIndexBuilder(){
+
+        return this.field_IndexBuilder;
+    }
+
+    private String getString(){
+
+        return this.field_String;
+    }
+
+    private String getIndexBuilder(){
+
+        return this.field_IndexBuilder;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setStringPart(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("        sb");
+        sb0.append(buildIndexBuilder());
+        sb0.append(".append(\"");
+        sb0.append(buildString());
+        sb0.append("\");");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

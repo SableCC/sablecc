@@ -2,38 +2,69 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MInternalMacroRef {
+public class MInternalMacroRef extends Macro{
 
-  private final String pParamName;
-  private final MInternalMacroRef mInternalMacroRef = this;
+    private String field_ParamName;
 
-  public MInternalMacroRef(String pParamName) {
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    public MInternalMacroRef(String pParamName){
 
-  String pParamName() {
-    return this.pParamName;
-  }
+        this.setPParamName(pParamName);
+    }
 
-  private String rParamName() {
-    return this.mInternalMacroRef.pParamName();
-  }
+    private void setPParamName(String pParamName){
+        if(pParamName == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    private InternalValue get");
-    sb.append(rParamName());
-    sb.append("(Context context){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        return this.list_");
-    sb.append(rParamName());
-    sb.append(".get(context);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.field_ParamName = pParamName;
+    }
 
+    private String buildParamName(){
+
+        return this.field_ParamName;
+    }
+
+    private String getParamName(){
+
+        return this.field_ParamName;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setInternalMacroRef(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    private InternalValue get");
+        sb0.append(buildParamName());
+        sb0.append("(Context context)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        return this.list_");
+        sb0.append(buildParamName());
+        sb0.append(".get(context);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

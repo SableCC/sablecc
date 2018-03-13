@@ -2,32 +2,62 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MPackageDeclaration {
+public class MPackageDeclaration extends Macro{
 
-  private final String pPackageName;
-  private final MPackageDeclaration mPackageDeclaration = this;
+    private String field_PackageName;
 
-  public MPackageDeclaration(String pPackageName) {
-    if(pPackageName == null) throw new NullPointerException();
-    this.pPackageName = pPackageName;
-  }
+    public MPackageDeclaration(String pPackageName){
 
-  String pPackageName() {
-    return this.pPackageName;
-  }
+        this.setPPackageName(pPackageName);
+    }
 
-  private String rPackageName() {
-    return this.mPackageDeclaration.pPackageName();
-  }
+    private void setPPackageName(String pPackageName){
+        if(pPackageName == null){
+            throw ObjectMacroException.parameterNull("PackageName");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("package ");
-    sb.append(rPackageName());
-    sb.append(";");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.field_PackageName = pPackageName;
+    }
 
+    private String buildPackageName(){
+
+        return this.field_PackageName;
+    }
+
+    private String getPackageName(){
+
+        return this.field_PackageName;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setPackageDeclaration(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("package ");
+        sb0.append(buildPackageName());
+        sb0.append(";");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }
