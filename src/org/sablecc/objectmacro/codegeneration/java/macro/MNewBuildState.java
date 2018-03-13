@@ -2,16 +2,38 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MNewBuildState {
+public class MNewBuildState extends Macro{
 
-  public MNewBuildState() {
-  }
+    public MNewBuildState(){
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("this.build_states.put(context, buildState)");
-    return sb.toString();
-  }
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
 
+        internalsInitializer.setNewBuildState(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("this.build_states.put(context, buildState)");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

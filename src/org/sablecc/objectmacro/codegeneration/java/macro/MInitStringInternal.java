@@ -2,32 +2,62 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MInitStringInternal {
+public class MInitStringInternal extends Macro{
 
-  private final String pName;
-  private final MInitStringInternal mInitStringInternal = this;
+    private String field_Name;
 
-  public MInitStringInternal(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
+    public MInitStringInternal(String pName){
 
-  String pName() {
-    return this.pName;
-  }
+        this.setPName(pName);
+    }
 
-  private String rName() {
-    return this.mInitStringInternal.pName();
-  }
+    private void setPName(String pName){
+        if(pName == null){
+            throw ObjectMacroException.parameterNull("Name");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    this.field_");
-    sb.append(rName());
-    sb.append(" = new LinkedHashMap<>();");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.field_Name = pName;
+    }
 
+    private String buildName(){
+
+        return this.field_Name;
+    }
+
+    private String getName(){
+
+        return this.field_Name;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setInitStringInternal(this);
+    }
+
+    @Override
+    public String build(){
+
+        String local_expansion = this.expansion;
+
+        if(local_expansion != null){
+            return local_expansion;
+        }
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    this.field_");
+        sb0.append(buildName());
+        sb0.append(" = new LinkedHashMap<>();");
+
+        local_expansion = sb0.toString();
+        this.expansion = local_expansion;
+        return local_expansion;
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }
