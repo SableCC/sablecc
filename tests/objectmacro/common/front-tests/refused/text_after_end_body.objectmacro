@@ -3,7 +3,7 @@ Macro x
 
 {Indent: "lala"}
 
-{End}text_after_end_body.objectmacro
+{End}
 
 {End}Macro y #Error here
 {Body}
