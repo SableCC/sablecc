@@ -18,7 +18,6 @@
 
 mkdir -p tests/objectmacro/common/intermediate
 
-java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/accepted/test.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/cyclic_reference.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/double_parameter_declaration.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/escape.objectmacro
@@ -33,4 +32,7 @@ java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/ob
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/invalid_insert.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/unknown_command.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/overwrite_internals.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/text_after_end_body.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/text_after_end_body2.objectmacro
 
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/accepted/test.objectmacro
