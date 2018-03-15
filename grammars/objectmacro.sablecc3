@@ -182,6 +182,9 @@ Tokens
 
   invalid_character = [0..0xffff];
 
+  {macro_body}
+  erroneous_end = '{End}' white_space_not_newline* (ascii_pattern_syntax | lowercase | uppercase)+;
+
 Ignored Tokens
 
   blank, comment;
