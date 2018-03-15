@@ -1,0 +1,11 @@
+Macro x
+{Body}
+
+{Indent: "lala"}
+
+{End}text_after_end_body.objectmacro
+
+{End}Macro y #Error here
+{Body}
+
+{End}
