@@ -1,0 +1,8 @@
+Macro x
+{Body}
+
+{Indent: "lala"}
+
+{End}aaa
+
+{End}
