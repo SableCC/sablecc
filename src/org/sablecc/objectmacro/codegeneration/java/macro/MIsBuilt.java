@@ -31,7 +31,6 @@ public class MIsBuilt extends Macro{
 
         return this.field_MacroName.get(context);
     }
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -42,12 +41,21 @@ public class MIsBuilt extends Macro{
     @Override
      String build(Context context){
 
-        String local_expansion = this.expansions.get(context);
+        BuildState buildState = this.build_states.get(context);
 
-        if(local_expansion != null){
-            return local_expansion;
+        if(buildState == null){
+            buildState = new BuildState();
         }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("IsBuilt");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_states.put(context, buildState);
 
+        
+        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("        if(this.build_state != null)");
@@ -59,8 +67,7 @@ public class MIsBuilt extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("        }");
 
-        local_expansion = sb0.toString();
-        this.expansions.put(context, local_expansion);
-        return local_expansion;
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 }

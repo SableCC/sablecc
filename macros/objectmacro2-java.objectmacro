@@ -1320,8 +1320,8 @@ public class MMacroNullInList {
 }
 {End}
 
-#============ cannot_modify ============
-Macro cannot_modify
+#============ ex_cannot_modify ============
+Macro ex_cannot_modify
     Param
         package_declaration: package_declaration, before_first="\n";
 {Begin}
@@ -1361,9 +1361,9 @@ public class MCannotModify {
 }
 {End}
 
-#============ cyclic_reference ============
+#============ ex_cyclic_reference ============
 
-Macro cyclic_reference
+Macro ex_cyclic_reference
     Param
         package_declaration: package_declaration, before_first="\n";
 {Begin}

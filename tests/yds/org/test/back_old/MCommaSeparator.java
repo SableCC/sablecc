@@ -2,72 +2,98 @@
 
 package org.test.back_old;
 
+import java.util.*;
+
 public class MCommaSeparator extends Macro{
 
-    private Macro list_X[];
+    private final List<Macro> list_X;
+
+    private DSeparator XSeparator;
+
+    private DBeforeFirst XBeforeFirst;
+
+    private DAfterLast XAfterLast;
+
+    private DNone XNone;
+
+    private final InternalValue XValue;
 
     private final Context XContext = new Context();
 
-    public MCommaSeparator(Macro pX[]){
+    public MCommaSeparator(){
 
-        this.setPX(pX);
+    this.list_X = new ArrayList<>();
+
+    this.XValue = new InternalValue(this.list_X, this.XContext);
     }
 
-    private void setPX(Macro pX[]){
-        if(pX == null){
+    public void addX(MEmptyMacro macro){
+        if(macro == null){
             throw ObjectMacroException.parameterNull("X");
         }
+                if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("CommaSeparator");
+        }
 
-        Macro macros[] = pX;
-        this.list_X = new Macro[macros.length];
+        this.list_X.add(macro);
+    }
+
+    private String buildX(){
+        StringBuilder sb = new StringBuilder();
+        Context local_context = XContext;
+        List<Macro> macros = this.list_X;
+
         int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if(this.XNone != null){
+            sb.append(this.XNone.apply(i, "", nb_macros));
+        }
 
         for(Macro macro : macros){
-            if(macro == null){
-                throw ObjectMacroException.macroNull(i, "X");
+            expansion = macro.build(local_context);
+
+            if(this.XBeforeFirst != null){
+                expansion = this.XBeforeFirst.apply(i, expansion, nb_macros);
             }
 
+            if(this.XAfterLast != null){
+                expansion = this.XAfterLast.apply(i, expansion, nb_macros);
+            }
+
+            if(this.XSeparator != null){
+                expansion = this.XSeparator.apply(i, expansion, nb_macros);
+            }
+
+            sb.append(expansion);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    private InternalValue getX(){
+        return this.XValue;
+    }
+    private void initXInternals(Context context){
+        for(Macro macro : this.list_X){
             macro.apply(new InternalsInitializer("X"){
 @Override
 void setEmptyMacro(MEmptyMacro mEmptyMacro){
 
         }
 });
-
-            this.list_X[i++] = macro;
-
         }
     }
 
-    private String buildX(){
-
+    private void initXDirectives(){
+        
         StringBuilder sb0 = new StringBuilder();
-        Context local_context = XContext;
-        Macro macros[] = this.list_X;
-                boolean first = true;
-        int i = 0;
-
-        for(Macro macro : macros){
-                        if(first) {
-  first = false;
-}
-else {
-           sb0.append(", ");
-}
-
-            sb0.append(macro.build(local_context));
-            i++;
-
-                    }
-
-        return sb0.toString();
-    }
-
-    private Macro[] getX(){
-
-        return this.list_X;
-    }
-
+                sb0.append(", ");
+        this.XSeparator = new DSeparator(sb0.toString());
+        this.XValue.setSeparator(this.XSeparator);
+            }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -78,12 +104,23 @@ else {
     @Override
     public String build(){
 
-        String local_expansion = this.expansion;
+        BuildState buildState = this.build_state;
 
-        if(local_expansion != null){
-            return local_expansion;
+        if(buildState == null){
+            buildState = new BuildState();
         }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("CommaSeparator");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
 
+                initXDirectives();
+        
+                initXInternals(null);
+        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("La liste x : ");
@@ -95,9 +132,8 @@ else {
         sb0.append(minsert_1.build(null));
         sb0.append(".");
 
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 
     @Override

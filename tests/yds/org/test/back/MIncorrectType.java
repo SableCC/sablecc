@@ -2,7 +2,6 @@
 
 package org.test.back;
 
-
 public class MIncorrectType {
 
   private final String pType;
