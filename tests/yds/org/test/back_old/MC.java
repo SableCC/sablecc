@@ -6,14 +6,14 @@ import java.util.*;
 
 public class MC extends Macro{
 
-    private Map<Context, String> field_Y = new LinkedHashMap<>();
+    private Map<Context, String> field_Q = new LinkedHashMap<>();
 
-    private Map<Context, String> field_Z = new LinkedHashMap<>();
+    private Map<Context, String> field_R = new LinkedHashMap<>();
 
     public MC(){
     }
 
-    void setY(
+    void setQ(
             Context context,
             String value) {
 
@@ -21,10 +21,10 @@ public class MC extends Macro{
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_Y.put(context, value);
+        this.field_Q.put(context, value);
     }
 
-    void setZ(
+    void setR(
             Context context,
             String value) {
 
@@ -32,29 +32,28 @@ public class MC extends Macro{
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_Z.put(context, value);
+        this.field_R.put(context, value);
     }
 
-    private String buildY(Context context){
+    private String buildQ(Context context){
 
-        return this.field_Y.get(context);
+        return this.field_Q.get(context);
     }
 
-    private String buildZ(Context context){
+    private String buildR(Context context){
 
-        return this.field_Z.get(context);
+        return this.field_R.get(context);
     }
 
-    private String getY(Context context){
+    private String getQ(Context context){
 
-        return this.field_Y.get(context);
+        return this.field_Q.get(context);
     }
 
-    private String getZ(Context context){
+    private String getR(Context context){
 
-        return this.field_Z.get(context);
+        return this.field_R.get(context);
     }
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -65,20 +64,32 @@ public class MC extends Macro{
     @Override
      String build(Context context){
 
-        String local_expansion = this.expansions.get(context);
+        BuildState buildState = this.build_states.get(context);
 
-        if(local_expansion != null){
-            return local_expansion;
+        if(buildState == null){
+            buildState = new BuildState();
         }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("C");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_states.put(context, buildState);
 
+        
+        
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(buildY(context));
-        sb0.append(" ");
-        sb0.append(buildZ(context));
+        sb0.append("=============== C ==============");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Q : ");
+        sb0.append(buildQ(context));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("R : ");
+        sb0.append(buildR(context));
 
-        local_expansion = sb0.toString();
-        this.expansions.put(context, local_expansion);
-        return local_expansion;
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 }

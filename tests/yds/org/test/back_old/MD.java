@@ -2,11 +2,12 @@
 
 package org.test.back_old;
 
+import java.util.*;
+
 public class MD extends Macro{
 
     public MD(){
     }
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -17,12 +18,21 @@ public class MD extends Macro{
     @Override
     public String build(){
 
-        String local_expansion = this.expansion;
+        BuildState buildState = this.build_state;
 
-        if(local_expansion != null){
-            return local_expansion;
+        if(buildState == null){
+            buildState = new BuildState();
         }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("D");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
 
+        
+        
         StringBuilder sb0 = new StringBuilder();
 
         ME minsert_1 = new ME();
@@ -36,8 +46,8 @@ public class MD extends Macro{
         sbC.append("y3");
         StringBuilder sbD = new StringBuilder();
         sbD.append("yz3");
-                minsert_3.setY(null, sbC.toString());
-        minsert_3.setZ(null, sbD.toString());
+                minsert_3.setQ(null, sbC.toString());
+        minsert_3.setR(null, sbD.toString());
         sbB.append(minsert_3.build(null));
         StringBuilder sbE = new StringBuilder();
         MC minsert_4 = new MC();
@@ -45,11 +55,11 @@ public class MD extends Macro{
         sbF.append("a");
         StringBuilder sbG = new StringBuilder();
         sbG.append("b");
-                minsert_4.setY(null, sbF.toString());
-        minsert_4.setZ(null, sbG.toString());
+                minsert_4.setQ(null, sbF.toString());
+        minsert_4.setR(null, sbG.toString());
         sbE.append(minsert_4.build(null));
-                minsert_2.setY(null, sbB.toString());
-        minsert_2.setZ(null, sbE.toString());
+                minsert_2.setQ(null, sbB.toString());
+        minsert_2.setR(null, sbE.toString());
         sbA.append(minsert_2.build(null));
         StringBuilder sbH = new StringBuilder();
         MC minsert_5 = new MC();
@@ -57,8 +67,8 @@ public class MD extends Macro{
         sbI.append("y4");
         StringBuilder sbJ = new StringBuilder();
         sbJ.append("z4");
-                minsert_5.setY(null, sbI.toString());
-        minsert_5.setZ(null, sbJ.toString());
+                minsert_5.setQ(null, sbI.toString());
+        minsert_5.setR(null, sbJ.toString());
         sbH.append(minsert_5.build(null));
         StringBuilder sbK = new StringBuilder();
         MC minsert_6 = new MC();
@@ -66,17 +76,16 @@ public class MD extends Macro{
         sbL.append("y4");
         StringBuilder sbM = new StringBuilder();
         sbM.append("z4");
-                minsert_6.setY(null, sbL.toString());
-        minsert_6.setZ(null, sbM.toString());
+                minsert_6.setQ(null, sbL.toString());
+        minsert_6.setR(null, sbM.toString());
         sbK.append(minsert_6.build(null));
-                minsert_1.setX(null, sbA.toString());
-        minsert_1.setY(null, sbH.toString());
-        minsert_1.setZ(null, sbK.toString());
+                minsert_1.setS(null, sbA.toString());
+        minsert_1.setT(null, sbH.toString());
+        minsert_1.setU(null, sbK.toString());
         sb0.append(minsert_1.build(null));
 
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 
     @Override

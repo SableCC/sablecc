@@ -151,9 +151,10 @@ public class CodeGenerationWalker
      */
     private MPackageDeclaration currentPackageDeclaration;
 
-    private List<MAddIndent> indentations = new LinkedList<>();
-
-    private MAddIndent currentAddIndent;
+    //TODO
+//    private List<MAddIndent> indentations = new LinkedList<>();
+//
+//    private MAddIndent currentAddIndent;
 
     public CodeGenerationWalker(
             IntermediateRepresentation ir,
@@ -178,6 +179,7 @@ public class CodeGenerationWalker
             this.superMacro.addPackageDeclaration(this.currentPackageDeclaration);
             this.mInternalsInitializer.addPackageDeclaration(this.currentPackageDeclaration);
         }
+
     }
 
     @Override
@@ -268,7 +270,7 @@ public class CodeGenerationWalker
         else if(node.getType() instanceof AMacroRefsType){
             this.currentMacroToBuild.addListField(new MInternalMacroField(paramName));
 
-            this.currentMacroToBuild.addListBuilder(new MInternalMacroRefBuilder(paramName));
+            this.currentMacroToBuild.addListBuilder(new MParamMacroRefBuilder(paramName));
             this.currentMacroToBuild.addListRef(new MInternalMacroRef(paramName));
 
             this.indexBuilder = 0;
@@ -434,7 +436,7 @@ public class CodeGenerationWalker
         if(anyContext){
             this.currentRedefinedInternalsSetter.addListPart(new MInitStringBuilder(index_builder));
 
-            this.currentRedefinedInternalsSetter.newSetInternal(
+            MSetInternal mSetInternal = new MSetInternal(
                     this.currentMacroRefName,
                     GenerationUtils.buildNameCamelCase(node.getParamName()),
                     this.currentContextName);
@@ -625,7 +627,6 @@ public class CodeGenerationWalker
 //                                index_insert);
 //
 //            }
-        }
         this.createdInserts.add(this.indexInsert);
 
         String tempContext = this.currentContextName;

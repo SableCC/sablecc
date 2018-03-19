@@ -2,6 +2,8 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
+import java.util.*;
+
 public class MInternalMacrosValueField extends Macro{
 
     private String field_ParamName;
@@ -28,7 +30,6 @@ public class MInternalMacrosValueField extends Macro{
 
         return this.field_ParamName;
     }
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -39,21 +40,29 @@ public class MInternalMacrosValueField extends Macro{
     @Override
     public String build(){
 
-        String local_expansion = this.expansion;
+        BuildState buildState = this.build_state;
 
-        if(local_expansion != null){
-            return local_expansion;
+        if(buildState == null){
+            buildState = new BuildState();
         }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("InternalMacrosValueField");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
 
+        
+        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    private final InternalValue ");
         sb0.append(buildParamName());
         sb0.append("Value;");
 
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 
     @Override
