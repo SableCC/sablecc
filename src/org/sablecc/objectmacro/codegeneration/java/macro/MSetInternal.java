@@ -2,6 +2,8 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
+import java.util.*;
+
 public class MSetInternal extends Macro{
 
     private String field_MacroName;
@@ -10,16 +12,29 @@ public class MSetInternal extends Macro{
 
     private String field_Context;
 
-    private Macro list_ListParam[];
+    private final List<Macro> list_ListParam;
+
+    private DSeparator ListParamSeparator;
+
+    private DBeforeFirst ListParamBeforeFirst;
+
+    private DAfterLast ListParamAfterLast;
+
+    private DNone ListParamNone;
+
+    private final InternalValue ListParamValue;
 
     private final Context ListParamContext = new Context();
 
-    public MSetInternal(String pMacroName, String pParamName, String pContext, Macro pListParam[]){
+    public MSetInternal(String pMacroName, String pParamName, String pContext){
 
         this.setPMacroName(pMacroName);
         this.setPParamName(pParamName);
         this.setPContext(pContext);
-        this.setPListParam(pListParam);
+
+    this.list_ListParam = new ArrayList<>();
+
+    this.ListParamValue = new InternalValue(this.list_ListParam, this.ListParamContext);
     }
 
     private void setPMacroName(String pMacroName){
@@ -46,34 +61,26 @@ public class MSetInternal extends Macro{
         this.field_Context = pContext;
     }
 
-    private void setPListParam(Macro pListParam[]){
-        if(pListParam == null){
+    public void addListParam(MParamRef macro){
+        if(macro == null){
             throw ObjectMacroException.parameterNull("ListParam");
         }
-
-        Macro macros[] = pListParam;
-        this.list_ListParam = new Macro[macros.length];
-        int i = 0;
-
-        for(Macro macro : macros){
-            if(macro == null){
-                throw ObjectMacroException.macroNull(i, "ListParam");
-            }
-
-            macro.apply(new InternalsInitializer("ListParam"){
-@Override
-void setParamRef(MParamRef mParamRef){
-
+                if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("SetInternal");
         }
-@Override
-void setStringBuilderBuild(MStringBuilderBuild mStringBuilderBuild){
 
+        this.list_ListParam.add(macro);
+    }
+
+    public void addListParam(MStringBuilderBuild macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("ListParam");
         }
-});
-
-            this.list_ListParam[i++] = macro;
-
+                if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("SetInternal");
         }
+
+        this.list_ListParam.add(macro);
     }
 
     private String buildMacroName(){
@@ -92,21 +99,38 @@ void setStringBuilderBuild(MStringBuilderBuild mStringBuilderBuild){
     }
 
     private String buildListParam(){
-
-        StringBuilder sb0 = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         Context local_context = ListParamContext;
-        Macro macros[] = this.list_ListParam;
-                boolean first = true;
+        List<Macro> macros = this.list_ListParam;
+
         int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if(this.ListParamNone != null){
+            sb.append(this.ListParamNone.apply(i, "", nb_macros));
+        }
 
         for(Macro macro : macros){
-                        
-            sb0.append(macro.build(local_context));
+            expansion = macro.build(local_context);
+
+            if(this.ListParamBeforeFirst != null){
+                expansion = this.ListParamBeforeFirst.apply(i, expansion, nb_macros);
+            }
+
+            if(this.ListParamAfterLast != null){
+                expansion = this.ListParamAfterLast.apply(i, expansion, nb_macros);
+            }
+
+            if(this.ListParamSeparator != null){
+                expansion = this.ListParamSeparator.apply(i, expansion, nb_macros);
+            }
+
+            sb.append(expansion);
             i++;
+        }
 
-                    }
-
-        return sb0.toString();
+        return sb.toString();
     }
 
     private String getMacroName(){
@@ -124,11 +148,26 @@ void setStringBuilderBuild(MStringBuilderBuild mStringBuilderBuild){
         return this.field_Context;
     }
 
-    private Macro[] getListParam(){
+    private InternalValue getListParam(){
+        return this.ListParamValue;
+    }
+    private void initListParamInternals(Context context){
+        for(Macro macro : this.list_ListParam){
+            macro.apply(new InternalsInitializer("ListParam"){
+@Override
+void setParamRef(MParamRef mParamRef){
 
-        return this.list_ListParam;
+        }
+@Override
+void setStringBuilderBuild(MStringBuilderBuild mStringBuilderBuild){
+
+        }
+});
+        }
     }
 
+    private void initListParamDirectives(){
+            }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -139,12 +178,23 @@ void setStringBuilderBuild(MStringBuilderBuild mStringBuilderBuild){
     @Override
     public String build(){
 
-        String local_expansion = this.expansion;
+        BuildState buildState = this.build_state;
 
-        if(local_expansion != null){
-            return local_expansion;
+        if(buildState == null){
+            buildState = new BuildState();
         }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("SetInternal");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
 
+                initListParamDirectives();
+        
+                initListParamInternals(null);
+        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("        m");
@@ -157,9 +207,8 @@ void setStringBuilderBuild(MStringBuilderBuild mStringBuilderBuild){
         sb0.append(buildListParam());
         sb0.append(");");
 
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 
     @Override

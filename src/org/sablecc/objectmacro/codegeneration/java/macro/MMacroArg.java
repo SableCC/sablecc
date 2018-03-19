@@ -2,6 +2,8 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
+import java.util.*;
+
 public class MMacroArg extends Macro{
 
     private String field_Name;
@@ -28,7 +30,6 @@ public class MMacroArg extends Macro{
 
         return this.field_Name;
     }
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -39,20 +40,28 @@ public class MMacroArg extends Macro{
     @Override
     public String build(){
 
-        String local_expansion = this.expansion;
+        BuildState buildState = this.build_state;
 
-        if(local_expansion != null){
-            return local_expansion;
+        if(buildState == null){
+            buildState = new BuildState();
         }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("MacroArg");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
 
+        
+        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("list_");
         sb0.append(buildName());
 
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 
     @Override

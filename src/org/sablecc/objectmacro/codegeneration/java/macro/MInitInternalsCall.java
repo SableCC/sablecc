@@ -2,18 +2,33 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
+import java.util.*;
+
 public class MInitInternalsCall extends Macro{
 
     private String field_ParamName;
 
-    private Macro list_ContextArg[];
+    private final List<Macro> list_ContextArg;
+
+    private DSeparator ContextArgSeparator;
+
+    private DBeforeFirst ContextArgBeforeFirst;
+
+    private DAfterLast ContextArgAfterLast;
+
+    private DNone ContextArgNone;
+
+    private final InternalValue ContextArgValue;
 
     private final Context ContextArgContext = new Context();
 
-    public MInitInternalsCall(String pParamName, Macro pContextArg[]){
+    public MInitInternalsCall(String pParamName){
 
         this.setPParamName(pParamName);
-        this.setPContextArg(pContextArg);
+
+    this.list_ContextArg = new ArrayList<>();
+
+    this.ContextArgValue = new InternalValue(this.list_ContextArg, this.ContextArgContext);
     }
 
     private void setPParamName(String pParamName){
@@ -24,30 +39,15 @@ public class MInitInternalsCall extends Macro{
         this.field_ParamName = pParamName;
     }
 
-    private void setPContextArg(Macro pContextArg[]){
-        if(pContextArg == null){
+    public void addContextArg(MContextArg macro){
+        if(macro == null){
             throw ObjectMacroException.parameterNull("ContextArg");
         }
-
-        Macro macros[] = pContextArg;
-        this.list_ContextArg = new Macro[macros.length];
-        int i = 0;
-
-        for(Macro macro : macros){
-            if(macro == null){
-                throw ObjectMacroException.macroNull(i, "ContextArg");
-            }
-
-            macro.apply(new InternalsInitializer("ContextArg"){
-@Override
-void setContextArg(MContextArg mContextArg){
-
+                if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("InitInternalsCall");
         }
-});
 
-            this.list_ContextArg[i++] = macro;
-
-        }
+        this.list_ContextArg.add(macro);
     }
 
     private String buildParamName(){
@@ -56,24 +56,38 @@ void setContextArg(MContextArg mContextArg){
     }
 
     private String buildContextArg(){
-
-        StringBuilder sb0 = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         Context local_context = ContextArgContext;
-        Macro macros[] = this.list_ContextArg;
-        if(macros.length == 0){
-            sb0.append("null");
-}
-        boolean first = true;
+        List<Macro> macros = this.list_ContextArg;
+
         int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if(this.ContextArgNone != null){
+            sb.append(this.ContextArgNone.apply(i, "", nb_macros));
+        }
 
         for(Macro macro : macros){
-                        
-            sb0.append(macro.build(local_context));
+            expansion = macro.build(local_context);
+
+            if(this.ContextArgBeforeFirst != null){
+                expansion = this.ContextArgBeforeFirst.apply(i, expansion, nb_macros);
+            }
+
+            if(this.ContextArgAfterLast != null){
+                expansion = this.ContextArgAfterLast.apply(i, expansion, nb_macros);
+            }
+
+            if(this.ContextArgSeparator != null){
+                expansion = this.ContextArgSeparator.apply(i, expansion, nb_macros);
+            }
+
+            sb.append(expansion);
             i++;
+        }
 
-                    }
-
-        return sb0.toString();
+        return sb.toString();
     }
 
     private String getParamName(){
@@ -81,11 +95,27 @@ void setContextArg(MContextArg mContextArg){
         return this.field_ParamName;
     }
 
-    private Macro[] getContextArg(){
+    private InternalValue getContextArg(){
+        return this.ContextArgValue;
+    }
+    private void initContextArgInternals(Context context){
+        for(Macro macro : this.list_ContextArg){
+            macro.apply(new InternalsInitializer("ContextArg"){
+@Override
+void setContextArg(MContextArg mContextArg){
 
-        return this.list_ContextArg;
+        }
+});
+        }
     }
 
+    private void initContextArgDirectives(){
+        
+        StringBuilder sb0 = new StringBuilder();
+                sb0.append("null");
+        this.ContextArgNone = new DNone(sb0.toString());
+        this.ContextArgValue.setNone(this.ContextArgNone);
+            }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -96,12 +126,23 @@ void setContextArg(MContextArg mContextArg){
     @Override
     public String build(){
 
-        String local_expansion = this.expansion;
+        BuildState buildState = this.build_state;
 
-        if(local_expansion != null){
-            return local_expansion;
+        if(buildState == null){
+            buildState = new BuildState();
         }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("InitInternalsCall");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
 
+                initContextArgDirectives();
+        
+                initContextArgInternals(null);
+        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("init");
@@ -110,9 +151,8 @@ void setContextArg(MContextArg mContextArg){
         sb0.append(buildContextArg());
         sb0.append(");");
 
-        local_expansion = sb0.toString();
-        this.expansion = local_expansion;
-        return local_expansion;
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 
     @Override
