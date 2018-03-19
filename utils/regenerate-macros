@@ -26,7 +26,7 @@ rm -f src/org/sablecc/sablecc/codegeneration/java/macro/*.java
 rm -f src/org/sablecc/sablecc/launcher/errormessage/*.java
 rm -f src/org/sablecc/sablecc/semantics/errormessage/*.java
 
-java -jar lib/objectmacro.jar -d src -p org.sablecc.objectmacro.codegeneration.java.macro macros/objectmacro-java.objectmacro
+java -jar lib/objectmacro.jar -d src -p org.sablecc.objectmacro.codegeneration.java.macro macros/objectmacro2-java.objectmacro
 java -jar lib/objectmacro.jar -d src -p org.sablecc.objectmacro.codegeneration.scala.macro macros/objectmacro-scala.objectmacro
 java -jar lib/objectmacro.jar -d src -p org.sablecc.objectmacro.codegeneration.c.macro macros/objectmacro-c.objectmacro
 java -jar lib/objectmacro.jar -d src -p org.sablecc.objectmacro.codegeneration.intermediate.macro macros/objectmacro-intermediate.objectmacro

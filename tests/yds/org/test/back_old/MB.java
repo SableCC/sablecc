@@ -6,99 +6,133 @@ import java.util.*;
 
 public class MB extends Macro{
 
-    private String field_X;
+    private String field_O;
 
-    private Map<Context, Macro[]> list_Y = new LinkedHashMap<>();
+    private final List<Macro> list_S;
 
-    private final Context YContext = new Context();
+    private DSeparator SSeparator;
 
-    public MB(String pX){
+    private DBeforeFirst SBeforeFirst;
 
-        this.setPX(pX);
+    private DAfterLast SAfterLast;
+
+    private DNone SNone;
+
+    private final InternalValue SValue;
+
+    private Map<Context, InternalValue> list_P = new LinkedHashMap<>();
+
+    private final Context SContext = new Context();
+
+    public MB(String pO){
+
+        this.setPO(pO);
+
+    this.list_S = new ArrayList<>();
+
+    this.SValue = new InternalValue(this.list_S, this.SContext);
     }
 
-    private void setPX(String pX){
-        if(pX == null){
-            throw ObjectMacroException.parameterNull("X");
+    private void setPO(String pO){
+        if(pO == null){
+            throw ObjectMacroException.parameterNull("O");
         }
 
-        this.field_X = pX;
+        this.field_O = pO;
     }
 
-    void setY(
+    public void addS(MC macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("S");
+        }
+        
+        this.list_S.add(macro);
+    }
+
+    void setP(
             Context context,
-            Macro macros[]) {
+            InternalValue internal_value) {
 
-        if(macros == null){
-            throw new RuntimeException("macros cannot be null here");
+        if(internal_value == null){
+            throw new RuntimeException("macros cannot be null");
         }
 
-        Macro[] tempMacros = new Macro[macros.length];
+        this.list_P.put(context, internal_value);
+    }
+
+    private String buildO(){
+
+        return this.field_O;
+    }
+
+    private String buildS(){
+        StringBuilder sb = new StringBuilder();
+        Context local_context = SContext;
+        List<Macro> macros = this.list_S;
+
         int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if(this.SNone != null){
+            sb.append(this.SNone.apply(i, "", nb_macros));
+        }
 
         for(Macro macro : macros){
+            expansion = macro.build(local_context);
 
-            if(macro == null){
-                throw ObjectMacroException.macroNull(i, "Y");
+            if(this.SBeforeFirst != null){
+                expansion = this.SBeforeFirst.apply(i, expansion, nb_macros);
             }
 
-            macro.apply(new InternalsInitializer("Y"){
+            if(this.SAfterLast != null){
+                expansion = this.SAfterLast.apply(i, expansion, nb_macros);
+            }
+
+            if(this.SSeparator != null){
+                expansion = this.SSeparator.apply(i, expansion, nb_macros);
+            }
+
+            sb.append(expansion);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    private String buildP(Context context){
+
+        InternalValue macros = this.list_P.get(context);
+        return macros.build();
+    }
+
+    private String getO(){
+
+        return this.field_O;
+    }
+
+    private InternalValue getS(){
+        return this.SValue;
+    }
+
+    private InternalValue getP(Context context){
+        return this.list_P.get(context);
+    }
+    private void initSInternals(Context context){
+        for(Macro macro : this.list_S){
+            macro.apply(new InternalsInitializer("S"){
 @Override
 void setC(MC mC){
 
-            StringBuilder sb1 = new StringBuilder();
-
-        sb1.append("first argument of c in b");
-            mC.setY(YContext, sb1.toString());
-        mC.setZ(YContext, getX());
+                mC.setQ(SContext, getO());
+        mC.setR(SContext, getO());
 }
 });
-
-            tempMacros[i++] = macro;
         }
-
-        this.list_Y.put(context, tempMacros);
     }
 
-    private String buildX(){
-
-        return this.field_X;
-    }
-
-    private String buildY(Context context){
-
-        StringBuilder sb0 = new StringBuilder();
-        Context local_context = YContext;
-        Macro macros[] = this.list_Y.get(context);
-                boolean first = true;
-        int i = 0;
-
-        for(Macro macro : macros){
-                        if(first) {
-  first = false;
-}
-else {
-           sb0.append(LINE_SEPARATOR);
-}
-
-            sb0.append(macro.build(local_context));
-            i++;
-
-                    }
-
-        return sb0.toString();
-    }
-
-    private String getX(){
-
-        return this.field_X;
-    }
-
-    private Macro[] getY(Context context){
-
-        return this.list_Y.get(context);
-    }
-
+    private void initSDirectives(){
+            }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -109,18 +143,34 @@ else {
     @Override
      String build(Context context){
 
-        String local_expansion = this.expansions.get(context);
+        BuildState buildState = this.build_states.get(context);
 
-        if(local_expansion != null){
-            return local_expansion;
+        if(buildState == null){
+            buildState = new BuildState();
         }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("B");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_states.put(context, buildState);
 
+                initSDirectives();
+        
+                initSInternals(context);
+        
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(buildY(context));
+        sb0.append("============== B ===============");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("P : ");
+        sb0.append(buildP(context));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("S : ");
+        sb0.append(buildS());
 
-        local_expansion = sb0.toString();
-        this.expansions.put(context, local_expansion);
-        return local_expansion;
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 }

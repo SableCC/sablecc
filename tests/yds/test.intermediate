@@ -1,0 +1,12 @@
+Macro {
+  Name = 'hello' Param {
+    Name = 'nom' Type = String  }
+    Initialization Order{
+        'nom'    }
+  MacroBody{
+  '    Bonjour ';
+ ParamInsert { Name = 'nom' } ;
+  ', ce code est genere a partir d\'un patron ObjectMacro2 !;';
+  }
+}
+
