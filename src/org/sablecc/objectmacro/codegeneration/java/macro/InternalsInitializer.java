@@ -311,12 +311,12 @@ public class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MExMacroNullInList", this._paramName);
     }
 
-    void setCannotModify(MCannotModify mCannotModify){
-        throw ObjectMacroException.incorrectType("MCannotModify", this._paramName);
+    void setExCannotModify(MExCannotModify mExCannotModify){
+        throw ObjectMacroException.incorrectType("MExCannotModify", this._paramName);
     }
 
-    void setCyclicReference(MCyclicReference mCyclicReference){
-        throw ObjectMacroException.incorrectType("MCyclicReference", this._paramName);
+    void setExCyclicReference(MExCyclicReference mExCyclicReference){
+        throw ObjectMacroException.incorrectType("MExCyclicReference", this._paramName);
     }
 
 }
