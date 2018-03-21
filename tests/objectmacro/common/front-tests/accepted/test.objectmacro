@@ -193,4 +193,23 @@ Macro lexer_b
 {End}
 
 
+# ============== indentation test ============
 
+Macro indent_a
+    Param
+        b : String;
+{Body}
+{Indent: "{Insert: indent_b("{Insert: indent_b("{b}")}")}"}
+Du texte
+{Indent: "{b}"}
+Du texte a indenter avec b
+{End}
+{End}
+{End}
+
+Macro indent_b
+    Internal
+        a : String;
+{Body}
+\t {a}
+{End}
