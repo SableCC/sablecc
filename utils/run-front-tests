@@ -35,4 +35,6 @@ java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/ob
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/text_after_end_body.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/text_after_end_body2.objectmacro
 
+set -e
+
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/accepted/test.objectmacro
