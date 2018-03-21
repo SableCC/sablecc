@@ -178,4 +178,24 @@ Macro end
 =================
 {End}
 
+Macro indent_a
+    Param
+        b : String;
+{Body}
+{Indent: "\t{Insert: indent_b("{Insert: indent_b("{b}")}")}"}
+Du texte
+{Indent: "{b}"}
+Du texte a indenter avec b
+{End}
+{End}
+{End}
+
+Macro indent_b
+    Internal
+        a : String;
+{Body}
+- {a}
+{End}
+
+
 
