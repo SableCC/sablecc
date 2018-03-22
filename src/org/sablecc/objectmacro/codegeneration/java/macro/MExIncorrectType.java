@@ -123,8 +123,10 @@ this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append("{");
-        sb0.append("Insert : header}");
+        MHeader minsert_1 = new MHeader();
+        
+        
+        sb0.append(minsert_1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(buildPackageDeclaration());
         sb0.append(LINE_SEPARATOR);
