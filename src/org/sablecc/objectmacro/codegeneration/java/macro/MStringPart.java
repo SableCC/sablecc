@@ -7,24 +7,24 @@ import java.util.*;
 public class MStringPart extends Macro{
 
     private String field_String;
-
     private String field_IndexBuilder;
+
 
     public MStringPart(String pString, String pIndexBuilder){
 
-        this.setPString(pString);
-        this.setPIndexBuilder(pIndexBuilder);
+        this.setPString(pString);        this.setPIndexBuilder(pIndexBuilder);
+
+
     }
 
-    private void setPString(String pString){
+    private void setPString( String pString ){
         if(pString == null){
             throw ObjectMacroException.parameterNull("String");
         }
 
         this.field_String = pString;
     }
-
-    private void setPIndexBuilder(String pIndexBuilder){
+    private void setPIndexBuilder( String pIndexBuilder ){
         if(pIndexBuilder == null){
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
@@ -36,7 +36,6 @@ public class MStringPart extends Macro{
 
         return this.field_String;
     }
-
     private String buildIndexBuilder(){
 
         return this.field_IndexBuilder;
@@ -46,11 +45,12 @@ public class MStringPart extends Macro{
 
         return this.field_String;
     }
-
     private String getIndexBuilder(){
 
         return this.field_IndexBuilder;
     }
+
+
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -58,7 +58,7 @@ public class MStringPart extends Macro{
         internalsInitializer.setStringPart(this);
     }
 
-    @Override
+   @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -75,7 +75,9 @@ public class MStringPart extends Macro{
         this.build_state = buildState;
 
         
+
         
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("        sb");

@@ -8,12 +8,15 @@ public class MInternalStringField extends Macro{
 
     private String field_Name;
 
+
     public MInternalStringField(String pName){
 
         this.setPName(pName);
+
+
     }
 
-    private void setPName(String pName){
+    private void setPName( String pName ){
         if(pName == null){
             throw ObjectMacroException.parameterNull("Name");
         }
@@ -30,6 +33,8 @@ public class MInternalStringField extends Macro{
 
         return this.field_Name;
     }
+
+
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -37,7 +42,7 @@ public class MInternalStringField extends Macro{
         internalsInitializer.setInternalStringField(this);
     }
 
-    @Override
+   @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -54,7 +59,9 @@ public class MInternalStringField extends Macro{
         this.build_state = buildState;
 
         
+
         
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    private Map<Context, String> field_");
