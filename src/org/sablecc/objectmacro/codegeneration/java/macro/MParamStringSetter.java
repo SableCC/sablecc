@@ -7,9 +7,7 @@ import java.util.*;
 public class MParamStringSetter extends Macro{
 
     private String field_Name;
-
     private final List<Macro> list_ListStringParam;
-
     private DSeparator ListStringParamSeparator;
 
     private DBeforeFirst ListStringParamBeforeFirst;
@@ -17,11 +15,8 @@ public class MParamStringSetter extends Macro{
     private DAfterLast ListStringParamAfterLast;
 
     private DNone ListStringParamNone;
-
     private final InternalValue ListStringParamValue;
-
     private final List<Macro> list_ListParamArg;
-
     private DSeparator ListParamArgSeparator;
 
     private DBeforeFirst ListParamArgBeforeFirst;
@@ -29,48 +24,42 @@ public class MParamStringSetter extends Macro{
     private DAfterLast ListParamArgAfterLast;
 
     private DNone ListParamArgNone;
-
     private final InternalValue ListParamArgValue;
 
-    private final Context ListStringParamContext = new Context();
-    private final Context ListParamArgContext = new Context();
+    private final Context ListStringParamContext = new Context();    private final Context ListParamArgContext = new Context();
 
     public MParamStringSetter(String pName){
 
         this.setPName(pName);
 
-    this.list_ListStringParam = new ArrayList<>();
-    this.list_ListParamArg = new ArrayList<>();
+    this.list_ListStringParam = new ArrayList<>();    this.list_ListParamArg = new ArrayList<>();
 
-    this.ListStringParamValue = new InternalValue(this.list_ListStringParam, this.ListStringParamContext);
-    this.ListParamArgValue = new InternalValue(this.list_ListParamArg, this.ListParamArgContext);
+    this.ListStringParamValue = new InternalValue(this.list_ListStringParam, this.ListStringParamContext);    this.ListParamArgValue = new InternalValue(this.list_ListParamArg, this.ListParamArgContext);
     }
 
-    private void setPName(String pName){
+    private void setPName( String pName ){
         if(pName == null){
             throw ObjectMacroException.parameterNull("Name");
         }
 
         this.field_Name = pName;
     }
-
     public void addListStringParam(MStringParam macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ListStringParam");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ParamStringSetter");
+            throw ObjectMacroException.cannotModify("StringParam");
         }
 
         this.list_ListStringParam.add(macro);
     }
-
     public void addListParamArg(MParamArg macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ListParamArg");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ParamStringSetter");
+            throw ObjectMacroException.cannotModify("ParamArg");
         }
 
         this.list_ListParamArg.add(macro);
@@ -80,7 +69,6 @@ public class MParamStringSetter extends Macro{
 
         return this.field_Name;
     }
-
     private String buildListStringParam(){
         StringBuilder sb = new StringBuilder();
         Context local_context = ListStringParamContext;
@@ -115,7 +103,6 @@ public class MParamStringSetter extends Macro{
 
         return sb.toString();
     }
-
     private String buildListParamArg(){
         StringBuilder sb = new StringBuilder();
         Context local_context = ListParamArgContext;
@@ -155,11 +142,9 @@ public class MParamStringSetter extends Macro{
 
         return this.field_Name;
     }
-
     private InternalValue getListStringParam(){
         return this.ListStringParamValue;
     }
-
     private InternalValue getListParamArg(){
         return this.ListParamArgValue;
     }
@@ -169,27 +154,31 @@ public class MParamStringSetter extends Macro{
 @Override
 void setStringParam(MStringParam mStringParam){
 
-        }
+    
+    
+}
 });
         }
     }
-
     private void initListParamArgInternals(Context context){
         for(Macro macro : this.list_ListParamArg){
             macro.apply(new InternalsInitializer("ListParamArg"){
 @Override
 void setParamArg(MParamArg mParamArg){
 
-        }
+    
+    
+}
 });
         }
     }
 
     private void initListStringParamDirectives(){
-            }
-
+        
+    }
     private void initListParamArgDirectives(){
-            }
+        
+    }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -197,7 +186,7 @@ void setParamArg(MParamArg mParamArg){
         internalsInitializer.setParamStringSetter(this);
     }
 
-    @Override
+   @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -213,12 +202,12 @@ void setParamArg(MParamArg mParamArg){
         }
         this.build_state = buildState;
 
-                initListStringParamDirectives();
-                initListParamArgDirectives();
-        
-                initListStringParamInternals(null);
-                initListParamArgInternals(null);
-        
+        initListStringParamDirectives();
+initListParamArgDirectives();
+
+        initListStringParamInternals(null);
+initListParamArgInternals(null);
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    private void setP");
