@@ -2435,8 +2435,10 @@ Macro {
     Initialization Order{
         'package_declaration'    }
   MacroBody{
-  '{';
-  'Insert : header}';
+ MacroInsert {
+ MacroRef {
+ Name = 'header' }
+ };
   eol;
  ParamInsert { Name = { 'package', 'declaration' } } ;
   eol;
