@@ -564,6 +564,8 @@ Macro {
  Name = { 'param', 'string', 'ref', 'builder' } }
  MacroRef {
  Name = { 'param', 'macro', 'ref', 'builder' } }
+ MacroRef {
+ Name = { 'internal', 'macro', 'ref', 'builder' } }
  }
  Directive {
      Name = 'separator'       eol;

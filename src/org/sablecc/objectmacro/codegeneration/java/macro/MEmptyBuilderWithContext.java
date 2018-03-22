@@ -6,8 +6,18 @@ import java.util.*;
 
 public class MEmptyBuilderWithContext extends Macro{
 
+
+
     public MEmptyBuilderWithContext(){
+
+
+
     }
+
+
+
+
+
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -15,7 +25,7 @@ public class MEmptyBuilderWithContext extends Macro{
         internalsInitializer.setEmptyBuilderWithContext(this);
     }
 
-    @Override
+   @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -32,7 +42,9 @@ public class MEmptyBuilderWithContext extends Macro{
         this.build_state = buildState;
 
         
+
         
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    @Override");

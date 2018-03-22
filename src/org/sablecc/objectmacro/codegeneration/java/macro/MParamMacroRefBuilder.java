@@ -7,9 +7,7 @@ import java.util.*;
 public class MParamMacroRefBuilder extends Macro{
 
     private String field_Name;
-
     private final List<Macro> list_ContextName;
-
     private DSeparator ContextNameSeparator;
 
     private DBeforeFirst ContextNameBeforeFirst;
@@ -17,7 +15,6 @@ public class MParamMacroRefBuilder extends Macro{
     private DAfterLast ContextNameAfterLast;
 
     private DNone ContextNameNone;
-
     private final InternalValue ContextNameValue;
 
     private final Context ContextNameContext = new Context();
@@ -31,20 +28,19 @@ public class MParamMacroRefBuilder extends Macro{
     this.ContextNameValue = new InternalValue(this.list_ContextName, this.ContextNameContext);
     }
 
-    private void setPName(String pName){
+    private void setPName( String pName ){
         if(pName == null){
             throw ObjectMacroException.parameterNull("Name");
         }
 
         this.field_Name = pName;
     }
-
     public void addContextName(MContextName macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ContextName");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ParamMacroRefBuilder");
+            throw ObjectMacroException.cannotModify("ContextName");
         }
 
         this.list_ContextName.add(macro);
@@ -54,7 +50,6 @@ public class MParamMacroRefBuilder extends Macro{
 
         return this.field_Name;
     }
-
     private String buildContextName(){
         StringBuilder sb = new StringBuilder();
         Context local_context = ContextNameContext;
@@ -94,7 +89,6 @@ public class MParamMacroRefBuilder extends Macro{
 
         return this.field_Name;
     }
-
     private InternalValue getContextName(){
         return this.ContextNameValue;
     }
@@ -104,18 +98,19 @@ public class MParamMacroRefBuilder extends Macro{
 @Override
 void setContextName(MContextName mContextName){
 
-        }
+    
+    
+}
 });
         }
     }
 
     private void initContextNameDirectives(){
-        
         StringBuilder sb0 = new StringBuilder();
-                sb0.append("context");
-        this.ContextNameNone = new DNone(sb0.toString());
-        this.ContextNameValue.setNone(this.ContextNameNone);
-            }
+        sb0.append("context");
+this.ContextNameNone = new DNone(sb0.toString());
+this.ContextNameValue.setNone(this.ContextNameNone);
+    }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -123,7 +118,7 @@ void setContextName(MContextName mContextName){
         internalsInitializer.setParamMacroRefBuilder(this);
     }
 
-    @Override
+   @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -139,10 +134,10 @@ void setContextName(MContextName mContextName){
         }
         this.build_state = buildState;
 
-                initContextNameDirectives();
-        
-                initContextNameInternals(null);
-        
+        initContextNameDirectives();
+
+        initContextNameInternals(null);
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    private String build");

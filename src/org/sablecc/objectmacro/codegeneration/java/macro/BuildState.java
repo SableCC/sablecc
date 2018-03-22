@@ -16,4 +16,3 @@ class BuildState {
         this.expansion = expansion;
     }
 }
-
