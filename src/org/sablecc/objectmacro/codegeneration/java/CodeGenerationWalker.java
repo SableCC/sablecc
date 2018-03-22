@@ -270,7 +270,8 @@ public class CodeGenerationWalker
         else if(node.getType() instanceof AMacroRefsType){
             this.currentMacroToBuild.addListField(new MInternalMacroField(paramName));
 
-            this.currentMacroToBuild.addListBuilder(new MParamMacroRefBuilder(paramName));
+            this.currentParamMacroRefBuilder = new MParamMacroRefBuilder(paramName);
+            this.currentMacroToBuild.addListBuilder(this.currentParamMacroRefBuilder);
             this.currentMacroToBuild.addListRef(new MInternalMacroRef(paramName));
 
             this.indexBuilder = 0;
