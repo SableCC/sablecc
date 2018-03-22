@@ -8,12 +8,15 @@ public class MInitMacroParam extends Macro{
 
     private String field_Name;
 
+
     public MInitMacroParam(String pName){
 
         this.setPName(pName);
+
+
     }
 
-    private void setPName(String pName){
+    private void setPName( String pName ){
         if(pName == null){
             throw ObjectMacroException.parameterNull("Name");
         }
@@ -30,6 +33,8 @@ public class MInitMacroParam extends Macro{
 
         return this.field_Name;
     }
+
+
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -37,7 +42,7 @@ public class MInitMacroParam extends Macro{
         internalsInitializer.setInitMacroParam(this);
     }
 
-    @Override
+   @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -54,7 +59,9 @@ public class MInitMacroParam extends Macro{
         this.build_state = buildState;
 
         
+
         
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    this.list_");

@@ -8,12 +8,15 @@ public class MEolPart extends Macro{
 
     private String field_IndexBuilder;
 
+
     public MEolPart(String pIndexBuilder){
 
         this.setPIndexBuilder(pIndexBuilder);
+
+
     }
 
-    private void setPIndexBuilder(String pIndexBuilder){
+    private void setPIndexBuilder( String pIndexBuilder ){
         if(pIndexBuilder == null){
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
@@ -30,6 +33,8 @@ public class MEolPart extends Macro{
 
         return this.field_IndexBuilder;
     }
+
+
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -37,7 +42,7 @@ public class MEolPart extends Macro{
         internalsInitializer.setEolPart(this);
     }
 
-    @Override
+   @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -54,7 +59,9 @@ public class MEolPart extends Macro{
         this.build_state = buildState;
 
         
+
         
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("        sb");

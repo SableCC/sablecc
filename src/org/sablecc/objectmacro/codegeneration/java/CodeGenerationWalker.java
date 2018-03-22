@@ -603,8 +603,8 @@ public class CodeGenerationWalker
                     index_insert);
             this.currentRedefinedInternalsSetter.addListPart(this.currentInsertMacroPart);
         }
-        else{
-            if(tempInsertMacroPart != null){
+        else {
+            if (tempInsertMacroPart != null) {
                 index_builder = GenerationUtils.getLetterFromInteger(this.indexBuilder);
 
                 this.currentInsertMacroPart = new MInsertMacroPart(macro_name,
@@ -612,8 +612,7 @@ public class CodeGenerationWalker
                         index_insert);
                 tempInsertMacroPart.addListPart(this.currentInsertMacroPart);
 
-            }
-            else if(this.currentDirective != null) {
+            } else if (this.currentDirective != null) {
                 this.currentInsertMacroPart = new MInsertMacroPart(macro_name,
                         index_builder,
                         index_insert);
@@ -627,6 +626,7 @@ public class CodeGenerationWalker
 //                                index_insert);
 //
 //            }
+        }
         this.createdInserts.add(this.indexInsert);
 
         String tempContext = this.currentContextName;
@@ -642,80 +642,80 @@ public class CodeGenerationWalker
         this.currentContextName = tempContext;
         this.currentMacroRefName = tempMacroName;
         this.currentInsertMacroPart = tempInsertMacroPart;
-
     }
 
-    @Override
-    public void outAVarValue(
-            AVarValue node) {
+//    @Override
+//    public void outAVarValue(
+//            AVarValue node) {
+//
+//        String var_name = GenerationUtils.buildNameCamelCase(node.getNames());
+//
+//        if(this.currentContextName != null){
+//
+//            MSetInternal mSetInternal = new MSetInternal(
+//                    this.currentMacroRefName,
+//                    GenerationUtils.buildNameCamelCase(node.getParamName()),
+//                    this.currentContextName);
+//            MParamRef paramRef =new MParamRef(var_name);
+//            this.currentRedefinedInternalsSetter.addListSetInternal(mSetInternal);
+//            mSetInternal.addListParam(paramRef);
+//
+//            if(this.currentMacro.getInternalsName().contains(var_name)){
+//                paramRef.addListContextArg(new MContextName(GenerationUtils.CONTEXT_STRING.toLowerCase()));
+//            }
+//        }
+//        else{
+//            MSetInternal mSetInternal = new MSetInternal(
+//                    GenerationUtils.INSERT_VAR_NAME.concat(String.valueOf(this.indexInsert)),
+//                    GenerationUtils.buildNameCamelCase(node.getParamName()),
+//                    "null");
+//            this.currentInsertMacroPart.addListSetInternal(mSetInternal);
+//            MParamRef mParamRef = new MParamRef(var_name);
+//            mSetInternal.addListParam(mParamRef);
+//
+//            if(this.currentMacro.getInternalsName().contains(var_name)){
+//                mParamRef.addListContextArg(new MContextArg());
+//            }
+//        }
+//    }
 
-        String var_name = GenerationUtils.buildNameCamelCase(node.getNames());
-
-        if(this.currentContextName != null){
-
-            MSetInternal mSetInternal = new MSetInternal(
-                    this.currentMacroRefName,
-                    GenerationUtils.buildNameCamelCase(node.getParamName()),
-                    this.currentContextName);
-            MParamRef paramRef =new MParamRef(var_name);
-            this.currentRedefinedInternalsSetter.addListSetInternal(mSetInternal);
-            mSetInternal.addListParam(paramRef);
-
-            if(this.currentMacro.getInternalsName().contains(var_name)){
-                paramRef.addListContextArg(new MContextName(GenerationUtils.CONTEXT_STRING.toLowerCase()));
-            }
-        }
-        else{
-            MSetInternal mSetInternal = new MSetInternal(
-                    GenerationUtils.INSERT_VAR_NAME.concat(String.valueOf(this.indexInsert)),
-                    GenerationUtils.buildNameCamelCase(node.getParamName()),
-                    "null");
-            this.currentInsertMacroPart.addListSetInternal(mSetInternal);
-            MParamRef mParamRef = new MParamRef(var_name);
-            mSetInternal.addListParam(mParamRef);
-
-            if(this.currentMacro.getInternalsName().contains(var_name)){
-                mParamRef.addListContextArg(new MContextArg());
-            }
-        }
-    }
-
-    @Override
-    public void caseAIndentMacroPart(
-            AIndentMacroPart node) {
-
-        this.indexBuilder++;
-        String index_builder = String.valueOf(this.indexBuilder);
-        this.currentMacroBuilder.newInitStringBuilder(index_builder);
-        this.currentAddIndent = this.currentMacroBuilder.newAddIndent();
-
-        //To avoid modification on indexes
-        Integer tempIndexBuilder = this.indexBuilder;
-        Integer tempIndexInsert = this.indexInsert;
-
-        for(PTextPart part : node.getTextPart()){
-            part.apply(this);
-        }
-
-        this.indexBuilder = tempIndexBuilder;
-        this.indexInsert = tempIndexInsert;
-
-        //TODO
-//        this.indentations.add(this.currentAddIndent);
-//        this.currentAddIndent = null;
-
-        this.createdBuilders.add(index_builder);
-    }
-
-    @Override
-    public void caseAEndIndentMacroPart(
-            AEndIndentMacroPart node) {
-
-        String index_indent = String.valueOf(this.indexBuilder);
-        this.indexBuilder--;
-        this.indentations.remove(this.indentations.size() - 1);
-        this.currentMacroBuilder.newIndentPart(String.valueOf(this.indexBuilder), index_indent);
-    }
+    //TODO
+//    @Override
+//    public void caseAIndentMacroPart(
+//            AIndentMacroPart node) {
+//
+//        this.indexBuilder++;
+//        String index_builder = String.valueOf(this.indexBuilder);
+//        this.currentMacroBuilder.newInitStringBuilder(index_builder);
+//        this.currentAddIndent = this.currentMacroBuilder.newAddIndent();
+//
+//        //To avoid modification on indexes
+//        Integer tempIndexBuilder = this.indexBuilder;
+//        Integer tempIndexInsert = this.indexInsert;
+//
+//        for(PTextPart part : node.getTextPart()){
+//            part.apply(this);
+//        }
+//
+//        this.indexBuilder = tempIndexBuilder;
+//        this.indexInsert = tempIndexInsert;
+//
+//        //TODO
+////        this.indentations.add(this.currentAddIndent);
+////        this.currentAddIndent = null;
+//
+//        this.createdBuilders.add(index_builder);
+//    }
+//
+//    @Override
+//    public void caseAEndIndentMacroPart(
+//            AEndIndentMacroPart node) {
+//
+//        String index_indent = String.valueOf(this.indexBuilder);
+//        this.indexBuilder--;
+//        this.indentations.remove(this.indentations.size() - 1);
+//        this.currentMacroBuilder.newIndentPart(String.valueOf(this.indexBuilder), index_indent);
+//    }
 
     @Override
     public void caseAStringMacroPart(
