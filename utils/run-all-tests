@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # This file is part of SableCC (http://sablecc.org/).
 #
 # See the NOTICE file distributed with this work for copyright information.
@@ -15,10 +14,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 ant -f ant-files/
 mkdir -p tests/objectmacro/common/intermediate
-
 ./utils/run-back-tests
 ./utils/run-front-tests
 ./utils/run-realistic-tests
