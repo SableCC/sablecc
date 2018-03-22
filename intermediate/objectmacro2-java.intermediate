@@ -564,6 +564,8 @@ Macro {
  Name = { 'param', 'string', 'ref', 'builder' } }
  MacroRef {
  Name = { 'param', 'macro', 'ref', 'builder' } }
+ MacroRef {
+ Name = { 'internal', 'macro', 'ref', 'builder' } }
  }
  Directive {
      Name = 'separator'       eol;
@@ -2433,8 +2435,10 @@ Macro {
     Initialization Order{
         'package_declaration'    }
   MacroBody{
-  '{';
-  'Insert : header}';
+ MacroInsert {
+ MacroRef {
+ Name = 'header' }
+ };
   eol;
  ParamInsert { Name = { 'package', 'declaration' } } ;
   eol;

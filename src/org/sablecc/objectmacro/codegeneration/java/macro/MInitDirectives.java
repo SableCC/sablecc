@@ -7,9 +7,7 @@ import java.util.*;
 public class MInitDirectives extends Macro{
 
     private String field_ParamName;
-
     private final List<Macro> list_NewDirective;
-
     private DSeparator NewDirectiveSeparator;
 
     private DBeforeFirst NewDirectiveBeforeFirst;
@@ -17,7 +15,6 @@ public class MInitDirectives extends Macro{
     private DAfterLast NewDirectiveAfterLast;
 
     private DNone NewDirectiveNone;
-
     private final InternalValue NewDirectiveValue;
 
     private final Context NewDirectiveContext = new Context();
@@ -31,20 +28,19 @@ public class MInitDirectives extends Macro{
     this.NewDirectiveValue = new InternalValue(this.list_NewDirective, this.NewDirectiveContext);
     }
 
-    private void setPParamName(String pParamName){
+    private void setPParamName( String pParamName ){
         if(pParamName == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
 
         this.field_ParamName = pParamName;
     }
-
     public void addNewDirective(MNewDirective macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("NewDirective");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("InitDirectives");
+            throw ObjectMacroException.cannotModify("NewDirective");
         }
 
         this.list_NewDirective.add(macro);
@@ -54,7 +50,6 @@ public class MInitDirectives extends Macro{
 
         return this.field_ParamName;
     }
-
     private String buildNewDirective(){
         StringBuilder sb = new StringBuilder();
         Context local_context = NewDirectiveContext;
@@ -94,7 +89,6 @@ public class MInitDirectives extends Macro{
 
         return this.field_ParamName;
     }
-
     private InternalValue getNewDirective(){
         return this.NewDirectiveValue;
     }
@@ -104,14 +98,16 @@ public class MInitDirectives extends Macro{
 @Override
 void setNewDirective(MNewDirective mNewDirective){
 
-                mNewDirective.setParamName(NewDirectiveContext, getParamName());
+    
+            mNewDirective.setParamName(NewDirectiveContext, getParamName());
 }
 });
         }
     }
 
     private void initNewDirectiveDirectives(){
-            }
+        
+    }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -119,7 +115,7 @@ void setNewDirective(MNewDirective mNewDirective){
         internalsInitializer.setInitDirectives(this);
     }
 
-    @Override
+   @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -135,10 +131,10 @@ void setNewDirective(MNewDirective mNewDirective){
         }
         this.build_state = buildState;
 
-                initNewDirectiveDirectives();
-        
-                initNewDirectiveInternals(null);
-        
+        initNewDirectiveDirectives();
+
+        initNewDirectiveInternals(null);
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    private void init");

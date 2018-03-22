@@ -7,11 +7,8 @@ import java.util.*;
 public class MParamInsertPart extends Macro{
 
     private String field_ParamName;
-
     private String field_IndexBuilder;
-
     private final List<Macro> list_ContextArg;
-
     private DSeparator ContextArgSeparator;
 
     private DBeforeFirst ContextArgBeforeFirst;
@@ -19,43 +16,39 @@ public class MParamInsertPart extends Macro{
     private DAfterLast ContextArgAfterLast;
 
     private DNone ContextArgNone;
-
     private final InternalValue ContextArgValue;
 
     private final Context ContextArgContext = new Context();
 
     public MParamInsertPart(String pParamName, String pIndexBuilder){
 
-        this.setPParamName(pParamName);
-        this.setPIndexBuilder(pIndexBuilder);
+        this.setPParamName(pParamName);        this.setPIndexBuilder(pIndexBuilder);
 
     this.list_ContextArg = new ArrayList<>();
 
     this.ContextArgValue = new InternalValue(this.list_ContextArg, this.ContextArgContext);
     }
 
-    private void setPParamName(String pParamName){
+    private void setPParamName( String pParamName ){
         if(pParamName == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
 
         this.field_ParamName = pParamName;
     }
-
-    private void setPIndexBuilder(String pIndexBuilder){
+    private void setPIndexBuilder( String pIndexBuilder ){
         if(pIndexBuilder == null){
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
 
         this.field_IndexBuilder = pIndexBuilder;
     }
-
     public void addContextArg(MContextArg macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ContextArg");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ParamInsertPart");
+            throw ObjectMacroException.cannotModify("ContextArg");
         }
 
         this.list_ContextArg.add(macro);
@@ -65,12 +58,10 @@ public class MParamInsertPart extends Macro{
 
         return this.field_ParamName;
     }
-
     private String buildIndexBuilder(){
 
         return this.field_IndexBuilder;
     }
-
     private String buildContextArg(){
         StringBuilder sb = new StringBuilder();
         Context local_context = ContextArgContext;
@@ -110,12 +101,10 @@ public class MParamInsertPart extends Macro{
 
         return this.field_ParamName;
     }
-
     private String getIndexBuilder(){
 
         return this.field_IndexBuilder;
     }
-
     private InternalValue getContextArg(){
         return this.ContextArgValue;
     }
@@ -125,13 +114,16 @@ public class MParamInsertPart extends Macro{
 @Override
 void setContextArg(MContextArg mContextArg){
 
-        }
+    
+    
+}
 });
         }
     }
 
     private void initContextArgDirectives(){
-            }
+        
+    }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -139,7 +131,7 @@ void setContextArg(MContextArg mContextArg){
         internalsInitializer.setParamInsertPart(this);
     }
 
-    @Override
+   @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -155,10 +147,10 @@ void setContextArg(MContextArg mContextArg){
         }
         this.build_state = buildState;
 
-                initContextArgDirectives();
-        
-                initContextArgInternals(null);
-        
+        initContextArgDirectives();
+
+        initContextArgInternals(null);
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("        sb");
