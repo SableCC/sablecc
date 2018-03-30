@@ -1,0 +1,27 @@
+Macro html
+    Param
+        parts : text, div;
+{Body}
+<html>
+    <title> Mon petit doc HTML </title>
+    <body>
+{Indent: "          "}
+{parts}
+{End}
+    </body>
+</html>
+{End}
+
+Macro text
+    Param
+        content : String;
+{Body}
+{content}
+{End}
+
+Macro div
+    Param
+        parts : text, div;
+{Body}
+<div>{parts}</div>
+{End}

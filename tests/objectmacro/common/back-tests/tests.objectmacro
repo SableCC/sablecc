@@ -1,0 +1,46 @@
+Macro a
+    Param
+        x : b;
+        y : a;
+{Body}
+{x}
+{y}
+{End}
+
+Macro b
+    Param
+        y : c;
+{Body}
+{y}
+{End}
+
+Macro c
+    Param
+        y : a;
+        z : b;
+{Body}
+{y}
+{z}
+{End}
+
+Macro f
+    Param
+        x : g;
+        y : h;
+{Body}
+{y} {x}
+{End}
+
+Macro g
+    Param
+        z : h;
+{Body}
+{z}
+{End}
+
+Macro h
+    Param
+        lala : f;
+{Body}
+{lala}
+{End}
