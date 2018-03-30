@@ -4,12 +4,12 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MSuperMacro {
+public class MCycleDetectorClass {
 
   private final List<Object> ePackageDeclaration = new LinkedList<Object>();
   private final List<Object> eImportJavaUtil = new LinkedList<Object>();
 
-  public MSuperMacro() {
+  public MCycleDetectorClass() {
   }
 
   public MPackageDeclaration newPackageDeclaration(String pPackageName) {
@@ -34,62 +34,67 @@ public class MSuperMacro {
     for(Object oPackageDeclaration : this.ePackageDeclaration) {
       sb.append(oPackageDeclaration.toString());
     }
+    if(this.eImportJavaUtil.size() > 0) {
+      sb.append(System.getProperty("line.separator"));
+    }
     for(Object oImportJavaUtil : this.eImportJavaUtil) {
       sb.append(oImportJavaUtil.toString());
     }
     sb.append(System.getProperty("line.separator"));
-    sb.append("public abstract class Macro {");
+    sb.append("public class CycleDetector {");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("    final static String LINE_SEPARATOR = System.getProperty(\"line.separator\");");
+    sb.append("    private Macro receiver;");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("    BuildState build_state = null;");
+    sb.append("    private Set<Macro> visited;");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("    final Map<Context, BuildState> build_states = new LinkedHashMap<>();");
+    sb.append("    void detectCycle(");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            Macro receiver,");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            Macro added){");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("    final LinkedList<Macro> children = new LinkedList<>();");
+    sb.append("        this.visited = new LinkedHashSet<>();");
     sb.append(System.getProperty("line.separator"));
+    sb.append("        this.receiver = receiver;");
     sb.append(System.getProperty("line.separator"));
-    sb.append("    static final CycleDetector cycleDetector = new CycleDetector();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    public String build(){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        throw new RuntimeException(\"build cannot be invoked here\");");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    String build(");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            Context context){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        throw new RuntimeException(\"build cannot be invoked here\");");
+    sb.append("        detectCycle(added);");
     sb.append(System.getProperty("line.separator"));
     sb.append("    }");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("    void apply(");
+    sb.append("    private void detectCycle(");
     sb.append(System.getProperty("line.separator"));
-    sb.append("            InternalsInitializer internalsInitializer){");
+    sb.append("            Macro macro){");
     sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
-    sb.append("        throw new RuntimeException(\"apply cannot be called here\");");
+    sb.append("        if(this.visited.contains(macro)){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            return;");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        }");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        if(macro == this.receiver){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            throw ObjectMacroException.cyclicReference(macro.getClass().getSimpleName());");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        }");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        this.visited.add(macro);");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        for(Macro child : macro.getChildren()){");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("            detectCycle(child);");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        }");
     sb.append(System.getProperty("line.separator"));
     sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    LinkedList<Macro> getChildren(){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        return this.children;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("}");
     sb.append(System.getProperty("line.separator"));
