@@ -90,30 +90,6 @@ Macro e
 {u}
 {End}
 
-# ========= Example for cyclic reference ==============
-
-Macro f
-    Param
-        x : g(y);
-        y : h;
-{Body}
-{y} {x}
-{End}
-
-Macro g
-    Internal
-        z : h;
-{Body}
-{z}
-{End}
-
-Macro h
-    Param
-        lala : f;
-{Body}
-{lala}
-{End}
-
 #=========== Example =========
 
 Macro i
