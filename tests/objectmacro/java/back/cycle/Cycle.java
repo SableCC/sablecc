@@ -15,29 +15,30 @@
  * limitations under the License.
  */
 
-package back;
+package back.cycle;
 
-import back.macro.*;
+import back.cycle.macro.*;
 
 public class Cycle {
 
-    public static void main(String args[]){
+    public static void main(String[] args){
 
         System.out.print("---------- Cyclic Reference ----------\n");
-        MF f = new MF();
-        MG g = new MG();
-        MH h = new MH();
-        f.addY(h);
-        f.addX(g);
-        f.addX(g);
-        h.addLala(f);
+
+        MA ma = new MA();
+        MB mb = new MB();
+        MC mc = new MC();
+
+        ma.addX(mb);
+        mb.addY(mc);
 
         try{
-            System.out.print(f.build());
+            mc.addY(ma);
             System.err.println("It should throw an exception here");
             System.exit(1);
-        }catch(ObjectMacroException e){
-            System.out.println(e.getMessage());
+        }
+        catch(ObjectMacroException e){
+            e.printStackTrace();
         }
     }
 }
