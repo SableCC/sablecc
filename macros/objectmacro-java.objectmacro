@@ -74,6 +74,48 @@ $macro: parent_internals_setter(name) $
     }
 $end: parent_internals_setter $
 
+$comment: ============ cycle_detector ============= $
+
+$macro: cycle_detector_class $
+$insert: header $
+$expand: package_declaration, before_first="\n" $
+$expand: import_java_util, before_first="\n" $
+
+public class CycleDetector {
+
+    private Macro receiver;
+
+    private Set<Macro> visited;
+
+    void detectCycle(
+            Macro receiver,
+            Macro added){
+
+        this.visited = new LinkedHashSet<>();
+        this.receiver = receiver;
+        detectCycle(added);
+    }
+
+    private void detectCycle(
+            Macro macro){
+
+        if(this.visited.contains(macro)){
+            return;
+        }
+
+        if(macro == this.receiver){
+            throw ObjectMacroException.cyclicReference(macro.getClass().getSimpleName());
+        }
+
+        this.visited.add(macro);
+
+        for(Macro child : macro.getChildren()){
+            detectCycle(child);
+        }
+    }
+}
+$end: cycle_detector_class $
+
 $comment: ========== super_macro ========== $
 
 $macro: super_macro $
@@ -88,6 +130,10 @@ public abstract class Macro {
     BuildState build_state = null;
 
     final Map<Context, BuildState> build_states = new LinkedHashMap<>();
+
+    final LinkedList<Macro> children = new LinkedList<>();
+
+    static final CycleDetector cycleDetector = new CycleDetector();
 
     public String build(){
 
@@ -104,6 +150,10 @@ public abstract class Macro {
             InternalsInitializer internalsInitializer){
 
         throw new RuntimeException("apply cannot be called here");
+    }
+
+    LinkedList<Macro> getChildren(){
+        return this.children;
     }
 
 }
@@ -355,6 +405,8 @@ $macro: single_add(macro_name, param_name) $
         $expand: is_built $
 
         this.list_$param_name.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
 $end: single_add $
 

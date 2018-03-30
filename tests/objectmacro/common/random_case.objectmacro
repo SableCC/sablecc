@@ -1,0 +1,99 @@
+Macro main
+    Param
+        class_name : String;
+        package : package_declaration;
+        macro_declarations : new_macro, separator="\n", before_first="\n";
+        link_methods : link_method, separator="\n\n", before_first="\n";
+        calls_link_function : call_link_function, separator="\n";
+        init_macros : init_macro, separator="\n", before_first="\n";
+{Body}
+{package}
+
+public class {class_name}{{
+
+    public static long exec_time = 0;
+    public static long start = 0;
+    public static long end = 0;
+
+{Indent: "\t"}
+{macro_declarations}
+{End}
+
+{Indent: "\t"}
+public static void main(
+            String[] args){{
+
+{Indent: "\t"}
+{init_macros}
+start = System.nanoTime();
+try{
+{Indent: "\t"}
+{calls_link_function}
+{End}
+}
+catch(ObjectMacroException e){
+    end = System.nanoTime();
+    exec_time = end - start;
+}
+
+{End}
+}
+{End}
+{Indent: "\t"}
+{link_methods}
+{End}
+}
+{End}
+
+Macro package_declaration
+    Param
+        name : String;
+{Body}
+package {name};
+
+import {name}.macro.*;
+{End}
+
+Macro new_macro
+    Param
+        param_name : String;
+{Body}
+private static MA m{param_name} = new MA();
+{End}
+
+Macro init_macro
+    Param
+        param_name : String;
+{Body}
+m{param_name} = new MA();
+{End}
+
+Macro add_macro
+    Param
+        receiver : String;
+        added : String;
+{Body}
+m{receiver}.addY(m{added});
+{End}
+
+Macro link_method
+    Param
+        index : String;
+        macro_links : add_macro, separator="\nelse ";
+{Body}
+private static void addLinks{index}() throws ObjectMacroException{
+{Indent: "\t"}
+{macro_links}
+{End}
+}
+{End}
+
+Macro call_link_function
+    Param
+        index : String;
+{Body}
+addLinks{index}();
+if(exec_time != 0){
+    return;
+}
+{End}

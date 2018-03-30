@@ -1,0 +1,52 @@
+Macro class_main
+    Param
+        class_name : String;
+        package : package;
+        nb_nodes : String;
+{Body}
+{package}
+
+public class {class_name}{{
+
+    public static long exec_time = 0;
+
+{Indent: "\t"}
+public static void main(
+            String[] args){
+
+MA mFirst = new MA();
+MA mLast = new MA();
+MA currentMA = new MA();
+currentMA.addY(mLast);
+
+{Indent: "\t"}
+long start = System.nanoTime();
+for(int i = 0; i < {nb_nodes} - 2; i++){
+{Indent: "\t"}
+MA tempMA = new MA();
+tempMA.addY(currentMA);
+currentMA = tempMA;
+{End}
+}
+mFirst.addY(currentMA);
+try{
+    mLast.addY(mFirst);
+}
+catch(ObjectMacroException e){
+    long end = System.nanoTime();
+    exec_time = end - start;
+}
+{End}
+}
+{End}
+}
+{End}
+
+Macro package
+    Param
+        name : String;
+{Body}
+package {name};
+
+import {name}.macro.*;
+{End}
