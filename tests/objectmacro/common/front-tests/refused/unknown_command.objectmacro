@@ -19,6 +19,6 @@
 Macro a
     Param
         b : String;
-{Begin}
+{Body}
 {Lala: a}
 {End}

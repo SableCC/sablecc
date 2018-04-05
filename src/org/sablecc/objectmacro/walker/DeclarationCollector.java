@@ -44,8 +44,8 @@ public class DeclarationCollector
     public void caseAMacro(
             AMacro node) {
 
-        if (node.getBegin().getPos() != 1) {
-            throw CompilerException.beginTokenMisused(node.getBegin());
+        if (node.getBody().getPos() != 1) {
+            throw CompilerException.bodyTokenMisused(node.getBody());
         }
 
         Macro macro = this.globalIndex.newMacro(node);
@@ -61,6 +61,19 @@ public class DeclarationCollector
         for (PInternal param_production : internals) {
             AInternal param_node = (AInternal) param_production;
             macro.newInternal(param_node);
+        }
+
+        for(PMacroBodyPart pMacroBodyPart : node.getMacroBodyParts()){
+            pMacroBodyPart.apply(this);
+        }
+    }
+
+    @Override
+    public void caseAIndentMacroBodyPart(
+            AIndentMacroBodyPart node) {
+
+        if(node.getCommand().getPos() != 1){
+            throw CompilerException.indentTokenMisused(node.getCommand());
         }
     }
 }

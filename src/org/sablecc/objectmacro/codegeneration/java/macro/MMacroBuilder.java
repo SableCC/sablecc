@@ -12,7 +12,7 @@ public class MMacroBuilder {
   private final List<Object> eContextParam = new LinkedList<Object>();
   private final List<Object> eContextBuildState = new LinkedList<Object>();
   private final List<Object> eNewBuildState = new LinkedList<Object>();
-  private final List<Object> eStringPart_ParamInsertPart_EolPart_InsertMacroPart = new LinkedList<Object>();
+  private final List<Object> eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart_AddIndent_IndentPart = new LinkedList<Object>();
   private final List<Object> eInitDirectivesCall = new LinkedList<Object>();
   private final List<Object> eInitInternalsCall = new LinkedList<Object>();
 
@@ -57,28 +57,46 @@ public class MMacroBuilder {
     return lNewBuildState;
   }
 
+  public MInitStringBuilder newInitStringBuilder(String pIndexBuilder) {
+    MInitStringBuilder lInitStringBuilder = new MInitStringBuilder(pIndexBuilder);
+    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart_AddIndent_IndentPart.add(lInitStringBuilder);
+    return lInitStringBuilder;
+  }
+
   public MStringPart newStringPart(String pString, String pIndexBuilder) {
     MStringPart lStringPart = new MStringPart(pString, pIndexBuilder);
-    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lStringPart);
+    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart_AddIndent_IndentPart.add(lStringPart);
     return lStringPart;
   }
 
   public MParamInsertPart newParamInsertPart(String pParamName, String pIndexBuilder) {
     MParamInsertPart lParamInsertPart = new MParamInsertPart(pParamName, pIndexBuilder);
-    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lParamInsertPart);
+    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart_AddIndent_IndentPart.add(lParamInsertPart);
     return lParamInsertPart;
   }
 
   public MEolPart newEolPart(String pIndexBuilder) {
     MEolPart lEolPart = new MEolPart(pIndexBuilder);
-    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lEolPart);
+    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart_AddIndent_IndentPart.add(lEolPart);
     return lEolPart;
   }
 
   public MInsertMacroPart newInsertMacroPart(String pName, String pIndexBuilder, String pIndexInsert) {
     MInsertMacroPart lInsertMacroPart = new MInsertMacroPart(pName, pIndexBuilder, pIndexInsert);
-    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lInsertMacroPart);
+    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart_AddIndent_IndentPart.add(lInsertMacroPart);
     return lInsertMacroPart;
+  }
+
+  public MAddIndent newAddIndent() {
+    MAddIndent lAddIndent = new MAddIndent();
+    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart_AddIndent_IndentPart.add(lAddIndent);
+    return lAddIndent;
+  }
+
+  public MIndentPart newIndentPart(String pIndexBuilder, String pIndexIndent) {
+    MIndentPart lIndentPart = new MIndentPart(pIndexBuilder, pIndexIndent);
+    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart_AddIndent_IndentPart.add(lIndentPart);
+    return lIndentPart;
   }
 
   String pMacroName() {
@@ -144,6 +162,10 @@ public class MMacroBuilder {
     }
     sb.append(";");
     sb.append(System.getProperty("line.separator"));
+    sb.append("        List<String> indentations = new LinkedList<>();");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("        StringBuilder sbIndentation = new StringBuilder();");
+    sb.append(System.getProperty("line.separator"));
     sb.append(System.getProperty("line.separator"));
     sb.append("        ");
     for(Object oInitDirectivesCall : this.eInitDirectivesCall) {
@@ -157,9 +179,8 @@ public class MMacroBuilder {
     sb.append(System.getProperty("line.separator"));
     sb.append("        StringBuilder sb0 = new StringBuilder();");
     sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    for(Object oStringPart_ParamInsertPart_EolPart_InsertMacroPart : this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart) {
-      sb.append(oStringPart_ParamInsertPart_EolPart_InsertMacroPart.toString());
+    for(Object oInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart_AddIndent_IndentPart : this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart_AddIndent_IndentPart) {
+      sb.append(oInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart_AddIndent_IndentPart.toString());
     }
     sb.append(System.getProperty("line.separator"));
     sb.append("        buildState.setExpansion(sb0.toString());");

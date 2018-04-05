@@ -1,0 +1,11 @@
+Macro x
+{Body}
+
+{Indent: "lala"}
+
+{End}
+
+{End}Macro y #Error here
+{Body}
+
+{End}

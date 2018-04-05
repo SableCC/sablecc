@@ -19,7 +19,7 @@ Macro a
         x : c(k);
         y : b("a {x}");
         k : b("b {y}");
-{Begin}
+{Body}
 {x}
 {y}
 {k}
@@ -28,7 +28,7 @@ Macro a
 Macro b
     Internal
         i : String;
-{Begin}
+{Body}
 {i}
 {End}
 
@@ -37,7 +37,7 @@ Macro c
         zzz : c(l);
     Internal
         l : b;
-{Begin}
+{Body}
 {zzz}e
 {l}
 {End}
