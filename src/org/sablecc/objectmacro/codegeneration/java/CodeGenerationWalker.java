@@ -151,6 +151,8 @@ public class CodeGenerationWalker
 
     private MAddIndent currentAddIndent;
 
+    private List<Integer> currentlyUsed = new LinkedList<>();
+
     public CodeGenerationWalker(
             IntermediateRepresentation ir,
             File packageDirectory,
@@ -661,10 +663,16 @@ public class CodeGenerationWalker
     public void caseAIndentMacroPart(
             AIndentMacroPart node) {
 
+        this.currentlyUsed.add(this.indexBuilder);
         this.indexBuilder++;
+        //Avoid declaring insert of the same name
+        while(this.createdBuilders.contains(String.valueOf(this.indexBuilder))){
+            this.indexBuilder++;
+        }
         String index_builder = String.valueOf(this.indexBuilder);
         this.currentMacroBuilder.newInitStringBuilder(index_builder);
         this.currentAddIndent = this.currentMacroBuilder.newAddIndent();
+        this.createdBuilders.add(index_builder);
 
         //To avoid modification on indexes
         Integer tempIndexBuilder = this.indexBuilder;
@@ -679,8 +687,6 @@ public class CodeGenerationWalker
 
         this.indentations.add(this.currentAddIndent);
         this.currentAddIndent = null;
-
-        this.createdBuilders.add(index_builder);
     }
 
     @Override
@@ -688,7 +694,7 @@ public class CodeGenerationWalker
             AEndIndentMacroPart node) {
 
         String index_indent = String.valueOf(this.indexBuilder);
-        this.indexBuilder--;
+        this.indexBuilder = this.currentlyUsed.remove(this.currentlyUsed.size() - 1);
         this.indentations.remove(this.indentations.size() - 1);
         this.currentMacroBuilder.newIndentPart(String.valueOf(this.indexBuilder), index_indent);
     }
