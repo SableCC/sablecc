@@ -697,15 +697,15 @@ public class CodeGenerationWalker
         this.createdBuilders.add(index_builder);
     }
 
-//    @Override
-//    public void caseAEndIndentMacroPart(
-//            AEndIndentMacroPart node) {
-//
-//        String index_indent = String.valueOf(this.indexBuilder);
-//        this.indexBuilder--;
-//        this.indentations.remove(this.indentations.size() - 1);
-//        this.currentMacroBuilder.newIndentPart(String.valueOf(this.indexBuilder), index_indent);
-//    }
+    @Override
+    public void caseAEndIndentMacroPart(
+            AEndIndentMacroPart node) {
+
+        String index_indent = String.valueOf(this.indexBuilder);
+        this.indexBuilder--;
+        this.indentations.remove(this.indentations.size() - 1);
+        this.currentMacroBuilder.addListPart(new MIndentPart(String.valueOf(this.indexBuilder), index_indent));
+    }
 
     @Override
     public void caseAStringMacroPart(
