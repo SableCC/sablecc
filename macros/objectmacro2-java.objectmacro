@@ -294,6 +294,30 @@ public class M{name} extends Macro{
 {list_redefined_apply_initializer}
 {list_macro_builder}
 {list_empty_builder_with_context}
+
+    private String applyIndent(
+                            String macro,
+                            String indent){
+
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }
 {End}
 
@@ -609,7 +633,7 @@ Macro macro_builder
     new_build_state: new_build_state, none="this.build_state = buildState";
     init_directive_call: init_directive_call, separator="\n";
     init_internals_call: init_internals_call, separator="\n";
-    list_part : string_part, param_insert_part,  eol_part, insert_macro_part, separator="\n";
+    list_part : init_string_builder, string_part, param_insert_part,  eol_part, insert_macro_part, add_indent, indent_part, separator="\n";
 {Begin}
    @Override
     {Insert: public} String build({list_context_param}){
@@ -626,6 +650,8 @@ Macro macro_builder
             return buildState.getExpansion();
         }
         {new_build_state};
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
 
         {init_directive_call}
 
@@ -817,6 +843,15 @@ Macro param_insert_part
         sb{index_builder}.append(build{param_name}({context_arg}));
 {End}
 
+#========== indent_part ===========
+Macro indent_part
+    Param
+        index_builder : String;
+        index_indent : String;
+{Begin}
+    sb{index_builder}.append(applyIndent(sb{index_indent}.toString(), indentations.remove(indentations.size() - 1)));
+{End}
+
 #========== insert_macro_part ===============
 Macro insert_macro_part
   Param
@@ -868,6 +903,15 @@ Macro param_ref
 get{name}({list_context_arg})
 {End}
 
+#========= add_indent ===================
+Macro add_indent
+    Param
+        list_parts : init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part;
+{Begin}
+        sbIndentation = new StringBuilder();
+{list_parts}
+        indentations.add(sbIndentation.toString());
+{End}
 
 #===================================================
 #===================== OTHER =======================
