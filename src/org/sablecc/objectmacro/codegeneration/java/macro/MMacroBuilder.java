@@ -130,6 +130,16 @@ public class MMacroBuilder extends Macro{
 
         this.list_InitInternalsCall.add(macro);
     }
+    public void addListPart(MInitStringBuilder macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("ListPart");
+        }
+                if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("InitStringBuilder");
+        }
+
+        this.list_ListPart.add(macro);
+    }
     public void addListPart(MStringPart macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ListPart");
@@ -166,6 +176,26 @@ public class MMacroBuilder extends Macro{
         }
                 if(this.build_state != null){
             throw ObjectMacroException.cannotModify("InsertMacroPart");
+        }
+
+        this.list_ListPart.add(macro);
+    }
+    public void addListPart(MAddIndent macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("ListPart");
+        }
+                if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("AddIndent");
+        }
+
+        this.list_ListPart.add(macro);
+    }
+    public void addListPart(MIndentPart macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("ListPart");
+        }
+                if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("IndentPart");
         }
 
         this.list_ListPart.add(macro);
@@ -466,6 +496,11 @@ void setInitInternalsCall(MInitInternalsCall mInitInternalsCall){
         for(Macro macro : this.list_ListPart){
             macro.apply(new InternalsInitializer("ListPart"){
 @Override
+void setInitStringBuilder(MInitStringBuilder mInitStringBuilder){
+
+    
+    
+}@Override
 void setStringPart(MStringPart mStringPart){
 
     
@@ -482,6 +517,16 @@ void setEolPart(MEolPart mEolPart){
     
 }@Override
 void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
+
+    
+    
+}@Override
+void setAddIndent(MAddIndent mAddIndent){
+
+    
+    
+}@Override
+void setIndentPart(MIndentPart mIndentPart){
 
     
     
@@ -606,6 +651,10 @@ initListPartInternals(null);
         sb0.append("        ");
         sb0.append(buildNewBuildState());
         sb0.append(";");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        List<String> indentations = new LinkedList<>();");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        StringBuilder sbIndentation = new StringBuilder();");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("        ");
