@@ -2,36 +2,82 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MInitInternalValue {
+import java.util.*;
 
-  private final String pParamName;
-  private final MInitInternalValue mInitInternalValue = this;
+public class MInitInternalValue extends Macro{
 
-  public MInitInternalValue(String pParamName) {
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    private String field_ParamName;
 
-  String pParamName() {
-    return this.pParamName;
-  }
 
-  private String rParamName() {
-    return this.mInitInternalValue.pParamName();
-  }
+    public MInitInternalValue(String pParamName){
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    this.");
-    sb.append(rParamName());
-    sb.append("Value = new InternalValue(this.list_");
-    sb.append(rParamName());
-    sb.append(", this.");
-    sb.append(rParamName());
-    sb.append("Context);");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.setPParamName(pParamName);
 
+
+    }
+
+    private void setPParamName( String pParamName ){
+        if(pParamName == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+
+        this.field_ParamName = pParamName;
+    }
+
+    private String buildParamName(){
+
+        return this.field_ParamName;
+    }
+
+    private String getParamName(){
+
+        return this.field_ParamName;
+    }
+
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setInitInternalValue(this);
+    }
+
+   @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("InitInternalValue");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+
+        
+
+        
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    this.");
+        sb0.append(buildParamName());
+        sb0.append("Value = new InternalValue(this.list_");
+        sb0.append(buildParamName());
+        sb0.append(", this.");
+        sb0.append(buildParamName());
+        sb0.append("Context);");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

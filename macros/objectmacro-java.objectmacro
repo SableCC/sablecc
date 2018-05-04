@@ -259,7 +259,7 @@ $expand: param_macro_field, param_string_field, internal_macro_field, internal_s
 $expand: context_field, before_first="\n" $
 $expand: constructor, before_first="\n" $
 $expand: param_string_setter, single_add, internal_string_setter, internal_macro_setter, before_first="\n", separator="\n" $
-$expand: param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, separator="\n", before_first="\n" $
+$expand: param_string_ref_builder, param_macro_ref_builder, separator="\n", before_first="\n" $
 $expand: param_string_ref, param_macro_ref, internal_macro_ref, separator="\n", before_first="\n" $
 $expand: init_internals_method, separator="\n" $
 $expand: init_directives, separator="\n", before_first="\n"$

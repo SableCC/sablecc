@@ -2,32 +2,78 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MInternalMacrosValueField {
+import java.util.*;
 
-  private final String pParamName;
-  private final MInternalMacrosValueField mInternalMacrosValueField = this;
+public class MInternalMacrosValueField extends Macro{
 
-  public MInternalMacrosValueField(String pParamName) {
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    private String field_ParamName;
 
-  String pParamName() {
-    return this.pParamName;
-  }
 
-  private String rParamName() {
-    return this.mInternalMacrosValueField.pParamName();
-  }
+    public MInternalMacrosValueField(String pParamName){
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    private final InternalValue ");
-    sb.append(rParamName());
-    sb.append("Value;");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.setPParamName(pParamName);
 
+
+    }
+
+    private void setPParamName( String pParamName ){
+        if(pParamName == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+
+        this.field_ParamName = pParamName;
+    }
+
+    private String buildParamName(){
+
+        return this.field_ParamName;
+    }
+
+    private String getParamName(){
+
+        return this.field_ParamName;
+    }
+
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setInternalMacrosValueField(this);
+    }
+
+   @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("InternalMacrosValueField");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+
+        
+
+        
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    private final InternalValue ");
+        sb0.append(buildParamName());
+        sb0.append("Value;");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

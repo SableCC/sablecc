@@ -2,50 +2,98 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MInternalMacroSetter {
+import java.util.*;
 
-  private final String pParamName;
-  private final MInternalMacroSetter mInternalMacroSetter = this;
+public class MInternalMacroSetter extends Macro{
 
-  public MInternalMacroSetter(String pParamName) {
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    private String field_ParamName;
 
-  String pParamName() {
-    return this.pParamName;
-  }
 
-  private String rParamName() {
-    return this.mInternalMacroSetter.pParamName();
-  }
+    public MInternalMacroSetter(String pParamName){
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    void set");
-    sb.append(rParamName());
-    sb.append("(");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            Context context,");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            InternalValue internal_value) {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        if(internal_value == null){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            throw new RuntimeException(\"macros cannot be null\");");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        this.list_");
-    sb.append(rParamName());
-    sb.append(".put(context, internal_value);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.setPParamName(pParamName);
 
+
+    }
+
+    private void setPParamName( String pParamName ){
+        if(pParamName == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+
+        this.field_ParamName = pParamName;
+    }
+
+    private String buildParamName(){
+
+        return this.field_ParamName;
+    }
+
+    private String getParamName(){
+
+        return this.field_ParamName;
+    }
+
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setInternalMacroSetter(this);
+    }
+
+   @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("InternalMacroSetter");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+
+        
+
+        
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    void set");
+        sb0.append(buildParamName());
+        sb0.append("(");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("                Context context,");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("                InternalValue internal_value) ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            if(internal_value == null)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("                throw new RuntimeException(\"macros cannot be null\");");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            this.list_");
+        sb0.append(buildParamName());
+        sb0.append(".put(context, internal_value);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        }");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }

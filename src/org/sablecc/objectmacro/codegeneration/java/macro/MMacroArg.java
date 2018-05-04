@@ -2,30 +2,77 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MMacroArg {
+import java.util.*;
 
-  private final String pName;
-  private final MMacroArg mMacroArg = this;
+public class MMacroArg extends Macro{
 
-  public MMacroArg(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
+    private String field_Name;
 
-  String pName() {
-    return this.pName;
-  }
 
-  private String rName() {
-    return this.mMacroArg.pName();
-  }
+    public MMacroArg(String pName){
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("list_");
-    sb.append(rName());
-    return sb.toString();
-  }
+        this.setPName(pName);
 
+
+    }
+
+    private void setPName( String pName ){
+        if(pName == null){
+            throw ObjectMacroException.parameterNull("Name");
+        }
+
+        this.field_Name = pName;
+    }
+
+    private String buildName(){
+
+        return this.field_Name;
+    }
+
+    private String getName(){
+
+        return this.field_Name;
+    }
+
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setMacroArg(this);
+    }
+
+   @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("MacroArg");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+
+        
+
+        
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("list_");
+        sb0.append(buildName());
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }
