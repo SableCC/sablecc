@@ -167,6 +167,9 @@ public class InternalsInitializer {
   void setParamInsertPart(MParamInsertPart mParamInsertPart){
       throw ObjectMacroException.incorrectType("MParamInsertPart", this._paramName);
   }
+  void setIndentPart(MIndentPart mIndentPart){
+      throw ObjectMacroException.incorrectType("MIndentPart", this._paramName);
+  }
   void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
       throw ObjectMacroException.incorrectType("MInsertMacroPart", this._paramName);
   }
@@ -181,6 +184,9 @@ public class InternalsInitializer {
   }
   void setParamRef(MParamRef mParamRef){
       throw ObjectMacroException.incorrectType("MParamRef", this._paramName);
+  }
+  void setAddIndent(MAddIndent mAddIndent){
+      throw ObjectMacroException.incorrectType("MAddIndent", this._paramName);
   }
   void setStringValue(MStringValue mStringValue){
       throw ObjectMacroException.incorrectType("MStringValue", this._paramName);

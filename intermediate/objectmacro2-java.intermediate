@@ -679,6 +679,54 @@ Macro {
   eol;
  ParamInsert { Name = { 'list', 'empty', 'builder', 'with', 'context' } } ;
   eol;
+  eol;
+  '    private String applyIndent(';
+  eol;
+  '                            String macro,';
+  eol;
+  '                            String indent)';
+  '{';
+  eol;
+  eol;
+  '            StringBuilder sb = new StringBuilder();';
+  eol;
+  '            String[] lines = macro.split( "\\n");';
+  eol;
+  eol;
+  '            if(lines.length > 1)';
+  '{';
+  eol;
+  '                for(int i = 0; i < lines.length; i++)';
+  '{';
+  eol;
+  '                    String line = lines[i];';
+  eol;
+  '                    sb.append(indent).append(line);';
+  eol;
+  eol;
+  '                    if(i < lines.length - 1)';
+  '{';
+  eol;
+  '                        sb.append(LINE_SEPARATOR);';
+  eol;
+  '                    }';
+  eol;
+  '                }';
+  eol;
+  '            }';
+  eol;
+  '            else';
+  '{';
+  eol;
+  '                sb.append(indent).append(macro);';
+  eol;
+  '            }';
+  eol;
+  eol;
+  '            return sb.toString();';
+  eol;
+  '    }';
+  eol;
   '}';
   }
 }
@@ -1405,6 +1453,8 @@ Macro {
  Param {
     Name = { 'list', 'part' } Type {
  MacroRef {
+ Name = { 'init', 'string', 'builder' } }
+ MacroRef {
  Name = { 'string', 'part' } }
  MacroRef {
  Name = { 'param', 'insert', 'part' } }
@@ -1412,6 +1462,10 @@ Macro {
  Name = { 'eol', 'part' } }
  MacroRef {
  Name = { 'insert', 'macro', 'part' } }
+ MacroRef {
+ Name = { 'add', 'indent' } }
+ MacroRef {
+ Name = { 'indent', 'part' } }
  }
  Directive {
      Name = 'separator'       eol;
@@ -1464,6 +1518,10 @@ Macro {
   '        ';
  ParamInsert { Name = { 'new', 'build', 'state' } } ;
   ';';
+  eol;
+  '        List<String> indentations = new LinkedList<>();';
+  eol;
+  '        StringBuilder sbIndentation = new StringBuilder();';
   eol;
   eol;
   '        ';
@@ -1802,6 +1860,22 @@ Macro {
 }
 
 Macro {
+  Name = { 'indent', 'part' } Param {
+    Name = { 'index', 'builder' } Type = String  }
+ Param {
+    Name = { 'index', 'indent' } Type = String  }
+    Initialization Order{
+            }
+  MacroBody{
+  '    sb';
+ ParamInsert { Name = { 'index', 'builder' } } ;
+  '.append(applyIndent(sb';
+ ParamInsert { Name = { 'index', 'indent' } } ;
+  '.toString(), indentations.remove(indentations.size() - 1)));';
+  }
+}
+
+Macro {
   Name = { 'insert', 'macro', 'part' } Param {
     Name = 'name' Type = String  }
  Param {
@@ -1926,6 +2000,32 @@ Macro {
   '(';
  ParamInsert { Name = { 'list', 'context', 'arg' } } ;
   ')';
+  }
+}
+
+Macro {
+  Name = { 'add', 'indent' } Param {
+    Name = { 'list', 'parts' } Type {
+ MacroRef {
+ Name = { 'init', 'string', 'builder' } }
+ MacroRef {
+ Name = { 'string', 'part' } }
+ MacroRef {
+ Name = { 'param', 'insert', 'part' } }
+ MacroRef {
+ Name = { 'eol', 'part' } }
+ MacroRef {
+ Name = { 'insert', 'macro', 'part' } }
+ }
+ }
+    Initialization Order{
+        'list_parts'    }
+  MacroBody{
+  '        sbIndentation = new StringBuilder();';
+  eol;
+ ParamInsert { Name = { 'list', 'parts' } } ;
+  eol;
+  '        indentations.add(sbIndentation.toString());';
   }
 }
 
