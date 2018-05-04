@@ -7,24 +7,24 @@ import java.util.*;
 public class MIndentPart extends Macro{
 
     private String field_IndexBuilder;
-    private String field_IndexIndent;
 
+    private String field_IndexIndent;
 
     public MIndentPart(String pIndexBuilder, String pIndexIndent){
 
-        this.setPIndexBuilder(pIndexBuilder);        this.setPIndexIndent(pIndexIndent);
-
-
+        this.setPIndexBuilder(pIndexBuilder);
+        this.setPIndexIndent(pIndexIndent);
     }
 
-    private void setPIndexBuilder( String pIndexBuilder ){
+    private void setPIndexBuilder(String pIndexBuilder){
         if(pIndexBuilder == null){
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
 
         this.field_IndexBuilder = pIndexBuilder;
     }
-    private void setPIndexIndent( String pIndexIndent ){
+
+    private void setPIndexIndent(String pIndexIndent){
         if(pIndexIndent == null){
             throw ObjectMacroException.parameterNull("IndexIndent");
         }
@@ -36,6 +36,7 @@ public class MIndentPart extends Macro{
 
         return this.field_IndexBuilder;
     }
+
     private String buildIndexIndent(){
 
         return this.field_IndexIndent;
@@ -45,12 +46,11 @@ public class MIndentPart extends Macro{
 
         return this.field_IndexBuilder;
     }
+
     private String getIndexIndent(){
 
         return this.field_IndexIndent;
     }
-
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -58,7 +58,7 @@ public class MIndentPart extends Macro{
         internalsInitializer.setIndentPart(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -75,9 +75,7 @@ public class MIndentPart extends Macro{
         this.build_state = buildState;
 
         
-
         
-
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    sb");

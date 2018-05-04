@@ -6,18 +6,8 @@ import java.util.*;
 
 public class MContextArg extends Macro{
 
-
-
     public MContextArg(){
-
-
-
     }
-
-
-
-
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -25,7 +15,7 @@ public class MContextArg extends Macro{
         internalsInitializer.setContextArg(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -42,9 +32,7 @@ public class MContextArg extends Macro{
         this.build_state = buildState;
 
         
-
         
-
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("context");

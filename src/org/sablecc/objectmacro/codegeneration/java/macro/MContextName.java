@@ -8,15 +8,12 @@ public class MContextName extends Macro{
 
     private String field_ContextName;
 
-
     public MContextName(String pContextName){
 
         this.setPContextName(pContextName);
-
-
     }
 
-    private void setPContextName( String pContextName ){
+    private void setPContextName(String pContextName){
         if(pContextName == null){
             throw ObjectMacroException.parameterNull("ContextName");
         }
@@ -33,8 +30,6 @@ public class MContextName extends Macro{
 
         return this.field_ContextName;
     }
-
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -42,7 +37,7 @@ public class MContextName extends Macro{
         internalsInitializer.setContextName(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -59,9 +54,7 @@ public class MContextName extends Macro{
         this.build_state = buildState;
 
         
-
         
-
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append(buildContextName());

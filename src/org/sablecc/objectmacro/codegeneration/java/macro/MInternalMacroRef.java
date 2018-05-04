@@ -8,15 +8,12 @@ public class MInternalMacroRef extends Macro{
 
     private String field_ParamName;
 
-
     public MInternalMacroRef(String pParamName){
 
         this.setPParamName(pParamName);
-
-
     }
 
-    private void setPParamName( String pParamName ){
+    private void setPParamName(String pParamName){
         if(pParamName == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
@@ -33,8 +30,6 @@ public class MInternalMacroRef extends Macro{
 
         return this.field_ParamName;
     }
-
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -42,7 +37,7 @@ public class MInternalMacroRef extends Macro{
         internalsInitializer.setInternalMacroRef(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -59,9 +54,7 @@ public class MInternalMacroRef extends Macro{
         this.build_state = buildState;
 
         
-
         
-
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    private InternalValue get");

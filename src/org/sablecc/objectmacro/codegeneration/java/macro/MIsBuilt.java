@@ -8,11 +8,7 @@ public class MIsBuilt extends Macro{
 
     private Map<Context, String> field_MacroName = new LinkedHashMap<>();
 
-
     public MIsBuilt(){
-
-
-
     }
 
     void setMacroName(
@@ -35,8 +31,6 @@ public class MIsBuilt extends Macro{
 
         return this.field_MacroName.get(context);
     }
-
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -44,8 +38,8 @@ public class MIsBuilt extends Macro{
         internalsInitializer.setIsBuilt(this);
     }
 
-   @Override
-    public String build(Context context){
+    @Override
+     String build(Context context){
 
         BuildState buildState = this.build_states.get(context);
 
@@ -61,9 +55,7 @@ public class MIsBuilt extends Macro{
         this.build_states.put(context, buildState);
 
         
-
         
-
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("        if(this.build_state != null)");
@@ -78,5 +70,4 @@ public class MIsBuilt extends Macro{
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
-
 }

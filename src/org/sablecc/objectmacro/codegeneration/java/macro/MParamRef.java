@@ -7,7 +7,9 @@ import java.util.*;
 public class MParamRef extends Macro{
 
     private String field_Name;
+
     private final List<Macro> list_ListContextArg;
+
     private DSeparator ListContextArgSeparator;
 
     private DBeforeFirst ListContextArgBeforeFirst;
@@ -15,6 +17,7 @@ public class MParamRef extends Macro{
     private DAfterLast ListContextArgAfterLast;
 
     private DNone ListContextArgNone;
+
     private final InternalValue ListContextArgValue;
 
     private final Context ListContextArgContext = new Context();
@@ -28,29 +31,31 @@ public class MParamRef extends Macro{
     this.ListContextArgValue = new InternalValue(this.list_ListContextArg, this.ListContextArgContext);
     }
 
-    private void setPName( String pName ){
+    private void setPName(String pName){
         if(pName == null){
             throw ObjectMacroException.parameterNull("Name");
         }
 
         this.field_Name = pName;
     }
+
     public void addListContextArg(MContextArg macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ListContextArg");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ContextArg");
+            throw ObjectMacroException.cannotModify("ParamRef");
         }
 
         this.list_ListContextArg.add(macro);
     }
+
     public void addListContextArg(MContextName macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ListContextArg");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ContextName");
+            throw ObjectMacroException.cannotModify("ParamRef");
         }
 
         this.list_ListContextArg.add(macro);
@@ -60,6 +65,7 @@ public class MParamRef extends Macro{
 
         return this.field_Name;
     }
+
     private String buildListContextArg(){
         StringBuilder sb = new StringBuilder();
         Context local_context = ListContextArgContext;
@@ -99,6 +105,7 @@ public class MParamRef extends Macro{
 
         return this.field_Name;
     }
+
     private InternalValue getListContextArg(){
         return this.ListContextArgValue;
     }
@@ -108,21 +115,17 @@ public class MParamRef extends Macro{
 @Override
 void setContextArg(MContextArg mContextArg){
 
-    
-    
-}@Override
+        }
+@Override
 void setContextName(MContextName mContextName){
 
-    
-    
-}
+        }
 });
         }
     }
 
     private void initListContextArgDirectives(){
-        
-    }
+            }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -130,7 +133,7 @@ void setContextName(MContextName mContextName){
         internalsInitializer.setParamRef(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -146,10 +149,10 @@ void setContextName(MContextName mContextName){
         }
         this.build_state = buildState;
 
-        initListContextArgDirectives();
-
-        initListContextArgInternals(null);
-
+                initListContextArgDirectives();
+        
+                initListContextArgInternals(null);
+        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("get");

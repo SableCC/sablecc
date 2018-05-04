@@ -6,18 +6,8 @@ import java.util.*;
 
 public class MNewBuildState extends Macro{
 
-
-
     public MNewBuildState(){
-
-
-
     }
-
-
-
-
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -25,7 +15,7 @@ public class MNewBuildState extends Macro{
         internalsInitializer.setNewBuildState(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -42,9 +32,7 @@ public class MNewBuildState extends Macro{
         this.build_state = buildState;
 
         
-
         
-
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("this.build_states.put(context, buildState)");

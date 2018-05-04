@@ -7,6 +7,7 @@ import java.util.*;
 public class MAddIndent extends Macro{
 
     private final List<Macro> list_ListParts;
+
     private DSeparator ListPartsSeparator;
 
     private DBeforeFirst ListPartsBeforeFirst;
@@ -14,12 +15,12 @@ public class MAddIndent extends Macro{
     private DAfterLast ListPartsAfterLast;
 
     private DNone ListPartsNone;
+
     private final InternalValue ListPartsValue;
 
     private final Context ListPartsContext = new Context();
 
     public MAddIndent(){
-
 
     this.list_ListParts = new ArrayList<>();
 
@@ -31,47 +32,51 @@ public class MAddIndent extends Macro{
             throw ObjectMacroException.parameterNull("ListParts");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("InitStringBuilder");
+            throw ObjectMacroException.cannotModify("AddIndent");
         }
 
         this.list_ListParts.add(macro);
     }
+
     public void addListParts(MStringPart macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ListParts");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("StringPart");
+            throw ObjectMacroException.cannotModify("AddIndent");
         }
 
         this.list_ListParts.add(macro);
     }
+
     public void addListParts(MParamInsertPart macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ListParts");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ParamInsertPart");
+            throw ObjectMacroException.cannotModify("AddIndent");
         }
 
         this.list_ListParts.add(macro);
     }
+
     public void addListParts(MEolPart macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ListParts");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("EolPart");
+            throw ObjectMacroException.cannotModify("AddIndent");
         }
 
         this.list_ListParts.add(macro);
     }
+
     public void addListParts(MInsertMacroPart macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ListParts");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("InsertMacroPart");
+            throw ObjectMacroException.cannotModify("AddIndent");
         }
 
         this.list_ListParts.add(macro);
@@ -121,36 +126,29 @@ public class MAddIndent extends Macro{
 @Override
 void setInitStringBuilder(MInitStringBuilder mInitStringBuilder){
 
-    
-    
-}@Override
+        }
+@Override
 void setStringPart(MStringPart mStringPart){
 
-    
-    
-}@Override
+        }
+@Override
 void setParamInsertPart(MParamInsertPart mParamInsertPart){
 
-    
-    
-}@Override
+        }
+@Override
 void setEolPart(MEolPart mEolPart){
 
-    
-    
-}@Override
+        }
+@Override
 void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
 
-    
-    
-}
+        }
 });
         }
     }
 
     private void initListPartsDirectives(){
-        
-    }
+            }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -158,7 +156,7 @@ void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
         internalsInitializer.setAddIndent(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -174,10 +172,10 @@ void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
         }
         this.build_state = buildState;
 
-        initListPartsDirectives();
-
-        initListPartsInternals(null);
-
+                initListPartsDirectives();
+        
+                initListPartsInternals(null);
+        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("        sbIndentation = new StringBuilder();");

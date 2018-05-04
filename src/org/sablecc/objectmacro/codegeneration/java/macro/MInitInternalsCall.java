@@ -7,7 +7,9 @@ import java.util.*;
 public class MInitInternalsCall extends Macro{
 
     private String field_ParamName;
+
     private final List<Macro> list_ContextArg;
+
     private DSeparator ContextArgSeparator;
 
     private DBeforeFirst ContextArgBeforeFirst;
@@ -15,6 +17,7 @@ public class MInitInternalsCall extends Macro{
     private DAfterLast ContextArgAfterLast;
 
     private DNone ContextArgNone;
+
     private final InternalValue ContextArgValue;
 
     private final Context ContextArgContext = new Context();
@@ -28,19 +31,20 @@ public class MInitInternalsCall extends Macro{
     this.ContextArgValue = new InternalValue(this.list_ContextArg, this.ContextArgContext);
     }
 
-    private void setPParamName( String pParamName ){
+    private void setPParamName(String pParamName){
         if(pParamName == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
 
         this.field_ParamName = pParamName;
     }
+
     public void addContextArg(MContextArg macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ContextArg");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ContextArg");
+            throw ObjectMacroException.cannotModify("InitInternalsCall");
         }
 
         this.list_ContextArg.add(macro);
@@ -50,6 +54,7 @@ public class MInitInternalsCall extends Macro{
 
         return this.field_ParamName;
     }
+
     private String buildContextArg(){
         StringBuilder sb = new StringBuilder();
         Context local_context = ContextArgContext;
@@ -89,6 +94,7 @@ public class MInitInternalsCall extends Macro{
 
         return this.field_ParamName;
     }
+
     private InternalValue getContextArg(){
         return this.ContextArgValue;
     }
@@ -98,19 +104,18 @@ public class MInitInternalsCall extends Macro{
 @Override
 void setContextArg(MContextArg mContextArg){
 
-    
-    
-}
+        }
 });
         }
     }
 
     private void initContextArgDirectives(){
+        
         StringBuilder sb0 = new StringBuilder();
-        sb0.append("null");
-this.ContextArgNone = new DNone(sb0.toString());
-this.ContextArgValue.setNone(this.ContextArgNone);
-    }
+                sb0.append("null");
+        this.ContextArgNone = new DNone(sb0.toString());
+        this.ContextArgValue.setNone(this.ContextArgNone);
+            }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -118,7 +123,7 @@ this.ContextArgValue.setNone(this.ContextArgNone);
         internalsInitializer.setInitInternalsCall(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -134,10 +139,10 @@ this.ContextArgValue.setNone(this.ContextArgNone);
         }
         this.build_state = buildState;
 
-        initContextArgDirectives();
-
-        initContextArgInternals(null);
-
+                initContextArgDirectives();
+        
+                initContextArgInternals(null);
+        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("init");

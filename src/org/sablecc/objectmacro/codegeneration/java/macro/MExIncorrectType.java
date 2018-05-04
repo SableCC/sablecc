@@ -7,6 +7,7 @@ import java.util.*;
 public class MExIncorrectType extends Macro{
 
     private final List<Macro> list_PackageDeclaration;
+
     private DSeparator PackageDeclarationSeparator;
 
     private DBeforeFirst PackageDeclarationBeforeFirst;
@@ -14,12 +15,12 @@ public class MExIncorrectType extends Macro{
     private DAfterLast PackageDeclarationAfterLast;
 
     private DNone PackageDeclarationNone;
+
     private final InternalValue PackageDeclarationValue;
 
     private final Context PackageDeclarationContext = new Context();
 
     public MExIncorrectType(){
-
 
     this.list_PackageDeclaration = new ArrayList<>();
 
@@ -31,7 +32,7 @@ public class MExIncorrectType extends Macro{
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("PackageDeclaration");
+            throw ObjectMacroException.cannotModify("ExIncorrectType");
         }
 
         this.list_PackageDeclaration.add(macro);
@@ -81,19 +82,18 @@ public class MExIncorrectType extends Macro{
 @Override
 void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
 
-    
-    
-}
+        }
 });
         }
     }
 
     private void initPackageDeclarationDirectives(){
+        
         StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb0.toString());
-this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
-    }
+                sb0.append(LINE_SEPARATOR);
+        this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb0.toString());
+        this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
+            }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -101,7 +101,7 @@ this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
         internalsInitializer.setExIncorrectType(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -117,16 +117,14 @@ this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
         }
         this.build_state = buildState;
 
-        initPackageDeclarationDirectives();
-
-        initPackageDeclarationInternals(null);
-
+                initPackageDeclarationDirectives();
+        
+                initPackageDeclarationInternals(null);
+        
         StringBuilder sb0 = new StringBuilder();
 
         MHeader minsert_1 = new MHeader();
-        
-        
-        sb0.append(minsert_1.build(null));
+                        sb0.append(minsert_1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(buildPackageDeclaration());
         sb0.append(LINE_SEPARATOR);

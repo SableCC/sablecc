@@ -8,15 +8,12 @@ public class MStringBuilderBuild extends Macro{
 
     private String field_IndexBuilder;
 
-
     public MStringBuilderBuild(String pIndexBuilder){
 
         this.setPIndexBuilder(pIndexBuilder);
-
-
     }
 
-    private void setPIndexBuilder( String pIndexBuilder ){
+    private void setPIndexBuilder(String pIndexBuilder){
         if(pIndexBuilder == null){
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
@@ -33,8 +30,6 @@ public class MStringBuilderBuild extends Macro{
 
         return this.field_IndexBuilder;
     }
-
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -42,7 +37,7 @@ public class MStringBuilderBuild extends Macro{
         internalsInitializer.setStringBuilderBuild(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -59,9 +54,7 @@ public class MStringBuilderBuild extends Macro{
         this.build_state = buildState;
 
         
-
         
-
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("sb");

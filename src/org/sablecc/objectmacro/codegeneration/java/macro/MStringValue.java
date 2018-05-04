@@ -8,15 +8,12 @@ public class MStringValue extends Macro{
 
     private String field_String;
 
-
     public MStringValue(String pString){
 
         this.setPString(pString);
-
-
     }
 
-    private void setPString( String pString ){
+    private void setPString(String pString){
         if(pString == null){
             throw ObjectMacroException.parameterNull("String");
         }
@@ -33,8 +30,6 @@ public class MStringValue extends Macro{
 
         return this.field_String;
     }
-
-
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -42,7 +37,7 @@ public class MStringValue extends Macro{
         internalsInitializer.setStringValue(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -59,9 +54,7 @@ public class MStringValue extends Macro{
         this.build_state = buildState;
 
         
-
         
-
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("\"");

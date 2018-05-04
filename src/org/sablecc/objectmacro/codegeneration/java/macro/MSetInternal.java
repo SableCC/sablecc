@@ -7,9 +7,13 @@ import java.util.*;
 public class MSetInternal extends Macro{
 
     private String field_MacroName;
+
     private String field_ParamName;
+
     private String field_Context;
+
     private final List<Macro> list_ListParam;
+
     private DSeparator ListParamSeparator;
 
     private DBeforeFirst ListParamBeforeFirst;
@@ -17,56 +21,63 @@ public class MSetInternal extends Macro{
     private DAfterLast ListParamAfterLast;
 
     private DNone ListParamNone;
+
     private final InternalValue ListParamValue;
 
     private final Context ListParamContext = new Context();
 
     public MSetInternal(String pMacroName, String pParamName, String pContext){
 
-        this.setPMacroName(pMacroName);        this.setPParamName(pParamName);        this.setPContext(pContext);
+        this.setPMacroName(pMacroName);
+        this.setPParamName(pParamName);
+        this.setPContext(pContext);
 
     this.list_ListParam = new ArrayList<>();
 
     this.ListParamValue = new InternalValue(this.list_ListParam, this.ListParamContext);
     }
 
-    private void setPMacroName( String pMacroName ){
+    private void setPMacroName(String pMacroName){
         if(pMacroName == null){
             throw ObjectMacroException.parameterNull("MacroName");
         }
 
         this.field_MacroName = pMacroName;
     }
-    private void setPParamName( String pParamName ){
+
+    private void setPParamName(String pParamName){
         if(pParamName == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
 
         this.field_ParamName = pParamName;
     }
-    private void setPContext( String pContext ){
+
+    private void setPContext(String pContext){
         if(pContext == null){
             throw ObjectMacroException.parameterNull("Context");
         }
 
         this.field_Context = pContext;
     }
+
     public void addListParam(MParamRef macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ListParam");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ParamRef");
+            throw ObjectMacroException.cannotModify("SetInternal");
         }
 
         this.list_ListParam.add(macro);
     }
+
     public void addListParam(MStringBuilderBuild macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ListParam");
         }
                 if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("StringBuilderBuild");
+            throw ObjectMacroException.cannotModify("SetInternal");
         }
 
         this.list_ListParam.add(macro);
@@ -76,14 +87,17 @@ public class MSetInternal extends Macro{
 
         return this.field_MacroName;
     }
+
     private String buildParamName(){
 
         return this.field_ParamName;
     }
+
     private String buildContext(){
 
         return this.field_Context;
     }
+
     private String buildListParam(){
         StringBuilder sb = new StringBuilder();
         Context local_context = ListParamContext;
@@ -123,14 +137,17 @@ public class MSetInternal extends Macro{
 
         return this.field_MacroName;
     }
+
     private String getParamName(){
 
         return this.field_ParamName;
     }
+
     private String getContext(){
 
         return this.field_Context;
     }
+
     private InternalValue getListParam(){
         return this.ListParamValue;
     }
@@ -140,21 +157,17 @@ public class MSetInternal extends Macro{
 @Override
 void setParamRef(MParamRef mParamRef){
 
-    
-    
-}@Override
+        }
+@Override
 void setStringBuilderBuild(MStringBuilderBuild mStringBuilderBuild){
 
-    
-    
-}
+        }
 });
         }
     }
 
     private void initListParamDirectives(){
-        
-    }
+            }
     @Override
     void apply(
             InternalsInitializer internalsInitializer){
@@ -162,7 +175,7 @@ void setStringBuilderBuild(MStringBuilderBuild mStringBuilderBuild){
         internalsInitializer.setSetInternal(this);
     }
 
-   @Override
+    @Override
     public String build(){
 
         BuildState buildState = this.build_state;
@@ -178,10 +191,10 @@ void setStringBuilderBuild(MStringBuilderBuild mStringBuilderBuild){
         }
         this.build_state = buildState;
 
-        initListParamDirectives();
-
-        initListParamInternals(null);
-
+                initListParamDirectives();
+        
+                initListParamInternals(null);
+        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("        m");
