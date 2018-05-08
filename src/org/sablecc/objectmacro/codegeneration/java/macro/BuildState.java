@@ -7,7 +7,8 @@ class BuildState {
     private String expansion = null;
 
     public String getExpansion() {
-        return expansion;
+
+        return this.expansion;
     }
 
     public void setExpansion(
@@ -16,4 +17,3 @@ class BuildState {
         this.expansion = expansion;
     }
 }
-

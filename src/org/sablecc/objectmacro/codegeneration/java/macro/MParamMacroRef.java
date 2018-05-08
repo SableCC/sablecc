@@ -2,59 +2,61 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
-public class MParamMacroRef extends Macro{
+public class MParamMacroRef
+        extends
+        Macro {
 
     private String field_Name;
 
-    public MParamMacroRef(String pName){
+    public MParamMacroRef(
+            String pName) {
 
-        this.setPName(pName);
+        setPName(pName);
     }
 
-    private void setPName(String pName){
-        if(pName == null){
+    private void setPName(
+            String pName) {
+
+        if (pName == null) {
             throw ObjectMacroException.parameterNull("Name");
         }
 
         this.field_Name = pName;
     }
 
-    private String buildName(){
+    private String buildName() {
 
         return this.field_Name;
     }
 
-    private String getName(){
+    private String getName() {
 
         return this.field_Name;
     }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setParamMacroRef(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("ParamMacroRef");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-        
-        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    private InternalValue get");
@@ -73,7 +75,9 @@ public class MParamMacroRef extends Macro{
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

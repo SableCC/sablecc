@@ -3,9 +3,11 @@
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
 class DNone
-        extends Directive{
+        extends
+        Directive {
 
-    DNone(String value) {
+    DNone(
+            String value) {
 
         super(value);
     }
@@ -16,7 +18,7 @@ class DNone
             String macro,
             Integer list_size) {
 
-        if(list_size == 0){
+        if (list_size == 0) {
             return this.value;
         }
 

@@ -3,9 +3,11 @@
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
 class DBeforeFirst
-        extends Directive {
+        extends
+        Directive {
 
-    DBeforeFirst(String value) {
+    DBeforeFirst(
+            String value) {
 
         super(value);
     }
@@ -16,10 +18,9 @@ class DBeforeFirst
             String macro,
             Integer list_size) {
 
-        if(index == 0){
+        if (index == 0) {
             return this.value.concat(macro);
         }
         return macro;
     }
 }
-

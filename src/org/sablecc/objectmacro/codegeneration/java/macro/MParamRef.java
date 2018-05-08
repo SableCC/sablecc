@@ -2,9 +2,12 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MParamRef extends Macro{
+public class MParamRef
+        extends
+        Macro {
 
     private String field_Name;
 
@@ -22,76 +25,88 @@ public class MParamRef extends Macro{
 
     private final Context ListContextArgContext = new Context();
 
-    public MParamRef(String pName){
+    public MParamRef(
+            String pName) {
 
-        this.setPName(pName);
+        setPName(pName);
 
-    this.list_ListContextArg = new ArrayList<>();
+        this.list_ListContextArg = new ArrayList<>();
 
-    this.ListContextArgValue = new InternalValue(this.list_ListContextArg, this.ListContextArgContext);
+        this.ListContextArgValue = new InternalValue(this.list_ListContextArg,
+                this.ListContextArgContext);
     }
 
-    private void setPName(String pName){
-        if(pName == null){
+    private void setPName(
+            String pName) {
+
+        if (pName == null) {
             throw ObjectMacroException.parameterNull("Name");
         }
 
         this.field_Name = pName;
     }
 
-    public void addListContextArg(MContextArg macro){
-        if(macro == null){
+    public void addListContextArg(
+            MContextArg macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ListContextArg");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("ParamRef");
         }
 
         this.list_ListContextArg.add(macro);
     }
 
-    public void addListContextArg(MContextName macro){
-        if(macro == null){
+    public void addListContextArg(
+            MContextName macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ListContextArg");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("ParamRef");
         }
 
         this.list_ListContextArg.add(macro);
     }
 
-    private String buildName(){
+    private String buildName() {
 
         return this.field_Name;
     }
 
-    private String buildListContextArg(){
+    private String buildListContextArg() {
+
         StringBuilder sb = new StringBuilder();
-        Context local_context = ListContextArgContext;
+        Context local_context = this.ListContextArgContext;
         List<Macro> macros = this.list_ListContextArg;
 
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
 
-        if(this.ListContextArgNone != null){
+        if (this.ListContextArgNone != null) {
             sb.append(this.ListContextArgNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : macros){
+        for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if(this.ListContextArgBeforeFirst != null){
-                expansion = this.ListContextArgBeforeFirst.apply(i, expansion, nb_macros);
+            if (this.ListContextArgBeforeFirst != null) {
+                expansion = this.ListContextArgBeforeFirst.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.ListContextArgAfterLast != null){
-                expansion = this.ListContextArgAfterLast.apply(i, expansion, nb_macros);
+            if (this.ListContextArgAfterLast != null) {
+                expansion = this.ListContextArgAfterLast.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.ListContextArgSeparator != null){
-                expansion = this.ListContextArgSeparator.apply(i, expansion, nb_macros);
+            if (this.ListContextArgSeparator != null) {
+                expansion = this.ListContextArgSeparator.apply(i, expansion,
+                        nb_macros);
             }
 
             sb.append(expansion);
@@ -101,58 +116,68 @@ public class MParamRef extends Macro{
         return sb.toString();
     }
 
-    private String getName(){
+    private String getName() {
 
         return this.field_Name;
     }
 
-    private InternalValue getListContextArg(){
+    private InternalValue getListContextArg() {
+
         return this.ListContextArgValue;
     }
-    private void initListContextArgInternals(Context context){
-        for(Macro macro : this.list_ListContextArg){
-            macro.apply(new InternalsInitializer("ListContextArg"){
-@Override
-void setContextArg(MContextArg mContextArg){
 
-        }
-@Override
-void setContextName(MContextName mContextName){
+    private void initListContextArgInternals(
+            Context context) {
 
-        }
-});
+        for (Macro macro : this.list_ListContextArg) {
+            macro.apply(new InternalsInitializer("ListContextArg") {
+
+                @Override
+                void setContextArg(
+                        MContextArg mContextArg) {
+
+                }
+
+                @Override
+                void setContextName(
+                        MContextName mContextName) {
+
+                }
+            });
         }
     }
 
-    private void initListContextArgDirectives(){
-            }
+    private void initListContextArgDirectives() {
+
+    }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setParamRef(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("ParamRef");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-                initListContextArgDirectives();
-        
-                initListContextArgInternals(null);
-        
+        initListContextArgDirectives();
+
+        initListContextArgInternals(null);
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("get");
@@ -166,7 +191,9 @@ void setContextName(MContextName mContextName){
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

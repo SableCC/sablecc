@@ -2,7 +2,7 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.List;
 
 class InternalValue {
 
@@ -22,15 +22,15 @@ class InternalValue {
 
     InternalValue(
             List<Macro> macros,
-            Context context){
+            Context context) {
 
         this.macros = macros;
         this.context = context;
     }
 
-    String build(){
+    String build() {
 
-        if(this.cache != null){
+        if (this.cache != null) {
             return this.cache;
         }
 
@@ -38,23 +38,23 @@ class InternalValue {
         int i = 0;
         int nb_macros = this.macros.size();
 
-        if(this.dNone != null){
+        if (this.dNone != null) {
             sb.append(this.dNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : this.macros){
+        for (Macro macro : this.macros) {
             String expansion = macro.build(this.context);
 
-            if(this.dBeforeFirst != null){
-                expansion = dBeforeFirst.apply(i, expansion, nb_macros);
+            if (this.dBeforeFirst != null) {
+                expansion = this.dBeforeFirst.apply(i, expansion, nb_macros);
             }
 
-            if(dAfterLast != null){
-                expansion = dAfterLast.apply(i, expansion, nb_macros);
+            if (this.dAfterLast != null) {
+                expansion = this.dAfterLast.apply(i, expansion, nb_macros);
             }
 
-            if(this.dSeparator != null){
-                expansion = dSeparator.apply(i, expansion, nb_macros);
+            if (this.dSeparator != null) {
+                expansion = this.dSeparator.apply(i, expansion, nb_macros);
             }
 
             sb.append(expansion);
@@ -66,27 +66,26 @@ class InternalValue {
     }
 
     void setNone(
-                DNone none){
+            DNone none) {
 
         this.dNone = none;
     }
 
     void setBeforeFirst(
-            DBeforeFirst dBeforeFirst){
+            DBeforeFirst dBeforeFirst) {
 
         this.dBeforeFirst = dBeforeFirst;
     }
 
     void setAfterLast(
-            DAfterLast dAfterLast){
+            DAfterLast dAfterLast) {
 
         this.dAfterLast = dAfterLast;
     }
 
     void setSeparator(
-            DSeparator dSeparator){
+            DSeparator dSeparator) {
 
         this.dSeparator = dSeparator;
     }
 }
-

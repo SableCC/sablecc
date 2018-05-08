@@ -2,9 +2,12 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MClassAfterLast extends Macro{
+public class MClassAfterLast
+        extends
+        Macro {
 
     private final List<Macro> list_PackageDeclaration;
 
@@ -20,50 +23,57 @@ public class MClassAfterLast extends Macro{
 
     private final Context PackageDeclarationContext = new Context();
 
-    public MClassAfterLast(){
+    public MClassAfterLast() {
 
-    this.list_PackageDeclaration = new ArrayList<>();
+        this.list_PackageDeclaration = new ArrayList<>();
 
-    this.PackageDeclarationValue = new InternalValue(this.list_PackageDeclaration, this.PackageDeclarationContext);
+        this.PackageDeclarationValue = new InternalValue(
+                this.list_PackageDeclaration, this.PackageDeclarationContext);
     }
 
-    public void addPackageDeclaration(MPackageDeclaration macro){
-        if(macro == null){
+    public void addPackageDeclaration(
+            MPackageDeclaration macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("ClassAfterLast");
         }
 
         this.list_PackageDeclaration.add(macro);
     }
 
-    private String buildPackageDeclaration(){
+    private String buildPackageDeclaration() {
+
         StringBuilder sb = new StringBuilder();
-        Context local_context = PackageDeclarationContext;
+        Context local_context = this.PackageDeclarationContext;
         List<Macro> macros = this.list_PackageDeclaration;
 
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
 
-        if(this.PackageDeclarationNone != null){
+        if (this.PackageDeclarationNone != null) {
             sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : macros){
+        for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if(this.PackageDeclarationBeforeFirst != null){
-                expansion = this.PackageDeclarationBeforeFirst.apply(i, expansion, nb_macros);
+            if (this.PackageDeclarationBeforeFirst != null) {
+                expansion = this.PackageDeclarationBeforeFirst.apply(i,
+                        expansion, nb_macros);
             }
 
-            if(this.PackageDeclarationAfterLast != null){
-                expansion = this.PackageDeclarationAfterLast.apply(i, expansion, nb_macros);
+            if (this.PackageDeclarationAfterLast != null) {
+                expansion = this.PackageDeclarationAfterLast.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.PackageDeclarationSeparator != null){
-                expansion = this.PackageDeclarationSeparator.apply(i, expansion, nb_macros);
+            if (this.PackageDeclarationSeparator != null) {
+                expansion = this.PackageDeclarationSeparator.apply(i, expansion,
+                        nb_macros);
             }
 
             sb.append(expansion);
@@ -73,58 +83,66 @@ public class MClassAfterLast extends Macro{
         return sb.toString();
     }
 
-    private InternalValue getPackageDeclaration(){
+    private InternalValue getPackageDeclaration() {
+
         return this.PackageDeclarationValue;
     }
-    private void initPackageDeclarationInternals(Context context){
-        for(Macro macro : this.list_PackageDeclaration){
-            macro.apply(new InternalsInitializer("PackageDeclaration"){
-@Override
-void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
 
-        }
-});
+    private void initPackageDeclarationInternals(
+            Context context) {
+
+        for (Macro macro : this.list_PackageDeclaration) {
+            macro.apply(new InternalsInitializer("PackageDeclaration") {
+
+                @Override
+                void setPackageDeclaration(
+                        MPackageDeclaration mPackageDeclaration) {
+
+                }
+            });
         }
     }
 
-    private void initPackageDeclarationDirectives(){
-        
+    private void initPackageDeclarationDirectives() {
+
         StringBuilder sb0 = new StringBuilder();
-                sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
         this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb0.toString());
-        this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
-            }
+        this.PackageDeclarationValue
+                .setBeforeFirst(this.PackageDeclarationBeforeFirst);
+    }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setClassAfterLast(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("ClassAfterLast");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-                initPackageDeclarationDirectives();
-        
-                initPackageDeclarationInternals(null);
-        
+        initPackageDeclarationDirectives();
+
+        initPackageDeclarationInternals(null);
+
         StringBuilder sb0 = new StringBuilder();
 
         MHeader minsert_1 = new MHeader();
-                        sb0.append(minsert_1.build(null));
+        sb0.append(minsert_1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(buildPackageDeclaration());
@@ -175,7 +193,9 @@ void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

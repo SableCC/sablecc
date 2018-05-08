@@ -2,37 +2,38 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+public class MEmptyBuilderWithContext
+        extends
+        Macro {
 
-public class MEmptyBuilderWithContext extends Macro{
+    public MEmptyBuilderWithContext() {
 
-    public MEmptyBuilderWithContext(){
     }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setEmptyBuilderWithContext(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("EmptyBuilderWithContext");
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException
+                    .cyclicReference("EmptyBuilderWithContext");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-        
-        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    @Override");
@@ -49,7 +50,9 @@ public class MEmptyBuilderWithContext extends Macro{
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

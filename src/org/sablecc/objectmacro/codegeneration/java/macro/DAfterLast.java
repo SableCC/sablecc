@@ -3,9 +3,11 @@
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
 class DAfterLast
-        extends Directive {
+        extends
+        Directive {
 
-    DAfterLast(String value) {
+    DAfterLast(
+            String value) {
 
         super(value);
     }
@@ -16,7 +18,7 @@ class DAfterLast
             String macro,
             Integer list_size) {
 
-        if(index == list_size - 1){
+        if (index == list_size - 1) {
             return macro.concat(this.value);
         }
         return macro;

@@ -2,59 +2,62 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
-public class MInternalMacrosValueField extends Macro{
+public class MInternalMacrosValueField
+        extends
+        Macro {
 
     private String field_ParamName;
 
-    public MInternalMacrosValueField(String pParamName){
+    public MInternalMacrosValueField(
+            String pParamName) {
 
-        this.setPParamName(pParamName);
+        setPParamName(pParamName);
     }
 
-    private void setPParamName(String pParamName){
-        if(pParamName == null){
+    private void setPParamName(
+            String pParamName) {
+
+        if (pParamName == null) {
             throw ObjectMacroException.parameterNull("ParamName");
         }
 
         this.field_ParamName = pParamName;
     }
 
-    private String buildParamName(){
+    private String buildParamName() {
 
         return this.field_ParamName;
     }
 
-    private String getParamName(){
+    private String getParamName() {
 
         return this.field_ParamName;
     }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setInternalMacrosValueField(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("InternalMacrosValueField");
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException
+                    .cyclicReference("InternalMacrosValueField");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-        
-        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    private final InternalValue ");
@@ -66,7 +69,9 @@ public class MInternalMacrosValueField extends Macro{
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

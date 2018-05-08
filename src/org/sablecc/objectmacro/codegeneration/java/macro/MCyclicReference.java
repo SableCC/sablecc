@@ -4,32 +4,40 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 public class MCyclicReference {
 
-  private final String pMacroName;
-  private final MCyclicReference mCyclicReference = this;
+    private final String pMacroName;
 
-  public MCyclicReference(String pMacroName) {
-    if(pMacroName == null) throw new NullPointerException();
-    this.pMacroName = pMacroName;
-  }
+    private final MCyclicReference mCyclicReference = this;
 
-  String pMacroName() {
-    return this.pMacroName;
-  }
+    public MCyclicReference(
+            String pMacroName) {
 
-  private String rMacroName() {
-    return this.mCyclicReference.pMacroName();
-  }
+        if (pMacroName == null) {
+            throw new NullPointerException();
+        }
+        this.pMacroName = pMacroName;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MObjectMacroErrorHead().toString());
-    sb.append(System.getProperty("line.separator"));
-    sb.append("An instance of \"");
-    sb.append(rMacroName());
-    sb.append("\" is a cyclic reference to the same instance.");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+    String pMacroName() {
+
+        return this.pMacroName;
+    }
+
+    private String rMacroName() {
+
+        return this.mCyclicReference.pMacroName();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(new MObjectMacroErrorHead().toString());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("An instance of \"");
+        sb.append(rMacroName());
+        sb.append("\" is a cyclic reference to the same instance.");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
+    }
 
 }

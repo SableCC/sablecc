@@ -2,59 +2,61 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
-public class MStringValue extends Macro{
+public class MStringValue
+        extends
+        Macro {
 
     private String field_String;
 
-    public MStringValue(String pString){
+    public MStringValue(
+            String pString) {
 
-        this.setPString(pString);
+        setPString(pString);
     }
 
-    private void setPString(String pString){
-        if(pString == null){
+    private void setPString(
+            String pString) {
+
+        if (pString == null) {
             throw ObjectMacroException.parameterNull("String");
         }
 
         this.field_String = pString;
     }
 
-    private String buildString(){
+    private String buildString() {
 
         return this.field_String;
     }
 
-    private String getString(){
+    private String getString() {
 
         return this.field_String;
     }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setStringValue(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("StringValue");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-        
-        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("\"");
@@ -66,7 +68,9 @@ public class MStringValue extends Macro{
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

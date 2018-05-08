@@ -2,59 +2,61 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
-public class MInternalMacroSetter extends Macro{
+public class MInternalMacroSetter
+        extends
+        Macro {
 
     private String field_ParamName;
 
-    public MInternalMacroSetter(String pParamName){
+    public MInternalMacroSetter(
+            String pParamName) {
 
-        this.setPParamName(pParamName);
+        setPParamName(pParamName);
     }
 
-    private void setPParamName(String pParamName){
-        if(pParamName == null){
+    private void setPParamName(
+            String pParamName) {
+
+        if (pParamName == null) {
             throw ObjectMacroException.parameterNull("ParamName");
         }
 
         this.field_ParamName = pParamName;
     }
 
-    private String buildParamName(){
+    private String buildParamName() {
 
         return this.field_ParamName;
     }
 
-    private String getParamName(){
+    private String getParamName() {
 
         return this.field_ParamName;
     }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setInternalMacroSetter(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("InternalMacroSetter");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-        
-        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    void set");
@@ -70,7 +72,8 @@ public class MInternalMacroSetter extends Macro{
         sb0.append("            if(internal_value == null)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("                throw new RuntimeException(\"macros cannot be null\");");
+        sb0.append(
+                "                throw new RuntimeException(\"macros cannot be null\");");
         sb0.append(LINE_SEPARATOR);
         sb0.append("            }");
         sb0.append(LINE_SEPARATOR);
@@ -86,7 +89,9 @@ public class MInternalMacroSetter extends Macro{
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

@@ -2,59 +2,61 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
-public class MPackageDeclaration extends Macro{
+public class MPackageDeclaration
+        extends
+        Macro {
 
     private String field_PackageName;
 
-    public MPackageDeclaration(String pPackageName){
+    public MPackageDeclaration(
+            String pPackageName) {
 
-        this.setPPackageName(pPackageName);
+        setPPackageName(pPackageName);
     }
 
-    private void setPPackageName(String pPackageName){
-        if(pPackageName == null){
+    private void setPPackageName(
+            String pPackageName) {
+
+        if (pPackageName == null) {
             throw ObjectMacroException.parameterNull("PackageName");
         }
 
         this.field_PackageName = pPackageName;
     }
 
-    private String buildPackageName(){
+    private String buildPackageName() {
 
         return this.field_PackageName;
     }
 
-    private String getPackageName(){
+    private String getPackageName() {
 
         return this.field_PackageName;
     }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setPackageDeclaration(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("PackageDeclaration");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-        
-        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("package ");
@@ -66,7 +68,9 @@ public class MPackageDeclaration extends Macro{
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

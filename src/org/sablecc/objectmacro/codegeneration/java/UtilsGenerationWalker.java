@@ -17,15 +17,31 @@
 
 package org.sablecc.objectmacro.codegeneration.java;
 
-import org.sablecc.objectmacro.codegeneration.IntermediateRepresentation;
-import org.sablecc.objectmacro.codegeneration.java.macro.*;
-import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.objectmacro.intermediate.syntax3.node.*;
-
 import java.io.File;
 
+import org.sablecc.objectmacro.codegeneration.IntermediateRepresentation;
+import org.sablecc.objectmacro.codegeneration.java.macro.MClassAfterLast;
+import org.sablecc.objectmacro.codegeneration.java.macro.MClassBeforeFirst;
+import org.sablecc.objectmacro.codegeneration.java.macro.MClassBuildState;
+import org.sablecc.objectmacro.codegeneration.java.macro.MClassInternalValue;
+import org.sablecc.objectmacro.codegeneration.java.macro.MClassNone;
+import org.sablecc.objectmacro.codegeneration.java.macro.MClassSeparator;
+import org.sablecc.objectmacro.codegeneration.java.macro.MContext;
+import org.sablecc.objectmacro.codegeneration.java.macro.MExCannotModify;
+import org.sablecc.objectmacro.codegeneration.java.macro.MExCyclicReference;
+import org.sablecc.objectmacro.codegeneration.java.macro.MExIncorrectType;
+import org.sablecc.objectmacro.codegeneration.java.macro.MExMacroNullInList;
+import org.sablecc.objectmacro.codegeneration.java.macro.MExObjectMacroErrorHead;
+import org.sablecc.objectmacro.codegeneration.java.macro.MExObjectMacroException;
+import org.sablecc.objectmacro.codegeneration.java.macro.MExParameterNull;
+import org.sablecc.objectmacro.codegeneration.java.macro.MPackageDeclaration;
+import org.sablecc.objectmacro.codegeneration.java.macro.MSuperDirective;
+import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AIntermediateRepresentation;
+
 public class UtilsGenerationWalker
-        extends DepthFirstAdapter {
+        extends
+        DepthFirstAdapter {
 
     private final IntermediateRepresentation ir;
 
@@ -61,9 +77,10 @@ public class UtilsGenerationWalker
         MClassNone mClassNone = new MClassNone();
         MClassSeparator mClassSeparator = new MClassSeparator();
 
-        if(!this.ir.getDestinationPackage().equals("")){
+        if (!this.ir.getDestinationPackage().equals("")) {
             String destinationPackage = this.ir.getDestinationPackage();
-            MPackageDeclaration mPackageDeclaration = new MPackageDeclaration(destinationPackage);
+            MPackageDeclaration mPackageDeclaration = new MPackageDeclaration(
+                    destinationPackage);
             mContext.addPackageDeclaration(mPackageDeclaration);
             mIncorrectType.addPackageDeclaration(mPackageDeclaration);
             mParameterNull.addPackageDeclaration(mPackageDeclaration);
@@ -81,23 +98,36 @@ public class UtilsGenerationWalker
             mClassBuildState.addPackageDeclaration(mPackageDeclaration);
         }
 
-        GenerationUtils.writeFile(this.packageDirectory,"Context.java", mContext.build());
-        GenerationUtils.writeFile(this.packageDirectory,"MIncorrectType.java", mIncorrectType.build());
-        GenerationUtils.writeFile(this.packageDirectory,"MParameterNull.java", mParameterNull.build());
-        GenerationUtils
-                .writeFile(this.packageDirectory,"MObjectMacroErrorHead.java", mObjectMacroErrorHead.build());
-        GenerationUtils.writeFile(this.packageDirectory,"MMacroNullInList.java", mMacroNullInList.build());
-        GenerationUtils.writeFile(this.packageDirectory,"MCyclicReference.java", mCyclicReference.build());
-        GenerationUtils.writeFile(this.packageDirectory,"MCannotModify.java", mCannotModify.build());
-        GenerationUtils
-                .writeFile(this.packageDirectory,"ObjectMacroException.java", mObjectMacroException.build());
-        GenerationUtils.writeFile(this.packageDirectory, "InternalValue.java", mClassInternalValue.build());
-        GenerationUtils.writeFile(this.packageDirectory, "Directive.java", mSuperDirective.build());
-        GenerationUtils.writeFile(this.packageDirectory, "DAfterLast.java", mClassAfterLast.build());
-        GenerationUtils.writeFile(this.packageDirectory, "DBeforeFirst.java", mClassBeforeFirst.build());
-        GenerationUtils.writeFile(this.packageDirectory, "DNone.java", mClassNone.build());
-        GenerationUtils.writeFile(this.packageDirectory, "DSeparator.java", mClassSeparator.build());
+        GenerationUtils.writeFile(this.packageDirectory, "Context.java",
+                mContext.build());
+        GenerationUtils.writeFile(this.packageDirectory, "MIncorrectType.java",
+                mIncorrectType.build());
+        GenerationUtils.writeFile(this.packageDirectory, "MParameterNull.java",
+                mParameterNull.build());
+        GenerationUtils.writeFile(this.packageDirectory,
+                "MObjectMacroErrorHead.java", mObjectMacroErrorHead.build());
+        GenerationUtils.writeFile(this.packageDirectory,
+                "MMacroNullInList.java", mMacroNullInList.build());
+        GenerationUtils.writeFile(this.packageDirectory,
+                "MCyclicReference.java", mCyclicReference.build());
+        GenerationUtils.writeFile(this.packageDirectory, "MCannotModify.java",
+                mCannotModify.build());
+        GenerationUtils.writeFile(this.packageDirectory,
+                "ObjectMacroException.java", mObjectMacroException.build());
+        GenerationUtils.writeFile(this.packageDirectory, "InternalValue.java",
+                mClassInternalValue.build());
+        GenerationUtils.writeFile(this.packageDirectory, "Directive.java",
+                mSuperDirective.build());
+        GenerationUtils.writeFile(this.packageDirectory, "DAfterLast.java",
+                mClassAfterLast.build());
+        GenerationUtils.writeFile(this.packageDirectory, "DBeforeFirst.java",
+                mClassBeforeFirst.build());
+        GenerationUtils.writeFile(this.packageDirectory, "DNone.java",
+                mClassNone.build());
+        GenerationUtils.writeFile(this.packageDirectory, "DSeparator.java",
+                mClassSeparator.build());
 
-        GenerationUtils.writeFile(this.packageDirectory, "BuildState.java", mClassBuildState.build());
+        GenerationUtils.writeFile(this.packageDirectory, "BuildState.java",
+                mClassBuildState.build());
     }
 }

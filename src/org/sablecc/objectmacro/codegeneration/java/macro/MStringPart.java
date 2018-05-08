@@ -2,80 +2,85 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
-public class MStringPart extends Macro{
+public class MStringPart
+        extends
+        Macro {
 
     private String field_String;
 
     private String field_IndexBuilder;
 
-    public MStringPart(String pString, String pIndexBuilder){
+    public MStringPart(
+            String pString,
+            String pIndexBuilder) {
 
-        this.setPString(pString);
-        this.setPIndexBuilder(pIndexBuilder);
+        setPString(pString);
+        setPIndexBuilder(pIndexBuilder);
     }
 
-    private void setPString(String pString){
-        if(pString == null){
+    private void setPString(
+            String pString) {
+
+        if (pString == null) {
             throw ObjectMacroException.parameterNull("String");
         }
 
         this.field_String = pString;
     }
 
-    private void setPIndexBuilder(String pIndexBuilder){
-        if(pIndexBuilder == null){
+    private void setPIndexBuilder(
+            String pIndexBuilder) {
+
+        if (pIndexBuilder == null) {
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
 
         this.field_IndexBuilder = pIndexBuilder;
     }
 
-    private String buildString(){
+    private String buildString() {
 
         return this.field_String;
     }
 
-    private String buildIndexBuilder(){
+    private String buildIndexBuilder() {
 
         return this.field_IndexBuilder;
     }
 
-    private String getString(){
+    private String getString() {
 
         return this.field_String;
     }
 
-    private String getIndexBuilder(){
+    private String getIndexBuilder() {
 
         return this.field_IndexBuilder;
     }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setStringPart(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("StringPart");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-        
-        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("        sb");
@@ -89,7 +94,9 @@ public class MStringPart extends Macro{
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

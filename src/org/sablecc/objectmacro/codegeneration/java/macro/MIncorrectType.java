@@ -4,44 +4,58 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 public class MIncorrectType {
 
-  private final String pType;
-  private final String pParamName;
-  private final MIncorrectType mIncorrectType = this;
+    private final String pType;
 
-  public MIncorrectType(String pType, String pParamName) {
-    if(pType == null) throw new NullPointerException();
-    this.pType = pType;
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    private final String pParamName;
 
-  String pType() {
-    return this.pType;
-  }
+    private final MIncorrectType mIncorrectType = this;
 
-  String pParamName() {
-    return this.pParamName;
-  }
+    public MIncorrectType(
+            String pType,
+            String pParamName) {
 
-  private String rType() {
-    return this.mIncorrectType.pType();
-  }
+        if (pType == null) {
+            throw new NullPointerException();
+        }
+        this.pType = pType;
+        if (pParamName == null) {
+            throw new NullPointerException();
+        }
+        this.pParamName = pParamName;
+    }
 
-  private String rParamName() {
-    return this.mIncorrectType.pParamName();
-  }
+    String pType() {
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MObjectMacroErrorHead().toString());
-    sb.append(System.getProperty("line.separator"));
-    sb.append(rType());
-    sb.append(" was not expected in parameter '");
-    sb.append(rParamName());
-    sb.append("'.");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        return this.pType;
+    }
+
+    String pParamName() {
+
+        return this.pParamName;
+    }
+
+    private String rType() {
+
+        return this.mIncorrectType.pType();
+    }
+
+    private String rParamName() {
+
+        return this.mIncorrectType.pParamName();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(new MObjectMacroErrorHead().toString());
+        sb.append(System.getProperty("line.separator"));
+        sb.append(rType());
+        sb.append(" was not expected in parameter '");
+        sb.append(rParamName());
+        sb.append("'.");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
+    }
 
 }

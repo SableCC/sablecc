@@ -2,60 +2,66 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class MIsBuilt extends Macro{
+public class MIsBuilt
+        extends
+        Macro {
 
     private Map<Context, String> field_MacroName = new LinkedHashMap<>();
 
-    public MIsBuilt(){
+    public MIsBuilt() {
+
     }
 
     void setMacroName(
             Context context,
             String value) {
 
-        if(value == null){
+        if (value == null) {
             throw new RuntimeException("value cannot be null here");
         }
 
         this.field_MacroName.put(context, value);
     }
 
-    private String buildMacroName(Context context){
+    private String buildMacroName(
+            Context context) {
 
         return this.field_MacroName.get(context);
     }
 
-    private String getMacroName(Context context){
+    private String getMacroName(
+            Context context) {
 
         return this.field_MacroName.get(context);
     }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setIsBuilt(this);
     }
 
     @Override
-     String build(Context context){
+    String build(
+            Context context) {
 
         BuildState buildState = this.build_states.get(context);
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("IsBuilt");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_states.put(context, buildState);
 
-        
-        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("        if(this.build_state != null)");

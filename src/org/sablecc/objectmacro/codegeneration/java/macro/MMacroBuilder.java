@@ -2,9 +2,12 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MMacroBuilder extends Macro{
+public class MMacroBuilder
+        extends
+        Macro {
 
     private String field_MacroName;
 
@@ -81,202 +84,244 @@ public class MMacroBuilder extends Macro{
     private final InternalValue ListPartValue;
 
     private final Context ListContextParamContext = new Context();
+
     private final Context ContextBuildStateContext = new Context();
+
     private final Context NewBuildStateContext = new Context();
+
     private final Context InitDirectiveCallContext = new Context();
+
     private final Context InitInternalsCallContext = new Context();
+
     private final Context ListPartContext = new Context();
 
-    public MMacroBuilder(String pMacroName){
+    public MMacroBuilder(
+            String pMacroName) {
 
-        this.setPMacroName(pMacroName);
+        setPMacroName(pMacroName);
 
-    this.list_ListContextParam = new ArrayList<>();
-    this.list_ContextBuildState = new ArrayList<>();
-    this.list_NewBuildState = new ArrayList<>();
-    this.list_InitDirectiveCall = new ArrayList<>();
-    this.list_InitInternalsCall = new ArrayList<>();
-    this.list_ListPart = new ArrayList<>();
+        this.list_ListContextParam = new ArrayList<>();
+        this.list_ContextBuildState = new ArrayList<>();
+        this.list_NewBuildState = new ArrayList<>();
+        this.list_InitDirectiveCall = new ArrayList<>();
+        this.list_InitInternalsCall = new ArrayList<>();
+        this.list_ListPart = new ArrayList<>();
 
-    this.ListContextParamValue = new InternalValue(this.list_ListContextParam, this.ListContextParamContext);
-    this.ContextBuildStateValue = new InternalValue(this.list_ContextBuildState, this.ContextBuildStateContext);
-    this.NewBuildStateValue = new InternalValue(this.list_NewBuildState, this.NewBuildStateContext);
-    this.InitDirectiveCallValue = new InternalValue(this.list_InitDirectiveCall, this.InitDirectiveCallContext);
-    this.InitInternalsCallValue = new InternalValue(this.list_InitInternalsCall, this.InitInternalsCallContext);
-    this.ListPartValue = new InternalValue(this.list_ListPart, this.ListPartContext);
+        this.ListContextParamValue = new InternalValue(
+                this.list_ListContextParam, this.ListContextParamContext);
+        this.ContextBuildStateValue = new InternalValue(
+                this.list_ContextBuildState, this.ContextBuildStateContext);
+        this.NewBuildStateValue = new InternalValue(this.list_NewBuildState,
+                this.NewBuildStateContext);
+        this.InitDirectiveCallValue = new InternalValue(
+                this.list_InitDirectiveCall, this.InitDirectiveCallContext);
+        this.InitInternalsCallValue = new InternalValue(
+                this.list_InitInternalsCall, this.InitInternalsCallContext);
+        this.ListPartValue = new InternalValue(this.list_ListPart,
+                this.ListPartContext);
     }
 
-    private void setPMacroName(String pMacroName){
-        if(pMacroName == null){
+    private void setPMacroName(
+            String pMacroName) {
+
+        if (pMacroName == null) {
             throw ObjectMacroException.parameterNull("MacroName");
         }
 
         this.field_MacroName = pMacroName;
     }
 
-    public void addListContextParam(MContextParam macro){
-        if(macro == null){
+    public void addListContextParam(
+            MContextParam macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ListContextParam");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_ListContextParam.add(macro);
     }
 
-    public void addContextBuildState(MContextBuildState macro){
-        if(macro == null){
+    public void addContextBuildState(
+            MContextBuildState macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ContextBuildState");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_ContextBuildState.add(macro);
     }
 
-    public void addNewBuildState(MNewBuildState macro){
-        if(macro == null){
+    public void addNewBuildState(
+            MNewBuildState macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("NewBuildState");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_NewBuildState.add(macro);
     }
 
-    public void addInitDirectiveCall(MInitDirectiveCall macro){
-        if(macro == null){
+    public void addInitDirectiveCall(
+            MInitDirectiveCall macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("InitDirectiveCall");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_InitDirectiveCall.add(macro);
     }
 
-    public void addInitInternalsCall(MInitInternalsCall macro){
-        if(macro == null){
+    public void addInitInternalsCall(
+            MInitInternalsCall macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("InitInternalsCall");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_InitInternalsCall.add(macro);
     }
 
-    public void addListPart(MInitStringBuilder macro){
-        if(macro == null){
+    public void addListPart(
+            MInitStringBuilder macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ListPart");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_ListPart.add(macro);
     }
 
-    public void addListPart(MStringPart macro){
-        if(macro == null){
+    public void addListPart(
+            MStringPart macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ListPart");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_ListPart.add(macro);
     }
 
-    public void addListPart(MParamInsertPart macro){
-        if(macro == null){
+    public void addListPart(
+            MParamInsertPart macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ListPart");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_ListPart.add(macro);
     }
 
-    public void addListPart(MEolPart macro){
-        if(macro == null){
+    public void addListPart(
+            MEolPart macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ListPart");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_ListPart.add(macro);
     }
 
-    public void addListPart(MInsertMacroPart macro){
-        if(macro == null){
+    public void addListPart(
+            MInsertMacroPart macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ListPart");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_ListPart.add(macro);
     }
 
-    public void addListPart(MAddIndent macro){
-        if(macro == null){
+    public void addListPart(
+            MAddIndent macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ListPart");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_ListPart.add(macro);
     }
 
-    public void addListPart(MIndentPart macro){
-        if(macro == null){
+    public void addListPart(
+            MIndentPart macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ListPart");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroBuilder");
         }
 
         this.list_ListPart.add(macro);
     }
 
-    private String buildMacroName(){
+    private String buildMacroName() {
 
         return this.field_MacroName;
     }
 
-    private String buildListContextParam(){
+    private String buildListContextParam() {
+
         StringBuilder sb = new StringBuilder();
-        Context local_context = ListContextParamContext;
+        Context local_context = this.ListContextParamContext;
         List<Macro> macros = this.list_ListContextParam;
 
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
 
-        if(this.ListContextParamNone != null){
+        if (this.ListContextParamNone != null) {
             sb.append(this.ListContextParamNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : macros){
+        for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if(this.ListContextParamBeforeFirst != null){
-                expansion = this.ListContextParamBeforeFirst.apply(i, expansion, nb_macros);
+            if (this.ListContextParamBeforeFirst != null) {
+                expansion = this.ListContextParamBeforeFirst.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.ListContextParamAfterLast != null){
-                expansion = this.ListContextParamAfterLast.apply(i, expansion, nb_macros);
+            if (this.ListContextParamAfterLast != null) {
+                expansion = this.ListContextParamAfterLast.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.ListContextParamSeparator != null){
-                expansion = this.ListContextParamSeparator.apply(i, expansion, nb_macros);
+            if (this.ListContextParamSeparator != null) {
+                expansion = this.ListContextParamSeparator.apply(i, expansion,
+                        nb_macros);
             }
 
             sb.append(expansion);
@@ -286,32 +331,36 @@ public class MMacroBuilder extends Macro{
         return sb.toString();
     }
 
-    private String buildContextBuildState(){
+    private String buildContextBuildState() {
+
         StringBuilder sb = new StringBuilder();
-        Context local_context = ContextBuildStateContext;
+        Context local_context = this.ContextBuildStateContext;
         List<Macro> macros = this.list_ContextBuildState;
 
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
 
-        if(this.ContextBuildStateNone != null){
+        if (this.ContextBuildStateNone != null) {
             sb.append(this.ContextBuildStateNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : macros){
+        for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if(this.ContextBuildStateBeforeFirst != null){
-                expansion = this.ContextBuildStateBeforeFirst.apply(i, expansion, nb_macros);
+            if (this.ContextBuildStateBeforeFirst != null) {
+                expansion = this.ContextBuildStateBeforeFirst.apply(i,
+                        expansion, nb_macros);
             }
 
-            if(this.ContextBuildStateAfterLast != null){
-                expansion = this.ContextBuildStateAfterLast.apply(i, expansion, nb_macros);
+            if (this.ContextBuildStateAfterLast != null) {
+                expansion = this.ContextBuildStateAfterLast.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.ContextBuildStateSeparator != null){
-                expansion = this.ContextBuildStateSeparator.apply(i, expansion, nb_macros);
+            if (this.ContextBuildStateSeparator != null) {
+                expansion = this.ContextBuildStateSeparator.apply(i, expansion,
+                        nb_macros);
             }
 
             sb.append(expansion);
@@ -321,32 +370,36 @@ public class MMacroBuilder extends Macro{
         return sb.toString();
     }
 
-    private String buildNewBuildState(){
+    private String buildNewBuildState() {
+
         StringBuilder sb = new StringBuilder();
-        Context local_context = NewBuildStateContext;
+        Context local_context = this.NewBuildStateContext;
         List<Macro> macros = this.list_NewBuildState;
 
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
 
-        if(this.NewBuildStateNone != null){
+        if (this.NewBuildStateNone != null) {
             sb.append(this.NewBuildStateNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : macros){
+        for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if(this.NewBuildStateBeforeFirst != null){
-                expansion = this.NewBuildStateBeforeFirst.apply(i, expansion, nb_macros);
+            if (this.NewBuildStateBeforeFirst != null) {
+                expansion = this.NewBuildStateBeforeFirst.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.NewBuildStateAfterLast != null){
-                expansion = this.NewBuildStateAfterLast.apply(i, expansion, nb_macros);
+            if (this.NewBuildStateAfterLast != null) {
+                expansion = this.NewBuildStateAfterLast.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.NewBuildStateSeparator != null){
-                expansion = this.NewBuildStateSeparator.apply(i, expansion, nb_macros);
+            if (this.NewBuildStateSeparator != null) {
+                expansion = this.NewBuildStateSeparator.apply(i, expansion,
+                        nb_macros);
             }
 
             sb.append(expansion);
@@ -356,32 +409,36 @@ public class MMacroBuilder extends Macro{
         return sb.toString();
     }
 
-    private String buildInitDirectiveCall(){
+    private String buildInitDirectiveCall() {
+
         StringBuilder sb = new StringBuilder();
-        Context local_context = InitDirectiveCallContext;
+        Context local_context = this.InitDirectiveCallContext;
         List<Macro> macros = this.list_InitDirectiveCall;
 
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
 
-        if(this.InitDirectiveCallNone != null){
+        if (this.InitDirectiveCallNone != null) {
             sb.append(this.InitDirectiveCallNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : macros){
+        for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if(this.InitDirectiveCallBeforeFirst != null){
-                expansion = this.InitDirectiveCallBeforeFirst.apply(i, expansion, nb_macros);
+            if (this.InitDirectiveCallBeforeFirst != null) {
+                expansion = this.InitDirectiveCallBeforeFirst.apply(i,
+                        expansion, nb_macros);
             }
 
-            if(this.InitDirectiveCallAfterLast != null){
-                expansion = this.InitDirectiveCallAfterLast.apply(i, expansion, nb_macros);
+            if (this.InitDirectiveCallAfterLast != null) {
+                expansion = this.InitDirectiveCallAfterLast.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.InitDirectiveCallSeparator != null){
-                expansion = this.InitDirectiveCallSeparator.apply(i, expansion, nb_macros);
+            if (this.InitDirectiveCallSeparator != null) {
+                expansion = this.InitDirectiveCallSeparator.apply(i, expansion,
+                        nb_macros);
             }
 
             sb.append(expansion);
@@ -391,32 +448,36 @@ public class MMacroBuilder extends Macro{
         return sb.toString();
     }
 
-    private String buildInitInternalsCall(){
+    private String buildInitInternalsCall() {
+
         StringBuilder sb = new StringBuilder();
-        Context local_context = InitInternalsCallContext;
+        Context local_context = this.InitInternalsCallContext;
         List<Macro> macros = this.list_InitInternalsCall;
 
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
 
-        if(this.InitInternalsCallNone != null){
+        if (this.InitInternalsCallNone != null) {
             sb.append(this.InitInternalsCallNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : macros){
+        for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if(this.InitInternalsCallBeforeFirst != null){
-                expansion = this.InitInternalsCallBeforeFirst.apply(i, expansion, nb_macros);
+            if (this.InitInternalsCallBeforeFirst != null) {
+                expansion = this.InitInternalsCallBeforeFirst.apply(i,
+                        expansion, nb_macros);
             }
 
-            if(this.InitInternalsCallAfterLast != null){
-                expansion = this.InitInternalsCallAfterLast.apply(i, expansion, nb_macros);
+            if (this.InitInternalsCallAfterLast != null) {
+                expansion = this.InitInternalsCallAfterLast.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.InitInternalsCallSeparator != null){
-                expansion = this.InitInternalsCallSeparator.apply(i, expansion, nb_macros);
+            if (this.InitInternalsCallSeparator != null) {
+                expansion = this.InitInternalsCallSeparator.apply(i, expansion,
+                        nb_macros);
             }
 
             sb.append(expansion);
@@ -426,32 +487,36 @@ public class MMacroBuilder extends Macro{
         return sb.toString();
     }
 
-    private String buildListPart(){
+    private String buildListPart() {
+
         StringBuilder sb = new StringBuilder();
-        Context local_context = ListPartContext;
+        Context local_context = this.ListPartContext;
         List<Macro> macros = this.list_ListPart;
 
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
 
-        if(this.ListPartNone != null){
+        if (this.ListPartNone != null) {
             sb.append(this.ListPartNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : macros){
+        for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if(this.ListPartBeforeFirst != null){
-                expansion = this.ListPartBeforeFirst.apply(i, expansion, nb_macros);
+            if (this.ListPartBeforeFirst != null) {
+                expansion = this.ListPartBeforeFirst.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.ListPartAfterLast != null){
-                expansion = this.ListPartAfterLast.apply(i, expansion, nb_macros);
+            if (this.ListPartAfterLast != null) {
+                expansion = this.ListPartAfterLast.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.ListPartSeparator != null){
-                expansion = this.ListPartSeparator.apply(i, expansion, nb_macros);
+            if (this.ListPartSeparator != null) {
+                expansion = this.ListPartSeparator.apply(i, expansion,
+                        nb_macros);
             }
 
             sb.append(expansion);
@@ -461,210 +526,257 @@ public class MMacroBuilder extends Macro{
         return sb.toString();
     }
 
-    private String getMacroName(){
+    private String getMacroName() {
 
         return this.field_MacroName;
     }
 
-    private InternalValue getListContextParam(){
+    private InternalValue getListContextParam() {
+
         return this.ListContextParamValue;
     }
 
-    private InternalValue getContextBuildState(){
+    private InternalValue getContextBuildState() {
+
         return this.ContextBuildStateValue;
     }
 
-    private InternalValue getNewBuildState(){
+    private InternalValue getNewBuildState() {
+
         return this.NewBuildStateValue;
     }
 
-    private InternalValue getInitDirectiveCall(){
+    private InternalValue getInitDirectiveCall() {
+
         return this.InitDirectiveCallValue;
     }
 
-    private InternalValue getInitInternalsCall(){
+    private InternalValue getInitInternalsCall() {
+
         return this.InitInternalsCallValue;
     }
 
-    private InternalValue getListPart(){
+    private InternalValue getListPart() {
+
         return this.ListPartValue;
     }
-    private void initListContextParamInternals(Context context){
-        for(Macro macro : this.list_ListContextParam){
-            macro.apply(new InternalsInitializer("ListContextParam"){
-@Override
-void setContextParam(MContextParam mContextParam){
 
-        }
-});
-        }
-    }
+    private void initListContextParamInternals(
+            Context context) {
 
-    private void initContextBuildStateInternals(Context context){
-        for(Macro macro : this.list_ContextBuildState){
-            macro.apply(new InternalsInitializer("ContextBuildState"){
-@Override
-void setContextBuildState(MContextBuildState mContextBuildState){
+        for (Macro macro : this.list_ListContextParam) {
+            macro.apply(new InternalsInitializer("ListContextParam") {
 
-        }
-});
+                @Override
+                void setContextParam(
+                        MContextParam mContextParam) {
+
+                }
+            });
         }
     }
 
-    private void initNewBuildStateInternals(Context context){
-        for(Macro macro : this.list_NewBuildState){
-            macro.apply(new InternalsInitializer("NewBuildState"){
-@Override
-void setNewBuildState(MNewBuildState mNewBuildState){
+    private void initContextBuildStateInternals(
+            Context context) {
 
-        }
-});
-        }
-    }
+        for (Macro macro : this.list_ContextBuildState) {
+            macro.apply(new InternalsInitializer("ContextBuildState") {
 
-    private void initInitDirectiveCallInternals(Context context){
-        for(Macro macro : this.list_InitDirectiveCall){
-            macro.apply(new InternalsInitializer("InitDirectiveCall"){
-@Override
-void setInitDirectiveCall(MInitDirectiveCall mInitDirectiveCall){
+                @Override
+                void setContextBuildState(
+                        MContextBuildState mContextBuildState) {
 
-        }
-});
+                }
+            });
         }
     }
 
-    private void initInitInternalsCallInternals(Context context){
-        for(Macro macro : this.list_InitInternalsCall){
-            macro.apply(new InternalsInitializer("InitInternalsCall"){
-@Override
-void setInitInternalsCall(MInitInternalsCall mInitInternalsCall){
+    private void initNewBuildStateInternals(
+            Context context) {
 
-        }
-});
-        }
-    }
+        for (Macro macro : this.list_NewBuildState) {
+            macro.apply(new InternalsInitializer("NewBuildState") {
 
-    private void initListPartInternals(Context context){
-        for(Macro macro : this.list_ListPart){
-            macro.apply(new InternalsInitializer("ListPart"){
-@Override
-void setInitStringBuilder(MInitStringBuilder mInitStringBuilder){
+                @Override
+                void setNewBuildState(
+                        MNewBuildState mNewBuildState) {
 
-        }
-@Override
-void setStringPart(MStringPart mStringPart){
-
-        }
-@Override
-void setParamInsertPart(MParamInsertPart mParamInsertPart){
-
-        }
-@Override
-void setEolPart(MEolPart mEolPart){
-
-        }
-@Override
-void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
-
-        }
-@Override
-void setAddIndent(MAddIndent mAddIndent){
-
-        }
-@Override
-void setIndentPart(MIndentPart mIndentPart){
-
-        }
-});
+                }
+            });
         }
     }
 
-    private void initListContextParamDirectives(){
-            }
+    private void initInitDirectiveCallInternals(
+            Context context) {
 
-    private void initContextBuildStateDirectives(){
-        
+        for (Macro macro : this.list_InitDirectiveCall) {
+            macro.apply(new InternalsInitializer("InitDirectiveCall") {
+
+                @Override
+                void setInitDirectiveCall(
+                        MInitDirectiveCall mInitDirectiveCall) {
+
+                }
+            });
+        }
+    }
+
+    private void initInitInternalsCallInternals(
+            Context context) {
+
+        for (Macro macro : this.list_InitInternalsCall) {
+            macro.apply(new InternalsInitializer("InitInternalsCall") {
+
+                @Override
+                void setInitInternalsCall(
+                        MInitInternalsCall mInitInternalsCall) {
+
+                }
+            });
+        }
+    }
+
+    private void initListPartInternals(
+            Context context) {
+
+        for (Macro macro : this.list_ListPart) {
+            macro.apply(new InternalsInitializer("ListPart") {
+
+                @Override
+                void setInitStringBuilder(
+                        MInitStringBuilder mInitStringBuilder) {
+
+                }
+
+                @Override
+                void setStringPart(
+                        MStringPart mStringPart) {
+
+                }
+
+                @Override
+                void setParamInsertPart(
+                        MParamInsertPart mParamInsertPart) {
+
+                }
+
+                @Override
+                void setEolPart(
+                        MEolPart mEolPart) {
+
+                }
+
+                @Override
+                void setInsertMacroPart(
+                        MInsertMacroPart mInsertMacroPart) {
+
+                }
+
+                @Override
+                void setAddIndent(
+                        MAddIndent mAddIndent) {
+
+                }
+
+                @Override
+                void setIndentPart(
+                        MIndentPart mIndentPart) {
+
+                }
+            });
+        }
+    }
+
+    private void initListContextParamDirectives() {
+
+    }
+
+    private void initContextBuildStateDirectives() {
+
         StringBuilder sb0 = new StringBuilder();
-                sb0.append("this.build_state");
+        sb0.append("this.build_state");
         this.ContextBuildStateNone = new DNone(sb0.toString());
         this.ContextBuildStateValue.setNone(this.ContextBuildStateNone);
-            }
+    }
 
-    private void initNewBuildStateDirectives(){
-        
+    private void initNewBuildStateDirectives() {
+
         StringBuilder sb0 = new StringBuilder();
-                sb0.append("this.build_state = buildState");
+        sb0.append("this.build_state = buildState");
         this.NewBuildStateNone = new DNone(sb0.toString());
         this.NewBuildStateValue.setNone(this.NewBuildStateNone);
-            }
+    }
 
-    private void initInitDirectiveCallDirectives(){
-        
+    private void initInitDirectiveCallDirectives() {
+
         StringBuilder sb0 = new StringBuilder();
-                sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
         this.InitDirectiveCallSeparator = new DSeparator(sb0.toString());
-        this.InitDirectiveCallValue.setSeparator(this.InitDirectiveCallSeparator);
-            }
+        this.InitDirectiveCallValue
+                .setSeparator(this.InitDirectiveCallSeparator);
+    }
 
-    private void initInitInternalsCallDirectives(){
-        
+    private void initInitInternalsCallDirectives() {
+
         StringBuilder sb0 = new StringBuilder();
-                sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
         this.InitInternalsCallSeparator = new DSeparator(sb0.toString());
-        this.InitInternalsCallValue.setSeparator(this.InitInternalsCallSeparator);
-            }
+        this.InitInternalsCallValue
+                .setSeparator(this.InitInternalsCallSeparator);
+    }
 
-    private void initListPartDirectives(){
-        
+    private void initListPartDirectives() {
+
         StringBuilder sb0 = new StringBuilder();
-                sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
         this.ListPartSeparator = new DSeparator(sb0.toString());
         this.ListPartValue.setSeparator(this.ListPartSeparator);
-            }
+    }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setMacroBuilder(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("MacroBuilder");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-                initListContextParamDirectives();
-                initContextBuildStateDirectives();
-                initNewBuildStateDirectives();
-                initInitDirectiveCallDirectives();
-                initInitInternalsCallDirectives();
-                initListPartDirectives();
-        
-                initListContextParamInternals(null);
-                initContextBuildStateInternals(null);
-                initNewBuildStateInternals(null);
-                initInitDirectiveCallInternals(null);
-                initInitInternalsCallInternals(null);
-                initListPartInternals(null);
-        
+        initListContextParamDirectives();
+        initContextBuildStateDirectives();
+        initNewBuildStateDirectives();
+        initInitDirectiveCallDirectives();
+        initInitInternalsCallDirectives();
+        initListPartDirectives();
+
+        initListContextParamInternals(null);
+        initContextBuildStateInternals(null);
+        initNewBuildStateInternals(null);
+        initInitDirectiveCallInternals(null);
+        initInitInternalsCallInternals(null);
+        initListPartInternals(null);
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("   @Override");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    ");
         MPublic minsert_1 = new MPublic();
-                        sb0.append(minsert_1.build(null));
+        sb0.append(minsert_1.build(null));
         sb0.append(" String build(");
         sb0.append(buildListContextParam());
         sb0.append(")");
@@ -705,7 +817,8 @@ void setIndentPart(MIndentPart mIndentPart){
         sb0.append(LINE_SEPARATOR);
         sb0.append("        List<String> indentations = new LinkedList<>();");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("        StringBuilder sbIndentation = new StringBuilder();");
+        sb0.append(
+                "        StringBuilder sbIndentation = new StringBuilder();");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("        ");
@@ -733,7 +846,9 @@ void setIndentPart(MIndentPart mIndentPart){
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

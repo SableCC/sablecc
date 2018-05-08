@@ -3,9 +3,11 @@
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
 class DSeparator
-        extends Directive {
+        extends
+        Directive {
 
-    DSeparator(String value) {
+    DSeparator(
+            String value) {
 
         super(value);
     }
@@ -16,7 +18,7 @@ class DSeparator
             String macro,
             Integer list_size) {
 
-        if(index == list_size - 1){
+        if (index == list_size - 1) {
             return macro;
         }
 

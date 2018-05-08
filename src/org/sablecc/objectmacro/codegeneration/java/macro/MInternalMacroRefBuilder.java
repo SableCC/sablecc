@@ -2,59 +2,62 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
-public class MInternalMacroRefBuilder extends Macro{
+public class MInternalMacroRefBuilder
+        extends
+        Macro {
 
     private String field_InternalName;
 
-    public MInternalMacroRefBuilder(String pInternalName){
+    public MInternalMacroRefBuilder(
+            String pInternalName) {
 
-        this.setPInternalName(pInternalName);
+        setPInternalName(pInternalName);
     }
 
-    private void setPInternalName(String pInternalName){
-        if(pInternalName == null){
+    private void setPInternalName(
+            String pInternalName) {
+
+        if (pInternalName == null) {
             throw ObjectMacroException.parameterNull("InternalName");
         }
 
         this.field_InternalName = pInternalName;
     }
 
-    private String buildInternalName(){
+    private String buildInternalName() {
 
         return this.field_InternalName;
     }
 
-    private String getInternalName(){
+    private String getInternalName() {
 
         return this.field_InternalName;
     }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setInternalMacroRefBuilder(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("InternalMacroRefBuilder");
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException
+                    .cyclicReference("InternalMacroRefBuilder");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-        
-        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    private String build");
@@ -76,7 +79,9 @@ public class MInternalMacroRefBuilder extends Macro{
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

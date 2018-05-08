@@ -2,9 +2,12 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MSingleAdd extends Macro{
+public class MSingleAdd
+        extends
+        Macro {
 
     private String field_MacroName;
 
@@ -24,79 +27,92 @@ public class MSingleAdd extends Macro{
 
     private final Context IsBuiltContext = new Context();
 
-    public MSingleAdd(String pMacroName, String pParamName){
+    public MSingleAdd(
+            String pMacroName,
+            String pParamName) {
 
-        this.setPMacroName(pMacroName);
-        this.setPParamName(pParamName);
+        setPMacroName(pMacroName);
+        setPParamName(pParamName);
 
-    this.list_IsBuilt = new ArrayList<>();
+        this.list_IsBuilt = new ArrayList<>();
 
-    this.IsBuiltValue = new InternalValue(this.list_IsBuilt, this.IsBuiltContext);
+        this.IsBuiltValue = new InternalValue(this.list_IsBuilt,
+                this.IsBuiltContext);
     }
 
-    private void setPMacroName(String pMacroName){
-        if(pMacroName == null){
+    private void setPMacroName(
+            String pMacroName) {
+
+        if (pMacroName == null) {
             throw ObjectMacroException.parameterNull("MacroName");
         }
 
         this.field_MacroName = pMacroName;
     }
 
-    private void setPParamName(String pParamName){
-        if(pParamName == null){
+    private void setPParamName(
+            String pParamName) {
+
+        if (pParamName == null) {
             throw ObjectMacroException.parameterNull("ParamName");
         }
 
         this.field_ParamName = pParamName;
     }
 
-    public void addIsBuilt(MIsBuilt macro){
-        if(macro == null){
+    public void addIsBuilt(
+            MIsBuilt macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("IsBuilt");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("SingleAdd");
         }
 
         this.list_IsBuilt.add(macro);
     }
 
-    private String buildMacroName(){
+    private String buildMacroName() {
 
         return this.field_MacroName;
     }
 
-    private String buildParamName(){
+    private String buildParamName() {
 
         return this.field_ParamName;
     }
 
-    private String buildIsBuilt(){
+    private String buildIsBuilt() {
+
         StringBuilder sb = new StringBuilder();
-        Context local_context = IsBuiltContext;
+        Context local_context = this.IsBuiltContext;
         List<Macro> macros = this.list_IsBuilt;
 
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
 
-        if(this.IsBuiltNone != null){
+        if (this.IsBuiltNone != null) {
             sb.append(this.IsBuiltNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : macros){
+        for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if(this.IsBuiltBeforeFirst != null){
-                expansion = this.IsBuiltBeforeFirst.apply(i, expansion, nb_macros);
+            if (this.IsBuiltBeforeFirst != null) {
+                expansion = this.IsBuiltBeforeFirst.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.IsBuiltAfterLast != null){
-                expansion = this.IsBuiltAfterLast.apply(i, expansion, nb_macros);
+            if (this.IsBuiltAfterLast != null) {
+                expansion = this.IsBuiltAfterLast.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.IsBuiltSeparator != null){
-                expansion = this.IsBuiltSeparator.apply(i, expansion, nb_macros);
+            if (this.IsBuiltSeparator != null) {
+                expansion = this.IsBuiltSeparator.apply(i, expansion,
+                        nb_macros);
             }
 
             sb.append(expansion);
@@ -106,60 +122,69 @@ public class MSingleAdd extends Macro{
         return sb.toString();
     }
 
-    private String getMacroName(){
+    private String getMacroName() {
 
         return this.field_MacroName;
     }
 
-    private String getParamName(){
+    private String getParamName() {
 
         return this.field_ParamName;
     }
 
-    private InternalValue getIsBuilt(){
+    private InternalValue getIsBuilt() {
+
         return this.IsBuiltValue;
     }
-    private void initIsBuiltInternals(Context context){
-        for(Macro macro : this.list_IsBuilt){
-            macro.apply(new InternalsInitializer("IsBuilt"){
-@Override
-void setIsBuilt(MIsBuilt mIsBuilt){
 
-                mIsBuilt.setMacroName(IsBuiltContext, getMacroName());
-}
-});
+    private void initIsBuiltInternals(
+            Context context) {
+
+        for (Macro macro : this.list_IsBuilt) {
+            macro.apply(new InternalsInitializer("IsBuilt") {
+
+                @Override
+                void setIsBuilt(
+                        MIsBuilt mIsBuilt) {
+
+                    mIsBuilt.setMacroName(MSingleAdd.this.IsBuiltContext,
+                            getMacroName());
+                }
+            });
         }
     }
 
-    private void initIsBuiltDirectives(){
-            }
+    private void initIsBuiltDirectives() {
+
+    }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setSingleAdd(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("SingleAdd");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-                initIsBuiltDirectives();
-        
-                initIsBuiltInternals(null);
-        
+        initIsBuiltDirectives();
+
+        initIsBuiltInternals(null);
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("    public void add");
@@ -193,7 +218,9 @@ void setIsBuilt(MIsBuilt mIsBuilt){
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

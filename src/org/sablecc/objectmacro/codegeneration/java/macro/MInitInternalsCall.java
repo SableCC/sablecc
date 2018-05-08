@@ -2,9 +2,12 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MInitInternalsCall extends Macro{
+public class MInitInternalsCall
+        extends
+        Macro {
 
     private String field_ParamName;
 
@@ -22,65 +25,75 @@ public class MInitInternalsCall extends Macro{
 
     private final Context ContextArgContext = new Context();
 
-    public MInitInternalsCall(String pParamName){
+    public MInitInternalsCall(
+            String pParamName) {
 
-        this.setPParamName(pParamName);
+        setPParamName(pParamName);
 
-    this.list_ContextArg = new ArrayList<>();
+        this.list_ContextArg = new ArrayList<>();
 
-    this.ContextArgValue = new InternalValue(this.list_ContextArg, this.ContextArgContext);
+        this.ContextArgValue = new InternalValue(this.list_ContextArg,
+                this.ContextArgContext);
     }
 
-    private void setPParamName(String pParamName){
-        if(pParamName == null){
+    private void setPParamName(
+            String pParamName) {
+
+        if (pParamName == null) {
             throw ObjectMacroException.parameterNull("ParamName");
         }
 
         this.field_ParamName = pParamName;
     }
 
-    public void addContextArg(MContextArg macro){
-        if(macro == null){
+    public void addContextArg(
+            MContextArg macro) {
+
+        if (macro == null) {
             throw ObjectMacroException.parameterNull("ContextArg");
         }
-                if(this.build_state != null){
+        if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("InitInternalsCall");
         }
 
         this.list_ContextArg.add(macro);
     }
 
-    private String buildParamName(){
+    private String buildParamName() {
 
         return this.field_ParamName;
     }
 
-    private String buildContextArg(){
+    private String buildContextArg() {
+
         StringBuilder sb = new StringBuilder();
-        Context local_context = ContextArgContext;
+        Context local_context = this.ContextArgContext;
         List<Macro> macros = this.list_ContextArg;
 
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
 
-        if(this.ContextArgNone != null){
+        if (this.ContextArgNone != null) {
             sb.append(this.ContextArgNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : macros){
+        for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if(this.ContextArgBeforeFirst != null){
-                expansion = this.ContextArgBeforeFirst.apply(i, expansion, nb_macros);
+            if (this.ContextArgBeforeFirst != null) {
+                expansion = this.ContextArgBeforeFirst.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.ContextArgAfterLast != null){
-                expansion = this.ContextArgAfterLast.apply(i, expansion, nb_macros);
+            if (this.ContextArgAfterLast != null) {
+                expansion = this.ContextArgAfterLast.apply(i, expansion,
+                        nb_macros);
             }
 
-            if(this.ContextArgSeparator != null){
-                expansion = this.ContextArgSeparator.apply(i, expansion, nb_macros);
+            if (this.ContextArgSeparator != null) {
+                expansion = this.ContextArgSeparator.apply(i, expansion,
+                        nb_macros);
             }
 
             sb.append(expansion);
@@ -90,59 +103,66 @@ public class MInitInternalsCall extends Macro{
         return sb.toString();
     }
 
-    private String getParamName(){
+    private String getParamName() {
 
         return this.field_ParamName;
     }
 
-    private InternalValue getContextArg(){
+    private InternalValue getContextArg() {
+
         return this.ContextArgValue;
     }
-    private void initContextArgInternals(Context context){
-        for(Macro macro : this.list_ContextArg){
-            macro.apply(new InternalsInitializer("ContextArg"){
-@Override
-void setContextArg(MContextArg mContextArg){
 
-        }
-});
+    private void initContextArgInternals(
+            Context context) {
+
+        for (Macro macro : this.list_ContextArg) {
+            macro.apply(new InternalsInitializer("ContextArg") {
+
+                @Override
+                void setContextArg(
+                        MContextArg mContextArg) {
+
+                }
+            });
         }
     }
 
-    private void initContextArgDirectives(){
-        
+    private void initContextArgDirectives() {
+
         StringBuilder sb0 = new StringBuilder();
-                sb0.append("null");
+        sb0.append("null");
         this.ContextArgNone = new DNone(sb0.toString());
         this.ContextArgValue.setNone(this.ContextArgNone);
-            }
+    }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setInitInternalsCall(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("InitInternalsCall");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-                initContextArgDirectives();
-        
-                initContextArgInternals(null);
-        
+        initContextArgDirectives();
+
+        initContextArgInternals(null);
+
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("init");
@@ -156,7 +176,9 @@ void setContextArg(MContextArg mContextArg){
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }

@@ -4,32 +4,40 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 public class MCannotModify {
 
-  private final String pMacroName;
-  private final MCannotModify mCannotModify = this;
+    private final String pMacroName;
 
-  public MCannotModify(String pMacroName) {
-    if(pMacroName == null) throw new NullPointerException();
-    this.pMacroName = pMacroName;
-  }
+    private final MCannotModify mCannotModify = this;
 
-  String pMacroName() {
-    return this.pMacroName;
-  }
+    public MCannotModify(
+            String pMacroName) {
 
-  private String rMacroName() {
-    return this.mCannotModify.pMacroName();
-  }
+        if (pMacroName == null) {
+            throw new NullPointerException();
+        }
+        this.pMacroName = pMacroName;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MObjectMacroErrorHead().toString());
-    sb.append(System.getProperty("line.separator"));
-    sb.append("Instance of M");
-    sb.append(rMacroName());
-    sb.append(" cannot be updated after calling the method built.");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+    String pMacroName() {
+
+        return this.pMacroName;
+    }
+
+    private String rMacroName() {
+
+        return this.mCannotModify.pMacroName();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(new MObjectMacroErrorHead().toString());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Instance of M");
+        sb.append(rMacroName());
+        sb.append(" cannot be updated after calling the method built.");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
+    }
 
 }

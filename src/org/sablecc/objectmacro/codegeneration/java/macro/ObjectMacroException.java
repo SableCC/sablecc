@@ -3,14 +3,15 @@
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
 public class ObjectMacroException
-        extends RuntimeException{
+        extends
+        RuntimeException {
 
     private ObjectMacroException(
-            String message){
+            String message) {
 
         super(message);
 
-        if(message == null){
+        if (message == null) {
             throw new RuntimeException("message may not be null");
         }
     }
@@ -32,8 +33,7 @@ public class ObjectMacroException
 
     static ObjectMacroException incorrectType(
             String type,
-            String param_name){
-
+            String param_name) {
 
         return new ObjectMacroException(
                 new MIncorrectType(type, param_name).toString());
@@ -41,28 +41,32 @@ public class ObjectMacroException
 
     static ObjectMacroException macroNull(
             Integer index,
-            String paramName){
+            String paramName) {
 
         return new ObjectMacroException(
-                new MMacroNullInList(String.valueOf(index), paramName).toString());
+                new MMacroNullInList(String.valueOf(index), paramName)
+                        .toString());
     }
 
     static ObjectMacroException parameterNull(
-            String paramName){
+            String paramName) {
 
-        return new ObjectMacroException(new MParameterNull(paramName).toString());
+        return new ObjectMacroException(
+                new MParameterNull(paramName).toString());
     }
 
     static ObjectMacroException cyclicReference(
-            String macroName){
+            String macroName) {
 
-        return new ObjectMacroException(new MCyclicReference(macroName).toString());
+        return new ObjectMacroException(
+                new MCyclicReference(macroName).toString());
     }
 
     static ObjectMacroException cannotModify(
-            String macroName){
+            String macroName) {
 
-        return new ObjectMacroException(new MCannotModify(macroName).toString());
+        return new ObjectMacroException(
+                new MCannotModify(macroName).toString());
     }
 
 }

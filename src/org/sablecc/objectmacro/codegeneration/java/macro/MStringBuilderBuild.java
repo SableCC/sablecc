@@ -2,59 +2,61 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
-public class MStringBuilderBuild extends Macro{
+public class MStringBuilderBuild
+        extends
+        Macro {
 
     private String field_IndexBuilder;
 
-    public MStringBuilderBuild(String pIndexBuilder){
+    public MStringBuilderBuild(
+            String pIndexBuilder) {
 
-        this.setPIndexBuilder(pIndexBuilder);
+        setPIndexBuilder(pIndexBuilder);
     }
 
-    private void setPIndexBuilder(String pIndexBuilder){
-        if(pIndexBuilder == null){
+    private void setPIndexBuilder(
+            String pIndexBuilder) {
+
+        if (pIndexBuilder == null) {
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
 
         this.field_IndexBuilder = pIndexBuilder;
     }
 
-    private String buildIndexBuilder(){
+    private String buildIndexBuilder() {
 
         return this.field_IndexBuilder;
     }
 
-    private String getIndexBuilder(){
+    private String getIndexBuilder() {
 
         return this.field_IndexBuilder;
     }
+
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setStringBuilderBuild(this);
     }
 
     @Override
-    public String build(){
+    public String build() {
 
         BuildState buildState = this.build_state;
 
-        if(buildState == null){
+        if (buildState == null) {
             buildState = new BuildState();
         }
-        else if(buildState.getExpansion() == null){
+        else if (buildState.getExpansion() == null) {
             throw ObjectMacroException.cyclicReference("StringBuilderBuild");
         }
-        else{
+        else {
             return buildState.getExpansion();
         }
         this.build_state = buildState;
 
-        
-        
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("sb");
@@ -66,7 +68,9 @@ public class MStringBuilderBuild extends Macro{
     }
 
     @Override
-    String build(Context context) {
+    String build(
+            Context context) {
+
         return build();
     }
 }
