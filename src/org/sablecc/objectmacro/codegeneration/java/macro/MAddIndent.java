@@ -2,56 +2,230 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MAddIndent {
+public class MAddIndent
+        extends
+        Macro {
 
-  private final List<Object> eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart = new LinkedList<Object>();
+    private final List<Macro> list_ListParts;
 
-  public MAddIndent() {
-  }
+    private DSeparator ListPartsSeparator;
 
-  public MInitStringBuilder newInitStringBuilder(String pIndexBuilder) {
-    MInitStringBuilder lInitStringBuilder = new MInitStringBuilder(pIndexBuilder);
-    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lInitStringBuilder);
-    return lInitStringBuilder;
-  }
+    private DBeforeFirst ListPartsBeforeFirst;
 
-  public MStringPart newStringPart(String pString, String pIndexBuilder) {
-    MStringPart lStringPart = new MStringPart(pString, pIndexBuilder);
-    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lStringPart);
-    return lStringPart;
-  }
+    private DAfterLast ListPartsAfterLast;
 
-  public MParamInsertPart newParamInsertPart(String pParamName, String pIndexBuilder) {
-    MParamInsertPart lParamInsertPart = new MParamInsertPart(pParamName, pIndexBuilder);
-    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lParamInsertPart);
-    return lParamInsertPart;
-  }
+    private DNone ListPartsNone;
 
-  public MEolPart newEolPart(String pIndexBuilder) {
-    MEolPart lEolPart = new MEolPart(pIndexBuilder);
-    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lEolPart);
-    return lEolPart;
-  }
+    private final InternalValue ListPartsValue;
 
-  public MInsertMacroPart newInsertMacroPart(String pName, String pIndexBuilder, String pIndexInsert) {
-    MInsertMacroPart lInsertMacroPart = new MInsertMacroPart(pName, pIndexBuilder, pIndexInsert);
-    this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lInsertMacroPart);
-    return lInsertMacroPart;
-  }
+    private final Context ListPartsContext = new Context();
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("        sbIndentation = new StringBuilder();");
-    sb.append(System.getProperty("line.separator"));
-    for(Object oInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart : this.eInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart) {
-      sb.append(oInitStringBuilder_StringPart_ParamInsertPart_EolPart_InsertMacroPart.toString());
+    public MAddIndent() {
+
+        this.list_ListParts = new ArrayList<>();
+
+        this.ListPartsValue = new InternalValue(this.list_ListParts,
+                this.ListPartsContext);
     }
-    sb.append("        indentations.add(sbIndentation.toString());");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
+    public void addListParts(
+            MInitStringBuilder macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("ListParts");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("AddIndent");
+        }
+
+        this.list_ListParts.add(macro);
+    }
+
+    public void addListParts(
+            MStringPart macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("ListParts");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("AddIndent");
+        }
+
+        this.list_ListParts.add(macro);
+    }
+
+    public void addListParts(
+            MParamInsertPart macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("ListParts");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("AddIndent");
+        }
+
+        this.list_ListParts.add(macro);
+    }
+
+    public void addListParts(
+            MEolPart macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("ListParts");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("AddIndent");
+        }
+
+        this.list_ListParts.add(macro);
+    }
+
+    public void addListParts(
+            MInsertMacroPart macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("ListParts");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("AddIndent");
+        }
+
+        this.list_ListParts.add(macro);
+    }
+
+    private String buildListParts() {
+
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.ListPartsContext;
+        List<Macro> macros = this.list_ListParts;
+
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if (this.ListPartsNone != null) {
+            sb.append(this.ListPartsNone.apply(i, "", nb_macros));
+        }
+
+        for (Macro macro : macros) {
+            expansion = macro.build(local_context);
+
+            if (this.ListPartsBeforeFirst != null) {
+                expansion = this.ListPartsBeforeFirst.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.ListPartsAfterLast != null) {
+                expansion = this.ListPartsAfterLast.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.ListPartsSeparator != null) {
+                expansion = this.ListPartsSeparator.apply(i, expansion,
+                        nb_macros);
+            }
+
+            sb.append(expansion);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    private InternalValue getListParts() {
+
+        return this.ListPartsValue;
+    }
+
+    private void initListPartsInternals(
+            Context context) {
+
+        for (Macro macro : this.list_ListParts) {
+            macro.apply(new InternalsInitializer("ListParts") {
+
+                @Override
+                void setInitStringBuilder(
+                        MInitStringBuilder mInitStringBuilder) {
+
+                }
+
+                @Override
+                void setStringPart(
+                        MStringPart mStringPart) {
+
+                }
+
+                @Override
+                void setParamInsertPart(
+                        MParamInsertPart mParamInsertPart) {
+
+                }
+
+                @Override
+                void setEolPart(
+                        MEolPart mEolPart) {
+
+                }
+
+                @Override
+                void setInsertMacroPart(
+                        MInsertMacroPart mInsertMacroPart) {
+
+                }
+            });
+        }
+    }
+
+    private void initListPartsDirectives() {
+
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setAddIndent(this);
+    }
+
+    @Override
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+            buildState = new BuildState();
+        }
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException.cyclicReference("AddIndent");
+        }
+        else {
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+
+        initListPartsDirectives();
+
+        initListPartsInternals(null);
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("        sbIndentation = new StringBuilder();");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(buildListParts());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        indentations.add(sbIndentation.toString());");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(
+            Context context) {
+
+        return build();
+    }
 }

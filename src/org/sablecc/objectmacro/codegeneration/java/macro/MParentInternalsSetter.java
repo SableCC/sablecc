@@ -2,42 +2,86 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MParentInternalsSetter {
+public class MParentInternalsSetter
+        extends
+        Macro {
 
-  private final String pName;
-  private final MParentInternalsSetter mParentInternalsSetter = this;
+    private String field_Name;
 
-  public MParentInternalsSetter(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
+    public MParentInternalsSetter(
+            String pName) {
 
-  String pName() {
-    return this.pName;
-  }
+        setPName(pName);
+    }
 
-  private String rName() {
-    return this.mParentInternalsSetter.pName();
-  }
+    private void setPName(
+            String pName) {
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    void set");
-    sb.append(rName());
-    sb.append("(M");
-    sb.append(rName());
-    sb.append(" m");
-    sb.append(rName());
-    sb.append("){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        throw ObjectMacroException.incorrectType(\"M");
-    sb.append(rName());
-    sb.append("\", this._paramName);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        if (pName == null) {
+            throw ObjectMacroException.parameterNull("Name");
+        }
 
+        this.field_Name = pName;
+    }
+
+    private String buildName() {
+
+        return this.field_Name;
+    }
+
+    private String getName() {
+
+        return this.field_Name;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setParentInternalsSetter(this);
+    }
+
+    @Override
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+            buildState = new BuildState();
+        }
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException.cyclicReference("ParentInternalsSetter");
+        }
+        else {
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("  void set");
+        sb0.append(buildName());
+        sb0.append("(M");
+        sb0.append(buildName());
+        sb0.append(" m");
+        sb0.append(buildName());
+        sb0.append(")");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("      throw ObjectMacroException.incorrectType(\"M");
+        sb0.append(buildName());
+        sb0.append("\", this._paramName);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("  }");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(
+            Context context) {
+
+        return build();
+    }
 }

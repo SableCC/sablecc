@@ -4,31 +4,39 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 public class MInitDirectivesCall {
 
-  private final String pParamName;
-  private final MInitDirectivesCall mInitDirectivesCall = this;
+    private final String pParamName;
 
-  MInitDirectivesCall(String pParamName) {
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    private final MInitDirectivesCall mInitDirectivesCall = this;
 
-  String pParamName() {
-    return this.pParamName;
-  }
+    MInitDirectivesCall(
+            String pParamName) {
 
-  private String rParamName() {
-    return this.mInitDirectivesCall.pParamName();
-  }
+        if (pParamName == null) {
+            throw new NullPointerException();
+        }
+        this.pParamName = pParamName;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("        init");
-    sb.append(rParamName());
-    sb.append("Directives();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        ");
-    return sb.toString();
-  }
+    String pParamName() {
+
+        return this.pParamName;
+    }
+
+    private String rParamName() {
+
+        return this.mInitDirectivesCall.pParamName();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("        init");
+        sb.append(rParamName());
+        sb.append("Directives();");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("        ");
+        return sb.toString();
+    }
 
 }

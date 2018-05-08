@@ -2,29 +2,73 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MContextName {
+public class MContextName
+        extends
+        Macro {
 
-  private final String pContextName;
-  private final MContextName mContextName = this;
+    private String field_ContextName;
 
-  public MContextName(String pContextName) {
-    if(pContextName == null) throw new NullPointerException();
-    this.pContextName = pContextName;
-  }
+    public MContextName(
+            String pContextName) {
 
-  String pContextName() {
-    return this.pContextName;
-  }
+        setPContextName(pContextName);
+    }
 
-  private String rContextName() {
-    return this.mContextName.pContextName();
-  }
+    private void setPContextName(
+            String pContextName) {
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(rContextName());
-    return sb.toString();
-  }
+        if (pContextName == null) {
+            throw ObjectMacroException.parameterNull("ContextName");
+        }
 
+        this.field_ContextName = pContextName;
+    }
+
+    private String buildContextName() {
+
+        return this.field_ContextName;
+    }
+
+    private String getContextName() {
+
+        return this.field_ContextName;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setContextName(this);
+    }
+
+    @Override
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+            buildState = new BuildState();
+        }
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException.cyclicReference("ContextName");
+        }
+        else {
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(buildContextName());
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(
+            Context context) {
+
+        return build();
+    }
 }

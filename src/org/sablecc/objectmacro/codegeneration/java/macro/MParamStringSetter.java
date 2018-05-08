@@ -2,75 +2,295 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MParamStringSetter {
+public class MParamStringSetter
+        extends
+        Macro {
 
-  private final String pName;
-  private final MParamStringSetter mParamStringSetter = this;
-  private final List<Object> eStringParam = new LinkedList<Object>();
-  private final List<Object> eParamArg = new LinkedList<Object>();
+    private String field_Name;
 
-  public MParamStringSetter(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
+    private final List<Macro> list_ListStringParam;
 
-  public MStringParam newStringParam(String pName) {
-    MStringParam lStringParam = new MStringParam(pName);
-    this.eStringParam.add(lStringParam);
-    return lStringParam;
-  }
+    private DSeparator ListStringParamSeparator;
 
-  public MParamArg newParamArg(String pName) {
-    MParamArg lParamArg = new MParamArg(pName);
-    this.eParamArg.add(lParamArg);
-    return lParamArg;
-  }
+    private DBeforeFirst ListStringParamBeforeFirst;
 
-  String pName() {
-    return this.pName;
-  }
+    private DAfterLast ListStringParamAfterLast;
 
-  private String rName() {
-    return this.mParamStringSetter.pName();
-  }
+    private DNone ListStringParamNone;
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    private void setP");
-    sb.append(rName());
-    sb.append("(");
-    for(Object oStringParam : this.eStringParam) {
-      sb.append(oStringParam.toString());
+    private final InternalValue ListStringParamValue;
+
+    private final List<Macro> list_ListParamArg;
+
+    private DSeparator ListParamArgSeparator;
+
+    private DBeforeFirst ListParamArgBeforeFirst;
+
+    private DAfterLast ListParamArgAfterLast;
+
+    private DNone ListParamArgNone;
+
+    private final InternalValue ListParamArgValue;
+
+    private final Context ListStringParamContext = new Context();
+
+    private final Context ListParamArgContext = new Context();
+
+    public MParamStringSetter(
+            String pName) {
+
+        setPName(pName);
+
+        this.list_ListStringParam = new ArrayList<>();
+        this.list_ListParamArg = new ArrayList<>();
+
+        this.ListStringParamValue = new InternalValue(this.list_ListStringParam,
+                this.ListStringParamContext);
+        this.ListParamArgValue = new InternalValue(this.list_ListParamArg,
+                this.ListParamArgContext);
     }
-    sb.append("){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        if(");
-    for(Object oParamArg : this.eParamArg) {
-      sb.append(oParamArg.toString());
-    }
-    sb.append(" == null){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            throw ObjectMacroException.parameterNull(\"");
-    sb.append(rName());
-    sb.append("\");");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        this.field_");
-    sb.append(rName());
-    sb.append(" = ");
-    for(Object oParamArg : this.eParamArg) {
-      sb.append(oParamArg.toString());
-    }
-    sb.append(";");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
+    private void setPName(
+            String pName) {
+
+        if (pName == null) {
+            throw ObjectMacroException.parameterNull("Name");
+        }
+
+        this.field_Name = pName;
+    }
+
+    public void addListStringParam(
+            MStringParam macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("ListStringParam");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("ParamStringSetter");
+        }
+
+        this.list_ListStringParam.add(macro);
+    }
+
+    public void addListParamArg(
+            MParamArg macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("ListParamArg");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("ParamStringSetter");
+        }
+
+        this.list_ListParamArg.add(macro);
+    }
+
+    private String buildName() {
+
+        return this.field_Name;
+    }
+
+    private String buildListStringParam() {
+
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.ListStringParamContext;
+        List<Macro> macros = this.list_ListStringParam;
+
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if (this.ListStringParamNone != null) {
+            sb.append(this.ListStringParamNone.apply(i, "", nb_macros));
+        }
+
+        for (Macro macro : macros) {
+            expansion = macro.build(local_context);
+
+            if (this.ListStringParamBeforeFirst != null) {
+                expansion = this.ListStringParamBeforeFirst.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.ListStringParamAfterLast != null) {
+                expansion = this.ListStringParamAfterLast.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.ListStringParamSeparator != null) {
+                expansion = this.ListStringParamSeparator.apply(i, expansion,
+                        nb_macros);
+            }
+
+            sb.append(expansion);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    private String buildListParamArg() {
+
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.ListParamArgContext;
+        List<Macro> macros = this.list_ListParamArg;
+
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if (this.ListParamArgNone != null) {
+            sb.append(this.ListParamArgNone.apply(i, "", nb_macros));
+        }
+
+        for (Macro macro : macros) {
+            expansion = macro.build(local_context);
+
+            if (this.ListParamArgBeforeFirst != null) {
+                expansion = this.ListParamArgBeforeFirst.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.ListParamArgAfterLast != null) {
+                expansion = this.ListParamArgAfterLast.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.ListParamArgSeparator != null) {
+                expansion = this.ListParamArgSeparator.apply(i, expansion,
+                        nb_macros);
+            }
+
+            sb.append(expansion);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    private String getName() {
+
+        return this.field_Name;
+    }
+
+    private InternalValue getListStringParam() {
+
+        return this.ListStringParamValue;
+    }
+
+    private InternalValue getListParamArg() {
+
+        return this.ListParamArgValue;
+    }
+
+    private void initListStringParamInternals(
+            Context context) {
+
+        for (Macro macro : this.list_ListStringParam) {
+            macro.apply(new InternalsInitializer("ListStringParam") {
+
+                @Override
+                void setStringParam(
+                        MStringParam mStringParam) {
+
+                }
+            });
+        }
+    }
+
+    private void initListParamArgInternals(
+            Context context) {
+
+        for (Macro macro : this.list_ListParamArg) {
+            macro.apply(new InternalsInitializer("ListParamArg") {
+
+                @Override
+                void setParamArg(
+                        MParamArg mParamArg) {
+
+                }
+            });
+        }
+    }
+
+    private void initListStringParamDirectives() {
+
+    }
+
+    private void initListParamArgDirectives() {
+
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setParamStringSetter(this);
+    }
+
+    @Override
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+            buildState = new BuildState();
+        }
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException.cyclicReference("ParamStringSetter");
+        }
+        else {
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+
+        initListStringParamDirectives();
+        initListParamArgDirectives();
+
+        initListStringParamInternals(null);
+        initListParamArgInternals(null);
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    private void setP");
+        sb0.append(buildName());
+        sb0.append("( ");
+        sb0.append(buildListStringParam());
+        sb0.append(" )");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        if(");
+        sb0.append(buildListParamArg());
+        sb0.append(" == null)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("            throw ObjectMacroException.parameterNull(\"");
+        sb0.append(buildName());
+        sb0.append("\");");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("        this.field_");
+        sb0.append(buildName());
+        sb0.append(" = ");
+        sb0.append(buildListParamArg());
+        sb0.append(";");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(
+            Context context) {
+
+        return build();
+    }
 }

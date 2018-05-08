@@ -1,0 +1,1 @@
+org.sablecc.objectmacro.codegeneration.java.macro.MClassNone@7e0e6aa2

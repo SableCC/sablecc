@@ -2,32 +2,75 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MParamMacroField {
+public class MParamMacroField
+        extends
+        Macro {
 
-  private final String pName;
-  private final MParamMacroField mParamMacroField = this;
+    private String field_Name;
 
-  public MParamMacroField(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
+    public MParamMacroField(
+            String pName) {
 
-  String pName() {
-    return this.pName;
-  }
+        setPName(pName);
+    }
 
-  private String rName() {
-    return this.mParamMacroField.pName();
-  }
+    private void setPName(
+            String pName) {
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    private final List<Macro> list_");
-    sb.append(rName());
-    sb.append(";");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        if (pName == null) {
+            throw ObjectMacroException.parameterNull("Name");
+        }
 
+        this.field_Name = pName;
+    }
+
+    private String buildName() {
+
+        return this.field_Name;
+    }
+
+    private String getName() {
+
+        return this.field_Name;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setParamMacroField(this);
+    }
+
+    @Override
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+            buildState = new BuildState();
+        }
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException.cyclicReference("ParamMacroField");
+        }
+        else {
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    private final List<Macro> list_");
+        sb0.append(buildName());
+        sb0.append(";");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(
+            Context context) {
+
+        return build();
+    }
 }

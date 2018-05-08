@@ -2,47 +2,90 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MDirectiveFields {
+public class MDirectiveFields
+        extends
+        Macro {
 
-  private final String pParamName;
-  private final MDirectiveFields mDirectiveFields = this;
+    private String field_ParamName;
 
-  public MDirectiveFields(String pParamName) {
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    public MDirectiveFields(
+            String pParamName) {
 
-  String pParamName() {
-    return this.pParamName;
-  }
+        setPParamName(pParamName);
+    }
 
-  private String rParamName() {
-    return this.mDirectiveFields.pParamName();
-  }
+    private void setPParamName(
+            String pParamName) {
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    private DSeparator ");
-    sb.append(rParamName());
-    sb.append("Separator;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    private DBeforeFirst ");
-    sb.append(rParamName());
-    sb.append("BeforeFirst;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    private DAfterLast ");
-    sb.append(rParamName());
-    sb.append("AfterLast;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    private DNone ");
-    sb.append(rParamName());
-    sb.append("None;");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        if (pParamName == null) {
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
 
+        this.field_ParamName = pParamName;
+    }
+
+    private String buildParamName() {
+
+        return this.field_ParamName;
+    }
+
+    private String getParamName() {
+
+        return this.field_ParamName;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setDirectiveFields(this);
+    }
+
+    @Override
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+            buildState = new BuildState();
+        }
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException.cyclicReference("DirectiveFields");
+        }
+        else {
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("    private DSeparator ");
+        sb0.append(buildParamName());
+        sb0.append("Separator;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    private DBeforeFirst ");
+        sb0.append(buildParamName());
+        sb0.append("BeforeFirst;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    private DAfterLast ");
+        sb0.append(buildParamName());
+        sb0.append("AfterLast;");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    private DNone ");
+        sb0.append(buildParamName());
+        sb0.append("None;");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(
+            Context context) {
+
+        return build();
+    }
 }
