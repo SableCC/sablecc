@@ -2,59 +2,163 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MStringPart {
+import java.util.*;
 
-    private final String pString;
+public class MStringPart
+        extends Macro {
 
-    private final String pIndexBuilder;
+    private String field_String;
 
-    private final MStringPart mStringPart = this;
+    private String field_IndexBuilder;
 
     public MStringPart(
             String pString,
             String pIndexBuilder) {
 
+        setPString(pString);
+
+        setPIndexBuilder(pIndexBuilder);
+
+    }
+
+    private void setPString(
+            String pString) {
+
         if (pString == null) {
-            throw new NullPointerException();
+
+            throw ObjectMacroException.parameterNull("String");
+
         }
-        this.pString = pString;
+
+        this.field_String = pString;
+
+    }
+
+    private void setPIndexBuilder(
+            String pIndexBuilder) {
+
         if (pIndexBuilder == null) {
-            throw new NullPointerException();
+
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+
         }
-        this.pIndexBuilder = pIndexBuilder;
+
+        this.field_IndexBuilder = pIndexBuilder;
+
     }
 
-    String pString() {
+    private String buildString() {
 
-        return this.pString;
+        return this.field_String;
+
     }
 
-    String pIndexBuilder() {
+    private String buildIndexBuilder() {
 
-        return this.pIndexBuilder;
+        return this.field_IndexBuilder;
+
     }
 
-    private String rIndexBuilder() {
+    private String getString() {
 
-        return this.mStringPart.pIndexBuilder();
+        return this.field_String;
+
     }
 
-    private String rString() {
+    private String getIndexBuilder() {
 
-        return this.mStringPart.pString();
+        return this.field_IndexBuilder;
+
     }
 
     @Override
-    public String toString() {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("        sb");
-        sb.append(rIndexBuilder());
-        sb.append(".append(\"");
-        sb.append(rString());
-        sb.append("\");");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+    void apply(
+
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setStringPart(this);
+
     }
 
+    @Override
+
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+
+            buildState = new BuildState();
+
+        }
+
+        else if (buildState.getExpansion() == null) {
+
+            throw ObjectMacroException.cyclicReference("StringPart");
+
+        }
+
+        else {
+
+            return buildState.getExpansion();
+
+        }
+
+        this.build_state = buildState;
+
+        List<String> indentations = new LinkedList<>();
+
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("sb");
+
+        sb0.append(buildIndexBuilder());
+
+        sb0.append(".append(\"");
+
+        sb0.append(buildString());
+
+        sb0.append("\");");
+
+        buildState.setExpansion(sb0.toString());
+
+        return sb0.toString();
+
+    }
+
+    @Override
+
+    String build(
+            Context context) {
+
+        return build();
+
+    }
+
+    private String applyIndent(
+            String macro,
+            String indent) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if (i < lines.length - 1) {
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else {
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
+    }
 }

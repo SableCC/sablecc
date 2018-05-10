@@ -20,7 +20,7 @@ package org.sablecc.objectmacro.codegeneration.java;
 import java.util.*;
 
 import org.sablecc.objectmacro.codegeneration.java.macro.*;
-import org.sablecc.objectmacro.codegeneration.java.structure.*;
+import org.sablecc.objectmacro.codegeneration.java.structure.Macro;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.*;
 import org.sablecc.objectmacro.intermediate.syntax3.node.*;
 

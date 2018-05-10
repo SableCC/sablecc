@@ -2,44 +2,133 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MIsBuilt {
+import java.util.*;
 
-    private final String pMacroName;
+public class MIsBuilt
+        extends Macro {
 
-    private final MIsBuilt mIsBuilt = this;
+    private Map<Context, String> field_MacroName = new LinkedHashMap<>();
 
-    public MIsBuilt(
-            String pMacroName) {
+    public MIsBuilt() {
 
-        if (pMacroName == null) {
-            throw new NullPointerException();
+    }
+
+    void setMacroName(
+
+            Context context,
+
+            String value) {
+
+        if (value == null) {
+
+            throw new RuntimeException("value cannot be null here");
+
         }
-        this.pMacroName = pMacroName;
+
+        this.field_MacroName.put(context, value);
+
     }
 
-    String pMacroName() {
+    private String buildMacroName(
+            Context context) {
 
-        return this.pMacroName;
+        return this.field_MacroName.get(context);
+
     }
 
-    private String rMacroName() {
+    private String getMacroName(
+            Context context) {
 
-        return this.mIsBuilt.pMacroName();
+        return this.field_MacroName.get(context);
+
     }
 
     @Override
-    public String toString() {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("        if(this.build_state != null){");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("            throw ObjectMacroException.cannotModify(\"");
-        sb.append(rMacroName());
-        sb.append("\");");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("        }");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+    void apply(
+
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setIsBuilt(this);
+
     }
 
+    @Override
+
+    public String build(
+            Context context) {
+
+        BuildState buildState = this.build_states.get(context);
+
+        if (buildState == null) {
+
+            buildState = new BuildState();
+
+        }
+
+        else if (buildState.getExpansion() == null) {
+
+            throw ObjectMacroException.cyclicReference("IsBuilt");
+
+        }
+
+        else {
+
+            return buildState.getExpansion();
+
+        }
+
+        this.build_states.put(context, buildState);
+
+        List<String> indentations = new LinkedList<>();
+
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("        if(this.build_state != null)");
+
+        sb0.append("{");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("            throw ObjectMacroException.cannotModify(\"");
+
+        sb0.append(buildMacroName(context));
+
+        sb0.append("\");");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("        }");
+
+        buildState.setExpansion(sb0.toString());
+
+        return sb0.toString();
+
+    }
+
+    private String applyIndent(
+            String macro,
+            String indent) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if (i < lines.length - 1) {
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else {
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
+    }
 }
