@@ -17,15 +17,15 @@
 
 package org.sablecc.objectmacro.codegeneration.java;
 
-import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.intermediate.syntax3.node.TString;
-import org.sablecc.objectmacro.util.Utils;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
+
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.exception.CompilerException;
+import org.sablecc.objectmacro.intermediate.syntax3.node.TString;
+import org.sablecc.objectmacro.util.Utils;
 
 class GenerationUtils {
 
@@ -92,10 +92,10 @@ class GenerationUtils {
     }
 
     static String buildNameCamelCase(
-            LinkedList<TString> name_parts){
+            LinkedList<TString> name_parts) {
 
         StringBuilder macroName = new StringBuilder();
-        for(TString partName : name_parts){
+        for (TString partName : name_parts) {
             macroName.append(Utils.toCamelCase(string(partName)));
         }
 
@@ -103,10 +103,10 @@ class GenerationUtils {
     }
 
     static String buildName(
-            LinkedList<TString> name_parts){
+            LinkedList<TString> name_parts) {
 
         StringBuilder macroName = new StringBuilder();
-        for(TString partName : name_parts){
+        for (TString partName : name_parts) {
             macroName.append(string(partName));
         }
 
@@ -116,7 +116,7 @@ class GenerationUtils {
     static void writeFile(
             File packageDirectory,
             String fileName,
-            String content){
+            String content) {
 
         File destination = new File(packageDirectory, fileName);
 
@@ -131,7 +131,7 @@ class GenerationUtils {
     }
 
     static String getLetterFromInteger(
-            Integer i){
+            Integer i) {
 
         return i > 0 && i < 27 ? String.valueOf((char) (i + 64)) : null;
     }

@@ -2,53 +2,313 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
-public class MInitInternalsMethod {
+public class MInitInternalsMethod
+        extends
+        Macro {
 
-  private final String pName;
-  private final MInitInternalsMethod mInitInternalsMethod = this;
-  private final List<Object> eApplyInternalsInitializer = new LinkedList<Object>();
+    private String field_Name;
 
-  public MInitInternalsMethod(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
+    private final List<Macro> list_ApplyInternalsInitializer;
 
-  public MApplyInternalsInitializer newApplyInternalsInitializer(String pParamName) {
-    MApplyInternalsInitializer lApplyInternalsInitializer = new MApplyInternalsInitializer(pParamName);
-    this.eApplyInternalsInitializer.add(lApplyInternalsInitializer);
-    return lApplyInternalsInitializer;
-  }
+    private DSeparator ApplyInternalsInitializerSeparator;
 
-  String pName() {
-    return this.pName;
-  }
+    private DBeforeFirst ApplyInternalsInitializerBeforeFirst;
 
-  private String rName() {
-    return this.mInitInternalsMethod.pName();
-  }
+    private DAfterLast ApplyInternalsInitializerAfterLast;
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    private void init");
-    sb.append(rName());
-    sb.append("Internals(Context context){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        for(Macro macro : this.list_");
-    sb.append(rName());
-    sb.append("){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            ");
-    for(Object oApplyInternalsInitializer : this.eApplyInternalsInitializer) {
-      sb.append(oApplyInternalsInitializer.toString());
+    private DNone ApplyInternalsInitializerNone;
+
+    private final InternalValue ApplyInternalsInitializerValue;
+
+    private final Context ApplyInternalsInitializerContext = new Context();
+
+    public MInitInternalsMethod(
+            String pName) {
+
+        setPName(pName);
+
+        this.list_ApplyInternalsInitializer = new ArrayList<>();
+
+        this.ApplyInternalsInitializerValue = new InternalValue(
+                this.list_ApplyInternalsInitializer,
+                this.ApplyInternalsInitializerContext);
+
     }
-    sb.append("        }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
+    private void setPName(
+            String pName) {
+
+        if (pName == null) {
+
+            throw ObjectMacroException.parameterNull("Name");
+
+        }
+
+        this.field_Name = pName;
+
+    }
+
+    public void addApplyInternalsInitializer(
+            MApplyInternalsInitializer macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException
+                    .parameterNull("ApplyInternalsInitializer");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException
+                    .cannotModify("ApplyInternalsInitializer");
+
+        }
+
+        this.list_ApplyInternalsInitializer.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    private String buildName() {
+
+        return this.field_Name;
+
+    }
+
+    private String buildApplyInternalsInitializer() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.ApplyInternalsInitializerContext;
+
+        List<Macro> macros = this.list_ApplyInternalsInitializer;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.ApplyInternalsInitializerNone != null) {
+
+            sb.append(
+                    this.ApplyInternalsInitializerNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.ApplyInternalsInitializerBeforeFirst != null) {
+
+                expansion = this.ApplyInternalsInitializerBeforeFirst.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            if (this.ApplyInternalsInitializerAfterLast != null) {
+
+                expansion = this.ApplyInternalsInitializerAfterLast.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            if (this.ApplyInternalsInitializerSeparator != null) {
+
+                expansion = this.ApplyInternalsInitializerSeparator.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String getName() {
+
+        return this.field_Name;
+
+    }
+
+    private InternalValue getApplyInternalsInitializer() {
+
+        return this.ApplyInternalsInitializerValue;
+
+    }
+
+    private void initApplyInternalsInitializerInternals(
+            Context context) {
+
+        for (Macro macro : this.list_ApplyInternalsInitializer) {
+
+            macro.apply(new InternalsInitializer("ApplyInternalsInitializer") {
+
+                @Override
+
+                void setApplyInternalsInitializer(
+                        MApplyInternalsInitializer mApplyInternalsInitializer) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initApplyInternalsInitializerDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+
+        this.ApplyInternalsInitializerSeparator = new DSeparator(
+                sb0.toString());
+
+        this.ApplyInternalsInitializerValue
+                .setSeparator(this.ApplyInternalsInitializerSeparator);
+
+    }
+
+    @Override
+
+    void apply(
+
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setInitInternalsMethod(this);
+
+    }
+
+    @Override
+
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+
+            buildState = new BuildState();
+
+        }
+
+        else if (buildState.getExpansion() == null) {
+
+            throw ObjectMacroException.cyclicReference("InitInternalsMethod");
+
+        }
+
+        else {
+
+            return buildState.getExpansion();
+
+        }
+
+        this.build_state = buildState;
+
+        List<String> indentations = new LinkedList<>();
+
+        StringBuilder sbIndentation = new StringBuilder();
+
+        initApplyInternalsInitializerDirectives();
+
+        initApplyInternalsInitializerInternals(null);
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("private void init");
+
+        sb0.append(buildName());
+
+        sb0.append("Internals(Context context)");
+
+        sb0.append("{");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("    for(Macro macro : this.list_");
+
+        sb0.append(buildName());
+
+        sb0.append(")");
+
+        sb0.append("{");
+
+        sb0.append(LINE_SEPARATOR);
+
+        StringBuilder sb1 = new StringBuilder();
+
+        sbIndentation = new StringBuilder();
+
+        sbIndentation.append("    ");
+        sbIndentation.append("    ");
+
+        indentations.add(sbIndentation.toString());
+
+        sb1.append(buildApplyInternalsInitializer());
+
+        sb0.append(applyIndent(sb1.toString(),
+                indentations.remove(indentations.size() - 1)));
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("    }");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("}");
+
+        buildState.setExpansion(sb0.toString());
+
+        return sb0.toString();
+
+    }
+
+    @Override
+
+    String build(
+            Context context) {
+
+        return build();
+
+    }
+
+    private String applyIndent(
+            String macro,
+            String indent) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if (i < lines.length - 1) {
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else {
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
+    }
 }

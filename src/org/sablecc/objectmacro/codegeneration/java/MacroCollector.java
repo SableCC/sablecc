@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sablecc.objectmacro.codegeneration.java;
 
-import org.sablecc.objectmacro.codegeneration.java.macro.MMacro;
-import org.sablecc.objectmacro.codegeneration.java.structure.Macro;
-import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.objectmacro.intermediate.syntax3.node.*;
+package org.sablecc.objectmacro.codegeneration.java;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.sablecc.objectmacro.codegeneration.java.macro.MMacro;
+import org.sablecc.objectmacro.codegeneration.java.structure.Macro;
+import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AInternal;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AMacro;
+import org.sablecc.objectmacro.intermediate.syntax3.node.AParam;
+
 public class MacroCollector
-        extends DepthFirstAdapter{
+        extends
+        DepthFirstAdapter {
 
     private final Map<String, Macro> macros;
 
@@ -35,7 +39,7 @@ public class MacroCollector
     private List<String> currentInternals = new LinkedList<>();
 
     public MacroCollector(
-            Map<String, Macro> macros){
+            Map<String, Macro> macros) {
 
         this.macros = macros;
     }
@@ -53,8 +57,8 @@ public class MacroCollector
             AMacro node) {
 
         String macro_name = GenerationUtils.buildNameCamelCase(node.getNames());
-        this.macros.put(macro_name,
-                new Macro(new MMacro(macro_name), this.currentParameters, this.currentInternals, macro_name));
+        this.macros.put(macro_name, new Macro(new MMacro(macro_name),
+                this.currentParameters, this.currentInternals, macro_name));
 
     }
 

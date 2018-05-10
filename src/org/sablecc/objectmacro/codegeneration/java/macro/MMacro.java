@@ -2,370 +2,2406 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
-public class MMacro {
+public class MMacro
+        extends
+        Macro {
 
-  private final String pName;
-  private final MMacro mMacro = this;
-  private final List<Object> ePackageDeclaration = new LinkedList<Object>();
-  private final List<Object> eImportJavaUtil = new LinkedList<Object>();
-  private final List<Object> eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields = new LinkedList<Object>();
-  private final List<Object> eContextField = new LinkedList<Object>();
-  private final List<Object> eConstructor = new LinkedList<Object>();
-  private final List<Object> eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter = new LinkedList<Object>();
-  private final List<Object> eParamStringRefBuilder_ParamMacroRefBuilder_InternalMacroRefBuilder = new LinkedList<Object>();
-  private final List<Object> eParamStringRef_ParamMacroRef_InternalMacroRef = new LinkedList<Object>();
-  private final List<Object> eInitInternalsMethod = new LinkedList<Object>();
-  private final List<Object> eInitDirectives = new LinkedList<Object>();
-  private final List<Object> eRedefinedApplyInitializer = new LinkedList<Object>();
-  private final List<Object> eMacroBuilder = new LinkedList<Object>();
-  private final List<Object> eEmptyBuilderWithContext = new LinkedList<Object>();
+    private String field_Name;
 
-  public MMacro(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
+    private final List<Macro> list_PackageDeclaration;
 
-  public MPackageDeclaration newPackageDeclaration(String pPackageName) {
-    MPackageDeclaration lPackageDeclaration = new MPackageDeclaration(pPackageName);
-    this.ePackageDeclaration.add(lPackageDeclaration);
-    return lPackageDeclaration;
-  }
+    private DSeparator PackageDeclarationSeparator;
 
-  public MImportJavaUtil newImportJavaUtil() {
-    MImportJavaUtil lImportJavaUtil = new MImportJavaUtil();
-    this.eImportJavaUtil.add(lImportJavaUtil);
-    return lImportJavaUtil;
-  }
+    private DBeforeFirst PackageDeclarationBeforeFirst;
 
-  public MParamMacroField newParamMacroField(String pName) {
-    MParamMacroField lParamMacroField = new MParamMacroField(pName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lParamMacroField);
-    return lParamMacroField;
-  }
+    private DAfterLast PackageDeclarationAfterLast;
 
-  public MParamStringField newParamStringField(String pName) {
-    MParamStringField lParamStringField = new MParamStringField(pName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lParamStringField);
-    return lParamStringField;
-  }
+    private DNone PackageDeclarationNone;
 
-  public MInternalMacroField newInternalMacroField(String pName) {
-    MInternalMacroField lInternalMacroField = new MInternalMacroField(pName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lInternalMacroField);
-    return lInternalMacroField;
-  }
+    private final InternalValue PackageDeclarationValue;
 
-  public MInternalStringField newInternalStringField(String pName) {
-    MInternalStringField lInternalStringField = new MInternalStringField(pName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lInternalStringField);
-    return lInternalStringField;
-  }
+    private final List<Macro> list_Fields;
 
-  public MInternalMacrosValueField newInternalMacrosValueField(String pParamName) {
-    MInternalMacrosValueField lInternalMacrosValueField = new MInternalMacrosValueField(pParamName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lInternalMacrosValueField);
-    return lInternalMacrosValueField;
-  }
+    private DSeparator FieldsSeparator;
 
-  public MDirectiveFields newDirectiveFields(String pParamName) {
-    MDirectiveFields lDirectiveFields = new MDirectiveFields(pParamName);
-    this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.add(lDirectiveFields);
-    return lDirectiveFields;
-  }
+    private DBeforeFirst FieldsBeforeFirst;
 
-  public MContextField newContextField(String pName) {
-    MContextField lContextField = new MContextField(pName);
-    this.eContextField.add(lContextField);
-    return lContextField;
-  }
+    private DAfterLast FieldsAfterLast;
 
-  public MConstructor newConstructor(String pName) {
-    MConstructor lConstructor = new MConstructor(pName);
-    this.eConstructor.add(lConstructor);
-    return lConstructor;
-  }
+    private DNone FieldsNone;
 
-  public MParamStringSetter newParamStringSetter(String pName) {
-    MParamStringSetter lParamStringSetter = new MParamStringSetter(pName);
-    this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter.add(lParamStringSetter);
-    return lParamStringSetter;
-  }
+    private final InternalValue FieldsValue;
 
-  public MSingleAdd newSingleAdd(String pMacroName, String pParamName) {
-    MSingleAdd lSingleAdd = new MSingleAdd(pMacroName, pParamName);
-    this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter.add(lSingleAdd);
-    return lSingleAdd;
-  }
+    private final List<Macro> list_ContextFields;
 
-  public MInternalStringSetter newInternalStringSetter(String pName) {
-    MInternalStringSetter lInternalStringSetter = new MInternalStringSetter(pName);
-    this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter.add(lInternalStringSetter);
-    return lInternalStringSetter;
-  }
+    private DSeparator ContextFieldsSeparator;
 
-  public MInternalMacroSetter newInternalMacroSetter(String pParamName) {
-    MInternalMacroSetter lInternalMacroSetter = new MInternalMacroSetter(pParamName);
-    this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter.add(lInternalMacroSetter);
-    return lInternalMacroSetter;
-  }
+    private DBeforeFirst ContextFieldsBeforeFirst;
 
-  public MParamStringRefBuilder newParamStringRefBuilder(String pName) {
-    MParamStringRefBuilder lParamStringRefBuilder = new MParamStringRefBuilder(pName);
-    this.eParamStringRefBuilder_ParamMacroRefBuilder_InternalMacroRefBuilder.add(lParamStringRefBuilder);
-    return lParamStringRefBuilder;
-  }
+    private DAfterLast ContextFieldsAfterLast;
 
-  public MParamMacroRefBuilder newParamMacroRefBuilder(String pName) {
-    MParamMacroRefBuilder lParamMacroRefBuilder = new MParamMacroRefBuilder(pName);
-    this.eParamStringRefBuilder_ParamMacroRefBuilder_InternalMacroRefBuilder.add(lParamMacroRefBuilder);
-    return lParamMacroRefBuilder;
-  }
+    private DNone ContextFieldsNone;
 
-  public MInternalMacroRefBuilder newInternalMacroRefBuilder(String pInternalName) {
-    MInternalMacroRefBuilder lInternalMacroRefBuilder = new MInternalMacroRefBuilder(pInternalName);
-    this.eParamStringRefBuilder_ParamMacroRefBuilder_InternalMacroRefBuilder.add(lInternalMacroRefBuilder);
-    return lInternalMacroRefBuilder;
-  }
+    private final InternalValue ContextFieldsValue;
 
-  public MParamStringRef newParamStringRef(String pName) {
-    MParamStringRef lParamStringRef = new MParamStringRef(pName);
-    this.eParamStringRef_ParamMacroRef_InternalMacroRef.add(lParamStringRef);
-    return lParamStringRef;
-  }
+    private final List<Macro> list_Constructor;
 
-  public MParamMacroRef newParamMacroRef(String pName) {
-    MParamMacroRef lParamMacroRef = new MParamMacroRef(pName);
-    this.eParamStringRef_ParamMacroRef_InternalMacroRef.add(lParamMacroRef);
-    return lParamMacroRef;
-  }
+    private DSeparator ConstructorSeparator;
 
-  public MInternalMacroRef newInternalMacroRef(String pParamName) {
-    MInternalMacroRef lInternalMacroRef = new MInternalMacroRef(pParamName);
-    this.eParamStringRef_ParamMacroRef_InternalMacroRef.add(lInternalMacroRef);
-    return lInternalMacroRef;
-  }
+    private DBeforeFirst ConstructorBeforeFirst;
 
-  public MInitInternalsMethod newInitInternalsMethod(String pName) {
-    MInitInternalsMethod lInitInternalsMethod = new MInitInternalsMethod(pName);
-    this.eInitInternalsMethod.add(lInitInternalsMethod);
-    return lInitInternalsMethod;
-  }
+    private DAfterLast ConstructorAfterLast;
 
-  public MInitDirectives newInitDirectives(String pParamName) {
-    MInitDirectives lInitDirectives = new MInitDirectives(pParamName);
-    this.eInitDirectives.add(lInitDirectives);
-    return lInitDirectives;
-  }
+    private DNone ConstructorNone;
 
-  public MRedefinedApplyInitializer newRedefinedApplyInitializer(String pName) {
-    MRedefinedApplyInitializer lRedefinedApplyInitializer = new MRedefinedApplyInitializer(pName);
-    this.eRedefinedApplyInitializer.add(lRedefinedApplyInitializer);
-    return lRedefinedApplyInitializer;
-  }
+    private final InternalValue ConstructorValue;
 
-  public MMacroBuilder newMacroBuilder(String pMacroName) {
-    MMacroBuilder lMacroBuilder = new MMacroBuilder(pMacroName);
-    this.eMacroBuilder.add(lMacroBuilder);
-    return lMacroBuilder;
-  }
+    private final List<Macro> list_Setters;
 
-  public MEmptyBuilderWithContext newEmptyBuilderWithContext() {
-    MEmptyBuilderWithContext lEmptyBuilderWithContext = new MEmptyBuilderWithContext();
-    this.eEmptyBuilderWithContext.add(lEmptyBuilderWithContext);
-    return lEmptyBuilderWithContext;
-  }
+    private DSeparator SettersSeparator;
 
-  String pName() {
-    return this.pName;
-  }
+    private DBeforeFirst SettersBeforeFirst;
 
-  private String rName() {
-    return this.mMacro.pName();
-  }
+    private DAfterLast SettersAfterLast;
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MHeader().toString());
-    if(this.ePackageDeclaration.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
+    private DNone SettersNone;
+
+    private final InternalValue SettersValue;
+
+    private final List<Macro> list_Builders;
+
+    private DSeparator BuildersSeparator;
+
+    private DBeforeFirst BuildersBeforeFirst;
+
+    private DAfterLast BuildersAfterLast;
+
+    private DNone BuildersNone;
+
+    private final InternalValue BuildersValue;
+
+    private final List<Macro> list_Getters;
+
+    private DSeparator GettersSeparator;
+
+    private DBeforeFirst GettersBeforeFirst;
+
+    private DAfterLast GettersAfterLast;
+
+    private DNone GettersNone;
+
+    private final InternalValue GettersValue;
+
+    private final List<Macro> list_InitInternalsMethods;
+
+    private DSeparator InitInternalsMethodsSeparator;
+
+    private DBeforeFirst InitInternalsMethodsBeforeFirst;
+
+    private DAfterLast InitInternalsMethodsAfterLast;
+
+    private DNone InitInternalsMethodsNone;
+
+    private final InternalValue InitInternalsMethodsValue;
+
+    private final List<Macro> list_InitDirectives;
+
+    private DSeparator InitDirectivesSeparator;
+
+    private DBeforeFirst InitDirectivesBeforeFirst;
+
+    private DAfterLast InitDirectivesAfterLast;
+
+    private DNone InitDirectivesNone;
+
+    private final InternalValue InitDirectivesValue;
+
+    private final List<Macro> list_RedefinedApplyInitializer;
+
+    private DSeparator RedefinedApplyInitializerSeparator;
+
+    private DBeforeFirst RedefinedApplyInitializerBeforeFirst;
+
+    private DAfterLast RedefinedApplyInitializerAfterLast;
+
+    private DNone RedefinedApplyInitializerNone;
+
+    private final InternalValue RedefinedApplyInitializerValue;
+
+    private final List<Macro> list_MacroBuilder;
+
+    private DSeparator MacroBuilderSeparator;
+
+    private DBeforeFirst MacroBuilderBeforeFirst;
+
+    private DAfterLast MacroBuilderAfterLast;
+
+    private DNone MacroBuilderNone;
+
+    private final InternalValue MacroBuilderValue;
+
+    private final List<Macro> list_EmptyBuilderWithContext;
+
+    private DSeparator EmptyBuilderWithContextSeparator;
+
+    private DBeforeFirst EmptyBuilderWithContextBeforeFirst;
+
+    private DAfterLast EmptyBuilderWithContextAfterLast;
+
+    private DNone EmptyBuilderWithContextNone;
+
+    private final InternalValue EmptyBuilderWithContextValue;
+
+    private final Context PackageDeclarationContext = new Context();
+
+    private final Context FieldsContext = new Context();
+
+    private final Context ContextFieldsContext = new Context();
+
+    private final Context ConstructorContext = new Context();
+
+    private final Context SettersContext = new Context();
+
+    private final Context BuildersContext = new Context();
+
+    private final Context GettersContext = new Context();
+
+    private final Context InitInternalsMethodsContext = new Context();
+
+    private final Context InitDirectivesContext = new Context();
+
+    private final Context RedefinedApplyInitializerContext = new Context();
+
+    private final Context MacroBuilderContext = new Context();
+
+    private final Context EmptyBuilderWithContextContext = new Context();
+
+    public MMacro(
+            String pName) {
+
+        setPName(pName);
+
+        this.list_PackageDeclaration = new ArrayList<>();
+
+        this.list_Fields = new ArrayList<>();
+
+        this.list_ContextFields = new ArrayList<>();
+
+        this.list_Constructor = new ArrayList<>();
+
+        this.list_Setters = new ArrayList<>();
+
+        this.list_Builders = new ArrayList<>();
+
+        this.list_Getters = new ArrayList<>();
+
+        this.list_InitInternalsMethods = new ArrayList<>();
+
+        this.list_InitDirectives = new ArrayList<>();
+
+        this.list_RedefinedApplyInitializer = new ArrayList<>();
+
+        this.list_MacroBuilder = new ArrayList<>();
+
+        this.list_EmptyBuilderWithContext = new ArrayList<>();
+
+        this.PackageDeclarationValue = new InternalValue(
+                this.list_PackageDeclaration, this.PackageDeclarationContext);
+
+        this.FieldsValue = new InternalValue(this.list_Fields,
+                this.FieldsContext);
+
+        this.ContextFieldsValue = new InternalValue(this.list_ContextFields,
+                this.ContextFieldsContext);
+
+        this.ConstructorValue = new InternalValue(this.list_Constructor,
+                this.ConstructorContext);
+
+        this.SettersValue = new InternalValue(this.list_Setters,
+                this.SettersContext);
+
+        this.BuildersValue = new InternalValue(this.list_Builders,
+                this.BuildersContext);
+
+        this.GettersValue = new InternalValue(this.list_Getters,
+                this.GettersContext);
+
+        this.InitInternalsMethodsValue = new InternalValue(
+                this.list_InitInternalsMethods,
+                this.InitInternalsMethodsContext);
+
+        this.InitDirectivesValue = new InternalValue(this.list_InitDirectives,
+                this.InitDirectivesContext);
+
+        this.RedefinedApplyInitializerValue = new InternalValue(
+                this.list_RedefinedApplyInitializer,
+                this.RedefinedApplyInitializerContext);
+
+        this.MacroBuilderValue = new InternalValue(this.list_MacroBuilder,
+                this.MacroBuilderContext);
+
+        this.EmptyBuilderWithContextValue = new InternalValue(
+                this.list_EmptyBuilderWithContext,
+                this.EmptyBuilderWithContextContext);
+
     }
-    for(Object oPackageDeclaration : this.ePackageDeclaration) {
-      sb.append(oPackageDeclaration.toString());
+
+    private void setPName(
+            String pName) {
+
+        if (pName == null) {
+
+            throw ObjectMacroException.parameterNull("Name");
+
+        }
+
+        this.field_Name = pName;
+
     }
-    if(this.eImportJavaUtil.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
+
+    public void addPackageDeclaration(
+            MPackageDeclaration macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("PackageDeclaration");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("PackageDeclaration");
+
+        }
+
+        this.list_PackageDeclaration.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
     }
-    for(Object oImportJavaUtil : this.eImportJavaUtil) {
-      sb.append(oImportJavaUtil.toString());
+
+    public void addFields(
+            MParamMacroField macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Fields");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("ParamMacroField");
+
+        }
+
+        this.list_Fields.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
     }
-    sb.append(System.getProperty("line.separator"));
-    sb.append("public class M");
-    sb.append(rName());
-    sb.append(" extends Macro{");
-    sb.append(System.getProperty("line.separator"));
-    if(this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
+
+    public void addFields(
+            MParamStringField macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Fields");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("ParamStringField");
+
+        }
+
+        this.list_Fields.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
     }
-    {
-      boolean first = true;
-      for(Object oParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields : this.eParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields) {
-        if(first) {
-          first = false;
+
+    public void addFields(
+            MInternalMacroField macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Fields");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("InternalMacroField");
+
+        }
+
+        this.list_Fields.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addFields(
+            MInternalStringField macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Fields");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("InternalStringField");
+
+        }
+
+        this.list_Fields.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addFields(
+            MInternalMacrosValueField macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Fields");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("InternalMacrosValueField");
+
+        }
+
+        this.list_Fields.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addFields(
+            MDirectiveFields macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Fields");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("DirectiveFields");
+
+        }
+
+        this.list_Fields.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addContextFields(
+            MContextField macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("ContextFields");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("ContextField");
+
+        }
+
+        this.list_ContextFields.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addConstructor(
+            MConstructor macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Constructor");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("Constructor");
+
+        }
+
+        this.list_Constructor.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addSetters(
+            MParamStringSetter macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Setters");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("ParamStringSetter");
+
+        }
+
+        this.list_Setters.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addSetters(
+            MSingleAdd macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Setters");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("SingleAdd");
+
+        }
+
+        this.list_Setters.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addSetters(
+            MInternalStringSetter macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Setters");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("InternalStringSetter");
+
+        }
+
+        this.list_Setters.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addSetters(
+            MInternalMacroSetter macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Setters");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("InternalMacroSetter");
+
+        }
+
+        this.list_Setters.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addBuilders(
+            MParamStringRefBuilder macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Builders");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("ParamStringRefBuilder");
+
+        }
+
+        this.list_Builders.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addBuilders(
+            MParamMacroRefBuilder macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Builders");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("ParamMacroRefBuilder");
+
+        }
+
+        this.list_Builders.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addBuilders(
+            MInternalMacroRefBuilder macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Builders");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("InternalMacroRefBuilder");
+
+        }
+
+        this.list_Builders.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addGetters(
+            MParamStringRef macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Getters");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("ParamStringRef");
+
+        }
+
+        this.list_Getters.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addGetters(
+            MParamMacroRef macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Getters");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("ParamMacroRef");
+
+        }
+
+        this.list_Getters.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addGetters(
+            MInternalMacroRef macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("Getters");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("InternalMacroRef");
+
+        }
+
+        this.list_Getters.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addInitInternalsMethods(
+            MInitInternalsMethod macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("InitInternalsMethods");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("InitInternalsMethod");
+
+        }
+
+        this.list_InitInternalsMethods.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addInitDirectives(
+            MInitDirectives macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("InitDirectives");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("InitDirectives");
+
+        }
+
+        this.list_InitDirectives.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addRedefinedApplyInitializer(
+            MRedefinedApplyInitializer macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException
+                    .parameterNull("RedefinedApplyInitializer");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException
+                    .cannotModify("RedefinedApplyInitializer");
+
+        }
+
+        this.list_RedefinedApplyInitializer.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addMacroBuilder(
+            MMacroBuilder macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("MacroBuilder");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("MacroBuilder");
+
+        }
+
+        this.list_MacroBuilder.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addEmptyBuilderWithContext(
+            MEmptyBuilderWithContext macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("EmptyBuilderWithContext");
+
+        }
+
+        if (this.build_state != null) {
+
+            throw ObjectMacroException.cannotModify("EmptyBuilderWithContext");
+
+        }
+
+        this.list_EmptyBuilderWithContext.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    private String buildName() {
+
+        return this.field_Name;
+
+    }
+
+    private String buildPackageDeclaration() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.PackageDeclarationContext;
+
+        List<Macro> macros = this.list_PackageDeclaration;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.PackageDeclarationNone != null) {
+
+            sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.PackageDeclarationBeforeFirst != null) {
+
+                expansion = this.PackageDeclarationBeforeFirst.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            if (this.PackageDeclarationAfterLast != null) {
+
+                expansion = this.PackageDeclarationAfterLast.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.PackageDeclarationSeparator != null) {
+
+                expansion = this.PackageDeclarationSeparator.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildFields() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.FieldsContext;
+
+        List<Macro> macros = this.list_Fields;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.FieldsNone != null) {
+
+            sb.append(this.FieldsNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.FieldsBeforeFirst != null) {
+
+                expansion = this.FieldsBeforeFirst.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.FieldsAfterLast != null) {
+
+                expansion = this.FieldsAfterLast.apply(i, expansion, nb_macros);
+
+            }
+
+            if (this.FieldsSeparator != null) {
+
+                expansion = this.FieldsSeparator.apply(i, expansion, nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildContextFields() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.ContextFieldsContext;
+
+        List<Macro> macros = this.list_ContextFields;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.ContextFieldsNone != null) {
+
+            sb.append(this.ContextFieldsNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.ContextFieldsBeforeFirst != null) {
+
+                expansion = this.ContextFieldsBeforeFirst.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.ContextFieldsAfterLast != null) {
+
+                expansion = this.ContextFieldsAfterLast.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.ContextFieldsSeparator != null) {
+
+                expansion = this.ContextFieldsSeparator.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildConstructor() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.ConstructorContext;
+
+        List<Macro> macros = this.list_Constructor;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.ConstructorNone != null) {
+
+            sb.append(this.ConstructorNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.ConstructorBeforeFirst != null) {
+
+                expansion = this.ConstructorBeforeFirst.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.ConstructorAfterLast != null) {
+
+                expansion = this.ConstructorAfterLast.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.ConstructorSeparator != null) {
+
+                expansion = this.ConstructorSeparator.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildSetters() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.SettersContext;
+
+        List<Macro> macros = this.list_Setters;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.SettersNone != null) {
+
+            sb.append(this.SettersNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.SettersBeforeFirst != null) {
+
+                expansion = this.SettersBeforeFirst.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.SettersAfterLast != null) {
+
+                expansion = this.SettersAfterLast.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.SettersSeparator != null) {
+
+                expansion = this.SettersSeparator.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildBuilders() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.BuildersContext;
+
+        List<Macro> macros = this.list_Builders;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.BuildersNone != null) {
+
+            sb.append(this.BuildersNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.BuildersBeforeFirst != null) {
+
+                expansion = this.BuildersBeforeFirst.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.BuildersAfterLast != null) {
+
+                expansion = this.BuildersAfterLast.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.BuildersSeparator != null) {
+
+                expansion = this.BuildersSeparator.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildGetters() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.GettersContext;
+
+        List<Macro> macros = this.list_Getters;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.GettersNone != null) {
+
+            sb.append(this.GettersNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.GettersBeforeFirst != null) {
+
+                expansion = this.GettersBeforeFirst.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.GettersAfterLast != null) {
+
+                expansion = this.GettersAfterLast.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.GettersSeparator != null) {
+
+                expansion = this.GettersSeparator.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildInitInternalsMethods() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.InitInternalsMethodsContext;
+
+        List<Macro> macros = this.list_InitInternalsMethods;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.InitInternalsMethodsNone != null) {
+
+            sb.append(this.InitInternalsMethodsNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.InitInternalsMethodsBeforeFirst != null) {
+
+                expansion = this.InitInternalsMethodsBeforeFirst.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            if (this.InitInternalsMethodsAfterLast != null) {
+
+                expansion = this.InitInternalsMethodsAfterLast.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            if (this.InitInternalsMethodsSeparator != null) {
+
+                expansion = this.InitInternalsMethodsSeparator.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildInitDirectives() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.InitDirectivesContext;
+
+        List<Macro> macros = this.list_InitDirectives;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.InitDirectivesNone != null) {
+
+            sb.append(this.InitDirectivesNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.InitDirectivesBeforeFirst != null) {
+
+                expansion = this.InitDirectivesBeforeFirst.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.InitDirectivesAfterLast != null) {
+
+                expansion = this.InitDirectivesAfterLast.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.InitDirectivesSeparator != null) {
+
+                expansion = this.InitDirectivesSeparator.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildRedefinedApplyInitializer() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.RedefinedApplyInitializerContext;
+
+        List<Macro> macros = this.list_RedefinedApplyInitializer;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.RedefinedApplyInitializerNone != null) {
+
+            sb.append(
+                    this.RedefinedApplyInitializerNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.RedefinedApplyInitializerBeforeFirst != null) {
+
+                expansion = this.RedefinedApplyInitializerBeforeFirst.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            if (this.RedefinedApplyInitializerAfterLast != null) {
+
+                expansion = this.RedefinedApplyInitializerAfterLast.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            if (this.RedefinedApplyInitializerSeparator != null) {
+
+                expansion = this.RedefinedApplyInitializerSeparator.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildMacroBuilder() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.MacroBuilderContext;
+
+        List<Macro> macros = this.list_MacroBuilder;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.MacroBuilderNone != null) {
+
+            sb.append(this.MacroBuilderNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.MacroBuilderBeforeFirst != null) {
+
+                expansion = this.MacroBuilderBeforeFirst.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.MacroBuilderAfterLast != null) {
+
+                expansion = this.MacroBuilderAfterLast.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.MacroBuilderSeparator != null) {
+
+                expansion = this.MacroBuilderSeparator.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildEmptyBuilderWithContext() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.EmptyBuilderWithContextContext;
+
+        List<Macro> macros = this.list_EmptyBuilderWithContext;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.EmptyBuilderWithContextNone != null) {
+
+            sb.append(this.EmptyBuilderWithContextNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.EmptyBuilderWithContextBeforeFirst != null) {
+
+                expansion = this.EmptyBuilderWithContextBeforeFirst.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            if (this.EmptyBuilderWithContextAfterLast != null) {
+
+                expansion = this.EmptyBuilderWithContextAfterLast.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            if (this.EmptyBuilderWithContextSeparator != null) {
+
+                expansion = this.EmptyBuilderWithContextSeparator.apply(i,
+                        expansion, nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String getName() {
+
+        return this.field_Name;
+
+    }
+
+    private InternalValue getPackageDeclaration() {
+
+        return this.PackageDeclarationValue;
+
+    }
+
+    private InternalValue getFields() {
+
+        return this.FieldsValue;
+
+    }
+
+    private InternalValue getContextFields() {
+
+        return this.ContextFieldsValue;
+
+    }
+
+    private InternalValue getConstructor() {
+
+        return this.ConstructorValue;
+
+    }
+
+    private InternalValue getSetters() {
+
+        return this.SettersValue;
+
+    }
+
+    private InternalValue getBuilders() {
+
+        return this.BuildersValue;
+
+    }
+
+    private InternalValue getGetters() {
+
+        return this.GettersValue;
+
+    }
+
+    private InternalValue getInitInternalsMethods() {
+
+        return this.InitInternalsMethodsValue;
+
+    }
+
+    private InternalValue getInitDirectives() {
+
+        return this.InitDirectivesValue;
+
+    }
+
+    private InternalValue getRedefinedApplyInitializer() {
+
+        return this.RedefinedApplyInitializerValue;
+
+    }
+
+    private InternalValue getMacroBuilder() {
+
+        return this.MacroBuilderValue;
+
+    }
+
+    private InternalValue getEmptyBuilderWithContext() {
+
+        return this.EmptyBuilderWithContextValue;
+
+    }
+
+    private void initPackageDeclarationInternals(
+            Context context) {
+
+        for (Macro macro : this.list_PackageDeclaration) {
+
+            macro.apply(new InternalsInitializer("PackageDeclaration") {
+
+                @Override
+
+                void setPackageDeclaration(
+                        MPackageDeclaration mPackageDeclaration) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initFieldsInternals(
+            Context context) {
+
+        for (Macro macro : this.list_Fields) {
+
+            macro.apply(new InternalsInitializer("Fields") {
+
+                @Override
+
+                void setParamMacroField(
+                        MParamMacroField mParamMacroField) {
+
+                }
+
+                @Override
+
+                void setParamStringField(
+                        MParamStringField mParamStringField) {
+
+                }
+
+                @Override
+
+                void setInternalMacroField(
+                        MInternalMacroField mInternalMacroField) {
+
+                }
+
+                @Override
+
+                void setInternalStringField(
+                        MInternalStringField mInternalStringField) {
+
+                }
+
+                @Override
+
+                void setInternalMacrosValueField(
+                        MInternalMacrosValueField mInternalMacrosValueField) {
+
+                }
+
+                @Override
+
+                void setDirectiveFields(
+                        MDirectiveFields mDirectiveFields) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initContextFieldsInternals(
+            Context context) {
+
+        for (Macro macro : this.list_ContextFields) {
+
+            macro.apply(new InternalsInitializer("ContextFields") {
+
+                @Override
+
+                void setContextField(
+                        MContextField mContextField) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initConstructorInternals(
+            Context context) {
+
+        for (Macro macro : this.list_Constructor) {
+
+            macro.apply(new InternalsInitializer("Constructor") {
+
+                @Override
+
+                void setConstructor(
+                        MConstructor mConstructor) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initSettersInternals(
+            Context context) {
+
+        for (Macro macro : this.list_Setters) {
+
+            macro.apply(new InternalsInitializer("Setters") {
+
+                @Override
+
+                void setParamStringSetter(
+                        MParamStringSetter mParamStringSetter) {
+
+                }
+
+                @Override
+
+                void setSingleAdd(
+                        MSingleAdd mSingleAdd) {
+
+                }
+
+                @Override
+
+                void setInternalStringSetter(
+                        MInternalStringSetter mInternalStringSetter) {
+
+                }
+
+                @Override
+
+                void setInternalMacroSetter(
+                        MInternalMacroSetter mInternalMacroSetter) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initBuildersInternals(
+            Context context) {
+
+        for (Macro macro : this.list_Builders) {
+
+            macro.apply(new InternalsInitializer("Builders") {
+
+                @Override
+
+                void setParamStringRefBuilder(
+                        MParamStringRefBuilder mParamStringRefBuilder) {
+
+                }
+
+                @Override
+
+                void setParamMacroRefBuilder(
+                        MParamMacroRefBuilder mParamMacroRefBuilder) {
+
+                }
+
+                @Override
+
+                void setInternalMacroRefBuilder(
+                        MInternalMacroRefBuilder mInternalMacroRefBuilder) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initGettersInternals(
+            Context context) {
+
+        for (Macro macro : this.list_Getters) {
+
+            macro.apply(new InternalsInitializer("Getters") {
+
+                @Override
+
+                void setParamStringRef(
+                        MParamStringRef mParamStringRef) {
+
+                }
+
+                @Override
+
+                void setParamMacroRef(
+                        MParamMacroRef mParamMacroRef) {
+
+                }
+
+                @Override
+
+                void setInternalMacroRef(
+                        MInternalMacroRef mInternalMacroRef) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initInitInternalsMethodsInternals(
+            Context context) {
+
+        for (Macro macro : this.list_InitInternalsMethods) {
+
+            macro.apply(new InternalsInitializer("InitInternalsMethods") {
+
+                @Override
+
+                void setInitInternalsMethod(
+                        MInitInternalsMethod mInitInternalsMethod) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initInitDirectivesInternals(
+            Context context) {
+
+        for (Macro macro : this.list_InitDirectives) {
+
+            macro.apply(new InternalsInitializer("InitDirectives") {
+
+                @Override
+
+                void setInitDirectives(
+                        MInitDirectives mInitDirectives) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initRedefinedApplyInitializerInternals(
+            Context context) {
+
+        for (Macro macro : this.list_RedefinedApplyInitializer) {
+
+            macro.apply(new InternalsInitializer("RedefinedApplyInitializer") {
+
+                @Override
+
+                void setRedefinedApplyInitializer(
+                        MRedefinedApplyInitializer mRedefinedApplyInitializer) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initMacroBuilderInternals(
+            Context context) {
+
+        for (Macro macro : this.list_MacroBuilder) {
+
+            macro.apply(new InternalsInitializer("MacroBuilder") {
+
+                @Override
+
+                void setMacroBuilder(
+                        MMacroBuilder mMacroBuilder) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initEmptyBuilderWithContextInternals(
+            Context context) {
+
+        for (Macro macro : this.list_EmptyBuilderWithContext) {
+
+            macro.apply(new InternalsInitializer("EmptyBuilderWithContext") {
+
+                @Override
+
+                void setEmptyBuilderWithContext(
+                        MEmptyBuilderWithContext mEmptyBuilderWithContext) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initPackageDeclarationDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+
+        this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb0.toString());
+
+        this.PackageDeclarationValue
+                .setBeforeFirst(this.PackageDeclarationBeforeFirst);
+
+    }
+
+    private void initFieldsDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+
+        this.FieldsSeparator = new DSeparator(sb0.toString());
+
+        this.FieldsValue.setSeparator(this.FieldsSeparator);
+        StringBuilder sb1 = new StringBuilder();
+
+        sb1.append(LINE_SEPARATOR);
+
+        this.FieldsBeforeFirst = new DBeforeFirst(sb1.toString());
+
+        this.FieldsValue.setBeforeFirst(this.FieldsBeforeFirst);
+
+    }
+
+    private void initContextFieldsDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+
+        this.ContextFieldsBeforeFirst = new DBeforeFirst(sb0.toString());
+
+        this.ContextFieldsValue.setBeforeFirst(this.ContextFieldsBeforeFirst);
+        StringBuilder sb1 = new StringBuilder();
+
+        sb1.append(LINE_SEPARATOR);
+        sb1.append(LINE_SEPARATOR);
+
+        this.ContextFieldsSeparator = new DSeparator(sb1.toString());
+
+        this.ContextFieldsValue.setSeparator(this.ContextFieldsSeparator);
+
+    }
+
+    private void initConstructorDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+
+        this.ConstructorBeforeFirst = new DBeforeFirst(sb0.toString());
+
+        this.ConstructorValue.setBeforeFirst(this.ConstructorBeforeFirst);
+
+    }
+
+    private void initSettersDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+
+        this.SettersSeparator = new DSeparator(sb0.toString());
+
+        this.SettersValue.setSeparator(this.SettersSeparator);
+        StringBuilder sb1 = new StringBuilder();
+
+        sb1.append(LINE_SEPARATOR);
+
+        this.SettersBeforeFirst = new DBeforeFirst(sb1.toString());
+
+        this.SettersValue.setBeforeFirst(this.SettersBeforeFirst);
+
+    }
+
+    private void initBuildersDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+
+        this.BuildersSeparator = new DSeparator(sb0.toString());
+
+        this.BuildersValue.setSeparator(this.BuildersSeparator);
+        StringBuilder sb1 = new StringBuilder();
+
+        sb1.append(LINE_SEPARATOR);
+
+        this.BuildersBeforeFirst = new DBeforeFirst(sb1.toString());
+
+        this.BuildersValue.setBeforeFirst(this.BuildersBeforeFirst);
+
+    }
+
+    private void initGettersDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+
+        this.GettersSeparator = new DSeparator(sb0.toString());
+
+        this.GettersValue.setSeparator(this.GettersSeparator);
+        StringBuilder sb1 = new StringBuilder();
+
+        sb1.append(LINE_SEPARATOR);
+
+        this.GettersBeforeFirst = new DBeforeFirst(sb1.toString());
+
+        this.GettersValue.setBeforeFirst(this.GettersBeforeFirst);
+
+    }
+
+    private void initInitInternalsMethodsDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+
+        this.InitInternalsMethodsSeparator = new DSeparator(sb0.toString());
+
+        this.InitInternalsMethodsValue
+                .setSeparator(this.InitInternalsMethodsSeparator);
+
+    }
+
+    private void initInitDirectivesDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+
+        this.InitDirectivesSeparator = new DSeparator(sb0.toString());
+
+        this.InitDirectivesValue.setSeparator(this.InitDirectivesSeparator);
+        StringBuilder sb1 = new StringBuilder();
+
+        sb1.append(LINE_SEPARATOR);
+
+        this.InitDirectivesBeforeFirst = new DBeforeFirst(sb1.toString());
+
+        this.InitDirectivesValue.setBeforeFirst(this.InitDirectivesBeforeFirst);
+
+    }
+
+    private void initRedefinedApplyInitializerDirectives() {
+
+    }
+
+    private void initMacroBuilderDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+
+        this.MacroBuilderBeforeFirst = new DBeforeFirst(sb0.toString());
+
+        this.MacroBuilderValue.setBeforeFirst(this.MacroBuilderBeforeFirst);
+
+    }
+
+    private void initEmptyBuilderWithContextDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append(LINE_SEPARATOR);
+
+        this.EmptyBuilderWithContextBeforeFirst = new DBeforeFirst(
+                sb0.toString());
+
+        this.EmptyBuilderWithContextValue
+                .setBeforeFirst(this.EmptyBuilderWithContextBeforeFirst);
+
+    }
+
+    @Override
+
+    void apply(
+
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setMacro(this);
+
+    }
+
+    @Override
+
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+
+            buildState = new BuildState();
+
+        }
+
+        else if (buildState.getExpansion() == null) {
+
+            throw ObjectMacroException.cyclicReference("Macro");
+
+        }
+
+        else {
+
+            return buildState.getExpansion();
+
+        }
+
+        this.build_state = buildState;
+
+        List<String> indentations = new LinkedList<>();
+
+        StringBuilder sbIndentation = new StringBuilder();
+
+        initPackageDeclarationDirectives();
+
+        initFieldsDirectives();
+
+        initContextFieldsDirectives();
+
+        initConstructorDirectives();
+
+        initSettersDirectives();
+
+        initBuildersDirectives();
+
+        initGettersDirectives();
+
+        initInitInternalsMethodsDirectives();
+
+        initInitDirectivesDirectives();
+
+        initRedefinedApplyInitializerDirectives();
+
+        initMacroBuilderDirectives();
+
+        initEmptyBuilderWithContextDirectives();
+
+        initPackageDeclarationInternals(null);
+
+        initFieldsInternals(null);
+
+        initContextFieldsInternals(null);
+
+        initConstructorInternals(null);
+
+        initSettersInternals(null);
+
+        initBuildersInternals(null);
+
+        initGettersInternals(null);
+
+        initInitInternalsMethodsInternals(null);
+
+        initInitDirectivesInternals(null);
+
+        initRedefinedApplyInitializerInternals(null);
+
+        initMacroBuilderInternals(null);
+
+        initEmptyBuilderWithContextInternals(null);
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MHeader minsert_1 = new MHeader();
+
+        sb0.append(minsert_1.build(null));
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append(buildPackageDeclaration());
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append(LINE_SEPARATOR);
+
+        MImportJavaUtil minsert_2 = new MImportJavaUtil();
+
+        sb0.append(minsert_2.build(null));
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("public class M");
+
+        sb0.append(buildName());
+
+        sb0.append(" extends Macro");
+
+        sb0.append("{");
+
+        sb0.append(LINE_SEPARATOR);
+
+        StringBuilder sb1 = new StringBuilder();
+
+        sbIndentation = new StringBuilder();
+
+        sbIndentation.append("    ");
+
+        indentations.add(sbIndentation.toString());
+
+        sb1.append(buildFields());
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(buildContextFields());
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(buildConstructor());
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(buildSetters());
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(buildBuilders());
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(buildGetters());
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(buildInitInternalsMethods());
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(buildInitDirectives());
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(buildRedefinedApplyInitializer());
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(buildMacroBuilder());
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb1.append(buildEmptyBuilderWithContext());
+
+        sb1.append(LINE_SEPARATOR);
+
+        sb0.append(applyIndent(sb1.toString(),
+                indentations.remove(indentations.size() - 1)));
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("    private String applyIndent(");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("                            String macro,");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("                            String indent)");
+
+        sb0.append("{");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("            StringBuilder sb = new StringBuilder();");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("            String[] lines = macro.split( \"\\n\");");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("            if(lines.length > 1)");
+
+        sb0.append("{");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("                for(int i = 0; i < lines.length; i++)");
+
+        sb0.append("{");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("                    String line = lines[i];");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("                    sb.append(indent).append(line);");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("                    if(i < lines.length - 1)");
+
+        sb0.append("{");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("                        sb.append(LINE_SEPARATOR);");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("                    }");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("                }");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("            }");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("            else");
+
+        sb0.append("{");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("                sb.append(indent).append(macro);");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("            }");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("            return sb.toString();");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("    }");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("}");
+
+        buildState.setExpansion(sb0.toString());
+
+        return sb0.toString();
+
+    }
+
+    @Override
+
+    String build(
+            Context context) {
+
+        return build();
+
+    }
+
+    private String applyIndent(
+            String macro,
+            String indent) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if (i < lines.length - 1) {
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
         }
         else {
-          sb.append(System.getProperty("line.separator"));
+            sb.append(indent).append(macro);
         }
-        sb.append(oParamMacroField_ParamStringField_InternalMacroField_InternalStringField_InternalMacrosValueField_DirectiveFields.toString());
-      }
-    }
-    if(this.eContextField.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
-    }
-    for(Object oContextField : this.eContextField) {
-      sb.append(oContextField.toString());
-    }
-    if(this.eConstructor.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
-    }
-    for(Object oConstructor : this.eConstructor) {
-      sb.append(oConstructor.toString());
-    }
-    if(this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
-    }
-    {
-      boolean first = true;
-      for(Object oParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter : this.eParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter) {
-        if(first) {
-          first = false;
-        }
-        else {
-          sb.append(System.getProperty("line.separator"));
-        }
-        sb.append(oParamStringSetter_SingleAdd_InternalStringSetter_InternalMacroSetter.toString());
-      }
-    }
-    if(this.eParamStringRefBuilder_ParamMacroRefBuilder_InternalMacroRefBuilder.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
-    }
-    {
-      boolean first = true;
-      for(Object oParamStringRefBuilder_ParamMacroRefBuilder_InternalMacroRefBuilder : this.eParamStringRefBuilder_ParamMacroRefBuilder_InternalMacroRefBuilder) {
-        if(first) {
-          first = false;
-        }
-        else {
-          sb.append(System.getProperty("line.separator"));
-        }
-        sb.append(oParamStringRefBuilder_ParamMacroRefBuilder_InternalMacroRefBuilder.toString());
-      }
-    }
-    if(this.eParamStringRef_ParamMacroRef_InternalMacroRef.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
-    }
-    {
-      boolean first = true;
-      for(Object oParamStringRef_ParamMacroRef_InternalMacroRef : this.eParamStringRef_ParamMacroRef_InternalMacroRef) {
-        if(first) {
-          first = false;
-        }
-        else {
-          sb.append(System.getProperty("line.separator"));
-        }
-        sb.append(oParamStringRef_ParamMacroRef_InternalMacroRef.toString());
-      }
-    }
-    {
-      boolean first = true;
-      for(Object oInitInternalsMethod : this.eInitInternalsMethod) {
-        if(first) {
-          first = false;
-        }
-        else {
-          sb.append(System.getProperty("line.separator"));
-        }
-        sb.append(oInitInternalsMethod.toString());
-      }
-    }
-    if(this.eInitDirectives.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
-    }
-    {
-      boolean first = true;
-      for(Object oInitDirectives : this.eInitDirectives) {
-        if(first) {
-          first = false;
-        }
-        else {
-          sb.append(System.getProperty("line.separator"));
-        }
-        sb.append(oInitDirectives.toString());
-      }
-    }
-    for(Object oRedefinedApplyInitializer : this.eRedefinedApplyInitializer) {
-      sb.append(oRedefinedApplyInitializer.toString());
-    }
-    if(this.eMacroBuilder.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
-    }
-    for(Object oMacroBuilder : this.eMacroBuilder) {
-      sb.append(oMacroBuilder.toString());
-    }
-    if(this.eEmptyBuilderWithContext.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
-    }
-    for(Object oEmptyBuilderWithContext : this.eEmptyBuilderWithContext) {
-      sb.append(oEmptyBuilderWithContext.toString());
-    }
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    private String applyIndent(");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("                        String macro,");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("                        String indent){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        StringBuilder sb = new StringBuilder();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        String[] lines = macro.split( \"\\n\");");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        if(lines.length > 1){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            for(int i = 0; i < lines.length; i++){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("                String line = lines[i];");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("                sb.append(indent).append(line);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("                if(i < lines.length - 1){");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("                    sb.append(LINE_SEPARATOR);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("                }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        else{");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("            sb.append(indent).append(macro);");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        return sb.toString();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("}");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
+        return sb.toString();
+    }
 }
