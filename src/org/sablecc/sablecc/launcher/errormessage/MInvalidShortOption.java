@@ -4,45 +4,37 @@ package org.sablecc.sablecc.launcher.errormessage;
 
 public class MInvalidShortOption {
 
-    private final String pOptionName;
+  private final String pOptionName;
+  private final MInvalidShortOption mInvalidShortOption = this;
 
-    private final MInvalidShortOption mInvalidShortOption = this;
+  public MInvalidShortOption(String pOptionName) {
+    if(pOptionName == null) throw new NullPointerException();
+    this.pOptionName = pOptionName;
+  }
 
-    public MInvalidShortOption(
-            String pOptionName) {
+  String pOptionName() {
+    return this.pOptionName;
+  }
 
-        if (pOptionName == null) {
-            throw new NullPointerException();
-        }
-        this.pOptionName = pOptionName;
-    }
+  private String rOptionName() {
+    return this.mInvalidShortOption.pOptionName();
+  }
 
-    String pOptionName() {
-
-        return this.pOptionName;
-    }
-
-    private String rOptionName() {
-
-        return this.mInvalidShortOption.pOptionName();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The following option is rejected:");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" -");
-        sb.append(rOptionName());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("It is not a valid option.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MCommandLineErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("The following option is rejected:");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(" -");
+    sb.append(rOptionName());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("It is not a valid option.");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append(new MCommandLineErrorTail().toString());
+    return sb.toString();
+  }
 
 }

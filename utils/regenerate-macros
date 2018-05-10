@@ -35,3 +35,5 @@ java -jar lib/objectmacro.jar -d src -p org.sablecc.objectmacro.errormessage mac
 java -jar lib/objectmacro.jar -d src -p org.sablecc.sablecc.codegeneration.java.macro macros/sablecc-java.objectmacro
 java -jar lib/objectmacro.jar -d src -p org.sablecc.sablecc.launcher.errormessage macros/sablecc-launcher-errormessage.objectmacro
 java -jar lib/objectmacro.jar -d src -p org.sablecc.sablecc.semantics.errormessage macros/sablecc-semantics-errormessage.objectmacro
+
+java -jar lib/objectmacro-back.jar -d src -p org.sablecc.objectmacro.codegeneration.java.macro objectmacro2-java.intermediate

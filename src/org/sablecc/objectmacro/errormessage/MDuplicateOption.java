@@ -4,120 +4,88 @@ package org.sablecc.objectmacro.errormessage;
 
 public class MDuplicateOption {
 
-    private final String pName;
+  private final String pName;
+  private final String pLine;
+  private final String pChar;
+  private final String pRefLine;
+  private final String pRefChar;
+  private final MDuplicateOption mDuplicateOption = this;
 
-    private final String pLine;
+  public MDuplicateOption(String pName, String pLine, String pChar, String pRefLine, String pRefChar) {
+    if(pName == null) throw new NullPointerException();
+    this.pName = pName;
+    if(pLine == null) throw new NullPointerException();
+    this.pLine = pLine;
+    if(pChar == null) throw new NullPointerException();
+    this.pChar = pChar;
+    if(pRefLine == null) throw new NullPointerException();
+    this.pRefLine = pRefLine;
+    if(pRefChar == null) throw new NullPointerException();
+    this.pRefChar = pRefChar;
+  }
 
-    private final String pChar;
+  String pName() {
+    return this.pName;
+  }
 
-    private final String pRefLine;
+  String pLine() {
+    return this.pLine;
+  }
 
-    private final String pRefChar;
+  String pChar() {
+    return this.pChar;
+  }
 
-    private final MDuplicateOption mDuplicateOption = this;
+  String pRefLine() {
+    return this.pRefLine;
+  }
 
-    public MDuplicateOption(
-            String pName,
-            String pLine,
-            String pChar,
-            String pRefLine,
-            String pRefChar) {
+  String pRefChar() {
+    return this.pRefChar;
+  }
 
-        if (pName == null) {
-            throw new NullPointerException();
-        }
-        this.pName = pName;
-        if (pLine == null) {
-            throw new NullPointerException();
-        }
-        this.pLine = pLine;
-        if (pChar == null) {
-            throw new NullPointerException();
-        }
-        this.pChar = pChar;
-        if (pRefLine == null) {
-            throw new NullPointerException();
-        }
-        this.pRefLine = pRefLine;
-        if (pRefChar == null) {
-            throw new NullPointerException();
-        }
-        this.pRefChar = pRefChar;
-    }
+  private String rLine() {
+    return this.mDuplicateOption.pLine();
+  }
 
-    String pName() {
+  private String rChar() {
+    return this.mDuplicateOption.pChar();
+  }
 
-        return this.pName;
-    }
+  private String rName() {
+    return this.mDuplicateOption.pName();
+  }
 
-    String pLine() {
+  private String rRefLine() {
+    return this.mDuplicateOption.pRefLine();
+  }
 
-        return this.pLine;
-    }
+  private String rRefChar() {
+    return this.mDuplicateOption.pRefChar();
+  }
 
-    String pChar() {
-
-        return this.pChar;
-    }
-
-    String pRefLine() {
-
-        return this.pRefLine;
-    }
-
-    String pRefChar() {
-
-        return this.pRefChar;
-    }
-
-    private String rLine() {
-
-        return this.mDuplicateOption.pLine();
-    }
-
-    private String rChar() {
-
-        return this.mDuplicateOption.pChar();
-    }
-
-    private String rName() {
-
-        return this.mDuplicateOption.pName();
-    }
-
-    private String rRefLine() {
-
-        return this.mDuplicateOption.pRefLine();
-    }
-
-    private String rRefChar() {
-
-        return this.mDuplicateOption.pRefChar();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MSemanticErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line: ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char: ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Duplicate \"");
-        sb.append(rName());
-        sb.append("\" option.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("It was already provided at line ");
-        sb.append(rRefLine());
-        sb.append(", char ");
-        sb.append(rRefChar());
-        sb.append(".");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MSemanticErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("Line: ");
+    sb.append(rLine());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("Char: ");
+    sb.append(rChar());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("Duplicate \"");
+    sb.append(rName());
+    sb.append("\" option.");
+    sb.append(System.getProperty("line.separator"));
+    sb.append("It was already provided at line ");
+    sb.append(rRefLine());
+    sb.append(", char ");
+    sb.append(rRefChar());
+    sb.append(".");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
 }

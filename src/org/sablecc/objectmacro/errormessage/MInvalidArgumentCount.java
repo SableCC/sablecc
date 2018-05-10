@@ -4,21 +4,19 @@ package org.sablecc.objectmacro.errormessage;
 
 public class MInvalidArgumentCount {
 
-    public MInvalidArgumentCount() {
+  public MInvalidArgumentCount() {
+  }
 
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("A single macro file must be provided.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MCommandLineErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("A single macro file must be provided.");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append(new MCommandLineErrorTail().toString());
+    return sb.toString();
+  }
 
 }

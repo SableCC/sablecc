@@ -4,120 +4,88 @@ package org.sablecc.objectmacro.errormessage;
 
 public class MSyntaxError {
 
-    private final String pLine;
+  private final String pLine;
+  private final String pChar;
+  private final String pTokenType;
+  private final String pTokenText;
+  private final String pMessage;
+  private final MSyntaxError mSyntaxError = this;
 
-    private final String pChar;
+  public MSyntaxError(String pLine, String pChar, String pTokenType, String pTokenText, String pMessage) {
+    if(pLine == null) throw new NullPointerException();
+    this.pLine = pLine;
+    if(pChar == null) throw new NullPointerException();
+    this.pChar = pChar;
+    if(pTokenType == null) throw new NullPointerException();
+    this.pTokenType = pTokenType;
+    if(pTokenText == null) throw new NullPointerException();
+    this.pTokenText = pTokenText;
+    if(pMessage == null) throw new NullPointerException();
+    this.pMessage = pMessage;
+  }
 
-    private final String pTokenType;
+  String pLine() {
+    return this.pLine;
+  }
 
-    private final String pTokenText;
+  String pChar() {
+    return this.pChar;
+  }
 
-    private final String pMessage;
+  String pTokenType() {
+    return this.pTokenType;
+  }
 
-    private final MSyntaxError mSyntaxError = this;
+  String pTokenText() {
+    return this.pTokenText;
+  }
 
-    public MSyntaxError(
-            String pLine,
-            String pChar,
-            String pTokenType,
-            String pTokenText,
-            String pMessage) {
+  String pMessage() {
+    return this.pMessage;
+  }
 
-        if (pLine == null) {
-            throw new NullPointerException();
-        }
-        this.pLine = pLine;
-        if (pChar == null) {
-            throw new NullPointerException();
-        }
-        this.pChar = pChar;
-        if (pTokenType == null) {
-            throw new NullPointerException();
-        }
-        this.pTokenType = pTokenType;
-        if (pTokenText == null) {
-            throw new NullPointerException();
-        }
-        this.pTokenText = pTokenText;
-        if (pMessage == null) {
-            throw new NullPointerException();
-        }
-        this.pMessage = pMessage;
-    }
+  private String rLine() {
+    return this.mSyntaxError.pLine();
+  }
 
-    String pLine() {
+  private String rChar() {
+    return this.mSyntaxError.pChar();
+  }
 
-        return this.pLine;
-    }
+  private String rTokenType() {
+    return this.mSyntaxError.pTokenType();
+  }
 
-    String pChar() {
+  private String rTokenText() {
+    return this.mSyntaxError.pTokenText();
+  }
 
-        return this.pChar;
-    }
+  private String rMessage() {
+    return this.mSyntaxError.pMessage();
+  }
 
-    String pTokenType() {
-
-        return this.pTokenType;
-    }
-
-    String pTokenText() {
-
-        return this.pTokenText;
-    }
-
-    String pMessage() {
-
-        return this.pMessage;
-    }
-
-    private String rLine() {
-
-        return this.mSyntaxError.pLine();
-    }
-
-    private String rChar() {
-
-        return this.mSyntaxError.pChar();
-    }
-
-    private String rTokenType() {
-
-        return this.mSyntaxError.pTokenType();
-    }
-
-    private String rTokenText() {
-
-        return this.mSyntaxError.pTokenText();
-    }
-
-    private String rMessage() {
-
-        return this.mSyntaxError.pMessage();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("*** SYNTAX ERROR ***");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line: ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char: ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Syntax error on unexpected ");
-        sb.append(rTokenType());
-        sb.append(" token \"");
-        sb.append(rTokenText());
-        sb.append("\":");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(rMessage());
-        sb.append(".");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("*** SYNTAX ERROR ***");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("Line: ");
+    sb.append(rLine());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("Char: ");
+    sb.append(rChar());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("Syntax error on unexpected ");
+    sb.append(rTokenType());
+    sb.append(" token \"");
+    sb.append(rTokenText());
+    sb.append("\":");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(rMessage());
+    sb.append(".");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
 }

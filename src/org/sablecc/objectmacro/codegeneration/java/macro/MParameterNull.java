@@ -4,38 +4,30 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 public class MParameterNull {
 
-    private final String pParamName;
+  private final String pParamName;
+  private final MParameterNull mParameterNull = this;
 
-    private final MParameterNull mParameterNull = this;
+  public MParameterNull(String pParamName) {
+    if(pParamName == null) throw new NullPointerException();
+    this.pParamName = pParamName;
+  }
 
-    public MParameterNull(
-            String pParamName) {
+  String pParamName() {
+    return this.pParamName;
+  }
 
-        if (pParamName == null) {
-            throw new NullPointerException();
-        }
-        this.pParamName = pParamName;
-    }
+  private String rParamName() {
+    return this.mParameterNull.pParamName();
+  }
 
-    String pParamName() {
-
-        return this.pParamName;
-    }
-
-    private String rParamName() {
-
-        return this.mParameterNull.pParamName();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("Parameter '");
-        sb.append(rParamName());
-        sb.append("' cannot be null.");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Parameter '");
+    sb.append(rParamName());
+    sb.append("' cannot be null.");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
 }

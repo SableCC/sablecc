@@ -4,42 +4,34 @@ package org.sablecc.objectmacro.errormessage;
 
 public class MMissingMacroFile {
 
-    private final String pFileName;
+  private final String pFileName;
+  private final MMissingMacroFile mMissingMacroFile = this;
 
-    private final MMissingMacroFile mMissingMacroFile = this;
+  public MMissingMacroFile(String pFileName) {
+    if(pFileName == null) throw new NullPointerException();
+    this.pFileName = pFileName;
+  }
 
-    public MMissingMacroFile(
-            String pFileName) {
+  String pFileName() {
+    return this.pFileName;
+  }
 
-        if (pFileName == null) {
-            throw new NullPointerException();
-        }
-        this.pFileName = pFileName;
-    }
+  private String rFileName() {
+    return this.mMissingMacroFile.pFileName();
+  }
 
-    String pFileName() {
-
-        return this.pFileName;
-    }
-
-    private String rFileName() {
-
-        return this.mMissingMacroFile.pFileName();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The macro file, \"");
-        sb.append(rFileName());
-        sb.append("\", does not exist.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MCommandLineErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("The macro file, \"");
+    sb.append(rFileName());
+    sb.append("\", does not exist.");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append(new MCommandLineErrorTail().toString());
+    return sb.toString();
+  }
 
 }

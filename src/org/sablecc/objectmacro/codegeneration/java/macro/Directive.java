@@ -12,8 +12,5 @@ abstract class Directive {
         this.value = value;
     }
 
-    abstract String apply(
-            Integer index,
-            String macro,
-            Integer list_size);
+    abstract String apply(Integer index, String macro, Integer list_size);
 }

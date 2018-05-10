@@ -4,42 +4,34 @@ package org.sablecc.sablecc.launcher.errormessage;
 
 public class MInvalidDesinationDirectory {
 
-    private final String pDestination;
+  private final String pDestination;
+  private final MInvalidDesinationDirectory mInvalidDesinationDirectory = this;
 
-    private final MInvalidDesinationDirectory mInvalidDesinationDirectory = this;
+  public MInvalidDesinationDirectory(String pDestination) {
+    if(pDestination == null) throw new NullPointerException();
+    this.pDestination = pDestination;
+  }
 
-    public MInvalidDesinationDirectory(
-            String pDestination) {
+  String pDestination() {
+    return this.pDestination;
+  }
 
-        if (pDestination == null) {
-            throw new NullPointerException();
-        }
-        this.pDestination = pDestination;
-    }
+  private String rDestination() {
+    return this.mInvalidDesinationDirectory.pDestination();
+  }
 
-    String pDestination() {
-
-        return this.pDestination;
-    }
-
-    private String rDestination() {
-
-        return this.mInvalidDesinationDirectory.pDestination();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The \"");
-        sb.append(rDestination());
-        sb.append("\" destination is not a directory.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MCommandLineErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("The \"");
+    sb.append(rDestination());
+    sb.append("\" destination is not a directory.");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append(new MCommandLineErrorTail().toString());
+    return sb.toString();
+  }
 
 }

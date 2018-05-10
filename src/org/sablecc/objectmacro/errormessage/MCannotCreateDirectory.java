@@ -4,42 +4,34 @@ package org.sablecc.objectmacro.errormessage;
 
 public class MCannotCreateDirectory {
 
-    private final String pLocation;
+  private final String pLocation;
+  private final MCannotCreateDirectory mCannotCreateDirectory = this;
 
-    private final MCannotCreateDirectory mCannotCreateDirectory = this;
+  public MCannotCreateDirectory(String pLocation) {
+    if(pLocation == null) throw new NullPointerException();
+    this.pLocation = pLocation;
+  }
 
-    public MCannotCreateDirectory(
-            String pLocation) {
+  String pLocation() {
+    return this.pLocation;
+  }
 
-        if (pLocation == null) {
-            throw new NullPointerException();
-        }
-        this.pLocation = pLocation;
-    }
+  private String rLocation() {
+    return this.mCannotCreateDirectory.pLocation();
+  }
 
-    String pLocation() {
-
-        return this.pLocation;
-    }
-
-    private String rLocation() {
-
-        return this.mCannotCreateDirectory.pLocation();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The directory \"");
-        sb.append(rLocation());
-        sb.append("\" could not be created.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MCommandLineErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("The directory \"");
+    sb.append(rLocation());
+    sb.append("\" could not be created.");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append(new MCommandLineErrorTail().toString());
+    return sb.toString();
+  }
 
 }

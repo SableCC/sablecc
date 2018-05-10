@@ -4,67 +4,53 @@ package org.sablecc.sablecc.launcher.errormessage;
 
 public class MMissingLongOptionOperand {
 
-    private final String pOptionName;
+  private final String pOptionName;
+  private final String pOperandName;
+  private final MMissingLongOptionOperand mMissingLongOptionOperand = this;
 
-    private final String pOperandName;
+  public MMissingLongOptionOperand(String pOptionName, String pOperandName) {
+    if(pOptionName == null) throw new NullPointerException();
+    this.pOptionName = pOptionName;
+    if(pOperandName == null) throw new NullPointerException();
+    this.pOperandName = pOperandName;
+  }
 
-    private final MMissingLongOptionOperand mMissingLongOptionOperand = this;
+  String pOptionName() {
+    return this.pOptionName;
+  }
 
-    public MMissingLongOptionOperand(
-            String pOptionName,
-            String pOperandName) {
+  String pOperandName() {
+    return this.pOperandName;
+  }
 
-        if (pOptionName == null) {
-            throw new NullPointerException();
-        }
-        this.pOptionName = pOptionName;
-        if (pOperandName == null) {
-            throw new NullPointerException();
-        }
-        this.pOperandName = pOperandName;
-    }
+  private String rOptionName() {
+    return this.mMissingLongOptionOperand.pOptionName();
+  }
 
-    String pOptionName() {
+  private String rOperandName() {
+    return this.mMissingLongOptionOperand.pOperandName();
+  }
 
-        return this.pOptionName;
-    }
-
-    String pOperandName() {
-
-        return this.pOperandName;
-    }
-
-    private String rOptionName() {
-
-        return this.mMissingLongOptionOperand.pOptionName();
-    }
-
-    private String rOperandName() {
-
-        return this.mMissingLongOptionOperand.pOperandName();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The following option is rejected:");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" --");
-        sb.append(rOptionName());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("This option expects an operand:");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" --");
-        sb.append(rOptionName());
-        sb.append("=");
-        sb.append(rOperandName());
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MCommandLineErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("The following option is rejected:");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(" --");
+    sb.append(rOptionName());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("This option expects an operand:");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(" --");
+    sb.append(rOptionName());
+    sb.append("=");
+    sb.append(rOperandName());
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append(new MCommandLineErrorTail().toString());
+    return sb.toString();
+  }
 
 }

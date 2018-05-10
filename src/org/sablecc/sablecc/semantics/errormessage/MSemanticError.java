@@ -4,80 +4,60 @@ package org.sablecc.sablecc.semantics.errormessage;
 
 public class MSemanticError {
 
-    private final String pText;
+  private final String pText;
+  private final String pLine;
+  private final String pChar;
+  private final MSemanticError mSemanticError = this;
 
-    private final String pLine;
+  public MSemanticError(String pText, String pLine, String pChar) {
+    if(pText == null) throw new NullPointerException();
+    this.pText = pText;
+    if(pLine == null) throw new NullPointerException();
+    this.pLine = pLine;
+    if(pChar == null) throw new NullPointerException();
+    this.pChar = pChar;
+  }
 
-    private final String pChar;
+  String pText() {
+    return this.pText;
+  }
 
-    private final MSemanticError mSemanticError = this;
+  String pLine() {
+    return this.pLine;
+  }
 
-    public MSemanticError(
-            String pText,
-            String pLine,
-            String pChar) {
+  String pChar() {
+    return this.pChar;
+  }
 
-        if (pText == null) {
-            throw new NullPointerException();
-        }
-        this.pText = pText;
-        if (pLine == null) {
-            throw new NullPointerException();
-        }
-        this.pLine = pLine;
-        if (pChar == null) {
-            throw new NullPointerException();
-        }
-        this.pChar = pChar;
-    }
+  private String rLine() {
+    return this.mSemanticError.pLine();
+  }
 
-    String pText() {
+  private String rChar() {
+    return this.mSemanticError.pChar();
+  }
 
-        return this.pText;
-    }
+  private String rText() {
+    return this.mSemanticError.pText();
+  }
 
-    String pLine() {
-
-        return this.pLine;
-    }
-
-    String pChar() {
-
-        return this.pChar;
-    }
-
-    private String rLine() {
-
-        return this.mSemanticError.pLine();
-    }
-
-    private String rChar() {
-
-        return this.mSemanticError.pChar();
-    }
-
-    private String rText() {
-
-        return this.mSemanticError.pText();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("*** SEMANTIC ERROR ***");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line: ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char: ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(rText());
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("*** SEMANTIC ERROR ***");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("Line: ");
+    sb.append(rLine());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("Char: ");
+    sb.append(rChar());
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append(rText());
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
 }

@@ -2,49 +2,84 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MGetInternalTail
-        extends
-        Macro {
+import java.util.*;
 
-    public MGetInternalTail() {
+public class MGetInternalTail extends Macro{
+    
+    
+    
+    public MGetInternalTail(){
+        
+        
+    }
+    
+    
+    
+    
+    
+    @Override
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setGetInternalTail(this);
+     }
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("GetInternalTail");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+    
+    
+    
+    
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        sb0.append(".get(context)");
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+    
+    @Override
+     String build(Context context) {
+         return build();
+     }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
-    }
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
 
-    @Override
-    void apply(
-            InternalsInitializer internalsInitializer) {
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
 
-        internalsInitializer.setGetInternalTail(this);
-    }
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
 
-    @Override
-    public String build() {
-
-        BuildState buildState = this.build_state;
-
-        if (buildState == null) {
-            buildState = new BuildState();
-        }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("GetInternalTail");
-        }
-        else {
-            return buildState.getExpansion();
-        }
-        this.build_state = buildState;
-
-        StringBuilder sb0 = new StringBuilder();
-
-        sb0.append(".get(context)");
-
-        buildState.setExpansion(sb0.toString());
-        return sb0.toString();
-    }
-
-    @Override
-    String build(
-            Context context) {
-
-        return build();
+            return sb.toString();
     }
 }

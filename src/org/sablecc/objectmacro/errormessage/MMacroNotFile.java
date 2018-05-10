@@ -4,42 +4,34 @@ package org.sablecc.objectmacro.errormessage;
 
 public class MMacroNotFile {
 
-    private final String pFileName;
+  private final String pFileName;
+  private final MMacroNotFile mMacroNotFile = this;
 
-    private final MMacroNotFile mMacroNotFile = this;
+  public MMacroNotFile(String pFileName) {
+    if(pFileName == null) throw new NullPointerException();
+    this.pFileName = pFileName;
+  }
 
-    public MMacroNotFile(
-            String pFileName) {
+  String pFileName() {
+    return this.pFileName;
+  }
 
-        if (pFileName == null) {
-            throw new NullPointerException();
-        }
-        this.pFileName = pFileName;
-    }
+  private String rFileName() {
+    return this.mMacroNotFile.pFileName();
+  }
 
-    String pFileName() {
-
-        return this.pFileName;
-    }
-
-    private String rFileName() {
-
-        return this.mMacroNotFile.pFileName();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The macro argument, \"");
-        sb.append(rFileName());
-        sb.append("\", is not a file.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MCommandLineErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("The macro argument, \"");
+    sb.append(rFileName());
+    sb.append("\", is not a file.");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append(new MCommandLineErrorTail().toString());
+    return sb.toString();
+  }
 
 }

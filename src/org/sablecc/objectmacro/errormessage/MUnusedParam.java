@@ -4,80 +4,60 @@ package org.sablecc.objectmacro.errormessage;
 
 public class MUnusedParam {
 
-    private final String pName;
+  private final String pName;
+  private final String pLine;
+  private final String pChar;
+  private final MUnusedParam mUnusedParam = this;
 
-    private final String pLine;
+  public MUnusedParam(String pName, String pLine, String pChar) {
+    if(pName == null) throw new NullPointerException();
+    this.pName = pName;
+    if(pLine == null) throw new NullPointerException();
+    this.pLine = pLine;
+    if(pChar == null) throw new NullPointerException();
+    this.pChar = pChar;
+  }
 
-    private final String pChar;
+  String pName() {
+    return this.pName;
+  }
 
-    private final MUnusedParam mUnusedParam = this;
+  String pLine() {
+    return this.pLine;
+  }
 
-    public MUnusedParam(
-            String pName,
-            String pLine,
-            String pChar) {
+  String pChar() {
+    return this.pChar;
+  }
 
-        if (pName == null) {
-            throw new NullPointerException();
-        }
-        this.pName = pName;
-        if (pLine == null) {
-            throw new NullPointerException();
-        }
-        this.pLine = pLine;
-        if (pChar == null) {
-            throw new NullPointerException();
-        }
-        this.pChar = pChar;
-    }
+  private String rLine() {
+    return this.mUnusedParam.pLine();
+  }
 
-    String pName() {
+  private String rChar() {
+    return this.mUnusedParam.pChar();
+  }
 
-        return this.pName;
-    }
+  private String rName() {
+    return this.mUnusedParam.pName();
+  }
 
-    String pLine() {
-
-        return this.pLine;
-    }
-
-    String pChar() {
-
-        return this.pChar;
-    }
-
-    private String rLine() {
-
-        return this.mUnusedParam.pLine();
-    }
-
-    private String rChar() {
-
-        return this.mUnusedParam.pChar();
-    }
-
-    private String rName() {
-
-        return this.mUnusedParam.pName();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MSemanticErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line: ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char: ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The \"");
-        sb.append(rName());
-        sb.append("\" parameter is not used.");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MSemanticErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("Line: ");
+    sb.append(rLine());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("Char: ");
+    sb.append(rChar());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("The \"");
+    sb.append(rName());
+    sb.append("\" parameter is not used.");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
 }

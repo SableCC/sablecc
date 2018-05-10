@@ -4,19 +4,17 @@ package org.sablecc.sablecc.launcher.errormessage;
 
 class MCommandLineErrorTail {
 
-    MCommandLineErrorTail() {
+  MCommandLineErrorTail() {
+  }
 
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("The following command provides usage information:");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" sablecc --help");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("The following command provides usage information:");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(" sablecc --help");
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
 }

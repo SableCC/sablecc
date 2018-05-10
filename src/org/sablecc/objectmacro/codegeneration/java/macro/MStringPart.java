@@ -2,101 +2,123 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MStringPart
-        extends
-        Macro {
+import java.util.*;
 
-    private String field_String;
+public class MStringPart extends Macro{
+    
+    private String field_String;
+    
+    
+    private String field_IndexBuilder;
+    
+    
+    public MStringPart(String pString, String pIndexBuilder){
+        
+                this.setPString(pString);        this.setPIndexBuilder(pIndexBuilder);
+        
+    }
+    
+    private void setPString( String pString ){
+        if(pString == null){
+            throw ObjectMacroException.parameterNull("String");
+        }
+    
+        this.field_String = pString;
+    }
+    private void setPIndexBuilder( String pIndexBuilder ){
+        if(pIndexBuilder == null){
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+    
+        this.field_IndexBuilder = pIndexBuilder;
+    }
+    
+    private String buildString(){
+    
+        return this.field_String;
+    }
+    private String buildIndexBuilder(){
+    
+        return this.field_IndexBuilder;
+    }
+    
+    private String getString(){
+    
+        return this.field_String;
+    }
+    private String getIndexBuilder(){
+    
+        return this.field_IndexBuilder;
+    }
+    
+    
+    @Override
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setStringPart(this);
+     }
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("StringPart");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+    
+    
+    
+    
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        sb0.append("sb");
+        sb0.append(buildIndexBuilder());
+        sb0.append(".append(\"");
+        sb0.append(buildString());
+        sb0.append("\");");
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+    
+    @Override
+     String build(Context context) {
+         return build();
+     }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
-    private String field_IndexBuilder;
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
 
-    public MStringPart(
-            String pString,
-            String pIndexBuilder) {
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
 
-        setPString(pString);
-        setPIndexBuilder(pIndexBuilder);
-    }
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
 
-    private void setPString(
-            String pString) {
-
-        if (pString == null) {
-            throw ObjectMacroException.parameterNull("String");
-        }
-
-        this.field_String = pString;
-    }
-
-    private void setPIndexBuilder(
-            String pIndexBuilder) {
-
-        if (pIndexBuilder == null) {
-            throw ObjectMacroException.parameterNull("IndexBuilder");
-        }
-
-        this.field_IndexBuilder = pIndexBuilder;
-    }
-
-    private String buildString() {
-
-        return this.field_String;
-    }
-
-    private String buildIndexBuilder() {
-
-        return this.field_IndexBuilder;
-    }
-
-    private String getString() {
-
-        return this.field_String;
-    }
-
-    private String getIndexBuilder() {
-
-        return this.field_IndexBuilder;
-    }
-
-    @Override
-    void apply(
-            InternalsInitializer internalsInitializer) {
-
-        internalsInitializer.setStringPart(this);
-    }
-
-    @Override
-    public String build() {
-
-        BuildState buildState = this.build_state;
-
-        if (buildState == null) {
-            buildState = new BuildState();
-        }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("StringPart");
-        }
-        else {
-            return buildState.getExpansion();
-        }
-        this.build_state = buildState;
-
-        StringBuilder sb0 = new StringBuilder();
-
-        sb0.append("        sb");
-        sb0.append(buildIndexBuilder());
-        sb0.append(".append(\"");
-        sb0.append(buildString());
-        sb0.append("\");");
-
-        buildState.setExpansion(sb0.toString());
-        return sb0.toString();
-    }
-
-    @Override
-    String build(
-            Context context) {
-
-        return build();
+            return sb.toString();
     }
 }

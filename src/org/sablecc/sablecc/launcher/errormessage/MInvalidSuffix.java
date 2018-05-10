@@ -4,42 +4,34 @@ package org.sablecc.sablecc.launcher.errormessage;
 
 public class MInvalidSuffix {
 
-    private final String pFileName;
+  private final String pFileName;
+  private final MInvalidSuffix mInvalidSuffix = this;
 
-    private final MInvalidSuffix mInvalidSuffix = this;
+  public MInvalidSuffix(String pFileName) {
+    if(pFileName == null) throw new NullPointerException();
+    this.pFileName = pFileName;
+  }
 
-    public MInvalidSuffix(
-            String pFileName) {
+  String pFileName() {
+    return this.pFileName;
+  }
 
-        if (pFileName == null) {
-            throw new NullPointerException();
-        }
-        this.pFileName = pFileName;
-    }
+  private String rFileName() {
+    return this.mInvalidSuffix.pFileName();
+  }
 
-    String pFileName() {
-
-        return this.pFileName;
-    }
-
-    private String rFileName() {
-
-        return this.mInvalidSuffix.pFileName();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The grammar file \"");
-        sb.append(rFileName());
-        sb.append("\" does not have a .sablecc suffix.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(new MCommandLineErrorHead().toString());
+    sb.append(System.getProperty("line.separator"));
+    sb.append("The grammar file \"");
+    sb.append(rFileName());
+    sb.append("\" does not have a .sablecc suffix.");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append(new MCommandLineErrorTail().toString());
+    return sb.toString();
+  }
 
 }

@@ -4,61 +4,47 @@ package org.sablecc.sablecc.launcher.errormessage;
 
 public class MInputError {
 
-    private final String pFileName;
+  private final String pFileName;
+  private final String pMessage;
+  private final MInputError mInputError = this;
 
-    private final String pMessage;
+  public MInputError(String pFileName, String pMessage) {
+    if(pFileName == null) throw new NullPointerException();
+    this.pFileName = pFileName;
+    if(pMessage == null) throw new NullPointerException();
+    this.pMessage = pMessage;
+  }
 
-    private final MInputError mInputError = this;
+  String pFileName() {
+    return this.pFileName;
+  }
 
-    public MInputError(
-            String pFileName,
-            String pMessage) {
+  String pMessage() {
+    return this.pMessage;
+  }
 
-        if (pFileName == null) {
-            throw new NullPointerException();
-        }
-        this.pFileName = pFileName;
-        if (pMessage == null) {
-            throw new NullPointerException();
-        }
-        this.pMessage = pMessage;
-    }
+  private String rFileName() {
+    return this.mInputError.pFileName();
+  }
 
-    String pFileName() {
+  private String rMessage() {
+    return this.mInputError.pMessage();
+  }
 
-        return this.pFileName;
-    }
-
-    String pMessage() {
-
-        return this.pMessage;
-    }
-
-    private String rFileName() {
-
-        return this.mInputError.pFileName();
-    }
-
-    private String rMessage() {
-
-        return this.mInputError.pMessage();
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("*** I/O ERROR ***");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The following system error happened while reading \"");
-        sb.append(rFileName());
-        sb.append("\":");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" ");
-        sb.append(rMessage());
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("*** I/O ERROR ***");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(System.getProperty("line.separator"));
+    sb.append("The following system error happened while reading \"");
+    sb.append(rFileName());
+    sb.append("\":");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(" ");
+    sb.append(rMessage());
+    sb.append(System.getProperty("line.separator"));
+    return sb.toString();
+  }
 
 }
