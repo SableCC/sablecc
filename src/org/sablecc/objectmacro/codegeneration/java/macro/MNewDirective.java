@@ -2,101 +2,425 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-public class MNewDirective {
+public class MNewDirective
+        extends
+        Macro {
 
-  private final String pDirectiveName;
-  private final String pIndexBuilder;
-  private final MNewDirective mNewDirective = this;
-  private final MInitDirectives mInitDirectives;
-  private final List<Object> eStringPart_ParamInsertPart_EolPart_InsertMacroPart = new LinkedList<Object>();
+    private String field_DirectiveName;
 
-  MNewDirective(String pDirectiveName, String pIndexBuilder, MInitDirectives mInitDirectives) {
-    if(pDirectiveName == null) throw new NullPointerException();
-    this.pDirectiveName = pDirectiveName;
-    if(pIndexBuilder == null) throw new NullPointerException();
-    this.pIndexBuilder = pIndexBuilder;
-    if(mInitDirectives == null) throw new NullPointerException();
-    this.mInitDirectives = mInitDirectives;
-  }
+    private String field_IndexBuilder;
 
-  public MStringPart newStringPart(String pString, String pIndexBuilder) {
-    MStringPart lStringPart = new MStringPart(pString, pIndexBuilder);
-    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lStringPart);
-    return lStringPart;
-  }
+    private final List<Macro> list_MacroBodyParts;
 
-  public MParamInsertPart newParamInsertPart(String pParamName, String pIndexBuilder) {
-    MParamInsertPart lParamInsertPart = new MParamInsertPart(pParamName, pIndexBuilder);
-    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lParamInsertPart);
-    return lParamInsertPart;
-  }
+    private DSeparator MacroBodyPartsSeparator;
 
-  public MEolPart newEolPart(String pIndexBuilder) {
-    MEolPart lEolPart = new MEolPart(pIndexBuilder);
-    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lEolPart);
-    return lEolPart;
-  }
+    private DBeforeFirst MacroBodyPartsBeforeFirst;
 
-  public MInsertMacroPart newInsertMacroPart(String pName, String pIndexBuilder, String pIndexInsert) {
-    MInsertMacroPart lInsertMacroPart = new MInsertMacroPart(pName, pIndexBuilder, pIndexInsert);
-    this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart.add(lInsertMacroPart);
-    return lInsertMacroPart;
-  }
+    private DAfterLast MacroBodyPartsAfterLast;
 
-  String pDirectiveName() {
-    return this.pDirectiveName;
-  }
+    private DNone MacroBodyPartsNone;
 
-  String pIndexBuilder() {
-    return this.pIndexBuilder;
-  }
+    private final InternalValue MacroBodyPartsValue;
 
-  private String rIndexBuilder() {
-    return this.mNewDirective.pIndexBuilder();
-  }
+    private Map<Context, String> field_ParamName = new LinkedHashMap<>();
 
-  private String rParamName() {
-    return this.mInitDirectives.pParamName();
-  }
+    private final Context MacroBodyPartsContext = new Context();
 
-  private String rDirectiveName() {
-    return this.mNewDirective.pDirectiveName();
-  }
+    public MNewDirective(
+            String pDirectiveName,
+            String pIndexBuilder) {
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        StringBuilder sb");
-    sb.append(rIndexBuilder());
-    sb.append(" = new StringBuilder();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        ");
-    for(Object oStringPart_ParamInsertPart_EolPart_InsertMacroPart : this.eStringPart_ParamInsertPart_EolPart_InsertMacroPart) {
-      sb.append(oStringPart_ParamInsertPart_EolPart_InsertMacroPart.toString());
+        setPDirectiveName(pDirectiveName);
+
+        setPIndexBuilder(pIndexBuilder);
+
+        this.list_MacroBodyParts = new ArrayList<>();
+
+        this.MacroBodyPartsValue = new InternalValue(this.list_MacroBodyParts,
+                this.MacroBodyPartsContext);
+
     }
-    sb.append("        this.");
-    sb.append(rParamName());
-    sb.append(rDirectiveName());
-    sb.append(" = new D");
-    sb.append(rDirectiveName());
-    sb.append("(sb");
-    sb.append(rIndexBuilder());
-    sb.append(".toString());");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        this.");
-    sb.append(rParamName());
-    sb.append("Value.set");
-    sb.append(rDirectiveName());
-    sb.append("(this.");
-    sb.append(rParamName());
-    sb.append(rDirectiveName());
-    sb.append(");");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        ");
-    return sb.toString();
-  }
 
+    private void setPDirectiveName(
+            String pDirectiveName) {
+
+        if (pDirectiveName == null) {
+
+            throw ObjectMacroException.parameterNull("DirectiveName");
+
+        }
+
+        this.field_DirectiveName = pDirectiveName;
+
+    }
+
+    private void setPIndexBuilder(
+            String pIndexBuilder) {
+
+        if (pIndexBuilder == null) {
+
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+
+        }
+
+        this.field_IndexBuilder = pIndexBuilder;
+
+    }
+
+    public void addMacroBodyParts(
+            MStringPart macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("MacroBodyParts");
+
+        }
+
+        this.list_MacroBodyParts.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addMacroBodyParts(
+            MParamInsertPart macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("MacroBodyParts");
+
+        }
+
+        this.list_MacroBodyParts.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addMacroBodyParts(
+            MEolPart macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("MacroBodyParts");
+
+        }
+
+        this.list_MacroBodyParts.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    public void addMacroBodyParts(
+            MInsertMacroPart macro) {
+
+        if (macro == null) {
+
+            throw ObjectMacroException.parameterNull("MacroBodyParts");
+
+        }
+
+        this.list_MacroBodyParts.add(macro);
+
+        this.children.add(macro);
+
+        Macro.cycleDetector.detectCycle(this, macro);
+
+    }
+
+    void setParamName(
+
+            Context context,
+
+            String value) {
+
+        if (value == null) {
+
+            throw new RuntimeException("value cannot be null here");
+
+        }
+
+        this.field_ParamName.put(context, value);
+
+    }
+
+    private String buildDirectiveName() {
+
+        return this.field_DirectiveName;
+
+    }
+
+    private String buildIndexBuilder() {
+
+        return this.field_IndexBuilder;
+
+    }
+
+    private String buildMacroBodyParts() {
+
+        StringBuilder sb = new StringBuilder();
+
+        Context local_context = this.MacroBodyPartsContext;
+
+        List<Macro> macros = this.list_MacroBodyParts;
+
+        int i = 0;
+
+        int nb_macros = macros.size();
+
+        String expansion = null;
+
+        if (this.MacroBodyPartsNone != null) {
+
+            sb.append(this.MacroBodyPartsNone.apply(i, "", nb_macros));
+
+        }
+
+        for (Macro macro : macros) {
+
+            expansion = macro.build(local_context);
+
+            if (this.MacroBodyPartsBeforeFirst != null) {
+
+                expansion = this.MacroBodyPartsBeforeFirst.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.MacroBodyPartsAfterLast != null) {
+
+                expansion = this.MacroBodyPartsAfterLast.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            if (this.MacroBodyPartsSeparator != null) {
+
+                expansion = this.MacroBodyPartsSeparator.apply(i, expansion,
+                        nb_macros);
+
+            }
+
+            sb.append(expansion);
+
+            i++;
+
+        }
+
+        return sb.toString();
+
+    }
+
+    private String buildParamName(
+            Context context) {
+
+        return this.field_ParamName.get(context);
+
+    }
+
+    private String getDirectiveName() {
+
+        return this.field_DirectiveName;
+
+    }
+
+    private String getIndexBuilder() {
+
+        return this.field_IndexBuilder;
+
+    }
+
+    private InternalValue getMacroBodyParts() {
+
+        return this.MacroBodyPartsValue;
+
+    }
+
+    private String getParamName(
+            Context context) {
+
+        return this.field_ParamName.get(context);
+
+    }
+
+    private void initMacroBodyPartsInternals(
+            Context context) {
+
+        for (Macro macro : this.list_MacroBodyParts) {
+
+            macro.apply(new InternalsInitializer("MacroBodyParts") {
+
+                @Override
+
+                void setStringPart(
+                        MStringPart mStringPart) {
+
+                }
+
+                @Override
+
+                void setParamInsertPart(
+                        MParamInsertPart mParamInsertPart) {
+
+                }
+
+                @Override
+
+                void setEolPart(
+                        MEolPart mEolPart) {
+
+                }
+
+                @Override
+
+                void setInsertMacroPart(
+                        MInsertMacroPart mInsertMacroPart) {
+
+                }
+
+            });
+
+        }
+
+    }
+
+    private void initMacroBodyPartsDirectives() {
+
+    }
+
+    @Override
+
+    void apply(
+
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setNewDirective(this);
+
+    }
+
+    @Override
+
+    public String build(
+            Context context) {
+
+        BuildState buildState = this.build_states.get(context);
+
+        if (buildState == null) {
+
+            buildState = new BuildState();
+
+        }
+
+        else if (buildState.getExpansion() == null) {
+
+            throw ObjectMacroException.cyclicReference("NewDirective");
+
+        }
+
+        else {
+
+            return buildState.getExpansion();
+
+        }
+
+        this.build_states.put(context, buildState);
+
+        List<String> indentations = new LinkedList<>();
+
+        StringBuilder sbIndentation = new StringBuilder();
+
+        initMacroBodyPartsDirectives();
+
+        initMacroBodyPartsInternals(context);
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("StringBuilder sb");
+
+        sb0.append(buildIndexBuilder());
+
+        sb0.append(" = new StringBuilder();");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append(buildMacroBodyParts());
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("this.");
+
+        sb0.append(buildParamName(context));
+
+        sb0.append(buildDirectiveName());
+
+        sb0.append(" = new D");
+
+        sb0.append(buildDirectiveName());
+
+        sb0.append("(sb");
+
+        sb0.append(buildIndexBuilder());
+
+        sb0.append(".toString());");
+
+        sb0.append(LINE_SEPARATOR);
+
+        sb0.append("this.");
+
+        sb0.append(buildParamName(context));
+
+        sb0.append("Value.set");
+
+        sb0.append(buildDirectiveName());
+
+        sb0.append("(this.");
+
+        sb0.append(buildParamName(context));
+
+        sb0.append(buildDirectiveName());
+
+        sb0.append(");");
+
+        buildState.setExpansion(sb0.toString());
+
+        return sb0.toString();
+
+    }
+
+    private String applyIndent(
+            String macro,
+            String indent) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if (i < lines.length - 1) {
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else {
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
+    }
 }
