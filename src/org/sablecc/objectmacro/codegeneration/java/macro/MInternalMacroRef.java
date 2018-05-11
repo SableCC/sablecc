@@ -91,7 +91,7 @@ public class MInternalMacroRef
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    return this.list_");
 
@@ -99,7 +99,7 @@ public class MInternalMacroRef
 
         sb0.append(".get(context);");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -131,7 +131,7 @@ public class MInternalMacroRef
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

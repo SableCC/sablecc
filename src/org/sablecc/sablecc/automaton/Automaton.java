@@ -17,9 +17,6 @@
 
 package org.sablecc.sablecc.automaton;
 
-import static java.math.BigInteger.*;
-import static org.sablecc.util.UsefulStaticImports.*;
-
 import java.math.*;
 import java.util.*;
 
@@ -238,7 +235,7 @@ public final class Automaton {
             sb.append("Automaton:{");
 
             for (State state : this.states) {
-                sb.append(LINE_SEPARATOR);
+                sb.append(UsefulStaticImports.LINE_SEPARATOR);
                 sb.append("    ");
 
                 if (state == this.startState) {
@@ -254,7 +251,7 @@ public final class Automaton {
                     SortedSet<State> targets = entry.getValue();
 
                     for (State target : targets) {
-                        sb.append(LINE_SEPARATOR);
+                        sb.append(UsefulStaticImports.LINE_SEPARATOR);
                         sb.append("        ");
                         sb.append(richSymbol == null ? "EPSILON"
                                 : richSymbol.toString());
@@ -264,7 +261,7 @@ public final class Automaton {
                 }
             }
 
-            sb.append(LINE_SEPARATOR);
+            sb.append(UsefulStaticImports.LINE_SEPARATOR);
             sb.append("}");
 
             this.toString = sb.toString();
@@ -709,7 +706,7 @@ public final class Automaton {
             throw new InternalException("this automaton is not yet stable");
         }
 
-        return or(getEpsilonLookAnyStarEnd());
+        return or(Automaton.getEpsilonLookAnyStarEnd());
     }
 
     public Automaton oneOrMore() {
@@ -773,16 +770,17 @@ public final class Automaton {
             throw new InternalException("this automaton is not yet stable");
         }
 
-        if (n.compareTo(ZERO) < 0) {
+        if (n.compareTo(BigInteger.ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
-        if (n.compareTo(ZERO) == 0) {
-            return getEpsilonLookAnyStarEnd();
+        if (n.compareTo(BigInteger.ZERO) == 0) {
+            return Automaton.getEpsilonLookAnyStarEnd();
         }
 
         Automaton newAutomaton = this;
-        for (BigInteger i = ONE; i.compareTo(n) < 0; i = i.add(ONE)) {
+        for (BigInteger i = BigInteger.ONE; i.compareTo(n) < 0;
+                i = i.add(BigInteger.ONE)) {
             newAutomaton = newAutomaton.concat(this);
         }
 
@@ -805,19 +803,20 @@ public final class Automaton {
             throw new InternalException("automaton is not yet stable");
         }
 
-        if (n.compareTo(ZERO) < 0) {
+        if (n.compareTo(BigInteger.ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
-        if (n.compareTo(ZERO) == 0) {
-            return getEpsilonLookAnyStarEnd();
+        if (n.compareTo(BigInteger.ZERO) == 0) {
+            return Automaton.getEpsilonLookAnyStarEnd();
         }
 
-        if (n.compareTo(ONE) == 0) {
+        if (n.compareTo(BigInteger.ONE) == 0) {
             return this;
         }
 
-        return concat(automaton.concat(this).nTimes(n.subtract(ONE)));
+        return concat(
+                automaton.concat(this).nTimes(n.subtract(BigInteger.ONE)));
     }
 
     public Automaton nOrMore(
@@ -827,7 +826,7 @@ public final class Automaton {
             throw new InternalException("this automaton is not yet stable");
         }
 
-        if (n.compareTo(ZERO) < 0) {
+        if (n.compareTo(BigInteger.ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
@@ -850,19 +849,20 @@ public final class Automaton {
             throw new InternalException("automaton is not yet stable");
         }
 
-        if (n.compareTo(ZERO) < 0) {
+        if (n.compareTo(BigInteger.ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
-        if (n.compareTo(ZERO) == 0) {
+        if (n.compareTo(BigInteger.ZERO) == 0) {
             return zeroOrMoreWithSeparator(automaton);
         }
 
-        if (n.compareTo(ONE) == 0) {
+        if (n.compareTo(BigInteger.ONE) == 0) {
             return oneOrMoreWithSeparator(automaton);
         }
 
-        return concat(automaton.concat(this).nOrMore(n.subtract(ONE)));
+        return concat(
+                automaton.concat(this).nOrMore(n.subtract(BigInteger.ONE)));
     }
 
     public Automaton nToM(
@@ -873,7 +873,7 @@ public final class Automaton {
             throw new InternalException("this automaton is not yet stable");
         }
 
-        if (n.compareTo(ZERO) < 0) {
+        if (n.compareTo(BigInteger.ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
@@ -881,9 +881,9 @@ public final class Automaton {
             throw new InternalException("m may not be smaller than n");
         }
 
-        Automaton tailAutomaton = getEpsilonLookAnyStarEnd();
+        Automaton tailAutomaton = Automaton.getEpsilonLookAnyStarEnd();
 
-        for (BigInteger i = n; i.compareTo(m) < 0; i = i.add(ONE)) {
+        for (BigInteger i = n; i.compareTo(m) < 0; i = i.add(BigInteger.ONE)) {
             tailAutomaton = tailAutomaton.concat(this).zeroOrOne();
         }
 
@@ -907,7 +907,7 @@ public final class Automaton {
             throw new InternalException("automaton is not yet stable");
         }
 
-        if (n.compareTo(ZERO) < 0) {
+        if (n.compareTo(BigInteger.ZERO) < 0) {
             throw new InternalException("n may not be negative");
         }
 
@@ -919,10 +919,11 @@ public final class Automaton {
             return nTimesWithSeparator(automaton, n);
         }
 
-        Automaton tailAutomaton = getEpsilonLookAnyStarEnd();
+        Automaton tailAutomaton = Automaton.getEpsilonLookAnyStarEnd();
 
-        if (n.compareTo(ZERO) == 0) {
-            for (BigInteger i = ONE; i.compareTo(m) < 0; i = i.add(ONE)) {
+        if (n.compareTo(BigInteger.ZERO) == 0) {
+            for (BigInteger i = BigInteger.ONE; i.compareTo(m) < 0;
+                    i = i.add(BigInteger.ONE)) {
                 tailAutomaton = tailAutomaton.concat(automaton.concat(this))
                         .zeroOrOne();
             }
@@ -930,7 +931,7 @@ public final class Automaton {
             return concat(tailAutomaton).zeroOrOne();
         }
 
-        for (BigInteger i = n; i.compareTo(m) < 0; i = i.add(ONE)) {
+        for (BigInteger i = n; i.compareTo(m) < 0; i = i.add(BigInteger.ONE)) {
             tailAutomaton
                     = tailAutomaton.concat(automaton.concat(this)).zeroOrOne();
         }
@@ -971,8 +972,8 @@ public final class Automaton {
             throw new InternalException("automaton is not yet stable");
         }
 
-        Automaton lookAutomaton = getEpsilonLookAnyStarEnd()
-                .except(getEpsilonLookAnyStarEnd().look(automaton));
+        Automaton lookAutomaton = Automaton.getEpsilonLookAnyStarEnd()
+                .except(Automaton.getEpsilonLookAnyStarEnd().look(automaton));
         return look(lookAutomaton);
     }
 
@@ -1301,8 +1302,8 @@ public final class Automaton {
             throw new InternalException("invalid operation");
         }
 
-        ComponentFinder<State> componentFinder
-                = new ComponentFinder<>(getStates(), lookaheadProgeny);
+        ComponentFinder<State> componentFinder = new ComponentFinder<>(
+                getStates(), Automaton.lookaheadProgeny);
 
         for (State state : getStates()) {
             State representative = componentFinder.getRepresentative(state);
@@ -1317,7 +1318,7 @@ public final class Automaton {
      * result are new objects (the states of newAccepts refers to the one in the
      * current automaton). 2) the acceptation objects of newAccepts are reused
      * in the new automaton.
-     * */
+     */
     public Automaton resetAcceptations(
             Map<State, Acceptation> newAccepts) {
 

@@ -306,11 +306,11 @@ public class MAddIndent
 
         sb0.append("sbIndentation = new StringBuilder();");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append(buildMacroBodyParts());
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("indentations.add(sbIndentation.toString());");
 
@@ -342,7 +342,7 @@ public class MAddIndent
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

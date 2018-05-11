@@ -349,11 +349,11 @@ public class MNewDirective
 
         sb0.append(" = new StringBuilder();");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append(buildMacroBodyParts());
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("this.");
 
@@ -371,7 +371,7 @@ public class MNewDirective
 
         sb0.append(".toString());");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("this.");
 
@@ -408,7 +408,7 @@ public class MNewDirective
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

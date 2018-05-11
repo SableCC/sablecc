@@ -45,7 +45,7 @@ public class ObjectMacroBack {
             String[] args) {
 
         try {
-            compile(args);
+            ObjectMacroBack.compile(args);
         }
         catch (CompilerException e) {
             System.err.print(e.getMessage());
@@ -232,7 +232,7 @@ public class ObjectMacroBack {
             throw CompilerException.macroNotFile(textArgument.getText());
         }
 
-        compile(macroFile, targetLanguage, destinationDirectory,
+        ObjectMacroBack.compile(macroFile, targetLanguage, destinationDirectory,
                 destinationPackage, generateCode, strictness, verbosity);
     }
 

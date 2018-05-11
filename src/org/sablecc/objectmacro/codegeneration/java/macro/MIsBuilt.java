@@ -90,7 +90,7 @@ public class MIsBuilt
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("            throw ObjectMacroException.cannotModify(\"");
 
@@ -98,7 +98,7 @@ public class MIsBuilt
 
         sb0.append("\");");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("        }");
 
@@ -121,7 +121,7 @@ public class MIsBuilt
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

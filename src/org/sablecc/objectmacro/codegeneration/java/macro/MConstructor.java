@@ -507,7 +507,7 @@ public class MConstructor
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.FieldInitializersBeforeFirst = new DBeforeFirst(sb0.toString());
 
@@ -515,7 +515,7 @@ public class MConstructor
                 .setBeforeFirst(this.FieldInitializersBeforeFirst);
         StringBuilder sb1 = new StringBuilder();
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         this.FieldInitializersSeparator = new DSeparator(sb1.toString());
 
@@ -540,7 +540,7 @@ public class MConstructor
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.InternalValuesInitializersBeforeFirst
                 = new DBeforeFirst(sb0.toString());
@@ -549,7 +549,7 @@ public class MConstructor
                 .setBeforeFirst(this.InternalValuesInitializersBeforeFirst);
         StringBuilder sb1 = new StringBuilder();
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         this.InternalValuesInitializersSeparator
                 = new DSeparator(sb1.toString());
@@ -625,15 +625,15 @@ public class MConstructor
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append(buildFieldInitializers());
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append(buildInternalValuesInitializers());
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -665,7 +665,7 @@ public class MConstructor
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

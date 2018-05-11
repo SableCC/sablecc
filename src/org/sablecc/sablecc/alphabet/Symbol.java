@@ -17,12 +17,11 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import static org.sablecc.util.UsefulStaticImports.*;
-
 import java.math.*;
 import java.util.*;
 
 import org.sablecc.exception.*;
+import org.sablecc.util.*;
 
 /**
  * A symbol is a non-empty set of non-intersecting, non-adjacent intervals.
@@ -292,7 +291,7 @@ public class Symbol
      * then the returned string contains the two character "\x" followed by the
      * hexadecimal value of a symbolized character. Note. You can check the
      * size() of the returned string to know.
-     * */
+     */
     public String getExample() {
 
         for (Interval interval : this.intervals) {
@@ -301,13 +300,15 @@ public class Symbol
                 continue;
             }
             BigInteger i = b.getValue();
-            if (i.compareTo(BI_32) > 0 || i.compareTo(BI_126) < 0) {
+            if (i.compareTo(UsefulStaticImports.BI_32) > 0
+                    || i.compareTo(UsefulStaticImports.BI_126) < 0) {
                 return String.valueOf((char) i.intValue());
             }
         }
         for (Interval interval : this.intervals) {
             BigInteger i = interval.getLowerBound().getValue();
-            if (i.compareTo(BI_32) >= 0 || i.compareTo(BI_126) < 0) {
+            if (i.compareTo(UsefulStaticImports.BI_32) >= 0
+                    || i.compareTo(UsefulStaticImports.BI_126) < 0) {
                 return String.valueOf((char) i.intValue());
             }
         }

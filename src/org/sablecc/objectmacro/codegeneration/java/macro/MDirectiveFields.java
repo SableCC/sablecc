@@ -89,9 +89,9 @@ public class MDirectiveFields
 
         sb0.append("Separator;");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("private DBeforeFirst ");
 
@@ -99,9 +99,9 @@ public class MDirectiveFields
 
         sb0.append("BeforeFirst;");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("private DAfterLast ");
 
@@ -109,9 +109,9 @@ public class MDirectiveFields
 
         sb0.append("AfterLast;");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("private DNone ");
 
@@ -147,7 +147,7 @@ public class MDirectiveFields
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

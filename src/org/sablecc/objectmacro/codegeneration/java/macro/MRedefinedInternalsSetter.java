@@ -411,7 +411,7 @@ public class MRedefinedInternalsSetter
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.MacroBodyPartsSeparator = new DSeparator(sb0.toString());
 
@@ -476,7 +476,7 @@ public class MRedefinedInternalsSetter
 
         sb0.append("@Override");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("void set");
 
@@ -494,21 +494,21 @@ public class MRedefinedInternalsSetter
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    ");
 
         sb0.append(buildMacroBodyParts());
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    ");
 
         sb0.append(buildSetInternals());
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -540,7 +540,7 @@ public class MRedefinedInternalsSetter
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

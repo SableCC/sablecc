@@ -349,7 +349,7 @@ public class Alphabet {
 
         // First, we compute a map of (symbol pair,interval set)
         Map<Pair<Symbol, Symbol>, SortedSet<Interval>> symbolPairToIntervalSetMap
-                = computeSymbolPairToIntervalSetMap(this, alphabet);
+                = Alphabet.computeSymbolPairToIntervalSetMap(this, alphabet);
 
         // list of new symbols
         Collection<Symbol> newSymbols = new LinkedList<>();

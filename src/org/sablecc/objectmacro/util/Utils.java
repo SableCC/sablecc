@@ -35,14 +35,14 @@ public class Utils {
             TIdentifier identifier) {
 
         String text = identifier.getText();
-        return toCamelCase(text);
+        return Utils.toCamelCase(text);
     }
 
     public static String toCamelCase(
             TVariable var) {
 
-        String text = getVarName(var);
-        return toCamelCase(text);
+        String text = Utils.getVarName(var);
+        return Utils.toCamelCase(text);
     }
 
     public static String toCamelCase(
@@ -68,7 +68,7 @@ public class Utils {
     public static String[] splitName(
             TIdentifier identifier) {
 
-        return identifier.getText().split(NAME_SEPARATOR);
+        return identifier.getText().split(Utils.NAME_SEPARATOR);
     }
 
 }

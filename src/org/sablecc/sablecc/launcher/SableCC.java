@@ -17,7 +17,6 @@
 
 package org.sablecc.sablecc.launcher;
 
-import static org.sablecc.sablecc.launcher.Version.*;
 import static org.sablecc.util.Strictness.*;
 import static org.sablecc.util.Verbosity.*;
 
@@ -50,7 +49,7 @@ public class SableCC {
 
         try {
             try {
-                processCommandLine(args);
+                SableCC.processCommandLine(args);
             }
             finally {
                 System.out.flush();
@@ -207,7 +206,7 @@ public class SableCC {
                 break;
 
             case VERSION:
-                System.out.println("SableCC version " + VERSION);
+                System.out.println("SableCC version " + Version.VERSION);
                 return;
 
             case HELP:
@@ -255,12 +254,12 @@ public class SableCC {
         Trace trace = new Trace(verbosity);
 
         trace.informativeln();
-        trace.informativeln("SableCC version " + VERSION);
+        trace.informativeln("SableCC version " + Version.VERSION);
         trace.informativeln(
                 "by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
         trace.informativeln();
 
-        compileFile(grammarFile, targetLanguage, destinationDirectory,
+        SableCC.compileFile(grammarFile, targetLanguage, destinationDirectory,
                 destinationPackage, generateCode, strictness, trace);
     }
 
@@ -313,7 +312,7 @@ public class SableCC {
             br.close();
             fr.close();
 
-            compileGrammar(sb.toString(), strictness, trace);
+            SableCC.compileGrammar(sb.toString(), strictness, trace);
 
             // TODO: implement
 

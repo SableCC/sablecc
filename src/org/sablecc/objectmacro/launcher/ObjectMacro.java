@@ -52,7 +52,7 @@ public class ObjectMacro {
             String[] args) {
 
         try {
-            compile(args);
+            ObjectMacro.compile(args);
         }
         catch (CompilerException e) {
             System.err.print(e.getMessage());
@@ -221,7 +221,7 @@ public class ObjectMacro {
             throw CompilerException.macroNotFile(textArgument.getText());
         }
 
-        compile(macroFile, destinationDirectory, destinationPackage,
+        ObjectMacro.compile(macroFile, destinationDirectory, destinationPackage,
                 generateCode, strictness, verbosity);
     }
 
@@ -267,11 +267,12 @@ public class ObjectMacro {
             throw CompilerException.inputError(macroFile.toString(), e);
         }
 
-        globalIndex = verifySemantics(ast, strictness, verbosity);
+        ObjectMacro.globalIndex
+                = ObjectMacro.verifySemantics(ast, strictness, verbosity);
 
         if (generateCode) {
-            generateIntermediateFile(verbosity, destinationDirectory,
-                    macroFile);
+            ObjectMacro.generateIntermediateFile(verbosity,
+                    destinationDirectory, macroFile);
         }
 
     }
@@ -329,8 +330,8 @@ public class ObjectMacro {
 
         StringBuilder macros_string = new StringBuilder();
 
-        for (Macro macro : globalIndex.getAllMacros()) {
-            MMacro macro_macro = createMacro(macro);
+        for (Macro macro : ObjectMacro.globalIndex.getAllMacros()) {
+            MMacro macro_macro = ObjectMacro.createMacro(macro);
             macros_string.append(macro_macro.toString());
             macros_string.append(System.getProperty("line.separator"));
         }
@@ -369,14 +370,14 @@ public class ObjectMacro {
 
         List<PMacroBodyPart> macroBodyParts
                 = macro.getDeclaration().getMacroBodyParts();
-        createMacroBody(mMacro, macroBodyParts);
+        ObjectMacro.createMacroBody(mMacro, macroBodyParts);
 
         for (External param : macro_params) {
-            createParam(mMacro.newParam(), param);
+            ObjectMacro.createParam(mMacro.newParam(), param);
         }
 
         for (Internal internal : macro_internals) {
-            createInternal(mMacro.newInternal(), internal);
+            ObjectMacro.createInternal(mMacro.newInternal(), internal);
         }
 
         MInitializationOrder mInitializationOrder
@@ -431,7 +432,7 @@ public class ObjectMacro {
                 }
 
                 if (macroReference.getValues().size() > 0) {
-                    createArgs(mMacroRef.newArgs(), macroReference);
+                    ObjectMacro.createArgs(mMacroRef.newArgs(), macroReference);
                 }
 
             }
@@ -454,14 +455,15 @@ public class ObjectMacro {
             else if (bodyPart instanceof AIndentMacroBodyPart) {
                 AIndentMacroBodyPart indentPart
                         = (AIndentMacroBodyPart) bodyPart;
-                createIndentTextParts(mMacro.newIndentPart(),
+                ObjectMacro.createIndentTextParts(mMacro.newIndentPart(),
                         indentPart.getStringPart());
-                createMacroBody(mMacro, indentPart.getMacroBodyPart());
+                ObjectMacro.createMacroBody(mMacro,
+                        indentPart.getMacroBodyPart());
                 mMacro.newEndIndentPart();
             }
-            //            else if(bodyPart instanceof AEndIndentMacroBodyPart){
-            //                mMacro.newEndIndentPart();
-            //            }
+            // else if(bodyPart instanceof AEndIndentMacroBodyPart){
+            // mMacro.newEndIndentPart();
+            // }
             else {
                 throw new InternalException("case unhandled");
             }
@@ -494,7 +496,7 @@ public class ObjectMacro {
                 }
 
                 if (macro_node.getValues().size() > 0) {
-                    createArgs(macro_ref.newArgs(), macro_node);
+                    ObjectMacro.createArgs(macro_ref.newArgs(), macro_node);
                 }
             }
             else if (stringPart instanceof AVarStringPart) {
@@ -520,7 +522,7 @@ public class ObjectMacro {
                     mTextArgument.newEolPart();
                 }
                 else if (text.equals("\\t")) {
-                    mTextArgument.newStringPart(DEFAULT_TABULATION);
+                    mTextArgument.newStringPart(ObjectMacro.DEFAULT_TABULATION);
                 }
                 else if (text.startsWith("\\")) {
                     mTextArgument
@@ -562,7 +564,7 @@ public class ObjectMacro {
                 }
 
                 if (macro_node.getValues().size() > 0) {
-                    createArgs(macro_ref.newArgs(), macro_node);
+                    ObjectMacro.createArgs(macro_ref.newArgs(), macro_node);
                 }
             }
             else if (stringPart instanceof AVarStringPart) {
@@ -588,7 +590,7 @@ public class ObjectMacro {
                     mIndentPart.newEolPart();
                 }
                 else if (text.equals("\\t")) {
-                    mIndentPart.newStringPart(DEFAULT_TABULATION);
+                    mIndentPart.newStringPart(ObjectMacro.DEFAULT_TABULATION);
                 }
                 else if (text.startsWith("\\")) {
                     mIndentPart
@@ -629,7 +631,7 @@ public class ObjectMacro {
                 }
 
                 if (macro_node.getValues().size() > 0) {
-                    createArgs(macro_ref.newArgs(), macro_node);
+                    ObjectMacro.createArgs(macro_ref.newArgs(), macro_node);
                 }
             }
             else if (stringPart instanceof AVarStringPart) {
@@ -692,7 +694,7 @@ public class ObjectMacro {
                 }
 
                 if (l_macroRef.getValues().size() > 0) {
-                    createArgs(macroRef.newArgs(), l_macroRef);
+                    ObjectMacro.createArgs(macroRef.newArgs(), l_macroRef);
                 }
             }
         }
@@ -707,7 +709,7 @@ public class ObjectMacro {
                 mDirective.newSimpleName(part);
             }
 
-            createDirectiveParts(mDirective,
+            ObjectMacro.createDirectiveParts(mDirective,
                     l_directive.getDeclaration().getParts());
         }
     }
@@ -746,7 +748,8 @@ public class ObjectMacro {
             MArgs macro_args,
             AMacroReference aMacroReference) {
 
-        Macro macroReferenced = globalIndex.getMacro(aMacroReference.getName());
+        Macro macroReferenced
+                = ObjectMacro.globalIndex.getMacro(aMacroReference.getName());
         List<String> paramNames = macroReferenced.getInternalsName();
         List<PStaticValue> arguments = aMacroReference.getValues();
         int i = 0;
@@ -758,7 +761,8 @@ public class ObjectMacro {
                 MTextArgument textArgument = macro_args.newTextArgument();
                 textArgument.newParamName(paramNames.get(i));
 
-                createTextParts(textArgument, stringValue.getParts());
+                ObjectMacro.createTextParts(textArgument,
+                        stringValue.getParts());
             }
             else if (argument instanceof AVarStaticValue) {
                 AVarStaticValue varValue = (AVarStaticValue) argument;
