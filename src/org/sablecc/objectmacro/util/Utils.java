@@ -17,7 +17,8 @@
 
 package org.sablecc.objectmacro.util;
 
-import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
+import org.sablecc.objectmacro.syntax3.node.TVariable;
 
 public class Utils {
 
@@ -66,7 +67,7 @@ public class Utils {
     }
 
     public static String[] splitName(
-            TIdentifier identifier){
+            TIdentifier identifier) {
 
         return identifier.getText().split(NAME_SEPARATOR);
     }

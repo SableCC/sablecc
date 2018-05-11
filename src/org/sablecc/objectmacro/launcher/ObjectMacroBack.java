@@ -17,19 +17,29 @@
 
 package org.sablecc.objectmacro.launcher;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.PushbackReader;
+import java.io.StringWriter;
 
-import org.sablecc.exception.*;
-import org.sablecc.objectmacro.codegeneration.*;
-import org.sablecc.objectmacro.codegeneration.java.*;
-import org.sablecc.objectmacro.errormessage.*;
-import org.sablecc.objectmacro.exception.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.codegeneration.CodeGenerator;
+import org.sablecc.objectmacro.codegeneration.IntermediateRepresentation;
+import org.sablecc.objectmacro.codegeneration.java.JavaCodeGenerator;
+import org.sablecc.objectmacro.errormessage.MInternalError;
+import org.sablecc.objectmacro.errormessage.MLexicalError;
+import org.sablecc.objectmacro.errormessage.MSyntaxError;
+import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.intermediate.syntax3.lexer.Lexer;
 import org.sablecc.objectmacro.intermediate.syntax3.lexer.LexerException;
 import org.sablecc.objectmacro.intermediate.syntax3.node.Start;
 import org.sablecc.objectmacro.intermediate.syntax3.parser.Parser;
 import org.sablecc.objectmacro.intermediate.syntax3.parser.ParserException;
-import org.sablecc.util.*;
+import org.sablecc.util.Strictness;
+import org.sablecc.util.Verbosity;
 
 /**
  * The main class of ObjectMacroBack.
@@ -56,10 +66,11 @@ public class ObjectMacroBack {
         }
         catch (ParserException e) {
             int start = e.getMessage().indexOf(' ');
-            System.err.print(new MSyntaxError(e.getToken().getLine() + "", e
-                    .getToken().getPos() + "", e.getToken().getClass()
-                    .getSimpleName().substring(1).toLowerCase(), e.getToken()
-                    .getText(), e.getMessage().substring(start)));
+            System.err.print(new MSyntaxError(e.getToken().getLine() + "",
+                    e.getToken().getPos() + "",
+                    e.getToken().getClass().getSimpleName().substring(1)
+                            .toLowerCase(),
+                    e.getToken().getText(), e.getMessage().substring(start)));
             System.err.flush();
             System.exit(1);
         }
@@ -74,8 +85,8 @@ public class ObjectMacroBack {
 
             start = e.getMessage().indexOf(' ') + 1;
 
-            System.err.print(new MLexicalError(line, pos, e.getMessage()
-                    .substring(start)));
+            System.err.print(new MLexicalError(line, pos,
+                    e.getMessage().substring(start)));
             System.err.flush();
             System.exit(1);
         }
@@ -98,7 +109,8 @@ public class ObjectMacroBack {
      */
     public static void compile(
             String[] arguments)
-            throws ParserException, LexerException {
+            throws ParserException,
+            LexerException {
 
         // default target is java-constructor
         String targetLanguage = "java-constructor";
@@ -182,8 +194,8 @@ public class ObjectMacroBack {
                 return;
 
             default:
-                throw new InternalException("unhandled option "
-                        + optionArgument.getOption());
+                throw new InternalException(
+                        "unhandled option " + optionArgument.getOption());
             }
         }
 
@@ -193,8 +205,8 @@ public class ObjectMacroBack {
             System.out.println();
             System.out.println("ObjectMacroBack, part of SableCC version "
                     + Version.VERSION);
-            System.out
-                    .println("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
+            System.out.println(
+                    "by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
             System.out.println();
             break;
         }
@@ -210,7 +222,7 @@ public class ObjectMacroBack {
         }
 
         // check target
-        if (!(targetLanguage.equals("java-constructor"))) {
+        if (!targetLanguage.equals("java-constructor")) {
             throw CompilerException.unknownTarget(targetLanguage);
         }
 
@@ -221,7 +233,8 @@ public class ObjectMacroBack {
         File macroFile = new File(textArgument.getText());
 
         if (!textArgument.getText().endsWith(".intermediate")) {
-            throw CompilerException.invalidIntermediateSuffix(textArgument.getText());
+            throw CompilerException
+                    .invalidIntermediateSuffix(textArgument.getText());
         }
 
         if (!macroFile.exists()) {
@@ -247,7 +260,8 @@ public class ObjectMacroBack {
             boolean generateCode,
             Strictness strictness,
             Verbosity verbosity)
-            throws ParserException, LexerException {
+            throws ParserException,
+            LexerException {
 
         switch (verbosity) {
         case INFORMATIVE:
@@ -280,8 +294,8 @@ public class ObjectMacroBack {
         }
 
         IntermediateRepresentation ir = new IntermediateRepresentation(
-                ast.getPIntermediateRepresentation(), macroFile, destinationDirectory,
-                destinationPackage);
+                ast.getPIntermediateRepresentation(), macroFile,
+                destinationDirectory, destinationPackage);
 
         CodeGenerator codeGenerator = new JavaCodeGenerator(ir);
         codeGenerator.generateCode();

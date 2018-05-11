@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.sablecc.objectmacro.structure;
 
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.syntax3.node.ADirective;
-import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
 public class Directive {
 
@@ -28,13 +28,13 @@ public class Directive {
 
     Directive(
             ADirective declaration,
-            Param parent){
+            Param parent) {
 
-        if(parent == null){
+        if (parent == null) {
             throw new InternalException("parent may not be null here");
         }
 
-        if(declaration == null){
+        if (declaration == null) {
             throw new InternalException("declaration may not be null here");
         }
 
@@ -43,11 +43,13 @@ public class Directive {
 
     }
 
-    public ADirective getDeclaration(){
+    public ADirective getDeclaration() {
+
         return this.declaration;
     }
 
-    public String getName(){
+    public String getName() {
+
         return this.declaration.getName().getText();
     }
 }

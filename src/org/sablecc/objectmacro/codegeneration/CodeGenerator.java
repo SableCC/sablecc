@@ -17,8 +17,8 @@
 
 package org.sablecc.objectmacro.codegeneration;
 
-import org.sablecc.exception.*;
-import org.sablecc.util.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.util.Strictness;
 
 public abstract class CodeGenerator {
 

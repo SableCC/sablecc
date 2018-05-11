@@ -14,17 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.sablecc.objectmacro.walker;
 
-import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.structure.GlobalIndex;
 import org.sablecc.objectmacro.structure.Macro;
 import org.sablecc.objectmacro.structure.Param;
-import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.objectmacro.syntax3.node.AInternal;
+import org.sablecc.objectmacro.syntax3.node.AMacro;
+import org.sablecc.objectmacro.syntax3.node.AParam;
+import org.sablecc.objectmacro.syntax3.node.AVarStaticValue;
+import org.sablecc.objectmacro.syntax3.node.AVarStringPart;
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 import org.sablecc.objectmacro.util.Utils;
 
 public class ParamReferenceCollector
-        extends DepthFirstAdapter {
+        extends
+        DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;
 
@@ -56,11 +63,10 @@ public class ParamReferenceCollector
     public void caseAVarStringPart(
             AVarStringPart node) {
 
-        if(this.currentParam != null){
-            this.currentParam.addParamReference(
-                    new TIdentifier(
-                            Utils.getVarName(
-                                    node.getVariable()), node.getVariable().getLine(), node.getVariable().getPos()));
+        if (this.currentParam != null) {
+            this.currentParam.addParamReference(new TIdentifier(
+                    Utils.getVarName(node.getVariable()),
+                    node.getVariable().getLine(), node.getVariable().getPos()));
         }
     }
 
@@ -68,7 +74,7 @@ public class ParamReferenceCollector
     public void caseAVarStaticValue(
             AVarStaticValue node) {
 
-        if(this.currentParam != null){
+        if (this.currentParam != null) {
             this.currentParam.addParamReference(node.getIdentifier());
         }
     }
@@ -77,8 +83,7 @@ public class ParamReferenceCollector
     public void inAParam(
             AParam node) {
 
-        this.currentParam = this.currentMacro
-                .getParam(node.getName());
+        this.currentParam = this.currentMacro.getParam(node.getName());
     }
 
     @Override
@@ -92,8 +97,7 @@ public class ParamReferenceCollector
     public void inAInternal(
             AInternal node) {
 
-        this.currentParam = this.currentMacro
-                .getParam(node.getName());
+        this.currentParam = this.currentMacro.getParam(node.getName());
     }
 
     @Override

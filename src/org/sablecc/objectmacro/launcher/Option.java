@@ -17,13 +17,19 @@
 
 package org.sablecc.objectmacro.launcher;
 
-import java.io.*;
-import java.util.*;
+import java.io.PushbackReader;
+import java.io.StringReader;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import org.sablecc.exception.*;
-import org.sablecc.objectmacro.launcher.syntax3.lexer.*;
-import org.sablecc.objectmacro.launcher.syntax3.node.*;
-import org.sablecc.objectmacro.launcher.syntax3.parser.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.launcher.syntax3.lexer.Lexer;
+import org.sablecc.objectmacro.launcher.syntax3.node.ALongOption;
+import org.sablecc.objectmacro.launcher.syntax3.node.ALongOptionArgument;
+import org.sablecc.objectmacro.launcher.syntax3.node.AShortOption;
+import org.sablecc.objectmacro.launcher.syntax3.node.AShortOptionsArgument;
+import org.sablecc.objectmacro.launcher.syntax3.node.Start;
+import org.sablecc.objectmacro.launcher.syntax3.parser.Parser;
 
 /**
  * The Option enum encapsulates command-line options. This enum provides short
@@ -99,8 +105,8 @@ enum Option {
             if (option.shortName != null) {
 
                 if (shortNameMap.containsKey(option.shortName)) {
-                    throw new InternalException("duplicate short name: "
-                            + option.shortName);
+                    throw new InternalException(
+                            "duplicate short name: " + option.shortName);
                 }
 
                 shortNameMap.put(option.shortName, option);
@@ -109,8 +115,8 @@ enum Option {
             if (option.longName != null) {
 
                 if (longNameMap.containsKey(option.longName)) {
-                    throw new InternalException("duplicate long name: "
-                            + option.longName);
+                    throw new InternalException(
+                            "duplicate long name: " + option.longName);
                 }
 
                 longNameMap.put(option.longName, option);
@@ -166,8 +172,9 @@ enum Option {
         String argument = "-" + shortName;
 
         try {
-            Start ast = new Parser(new Lexer(new PushbackReader(
-                    new StringReader(argument), 1024))).parse();
+            Start ast = new Parser(new Lexer(
+                    new PushbackReader(new StringReader(argument), 1024)))
+                            .parse();
 
             // argument should be short options
             AShortOptionsArgument shortOptionsArgument = (AShortOptionsArgument) ast
@@ -201,8 +208,9 @@ enum Option {
         String argument = "--" + longName;
 
         try {
-            Start ast = new Parser(new Lexer(new PushbackReader(
-                    new StringReader(argument), 1024))).parse();
+            Start ast = new Parser(new Lexer(
+                    new PushbackReader(new StringReader(argument), 1024)))
+                            .parse();
 
             // argument should be long option
             ALongOptionArgument longOptionArgument = (ALongOptionArgument) ast
@@ -417,7 +425,8 @@ enum Option {
                 }
             }
 
-            for (int i = line.toString().length(); i < longestPrefixLength; i++) {
+            for (int i = line.toString()
+                    .length(); i < longestPrefixLength; i++) {
                 line.append(" ");
             }
 

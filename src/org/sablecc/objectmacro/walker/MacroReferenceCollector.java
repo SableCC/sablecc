@@ -14,20 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.sablecc.objectmacro.walker;
 
+import java.util.ArrayList;
+
 import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.structure.GlobalIndex;
 import org.sablecc.objectmacro.structure.Macro;
 import org.sablecc.objectmacro.structure.Param;
-import org.sablecc.objectmacro.syntax3.node.*;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
+import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.objectmacro.syntax3.node.AIdentifiersInternalType;
+import org.sablecc.objectmacro.syntax3.node.AInsertMacroBodyPart;
+import org.sablecc.objectmacro.syntax3.node.AInsertStringPart;
+import org.sablecc.objectmacro.syntax3.node.AInternal;
+import org.sablecc.objectmacro.syntax3.node.AMacro;
+import org.sablecc.objectmacro.syntax3.node.AMacroReference;
+import org.sablecc.objectmacro.syntax3.node.AParam;
+import org.sablecc.objectmacro.syntax3.node.AStringInternalType;
+import org.sablecc.objectmacro.syntax3.node.AStringType;
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
 public class MacroReferenceCollector
-        extends DepthFirstAdapter {
+        extends
+        DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;
 
@@ -59,15 +69,18 @@ public class MacroReferenceCollector
     public void caseAInsertMacroBodyPart(
             AInsertMacroBodyPart node) {
 
-        //Call to verify if the macro exist
-        AMacroReference macroReference = (AMacroReference) node.getMacroReference();
-        Macro referenced_macro = this.globalIndex.getMacro(macroReference.getName());
+        // Call to verify if the macro exist
+        AMacroReference macroReference = (AMacroReference) node
+                .getMacroReference();
+        Macro referenced_macro = this.globalIndex
+                .getMacro(macroReference.getName());
 
-        if(!referenced_macro.getAllParams().isEmpty()){
+        if (!referenced_macro.getAllParams().isEmpty()) {
             throw CompilerException.invalidInsert(macroReference.getName());
         }
 
-        //Delete currentParam reference to verify macro references in the children and avoiding adding duplicate macro references
+        // Delete currentParam reference to verify macro references in the
+        // children and avoiding adding duplicate macro references
         Param tempParam = this.currentParam;
         this.currentParam = null;
 
@@ -80,15 +93,17 @@ public class MacroReferenceCollector
     public void caseAInsertStringPart(
             AInsertStringPart node) {
 
-        //Call to verify if the macro exist
+        // Call to verify if the macro exist
         AMacroReference macroReference = (AMacroReference) node.getMacro();
-        Macro referenced_macro = this.globalIndex.getMacro(macroReference.getName());
+        Macro referenced_macro = this.globalIndex
+                .getMacro(macroReference.getName());
 
-        if(!referenced_macro.getAllParams().isEmpty()){
+        if (!referenced_macro.getAllParams().isEmpty()) {
             throw CompilerException.invalidInsert(macroReference.getName());
         }
 
-        //Delete currentParam reference to verify macro references in the children and avoiding adding duplicate macro references
+        // Delete currentParam reference to verify macro references in the
+        // children and avoiding adding duplicate macro references
         Param tempParam = this.currentParam;
         this.currentParam = null;
 
@@ -101,7 +116,7 @@ public class MacroReferenceCollector
     public void inAMacroReference(
             AMacroReference node) {
 
-        if(this.currentParam != null){
+        if (this.currentParam != null) {
             this.currentParam.addMacroReference(node);
         }
     }
@@ -110,8 +125,9 @@ public class MacroReferenceCollector
     public void caseTIdentifier(
             TIdentifier node) {
 
-        if(node.parent() instanceof AIdentifiersInternalType){
-            AMacroReference aMacroReference = new AMacroReference(node, new ArrayList<>());
+        if (node.parent() instanceof AIdentifiersInternalType) {
+            AMacroReference aMacroReference = new AMacroReference(node,
+                    new ArrayList<>());
             this.currentParam.addMacroReference(aMacroReference);
         }
     }
@@ -120,8 +136,7 @@ public class MacroReferenceCollector
     public void inAParam(
             AParam node) {
 
-        this.currentParam =
-                this.currentMacro.getParam(node.getName());
+        this.currentParam = this.currentMacro.getParam(node.getName());
     }
 
     @Override
@@ -135,8 +150,7 @@ public class MacroReferenceCollector
     public void inAInternal(
             AInternal node) {
 
-        this.currentParam =
-                this.currentMacro.getParam(node.getName());
+        this.currentParam = this.currentMacro.getParam(node.getName());
     }
 
     @Override
@@ -150,15 +164,15 @@ public class MacroReferenceCollector
     public void caseAStringType(
             AStringType node) {
 
-        this.currentMacro.setParamToString(
-                this.currentParam.getNameDeclaration());
+        this.currentMacro
+                .setParamToString(this.currentParam.getNameDeclaration());
     }
 
     @Override
     public void caseAStringInternalType(
             AStringInternalType node) {
 
-        this.currentMacro.setParamToString(
-                this.currentParam.getNameDeclaration());
+        this.currentMacro
+                .setParamToString(this.currentParam.getNameDeclaration());
     }
 }
