@@ -17,17 +17,19 @@
 
 package org.sablecc.objectmacro.codegeneration.java;
 
-import java.io.*;
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.sablecc.objectmacro.codegeneration.*;
+import org.sablecc.objectmacro.codegeneration.CodeGenerator;
+import org.sablecc.objectmacro.codegeneration.IntermediateRepresentation;
 import org.sablecc.objectmacro.codegeneration.java.structure.Macro;
-import org.sablecc.objectmacro.exception.*;
-import org.sablecc.util.*;
+import org.sablecc.objectmacro.exception.CompilerException;
+import org.sablecc.util.Strictness;
 
 public class JavaCodeGenerator
-        extends CodeGenerator {
+        extends
+        CodeGenerator {
 
     private File packageDirectory;
 
@@ -43,8 +45,9 @@ public class JavaCodeGenerator
             String packageName = getIr().getDestinationPackage();
             if (!packageName.equals("")) {
                 String packageDirectoryName = packageName.replace('.', '/');
-                this.packageDirectory = new File(getIr()
-                        .getDestinationDirectory(), packageDirectoryName);
+                this.packageDirectory = new File(
+                        getIr().getDestinationDirectory(),
+                        packageDirectoryName);
             }
             else {
                 this.packageDirectory = getIr().getDestinationDirectory();
@@ -68,8 +71,8 @@ public class JavaCodeGenerator
 
         if (!packageDirectory.exists()) {
             if (!packageDirectory.mkdirs()) {
-                CompilerException.cannotCreateDirectory(packageDirectory
-                        .toString());
+                CompilerException
+                        .cannotCreateDirectory(packageDirectory.toString());
             }
         }
 
@@ -80,7 +83,8 @@ public class JavaCodeGenerator
 
         CodeGenerationWalker walker = new CodeGenerationWalker(getIr(),
                 packageDirectory, macros);
-        UtilsGenerationWalker utilsGenerationWalker = new UtilsGenerationWalker(getIr(), packageDirectory);
+        UtilsGenerationWalker utilsGenerationWalker = new UtilsGenerationWalker(
+                getIr(), packageDirectory);
 
         getIr().getAST().apply(walker);
         getIr().getAST().apply(utilsGenerationWalker);

@@ -2,32 +2,131 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class MPackageDeclaration {
+import java.util.LinkedList;
+import java.util.List;
 
-  private final String pPackageName;
-  private final MPackageDeclaration mPackageDeclaration = this;
+public class MPackageDeclaration
+        extends
+        Macro {
 
-  public MPackageDeclaration(String pPackageName) {
-    if(pPackageName == null) throw new NullPointerException();
-    this.pPackageName = pPackageName;
-  }
+    private String field_PackageName;
 
-  String pPackageName() {
-    return this.pPackageName;
-  }
+    public MPackageDeclaration(
+            String pPackageName) {
 
-  private String rPackageName() {
-    return this.mPackageDeclaration.pPackageName();
-  }
+        setPPackageName(pPackageName);
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("package ");
-    sb.append(rPackageName());
-    sb.append(";");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+    }
 
+    private void setPPackageName(
+            String pPackageName) {
+
+        if (pPackageName == null) {
+
+            throw ObjectMacroException.parameterNull("PackageName");
+
+        }
+
+        this.field_PackageName = pPackageName;
+
+    }
+
+    private String buildPackageName() {
+
+        return this.field_PackageName;
+
+    }
+
+    private String getPackageName() {
+
+        return this.field_PackageName;
+
+    }
+
+    @Override
+
+    void apply(
+
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setPackageDeclaration(this);
+
+    }
+
+    @Override
+
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+
+            buildState = new BuildState();
+
+        }
+
+        else if (buildState.getExpansion() == null) {
+
+            throw ObjectMacroException.cyclicReference("PackageDeclaration");
+
+        }
+
+        else {
+
+            return buildState.getExpansion();
+
+        }
+
+        this.build_state = buildState;
+
+        List<String> indentations = new LinkedList<>();
+
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("package ");
+
+        sb0.append(buildPackageName());
+
+        sb0.append(";");
+
+        buildState.setExpansion(sb0.toString());
+
+        return sb0.toString();
+
+    }
+
+    @Override
+
+    String build(
+            Context context) {
+
+        return build();
+
+    }
+
+    private String applyIndent(
+            String macro,
+            String indent) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if (i < lines.length - 1) {
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else {
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
+    }
 }

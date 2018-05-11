@@ -2,89 +2,42 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.*;
-
 public class MCannotModify {
 
-  private final List<Object> ePackageDeclaration = new LinkedList<Object>();
+    private final String pMacroName;
 
-  public MCannotModify() {
-  }
+    private final MCannotModify mCannotModify = this;
 
-  public MPackageDeclaration newPackageDeclaration(String pPackageName) {
-    MPackageDeclaration lPackageDeclaration = new MPackageDeclaration(pPackageName);
-    this.ePackageDeclaration.add(lPackageDeclaration);
-    return lPackageDeclaration;
-  }
+    public MCannotModify(
+            String pMacroName) {
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MHeader().toString());
-    if(this.ePackageDeclaration.size() > 0) {
-      sb.append(System.getProperty("line.separator"));
+        if (pMacroName == null) {
+            throw new NullPointerException();
+        }
+        this.pMacroName = pMacroName;
     }
-    for(Object oPackageDeclaration : this.ePackageDeclaration) {
-      sb.append(oPackageDeclaration.toString());
+
+    String pMacroName() {
+
+        return this.pMacroName;
     }
-    sb.append(System.getProperty("line.separator"));
-    sb.append("public class MCannotModify {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  private final String pMacroName;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  private final MCannotModify mCannotModify = this;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  public MCannotModify(String pMacroName) {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    if(pMacroName == null) throw new NullPointerException();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    this.pMacroName = pMacroName;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  String pMacroName() {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    return this.pMacroName;");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  private String rMacroName() {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    return this.mCannotModify.pMacroName();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  @Override");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  public String toString() {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    StringBuilder sb = new StringBuilder();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(new MObjectMacroErrorHead().toString());");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(System.getProperty(\"line.separator\"));");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(\"Instance of M\");");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(rMacroName());");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(\" cannot be updated after calling the method built.\");");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    sb.append(System.getProperty(\"line.separator\"));");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("    return sb.toString();");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("}");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+
+    private String rMacroName() {
+
+        return this.mCannotModify.pMacroName();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(new MObjectMacroErrorHead().toString());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Instance of M");
+        sb.append(rMacroName());
+        sb.append(" cannot be updated after calling the method built.");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
+    }
 
 }
