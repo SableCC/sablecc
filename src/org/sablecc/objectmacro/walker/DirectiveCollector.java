@@ -14,16 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.sablecc.objectmacro.walker;
 
 import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.structure.*;
+import org.sablecc.objectmacro.structure.External;
+import org.sablecc.objectmacro.structure.GlobalIndex;
+import org.sablecc.objectmacro.structure.Macro;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
-import org.sablecc.objectmacro.syntax3.node.*;
-import org.sablecc.objectmacro.util.Utils;
+import org.sablecc.objectmacro.syntax3.node.ADirective;
+import org.sablecc.objectmacro.syntax3.node.AMacro;
+import org.sablecc.objectmacro.syntax3.node.AParam;
 
 public class DirectiveCollector
-        extends DepthFirstAdapter {
+        extends
+        DepthFirstAdapter {
 
     private GlobalIndex globalIndex;
 
@@ -32,7 +37,7 @@ public class DirectiveCollector
     private External currentParam;
 
     public DirectiveCollector(
-            GlobalIndex globalIndex){
+            GlobalIndex globalIndex) {
 
         this.globalIndex = globalIndex;
     }
@@ -55,7 +60,8 @@ public class DirectiveCollector
     public void inAParam(
             AParam node) {
 
-        this.currentParam = (External) this.currentMacro.getParam(node.getName());
+        this.currentParam = (External) this.currentMacro
+                .getParam(node.getName());
     }
 
     @Override
@@ -70,10 +76,10 @@ public class DirectiveCollector
             ADirective node) {
 
         String directive_name = node.getName().getText();
-        if(!directive_name.equals("separator")
+        if (!directive_name.equals("separator")
                 && !directive_name.equals("after_last")
                 && !directive_name.equals("before_first")
-                && !directive_name.equals("none") ){
+                && !directive_name.equals("none")) {
 
             throw CompilerException.unknownOption(node);
         }

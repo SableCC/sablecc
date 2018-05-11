@@ -17,15 +17,23 @@
 
 package org.sablecc.objectmacro.structure;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.sablecc.exception.*;
-import org.sablecc.objectmacro.exception.*;
-import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.exception.CompilerException;
+import org.sablecc.objectmacro.syntax3.node.AInternal;
+import org.sablecc.objectmacro.syntax3.node.AMacro;
+import org.sablecc.objectmacro.syntax3.node.AParam;
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 import org.sablecc.util.ComponentFinder;
 import org.sablecc.util.Progeny;
 
-public class Macro{
+public class Macro {
 
     private final GlobalIndex globalIndex;
 
@@ -58,17 +66,19 @@ public class Macro{
     }
 
     public Param newParam(
-            AParam param){
+            AParam param) {
 
-        if(param == null){
+        if (param == null) {
             throw new InternalException("AParam should not be null");
         }
 
         TIdentifier name = param.getName();
         String stringName = name.getText();
 
-        if(containsKeyInInternals(stringName) || containsKeyInParams(stringName)){
-            throw CompilerException.duplicateDeclaration(name, getNameDeclaration());
+        if (containsKeyInInternals(stringName)
+                || containsKeyInParams(stringName)) {
+            throw CompilerException.duplicateDeclaration(name,
+                    getNameDeclaration());
         }
 
         External newParam = new External(param, this, this.globalIndex);
@@ -79,9 +89,9 @@ public class Macro{
     }
 
     public Param newInternal(
-            AInternal param){
+            AInternal param) {
 
-        if(param == null){
+        if (param == null) {
             throw new InternalException("AParam should not be null");
         }
 
@@ -89,8 +99,9 @@ public class Macro{
         String stringName = name.getText();
 
         Param duplicateDeclaration = getParamOrNull(name);
-        if(duplicateDeclaration != null){
-            throw CompilerException.duplicateDeclaration(name, duplicateDeclaration.getNameDeclaration());
+        if (duplicateDeclaration != null) {
+            throw CompilerException.duplicateDeclaration(name,
+                    duplicateDeclaration.getNameDeclaration());
         }
 
         Internal newInternal = new Internal(param, this, this.globalIndex);
@@ -101,15 +112,15 @@ public class Macro{
     }
 
     private Param getParamOrNull(
-            TIdentifier var){
+            TIdentifier var) {
 
         Param toReturn = null;
         String name = var.getText();
-        if(containsKeyInParams(name)){
+        if (containsKeyInParams(name)) {
             toReturn = this.namedParams.get(name);
         }
 
-        if(containsKeyInInternals(name)){
+        if (containsKeyInInternals(name)) {
             toReturn = this.namedInternals.get(name);
         }
 
@@ -117,10 +128,10 @@ public class Macro{
     }
 
     public Param getParam(
-            TIdentifier variable){
+            TIdentifier variable) {
 
         Param param = getParamOrNull(variable);
-        if(param == null){
+        if (param == null) {
             throw CompilerException.unknownParam(variable);
         }
 
@@ -128,42 +139,46 @@ public class Macro{
     }
 
     public void setParamUsed(
-            TIdentifier variable){
+            TIdentifier variable) {
 
-        this.getParam(variable).setUsed();
+        getParam(variable).setUsed();
     }
 
     public void setParamToString(
-            TIdentifier variable){
+            TIdentifier variable) {
 
-        this.getParam(variable).setString();
+        getParam(variable).setString();
     }
 
-
     public AMacro getDeclaration() {
+
         return this.declaration;
     }
 
     public TIdentifier getNameDeclaration() {
+
         return this.declaration.getName();
     }
 
-    public String getName(){
+    public String getName() {
+
         return this.declaration.getName().getText();
     }
 
-    public Set<External> getAllParams(){
+    public Set<External> getAllParams() {
+
         return this.allParams;
     }
 
-    public Set<Internal> getAllInternals(){
+    public Set<Internal> getAllInternals() {
+
         return this.allInternals;
     }
 
     private boolean containsKeyInInternals(
-            String name){
+            String name) {
 
-        if(name == null){
+        if (name == null) {
             throw new InternalException("Name should not be null");
         }
 
@@ -171,25 +186,27 @@ public class Macro{
     }
 
     private boolean containsKeyInParams(
-            String name){
+            String name) {
 
-        if(name == null){
+        if (name == null) {
             throw new InternalException("Name should not be null");
         }
 
         return this.namedParams.containsKey(name);
     }
 
-    public List<String> getInternalsName(){
+    public List<String> getInternalsName() {
+
         List<String> paramsName = new LinkedList<>();
-        for(Param internal : this.getAllInternals()){
+        for (Param internal : getAllInternals()) {
             paramsName.add(internal.getName());
         }
 
         return paramsName;
     }
 
-    public void detectParamsCyclicReference(){
+    public void detectParamsCyclicReference() {
+
         Progeny<Param> referencedParamProgeny = new Progeny<Param>() {
 
             @Override
@@ -203,20 +220,24 @@ public class Macro{
         };
 
         Set<Param> params = new LinkedHashSet<>();
-        params.addAll(this.getAllInternals());
-        params.addAll(this.getAllParams());
-        this.paramsComponentFinder =
-                new ComponentFinder<>(params, referencedParamProgeny);
+        params.addAll(getAllInternals());
+        params.addAll(getAllParams());
+        this.paramsComponentFinder = new ComponentFinder<>(params,
+                referencedParamProgeny);
 
-        for(Param param : params){
-            Param representative = this.paramsComponentFinder.getRepresentative(param);
-            if(param != representative){
-                throw CompilerException.cyclicReference(param.getNameDeclaration(), representative.getNameDeclaration());
+        for (Param param : params) {
+            Param representative = this.paramsComponentFinder
+                    .getRepresentative(param);
+            if (param != representative) {
+                throw CompilerException.cyclicReference(
+                        param.getNameDeclaration(),
+                        representative.getNameDeclaration());
             }
         }
     }
 
-    public ComponentFinder<Param> getComponentFinder(){
+    public ComponentFinder<Param> getComponentFinder() {
+
         return this.paramsComponentFinder;
     }
 }

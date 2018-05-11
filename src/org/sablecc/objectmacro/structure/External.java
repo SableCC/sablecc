@@ -17,14 +17,20 @@
 
 package org.sablecc.objectmacro.structure;
 
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.syntax3.node.*;
-
-import java.util.*;
+import org.sablecc.objectmacro.syntax3.node.ADirective;
+import org.sablecc.objectmacro.syntax3.node.AParam;
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
 public class External
-        extends Param {
+        extends
+        Param {
 
     private final AParam declaration;
 
@@ -51,33 +57,36 @@ public class External
 
         String optionName = directive.getName().getText();
         if (this.directives.containsKey(optionName)) {
-            throw CompilerException.duplicateOption(
-                    directive, this.directives.get(optionName).getDeclaration());
+            throw CompilerException.duplicateOption(directive,
+                    this.directives.get(optionName).getDeclaration());
         }
 
         Directive newDirective = new Directive(directive, this);
-        this.directives.put(
-                optionName, newDirective);
+        this.directives.put(optionName, newDirective);
         this.allDirectives.add(newDirective);
 
         return newDirective;
     }
 
-    public Set<Directive> getAllDirectives(){
+    public Set<Directive> getAllDirectives() {
+
         return this.allDirectives;
     }
 
     @Override
     public TIdentifier getNameDeclaration() {
+
         return this.declaration.getName();
     }
 
     @Override
     public String getName() {
+
         return this.declaration.getName().getText();
     }
 
-    public AParam getDeclaration(){
+    public AParam getDeclaration() {
+
         return this.declaration;
     }
 }

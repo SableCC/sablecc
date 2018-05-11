@@ -17,11 +17,16 @@
 
 package org.sablecc.objectmacro.structure;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import org.sablecc.exception.*;
-import org.sablecc.objectmacro.exception.*;
-import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.exception.CompilerException;
+import org.sablecc.objectmacro.syntax3.node.AMacro;
+import org.sablecc.objectmacro.syntax3.node.PMacro;
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
 public class GlobalIndex {
 
@@ -82,6 +87,7 @@ public class GlobalIndex {
     }
 
     public Set<Macro> getAllMacros() {
+
         return this.allMacros;
     }
 }

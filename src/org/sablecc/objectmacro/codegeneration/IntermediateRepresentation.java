@@ -17,9 +17,9 @@
 
 package org.sablecc.objectmacro.codegeneration;
 
-import org.sablecc.objectmacro.intermediate.syntax3.node.PIntermediateRepresentation;
+import java.io.File;
 
-import java.io.*;
+import org.sablecc.objectmacro.intermediate.syntax3.node.PIntermediateRepresentation;
 
 public class IntermediateRepresentation {
 
@@ -43,8 +43,8 @@ public class IntermediateRepresentation {
 
         String macroFileName = macroFile.getName();
         int length = macroFileName.length();
-        this.name = macroFileName
-                .substring(0, length - ".objectmacro".length());
+        this.name = macroFileName.substring(0,
+                length - ".objectmacro".length());
     }
 
     public PIntermediateRepresentation getAST() {

@@ -17,16 +17,24 @@
 
 package org.sablecc.objectmacro.walker;
 
-import org.sablecc.exception.*;
-import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.structure.*;
-import org.sablecc.objectmacro.syntax3.analysis.*;
-import org.sablecc.objectmacro.syntax3.node.*;
-
 import java.util.List;
 
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.exception.CompilerException;
+import org.sablecc.objectmacro.structure.GlobalIndex;
+import org.sablecc.objectmacro.structure.Macro;
+import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.objectmacro.syntax3.node.AIndentMacroBodyPart;
+import org.sablecc.objectmacro.syntax3.node.AInternal;
+import org.sablecc.objectmacro.syntax3.node.AMacro;
+import org.sablecc.objectmacro.syntax3.node.AParam;
+import org.sablecc.objectmacro.syntax3.node.PInternal;
+import org.sablecc.objectmacro.syntax3.node.PMacroBodyPart;
+import org.sablecc.objectmacro.syntax3.node.PParam;
+
 public class DeclarationCollector
-        extends DepthFirstAdapter {
+        extends
+        DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;
 
@@ -63,7 +71,7 @@ public class DeclarationCollector
             macro.newInternal(param_node);
         }
 
-        for(PMacroBodyPart pMacroBodyPart : node.getMacroBodyParts()){
+        for (PMacroBodyPart pMacroBodyPart : node.getMacroBodyParts()) {
             pMacroBodyPart.apply(this);
         }
     }
@@ -72,7 +80,7 @@ public class DeclarationCollector
     public void caseAIndentMacroBodyPart(
             AIndentMacroBodyPart node) {
 
-        if(node.getCommand().getPos() != 1){
+        if (node.getCommand().getPos() != 1) {
             throw CompilerException.indentTokenMisused(node.getCommand());
         }
     }

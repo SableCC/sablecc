@@ -17,11 +17,18 @@
 
 package org.sablecc.objectmacro.structure;
 
-import org.sablecc.exception.*;
-import org.sablecc.objectmacro.exception.*;
-import org.sablecc.objectmacro.syntax3.node.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
-import java.util.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.exception.CompilerException;
+import org.sablecc.objectmacro.syntax3.node.AMacroReference;
+import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
 public class Param {
 
@@ -47,7 +54,7 @@ public class Param {
             throw new InternalException("scope may not be null");
         }
 
-        if(globalIndex == null){
+        if (globalIndex == null) {
             throw new InternalException("globalIndex may not be null");
         }
 
@@ -56,20 +63,21 @@ public class Param {
     }
 
     public void addMacroReference(
-            AMacroReference macroRef){
+            AMacroReference macroRef) {
 
-        if(macroRef == null){
+        if (macroRef == null) {
             throw new InternalException("Macro reference cannot be null");
         }
 
         TIdentifier identifier = macroRef.getName();
 
-        if(this.globalIndex.getMacro(identifier) == null){
+        if (this.globalIndex.getMacro(identifier) == null) {
             throw CompilerException.unknownMacro(identifier);
         }
 
-        if(this.macroReferencesName.containsKey(identifier.getText())){
-            throw CompilerException.duplicateMacroRef(macroRef.getName(), getNameDeclaration());
+        if (this.macroReferencesName.containsKey(identifier.getText())) {
+            throw CompilerException.duplicateMacroRef(macroRef.getName(),
+                    getNameDeclaration());
         }
 
         this.macroReferences.add(macroRef);
@@ -77,64 +85,73 @@ public class Param {
     }
 
     public void addParamReference(
-            TIdentifier paramName){
+            TIdentifier paramName) {
 
-        if(paramName == null){
+        if (paramName == null) {
             throw new InternalException("param cannot be null");
         }
 
         String name = paramName.getText();
-        if(name.equals(getName())){
-            throw CompilerException.selfReference(paramName, getNameDeclaration());
+        if (name.equals(getName())) {
+            throw CompilerException.selfReference(paramName,
+                    getNameDeclaration());
         }
 
         Param newParamRef = this.parent.getParam(paramName);
-        if(newParamRef == null){
+        if (newParamRef == null) {
             throw new InternalException("parameter may not be null");
         }
 
         this.paramReferences.put(name, newParamRef);
     }
 
-    public Set<AMacroReference> getMacroReferences(){
+    public Set<AMacroReference> getMacroReferences() {
+
         return this.macroReferences;
     }
 
-    public TIdentifier getNameDeclaration(){
+    public TIdentifier getNameDeclaration() {
+
         return null;
     }
 
     public String getName() {
+
         return null;
     }
 
     public boolean isUsed() {
+
         return this.isUsed;
     }
 
     void setUsed() {
+
         this.isUsed = true;
     }
 
-    public boolean isString(){
+    public boolean isString() {
+
         return this.isString;
     }
 
-    void setString(){
+    void setString() {
+
         this.isString = true;
     }
 
-    Set<Param> getDirectParamReferences(){
+    Set<Param> getDirectParamReferences() {
 
         Set<Param> directlyParams = new HashSet<>();
-        for(Param param : this.paramReferences.values()){
+        for (Param param : this.paramReferences.values()) {
             directlyParams.add(param);
         }
 
         return Collections.unmodifiableSet(directlyParams);
     }
 
-    public Macro getParent(){
+    public Macro getParent() {
+
         return this.parent;
     }
 }
