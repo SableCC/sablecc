@@ -2,122 +2,151 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MMacro {
 
-  private final List<Object> eSimpleName = new LinkedList<Object>();
-  private final List<Object> eParam = new LinkedList<Object>();
-  private final List<Object> eInternal = new LinkedList<Object>();
-  private final List<Object> eInitializationOrder = new LinkedList<Object>();
-  private final List<Object> eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart = new LinkedList<Object>();
+    private final List<Object> eSimpleName = new LinkedList<>();
 
-  public MMacro() {
-  }
+    private final List<Object> eParam = new LinkedList<>();
 
-  public MSimpleName newSimpleName(String pName) {
-    MSimpleName lSimpleName = new MSimpleName(pName);
-    this.eSimpleName.add(lSimpleName);
-    return lSimpleName;
-  }
+    private final List<Object> eInternal = new LinkedList<>();
 
-  public MParam newParam() {
-    MParam lParam = new MParam();
-    this.eParam.add(lParam);
-    return lParam;
-  }
+    private final List<Object> eInitializationOrder = new LinkedList<>();
 
-  public MInternal newInternal() {
-    MInternal lInternal = new MInternal();
-    this.eInternal.add(lInternal);
-    return lInternal;
-  }
+    private final List<
+            Object> eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                    = new LinkedList<>();
 
-  public MInitializationOrder newInitializationOrder() {
-    MInitializationOrder lInitializationOrder = new MInitializationOrder();
-    this.eInitializationOrder.add(lInitializationOrder);
-    return lInitializationOrder;
-  }
+    public MMacro() {
 
-  public MStringPart newStringPart(String pString) {
-    MStringPart lStringPart = new MStringPart(pString);
-    this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart.add(lStringPart);
-    return lStringPart;
-  }
-
-  public MEolPart newEolPart() {
-    MEolPart lEolPart = new MEolPart();
-    this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart.add(lEolPart);
-    return lEolPart;
-  }
-
-  public MParamInsert newParamInsert() {
-    MParamInsert lParamInsert = new MParamInsert();
-    this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart.add(lParamInsert);
-    return lParamInsert;
-  }
-
-  public MMacroInsert newMacroInsert() {
-    MMacroInsert lMacroInsert = new MMacroInsert();
-    this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart.add(lMacroInsert);
-    return lMacroInsert;
-  }
-
-  public MIndentPart newIndentPart() {
-    MIndentPart lIndentPart = new MIndentPart();
-    this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart.add(lIndentPart);
-    return lIndentPart;
-  }
-
-  public MEndIndentPart newEndIndentPart() {
-    MEndIndentPart lEndIndentPart = new MEndIndentPart();
-    this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart.add(lEndIndentPart);
-    return lEndIndentPart;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("Macro {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("  Name = ");
-    if(this.eSimpleName.size() > 1) {
-      sb.append("{ ");
     }
-    {
-      boolean first = true;
-      for(Object oSimpleName : this.eSimpleName) {
-        if(first) {
-          first = false;
+
+    public MSimpleName newSimpleName(
+            String pName) {
+
+        MSimpleName lSimpleName = new MSimpleName(pName);
+        this.eSimpleName.add(lSimpleName);
+        return lSimpleName;
+    }
+
+    public MParam newParam() {
+
+        MParam lParam = new MParam();
+        this.eParam.add(lParam);
+        return lParam;
+    }
+
+    public MInternal newInternal() {
+
+        MInternal lInternal = new MInternal();
+        this.eInternal.add(lInternal);
+        return lInternal;
+    }
+
+    public MInitializationOrder newInitializationOrder() {
+
+        MInitializationOrder lInitializationOrder = new MInitializationOrder();
+        this.eInitializationOrder.add(lInitializationOrder);
+        return lInitializationOrder;
+    }
+
+    public MStringPart newStringPart(
+            String pString) {
+
+        MStringPart lStringPart = new MStringPart(pString);
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lStringPart);
+        return lStringPart;
+    }
+
+    public MEolPart newEolPart() {
+
+        MEolPart lEolPart = new MEolPart();
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lEolPart);
+        return lEolPart;
+    }
+
+    public MParamInsert newParamInsert() {
+
+        MParamInsert lParamInsert = new MParamInsert();
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lParamInsert);
+        return lParamInsert;
+    }
+
+    public MMacroInsert newMacroInsert() {
+
+        MMacroInsert lMacroInsert = new MMacroInsert();
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lMacroInsert);
+        return lMacroInsert;
+    }
+
+    public MIndentPart newIndentPart() {
+
+        MIndentPart lIndentPart = new MIndentPart();
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lIndentPart);
+        return lIndentPart;
+    }
+
+    public MEndIndentPart newEndIndentPart() {
+
+        MEndIndentPart lEndIndentPart = new MEndIndentPart();
+        this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                .add(lEndIndentPart);
+        return lEndIndentPart;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Macro {");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("  Name = ");
+        if (this.eSimpleName.size() > 1) {
+            sb.append("{ ");
         }
-        else {
-          sb.append(", ");
+        {
+            boolean first = true;
+            for (Object oSimpleName : this.eSimpleName) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    sb.append(", ");
+                }
+                sb.append(oSimpleName.toString());
+            }
         }
-        sb.append(oSimpleName.toString());
-      }
+        if (this.eSimpleName.size() > 1) {
+            sb.append(" }");
+        }
+        for (Object oParam : this.eParam) {
+            sb.append(oParam.toString());
+        }
+        for (Object oInternal : this.eInternal) {
+            sb.append(oInternal.toString());
+        }
+        for (Object oInitializationOrder : this.eInitializationOrder) {
+            sb.append(oInitializationOrder.toString());
+        }
+        sb.append("  MacroBody{");
+        sb.append(System.getProperty("line.separator"));
+        for (Object oStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart : this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart) {
+            sb.append(
+                    oStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart
+                            .toString());
+        }
+        sb.append("  }");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("}");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
     }
-    if(this.eSimpleName.size() > 1) {
-      sb.append(" }");
-    }
-    for(Object oParam : this.eParam) {
-      sb.append(oParam.toString());
-    }
-    for(Object oInternal : this.eInternal) {
-      sb.append(oInternal.toString());
-    }
-    for(Object oInitializationOrder : this.eInitializationOrder) {
-      sb.append(oInitializationOrder.toString());
-    }
-    sb.append("  MacroBody{");
-    sb.append(System.getProperty("line.separator"));
-    for(Object oStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart : this.eStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart) {
-      sb.append(oStringPart_EolPart_ParamInsert_MacroInsert_IndentPart_EndIndentPart.toString());
-    }
-    sb.append("  }");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("}");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
 }

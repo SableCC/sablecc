@@ -35,8 +35,7 @@ import org.sablecc.objectmacro.syntax3.node.AStringInternalType;
 import org.sablecc.objectmacro.syntax3.node.AStringType;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
-public class MacroReferenceCollector
-        extends
+public class MacroReferenceCollector extends
         DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;
@@ -70,10 +69,10 @@ public class MacroReferenceCollector
             AInsertMacroBodyPart node) {
 
         // Call to verify if the macro exist
-        AMacroReference macroReference = (AMacroReference) node
-                .getMacroReference();
-        Macro referenced_macro = this.globalIndex
-                .getMacro(macroReference.getName());
+        AMacroReference macroReference
+                = (AMacroReference) node.getMacroReference();
+        Macro referenced_macro
+                = this.globalIndex.getMacro(macroReference.getName());
 
         if (!referenced_macro.getAllParams().isEmpty()) {
             throw CompilerException.invalidInsert(macroReference.getName());
@@ -95,8 +94,8 @@ public class MacroReferenceCollector
 
         // Call to verify if the macro exist
         AMacroReference macroReference = (AMacroReference) node.getMacro();
-        Macro referenced_macro = this.globalIndex
-                .getMacro(macroReference.getName());
+        Macro referenced_macro
+                = this.globalIndex.getMacro(macroReference.getName());
 
         if (!referenced_macro.getAllParams().isEmpty()) {
             throw CompilerException.invalidInsert(macroReference.getName());
@@ -126,8 +125,8 @@ public class MacroReferenceCollector
             TIdentifier node) {
 
         if (node.parent() instanceof AIdentifiersInternalType) {
-            AMacroReference aMacroReference = new AMacroReference(node,
-                    new ArrayList<>());
+            AMacroReference aMacroReference
+                    = new AMacroReference(node, new ArrayList<>());
             this.currentParam.addMacroReference(aMacroReference);
         }
     }

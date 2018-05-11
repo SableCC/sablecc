@@ -6,7 +6,8 @@ public class MInvalidDesinationDirectory {
 
     private final String pDestination;
 
-    private final MInvalidDesinationDirectory mInvalidDesinationDirectory = this;
+    private final MInvalidDesinationDirectory mInvalidDesinationDirectory
+            = this;
 
     public MInvalidDesinationDirectory(
             String pDestination) {

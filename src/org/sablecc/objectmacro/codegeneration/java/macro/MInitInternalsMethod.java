@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MInitInternalsMethod
-        extends
+public class MInitInternalsMethod extends
         Macro {
 
     private String field_Name;
@@ -33,9 +32,9 @@ public class MInitInternalsMethod
 
         this.list_ApplyInternalsInitializer = new ArrayList<>();
 
-        this.ApplyInternalsInitializerValue = new InternalValue(
-                this.list_ApplyInternalsInitializer,
-                this.ApplyInternalsInitializerContext);
+        this.ApplyInternalsInitializerValue
+                = new InternalValue(this.list_ApplyInternalsInitializer,
+                        this.ApplyInternalsInitializerContext);
 
     }
 
@@ -175,10 +174,10 @@ public class MInitInternalsMethod
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        this.ApplyInternalsInitializerSeparator = new DSeparator(
-                sb0.toString());
+        this.ApplyInternalsInitializerSeparator
+                = new DSeparator(sb0.toString());
 
         this.ApplyInternalsInitializerValue
                 .setSeparator(this.ApplyInternalsInitializerSeparator);
@@ -239,7 +238,7 @@ public class MInitInternalsMethod
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    for(Macro macro : this.list_");
 
@@ -249,7 +248,7 @@ public class MInitInternalsMethod
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         StringBuilder sb1 = new StringBuilder();
 
@@ -265,11 +264,11 @@ public class MInitInternalsMethod
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    }");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -301,7 +300,7 @@ public class MInitInternalsMethod
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

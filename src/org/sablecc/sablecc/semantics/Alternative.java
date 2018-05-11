@@ -17,14 +17,33 @@
 
 package org.sablecc.sablecc.semantics;
 
-import java.util.*;
+import java.util.List;
 
-import org.sablecc.exception.*;
-import org.sablecc.sablecc.syntax3.analysis.*;
-import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.sablecc.syntax3.node.AAlternative;
+import org.sablecc.sablecc.syntax3.node.ACharUnit;
+import org.sablecc.sablecc.syntax3.node.AElement;
+import org.sablecc.sablecc.syntax3.node.AEndUnit;
+import org.sablecc.sablecc.syntax3.node.AIdentifierCharUnit;
+import org.sablecc.sablecc.syntax3.node.AIdentifierStringUnit;
+import org.sablecc.sablecc.syntax3.node.ANameUnit;
+import org.sablecc.sablecc.syntax3.node.ANormalElementBody;
+import org.sablecc.sablecc.syntax3.node.AParserProduction;
+import org.sablecc.sablecc.syntax3.node.ASeparatedElementBody;
+import org.sablecc.sablecc.syntax3.node.AStringUnit;
+import org.sablecc.sablecc.syntax3.node.ATreeProduction;
+import org.sablecc.sablecc.syntax3.node.AZeroOrOneUnaryOperator;
+import org.sablecc.sablecc.syntax3.node.Node;
+import org.sablecc.sablecc.syntax3.node.PElementBody;
+import org.sablecc.sablecc.syntax3.node.PUnaryOperator;
+import org.sablecc.sablecc.syntax3.node.PUnit;
+import org.sablecc.sablecc.syntax3.node.TAlternativeName;
+import org.sablecc.sablecc.syntax3.node.TElementName;
+import org.sablecc.sablecc.syntax3.node.Token;
 
-public class Alternative
-        extends LocalDeclaration {
+public class Alternative extends
+        LocalDeclaration {
 
     private Grammar grammar;
 
@@ -60,8 +79,8 @@ public class Alternative
     public String getName() {
 
         if (!this.nameIsCached) {
-            TAlternativeName alternativeName = this.declaration
-                    .getAlternativeName();
+            TAlternativeName alternativeName
+                    = this.declaration.getAlternativeName();
             if (alternativeName != null) {
                 String text = alternativeName.getText();
                 this.name = text.substring(1, text.length() - 2);
@@ -107,8 +126,8 @@ public class Alternative
                             TElementName elementName = node.getElementName();
                             if (elementName != null) {
                                 String text = elementName.getText();
-                                Alternative.this.name = text.substring(1,
-                                        text.length() - 2);
+                                Alternative.this.name
+                                        = text.substring(1, text.length() - 2);
                                 Alternative.this.nameIsCached = true;
                             }
                             else {
@@ -120,8 +139,8 @@ public class Alternative
                         public void caseANormalElementBody(
                                 ANormalElementBody node) {
 
-                            PUnaryOperator unaryOperator = node
-                                    .getUnaryOperator();
+                            PUnaryOperator unaryOperator
+                                    = node.getUnaryOperator();
                             if (unaryOperator == null
                                     || unaryOperator instanceof AZeroOrOneUnaryOperator) {
                                 visit(node.getUnit());
@@ -144,8 +163,8 @@ public class Alternative
                         public void caseANameUnit(
                                 ANameUnit node) {
 
-                            Alternative.this.name = node.getIdentifier()
-                                    .getText();
+                            Alternative.this.name
+                                    = node.getIdentifier().getText();
                             Alternative.this.nameIsCached = true;
                         }
 
@@ -154,8 +173,8 @@ public class Alternative
                                 AIdentifierCharUnit node) {
 
                             String text = node.getIdentifierChar().getText();
-                            Alternative.this.name = text.substring(1,
-                                    text.length() - 1);
+                            Alternative.this.name
+                                    = text.substring(1, text.length() - 1);
                             Alternative.this.nameIsCached = true;
                         }
 
@@ -172,8 +191,8 @@ public class Alternative
                                 AIdentifierStringUnit node) {
 
                             String text = node.getIdentifierString().getText();
-                            Alternative.this.name = text.substring(1,
-                                    text.length() - 1);
+                            Alternative.this.name
+                                    = text.substring(1, text.length() - 1);
                             Alternative.this.nameIsCached = true;
                         }
 
@@ -195,8 +214,8 @@ public class Alternative
                     });
 
                     if (!this.nameIsCached) {
-                        throw new InternalException("unhandled case: "
-                                + this.declaration);
+                        throw new InternalException(
+                                "unhandled case: " + this.declaration);
                     }
                 }
             }
@@ -235,16 +254,17 @@ public class Alternative
             if (this.location == null) {
                 this.location = this.declaration.getEmptyKeyword();
                 if (this.location == null) {
-                    AElement element = (AElement) this.declaration
-                            .getElements().get(0);
+                    AElement element
+                            = (AElement) this.declaration.getElements().get(0);
                     this.location = element.getSelectionKeyword();
                     if (this.location == null) {
                         this.location = element.getElementName();
                         if (this.location == null) {
-                            PElementBody pElementBody = element
-                                    .getElementBody();
+                            PElementBody pElementBody
+                                    = element.getElementBody();
                             if (pElementBody instanceof ANormalElementBody) {
-                                ANormalElementBody elementBody = (ANormalElementBody) pElementBody;
+                                ANormalElementBody elementBody
+                                        = (ANormalElementBody) pElementBody;
                                 PUnit unit = elementBody.getUnit();
                                 unit.apply(new DepthFirstAdapter() {
 
@@ -252,12 +272,14 @@ public class Alternative
                                     public void defaultCase(
                                             Node node) {
 
-                                        Alternative.this.location = (Token) node;
+                                        Alternative.this.location
+                                                = (Token) node;
                                     }
                                 });
                             }
                             else {
-                                ASeparatedElementBody elementBody = (ASeparatedElementBody) pElementBody;
+                                ASeparatedElementBody elementBody
+                                        = (ASeparatedElementBody) pElementBody;
                                 this.location = elementBody.getLPar();
                             }
                         }
@@ -277,7 +299,7 @@ public class Alternative
         }
 
         this.elements = elements;
-        this.localNameSpace = new LocalNameSpace<Element>(elements);
+        this.localNameSpace = new LocalNameSpace<>(elements);
     }
 
     void setDeclaredTransformation(

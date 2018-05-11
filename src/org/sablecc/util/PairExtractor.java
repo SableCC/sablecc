@@ -17,7 +17,10 @@
 
 package org.sablecc.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class PairExtractor<T> {
 
@@ -26,14 +29,14 @@ public class PairExtractor<T> {
     public PairExtractor(
             Set<T> set) {
 
-        ArrayList<T> array = new ArrayList<T>(set);
+        ArrayList<T> array = new ArrayList<>(set);
         int size = array.size();
 
-        Set<Pair<T, T>> pairSet = new LinkedHashSet<Pair<T, T>>();
+        Set<Pair<T, T>> pairSet = new LinkedHashSet<>();
 
         for (int i = 0; i < size - 1; i++) {
             for (int j = i + 1; j < size; j++) {
-                pairSet.add(new Pair<T, T>(array.get(i), array.get(j)));
+                pairSet.add(new Pair<>(array.get(i), array.get(j)));
             }
         }
 

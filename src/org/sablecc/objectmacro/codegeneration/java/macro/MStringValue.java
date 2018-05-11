@@ -5,8 +5,7 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MStringValue
-        extends
+public class MStringValue extends
         Macro {
 
     private String field_String;
@@ -119,7 +118,7 @@ public class MStringValue
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

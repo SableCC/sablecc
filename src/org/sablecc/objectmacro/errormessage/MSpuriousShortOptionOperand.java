@@ -8,7 +8,8 @@ public class MSpuriousShortOptionOperand {
 
     private final String pOperandText;
 
-    private final MSpuriousShortOptionOperand mSpuriousShortOptionOperand = this;
+    private final MSpuriousShortOptionOperand mSpuriousShortOptionOperand
+            = this;
 
     public MSpuriousShortOptionOperand(
             String pOptionName,

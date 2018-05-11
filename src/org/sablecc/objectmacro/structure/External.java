@@ -28,8 +28,7 @@ import org.sablecc.objectmacro.syntax3.node.ADirective;
 import org.sablecc.objectmacro.syntax3.node.AParam;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
-public class External
-        extends
+public class External extends
         Param {
 
     private final AParam declaration;

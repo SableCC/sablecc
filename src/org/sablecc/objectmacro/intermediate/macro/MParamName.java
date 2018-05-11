@@ -4,30 +4,38 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 public class MParamName {
 
-  private final String pParamName;
-  private final MParamName mParamName = this;
+    private final String pParamName;
 
-  public MParamName(String pParamName) {
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    private final MParamName mParamName = this;
 
-  String pParamName() {
-    return this.pParamName;
-  }
+    public MParamName(
+            String pParamName) {
 
-  private String rParamName() {
-    return this.mParamName.pParamName();
-  }
+        if (pParamName == null) {
+            throw new NullPointerException();
+        }
+        this.pParamName = pParamName;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    ParamName { Name = '");
-    sb.append(rParamName());
-    sb.append("' }");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+    String pParamName() {
+
+        return this.pParamName;
+    }
+
+    private String rParamName() {
+
+        return this.mParamName.pParamName();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("    ParamName { Name = '");
+        sb.append(rParamName());
+        sb.append("' }");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
+    }
 
 }

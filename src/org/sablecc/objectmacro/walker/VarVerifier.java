@@ -36,8 +36,7 @@ import org.sablecc.objectmacro.syntax3.node.PStringPart;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 import org.sablecc.objectmacro.util.Utils;
 
-public class VarVerifier
-        extends
+public class VarVerifier extends
         DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;

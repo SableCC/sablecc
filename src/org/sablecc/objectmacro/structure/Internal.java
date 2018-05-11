@@ -21,8 +21,7 @@ import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.syntax3.node.AInternal;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
-public class Internal
-        extends
+public class Internal extends
         Param {
 
     private final AInternal declaration;

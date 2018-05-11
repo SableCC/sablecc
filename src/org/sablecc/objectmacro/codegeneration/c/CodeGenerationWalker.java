@@ -17,10 +17,10 @@
 
 package org.sablecc.objectmacro.codegeneration.c;
 
-import org.sablecc.objectmacro.intermediate.syntax3.analysis.*;
+import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
 
-public class CodeGenerationWalker
-        extends DepthFirstAdapter {
+public class CodeGenerationWalker extends
+        DepthFirstAdapter {
 //
 //    private final File packageDirectory;
 //

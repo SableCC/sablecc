@@ -2,8 +2,7 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-class DBeforeFirst
-        extends
+class DBeforeFirst extends
         Directive {
 
     DBeforeFirst(

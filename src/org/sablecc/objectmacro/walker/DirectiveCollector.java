@@ -26,8 +26,7 @@ import org.sablecc.objectmacro.syntax3.node.ADirective;
 import org.sablecc.objectmacro.syntax3.node.AMacro;
 import org.sablecc.objectmacro.syntax3.node.AParam;
 
-public class DirectiveCollector
-        extends
+public class DirectiveCollector extends
         DepthFirstAdapter {
 
     private GlobalIndex globalIndex;
@@ -60,8 +59,8 @@ public class DirectiveCollector
     public void inAParam(
             AParam node) {
 
-        this.currentParam = (External) this.currentMacro
-                .getParam(node.getName());
+        this.currentParam
+                = (External) this.currentMacro.getParam(node.getName());
     }
 
     @Override

@@ -17,8 +17,8 @@
 
 package org.sablecc.sablecc.semantics;
 
-import org.sablecc.exception.*;
-import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.syntax3.node.Token;
 
 public abstract class Declaration {
 

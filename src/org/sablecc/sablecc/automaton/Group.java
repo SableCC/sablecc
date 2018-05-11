@@ -17,10 +17,17 @@
 
 package org.sablecc.sablecc.automaton;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import org.sablecc.exception.*;
-import org.sablecc.sablecc.alphabet.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.alphabet.Alphabet;
+import org.sablecc.sablecc.alphabet.RichSymbol;
+import org.sablecc.sablecc.alphabet.Symbol;
 
 class Group {
 
@@ -147,7 +154,7 @@ class Group {
     boolean splitOnRichSymbol(
             RichSymbol richSymbol) {
 
-        Set<Group> destinations = new LinkedHashSet<Group>();
+        Set<Group> destinations = new LinkedHashSet<>();
 
         for (State state : this.states) {
 
@@ -172,7 +179,7 @@ class Group {
             return false;
         }
 
-        Map<Group, SortedSet<State>> stateMap = new HashMap<Group, SortedSet<State>>();
+        Map<Group, SortedSet<State>> stateMap = new HashMap<>();
 
         if (isDeadEnd()) {
             stateMap.put(this, new TreeSet<State>());
@@ -193,7 +200,7 @@ class Group {
             SortedSet<State> states = stateMap.get(destination);
 
             if (states == null) {
-                states = new TreeSet<State>();
+                states = new TreeSet<>();
                 stateMap.put(destination, states);
             }
 

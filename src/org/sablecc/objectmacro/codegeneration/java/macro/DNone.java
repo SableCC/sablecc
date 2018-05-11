@@ -2,8 +2,7 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-class DNone
-        extends
+class DNone extends
         Directive {
 
     DNone(

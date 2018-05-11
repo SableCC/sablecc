@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MInsertMacroPart
-        extends
+public class MInsertMacroPart extends
         Macro {
 
     private String field_Name;
@@ -542,15 +541,15 @@ public class MInsertMacroPart
 
         sb0.append("();");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append(buildMacroBodyParts());
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append(buildSetInternals());
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("sb");
 
@@ -590,7 +589,7 @@ public class MInsertMacroPart
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

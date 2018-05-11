@@ -2,21 +2,26 @@
 
 package org.sablecc.objectmacro.codegeneration.c.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MTextC {
 
     private final MFile mFile;
 
-    private final List<Object> eParamParam_AncestorParam = new LinkedList<Object>();
+    private final List<Object> eParamParam_AncestorParam = new LinkedList<>();
 
-    private final List<Object> eParamConstructorInit_SelfRefC_AncestorConstructorInit = new LinkedList<Object>();
+    private final List<
+            Object> eParamConstructorInit_SelfRefC_AncestorConstructorInit
+                    = new LinkedList<>();
 
-    private final List<Object> eParam = new LinkedList<Object>();
+    private final List<Object> eParam = new LinkedList<>();
 
-    private final List<Object> eParamRef = new LinkedList<Object>();
+    private final List<Object> eParamRef = new LinkedList<>();
 
-    private final List<Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart = new LinkedList<Object>();
+    private final List<
+            Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart
+                    = new LinkedList<>();
 
     MTextC(
             MFile mFile) {
@@ -46,8 +51,8 @@ public class MTextC {
     public MParamConstructorInit newParamConstructorInit(
             String pName) {
 
-        MParamConstructorInit lParamConstructorInit = new MParamConstructorInit(
-                pName, this.mFile);
+        MParamConstructorInit lParamConstructorInit
+                = new MParamConstructorInit(pName, this.mFile);
         this.eParamConstructorInit_SelfRefC_AncestorConstructorInit
                 .add(lParamConstructorInit);
         return lParamConstructorInit;
@@ -64,8 +69,8 @@ public class MTextC {
     public MAncestorConstructorInit newAncestorConstructorInit(
             String pName) {
 
-        MAncestorConstructorInit lAncestorConstructorInit = new MAncestorConstructorInit(
-                pName, this.mFile);
+        MAncestorConstructorInit lAncestorConstructorInit
+                = new MAncestorConstructorInit(pName, this.mFile);
         this.eParamConstructorInit_SelfRefC_AncestorConstructorInit
                 .add(lAncestorConstructorInit);
         return lAncestorConstructorInit;
@@ -107,8 +112,8 @@ public class MTextC {
     public MParamInsertPart newParamInsertPart(
             String pName) {
 
-        MParamInsertPart lParamInsertPart = new MParamInsertPart(pName,
-                this.mFile);
+        MParamInsertPart lParamInsertPart
+                = new MParamInsertPart(pName, this.mFile);
         this.eStringPart_EolPart_ParamInsertPart_TextInsertPart
                 .add(lParamInsertPart);
         return lParamInsertPart;

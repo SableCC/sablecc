@@ -17,21 +17,36 @@
 
 package org.sablecc.sablecc.launcher;
 
-import static org.sablecc.sablecc.launcher.Version.*;
-import static org.sablecc.util.Strictness.*;
-import static org.sablecc.util.Verbosity.*;
+import static org.sablecc.util.Strictness.LENIENT;
+import static org.sablecc.util.Strictness.STRICT;
+import static org.sablecc.util.Verbosity.INFORMATIVE;
+import static org.sablecc.util.Verbosity.QUIET;
+import static org.sablecc.util.Verbosity.VERBOSE;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.PushbackReader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import org.sablecc.exception.*;
-import org.sablecc.sablecc.exception.*;
-import org.sablecc.sablecc.launcher.errormessage.*;
-import org.sablecc.sablecc.semantics.*;
-import org.sablecc.sablecc.syntax3.lexer.*;
-import org.sablecc.sablecc.syntax3.node.*;
-import org.sablecc.sablecc.syntax3.parser.*;
-import org.sablecc.util.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.exception.CompilerException;
+import org.sablecc.sablecc.launcher.errormessage.MInternalError;
+import org.sablecc.sablecc.launcher.errormessage.MLexicalError;
+import org.sablecc.sablecc.launcher.errormessage.MSyntaxError;
+import org.sablecc.sablecc.semantics.SemanticVerifier;
+import org.sablecc.sablecc.syntax3.lexer.Lexer;
+import org.sablecc.sablecc.syntax3.lexer.LexerException;
+import org.sablecc.sablecc.syntax3.node.Start;
+import org.sablecc.sablecc.syntax3.parser.Parser;
+import org.sablecc.sablecc.syntax3.parser.ParserException;
+import org.sablecc.util.Strictness;
+import org.sablecc.util.Verbosity;
 
 /**
  * The main class of SableCC.
@@ -50,7 +65,7 @@ public class SableCC {
 
         try {
             try {
-                processCommandLine(args);
+                SableCC.processCommandLine(args);
             }
             finally {
                 System.out.flush();
@@ -66,9 +81,9 @@ public class SableCC {
             String pos = "" + e.getToken().getPos();
             int start = e.getMessage().indexOf(' ') + 1;
 
-            System.err.print(new MSyntaxError(line, pos, e.getToken()
-                    .getClass().getSimpleName().substring(1), e.getToken()
-                    .getText(), e.getMessage().substring(start)));
+            System.err.print(new MSyntaxError(line, pos,
+                    e.getToken().getClass().getSimpleName().substring(1),
+                    e.getToken().getText(), e.getMessage().substring(start)));
             System.err.flush();
             System.exit(1);
         }
@@ -77,8 +92,8 @@ public class SableCC {
             String pos = "" + e.getToken().getPos();
             int start = e.getMessage().indexOf(' ') + 1;
 
-            System.err.print(new MLexicalError(line, pos, e.getMessage()
-                    .substring(start)));
+            System.err.print(new MLexicalError(line, pos,
+                    e.getMessage().substring(start)));
             System.err.flush();
             System.exit(1);
         }
@@ -111,7 +126,8 @@ public class SableCC {
      */
     public static void processCommandLine(
             String[] arguments)
-            throws ParserException, LexerException {
+            throws ParserException,
+                LexerException {
 
         // default target is java
         final String defaultTarget = "java";
@@ -129,12 +145,12 @@ public class SableCC {
         Strictness strictness = STRICT;
 
         // supported targets
-        SortedSet<String> supportedTargets = new TreeSet<String>();
+        SortedSet<String> supportedTargets = new TreeSet<>();
         supportedTargets.add("java");
 
         // parse command line arguments
-        ArgumentCollection argumentCollection = new ArgumentCollection(
-                arguments);
+        ArgumentCollection argumentCollection
+                = new ArgumentCollection(arguments);
 
         // handle option arguments
         for (OptionArgument optionArgument : argumentCollection
@@ -207,7 +223,7 @@ public class SableCC {
                 break;
 
             case VERSION:
-                System.out.println("SableCC version " + VERSION);
+                System.out.println("SableCC version " + Version.VERSION);
                 return;
 
             case HELP:
@@ -218,8 +234,8 @@ public class SableCC {
                 return;
 
             default:
-                throw new InternalException("unhandled option "
-                        + optionArgument.getOption());
+                throw new InternalException(
+                        "unhandled option " + optionArgument.getOption());
             }
         }
 
@@ -234,8 +250,8 @@ public class SableCC {
         }
 
         // check argument
-        TextArgument fileNameArgument = argumentCollection.getTextArguments()
-                .get(0);
+        TextArgument fileNameArgument
+                = argumentCollection.getTextArguments().get(0);
 
         if (!fileNameArgument.getText().endsWith(".sablecc")) {
             throw LauncherException.invalidSuffix(fileNameArgument.getText());
@@ -244,8 +260,8 @@ public class SableCC {
         File grammarFile = new File(fileNameArgument.getText());
 
         if (!grammarFile.exists()) {
-            throw LauncherException.missingGrammarFile(fileNameArgument
-                    .getText());
+            throw LauncherException
+                    .missingGrammarFile(fileNameArgument.getText());
         }
 
         if (!grammarFile.isFile()) {
@@ -255,11 +271,12 @@ public class SableCC {
         Trace trace = new Trace(verbosity);
 
         trace.informativeln();
-        trace.informativeln("SableCC version " + VERSION);
-        trace.informativeln("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
+        trace.informativeln("SableCC version " + Version.VERSION);
+        trace.informativeln(
+                "by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
         trace.informativeln();
 
-        compileFile(grammarFile, targetLanguage, destinationDirectory,
+        SableCC.compileFile(grammarFile, targetLanguage, destinationDirectory,
                 destinationPackage, generateCode, strictness, trace);
     }
 
@@ -271,7 +288,8 @@ public class SableCC {
             final boolean generateCode,
             final Strictness strictness,
             final Trace trace)
-            throws ParserException, LexerException {
+            throws ParserException,
+                LexerException {
 
         if (grammarFile == null) {
             throw new InternalException("grammarFile may not be null");
@@ -312,7 +330,7 @@ public class SableCC {
             br.close();
             fr.close();
 
-            compileGrammar(sb.toString(), strictness, trace);
+            SableCC.compileGrammar(sb.toString(), strictness, trace);
 
             // TODO: implement
 
@@ -341,7 +359,9 @@ public class SableCC {
             final String text,
             final Strictness strictness,
             final Trace trace)
-            throws ParserException, LexerException, IOException {
+            throws ParserException,
+                LexerException,
+                IOException {
 
         if (text == null) {
             throw new InternalException("text may not be null");
@@ -357,8 +377,9 @@ public class SableCC {
 
         trace.verboseln(" Parsing");
 
-        Start ast = new Parser(new Lexer(new PushbackReader(new StringReader(
-                text), 1024))).parse();
+        Start ast = new Parser(
+                new Lexer(new PushbackReader(new StringReader(text), 1024)))
+                        .parse();
 
         trace.verboseln(" Verifying semantics");
 

@@ -17,13 +17,13 @@
 
 package org.sablecc.sablecc.automaton;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
 /**
  * A marker is used to mark states as starting point for back counts.
  */
-public class Marker
-        implements Comparable<Marker> {
+public class Marker implements
+        Comparable<Marker> {
 
     /**
      * The name of this marker.

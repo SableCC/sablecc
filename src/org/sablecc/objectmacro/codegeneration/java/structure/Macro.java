@@ -17,9 +17,9 @@
 
 package org.sablecc.objectmacro.codegeneration.java.structure;
 
-import org.sablecc.objectmacro.codegeneration.java.macro.MMacro;
+import java.util.List;
 
-import java.util.*;
+import org.sablecc.objectmacro.codegeneration.java.macro.MMacro;
 
 public class Macro {
 
@@ -35,7 +35,7 @@ public class Macro {
             MMacro macro,
             List<String> parametersName,
             List<String> internalsName,
-            String name){
+            String name) {
 
         this.macro = macro;
         this.parametersName = parametersName;
@@ -44,18 +44,22 @@ public class Macro {
     }
 
     public List<String> getInternalsName() {
+
         return this.internalsName;
     }
 
     public List<String> getParametersName() {
+
         return this.parametersName;
     }
 
     public MMacro getMacro() {
+
         return this.macro;
     }
 
-    public String getName(){
+    public String getName() {
+
         return this.name;
     }
 }

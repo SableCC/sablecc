@@ -5,8 +5,7 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MEmptyBuilderWithContext
-        extends
+public class MEmptyBuilderWithContext extends
         Macro {
 
     public MEmptyBuilderWithContext() {
@@ -58,17 +57,17 @@ public class MEmptyBuilderWithContext
 
         sb0.append("@Override");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("String build(Context context) ");
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append(" return build();");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -100,7 +99,7 @@ public class MEmptyBuilderWithContext
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

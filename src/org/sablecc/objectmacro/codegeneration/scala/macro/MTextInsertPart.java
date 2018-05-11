@@ -2,11 +2,12 @@
 
 package org.sablecc.objectmacro.codegeneration.scala.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MTextInsertPart {
 
-    private final List<Object> eTextInsert = new LinkedList<Object>();
+    private final List<Object> eTextInsert = new LinkedList<>();
 
     public MTextInsertPart() {
 

@@ -55,7 +55,8 @@ public class MListH {
         sb.append(System.getProperty("line.separator"));
         sb.append("int List_pushback(List* array, void* _elem_);");
         sb.append(System.getProperty("line.separator"));
-        sb.append("int List_pushback_Mtype(List* array, void* _elem_, int _bool_MType_);");
+        sb.append(
+                "int List_pushback_Mtype(List* array, void* _elem_, int _bool_MType_);");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append("#endif");

@@ -17,10 +17,10 @@
 
 package org.sablecc.util;
 
-import java.math.*;
-import java.util.*;
+import java.math.BigInteger;
+import java.util.LinkedList;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
 public abstract class Type {
 
@@ -34,8 +34,8 @@ public abstract class Type {
     public abstract Type add(
             Type aType);
 
-    public abstract static class SimpleType
-            extends Type {
+    public abstract static class SimpleType extends
+            Type {
 
         public SimpleType() {
 
@@ -55,8 +55,8 @@ public abstract class Type {
 
         public abstract CardinalityInterval getCardinality();
 
-        public static class HomogeneousType
-                extends SimpleType {
+        public static class HomogeneousType extends
+                SimpleType {
 
             private final String name;
 
@@ -71,7 +71,8 @@ public abstract class Type {
                 }
 
                 if (cardinality == null) {
-                    throw new InternalException("cardinality shouldn't be null");
+                    throw new InternalException(
+                            "cardinality shouldn't be null");
                 }
 
                 this.name = name;
@@ -94,8 +95,8 @@ public abstract class Type {
                     return false;
                 }
 
-                if (!this.cardinality.isIncludedIn(anHomogeneousType
-                        .getCardinality())) {
+                if (!this.cardinality
+                        .isIncludedIn(anHomogeneousType.getCardinality())) {
                     return false;
                 }
 
@@ -124,63 +125,67 @@ public abstract class Type {
                 if (aType instanceof Type.SimpleType) {
                     Type.SimpleType aSimpleType = (Type.SimpleType) aType;
 
-                    if (aSimpleType.getCardinality().equals(
-                            CardinalityInterval.ZERO_ZERO)) {
+                    if (aSimpleType.getCardinality()
+                            .equals(CardinalityInterval.ZERO_ZERO)) {
                         return this;
                     }
                 }
 
                 if (aType instanceof SimpleType.AlternatedType) {
-                    SimpleType.AlternatedType anAlternated = (SimpleType.AlternatedType) aType;
+                    SimpleType.AlternatedType anAlternated
+                            = (SimpleType.AlternatedType) aType;
 
                     if (this.name.equals(anAlternated.getLeftElementName())
-                            && this.name.equals(anAlternated
-                                    .getRightElementName())) {
+                            && this.name.equals(
+                                    anAlternated.getRightElementName())) {
                         // x^n..m + (x x)^o..p =
                         // x^[(n+o*2)..(m+p*2)]
 
-                        Bound lowerBound = anAlternated.getCardinality()
-                                .getLowerBound()
-                                .multiply(BigInteger.valueOf(2L));
+                        Bound lowerBound
+                                = anAlternated.getCardinality().getLowerBound()
+                                        .multiply(BigInteger.valueOf(2L));
                         lowerBound.add(this.cardinality.getLowerBound());
 
-                        Bound upperBound = anAlternated.getCardinality()
-                                .getUpperBound()
-                                .multiply(BigInteger.valueOf(2L));
+                        Bound upperBound
+                                = anAlternated.getCardinality().getUpperBound()
+                                        .multiply(BigInteger.valueOf(2L));
                         upperBound.add(this.cardinality.getUpperBound());
 
                         return new Type.SimpleType.HomogeneousType(this.name,
-                                new CardinalityInterval(lowerBound, upperBound));
+                                new CardinalityInterval(lowerBound,
+                                        upperBound));
                     }
                 }
                 else if (aType instanceof SimpleType.SeparatedType) {
-                    SimpleType.SeparatedType aSeparated = (SimpleType.SeparatedType) aType;
+                    SimpleType.SeparatedType aSeparated
+                            = (SimpleType.SeparatedType) aType;
 
                     if (this.name.equals(aSeparated.getRightElementName())
-                            && (aSeparated.getCardinality().isANumber() || aSeparated
-                                    .getCardinality().equals(
+                            && (aSeparated.getCardinality().isANumber()
+                                    || aSeparated.getCardinality().equals(
                                             CardinalityInterval.ONE_OR_MORE))) {
                         // x ^n..m + (x Sep x)^p =
                         // (x y)^[(n+p)..(m+p)]
 
                         return new Type.SimpleType.HomogeneousType(this.name,
-                                this.cardinality.add(aSeparated
-                                        .getCardinality()));
+                                this.cardinality
+                                        .add(aSeparated.getCardinality()));
                     }
 
                 }
 
                 if (aType instanceof SimpleType.HomogeneousType) {
 
-                    SimpleType.HomogeneousType anHomogeneous = (SimpleType.HomogeneousType) aType;
+                    SimpleType.HomogeneousType anHomogeneous
+                            = (SimpleType.HomogeneousType) aType;
 
                     if (this.name.equals(anHomogeneous.getName())) {
                         // x^[n..m] + x^[p..q]
                         // x^[(n+p)..(m+q)]
 
                         return new Type.SimpleType.HomogeneousType(this.name,
-                                this.cardinality.add(anHomogeneous
-                                        .getCardinality()));
+                                this.cardinality
+                                        .add(anHomogeneous.getCardinality()));
                     }
                 }
 
@@ -188,8 +193,8 @@ public abstract class Type {
             }
         }
 
-        public static class SeparatedType
-                extends SimpleType {
+        public static class SeparatedType extends
+                SimpleType {
 
             private final String leftElementName;
 
@@ -252,56 +257,60 @@ public abstract class Type {
                 }
 
                 if (aType instanceof SimpleType.SeparatedType) {
-                    SimpleType.SeparatedType separatedType = (SimpleType.SeparatedType) aType;
+                    SimpleType.SeparatedType separatedType
+                            = (SimpleType.SeparatedType) aType;
 
-                    if (separatedType.getCardinality().equals(
-                            CardinalityInterval.ONE_ONE)
-                            || separatedType.getCardinality().equals(
-                                    CardinalityInterval.ZERO_ONE)) {
+                    if (separatedType.getCardinality()
+                            .equals(CardinalityInterval.ONE_ONE)
+                            || separatedType.getCardinality()
+                                    .equals(CardinalityInterval.ZERO_ONE)) {
 
-                        if (!separatedType.getLeftElementName().equals(
-                                this.leftElementName)) {
+                        if (!separatedType.getLeftElementName()
+                                .equals(this.leftElementName)) {
                             return false;
                         }
 
                     }
                     else {
-                        if (!separatedType.getLeftElementName().equals(
-                                this.leftElementName)
-                                || !separatedType.getRightElementName().equals(
-                                        this.rightElementName)) {
+                        if (!separatedType.getLeftElementName()
+                                .equals(this.leftElementName)
+                                || !separatedType.getRightElementName()
+                                        .equals(this.rightElementName)) {
 
                             return false;
                         }
                     }
 
-                    if (!this.cardinality.isIncludedIn(separatedType
-                            .getCardinality())) {
+                    if (!this.cardinality
+                            .isIncludedIn(separatedType.getCardinality())) {
                         return false;
                     }
 
                 }
 
                 if (aType instanceof SimpleType.HomogeneousType) {
-                    SimpleType.HomogeneousType homogeneousType = (SimpleType.HomogeneousType) aType;
+                    SimpleType.HomogeneousType homogeneousType
+                            = (SimpleType.HomogeneousType) aType;
 
                     if (!this.leftElementName.equals(this.rightElementName)) {
                         return false;
                     }
 
-                    if (!homogeneousType.getName().equals(this.leftElementName)) {
+                    if (!homogeneousType.getName()
+                            .equals(this.leftElementName)) {
                         return false;
                     }
 
-                    if (!this.cardinality.isIncludedIn(homogeneousType
-                            .getCardinality())) {
+                    if (!this.cardinality
+                            .isIncludedIn(homogeneousType.getCardinality())) {
                         return false;
                     }
                 }
 
-                if (aType instanceof EmptyListType || aType instanceof NullType) {
-                    if (this.cardinality.getLowerBound().compareTo(
-                            new Bound(BigInteger.ZERO)) != 0) {
+                if (aType instanceof EmptyListType
+                        || aType instanceof NullType) {
+                    if (this.cardinality.getLowerBound()
+                            .compareTo(new Bound(BigInteger.ZERO)) != 0) {
                         return false;
                     }
                 }
@@ -338,8 +347,8 @@ public abstract class Type {
                 if (aType instanceof Type.SimpleType) {
                     aSimpleType = (Type.SimpleType) aType;
 
-                    if (aSimpleType.getCardinality().equals(
-                            CardinalityInterval.ZERO_ZERO)) {
+                    if (aSimpleType.getCardinality()
+                            .equals(CardinalityInterval.ZERO_ZERO)) {
                         return this;
                     }
                 }
@@ -353,10 +362,11 @@ public abstract class Type {
                     // x + (y Sep ..)^1 = (x y)^1
                     // x + y = (x y)
                     if (aSimpleType instanceof Type.SimpleType.SeparatedType
-                            && aSimpleType.getCardinality().equals(
-                                    CardinalityInterval.ONE_ONE)) {
+                            && aSimpleType.getCardinality()
+                                    .equals(CardinalityInterval.ONE_ONE)) {
 
-                        Type.SimpleType.SeparatedType separatedType = (Type.SimpleType.SeparatedType) aSimpleType;
+                        Type.SimpleType.SeparatedType separatedType
+                                = (Type.SimpleType.SeparatedType) aSimpleType;
 
                         return new Type.SimpleType.AlternatedType(
                                 this.leftElementName,
@@ -370,10 +380,11 @@ public abstract class Type {
                     // x + (x Sep x)^(n..m) = (x x)^(n..m)
                     else if (aSimpleType instanceof Type.SimpleType.SeparatedType) {
 
-                        Type.SimpleType.SeparatedType separatedType = (Type.SimpleType.SeparatedType) aSimpleType;
+                        Type.SimpleType.SeparatedType separatedType
+                                = (Type.SimpleType.SeparatedType) aSimpleType;
 
-                        if (this.leftElementName.equals(separatedType
-                                .getRightElementName())) {
+                        if (this.leftElementName
+                                .equals(separatedType.getRightElementName())) {
                             return new Type.SimpleType.AlternatedType(
                                     separatedType.getLeftElementName(),
                                     separatedType.getRightElementName(),
@@ -386,47 +397,51 @@ public abstract class Type {
                     // x + (y x)^(n..m) = (x Sep y)^(n+1..m+1)
                     // x + (x x)^(n..m) = (x Sep x)^(n+1..m+1)
                     else if (aSimpleType instanceof Type.SimpleType.AlternatedType) {
-                        Type.SimpleType.AlternatedType alternatedType = (Type.SimpleType.AlternatedType) aSimpleType;
+                        Type.SimpleType.AlternatedType alternatedType
+                                = (Type.SimpleType.AlternatedType) aSimpleType;
 
-                        if (this.leftElementName.equals(alternatedType
-                                .getRightElementName())) {
+                        if (this.leftElementName
+                                .equals(alternatedType.getRightElementName())) {
                             return new Type.SimpleType.SeparatedType(
                                     alternatedType.getRightElementName(),
                                     alternatedType.getLeftElementName(),
-                                    alternatedType.getCardinality().add(
-                                            CardinalityInterval.ONE_ONE));
+                                    alternatedType.getCardinality()
+                                            .add(CardinalityInterval.ONE_ONE));
                         }
                     }
                     // x + x^n = x^(n+1)
                     else if (aSimpleType instanceof Type.SimpleType.HomogeneousType) {
 
-                        Type.SimpleType.HomogeneousType homogeneousType = (Type.SimpleType.HomogeneousType) aSimpleType;
+                        Type.SimpleType.HomogeneousType homogeneousType
+                                = (Type.SimpleType.HomogeneousType) aSimpleType;
 
-                        if (this.leftElementName.equals(homogeneousType
-                                .getName())) {
+                        if (this.leftElementName
+                                .equals(homogeneousType.getName())) {
                             return new Type.SimpleType.HomogeneousType(
-                                    this.leftElementName, homogeneousType
-                                            .getCardinality()
+                                    this.leftElementName,
+                                    homogeneousType.getCardinality()
                                             .add(CardinalityInterval.ONE_ONE));
                         }
 
                     }
 
                 }
-                else if (this.cardinality.equals(CardinalityInterval.ZERO_ONE)) {
+                else if (this.cardinality
+                        .equals(CardinalityInterval.ZERO_ONE)) {
 
                     if (aSimpleType instanceof Type.SimpleType.SeparatedType) {
-                        Type.SimpleType.SeparatedType separatedType = (Type.SimpleType.SeparatedType) aSimpleType;
+                        Type.SimpleType.SeparatedType separatedType
+                                = (Type.SimpleType.SeparatedType) aSimpleType;
 
-                        if (this.leftElementName.equals(separatedType
-                                .getLeftElementName())) {
+                        if (this.leftElementName
+                                .equals(separatedType.getLeftElementName())) {
                             // x? + (x Sep ..)^1 = x^(1,2)
                             if (separatedType.cardinality
                                     .equals(CardinalityInterval.ONE_ONE)) {
                                 return new Type.SimpleType.HomogeneousType(
                                         this.leftElementName,
-                                        this.cardinality
-                                                .add(CardinalityInterval.ONE_ONE));
+                                        this.cardinality.add(
+                                                CardinalityInterval.ONE_ONE));
                             }
                             // x? + (x Sep ..)^[0..1] = x^(0,2)
                             else if (separatedType.cardinality
@@ -438,8 +453,8 @@ public abstract class Type {
 
                             }
                             // x? + (x Sep x)^(n..m) = x^[2*n-1, 2*m]
-                            else if (this.leftElementName.equals(separatedType
-                                    .getRightElementName())) {
+                            else if (this.leftElementName.equals(
+                                    separatedType.getRightElementName())) {
 
                                 Bound lowerBound = aSimpleType.getCardinality()
                                         .getLowerBound()
@@ -447,8 +462,8 @@ public abstract class Type {
                                 Bound upperBound = aSimpleType.getCardinality()
                                         .getUpperBound()
                                         .multiply(BigInteger.valueOf(2L));
-                                upperBound = upperBound
-                                        .subtract(BigInteger.ONE);
+                                upperBound
+                                        = upperBound.subtract(BigInteger.ONE);
 
                                 return new Type.SimpleType.HomogeneousType(
                                         this.leftElementName,
@@ -459,11 +474,12 @@ public abstract class Type {
                         }
                     }
                     else if (aSimpleType instanceof Type.SimpleType.AlternatedType) {
-                        Type.SimpleType.AlternatedType alternatedType = (Type.SimpleType.AlternatedType) aSimpleType;
+                        Type.SimpleType.AlternatedType alternatedType
+                                = (Type.SimpleType.AlternatedType) aSimpleType;
 
                         // x? + (x x)^(n..m) = x^(2n..2m+1)
-                        if (this.leftElementName.equals(alternatedType
-                                .getLeftElementName())
+                        if (this.leftElementName
+                                .equals(alternatedType.getLeftElementName())
                                 && alternatedType.getLeftElementName().equals(
                                         alternatedType.getRightElementName())) {
                             Bound lowerBound = aSimpleType.getCardinality()
@@ -481,14 +497,15 @@ public abstract class Type {
                         }
                     }
                     else if (aSimpleType instanceof Type.SimpleType.HomogeneousType) {
-                        Type.SimpleType.HomogeneousType homogeneousType = (Type.SimpleType.HomogeneousType) aSimpleType;
+                        Type.SimpleType.HomogeneousType homogeneousType
+                                = (Type.SimpleType.HomogeneousType) aSimpleType;
 
                         // x? + x^n = x^(n..n+1)
-                        if (this.leftElementName.equals(homogeneousType
-                                .getName())) {
+                        if (this.leftElementName
+                                .equals(homogeneousType.getName())) {
                             return new Type.SimpleType.HomogeneousType(
-                                    this.leftElementName, homogeneousType
-                                            .getCardinality()
+                                    this.leftElementName,
+                                    homogeneousType.getCardinality()
                                             .add(CardinalityInterval.ZERO_ONE));
                         }
 
@@ -498,28 +515,31 @@ public abstract class Type {
                     if (this.leftElementName.equals(this.rightElementName)) {
 
                         if (aSimpleType instanceof Type.SimpleType.SeparatedType) {
-                            Type.SimpleType.SeparatedType separatedType = (Type.SimpleType.SeparatedType) aSimpleType;
+                            Type.SimpleType.SeparatedType separatedType
+                                    = (Type.SimpleType.SeparatedType) aSimpleType;
 
                             // (x Sep x)^(n..m) + (x Sep x)^(p..q)
                             // = (x x)^(n+p-1..m+q-1)
-                            if (this.leftElementName.equals(separatedType
-                                    .getLeftElementName())
+                            if (this.leftElementName
+                                    .equals(separatedType.getLeftElementName())
                                     && separatedType.getLeftElementName()
                                             .equals(separatedType
                                                     .getRightElementName())) {
 
-                                Bound lowerBound = this.cardinality
-                                        .getLowerBound().add(
-                                                separatedType.getCardinality()
+                                Bound lowerBound
+                                        = this.cardinality.getLowerBound()
+                                                .add(separatedType
+                                                        .getCardinality()
                                                         .getLowerBound());
-                                lowerBound = lowerBound
-                                        .subtract(BigInteger.ONE);
-                                Bound upperBound = this.cardinality
-                                        .getUpperBound().add(
-                                                separatedType.getCardinality()
+                                lowerBound
+                                        = lowerBound.subtract(BigInteger.ONE);
+                                Bound upperBound
+                                        = this.cardinality.getUpperBound()
+                                                .add(separatedType
+                                                        .getCardinality()
                                                         .getUpperBound());
-                                upperBound = upperBound
-                                        .subtract(BigInteger.ONE);
+                                upperBound
+                                        = upperBound.subtract(BigInteger.ONE);
 
                                 return new Type.SimpleType.AlternatedType(
                                         this.leftElementName,
@@ -529,8 +549,8 @@ public abstract class Type {
                             }
                             // (x Sep x)^(n..m) + (x Sep..)^1
                             // = (x x)^(n..m)
-                            else if (this.leftElementName.equals(separatedType
-                                    .getLeftElementName())
+                            else if (this.leftElementName
+                                    .equals(separatedType.getLeftElementName())
                                     && separatedType.getCardinality().equals(
                                             CardinalityInterval.ONE_ONE)) {
 
@@ -544,24 +564,27 @@ public abstract class Type {
                         else if (aSimpleType instanceof Type.SimpleType.AlternatedType
                                 && !(this.cardinality.getLowerBound()
                                         .compareTo(Bound.ZERO) == 0)) {
-                            Type.SimpleType.AlternatedType alternatedType = (Type.SimpleType.AlternatedType) aSimpleType;
+                            Type.SimpleType.AlternatedType alternatedType
+                                    = (Type.SimpleType.AlternatedType) aSimpleType;
 
                             // (x Sep x)^(n..m) + (x x)^(p..q)
                             // = (x Sep x)^(n+p..m+q)
                             // n > 0
-                            if (this.leftElementName.equals(alternatedType
-                                    .getLeftElementName())
+                            if (this.leftElementName
+                                    .equals(alternatedType.getLeftElementName())
                                     && alternatedType.getLeftElementName()
                                             .equals(alternatedType
                                                     .getRightElementName())) {
 
-                                Bound lowerBound = this.cardinality
-                                        .getLowerBound().add(
-                                                alternatedType.getCardinality()
+                                Bound lowerBound
+                                        = this.cardinality.getLowerBound()
+                                                .add(alternatedType
+                                                        .getCardinality()
                                                         .getLowerBound());
-                                Bound upperBound = this.cardinality
-                                        .getUpperBound().add(
-                                                alternatedType.getCardinality()
+                                Bound upperBound
+                                        = this.cardinality.getUpperBound()
+                                                .add(alternatedType
+                                                        .getCardinality()
                                                         .getUpperBound());
 
                                 return new Type.SimpleType.SeparatedType(
@@ -572,28 +595,29 @@ public abstract class Type {
                             }
                         }
                         else if (aSimpleType instanceof Type.SimpleType.HomogeneousType) {
-                            Type.SimpleType.HomogeneousType homogeneousType = (Type.SimpleType.HomogeneousType) aSimpleType;
+                            Type.SimpleType.HomogeneousType homogeneousType
+                                    = (Type.SimpleType.HomogeneousType) aSimpleType;
 
                             // (x Sep x)^n + x^(p..q)
                             // = x^(2*n-1+p..2*n-1+q)
 
-                            if (this.leftElementName.equals(homogeneousType
-                                    .getName())) {
+                            if (this.leftElementName
+                                    .equals(homogeneousType.getName())) {
                                 Bound lowerBound = this.cardinality
-                                        .getLowerBound().multiply(
-                                                BigInteger.valueOf(2L));
-                                lowerBound = lowerBound
-                                        .subtract(BigInteger.ONE);
+                                        .getLowerBound()
+                                        .multiply(BigInteger.valueOf(2L));
+                                lowerBound
+                                        = lowerBound.subtract(BigInteger.ONE);
                                 lowerBound
                                         .add(this.cardinality.getLowerBound());
 
                                 Bound upperBound = this.cardinality
-                                        .getUpperBound().multiply(
-                                                BigInteger.valueOf(2L));
+                                        .getUpperBound()
+                                        .multiply(BigInteger.valueOf(2L));
+                                upperBound
+                                        = upperBound.subtract(BigInteger.ONE);
                                 upperBound = upperBound
-                                        .subtract(BigInteger.ONE);
-                                upperBound = upperBound.add(this.cardinality
-                                        .getUpperBound());
+                                        .add(this.cardinality.getUpperBound());
 
                                 return new Type.SimpleType.HomogeneousType(
                                         this.leftElementName,
@@ -606,27 +630,30 @@ public abstract class Type {
                     else {
 
                         if (aSimpleType instanceof Type.SimpleType.SeparatedType) {
-                            Type.SimpleType.SeparatedType separatedType = (Type.SimpleType.SeparatedType) aSimpleType;
+                            Type.SimpleType.SeparatedType separatedType
+                                    = (Type.SimpleType.SeparatedType) aSimpleType;
 
                             // (x Sep y)^(n..m) + (y Sep x)^(p..q)
                             // = (x y)^(n+p-1...m+q-1)
-                            if (this.leftElementName.equals(separatedType
-                                    .getRightElementName())
+                            if (this.leftElementName
+                                    .equals(separatedType.getRightElementName())
                                     && this.rightElementName
                                             .equals(separatedType
                                                     .getLeftElementName())) {
-                                Bound lowerBound = this.cardinality
-                                        .getLowerBound().add(
-                                                separatedType.getCardinality()
+                                Bound lowerBound
+                                        = this.cardinality.getLowerBound()
+                                                .add(separatedType
+                                                        .getCardinality()
                                                         .getLowerBound());
-                                lowerBound = lowerBound
-                                        .subtract(BigInteger.ONE);
-                                Bound upperBound = this.cardinality
-                                        .getUpperBound().add(
-                                                separatedType.getCardinality()
+                                lowerBound
+                                        = lowerBound.subtract(BigInteger.ONE);
+                                Bound upperBound
+                                        = this.cardinality.getUpperBound()
+                                                .add(separatedType
+                                                        .getCardinality()
                                                         .getUpperBound());
-                                upperBound = upperBound
-                                        .subtract(BigInteger.ONE);
+                                upperBound
+                                        = upperBound.subtract(BigInteger.ONE);
 
                                 return new Type.SimpleType.AlternatedType(
                                         this.leftElementName,
@@ -637,36 +664,40 @@ public abstract class Type {
                             }
                             // (x Sep y)^(n..m) + (y Sep..)^1
                             // = (x y)^(n..m)
-                            else if (this.rightElementName.equals(separatedType
-                                    .getLeftElementName())
+                            else if (this.rightElementName
+                                    .equals(separatedType.getLeftElementName())
                                     && separatedType.getCardinality().equals(
                                             CardinalityInterval.ONE_ONE)) {
                                 return new Type.SimpleType.AlternatedType(
                                         this.leftElementName,
-                                        this.rightElementName, this.cardinality);
+                                        this.rightElementName,
+                                        this.cardinality);
                             }
 
                         }
                         else if (aSimpleType instanceof Type.SimpleType.AlternatedType
                                 && !(this.cardinality.getLowerBound()
                                         .compareTo(Bound.ZERO) == 0)) {
-                            Type.SimpleType.AlternatedType alternatedType = (Type.SimpleType.AlternatedType) aSimpleType;
+                            Type.SimpleType.AlternatedType alternatedType
+                                    = (Type.SimpleType.AlternatedType) aSimpleType;
 
                             // (x Sep y)^(n..m) + (y x)^(p..q)
                             // = (x Sep y)^(n+p..m+q)
                             // n > 0
-                            if (this.leftElementName.equals(alternatedType
-                                    .getRightElementName())
+                            if (this.leftElementName.equals(
+                                    alternatedType.getRightElementName())
                                     && this.rightElementName
                                             .equals(alternatedType
                                                     .getLeftElementName())) {
-                                Bound lowerBound = this.cardinality
-                                        .getLowerBound().add(
-                                                alternatedType.getCardinality()
+                                Bound lowerBound
+                                        = this.cardinality.getLowerBound()
+                                                .add(alternatedType
+                                                        .getCardinality()
                                                         .getLowerBound());
-                                Bound upperBound = this.cardinality
-                                        .getUpperBound().add(
-                                                alternatedType.getCardinality()
+                                Bound upperBound
+                                        = this.cardinality.getUpperBound()
+                                                .add(alternatedType
+                                                        .getCardinality()
                                                         .getUpperBound());
 
                                 return new Type.SimpleType.SeparatedType(
@@ -683,8 +714,8 @@ public abstract class Type {
             }
         }
 
-        public static class AlternatedType
-                extends SimpleType {
+        public static class AlternatedType extends
+                SimpleType {
 
             private final String leftElementName;
 
@@ -708,7 +739,8 @@ public abstract class Type {
                 }
 
                 if (cardinality == null) {
-                    throw new InternalException("cardinality shouldn't be null");
+                    throw new InternalException(
+                            "cardinality shouldn't be null");
                 }
 
                 this.leftElementName = leftElementName;
@@ -746,40 +778,45 @@ public abstract class Type {
                 }
 
                 if (aType instanceof SimpleType.AlternatedType) {
-                    SimpleType.AlternatedType alternatedType = (SimpleType.AlternatedType) aType;
+                    SimpleType.AlternatedType alternatedType
+                            = (SimpleType.AlternatedType) aType;
 
-                    if (!alternatedType.getLeftElementName().equals(
-                            this.leftElementName)
-                            || !alternatedType.getRightElementName().equals(
-                                    this.rightElementName)) {
+                    if (!alternatedType.getLeftElementName()
+                            .equals(this.leftElementName)
+                            || !alternatedType.getRightElementName()
+                                    .equals(this.rightElementName)) {
                         return false;
                     }
 
-                    if (!this.cardinality.isIncludedIn(alternatedType
-                            .getCardinality())) {
+                    if (!this.cardinality
+                            .isIncludedIn(alternatedType.getCardinality())) {
                         return false;
                     }
                 }
 
                 if (aType instanceof SimpleType.HomogeneousType) {
-                    SimpleType.HomogeneousType homogeneousType = (SimpleType.HomogeneousType) aType;
+                    SimpleType.HomogeneousType homogeneousType
+                            = (SimpleType.HomogeneousType) aType;
 
                     if (!this.leftElementName.equals(this.rightElementName)) {
                         return false;
                     }
 
-                    if (!homogeneousType.getName().equals(this.leftElementName)) {
+                    if (!homogeneousType.getName()
+                            .equals(this.leftElementName)) {
                         return false;
                     }
 
-                    if (!homogeneousType.getCardinality().isIncludedIn(
-                            this.cardinality)) {
+                    if (!homogeneousType.getCardinality()
+                            .isIncludedIn(this.cardinality)) {
                         return false;
                     }
                 }
 
-                if (aType instanceof EmptyListType || aType instanceof NullType) {
-                    if (this.cardinality.getLowerBound().compareTo(Bound.ZERO) != 0) {
+                if (aType instanceof EmptyListType
+                        || aType instanceof NullType) {
+                    if (this.cardinality.getLowerBound()
+                            .compareTo(Bound.ZERO) != 0) {
                         return false;
                     }
                 }
@@ -817,8 +854,8 @@ public abstract class Type {
 
                     aSimpleType = (Type.SimpleType) aType;
 
-                    if (aSimpleType.getCardinality().equals(
-                            CardinalityInterval.ZERO_ZERO)) {
+                    if (aSimpleType.getCardinality()
+                            .equals(CardinalityInterval.ZERO_ZERO)) {
                         return this;
                     }
                 }
@@ -831,14 +868,15 @@ public abstract class Type {
                     if (aSimpleType instanceof Type.SimpleType.SeparatedType
                             && !(aSimpleType.getCardinality().getLowerBound()
                                     .compareTo(Bound.ZERO) == 0)) {
-                        Type.SimpleType.SeparatedType separatedType = (Type.SimpleType.SeparatedType) aSimpleType;
+                        Type.SimpleType.SeparatedType separatedType
+                                = (Type.SimpleType.SeparatedType) aSimpleType;
 
                         // (x x)^(n..m) + (x Sep..)^1
                         // = (x Sep x)^(n+1..m+1)
-                        if (this.leftElementName.equals(separatedType
-                                .getLeftElementName())
-                                && separatedType.getCardinality().equals(
-                                        CardinalityInterval.ONE_ONE)) {
+                        if (this.leftElementName
+                                .equals(separatedType.getLeftElementName())
+                                && separatedType.getCardinality()
+                                        .equals(CardinalityInterval.ONE_ONE)) {
 
                             return new SeparatedType(this.leftElementName,
                                     this.cardinality
@@ -848,8 +886,8 @@ public abstract class Type {
                         // (x x)^(n..m) + (x Sep x)^(p..q)
                         // = (x Sep x)^(n+p..m+q)
                         // p > 0
-                        else if (this.leftElementName.equals(separatedType
-                                .getLeftElementName())
+                        else if (this.leftElementName
+                                .equals(separatedType.getLeftElementName())
                                 && separatedType.getLeftElementName().equals(
                                         separatedType.getRightElementName())) {
                             Bound lowerBound = this.cardinality.getLowerBound()
@@ -867,12 +905,13 @@ public abstract class Type {
 
                     }
                     else if (aSimpleType instanceof Type.SimpleType.AlternatedType) {
-                        Type.SimpleType.AlternatedType alternatedType = (Type.SimpleType.AlternatedType) aSimpleType;
+                        Type.SimpleType.AlternatedType alternatedType
+                                = (Type.SimpleType.AlternatedType) aSimpleType;
 
                         // (x x)^(n..m) + (x x)^(p..q)
                         // = (x x)^(n+p..m+q)
-                        if (this.leftElementName.equals(alternatedType
-                                .getLeftElementName())
+                        if (this.leftElementName
+                                .equals(alternatedType.getLeftElementName())
                                 && alternatedType.getLeftElementName().equals(
                                         alternatedType.getRightElementName())) {
                             Bound lowerBound = this.cardinality.getLowerBound()
@@ -890,24 +929,25 @@ public abstract class Type {
                     }
                     else if (aSimpleType instanceof Type.SimpleType.HomogeneousType
                             && aSimpleType.getCardinality().isANumber()) {
-                        Type.SimpleType.HomogeneousType homogeneousType = (Type.SimpleType.HomogeneousType) aSimpleType;
+                        Type.SimpleType.HomogeneousType homogeneousType
+                                = (Type.SimpleType.HomogeneousType) aSimpleType;
 
-                        if (this.leftElementName.equals(homogeneousType
-                                .getName())) {
-                            BigInteger cardinalityValue = aSimpleType
-                                    .getCardinality().getLowerBound()
-                                    .getValue();
+                        if (this.leftElementName
+                                .equals(homogeneousType.getName())) {
+                            BigInteger cardinalityValue
+                                    = aSimpleType.getCardinality()
+                                            .getLowerBound().getValue();
 
                             Bound lowerBound = aSimpleType.getCardinality()
                                     .getLowerBound()
                                     .divide(BigInteger.valueOf(2L));
-                            lowerBound = lowerBound.add(this.cardinality
-                                    .getLowerBound());
+                            lowerBound = lowerBound
+                                    .add(this.cardinality.getLowerBound());
                             Bound upperBound = aSimpleType.getCardinality()
                                     .getUpperBound()
                                     .divide(BigInteger.valueOf(2L));
-                            upperBound = upperBound.add(this.cardinality
-                                    .getUpperBound());
+                            upperBound = upperBound
+                                    .add(this.cardinality.getUpperBound());
 
                             // (x x)^(n..m) + x^2p
                             // = (x x)^(n+p..m+p)
@@ -936,7 +976,8 @@ public abstract class Type {
                             && !(aSimpleType.getCardinality().getLowerBound()
                                     .compareTo(Bound.ZERO) == 0)) {
 
-                        Type.SimpleType.SeparatedType separatedType = (Type.SimpleType.SeparatedType) aSimpleType;
+                        Type.SimpleType.SeparatedType separatedType
+                                = (Type.SimpleType.SeparatedType) aSimpleType;
 
                         // (x..y)^(n..m) + (x Sep..)^1
                         // = (x Sep y)^(n+1..m+1)
@@ -945,18 +986,17 @@ public abstract class Type {
                                 && separatedType.cardinality
                                         .equals(CardinalityInterval.ONE_ONE)) {
                             return new Type.SimpleType.SeparatedType(
-                                    this.leftElementName,
-                                    this.rightElementName,
+                                    this.leftElementName, this.rightElementName,
                                     this.cardinality
                                             .add(CardinalityInterval.ONE_ONE));
                         }
                         // (x..y)^(n..m) + (y Sep x)^(p..q)
                         // = (x Sep y)^(n+p..m+q)
                         // p > 0
-                        else if (this.leftElementName.equals(separatedType
-                                .getRightElementName())
-                                && this.rightElementName.equals(separatedType
-                                        .getLeftElementName())) {
+                        else if (this.leftElementName
+                                .equals(separatedType.getRightElementName())
+                                && this.rightElementName.equals(
+                                        separatedType.getLeftElementName())) {
 
                             Bound lowerBound = this.cardinality.getLowerBound()
                                     .add(separatedType.getCardinality()
@@ -966,22 +1006,22 @@ public abstract class Type {
                                             .getUpperBound());
 
                             return new Type.SimpleType.SeparatedType(
-                                    this.leftElementName,
-                                    this.rightElementName,
+                                    this.leftElementName, this.rightElementName,
                                     new CardinalityInterval(lowerBound,
                                             upperBound));
 
                         }
                     }
                     else if (aSimpleType instanceof Type.SimpleType.AlternatedType) {
-                        Type.SimpleType.AlternatedType alternatedType = (Type.SimpleType.AlternatedType) aSimpleType;
+                        Type.SimpleType.AlternatedType alternatedType
+                                = (Type.SimpleType.AlternatedType) aSimpleType;
 
                         // (x y)^(n..m) + (x y)^(p..q)
                         // = (x y)^(n+p..m+q)
-                        if (this.leftElementName.equals(alternatedType
-                                .getLeftElementName())
-                                && this.rightElementName.equals(alternatedType
-                                        .getRightElementName())) {
+                        if (this.leftElementName
+                                .equals(alternatedType.getLeftElementName())
+                                && this.rightElementName.equals(
+                                        alternatedType.getRightElementName())) {
                             Bound lowerBound = this.cardinality.getLowerBound()
                                     .add(alternatedType.getCardinality()
                                             .getLowerBound());
@@ -990,8 +1030,7 @@ public abstract class Type {
                                             .getUpperBound());
 
                             return new Type.SimpleType.AlternatedType(
-                                    this.leftElementName,
-                                    this.rightElementName,
+                                    this.leftElementName, this.rightElementName,
                                     new CardinalityInterval(lowerBound,
                                             upperBound));
                         }
@@ -1003,8 +1042,8 @@ public abstract class Type {
 
         }
 
-        public static class EmptyListType
-                extends SimpleType {
+        public static class EmptyListType extends
+                SimpleType {
 
             public EmptyListType() {
 
@@ -1014,7 +1053,8 @@ public abstract class Type {
             public boolean isAssignableTo(
                     Type aType) {
 
-                throw new InternalException("An empty list shouldn't be assign");
+                throw new InternalException(
+                        "An empty list shouldn't be assign");
             }
 
             @Override
@@ -1031,8 +1071,8 @@ public abstract class Type {
             }
         }
 
-        public static class NullType
-                extends SimpleType {
+        public static class NullType extends
+                SimpleType {
 
             public NullType() {
 
@@ -1062,8 +1102,8 @@ public abstract class Type {
         }
     }
 
-    public static class CompositeType
-            extends Type {
+    public static class CompositeType extends
+            Type {
 
         private final LinkedList<Type> elements;
 
@@ -1094,8 +1134,8 @@ public abstract class Type {
             }
 
             for (int i = 0; i < this.elements.size(); i++) {
-                if (!this.elements.get(i).isAssignableTo(
-                        aCompositeType.getElements().get(i))) {
+                if (!this.elements.get(i)
+                        .isAssignableTo(aCompositeType.getElements().get(i))) {
                     return false;
                 }
             }

@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MSetParam
-        extends
+public class MSetParam extends
         Macro {
 
     private String field_Name;
@@ -33,8 +32,8 @@ public class MSetParam
 
         this.list_SetParam = new ArrayList<>();
 
-        this.SetParamValue = new InternalValue(this.list_SetParam,
-                this.SetParamContext);
+        this.SetParamValue
+                = new InternalValue(this.list_SetParam, this.SetParamContext);
 
     }
 
@@ -113,15 +112,15 @@ public class MSetParam
 
             if (this.SetParamAfterLast != null) {
 
-                expansion = this.SetParamAfterLast.apply(i, expansion,
-                        nb_macros);
+                expansion
+                        = this.SetParamAfterLast.apply(i, expansion, nb_macros);
 
             }
 
             if (this.SetParamSeparator != null) {
 
-                expansion = this.SetParamSeparator.apply(i, expansion,
-                        nb_macros);
+                expansion
+                        = this.SetParamSeparator.apply(i, expansion, nb_macros);
 
             }
 
@@ -255,7 +254,7 @@ public class MSetParam
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

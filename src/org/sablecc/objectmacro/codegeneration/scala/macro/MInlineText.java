@@ -2,11 +2,12 @@
 
 package org.sablecc.objectmacro.codegeneration.scala.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MInlineText {
 
-    private final List<Object> eInlineString_InlineEol = new LinkedList<Object>();
+    private final List<Object> eInlineString_InlineEol = new LinkedList<>();
 
     public MInlineText() {
 

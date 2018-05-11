@@ -4,34 +4,42 @@ package org.sablecc.objectmacro.errormessage;
 
 public class MInvalidIntermediateSuffix {
 
-  private final String pFileName;
-  private final MInvalidIntermediateSuffix mInvalidIntermediateSuffix = this;
+    private final String pFileName;
 
-  public MInvalidIntermediateSuffix(String pFileName) {
-    if(pFileName == null) throw new NullPointerException();
-    this.pFileName = pFileName;
-  }
+    private final MInvalidIntermediateSuffix mInvalidIntermediateSuffix = this;
 
-  String pFileName() {
-    return this.pFileName;
-  }
+    public MInvalidIntermediateSuffix(
+            String pFileName) {
 
-  private String rFileName() {
-    return this.mInvalidIntermediateSuffix.pFileName();
-  }
+        if (pFileName == null) {
+            throw new NullPointerException();
+        }
+        this.pFileName = pFileName;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MCommandLineErrorHead().toString());
-    sb.append(System.getProperty("line.separator"));
-    sb.append("The macro file, \"");
-    sb.append(rFileName());
-    sb.append("\", does not have a .intermediate suffix.");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append(new MCommandLineErrorTail().toString());
-    return sb.toString();
-  }
+    String pFileName() {
+
+        return this.pFileName;
+    }
+
+    private String rFileName() {
+
+        return this.mInvalidIntermediateSuffix.pFileName();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(new MCommandLineErrorHead().toString());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("The macro file, \"");
+        sb.append(rFileName());
+        sb.append("\", does not have a .intermediate suffix.");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        sb.append(new MCommandLineErrorTail().toString());
+        return sb.toString();
+    }
 
 }

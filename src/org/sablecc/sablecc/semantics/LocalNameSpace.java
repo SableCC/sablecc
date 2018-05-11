@@ -17,20 +17,25 @@
 
 package org.sablecc.sablecc.semantics;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class LocalNameSpace<T extends LocalDeclaration> {
 
-    private Map<String, T> nameMap = new TreeMap<String, T>();
+    private Map<String, T> nameMap = new TreeMap<>();
 
-    private Set<String> nameSet = new TreeSet<String>();
+    private Set<String> nameSet = new TreeSet<>();
 
     LocalNameSpace(
             List<T> localDeclarations) {
 
-        Map<String, List<T>> declarationMap = new TreeMap<String, List<T>>();
-        List<T> anonymousList = new LinkedList<T>();
+        Map<String, List<T>> declarationMap = new TreeMap<>();
+        List<T> anonymousList = new LinkedList<>();
 
         for (T localDeclaration : localDeclarations) {
             String name = localDeclaration.getName();
@@ -40,7 +45,7 @@ public class LocalNameSpace<T extends LocalDeclaration> {
             else {
                 List<T> declarations = declarationMap.get(name);
                 if (declarations == null) {
-                    declarations = new LinkedList<T>();
+                    declarations = new LinkedList<>();
                     declarationMap.put(name, declarations);
                 }
                 declarations.add(localDeclaration);

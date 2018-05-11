@@ -2,13 +2,15 @@
 
 package org.sablecc.objectmacro.codegeneration.scala.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MAfterOne {
 
     private final MExpandInsertPart mExpandInsertPart;
 
-    private final List<Object> eInlineText_ParamInsert_TextInsert = new LinkedList<Object>();
+    private final List<Object> eInlineText_ParamInsert_TextInsert
+            = new LinkedList<>();
 
     MAfterOne(
             MExpandInsertPart mExpandInsertPart) {

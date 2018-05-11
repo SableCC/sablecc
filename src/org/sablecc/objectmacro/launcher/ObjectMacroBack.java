@@ -57,7 +57,7 @@ public class ObjectMacroBack {
             String[] args) {
 
         try {
-            compile(args);
+            ObjectMacroBack.compile(args);
         }
         catch (CompilerException e) {
             System.err.print(e.getMessage());
@@ -110,7 +110,7 @@ public class ObjectMacroBack {
     public static void compile(
             String[] arguments)
             throws ParserException,
-            LexerException {
+                LexerException {
 
         // default target is java-constructor
         String targetLanguage = "java-constructor";
@@ -127,8 +127,8 @@ public class ObjectMacroBack {
         Strictness strictness = Strictness.STRICT;
 
         // parse command line arguments
-        ArgumentCollection argumentCollection = new ArgumentCollection(
-                arguments);
+        ArgumentCollection argumentCollection
+                = new ArgumentCollection(arguments);
 
         // handle option arguments
         for (OptionArgument optionArgument : argumentCollection
@@ -227,8 +227,8 @@ public class ObjectMacroBack {
         }
 
         // check argument
-        TextArgument textArgument = argumentCollection.getTextArguments()
-                .get(0);
+        TextArgument textArgument
+                = argumentCollection.getTextArguments().get(0);
 
         File macroFile = new File(textArgument.getText());
 
@@ -245,7 +245,7 @@ public class ObjectMacroBack {
             throw CompilerException.macroNotFile(textArgument.getText());
         }
 
-        compile(macroFile, targetLanguage, destinationDirectory,
+        ObjectMacroBack.compile(macroFile, targetLanguage, destinationDirectory,
                 destinationPackage, generateCode, strictness, verbosity);
     }
 
@@ -261,7 +261,7 @@ public class ObjectMacroBack {
             Strictness strictness,
             Verbosity verbosity)
             throws ParserException,
-            LexerException {
+                LexerException {
 
         switch (verbosity) {
         case INFORMATIVE:

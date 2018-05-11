@@ -222,12 +222,12 @@ public class Macro {
         Set<Param> params = new LinkedHashSet<>();
         params.addAll(getAllInternals());
         params.addAll(getAllParams());
-        this.paramsComponentFinder = new ComponentFinder<>(params,
-                referencedParamProgeny);
+        this.paramsComponentFinder
+                = new ComponentFinder<>(params, referencedParamProgeny);
 
         for (Param param : params) {
-            Param representative = this.paramsComponentFinder
-                    .getRepresentative(param);
+            Param representative
+                    = this.paramsComponentFinder.getRepresentative(param);
             if (param != representative) {
                 throw CompilerException.cyclicReference(
                         param.getNameDeclaration(),

@@ -2,8 +2,7 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-public class ObjectMacroException
-        extends
+public class ObjectMacroException extends
         RuntimeException {
 
     private ObjectMacroException(

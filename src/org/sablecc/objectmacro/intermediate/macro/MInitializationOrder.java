@@ -2,33 +2,38 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MInitializationOrder {
 
-  private final List<Object> eSimpleName = new LinkedList<Object>();
+    private final List<Object> eSimpleName = new LinkedList<>();
 
-  public MInitializationOrder() {
-  }
+    public MInitializationOrder() {
 
-  public MSimpleName newSimpleName(String pName) {
-    MSimpleName lSimpleName = new MSimpleName(pName);
-    this.eSimpleName.add(lSimpleName);
-    return lSimpleName;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("    Initialization Order{");
-    sb.append(System.getProperty("line.separator"));
-    sb.append("        ");
-    for(Object oSimpleName : this.eSimpleName) {
-      sb.append(oSimpleName.toString());
     }
-    sb.append("    }");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+
+    public MSimpleName newSimpleName(
+            String pName) {
+
+        MSimpleName lSimpleName = new MSimpleName(pName);
+        this.eSimpleName.add(lSimpleName);
+        return lSimpleName;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("    Initialization Order{");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("        ");
+        for (Object oSimpleName : this.eSimpleName) {
+            sb.append(oSimpleName.toString());
+        }
+        sb.append("    }");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
+    }
 
 }

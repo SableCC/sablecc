@@ -4,48 +4,62 @@ package org.sablecc.objectmacro.errormessage;
 
 public class MBodyTokenMisused {
 
-  private final String pLine;
-  private final String pChar;
-  private final MBodyTokenMisused mBodyTokenMisused = this;
+    private final String pLine;
 
-  public MBodyTokenMisused(String pLine, String pChar) {
-    if(pLine == null) throw new NullPointerException();
-    this.pLine = pLine;
-    if(pChar == null) throw new NullPointerException();
-    this.pChar = pChar;
-  }
+    private final String pChar;
 
-  String pLine() {
-    return this.pLine;
-  }
+    private final MBodyTokenMisused mBodyTokenMisused = this;
 
-  String pChar() {
-    return this.pChar;
-  }
+    public MBodyTokenMisused(
+            String pLine,
+            String pChar) {
 
-  private String rLine() {
-    return this.mBodyTokenMisused.pLine();
-  }
+        if (pLine == null) {
+            throw new NullPointerException();
+        }
+        this.pLine = pLine;
+        if (pChar == null) {
+            throw new NullPointerException();
+        }
+        this.pChar = pChar;
+    }
 
-  private String rChar() {
-    return this.mBodyTokenMisused.pChar();
-  }
+    String pLine() {
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("*** SYNTAX ERROR ***");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("Line: ");
-    sb.append(rLine());
-    sb.append(System.getProperty("line.separator"));
-    sb.append("Char: ");
-    sb.append(rChar());
-    sb.append(System.getProperty("line.separator"));
-    sb.append("The token {Body} must be at the beginning of the line.");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        return this.pLine;
+    }
+
+    String pChar() {
+
+        return this.pChar;
+    }
+
+    private String rLine() {
+
+        return this.mBodyTokenMisused.pLine();
+    }
+
+    private String rChar() {
+
+        return this.mBodyTokenMisused.pChar();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("*** SYNTAX ERROR ***");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Line: ");
+        sb.append(rLine());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Char: ");
+        sb.append(rChar());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("The token {Body} must be at the beginning of the line.");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
+    }
 
 }

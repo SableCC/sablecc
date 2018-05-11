@@ -91,10 +91,12 @@ enum Option {
     private String helpMessage;
 
     /** A mapping from each short name to its option. */
-    private static final SortedMap<String, Option> shortNameMap = new TreeMap<String, Option>();
+    private static final SortedMap<String, Option> shortNameMap
+            = new TreeMap<>();
 
     /** A mapping from each long name to its option. */
-    private static final SortedMap<String, Option> longNameMap = new TreeMap<String, Option>();
+    private static final SortedMap<String, Option> longNameMap
+            = new TreeMap<>();
 
     /**
      * Checks that there are no duplicate option names.
@@ -104,22 +106,22 @@ enum Option {
 
             if (option.shortName != null) {
 
-                if (shortNameMap.containsKey(option.shortName)) {
+                if (Option.shortNameMap.containsKey(option.shortName)) {
                     throw new InternalException(
                             "duplicate short name: " + option.shortName);
                 }
 
-                shortNameMap.put(option.shortName, option);
+                Option.shortNameMap.put(option.shortName, option);
             }
 
             if (option.longName != null) {
 
-                if (longNameMap.containsKey(option.longName)) {
+                if (Option.longNameMap.containsKey(option.longName)) {
                     throw new InternalException(
                             "duplicate long name: " + option.longName);
                 }
 
-                longNameMap.put(option.longName, option);
+                Option.longNameMap.put(option.longName, option);
             }
         }
     }
@@ -177,8 +179,8 @@ enum Option {
                             .parse();
 
             // argument should be short options
-            AShortOptionsArgument shortOptionsArgument = (AShortOptionsArgument) ast
-                    .getPArgument();
+            AShortOptionsArgument shortOptionsArgument
+                    = (AShortOptionsArgument) ast.getPArgument();
 
             // single
             if (shortOptionsArgument.getShortOptions().size() != 1) {
@@ -213,11 +215,11 @@ enum Option {
                             .parse();
 
             // argument should be long option
-            ALongOptionArgument longOptionArgument = (ALongOptionArgument) ast
-                    .getPArgument();
+            ALongOptionArgument longOptionArgument
+                    = (ALongOptionArgument) ast.getPArgument();
 
-            ALongOption longOption = (ALongOption) longOptionArgument
-                    .getLongOption();
+            ALongOption longOption
+                    = (ALongOption) longOptionArgument.getLongOption();
 
             // no operand
             if (longOption.getOperand() != null) {
@@ -276,7 +278,7 @@ enum Option {
     static Option getShortOption(
             String shortName) {
 
-        return shortNameMap.get(shortName);
+        return Option.shortNameMap.get(shortName);
     }
 
     /**
@@ -285,7 +287,7 @@ enum Option {
     static Option getLongOption(
             String longName) {
 
-        return longNameMap.get(longName);
+        return Option.longNameMap.get(longName);
     }
 
     /**
@@ -425,8 +427,8 @@ enum Option {
                 }
             }
 
-            for (int i = line.toString()
-                    .length(); i < longestPrefixLength; i++) {
+            for (int i = line.toString().length(); i < longestPrefixLength;
+                    i++) {
                 line.append(" ");
             }
 

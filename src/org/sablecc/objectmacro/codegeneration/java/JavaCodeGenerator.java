@@ -27,8 +27,7 @@ import org.sablecc.objectmacro.codegeneration.java.structure.Macro;
 import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.util.Strictness;
 
-public class JavaCodeGenerator
-        extends
+public class JavaCodeGenerator extends
         CodeGenerator {
 
     private File packageDirectory;
@@ -45,9 +44,9 @@ public class JavaCodeGenerator
             String packageName = getIr().getDestinationPackage();
             if (!packageName.equals("")) {
                 String packageDirectoryName = packageName.replace('.', '/');
-                this.packageDirectory = new File(
-                        getIr().getDestinationDirectory(),
-                        packageDirectoryName);
+                this.packageDirectory
+                        = new File(getIr().getDestinationDirectory(),
+                                packageDirectoryName);
             }
             else {
                 this.packageDirectory = getIr().getDestinationDirectory();
@@ -81,10 +80,10 @@ public class JavaCodeGenerator
         MacroCollector macroCollector = new MacroCollector(macros);
         getIr().getAST().apply(macroCollector);
 
-        CodeGenerationWalker walker = new CodeGenerationWalker(getIr(),
-                packageDirectory, macros);
-        UtilsGenerationWalker utilsGenerationWalker = new UtilsGenerationWalker(
-                getIr(), packageDirectory);
+        CodeGenerationWalker walker
+                = new CodeGenerationWalker(getIr(), packageDirectory, macros);
+        UtilsGenerationWalker utilsGenerationWalker
+                = new UtilsGenerationWalker(getIr(), packageDirectory);
 
         getIr().getAST().apply(walker);
         getIr().getAST().apply(utilsGenerationWalker);

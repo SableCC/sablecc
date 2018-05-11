@@ -33,8 +33,7 @@ import org.sablecc.objectmacro.syntax3.node.TInsertCommand;
 import org.sablecc.objectmacro.syntax3.node.TRBrace;
 import org.sablecc.objectmacro.syntax3.node.Token;
 
-public class CustomLexer
-        extends
+public class CustomLexer extends
         Lexer {
 
     public CustomLexer(
@@ -50,7 +49,7 @@ public class CustomLexer
     @Override
     protected void filter()
             throws LexerException,
-            IOException {
+                IOException {
 
         if (this.token instanceof TDquote) {
             if (this.state != State.STRING) {

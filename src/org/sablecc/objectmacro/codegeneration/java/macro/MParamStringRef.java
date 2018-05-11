@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MParamStringRef
-        extends
+public class MParamStringRef extends
         Macro {
 
     private String field_Name;
@@ -360,9 +359,9 @@ public class MParamStringRef
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    return this.field_");
 
@@ -372,7 +371,7 @@ public class MParamStringRef
 
         sb0.append(";");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -404,7 +403,7 @@ public class MParamStringRef
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

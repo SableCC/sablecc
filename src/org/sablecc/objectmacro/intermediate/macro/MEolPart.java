@@ -4,15 +4,17 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 public class MEolPart {
 
-  public MEolPart() {
-  }
+    public MEolPart() {
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("  eol;");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("  eol;");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
+    }
 
 }

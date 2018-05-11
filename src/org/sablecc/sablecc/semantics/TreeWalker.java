@@ -17,11 +17,11 @@
 
 package org.sablecc.sablecc.semantics;
 
-import org.sablecc.sablecc.syntax3.analysis.*;
-import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.sablecc.syntax3.node.Node;
 
-public abstract class TreeWalker
-        extends DepthFirstAdapter {
+public abstract class TreeWalker extends
+        DepthFirstAdapter {
 
     public void visit(
             Node node) {

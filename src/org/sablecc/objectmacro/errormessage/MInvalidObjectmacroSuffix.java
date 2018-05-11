@@ -4,34 +4,42 @@ package org.sablecc.objectmacro.errormessage;
 
 public class MInvalidObjectmacroSuffix {
 
-  private final String pFileName;
-  private final MInvalidObjectmacroSuffix mInvalidObjectmacroSuffix = this;
+    private final String pFileName;
 
-  public MInvalidObjectmacroSuffix(String pFileName) {
-    if(pFileName == null) throw new NullPointerException();
-    this.pFileName = pFileName;
-  }
+    private final MInvalidObjectmacroSuffix mInvalidObjectmacroSuffix = this;
 
-  String pFileName() {
-    return this.pFileName;
-  }
+    public MInvalidObjectmacroSuffix(
+            String pFileName) {
 
-  private String rFileName() {
-    return this.mInvalidObjectmacroSuffix.pFileName();
-  }
+        if (pFileName == null) {
+            throw new NullPointerException();
+        }
+        this.pFileName = pFileName;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MCommandLineErrorHead().toString());
-    sb.append(System.getProperty("line.separator"));
-    sb.append("The macro file, \"");
-    sb.append(rFileName());
-    sb.append("\", does not have a .objectmacro suffix.");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append(new MCommandLineErrorTail().toString());
-    return sb.toString();
-  }
+    String pFileName() {
+
+        return this.pFileName;
+    }
+
+    private String rFileName() {
+
+        return this.mInvalidObjectmacroSuffix.pFileName();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(new MCommandLineErrorHead().toString());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("The macro file, \"");
+        sb.append(rFileName());
+        sb.append("\", does not have a .objectmacro suffix.");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        sb.append(new MCommandLineErrorTail().toString());
+        return sb.toString();
+    }
 
 }

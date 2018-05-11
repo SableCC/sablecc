@@ -17,13 +17,13 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
 /**
  * A rich symbol is a symbol augmented with lookahead information.
  */
-public class RichSymbol
-        implements Comparable<RichSymbol> {
+public class RichSymbol implements
+        Comparable<RichSymbol> {
 
     /**
      * The end lookahead rich symbol.

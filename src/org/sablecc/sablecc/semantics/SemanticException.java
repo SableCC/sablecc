@@ -17,12 +17,13 @@
 
 package org.sablecc.sablecc.semantics;
 
-import org.sablecc.sablecc.exception.*;
-import org.sablecc.sablecc.semantics.errormessage.*;
-import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.sablecc.exception.CompilerException;
+import org.sablecc.sablecc.semantics.errormessage.MNotImplementedError;
+import org.sablecc.sablecc.semantics.errormessage.MSemanticError;
+import org.sablecc.sablecc.syntax3.node.Token;
 
-public class SemanticException
-        extends CompilerException {
+public class SemanticException extends
+        CompilerException {
 
     private Token location;
 
@@ -38,8 +39,9 @@ public class SemanticException
     public static SemanticException notImplementedError(
             Token location) {
 
-        return new SemanticException(new MNotImplementedError(
-                location.getLine() + "", location.getPos() + "").toString(),
+        return new SemanticException(
+                new MNotImplementedError(location.getLine() + "",
+                        location.getPos() + "").toString(),
                 location);
     }
 

@@ -2,83 +2,93 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MInternal {
 
-  private final List<Object> eSimpleName = new LinkedList<Object>();
-  private final List<Object> eStringType_MacroType = new LinkedList<Object>();
-  private final List<Object> eDirective = new LinkedList<Object>();
+    private final List<Object> eSimpleName = new LinkedList<>();
 
-  public MInternal() {
-  }
+    private final List<Object> eStringType_MacroType = new LinkedList<>();
 
-  public MSimpleName newSimpleName(String pName) {
-    MSimpleName lSimpleName = new MSimpleName(pName);
-    this.eSimpleName.add(lSimpleName);
-    return lSimpleName;
-  }
+    private final List<Object> eDirective = new LinkedList<>();
 
-  public MStringType newStringType() {
-    MStringType lStringType = new MStringType();
-    this.eStringType_MacroType.add(lStringType);
-    return lStringType;
-  }
+    public MInternal() {
 
-  public MMacroType newMacroType() {
-    MMacroType lMacroType = new MMacroType();
-    this.eStringType_MacroType.add(lMacroType);
-    return lMacroType;
-  }
-
-  public MDirective newDirective() {
-    MDirective lDirective = new MDirective();
-    this.eDirective.add(lDirective);
-    return lDirective;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(" Internal {");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(" Name = ");
-    if(this.eSimpleName.size() > 1) {
-      sb.append("{ ");
     }
-    {
-      boolean first = true;
-      for(Object oSimpleName : this.eSimpleName) {
-        if(first) {
-          first = false;
+
+    public MSimpleName newSimpleName(
+            String pName) {
+
+        MSimpleName lSimpleName = new MSimpleName(pName);
+        this.eSimpleName.add(lSimpleName);
+        return lSimpleName;
+    }
+
+    public MStringType newStringType() {
+
+        MStringType lStringType = new MStringType();
+        this.eStringType_MacroType.add(lStringType);
+        return lStringType;
+    }
+
+    public MMacroType newMacroType() {
+
+        MMacroType lMacroType = new MMacroType();
+        this.eStringType_MacroType.add(lMacroType);
+        return lMacroType;
+    }
+
+    public MDirective newDirective() {
+
+        MDirective lDirective = new MDirective();
+        this.eDirective.add(lDirective);
+        return lDirective;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(" Internal {");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(" Name = ");
+        if (this.eSimpleName.size() > 1) {
+            sb.append("{ ");
         }
-        else {
-          sb.append(", ");
+        {
+            boolean first = true;
+            for (Object oSimpleName : this.eSimpleName) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    sb.append(", ");
+                }
+                sb.append(oSimpleName.toString());
+            }
         }
-        sb.append(oSimpleName.toString());
-      }
-    }
-    if(this.eSimpleName.size() > 1) {
-      sb.append(" }");
-    }
-    for(Object oStringType_MacroType : this.eStringType_MacroType) {
-      sb.append(oStringType_MacroType.toString());
-    }
-    {
-      boolean first = true;
-      for(Object oDirective : this.eDirective) {
-        if(first) {
-          first = false;
+        if (this.eSimpleName.size() > 1) {
+            sb.append(" }");
         }
-        else {
-          sb.append(", ");
+        for (Object oStringType_MacroType : this.eStringType_MacroType) {
+            sb.append(oStringType_MacroType.toString());
         }
-        sb.append(oDirective.toString());
-      }
+        {
+            boolean first = true;
+            for (Object oDirective : this.eDirective) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    sb.append(", ");
+                }
+                sb.append(oDirective.toString());
+            }
+        }
+        sb.append(" }");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
     }
-    sb.append(" }");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
 }

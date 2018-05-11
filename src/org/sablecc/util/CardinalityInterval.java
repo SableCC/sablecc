@@ -17,31 +17,38 @@
 
 package org.sablecc.util;
 
-import org.sablecc.exception.*;
-import org.sablecc.sablecc.syntax3.analysis.*;
-import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.sablecc.syntax3.node.AAtLeastManyOperator;
+import org.sablecc.sablecc.syntax3.node.AIntervalManyOperator;
+import org.sablecc.sablecc.syntax3.node.ANumberManyOperator;
+import org.sablecc.sablecc.syntax3.node.AOneOrMoreManyOperator;
+import org.sablecc.sablecc.syntax3.node.AZeroOrMoreManyOperator;
+import org.sablecc.sablecc.syntax3.node.AZeroOrOneUnaryOperator;
+import org.sablecc.sablecc.syntax3.node.PManyOperator;
+import org.sablecc.sablecc.syntax3.node.PUnaryOperator;
 
-public final class CardinalityInterval
-        extends DepthFirstAdapter {
+public final class CardinalityInterval extends
+        DepthFirstAdapter {
 
     private Bound lowerBound;
 
     private Bound upperBound;
 
-    public static final CardinalityInterval ZERO_ZERO = new CardinalityInterval(
-            Bound.ZERO, Bound.ZERO);
+    public static final CardinalityInterval ZERO_ZERO
+            = new CardinalityInterval(Bound.ZERO, Bound.ZERO);
 
-    public static final CardinalityInterval ZERO_ONE = new CardinalityInterval(
-            Bound.ZERO, Bound.ONE);
+    public static final CardinalityInterval ZERO_ONE
+            = new CardinalityInterval(Bound.ZERO, Bound.ONE);
 
-    public static final CardinalityInterval ONE_ONE = new CardinalityInterval(
-            Bound.ONE, Bound.ONE);
+    public static final CardinalityInterval ONE_ONE
+            = new CardinalityInterval(Bound.ONE, Bound.ONE);
 
-    public static final CardinalityInterval ZERO_OR_MORE = new CardinalityInterval(
-            Bound.ZERO);
+    public static final CardinalityInterval ZERO_OR_MORE
+            = new CardinalityInterval(Bound.ZERO);
 
-    public static final CardinalityInterval ONE_OR_MORE = new CardinalityInterval(
-            Bound.ONE);
+    public static final CardinalityInterval ONE_OR_MORE
+            = new CardinalityInterval(Bound.ONE);
 
     public CardinalityInterval(
             PUnaryOperator operator) {

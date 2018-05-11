@@ -4,29 +4,37 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 public class MSimpleName {
 
-  private final String pName;
-  private final MSimpleName mSimpleName = this;
+    private final String pName;
 
-  public MSimpleName(String pName) {
-    if(pName == null) throw new NullPointerException();
-    this.pName = pName;
-  }
+    private final MSimpleName mSimpleName = this;
 
-  String pName() {
-    return this.pName;
-  }
+    public MSimpleName(
+            String pName) {
 
-  private String rName() {
-    return this.mSimpleName.pName();
-  }
+        if (pName == null) {
+            throw new NullPointerException();
+        }
+        this.pName = pName;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("'");
-    sb.append(rName());
-    sb.append("'");
-    return sb.toString();
-  }
+    String pName() {
+
+        return this.pName;
+    }
+
+    private String rName() {
+
+        return this.mSimpleName.pName();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("'");
+        sb.append(rName());
+        sb.append("'");
+        return sb.toString();
+    }
 
 }

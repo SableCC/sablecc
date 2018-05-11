@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.semantics;
 
-import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.sablecc.syntax3.node.Token;
 
 public class AlternativeReference {
 
@@ -50,8 +50,8 @@ public class AlternativeReference {
             Alternative alternative,
             Token location) {
 
-        AlternativeReference alternativeReference = new AlternativeReference(
-                grammar, alternative);
+        AlternativeReference alternativeReference
+                = new AlternativeReference(grammar, alternative);
         alternativeReference.location = location;
         return alternativeReference;
     }

@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MSetInternal
-        extends
+public class MSetInternal extends
         Macro {
 
     private String field_MacroName;
@@ -43,8 +42,8 @@ public class MSetInternal
 
         this.list_SetParams = new ArrayList<>();
 
-        this.SetParamsValue = new InternalValue(this.list_SetParams,
-                this.SetParamsContext);
+        this.SetParamsValue
+                = new InternalValue(this.list_SetParams, this.SetParamsContext);
 
     }
 
@@ -353,7 +352,7 @@ public class MSetInternal
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

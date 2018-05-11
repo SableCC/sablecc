@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MMacro
-        extends
+public class MMacro extends
         Macro {
 
     private String field_Name;
@@ -212,8 +211,8 @@ public class MMacro
         this.PackageDeclarationValue = new InternalValue(
                 this.list_PackageDeclaration, this.PackageDeclarationContext);
 
-        this.FieldsValue = new InternalValue(this.list_Fields,
-                this.FieldsContext);
+        this.FieldsValue
+                = new InternalValue(this.list_Fields, this.FieldsContext);
 
         this.ContextFieldsValue = new InternalValue(this.list_ContextFields,
                 this.ContextFieldsContext);
@@ -221,32 +220,32 @@ public class MMacro
         this.ConstructorValue = new InternalValue(this.list_Constructor,
                 this.ConstructorContext);
 
-        this.SettersValue = new InternalValue(this.list_Setters,
-                this.SettersContext);
+        this.SettersValue
+                = new InternalValue(this.list_Setters, this.SettersContext);
 
-        this.BuildersValue = new InternalValue(this.list_Builders,
-                this.BuildersContext);
+        this.BuildersValue
+                = new InternalValue(this.list_Builders, this.BuildersContext);
 
-        this.GettersValue = new InternalValue(this.list_Getters,
-                this.GettersContext);
+        this.GettersValue
+                = new InternalValue(this.list_Getters, this.GettersContext);
 
-        this.InitInternalsMethodsValue = new InternalValue(
-                this.list_InitInternalsMethods,
-                this.InitInternalsMethodsContext);
+        this.InitInternalsMethodsValue
+                = new InternalValue(this.list_InitInternalsMethods,
+                        this.InitInternalsMethodsContext);
 
         this.InitDirectivesValue = new InternalValue(this.list_InitDirectives,
                 this.InitDirectivesContext);
 
-        this.RedefinedApplyInitializerValue = new InternalValue(
-                this.list_RedefinedApplyInitializer,
-                this.RedefinedApplyInitializerContext);
+        this.RedefinedApplyInitializerValue
+                = new InternalValue(this.list_RedefinedApplyInitializer,
+                        this.RedefinedApplyInitializerContext);
 
         this.MacroBuilderValue = new InternalValue(this.list_MacroBuilder,
                 this.MacroBuilderContext);
 
-        this.EmptyBuilderWithContextValue = new InternalValue(
-                this.list_EmptyBuilderWithContext,
-                this.EmptyBuilderWithContextContext);
+        this.EmptyBuilderWithContextValue
+                = new InternalValue(this.list_EmptyBuilderWithContext,
+                        this.EmptyBuilderWithContextContext);
 
     }
 
@@ -904,8 +903,8 @@ public class MMacro
 
             if (this.FieldsBeforeFirst != null) {
 
-                expansion = this.FieldsBeforeFirst.apply(i, expansion,
-                        nb_macros);
+                expansion
+                        = this.FieldsBeforeFirst.apply(i, expansion, nb_macros);
 
             }
 
@@ -1074,15 +1073,15 @@ public class MMacro
 
             if (this.SettersAfterLast != null) {
 
-                expansion = this.SettersAfterLast.apply(i, expansion,
-                        nb_macros);
+                expansion
+                        = this.SettersAfterLast.apply(i, expansion, nb_macros);
 
             }
 
             if (this.SettersSeparator != null) {
 
-                expansion = this.SettersSeparator.apply(i, expansion,
-                        nb_macros);
+                expansion
+                        = this.SettersSeparator.apply(i, expansion, nb_macros);
 
             }
 
@@ -1129,15 +1128,15 @@ public class MMacro
 
             if (this.BuildersAfterLast != null) {
 
-                expansion = this.BuildersAfterLast.apply(i, expansion,
-                        nb_macros);
+                expansion
+                        = this.BuildersAfterLast.apply(i, expansion, nb_macros);
 
             }
 
             if (this.BuildersSeparator != null) {
 
-                expansion = this.BuildersSeparator.apply(i, expansion,
-                        nb_macros);
+                expansion
+                        = this.BuildersSeparator.apply(i, expansion, nb_macros);
 
             }
 
@@ -1184,15 +1183,15 @@ public class MMacro
 
             if (this.GettersAfterLast != null) {
 
-                expansion = this.GettersAfterLast.apply(i, expansion,
-                        nb_macros);
+                expansion
+                        = this.GettersAfterLast.apply(i, expansion, nb_macros);
 
             }
 
             if (this.GettersSeparator != null) {
 
-                expansion = this.GettersSeparator.apply(i, expansion,
-                        nb_macros);
+                expansion
+                        = this.GettersSeparator.apply(i, expansion, nb_macros);
 
             }
 
@@ -1888,7 +1887,7 @@ public class MMacro
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb0.toString());
 
@@ -1901,15 +1900,15 @@ public class MMacro
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.FieldsSeparator = new DSeparator(sb0.toString());
 
         this.FieldsValue.setSeparator(this.FieldsSeparator);
         StringBuilder sb1 = new StringBuilder();
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         this.FieldsBeforeFirst = new DBeforeFirst(sb1.toString());
 
@@ -1921,15 +1920,15 @@ public class MMacro
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.ContextFieldsBeforeFirst = new DBeforeFirst(sb0.toString());
 
         this.ContextFieldsValue.setBeforeFirst(this.ContextFieldsBeforeFirst);
         StringBuilder sb1 = new StringBuilder();
 
-        sb1.append(LINE_SEPARATOR);
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         this.ContextFieldsSeparator = new DSeparator(sb1.toString());
 
@@ -1941,7 +1940,7 @@ public class MMacro
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.ConstructorBeforeFirst = new DBeforeFirst(sb0.toString());
 
@@ -1953,15 +1952,15 @@ public class MMacro
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.SettersSeparator = new DSeparator(sb0.toString());
 
         this.SettersValue.setSeparator(this.SettersSeparator);
         StringBuilder sb1 = new StringBuilder();
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         this.SettersBeforeFirst = new DBeforeFirst(sb1.toString());
 
@@ -1973,15 +1972,15 @@ public class MMacro
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.BuildersSeparator = new DSeparator(sb0.toString());
 
         this.BuildersValue.setSeparator(this.BuildersSeparator);
         StringBuilder sb1 = new StringBuilder();
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         this.BuildersBeforeFirst = new DBeforeFirst(sb1.toString());
 
@@ -1993,15 +1992,15 @@ public class MMacro
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.GettersSeparator = new DSeparator(sb0.toString());
 
         this.GettersValue.setSeparator(this.GettersSeparator);
         StringBuilder sb1 = new StringBuilder();
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         this.GettersBeforeFirst = new DBeforeFirst(sb1.toString());
 
@@ -2013,8 +2012,8 @@ public class MMacro
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.InitInternalsMethodsSeparator = new DSeparator(sb0.toString());
 
@@ -2027,15 +2026,15 @@ public class MMacro
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.InitDirectivesSeparator = new DSeparator(sb0.toString());
 
         this.InitDirectivesValue.setSeparator(this.InitDirectivesSeparator);
         StringBuilder sb1 = new StringBuilder();
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         this.InitDirectivesBeforeFirst = new DBeforeFirst(sb1.toString());
 
@@ -2051,7 +2050,7 @@ public class MMacro
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         this.MacroBuilderBeforeFirst = new DBeforeFirst(sb0.toString());
 
@@ -2063,10 +2062,10 @@ public class MMacro
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        this.EmptyBuilderWithContextBeforeFirst = new DBeforeFirst(
-                sb0.toString());
+        this.EmptyBuilderWithContextBeforeFirst
+                = new DBeforeFirst(sb0.toString());
 
         this.EmptyBuilderWithContextValue
                 .setBeforeFirst(this.EmptyBuilderWithContextBeforeFirst);
@@ -2167,21 +2166,21 @@ public class MMacro
 
         sb0.append(minsert_1.build(null));
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append(buildPackageDeclaration());
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         MImportJavaUtil minsert_2 = new MImportJavaUtil();
 
         sb0.append(minsert_2.build(null));
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("public class M");
 
@@ -2191,7 +2190,7 @@ public class MMacro
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         StringBuilder sb1 = new StringBuilder();
 
@@ -2203,166 +2202,166 @@ public class MMacro
 
         sb1.append(buildFields());
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         sb1.append(buildContextFields());
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         sb1.append(buildConstructor());
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         sb1.append(buildSetters());
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         sb1.append(buildBuilders());
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         sb1.append(buildGetters());
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         sb1.append(buildInitInternalsMethods());
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         sb1.append(buildInitDirectives());
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         sb1.append(buildRedefinedApplyInitializer());
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         sb1.append(buildMacroBuilder());
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         sb1.append(buildEmptyBuilderWithContext());
 
-        sb1.append(LINE_SEPARATOR);
+        sb1.append(Macro.LINE_SEPARATOR);
 
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    private String applyIndent(");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                            String macro,");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                            String indent)");
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("            StringBuilder sb = new StringBuilder();");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("            String[] lines = macro.split( \"\\n\");");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("            if(lines.length > 1)");
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                for(int i = 0; i < lines.length; i++)");
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                    String line = lines[i];");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                    sb.append(indent).append(line);");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                    if(i < lines.length - 1)");
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                        sb.append(LINE_SEPARATOR);");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                    }");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                }");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("            }");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("            else");
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                sb.append(indent).append(macro);");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("            }");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("            return sb.toString();");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    }");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -2394,7 +2393,7 @@ public class MMacro
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

@@ -2,8 +2,7 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-class DAfterLast
-        extends
+class DAfterLast extends
         Directive {
 
     DAfterLast(

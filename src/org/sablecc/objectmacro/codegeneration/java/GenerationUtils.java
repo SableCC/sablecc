@@ -55,7 +55,7 @@ class GenerationUtils {
             TString tString) {
 
         StringBuilder sb = new StringBuilder();
-        String s = string(tString);
+        String s = GenerationUtils.string(tString);
         boolean escaped = false;
         for (char c : s.toCharArray()) {
             if (escaped) {
@@ -96,7 +96,8 @@ class GenerationUtils {
 
         StringBuilder macroName = new StringBuilder();
         for (TString partName : name_parts) {
-            macroName.append(Utils.toCamelCase(string(partName)));
+            macroName.append(
+                    Utils.toCamelCase(GenerationUtils.string(partName)));
         }
 
         return macroName.toString();
@@ -107,7 +108,7 @@ class GenerationUtils {
 
         StringBuilder macroName = new StringBuilder();
         for (TString partName : name_parts) {
-            macroName.append(string(partName));
+            macroName.append(GenerationUtils.string(partName));
         }
 
         return macroName.toString();

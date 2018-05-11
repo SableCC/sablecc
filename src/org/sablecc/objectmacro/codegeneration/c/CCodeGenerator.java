@@ -17,14 +17,15 @@
 
 package org.sablecc.objectmacro.codegeneration.c;
 
-import java.io.*;
+import java.io.File;
 
-import org.sablecc.objectmacro.codegeneration.*;
-import org.sablecc.objectmacro.exception.*;
-import org.sablecc.util.*;
+import org.sablecc.objectmacro.codegeneration.CodeGenerator;
+import org.sablecc.objectmacro.codegeneration.IntermediateRepresentation;
+import org.sablecc.objectmacro.exception.CompilerException;
+import org.sablecc.util.Strictness;
 
-public class CCodeGenerator
-        extends CodeGenerator {
+public class CCodeGenerator extends
+        CodeGenerator {
 
     private File packageDirectory;
 
@@ -40,8 +41,9 @@ public class CCodeGenerator
             String packageName = getIr().getDestinationPackage();
             if (!packageName.equals("")) {
                 String packageDirectoryName = packageName.replace('.', '/');
-                this.packageDirectory = new File(getIr()
-                        .getDestinationDirectory(), packageDirectoryName);
+                this.packageDirectory
+                        = new File(getIr().getDestinationDirectory(),
+                                packageDirectoryName);
             }
             else {
                 this.packageDirectory = getIr().getDestinationDirectory();
@@ -65,8 +67,8 @@ public class CCodeGenerator
 
         if (!packageDirectory.exists()) {
             if (!packageDirectory.mkdirs()) {
-                CompilerException.cannotCreateDirectory(packageDirectory
-                        .toString());
+                CompilerException
+                        .cannotCreateDirectory(packageDirectory.toString());
             }
         }
 

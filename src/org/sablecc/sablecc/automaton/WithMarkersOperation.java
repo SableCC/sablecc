@@ -17,23 +17,36 @@
 
 package org.sablecc.sablecc.automaton;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-import org.sablecc.exception.*;
-import org.sablecc.sablecc.alphabet.*;
-import org.sablecc.util.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.alphabet.Alphabet;
+import org.sablecc.sablecc.alphabet.RichSymbol;
+import org.sablecc.sablecc.alphabet.Symbol;
+import org.sablecc.util.Pair;
+import org.sablecc.util.WorkSet;
 
 class WithMarkersOperation {
 
     private Automaton newAutomaton;
 
-    private SortedSet<State> optimizedStates = new TreeSet<State>();
+    private SortedSet<State> optimizedStates = new TreeSet<>();
 
-    private Map<Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>>, State> stateMap = new HashMap<Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>>, State>();
+    private Map<Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>>,
+            State> stateMap = new HashMap<>();
 
-    private SortedMap<State, Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>>> progressMap = new TreeMap<State, Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>>>();
+    private SortedMap<State,
+            Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>>> progressMap
+                    = new TreeMap<>();
 
-    private WorkSet<State> workSet = new WorkSet<State>();
+    private WorkSet<State> workSet = new WorkSet<>();
 
     WithMarkersOperation(
             Automaton oldAutomaton) {
@@ -46,8 +59,8 @@ class WithMarkersOperation {
             throw new InternalException("invalid operation");
         }
 
-        if (oldAutomaton.getAcceptations().size() > 0
-                && oldAutomaton.getAcceptations().first() == Acceptation.ACCEPT) {
+        if (oldAutomaton.getAcceptations().size() > 0 && oldAutomaton
+                .getAcceptations().first() == Acceptation.ACCEPT) {
             throw new InternalException("invalid operation");
         }
 
@@ -59,11 +72,12 @@ class WithMarkersOperation {
         this.newAutomaton = new Automaton(oldAutomaton.getAlphabet());
 
         {
-            Set<Pair<State, Pair<Integer, Marker>>> progressSet = new LinkedHashSet<Pair<State, Pair<Integer, Marker>>>();
-            progressSet.add(new Pair<State, Pair<Integer, Marker>>(oldAutomaton
-                    .getStartState(), null));
-            Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>> progress = new Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>>(
-                    null, progressSet);
+            Set<Pair<State, Pair<Integer, Marker>>> progressSet
+                    = new LinkedHashSet<>();
+            progressSet.add(new Pair<State, Pair<Integer, Marker>>(
+                    oldAutomaton.getStartState(), null));
+            Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>> progress
+                    = new Pair<>(null, progressSet);
             this.stateMap.put(progress, this.newAutomaton.getStartState());
             this.progressMap.put(this.newAutomaton.getStartState(), progress);
             this.workSet.add(this.newAutomaton.getStartState());
@@ -72,14 +86,15 @@ class WithMarkersOperation {
         while (this.workSet.hasNext()) {
             State state = this.workSet.next();
 
-            Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>> progress = this.progressMap
-                    .get(state);
+            Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>> progress
+                    = this.progressMap.get(state);
 
             {
                 boolean acceptFound = false;
 
-                for (Pair<State, Pair<Integer, Marker>> progressElement : progress
-                        .getRight()) {
+                for (Pair<State,
+                        Pair<Integer, Marker>> progressElement : progress
+                                .getRight()) {
                     State oldState = progressElement.getLeft();
                     Pair<Integer, Marker> accept = progressElement.getRight();
                     if (oldState.isAcceptState()) {
@@ -98,8 +113,8 @@ class WithMarkersOperation {
                             }
                             else {
                                 markedAcceptation = new Acceptation(
-                                        acceptation.getName(),
-                                        accept.getLeft(), accept.getRight());
+                                        acceptation.getName(), accept.getLeft(),
+                                        accept.getRight());
                             }
 
                             if (!this.newAutomaton.getUnstableAcceptations()
@@ -132,25 +147,27 @@ class WithMarkersOperation {
             State newSourceState,
             RichSymbol richSymbol) {
 
-        RichSymbol normalRichSymbol = richSymbol.isLookahead() ? null
-                : richSymbol;
+        RichSymbol normalRichSymbol
+                = richSymbol.isLookahead() ? null : richSymbol;
         RichSymbol lookaheadRichSymbol = richSymbol.isLookahead() ? richSymbol
                 : richSymbol.getSymbol().getLookaheadRichSymbol();
 
-        Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>> sourceProgress = this.progressMap
-                .get(newSourceState);
+        Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>> sourceProgress
+                = this.progressMap.get(newSourceState);
 
-        Set<Pair<State, Pair<Integer, Marker>>> targetProgressSet = new LinkedHashSet<Pair<State, Pair<Integer, Marker>>>();
+        Set<Pair<State, Pair<Integer, Marker>>> targetProgressSet
+                = new LinkedHashSet<>();
 
-        SortedSet<Marker> targetMarkers = new TreeSet<Marker>();
+        SortedSet<Marker> targetMarkers = new TreeSet<>();
 
-        for (Pair<State, Pair<Integer, Marker>> sourceProgressElement : sourceProgress
-                .getRight()) {
+        for (Pair<State,
+                Pair<Integer, Marker>> sourceProgressElement : sourceProgress
+                        .getRight()) {
             State oldSourceState = sourceProgressElement.getLeft();
-            Pair<Integer, Marker> sourceAccept = sourceProgressElement
-                    .getRight();
-            State oldTargetState = oldSourceState
-                    .getSingleTarget(lookaheadRichSymbol);
+            Pair<Integer, Marker> sourceAccept
+                    = sourceProgressElement.getRight();
+            State oldTargetState
+                    = oldSourceState.getSingleTarget(lookaheadRichSymbol);
             if (oldTargetState != null) {
                 if (sourceAccept != null) {
                     Marker marker = sourceAccept.getRight();
@@ -176,30 +193,31 @@ class WithMarkersOperation {
             while (nextMarker == null);
         }
 
-        for (Pair<State, Pair<Integer, Marker>> sourceProgressElement : sourceProgress
-                .getRight()) {
+        for (Pair<State,
+                Pair<Integer, Marker>> sourceProgressElement : sourceProgress
+                        .getRight()) {
             State oldSourceState = sourceProgressElement.getLeft();
-            Pair<Integer, Marker> sourceAccept = sourceProgressElement
-                    .getRight();
+            Pair<Integer, Marker> sourceAccept
+                    = sourceProgressElement.getRight();
 
             if (normalRichSymbol != null) {
-                State oldTargetState = oldSourceState
-                        .getSingleTarget(normalRichSymbol);
+                State oldTargetState
+                        = oldSourceState.getSingleTarget(normalRichSymbol);
                 if (oldTargetState != null) {
                     if (sourceAccept != null) {
                         throw new InternalException(
                                 "a normal symbol is not valid after a lookahead symbol");
                     }
 
-                    Pair<State, Pair<Integer, Marker>> targetProgressElement = new Pair<State, Pair<Integer, Marker>>(
-                            oldTargetState, null);
+                    Pair<State, Pair<Integer, Marker>> targetProgressElement
+                            = new Pair<>(oldTargetState, null);
                     targetProgressSet.add(targetProgressElement);
                 }
             }
 
             {
-                State oldTargetState = oldSourceState
-                        .getSingleTarget(lookaheadRichSymbol);
+                State oldTargetState
+                        = oldSourceState.getSingleTarget(lookaheadRichSymbol);
                 if (oldTargetState != null) {
                     Pair<Integer, Marker> targetAccept;
 
@@ -208,25 +226,25 @@ class WithMarkersOperation {
                             targetAccept = sourceAccept;
                         }
                         else if (oldTargetState.isCyclic()) {
-                            targetAccept = new Pair<Integer, Marker>(
+                            targetAccept = new Pair<>(
                                     sourceAccept.getLeft() + 1, nextMarker);
                             nextMarkerIsUsed = true;
                         }
                         else {
-                            targetAccept = new Pair<Integer, Marker>(
+                            targetAccept = new Pair<>(
                                     sourceAccept.getLeft() + 1, null);
                         }
                     }
                     else if (oldTargetState.isCyclic()) {
-                        targetAccept = new Pair<Integer, Marker>(1, nextMarker);
+                        targetAccept = new Pair<>(1, nextMarker);
                         nextMarkerIsUsed = true;
                     }
                     else {
-                        targetAccept = new Pair<Integer, Marker>(1, null);
+                        targetAccept = new Pair<>(1, null);
                     }
 
-                    Pair<State, Pair<Integer, Marker>> targetProgressElement = new Pair<State, Pair<Integer, Marker>>(
-                            oldTargetState, targetAccept);
+                    Pair<State, Pair<Integer, Marker>> targetProgressElement
+                            = new Pair<>(oldTargetState, targetAccept);
                     targetProgressSet.add(targetProgressElement);
                 }
             }
@@ -242,8 +260,9 @@ class WithMarkersOperation {
             }
         }
 
-        Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>> targetProgress = new Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>>(
-                nextMarkerIsUsed ? nextMarker : null, targetProgressSet);
+        Pair<Marker, Set<Pair<State, Pair<Integer, Marker>>>> targetProgress
+                = new Pair<>(nextMarkerIsUsed ? nextMarker : null,
+                        targetProgressSet);
 
         State newTargetState = this.stateMap.get(targetProgress);
         if (newTargetState == null) {
@@ -260,13 +279,14 @@ class WithMarkersOperation {
     private Automaton getOptimizedAutomaton(
             Automaton oldAutomaton) {
 
-        Automaton optimizedAutomaton = new Automaton(oldAutomaton.getAlphabet());
+        Automaton optimizedAutomaton
+                = new Automaton(oldAutomaton.getAlphabet());
 
         for (Acceptation acceptation : oldAutomaton.getAcceptations()) {
             optimizedAutomaton.addAcceptation(acceptation);
         }
 
-        Map<State, State> oldStateToOptimizedStateMap = new HashMap<State, State>();
+        Map<State, State> oldStateToOptimizedStateMap = new HashMap<>();
 
         for (State oldState : oldAutomaton.getStates()) {
             State optimizedState;
@@ -296,8 +316,8 @@ class WithMarkersOperation {
         }
 
         for (State oldSourceState : oldAutomaton.getStates()) {
-            State optimizedSourceState = oldStateToOptimizedStateMap
-                    .get(oldSourceState);
+            State optimizedSourceState
+                    = oldStateToOptimizedStateMap.get(oldSourceState);
 
             if (this.optimizedStates.contains(optimizedSourceState)) {
                 continue;
@@ -308,8 +328,8 @@ class WithMarkersOperation {
                 RichSymbol richSymbol = entry.getKey();
 
                 for (State oldTargetState : entry.getValue()) {
-                    State optimizedTargetState = oldStateToOptimizedStateMap
-                            .get(oldTargetState);
+                    State optimizedTargetState
+                            = oldStateToOptimizedStateMap.get(oldTargetState);
                     optimizedSourceState.addTransition(richSymbol,
                             optimizedTargetState);
                 }
@@ -332,13 +352,13 @@ class WithMarkersOperation {
         }
 
         for (Symbol symbol : alphabet.getSymbols()) {
-            targetState = sourceState.getSingleTarget(symbol
-                    .getNormalRichSymbol());
+            targetState
+                    = sourceState.getSingleTarget(symbol.getNormalRichSymbol());
             if (targetState != null) {
                 return null;
             }
-            targetState = sourceState.getSingleTarget(symbol
-                    .getLookaheadRichSymbol());
+            targetState = sourceState
+                    .getSingleTarget(symbol.getLookaheadRichSymbol());
             if (targetState == null || !targetState.equals(sourceState)) {
                 return null;
             }
@@ -350,10 +370,12 @@ class WithMarkersOperation {
         }
 
         for (Symbol symbol : alphabet.getSymbols()) {
-            if (targetState.getSingleTarget(symbol.getNormalRichSymbol()) != null) {
+            if (targetState
+                    .getSingleTarget(symbol.getNormalRichSymbol()) != null) {
                 return null;
             }
-            if (targetState.getSingleTarget(symbol.getLookaheadRichSymbol()) != null) {
+            if (targetState
+                    .getSingleTarget(symbol.getLookaheadRichSymbol()) != null) {
                 return null;
             }
         }

@@ -38,7 +38,8 @@ public class Param {
 
     private final Set<AMacroReference> macroReferences = new LinkedHashSet<>();
 
-    private final Map<String, AMacroReference> macroReferencesName = new HashMap<>();
+    private final Map<String, AMacroReference> macroReferencesName
+            = new HashMap<>();
 
     private final Map<String, Param> paramReferences = new LinkedHashMap<>();
 

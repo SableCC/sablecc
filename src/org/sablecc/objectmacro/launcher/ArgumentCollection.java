@@ -46,9 +46,9 @@ class ArgumentCollection {
     ArgumentCollection(
             String[] arguments) {
 
-        List<OptionArgument> optionArguments = new LinkedList<OptionArgument>();
+        List<OptionArgument> optionArguments = new LinkedList<>();
 
-        List<TextArgument> textArguments = new LinkedList<TextArgument>();
+        List<TextArgument> textArguments = new LinkedList<>();
 
         int currentArgIndex = 0;
 

@@ -17,7 +17,7 @@
 
 package org.sablecc.util;
 
-import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.sablecc.syntax3.node.TIdentifier;
 
 public class CamelCase {
 
@@ -25,7 +25,7 @@ public class CamelCase {
             TIdentifier identifier) {
 
         String text = identifier.getText();
-        return to_CamelCase(text);
+        return CamelCase.to_CamelCase(text);
     }
 
     public static String to_CamelCase(
@@ -62,7 +62,7 @@ public class CamelCase {
             TIdentifier identifier) {
 
         String text = identifier.getText();
-        return to_camelCase(text);
+        return CamelCase.to_camelCase(text);
     }
 
     public static String to_camelCase(

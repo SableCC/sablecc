@@ -30,9 +30,9 @@ import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
 public class GlobalIndex {
 
-    private final Set<Macro> allMacros = new LinkedHashSet<Macro>();
+    private final Set<Macro> allMacros = new LinkedHashSet<>();
 
-    private final SortedMap<String, Macro> macroMap = new TreeMap<String, Macro>();
+    private final SortedMap<String, Macro> macroMap = new TreeMap<>();
 
     public Macro newMacro(
             PMacro pDeclaration) {

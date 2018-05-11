@@ -2,8 +2,7 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-class DSeparator
-        extends
+class DSeparator extends
         Directive {
 
     DSeparator(

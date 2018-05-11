@@ -61,8 +61,7 @@ import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 import org.sablecc.objectmacro.syntax3.node.Token;
 
 @SuppressWarnings("serial")
-public class CompilerException
-        extends
+public class CompilerException extends
         RuntimeException {
 
     private CompilerException(
@@ -323,8 +322,8 @@ public class CompilerException
 
         String line = String.valueOf(declaration.getName().getLine());
         String pos = String.valueOf(declaration.getName().getPos());
-        String expectedCount = String
-                .valueOf(macroReferenced.getAllInternals().size());
+        String expectedCount
+                = String.valueOf(macroReferenced.getAllInternals().size());
         String currentCount = String.valueOf(declaration.getValues().size());
 
         return new CompilerException(new MIncorrectArgumentCount(line, pos,

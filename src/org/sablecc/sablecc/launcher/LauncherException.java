@@ -17,11 +17,24 @@
 
 package org.sablecc.sablecc.launcher;
 
-import org.sablecc.sablecc.exception.*;
-import org.sablecc.sablecc.launcher.errormessage.*;
+import org.sablecc.sablecc.exception.CompilerException;
+import org.sablecc.sablecc.launcher.errormessage.MGrammarNotFile;
+import org.sablecc.sablecc.launcher.errormessage.MInputError;
+import org.sablecc.sablecc.launcher.errormessage.MInvalidArgument;
+import org.sablecc.sablecc.launcher.errormessage.MInvalidArgumentCount;
+import org.sablecc.sablecc.launcher.errormessage.MInvalidDesinationDirectory;
+import org.sablecc.sablecc.launcher.errormessage.MInvalidLongOption;
+import org.sablecc.sablecc.launcher.errormessage.MInvalidShortOption;
+import org.sablecc.sablecc.launcher.errormessage.MInvalidSuffix;
+import org.sablecc.sablecc.launcher.errormessage.MMissingGrammarFile;
+import org.sablecc.sablecc.launcher.errormessage.MMissingLongOptionOperand;
+import org.sablecc.sablecc.launcher.errormessage.MMissingShortOptionOperand;
+import org.sablecc.sablecc.launcher.errormessage.MSpuriousLongOptionOperand;
+import org.sablecc.sablecc.launcher.errormessage.MSpuriousShortOptionOperand;
+import org.sablecc.sablecc.launcher.errormessage.MUnknownTarget;
 
-public class LauncherException
-        extends CompilerException {
+public class LauncherException extends
+        CompilerException {
 
     private LauncherException(
             String message) {
@@ -33,8 +46,8 @@ public class LauncherException
             String fileName,
             Throwable cause) {
 
-        return new LauncherException(new MInputError(fileName,
-                cause.getMessage()).toString());
+        return new LauncherException(
+                new MInputError(fileName, cause.getMessage()).toString());
     }
 
     public static LauncherException unknownTarget(
@@ -47,8 +60,8 @@ public class LauncherException
     public static LauncherException invalidDesinationDirectory(
             String destination) {
 
-        return new LauncherException(new MInvalidDesinationDirectory(
-                destination).toString());
+        return new LauncherException(
+                new MInvalidDesinationDirectory(destination).toString());
     }
 
     public static LauncherException invalidArgumentCount() {
@@ -86,16 +99,18 @@ public class LauncherException
             String optionName,
             String operandName) {
 
-        return new LauncherException(new MMissingLongOptionOperand(optionName,
-                operandName).toString());
+        return new LauncherException(
+                new MMissingLongOptionOperand(optionName, operandName)
+                        .toString());
     }
 
     public static LauncherException missingShortOptionOperand(
             String optionName,
             String operandName) {
 
-        return new LauncherException(new MMissingShortOptionOperand(optionName,
-                operandName).toString());
+        return new LauncherException(
+                new MMissingShortOptionOperand(optionName, operandName)
+                        .toString());
     }
 
     public static LauncherException invalidLongOption(
@@ -109,8 +124,9 @@ public class LauncherException
             String optionName,
             String operand_text) {
 
-        return new LauncherException(new MSpuriousLongOptionOperand(optionName,
-                operand_text).toString());
+        return new LauncherException(
+                new MSpuriousLongOptionOperand(optionName, operand_text)
+                        .toString());
     }
 
     public static LauncherException invalidShortOption(
@@ -124,8 +140,9 @@ public class LauncherException
             String optionName,
             String operand_text) {
 
-        return new LauncherException(new MSpuriousShortOptionOperand(
-                optionName, operand_text).toString());
+        return new LauncherException(
+                new MSpuriousShortOptionOperand(optionName, operand_text)
+                        .toString());
     }
 
 }

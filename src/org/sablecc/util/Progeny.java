@@ -17,13 +17,16 @@
 
 package org.sablecc.util;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
 public abstract class Progeny<T> {
 
-    private final Map<T, Set<T>> childrenMap = new HashMap<T, Set<T>>();
+    private final Map<T, Set<T>> childrenMap = new HashMap<>();
 
     public Set<T> getChildren(
             T node) {

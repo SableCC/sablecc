@@ -17,11 +17,11 @@
 
 package org.sablecc.sablecc.exception;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
 @SuppressWarnings("serial")
-public abstract class CompilerException
-        extends RuntimeException {
+public abstract class CompilerException extends
+        RuntimeException {
 
     protected CompilerException(
             String message) {

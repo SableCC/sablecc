@@ -17,17 +17,16 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import static org.sablecc.util.UsefulStaticImports.*;
+import java.math.BigInteger;
 
-import java.math.*;
-
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.util.UsefulStaticImports;
 
 /**
  * A bound is a value that is used to construct intervals.
  */
-public class Bound
-        implements Comparable<Bound> {
+public class Bound implements
+        Comparable<Bound> {
 
     /**
      * The minimal bound.
@@ -111,11 +110,11 @@ public class Bound
     public Bound getPredecessor() {
 
         if (this.value == null) {
-            if (this == MIN) {
+            if (this == Bound.MIN) {
                 throw new InternalException("cannot get predecessor of MIN");
             }
             else {
-                assert this == MAX;
+                assert this == Bound.MAX;
                 throw new InternalException("cannot get predecessor of MAX");
             }
         }
@@ -129,11 +128,11 @@ public class Bound
     public Bound getSuccessor() {
 
         if (this.value == null) {
-            if (this == MIN) {
+            if (this == Bound.MIN) {
                 throw new InternalException("cannot get successor of MIN");
             }
             else {
-                assert this == MAX;
+                assert this == Bound.MAX;
                 throw new InternalException("cannot get successor of MAX");
             }
         }
@@ -197,7 +196,7 @@ public class Bound
 
         if (this.toString == null) {
             if (this.value == null) {
-                if (this == MIN) {
+                if (this == Bound.MIN) {
                     this.toString = "MIN";
                 }
                 else {
@@ -205,8 +204,9 @@ public class Bound
                 }
             }
             else {
-                if (this.value.compareTo(BI_32) < 0
-                        || this.value.compareTo(BI_126) > 0) {
+                if (this.value.compareTo(UsefulStaticImports.BI_32) < 0
+                        || this.value
+                                .compareTo(UsefulStaticImports.BI_126) > 0) {
                     this.toString = "#" + this.value.toString();
                 }
                 else {
@@ -235,15 +235,15 @@ public class Bound
         }
 
         if (this.value == null || bound.value == null) {
-            if (this == MIN) {
-                return bound == MIN ? 0 : -1;
+            if (this == Bound.MIN) {
+                return bound == Bound.MIN ? 0 : -1;
             }
 
-            if (this == MAX) {
-                return bound == MAX ? 0 : 1;
+            if (this == Bound.MAX) {
+                return bound == Bound.MAX ? 0 : 1;
             }
 
-            if (bound == MIN) {
+            if (bound == Bound.MIN) {
                 return 1;
             }
 
@@ -284,21 +284,22 @@ public class Bound
     public String getSimpleName() {
 
         if (this.value == null) {
-            if (this == MIN) {
+            if (this == Bound.MIN) {
                 return "min";
             }
 
             return "max";
         }
 
-        if (this.value.compareTo(BI_32) < 0 || this.value.compareTo(BI_126) > 0) {
+        if (this.value.compareTo(UsefulStaticImports.BI_32) < 0
+                || this.value.compareTo(UsefulStaticImports.BI_126) > 0) {
             return this.value.toString();
         }
 
         char c = (char) Integer.parseInt(this.value.toString());
 
-        if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A'
-                && c <= 'Z') {
+        if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z'
+                || c >= 'A' && c <= 'Z') {
             return "_" + c;
         }
 

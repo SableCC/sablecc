@@ -17,11 +17,24 @@
 
 package org.sablecc.sablecc.semantics;
 
-import org.sablecc.exception.*;
-import org.sablecc.sablecc.syntax3.node.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.syntax3.node.ACharUnit;
+import org.sablecc.sablecc.syntax3.node.AEndUnit;
+import org.sablecc.sablecc.syntax3.node.AIdentifierCharUnit;
+import org.sablecc.sablecc.syntax3.node.AIdentifierStringUnit;
+import org.sablecc.sablecc.syntax3.node.ANamedExpression;
+import org.sablecc.sablecc.syntax3.node.AStringUnit;
+import org.sablecc.sablecc.syntax3.node.Node;
+import org.sablecc.sablecc.syntax3.node.TChar;
+import org.sablecc.sablecc.syntax3.node.TEndKeyword;
+import org.sablecc.sablecc.syntax3.node.TIdentifier;
+import org.sablecc.sablecc.syntax3.node.TIdentifierChar;
+import org.sablecc.sablecc.syntax3.node.TIdentifierString;
+import org.sablecc.sablecc.syntax3.node.TString;
+import org.sablecc.sablecc.syntax3.node.Token;
 
-public class Expression
-        extends Declaration {
+public class Expression extends
+        Declaration {
 
     private Grammar grammar;
 

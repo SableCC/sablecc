@@ -17,9 +17,9 @@
 
 package org.sablecc.util;
 
-import java.math.*;
+import java.math.BigInteger;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
 /**
  * This class provides commonly used constants for static import.
@@ -27,8 +27,8 @@ import org.sablecc.exception.*;
 public class UsefulStaticImports {
 
     /** The system-specific line separator. */
-    public static final String LINE_SEPARATOR = System
-            .getProperty("line.separator");
+    public static final String LINE_SEPARATOR
+            = System.getProperty("line.separator");
 
     /** BigInteger constant 32. */
     public static final BigInteger BI_32 = new BigInteger("32");

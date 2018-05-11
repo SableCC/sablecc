@@ -2,7 +2,8 @@
 
 package org.sablecc.objectmacro.codegeneration.c.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MMacroCreator {
 
@@ -12,11 +13,11 @@ public class MMacroCreator {
 
     private final MFile mFile;
 
-    private final List<Object> eParamParam = new LinkedList<Object>();
+    private final List<Object> eParamParam = new LinkedList<>();
 
-    private final List<Object> eParamArg_AncestorArg = new LinkedList<Object>();
+    private final List<Object> eParamArg_AncestorArg = new LinkedList<>();
 
-    private final List<Object> eAddToExpand = new LinkedList<Object>();
+    private final List<Object> eAddToExpand = new LinkedList<>();
 
     MMacroCreator(
             String pName,
@@ -35,8 +36,8 @@ public class MMacroCreator {
     public MAddToExpand newAddToExpand(
             String pSignature) {
 
-        MAddToExpand lAddToExpand = new MAddToExpand(pSignature, this.mFile,
-                this.mMacroCreator);
+        MAddToExpand lAddToExpand
+                = new MAddToExpand(pSignature, this.mFile, this.mMacroCreator);
         this.eAddToExpand.add(lAddToExpand);
         return lAddToExpand;
     }

@@ -17,14 +17,14 @@
 
 package org.sablecc.sablecc.automaton;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
 /**
  * An acceptation represents the nature of an accept automaton state. A
  * constant, <code>ACCEPT</code>, is provided for generic acceptance.
  */
-public class Acceptation
-        implements Comparable<Acceptation> {
+public class Acceptation implements
+        Comparable<Acceptation> {
 
     /**
      * A generic acceptation.
@@ -110,7 +110,8 @@ public class Acceptation
     public String getName() {
 
         if (this.name == null) {
-            throw new InternalException("this acceptation does not have a name");
+            throw new InternalException(
+                    "this acceptation does not have a name");
         }
 
         return this.name;

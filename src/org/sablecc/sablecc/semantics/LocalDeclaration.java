@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.semantics;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
 public abstract class LocalDeclaration {
 

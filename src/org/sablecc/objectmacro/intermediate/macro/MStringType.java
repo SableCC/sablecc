@@ -2,41 +2,45 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MStringType {
 
-  private final List<Object> eDirective = new LinkedList<Object>();
+    private final List<Object> eDirective = new LinkedList<>();
 
-  public MStringType() {
-  }
+    public MStringType() {
 
-  public MDirective newDirective() {
-    MDirective lDirective = new MDirective();
-    this.eDirective.add(lDirective);
-    return lDirective;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(" Type = String ");
-    if(this.eDirective.size() == 1) {
-      sb.append(", ");
     }
-    {
-      boolean first = true;
-      for(Object oDirective : this.eDirective) {
-        if(first) {
-          first = false;
-        }
-        else {
-          sb.append(", ");
-        }
-        sb.append(oDirective.toString());
-      }
+
+    public MDirective newDirective() {
+
+        MDirective lDirective = new MDirective();
+        this.eDirective.add(lDirective);
+        return lDirective;
     }
-    return sb.toString();
-  }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(" Type = String ");
+        if (this.eDirective.size() == 1) {
+            sb.append(", ");
+        }
+        {
+            boolean first = true;
+            for (Object oDirective : this.eDirective) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    sb.append(", ");
+                }
+                sb.append(oDirective.toString());
+            }
+        }
+        return sb.toString();
+    }
 
 }

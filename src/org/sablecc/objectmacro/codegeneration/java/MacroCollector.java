@@ -28,8 +28,7 @@ import org.sablecc.objectmacro.intermediate.syntax3.node.AInternal;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AMacro;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AParam;
 
-public class MacroCollector
-        extends
+public class MacroCollector extends
         DepthFirstAdapter {
 
     private final Map<String, Macro> macros;

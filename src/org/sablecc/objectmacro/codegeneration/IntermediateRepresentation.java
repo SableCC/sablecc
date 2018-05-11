@@ -43,8 +43,8 @@ public class IntermediateRepresentation {
 
         String macroFileName = macroFile.getName();
         int length = macroFileName.length();
-        this.name = macroFileName.substring(0,
-                length - ".objectmacro".length());
+        this.name
+                = macroFileName.substring(0, length - ".objectmacro".length());
     }
 
     public PIntermediateRepresentation getAST() {

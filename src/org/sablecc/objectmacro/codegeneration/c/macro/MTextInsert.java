@@ -2,7 +2,8 @@
 
 package org.sablecc.objectmacro.codegeneration.c.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MTextInsert {
 
@@ -12,7 +13,9 @@ public class MTextInsert {
 
     private final MFile mFile;
 
-    private final List<Object> eInlineText_ParamInsert_TextInsert_TextInsertAncestor = new LinkedList<Object>();
+    private final List<
+            Object> eInlineText_ParamInsert_TextInsert_TextInsertAncestor
+                    = new LinkedList<>();
 
     MTextInsert(
             String pName,
@@ -57,8 +60,8 @@ public class MTextInsert {
     public MTextInsertAncestor newTextInsertAncestor(
             String pName) {
 
-        MTextInsertAncestor lTextInsertAncestor = new MTextInsertAncestor(
-                pName, this.mFile);
+        MTextInsertAncestor lTextInsertAncestor
+                = new MTextInsertAncestor(pName, this.mFile);
         this.eInlineText_ParamInsert_TextInsert_TextInsertAncestor
                 .add(lTextInsertAncestor);
         return lTextInsertAncestor;

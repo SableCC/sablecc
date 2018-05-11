@@ -29,8 +29,8 @@ package org.sablecc.exception;
  * a non-null argument.
  */
 @SuppressWarnings("serial")
-public class InternalException
-        extends RuntimeException {
+public class InternalException extends
+        RuntimeException {
 
     /**
      * Constructs an internal exception with the provided error message.

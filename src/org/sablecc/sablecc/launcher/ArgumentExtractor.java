@@ -17,18 +17,22 @@
 
 package org.sablecc.sablecc.launcher;
 
-import java.util.*;
+import java.util.List;
 
-import org.sablecc.exception.*;
-import org.sablecc.sablecc.launcher.syntax3.analysis.*;
-import org.sablecc.sablecc.launcher.syntax3.node.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.launcher.syntax3.analysis.DepthFirstAdapter;
+import org.sablecc.sablecc.launcher.syntax3.node.ALongOption;
+import org.sablecc.sablecc.launcher.syntax3.node.AOperand;
+import org.sablecc.sablecc.launcher.syntax3.node.APlainArgument;
+import org.sablecc.sablecc.launcher.syntax3.node.AShortOption;
+import org.sablecc.sablecc.launcher.syntax3.node.Start;
 
 /**
  * An argument extractor is an AST walker that extracts information from a
  * command-line argument.
  */
-class ArgumentExtractor
-        extends DepthFirstAdapter {
+class ArgumentExtractor extends
+        DepthFirstAdapter {
 
     /** The provided list of option arguments. */
     private final List<OptionArgument> optionArguments;
@@ -96,8 +100,8 @@ class ArgumentExtractor
                 // yes
 
                 if (operand.getOperandText() != null) {
-                    this.optionArguments.add(new OptionArgument(option, operand
-                            .getOperandText().getText()));
+                    this.optionArguments.add(new OptionArgument(option,
+                            operand.getOperandText().getText()));
                 }
                 else {
                     this.optionArguments.add(new OptionArgument(option, ""));
@@ -156,8 +160,8 @@ class ArgumentExtractor
                 // yes
 
                 if (operand.getOperandText() != null) {
-                    this.optionArguments.add(new OptionArgument(option, operand
-                            .getOperandText().getText()));
+                    this.optionArguments.add(new OptionArgument(option,
+                            operand.getOperandText().getText()));
                 }
                 else {
                     this.optionArguments.add(new OptionArgument(option, ""));
@@ -192,8 +196,8 @@ class ArgumentExtractor
             List<OptionArgument> optionArguments,
             List<TextArgument> textArguments) {
 
-        ArgumentExtractor extractor = new ArgumentExtractor(optionArguments,
-                textArguments);
+        ArgumentExtractor extractor
+                = new ArgumentExtractor(optionArguments, textArguments);
 
         ast.apply(extractor);
 

@@ -2,25 +2,30 @@
 
 package org.sablecc.objectmacro.codegeneration.c.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MMacroC {
 
     private final MFile mFile;
 
-    private final List<Object> eParamParam_AncestorParam = new LinkedList<Object>();
+    private final List<Object> eParamParam_AncestorParam = new LinkedList<>();
 
-    private final List<Object> eParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit = new LinkedList<Object>();
+    private final List<
+            Object> eParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit
+                    = new LinkedList<>();
 
-    private final List<Object> eExpandDestructor = new LinkedList<Object>();
+    private final List<Object> eExpandDestructor = new LinkedList<>();
 
-    private final List<Object> eMacroCreator = new LinkedList<Object>();
+    private final List<Object> eMacroCreator = new LinkedList<>();
 
-    private final List<Object> eParam = new LinkedList<Object>();
+    private final List<Object> eParam = new LinkedList<>();
 
-    private final List<Object> eParamRef = new LinkedList<Object>();
+    private final List<Object> eParamRef = new LinkedList<>();
 
-    private final List<Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart = new LinkedList<Object>();
+    private final List<
+            Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
+                    = new LinkedList<>();
 
     MMacroC(
             MFile mFile) {
@@ -50,8 +55,8 @@ public class MMacroC {
     public MParamConstructorInit newParamConstructorInit(
             String pName) {
 
-        MParamConstructorInit lParamConstructorInit = new MParamConstructorInit(
-                pName, this.mFile);
+        MParamConstructorInit lParamConstructorInit
+                = new MParamConstructorInit(pName, this.mFile);
         this.eParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit
                 .add(lParamConstructorInit);
         return lParamConstructorInit;
@@ -68,8 +73,8 @@ public class MMacroC {
     public MAncestorConstructorInit newAncestorConstructorInit(
             String pName) {
 
-        MAncestorConstructorInit lAncestorConstructorInit = new MAncestorConstructorInit(
-                pName, this.mFile);
+        MAncestorConstructorInit lAncestorConstructorInit
+                = new MAncestorConstructorInit(pName, this.mFile);
         this.eParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit
                 .add(lAncestorConstructorInit);
         return lAncestorConstructorInit;
@@ -78,8 +83,8 @@ public class MMacroC {
     public MExpandConstructorInit newExpandConstructorInit(
             String pName) {
 
-        MExpandConstructorInit lExpandConstructorInit = new MExpandConstructorInit(
-                pName, this.mFile);
+        MExpandConstructorInit lExpandConstructorInit
+                = new MExpandConstructorInit(pName, this.mFile);
         this.eParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit
                 .add(lExpandConstructorInit);
         return lExpandConstructorInit;
@@ -88,8 +93,8 @@ public class MMacroC {
     public MExpandDestructor newExpandDestructor(
             String pName) {
 
-        MExpandDestructor lExpandDestructor = new MExpandDestructor(pName,
-                this.mFile);
+        MExpandDestructor lExpandDestructor
+                = new MExpandDestructor(pName, this.mFile);
         this.eExpandDestructor.add(lExpandDestructor);
         return lExpandDestructor;
     }
@@ -139,8 +144,8 @@ public class MMacroC {
     public MParamInsertPart newParamInsertPart(
             String pName) {
 
-        MParamInsertPart lParamInsertPart = new MParamInsertPart(pName,
-                this.mFile);
+        MParamInsertPart lParamInsertPart
+                = new MParamInsertPart(pName, this.mFile);
         this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
                 .add(lParamInsertPart);
         return lParamInsertPart;
@@ -157,8 +162,8 @@ public class MMacroC {
     public MExpandInsertPart newExpandInsertPart(
             String pName) {
 
-        MExpandInsertPart lExpandInsertPart = new MExpandInsertPart(pName,
-                this.mFile);
+        MExpandInsertPart lExpandInsertPart
+                = new MExpandInsertPart(pName, this.mFile);
         this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
                 .add(lExpandInsertPart);
         return lExpandInsertPart;
@@ -222,8 +227,9 @@ public class MMacroC {
         sb.append("_free;");
         sb.append(System.getProperty("line.separator"));
         for (Object oParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit : this.eParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit) {
-            sb.append(oParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit
-                    .toString());
+            sb.append(
+                    oParamConstructorInit_SelfRefC_AncestorConstructorInit_ExpandConstructorInit
+                            .toString());
         }
         sb.append("  return m");
         sb.append(rFileName());
@@ -310,8 +316,9 @@ public class MMacroC {
         sb.append("  List* listString = List_init();");
         sb.append(System.getProperty("line.separator"));
         for (Object oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart : this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart) {
-            sb.append(oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                    .toString());
+            sb.append(
+                    oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
+                            .toString());
         }
         sb.append(System.getProperty("line.separator"));
         sb.append("  char* str = (char*)calloc(sizeString, sizeof(char));");

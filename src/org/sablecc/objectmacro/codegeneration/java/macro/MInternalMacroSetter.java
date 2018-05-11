@@ -5,8 +5,7 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MInternalMacroSetter
-        extends
+public class MInternalMacroSetter extends
         Macro {
 
     private String field_ParamName;
@@ -91,36 +90,36 @@ public class MInternalMacroSetter
 
         sb0.append("(");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                Context context,");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("                InternalValue internal_value) ");
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("            if(internal_value == null)");
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append(
                 "                throw new RuntimeException(\"macros cannot be null\");");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("            }");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("            this.list_");
 
@@ -128,7 +127,7 @@ public class MInternalMacroSetter
 
         sb0.append(".put(context, internal_value);");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("        }");
 
@@ -160,7 +159,7 @@ public class MInternalMacroSetter
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

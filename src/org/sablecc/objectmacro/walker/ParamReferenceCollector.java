@@ -29,8 +29,7 @@ import org.sablecc.objectmacro.syntax3.node.AVarStringPart;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 import org.sablecc.objectmacro.util.Utils;
 
-public class ParamReferenceCollector
-        extends
+public class ParamReferenceCollector extends
         DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;

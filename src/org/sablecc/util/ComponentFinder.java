@@ -17,19 +17,26 @@
 
 package org.sablecc.util;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
 public class ComponentFinder<T> {
 
-    private final Map<T, T> representativeMap = new HashMap<T, T>();
+    private final Map<T, T> representativeMap = new HashMap<>();
 
-    private final Map<T, Set<T>> memberMap = new LinkedHashMap<T, Set<T>>();
+    private final Map<T, Set<T>> memberMap = new LinkedHashMap<>();
 
-    private Set<T> linearization = new LinkedHashSet<T>();
+    private Set<T> linearization = new LinkedHashSet<>();
 
-    private final Map<T, Set<T>> reachMap = new LinkedHashMap<T, Set<T>>();
+    private final Map<T, Set<T>> reachMap = new LinkedHashMap<>();
 
     private Progeny<T> progeny;
 
@@ -58,9 +65,9 @@ public class ComponentFinder<T> {
                 boolean onStack;
             }
 
-            Map<T, NodeInfo> infoMap = new HashMap<T, NodeInfo>();
+            Map<T, NodeInfo> infoMap = new HashMap<>();
 
-            LinkedList<T> stack = new LinkedList<T>();
+            LinkedList<T> stack = new LinkedList<>();
 
             int time = 0;
 
@@ -108,7 +115,7 @@ public class ComponentFinder<T> {
                 }
 
                 if (nodeInfo.lowestReachableDiscoveryTime == nodeInfo.discoveryTime) {
-                    Set<T> members = new LinkedHashSet<T>();
+                    Set<T> members = new LinkedHashSet<>();
                     T member;
                     ComponentFinder.this.linearization.add(node);
 
@@ -116,8 +123,8 @@ public class ComponentFinder<T> {
                         member = this.stack.removeFirst();
                         NodeInfo memberInfo = this.infoMap.get(member);
                         memberInfo.onStack = false;
-                        ComponentFinder.this.representativeMap
-                                .put(member, node);
+                        ComponentFinder.this.representativeMap.put(member,
+                                node);
                         members.add(member);
                     }
                     while (member != node);
@@ -186,7 +193,7 @@ public class ComponentFinder<T> {
 
         for (T node : this.linearization) {
             Set<T> members = this.memberMap.get(node);
-            Set<T> reach = new LinkedHashSet<T>();
+            Set<T> reach = new LinkedHashSet<>();
             boolean recursive = false;
 
             for (T member : members) {

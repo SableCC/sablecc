@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MSingleAdd
-        extends
+public class MSingleAdd extends
         Macro {
 
     private String field_MacroName;
@@ -38,8 +37,8 @@ public class MSingleAdd
 
         this.list_IsBuilt = new ArrayList<>();
 
-        this.IsBuiltValue = new InternalValue(this.list_IsBuilt,
-                this.IsBuiltContext);
+        this.IsBuiltValue
+                = new InternalValue(this.list_IsBuilt, this.IsBuiltContext);
 
     }
 
@@ -137,15 +136,15 @@ public class MSingleAdd
 
             if (this.IsBuiltAfterLast != null) {
 
-                expansion = this.IsBuiltAfterLast.apply(i, expansion,
-                        nb_macros);
+                expansion
+                        = this.IsBuiltAfterLast.apply(i, expansion, nb_macros);
 
             }
 
             if (this.IsBuiltSeparator != null) {
 
-                expansion = this.IsBuiltSeparator.apply(i, expansion,
-                        nb_macros);
+                expansion
+                        = this.IsBuiltSeparator.apply(i, expansion, nb_macros);
 
             }
 
@@ -262,13 +261,13 @@ public class MSingleAdd
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    if(macro == null)");
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("        throw ObjectMacroException.parameterNull(\"");
 
@@ -276,11 +275,11 @@ public class MSingleAdd
 
         sb0.append("\");");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    }");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         StringBuilder sb1 = new StringBuilder();
 
@@ -295,9 +294,9 @@ public class MSingleAdd
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    this.list_");
 
@@ -305,15 +304,15 @@ public class MSingleAdd
 
         sb0.append(".add(macro);");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    this.children.add(macro);");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("    Macro.cycleDetector.detectCycle(this, macro);");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -345,7 +344,7 @@ public class MSingleAdd
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

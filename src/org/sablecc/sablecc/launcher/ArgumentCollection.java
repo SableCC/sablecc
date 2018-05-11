@@ -17,12 +17,15 @@
 
 package org.sablecc.sablecc.launcher;
 
-import java.io.*;
-import java.util.*;
+import java.io.PushbackReader;
+import java.io.StringReader;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.sablecc.sablecc.launcher.syntax3.lexer.*;
-import org.sablecc.sablecc.launcher.syntax3.node.*;
-import org.sablecc.sablecc.launcher.syntax3.parser.*;
+import org.sablecc.sablecc.launcher.syntax3.lexer.Lexer;
+import org.sablecc.sablecc.launcher.syntax3.node.Start;
+import org.sablecc.sablecc.launcher.syntax3.parser.Parser;
 
 /**
  * Encapsulates a collection of option and text command-line arguments.
@@ -42,9 +45,9 @@ class ArgumentCollection {
     ArgumentCollection(
             String[] arguments) {
 
-        List<OptionArgument> optionArguments = new LinkedList<OptionArgument>();
+        List<OptionArgument> optionArguments = new LinkedList<>();
 
-        List<TextArgument> textArguments = new LinkedList<TextArgument>();
+        List<TextArgument> textArguments = new LinkedList<>();
 
         int currentArgIndex = 0;
 
@@ -64,8 +67,9 @@ class ArgumentCollection {
 
             Start ast;
             try {
-                ast = new Parser(new Lexer(new PushbackReader(new StringReader(
-                        arguments[currentArgIndex]), 1024))).parse();
+                ast = new Parser(new Lexer(new PushbackReader(
+                        new StringReader(arguments[currentArgIndex]), 1024)))
+                                .parse();
             }
             catch (Exception e) {
                 throw LauncherException

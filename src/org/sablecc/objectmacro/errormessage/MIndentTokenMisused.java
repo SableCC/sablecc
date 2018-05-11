@@ -4,48 +4,62 @@ package org.sablecc.objectmacro.errormessage;
 
 public class MIndentTokenMisused {
 
-  private final String pLine;
-  private final String pChar;
-  private final MIndentTokenMisused mIndentTokenMisused = this;
+    private final String pLine;
 
-  public MIndentTokenMisused(String pLine, String pChar) {
-    if(pLine == null) throw new NullPointerException();
-    this.pLine = pLine;
-    if(pChar == null) throw new NullPointerException();
-    this.pChar = pChar;
-  }
+    private final String pChar;
 
-  String pLine() {
-    return this.pLine;
-  }
+    private final MIndentTokenMisused mIndentTokenMisused = this;
 
-  String pChar() {
-    return this.pChar;
-  }
+    public MIndentTokenMisused(
+            String pLine,
+            String pChar) {
 
-  private String rLine() {
-    return this.mIndentTokenMisused.pLine();
-  }
+        if (pLine == null) {
+            throw new NullPointerException();
+        }
+        this.pLine = pLine;
+        if (pChar == null) {
+            throw new NullPointerException();
+        }
+        this.pChar = pChar;
+    }
 
-  private String rChar() {
-    return this.mIndentTokenMisused.pChar();
-  }
+    String pLine() {
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("*** SYNTAX ERROR ***");
-    sb.append(System.getProperty("line.separator"));
-    sb.append(System.getProperty("line.separator"));
-    sb.append("Line: ");
-    sb.append(rLine());
-    sb.append(System.getProperty("line.separator"));
-    sb.append("Char: ");
-    sb.append(rChar());
-    sb.append(System.getProperty("line.separator"));
-    sb.append("The token {Indent} must be at the beginning of the line.");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        return this.pLine;
+    }
+
+    String pChar() {
+
+        return this.pChar;
+    }
+
+    private String rLine() {
+
+        return this.mIndentTokenMisused.pLine();
+    }
+
+    private String rChar() {
+
+        return this.mIndentTokenMisused.pChar();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("*** SYNTAX ERROR ***");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Line: ");
+        sb.append(rLine());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Char: ");
+        sb.append(rChar());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("The token {Indent} must be at the beginning of the line.");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
+    }
 
 }

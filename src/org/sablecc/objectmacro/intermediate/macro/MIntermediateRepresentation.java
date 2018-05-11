@@ -2,28 +2,32 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MIntermediateRepresentation {
 
-  private final List<Object> eMacro = new LinkedList<Object>();
+    private final List<Object> eMacro = new LinkedList<>();
 
-  public MIntermediateRepresentation() {
-  }
+    public MIntermediateRepresentation() {
 
-  public MMacro newMacro() {
-    MMacro lMacro = new MMacro();
-    this.eMacro.add(lMacro);
-    return lMacro;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    for(Object oMacro : this.eMacro) {
-      sb.append(oMacro.toString());
     }
-    return sb.toString();
-  }
+
+    public MMacro newMacro() {
+
+        MMacro lMacro = new MMacro();
+        this.eMacro.add(lMacro);
+        return lMacro;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        for (Object oMacro : this.eMacro) {
+            sb.append(oMacro.toString());
+        }
+        return sb.toString();
+    }
 
 }

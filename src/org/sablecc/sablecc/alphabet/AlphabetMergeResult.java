@@ -17,9 +17,13 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import java.util.*;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
 /**
  * An instance of this class stores the result of merging two alphabets. It
@@ -43,7 +47,9 @@ public final class AlphabetMergeResult {
      * The rich symbol map. It maps each old rich symbol (in a merged alphabet)
      * to a set of new rich symbols that cover the same intervals.
      */
-    private final SortedMap<RichSymbol, SortedSet<RichSymbol>> mergedAlphabetRichSymbolMap = new TreeMap<RichSymbol, SortedSet<RichSymbol>>();
+    private final SortedMap<RichSymbol,
+            SortedSet<RichSymbol>> mergedAlphabetRichSymbolMap
+                    = new TreeMap<>();
 
     /**
      * Constructs an instance to store the result of merging an alphabet with
@@ -59,10 +65,10 @@ public final class AlphabetMergeResult {
         this.newAlphabet = alphabet;
 
         // map each symbol to a set containing itself
-        this.mergedAlphabetSymbolMap = new TreeMap<Symbol, SortedSet<Symbol>>();
+        this.mergedAlphabetSymbolMap = new TreeMap<>();
 
         for (Symbol symbol : alphabet.getSymbols()) {
-            TreeSet<Symbol> set = new TreeSet<Symbol>();
+            TreeSet<Symbol> set = new TreeSet<>();
             set.add(symbol);
             this.mergedAlphabetSymbolMap.put(symbol, set);
         }
@@ -95,17 +101,18 @@ public final class AlphabetMergeResult {
 
     private void initMergedAlphabetRichSymbolMap() {
 
-        for (Map.Entry<Symbol, SortedSet<Symbol>> entry : this.mergedAlphabetSymbolMap
-                .entrySet()) {
+        for (Map.Entry<Symbol,
+                SortedSet<Symbol>> entry : this.mergedAlphabetSymbolMap
+                        .entrySet()) {
             Symbol oldSymbol = entry.getKey();
             SortedSet<Symbol> newSymbols = entry.getValue();
 
             RichSymbol oldNormalRichSymbol = oldSymbol.getNormalRichSymbol();
-            RichSymbol oldLookaheadRichSymbol = oldSymbol
-                    .getLookaheadRichSymbol();
+            RichSymbol oldLookaheadRichSymbol
+                    = oldSymbol.getLookaheadRichSymbol();
 
-            SortedSet<RichSymbol> newNormalRichSymbols = new TreeSet<RichSymbol>();
-            SortedSet<RichSymbol> newLookaheadRichSymbols = new TreeSet<RichSymbol>();
+            SortedSet<RichSymbol> newNormalRichSymbols = new TreeSet<>();
+            SortedSet<RichSymbol> newLookaheadRichSymbols = new TreeSet<>();
 
             for (Symbol newSymbol : newSymbols) {
                 newNormalRichSymbols.add(newSymbol.getNormalRichSymbol());
@@ -118,7 +125,7 @@ public final class AlphabetMergeResult {
                     newLookaheadRichSymbols);
         }
 
-        SortedSet<RichSymbol> newEndRichSymbols = new TreeSet<RichSymbol>();
+        SortedSet<RichSymbol> newEndRichSymbols = new TreeSet<>();
         newEndRichSymbols.add(RichSymbol.END);
 
         this.mergedAlphabetRichSymbolMap.put(RichSymbol.END, newEndRichSymbols);

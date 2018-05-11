@@ -40,8 +40,7 @@ import org.sablecc.objectmacro.codegeneration.java.macro.MSuperDirective;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AIntermediateRepresentation;
 
-public class UtilsGenerationWalker
-        extends
+public class UtilsGenerationWalker extends
         DepthFirstAdapter {
 
     private final IntermediateRepresentation ir;
@@ -64,11 +63,13 @@ public class UtilsGenerationWalker
 
         MExParameterNull mParameterNull = new MExParameterNull();
         MExIncorrectType mIncorrectType = new MExIncorrectType();
-        MExObjectMacroErrorHead mObjectMacroErrorHead = new MExObjectMacroErrorHead();
+        MExObjectMacroErrorHead mObjectMacroErrorHead
+                = new MExObjectMacroErrorHead();
         MExMacroNullInList mMacroNullInList = new MExMacroNullInList();
         MExCyclicReference mCyclicReference = new MExCyclicReference();
         MExCannotModify mCannotModify = new MExCannotModify();
-        MExObjectMacroException mObjectMacroException = new MExObjectMacroException();
+        MExObjectMacroException mObjectMacroException
+                = new MExObjectMacroException();
         MClassInternalValue mClassInternalValue = new MClassInternalValue();
         MClassBuildState mClassBuildState = new MClassBuildState();
         MCycleDetectorClass mTarjanClass = new MCycleDetectorClass();
@@ -81,8 +82,8 @@ public class UtilsGenerationWalker
 
         if (!this.ir.getDestinationPackage().equals("")) {
             String destinationPackage = this.ir.getDestinationPackage();
-            MPackageDeclaration mPackageDeclaration = new MPackageDeclaration(
-                    destinationPackage);
+            MPackageDeclaration mPackageDeclaration
+                    = new MPackageDeclaration(destinationPackage);
             mContext.addPackageDeclaration(mPackageDeclaration);
             mIncorrectType.addPackageDeclaration(mPackageDeclaration);
             mParameterNull.addPackageDeclaration(mPackageDeclaration);

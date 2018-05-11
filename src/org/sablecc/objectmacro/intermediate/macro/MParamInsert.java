@@ -2,46 +2,51 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MParamInsert {
 
-  private final List<Object> eSimpleName = new LinkedList<Object>();
+    private final List<Object> eSimpleName = new LinkedList<>();
 
-  public MParamInsert() {
-  }
+    public MParamInsert() {
 
-  public MSimpleName newSimpleName(String pName) {
-    MSimpleName lSimpleName = new MSimpleName(pName);
-    this.eSimpleName.add(lSimpleName);
-    return lSimpleName;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(" ParamInsert { Name = ");
-    if(this.eSimpleName.size() > 1) {
-      sb.append("{ ");
     }
-    {
-      boolean first = true;
-      for(Object oSimpleName : this.eSimpleName) {
-        if(first) {
-          first = false;
+
+    public MSimpleName newSimpleName(
+            String pName) {
+
+        MSimpleName lSimpleName = new MSimpleName(pName);
+        this.eSimpleName.add(lSimpleName);
+        return lSimpleName;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ParamInsert { Name = ");
+        if (this.eSimpleName.size() > 1) {
+            sb.append("{ ");
         }
-        else {
-          sb.append(", ");
+        {
+            boolean first = true;
+            for (Object oSimpleName : this.eSimpleName) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    sb.append(", ");
+                }
+                sb.append(oSimpleName.toString());
+            }
         }
-        sb.append(oSimpleName.toString());
-      }
+        if (this.eSimpleName.size() > 1) {
+            sb.append(" }");
+        }
+        sb.append(" } ;");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
     }
-    if(this.eSimpleName.size() > 1) {
-      sb.append(" }");
-    }
-    sb.append(" } ;");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
 
 }

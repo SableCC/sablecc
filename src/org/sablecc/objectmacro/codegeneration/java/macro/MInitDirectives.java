@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MInitDirectives
-        extends
+public class MInitDirectives extends
         Macro {
 
     private String field_ParamName;
@@ -229,7 +228,7 @@ public class MInitDirectives
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         StringBuilder sb1 = new StringBuilder();
 
@@ -244,7 +243,7 @@ public class MInitDirectives
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -276,7 +275,7 @@ public class MInitDirectives
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

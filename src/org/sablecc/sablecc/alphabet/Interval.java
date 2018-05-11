@@ -17,13 +17,13 @@
 
 package org.sablecc.sablecc.alphabet;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
 /**
  * An interval is defined by a lower bound and an upper bound.
  */
-public class Interval
-        implements Comparable<Interval> {
+public class Interval implements
+        Comparable<Interval> {
 
     /**
      * The lower bound of this interval.
@@ -187,8 +187,8 @@ public class Interval
                 this.toString = this.lowerBound.toString();
             }
             else {
-                this.toString = "[" + this.lowerBound + ".." + this.upperBound
-                        + "]";
+                this.toString
+                        = "[" + this.lowerBound + ".." + this.upperBound + "]";
             }
         }
 

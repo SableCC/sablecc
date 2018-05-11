@@ -17,12 +17,12 @@
 
 package org.sablecc.util;
 
-import java.math.*;
+import java.math.BigInteger;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 
-public class Bound
-        implements Comparable<Bound> {
+public class Bound implements
+        Comparable<Bound> {
 
     public static final Bound MIN = new Bound();
 
@@ -100,15 +100,15 @@ public class Bound
         }
 
         if (this.value == null || bound.value == null) {
-            if (this == MIN) {
-                return bound == MIN ? 0 : -1;
+            if (this == Bound.MIN) {
+                return bound == Bound.MIN ? 0 : -1;
             }
 
-            if (this == MAX) {
-                return bound == MAX ? 0 : 1;
+            if (this == Bound.MAX) {
+                return bound == Bound.MAX ? 0 : 1;
             }
 
-            if (bound == MIN) {
+            if (bound == Bound.MIN) {
                 return 1;
             }
 
@@ -134,7 +134,7 @@ public class Bound
             throw new InternalError("value shouldn't be null");
         }
 
-        if (equals(MAX) || equals(MIN)) {
+        if (equals(Bound.MAX) || equals(Bound.MIN)) {
 
             return this;
         }
@@ -148,16 +148,16 @@ public class Bound
             throw new InternalError("value shouldn't be null");
         }
 
-        if (equals(MAX) && bound.equals(MIN) || equals(MIN)
-                && bound.equals(MAX)) {
+        if (equals(Bound.MAX) && bound.equals(Bound.MIN)
+                || equals(Bound.MIN) && bound.equals(Bound.MAX)) {
             throw new InternalError("Canno't add + infinite adn - infinite");
         }
 
-        if (bound.equals(MAX) || equals(MAX)) {
-            return MAX;
+        if (bound.equals(Bound.MAX) || equals(Bound.MAX)) {
+            return Bound.MAX;
         }
-        else if (bound.equals(MIN) || equals(MIN)) {
-            return MIN;
+        else if (bound.equals(Bound.MIN) || equals(Bound.MIN)) {
+            return Bound.MIN;
         }
         else {
             return new Bound(this.value.add(bound.getValue()));
@@ -171,7 +171,7 @@ public class Bound
             throw new InternalError("value shouldn't be null");
         }
 
-        if (equals(MAX) || equals(MIN)) {
+        if (equals(Bound.MAX) || equals(Bound.MIN)) {
 
             return this;
         }
@@ -185,17 +185,17 @@ public class Bound
             throw new InternalError("value shouldn't be null");
         }
 
-        if (equals(MAX) && bound.equals(MAX) || equals(MIN)
-                && bound.equals(MIN)) {
+        if (equals(Bound.MAX) && bound.equals(Bound.MAX)
+                || equals(Bound.MIN) && bound.equals(Bound.MIN)) {
             throw new InternalError(
                     "Canno't subtract + infinite and - infinite");
         }
 
-        if (bound.equals(MAX) || equals(MIN)) {
-            return MIN;
+        if (bound.equals(Bound.MAX) || equals(Bound.MIN)) {
+            return Bound.MIN;
         }
-        else if (bound.equals(MIN) || equals(MAX)) {
-            return MAX;
+        else if (bound.equals(Bound.MIN) || equals(Bound.MAX)) {
+            return Bound.MAX;
         }
         else {
             return new Bound(this.value.subtract(bound.getValue()));
@@ -209,7 +209,7 @@ public class Bound
             throw new InternalError("value shouldn't be null");
         }
 
-        if (equals(MAX) || equals(MIN)) {
+        if (equals(Bound.MAX) || equals(Bound.MIN)) {
 
             return this;
         }
@@ -223,7 +223,7 @@ public class Bound
             throw new InternalError("value shouldn't be null");
         }
 
-        if (equals(MAX) || equals(MIN)) {
+        if (equals(Bound.MAX) || equals(Bound.MIN)) {
 
             return this;
         }
@@ -233,11 +233,11 @@ public class Bound
     public Bound min(
             Bound aBound) {
 
-        if (equals(MIN)) {
+        if (equals(Bound.MIN)) {
             return this;
         }
 
-        if (aBound.equals(MIN)) {
+        if (aBound.equals(Bound.MIN)) {
             return aBound;
         }
 
@@ -252,11 +252,11 @@ public class Bound
     public Bound max(
             Bound aBound) {
 
-        if (equals(MAX)) {
+        if (equals(Bound.MAX)) {
             return this;
         }
 
-        if (aBound.equals(MAX)) {
+        if (aBound.equals(Bound.MAX)) {
             return aBound;
         }
 

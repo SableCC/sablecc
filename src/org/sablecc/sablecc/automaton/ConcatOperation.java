@@ -17,11 +17,20 @@
 
 package org.sablecc.sablecc.automaton;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import org.sablecc.exception.*;
-import org.sablecc.sablecc.alphabet.*;
-import org.sablecc.util.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.alphabet.Alphabet;
+import org.sablecc.sablecc.alphabet.AlphabetMergeResult;
+import org.sablecc.sablecc.alphabet.RichSymbol;
+import org.sablecc.sablecc.alphabet.Symbol;
+import org.sablecc.util.Pair;
+import org.sablecc.util.WorkSet;
 
 class ConcatOperation {
 
@@ -29,9 +38,11 @@ class ConcatOperation {
 
     private Automaton newAutomaton;
 
-    private Map<Pair<State, Set<Pair<State, State>>>, State> stateMap = new HashMap<Pair<State, Set<Pair<State, State>>>, State>();
+    private Map<Pair<State, Set<Pair<State, State>>>, State> stateMap
+            = new HashMap<>();
 
-    private SortedMap<State, Pair<State, Set<Pair<State, State>>>> progressMap = new TreeMap<State, Pair<State, Set<Pair<State, State>>>>();
+    private SortedMap<State, Pair<State, Set<Pair<State, State>>>> progressMap
+            = new TreeMap<>();
 
     private WorkSet<State> workSet;
 
@@ -72,25 +83,25 @@ class ConcatOperation {
         leftAutomaton = leftAutomaton.minimal();
         rightAutomaton = rightAutomaton.minimal();
 
-        this.alphabetMergeResult = leftAutomaton.getAlphabet().mergeWith(
-                rightAutomaton.getAlphabet());
+        this.alphabetMergeResult = leftAutomaton.getAlphabet()
+                .mergeWith(rightAutomaton.getAlphabet());
         this.newAlphabet = this.alphabetMergeResult.getNewAlphabet();
         this.newAutomaton = new Automaton(this.newAlphabet);
 
-        this.leftAutomaton = leftAutomaton
-                .withMergedAlphabet(this.alphabetMergeResult);
-        this.rightAutomaton = rightAutomaton
-                .withMergedAlphabet(this.alphabetMergeResult);
+        this.leftAutomaton
+                = leftAutomaton.withMergedAlphabet(this.alphabetMergeResult);
+        this.rightAutomaton
+                = rightAutomaton.withMergedAlphabet(this.alphabetMergeResult);
 
         this.newAutomaton.addAcceptation(Acceptation.ACCEPT);
 
-        Set<Pair<State, State>> rightProgress = new LinkedHashSet<Pair<State, State>>();
-        rightProgress.add(new Pair<State, State>(this.rightAutomaton
-                .getStartState(), this.leftAutomaton.getStartState()));
-        Pair<State, Set<Pair<State, State>>> progress = new Pair<State, Set<Pair<State, State>>>(
-                this.leftAutomaton.getStartState(), rightProgress);
+        Set<Pair<State, State>> rightProgress = new LinkedHashSet<>();
+        rightProgress.add(new Pair<>(this.rightAutomaton.getStartState(),
+                this.leftAutomaton.getStartState()));
+        Pair<State, Set<Pair<State, State>>> progress
+                = new Pair<>(this.leftAutomaton.getStartState(), rightProgress);
 
-        this.workSet = new WorkSet<State>();
+        this.workSet = new WorkSet<>();
 
         this.stateMap.put(progress, this.newAutomaton.getStartState());
         this.progressMap.put(this.newAutomaton.getStartState(), progress);
@@ -99,8 +110,8 @@ class ConcatOperation {
         while (this.workSet.hasNext()) {
             State state = this.workSet.next();
 
-            for (Pair<State, State> rightProgressPair : this.progressMap.get(
-                    state).getRight()) {
+            for (Pair<State, State> rightProgressPair : this.progressMap
+                    .get(state).getRight()) {
                 if (rightProgressPair.getLeft().isAcceptState()
                         && rightProgressPair.getRight().isAcceptState()) {
                     state.addAcceptation(Acceptation.ACCEPT);
@@ -122,8 +133,8 @@ class ConcatOperation {
             State sourceState,
             RichSymbol richSymbol) {
 
-        Pair<State, Set<Pair<State, State>>> sourceProgress = this.progressMap
-                .get(sourceState);
+        Pair<State, Set<Pair<State, State>>> sourceProgress
+                = this.progressMap.get(sourceState);
 
         State leftSourceState = sourceProgress.getLeft();
         State leftTargetState;
@@ -136,40 +147,39 @@ class ConcatOperation {
         }
 
         Set<Pair<State, State>> rightSourceProgress = sourceProgress.getRight();
-        Set<Pair<State, State>> rightTargetProgress = new LinkedHashSet<Pair<State, State>>();
+        Set<Pair<State, State>> rightTargetProgress = new LinkedHashSet<>();
 
         if (leftTargetState != null) {
-            rightTargetProgress.add(new Pair<State, State>(this.rightAutomaton
-                    .getStartState(), leftTargetState));
+            rightTargetProgress.add(new Pair<>(
+                    this.rightAutomaton.getStartState(), leftTargetState));
         }
 
         for (Pair<State, State> sourcePair : rightSourceProgress) {
             State rightSourceState = sourcePair.getLeft();
             State conditionSourceState = sourcePair.getRight();
 
-            State rightTargetState = rightSourceState
-                    .getSingleTarget(richSymbol);
+            State rightTargetState
+                    = rightSourceState.getSingleTarget(richSymbol);
             State conditionTargetState;
 
             if (richSymbol.isLookahead()) {
-                conditionTargetState = conditionSourceState
-                        .getSingleTarget(richSymbol);
+                conditionTargetState
+                        = conditionSourceState.getSingleTarget(richSymbol);
             }
             else {
-                conditionTargetState = conditionSourceState
-                        .getSingleTarget(richSymbol.getSymbol()
-                                .getLookaheadRichSymbol());
+                conditionTargetState = conditionSourceState.getSingleTarget(
+                        richSymbol.getSymbol().getLookaheadRichSymbol());
             }
 
             if (rightTargetState != null && conditionTargetState != null) {
-                rightTargetProgress.add(new Pair<State, State>(
-                        rightTargetState, conditionTargetState));
+                rightTargetProgress.add(
+                        new Pair<>(rightTargetState, conditionTargetState));
             }
         }
 
         if (rightTargetProgress.size() > 0) {
-            Pair<State, Set<Pair<State, State>>> targetProgress = new Pair<State, Set<Pair<State, State>>>(
-                    leftTargetState, rightTargetProgress);
+            Pair<State, Set<Pair<State, State>>> targetProgress
+                    = new Pair<>(leftTargetState, rightTargetProgress);
             State targetState = this.stateMap.get(targetProgress);
             if (targetState == null) {
                 targetState = new State(this.newAutomaton);

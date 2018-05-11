@@ -2,7 +2,8 @@
 
 package org.sablecc.objectmacro.codegeneration.c.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MExpandInsertPart {
 
@@ -12,23 +13,23 @@ public class MExpandInsertPart {
 
     private final MFile mFile;
 
-    private final List<Object> eNone = new LinkedList<Object>();
+    private final List<Object> eNone = new LinkedList<>();
 
-    private final List<Object> eBeforeFirst = new LinkedList<Object>();
+    private final List<Object> eBeforeFirst = new LinkedList<>();
 
-    private final List<Object> eBeforeOne = new LinkedList<Object>();
+    private final List<Object> eBeforeOne = new LinkedList<>();
 
-    private final List<Object> eBeforeMany = new LinkedList<Object>();
+    private final List<Object> eBeforeMany = new LinkedList<>();
 
-    private final List<Object> eSeparator = new LinkedList<Object>();
+    private final List<Object> eSeparator = new LinkedList<>();
 
-    private final List<Object> eNoSeparator = new LinkedList<Object>();
+    private final List<Object> eNoSeparator = new LinkedList<>();
 
-    private final List<Object> eAfterLast = new LinkedList<Object>();
+    private final List<Object> eAfterLast = new LinkedList<>();
 
-    private final List<Object> eAfterOne = new LinkedList<Object>();
+    private final List<Object> eAfterOne = new LinkedList<>();
 
-    private final List<Object> eAfterMany = new LinkedList<Object>();
+    private final List<Object> eAfterMany = new LinkedList<>();
 
     MExpandInsertPart(
             String pName,
@@ -53,48 +54,48 @@ public class MExpandInsertPart {
 
     public MBeforeFirst newBeforeFirst() {
 
-        MBeforeFirst lBeforeFirst = new MBeforeFirst(this.mFile,
-                this.mExpandInsertPart);
+        MBeforeFirst lBeforeFirst
+                = new MBeforeFirst(this.mFile, this.mExpandInsertPart);
         this.eBeforeFirst.add(lBeforeFirst);
         return lBeforeFirst;
     }
 
     public MBeforeOne newBeforeOne() {
 
-        MBeforeOne lBeforeOne = new MBeforeOne(this.mFile,
-                this.mExpandInsertPart);
+        MBeforeOne lBeforeOne
+                = new MBeforeOne(this.mFile, this.mExpandInsertPart);
         this.eBeforeOne.add(lBeforeOne);
         return lBeforeOne;
     }
 
     public MBeforeMany newBeforeMany() {
 
-        MBeforeMany lBeforeMany = new MBeforeMany(this.mFile,
-                this.mExpandInsertPart);
+        MBeforeMany lBeforeMany
+                = new MBeforeMany(this.mFile, this.mExpandInsertPart);
         this.eBeforeMany.add(lBeforeMany);
         return lBeforeMany;
     }
 
     public MSeparator newSeparator() {
 
-        MSeparator lSeparator = new MSeparator(this.mFile,
-                this.mExpandInsertPart);
+        MSeparator lSeparator
+                = new MSeparator(this.mFile, this.mExpandInsertPart);
         this.eSeparator.add(lSeparator);
         return lSeparator;
     }
 
     public MNoSeparator newNoSeparator() {
 
-        MNoSeparator lNoSeparator = new MNoSeparator(this.mFile,
-                this.mExpandInsertPart);
+        MNoSeparator lNoSeparator
+                = new MNoSeparator(this.mFile, this.mExpandInsertPart);
         this.eNoSeparator.add(lNoSeparator);
         return lNoSeparator;
     }
 
     public MAfterLast newAfterLast() {
 
-        MAfterLast lAfterLast = new MAfterLast(this.mFile,
-                this.mExpandInsertPart);
+        MAfterLast lAfterLast
+                = new MAfterLast(this.mFile, this.mExpandInsertPart);
         this.eAfterLast.add(lAfterLast);
         return lAfterLast;
     }
@@ -108,8 +109,8 @@ public class MExpandInsertPart {
 
     public MAfterMany newAfterMany() {
 
-        MAfterMany lAfterMany = new MAfterMany(this.mFile,
-                this.mExpandInsertPart);
+        MAfterMany lAfterMany
+                = new MAfterMany(this.mFile, this.mExpandInsertPart);
         this.eAfterMany.add(lAfterMany);
         return lAfterMany;
     }

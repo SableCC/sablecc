@@ -2,32 +2,36 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MMacroInsert {
 
-  private final List<Object> eMacroRef = new LinkedList<Object>();
+    private final List<Object> eMacroRef = new LinkedList<>();
 
-  public MMacroInsert() {
-  }
+    public MMacroInsert() {
 
-  public MMacroRef newMacroRef() {
-    MMacroRef lMacroRef = new MMacroRef();
-    this.eMacroRef.add(lMacroRef);
-    return lMacroRef;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(" MacroInsert {");
-    sb.append(System.getProperty("line.separator"));
-    for(Object oMacroRef : this.eMacroRef) {
-      sb.append(oMacroRef.toString());
     }
-    sb.append(" };");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+
+    public MMacroRef newMacroRef() {
+
+        MMacroRef lMacroRef = new MMacroRef();
+        this.eMacroRef.add(lMacroRef);
+        return lMacroRef;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(" MacroInsert {");
+        sb.append(System.getProperty("line.separator"));
+        for (Object oMacroRef : this.eMacroRef) {
+            sb.append(oMacroRef.toString());
+        }
+        sb.append(" };");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
+    }
 
 }

@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MParamRef
-        extends
+public class MParamRef extends
         Macro {
 
     private String field_Name;
@@ -33,8 +32,8 @@ public class MParamRef
 
         this.list_GetParams = new ArrayList<>();
 
-        this.GetParamsValue = new InternalValue(this.list_GetParams,
-                this.GetParamsContext);
+        this.GetParamsValue
+                = new InternalValue(this.list_GetParams, this.GetParamsContext);
 
     }
 
@@ -285,7 +284,7 @@ public class MParamRef
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

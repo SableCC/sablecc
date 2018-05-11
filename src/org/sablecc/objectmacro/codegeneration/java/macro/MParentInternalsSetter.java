@@ -5,8 +5,7 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MParentInternalsSetter
-        extends
+public class MParentInternalsSetter extends
         Macro {
 
     private String field_Name;
@@ -101,7 +100,7 @@ public class MParentInternalsSetter
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("  throw ObjectMacroException.incorrectType(\"M");
 
@@ -109,7 +108,7 @@ public class MParentInternalsSetter
 
         sb0.append("\", this._paramName);");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -141,7 +140,7 @@ public class MParentInternalsSetter
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

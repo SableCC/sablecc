@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MApplyInternalsInitializer
-        extends
+public class MApplyInternalsInitializer extends
         Macro {
 
     private String field_ParamName;
@@ -33,9 +32,9 @@ public class MApplyInternalsInitializer
 
         this.list_RedefinedInternalsSetter = new ArrayList<>();
 
-        this.RedefinedInternalsSetterValue = new InternalValue(
-                this.list_RedefinedInternalsSetter,
-                this.RedefinedInternalsSetterContext);
+        this.RedefinedInternalsSetterValue
+                = new InternalValue(this.list_RedefinedInternalsSetter,
+                        this.RedefinedInternalsSetterContext);
 
     }
 
@@ -229,7 +228,7 @@ public class MApplyInternalsInitializer
 
         sb0.append("{");
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         StringBuilder sb1 = new StringBuilder();
 
@@ -244,7 +243,7 @@ public class MApplyInternalsInitializer
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
 
-        sb0.append(LINE_SEPARATOR);
+        sb0.append(Macro.LINE_SEPARATOR);
 
         sb0.append("});");
 
@@ -276,7 +275,7 @@ public class MApplyInternalsInitializer
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
+                    sb.append(Macro.LINE_SEPARATOR);
                 }
             }
         }

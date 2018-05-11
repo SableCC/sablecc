@@ -17,7 +17,7 @@
 
 package org.sablecc.sablecc.launcher;
 
-import org.sablecc.util.*;
+import org.sablecc.util.Verbosity;
 
 public class Trace {
 

@@ -60,7 +60,8 @@ public class MInternalError {
         sb.append(".");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("Please submit a defect ticket with the full error trace above on:");
+        sb.append(
+                "Please submit a defect ticket with the full error trace above on:");
         sb.append(System.getProperty("line.separator"));
         sb.append(" http://sablecc.org/");
         sb.append(System.getProperty("line.separator"));

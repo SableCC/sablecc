@@ -17,11 +17,20 @@
 
 package org.sablecc.sablecc.automaton;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-import org.sablecc.exception.*;
-import org.sablecc.sablecc.alphabet.*;
-import org.sablecc.util.*;
+import org.sablecc.exception.InternalException;
+import org.sablecc.sablecc.alphabet.RichSymbol;
+import org.sablecc.sablecc.alphabet.Symbol;
+import org.sablecc.util.Pair;
+import org.sablecc.util.WorkSet;
 
 class OneOrMoreOperation {
 
@@ -29,11 +38,13 @@ class OneOrMoreOperation {
 
     private Automaton oldAutomaton;
 
-    private Map<Set<Pair<State, SortedSet<State>>>, State> stateMap = new HashMap<Set<Pair<State, SortedSet<State>>>, State>();
+    private Map<Set<Pair<State, SortedSet<State>>>, State> stateMap
+            = new HashMap<>();
 
-    private SortedMap<State, Set<Pair<State, SortedSet<State>>>> progressMap = new TreeMap<State, Set<Pair<State, SortedSet<State>>>>();
+    private SortedMap<State, Set<Pair<State, SortedSet<State>>>> progressMap
+            = new TreeMap<>();
 
-    private WorkSet<State> workSet = new WorkSet<State>();
+    private WorkSet<State> workSet = new WorkSet<>();
 
     OneOrMoreOperation(
             Automaton oldAutomaton) {
@@ -55,21 +66,23 @@ class OneOrMoreOperation {
         this.newAutomaton.addAcceptation(Acceptation.ACCEPT);
 
         {
-            Set<Pair<State, SortedSet<State>>> progressSet = new LinkedHashSet<Pair<State, SortedSet<State>>>();
-            Pair<State, SortedSet<State>> progress = new Pair<State, SortedSet<State>>(
+            Set<Pair<State, SortedSet<State>>> progressSet
+                    = new LinkedHashSet<>();
+            Pair<State, SortedSet<State>> progress = new Pair<>(
                     this.oldAutomaton.getStartState(), new TreeSet<State>());
             progressSet.add(progress);
 
             this.stateMap.put(progressSet, this.newAutomaton.getStartState());
-            this.progressMap
-                    .put(this.newAutomaton.getStartState(), progressSet);
+            this.progressMap.put(this.newAutomaton.getStartState(),
+                    progressSet);
             this.workSet.add(this.newAutomaton.getStartState());
         }
 
         while (this.workSet.hasNext()) {
             State state = this.workSet.next();
 
-            outer_loop: for (Pair<State, SortedSet<State>> progress : this.progressMap
+            outer_loop:
+            for (Pair<State, SortedSet<State>> progress : this.progressMap
                     .get(state)) {
                 if (!progress.getLeft().isAcceptState()) {
                     continue;
@@ -99,30 +112,31 @@ class OneOrMoreOperation {
             State newSourceState,
             RichSymbol richSymbol) {
 
-        Set<Pair<State, SortedSet<State>>> sourceProgressSet = this.progressMap
-                .get(newSourceState);
-        Set<Pair<State, SortedSet<State>>> targetProgressSet = new LinkedHashSet<Pair<State, SortedSet<State>>>();
+        Set<Pair<State, SortedSet<State>>> sourceProgressSet
+                = this.progressMap.get(newSourceState);
+        Set<Pair<State, SortedSet<State>>> targetProgressSet
+                = new LinkedHashSet<>();
 
-        outer_loop: for (Pair<State, SortedSet<State>> sourceProgress : sourceProgressSet) {
-            State oldTargetState = sourceProgress.getLeft().getSingleTarget(
-                    richSymbol);
+        outer_loop:
+        for (Pair<State, SortedSet<State>> sourceProgress : sourceProgressSet) {
+            State oldTargetState
+                    = sourceProgress.getLeft().getSingleTarget(richSymbol);
 
             if (oldTargetState == null) {
                 continue;
             }
 
-            SortedSet<State> targetConditionStates = new TreeSet<State>();
+            SortedSet<State> targetConditionStates = new TreeSet<>();
 
             for (State sourceConditionState : sourceProgress.getRight()) {
                 State targetConditionState;
                 if (richSymbol.isLookahead()) {
-                    targetConditionState = sourceConditionState
-                            .getSingleTarget(richSymbol);
+                    targetConditionState
+                            = sourceConditionState.getSingleTarget(richSymbol);
                 }
                 else {
-                    targetConditionState = sourceConditionState
-                            .getSingleTarget(richSymbol.getSymbol()
-                                    .getLookaheadRichSymbol());
+                    targetConditionState = sourceConditionState.getSingleTarget(
+                            richSymbol.getSymbol().getLookaheadRichSymbol());
                 }
 
                 if (targetConditionState == null) {
@@ -132,18 +146,17 @@ class OneOrMoreOperation {
                 targetConditionStates.add(targetConditionState);
             }
 
-            Pair<State, SortedSet<State>> targetProgress = new Pair<State, SortedSet<State>>(
-                    oldTargetState, targetConditionStates);
+            Pair<State, SortedSet<State>> targetProgress
+                    = new Pair<>(oldTargetState, targetConditionStates);
 
             targetProgressSet.add(targetProgress);
 
             if (!richSymbol.isLookahead()) {
-                targetConditionStates = new TreeSet<State>();
+                targetConditionStates = new TreeSet<>();
                 targetConditionStates.add(targetProgress.getLeft());
                 targetConditionStates.addAll(targetProgress.getRight());
 
-                targetProgress = new Pair<State, SortedSet<State>>(
-                        this.oldAutomaton.getStartState(),
+                targetProgress = new Pair<>(this.oldAutomaton.getStartState(),
                         targetConditionStates);
 
                 targetProgressSet.add(targetProgress);

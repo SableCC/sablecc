@@ -32,8 +32,7 @@ import org.sablecc.objectmacro.syntax3.node.PInternal;
 import org.sablecc.objectmacro.syntax3.node.PMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.PParam;
 
-public class DeclarationCollector
-        extends
+public class DeclarationCollector extends
         DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;
