@@ -565,7 +565,9 @@ public class ObjectMacro {
             else if (bodyPart instanceof ATextMacroBodyPart){
                 ATextMacroBodyPart textBodyPart = (ATextMacroBodyPart) bodyPart;
 
-                String macroTextPart = textBodyPart.getTextPart().getText().replaceAll("'","\\\\'");
+                String macroTextPart = textBodyPart.getTextPart().getText();
+                macroTextPart = macroTextPart.replace("\\", "\\\\");
+                macroTextPart = macroTextPart.replace("'","\\'");
                 mMacro.addBody(new MStringPart(macroTextPart));
             }
             else if (bodyPart instanceof AInsertMacroBodyPart){
