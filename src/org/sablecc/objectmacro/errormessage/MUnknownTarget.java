@@ -2,49 +2,129 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MUnknownTarget {
+import java.util.*;
 
-    private final String pTarget;
-
-    private final MUnknownTarget mUnknownTarget = this;
-
-    public MUnknownTarget(
-            String pTarget) {
-
-        if (pTarget == null) {
-            throw new NullPointerException();
+public class MUnknownTarget extends Macro{
+    
+    private String field_Target;
+    
+    
+    
+    
+    public MUnknownTarget(String pTarget){
+    
+            this.setPTarget(pTarget);
+    
+    }
+    
+    
+    private void setPTarget( String pTarget ){
+        if(pTarget == null){
+            throw ObjectMacroException.parameterNull("Target");
         }
-        this.pTarget = pTarget;
+    
+        this.field_Target = pTarget;
     }
-
-    String pTarget() {
-
-        return this.pTarget;
+    
+    
+    private String buildTarget(){
+    
+        return this.field_Target;
     }
-
-    private String rTarget() {
-
-        return this.mUnknownTarget.pTarget();
+    
+    
+    private String getTarget(){
+    
+        return this.field_Target;
     }
-
+    
+    
+    
+    
+    
     @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The \"");
-        sb.append(rTarget());
-        sb.append("\" target is not supported.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The following command lists available target languages:");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" objectmacro --list-targets");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setUnknownTarget(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("UnknownTarget");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        
+    
+    
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        
+        
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("The \"");
+        sb0.append(buildTarget());
+        sb0.append("\" target is not supported.");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("The following command lists available target languages:");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(" objectmacro --list-targets");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        
+        
+        sb0.append(minsert_2.build(null));
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

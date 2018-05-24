@@ -2,139 +2,235 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MSelfReference {
+import java.util.*;
 
-    private final String pReference;
+public class MSelfReference extends Macro{
 
-    private final String pLine;
+    private String field_Reference;
 
-    private final String pChar;
+    private String field_Line;
 
-    private final String pContext;
+    private String field_Char;
 
-    private final String pContextLine;
+    private String field_Context;
 
-    private final String pContextChar;
+    private String field_ContextLine;
 
-    private final MSelfReference mSelfReference = this;
+    private String field_ContextChar;
 
-    public MSelfReference(
-            String pReference,
-            String pLine,
-            String pChar,
-            String pContext,
-            String pContextLine,
-            String pContextChar) {
 
-        if (pReference == null) {
-            throw new NullPointerException();
+
+
+    public MSelfReference(String pReference, String pLine, String pChar, String pContext, String pContextLine, String pContextChar){
+
+            this.setPReference(pReference);
+            this.setPLine(pLine);
+            this.setPChar(pChar);
+            this.setPContext(pContext);
+            this.setPContextLine(pContextLine);
+            this.setPContextChar(pContextChar);
+
+    }
+
+
+    private void setPReference( String pReference ){
+        if(pReference == null){
+            throw ObjectMacroException.parameterNull("Reference");
         }
-        this.pReference = pReference;
-        if (pLine == null) {
-            throw new NullPointerException();
+
+        this.field_Reference = pReference;
+    }
+
+    private void setPLine( String pLine ){
+        if(pLine == null){
+            throw ObjectMacroException.parameterNull("Line");
         }
-        this.pLine = pLine;
-        if (pChar == null) {
-            throw new NullPointerException();
+
+        this.field_Line = pLine;
+    }
+
+    private void setPChar( String pChar ){
+        if(pChar == null){
+            throw ObjectMacroException.parameterNull("Char");
         }
-        this.pChar = pChar;
-        if (pContext == null) {
-            throw new NullPointerException();
+
+        this.field_Char = pChar;
+    }
+
+    private void setPContext( String pContext ){
+        if(pContext == null){
+            throw ObjectMacroException.parameterNull("Context");
         }
-        this.pContext = pContext;
-        if (pContextLine == null) {
-            throw new NullPointerException();
+
+        this.field_Context = pContext;
+    }
+
+    private void setPContextLine( String pContextLine ){
+        if(pContextLine == null){
+            throw ObjectMacroException.parameterNull("ContextLine");
         }
-        this.pContextLine = pContextLine;
-        if (pContextChar == null) {
-            throw new NullPointerException();
+
+        this.field_ContextLine = pContextLine;
+    }
+
+    private void setPContextChar( String pContextChar ){
+        if(pContextChar == null){
+            throw ObjectMacroException.parameterNull("ContextChar");
         }
-        this.pContextChar = pContextChar;
+
+        this.field_ContextChar = pContextChar;
     }
 
-    String pReference() {
 
-        return this.pReference;
+    private String buildReference(){
+
+        return this.field_Reference;
     }
 
-    String pLine() {
+    private String buildLine(){
 
-        return this.pLine;
+        return this.field_Line;
     }
 
-    String pChar() {
+    private String buildChar(){
 
-        return this.pChar;
+        return this.field_Char;
     }
 
-    String pContext() {
+    private String buildContext(){
 
-        return this.pContext;
+        return this.field_Context;
     }
 
-    String pContextLine() {
+    private String buildContextLine(){
 
-        return this.pContextLine;
+        return this.field_ContextLine;
     }
 
-    String pContextChar() {
+    private String buildContextChar(){
 
-        return this.pContextChar;
+        return this.field_ContextChar;
     }
 
-    private String rLine() {
 
-        return this.mSelfReference.pLine();
+    private String getReference(){
+
+        return this.field_Reference;
     }
 
-    private String rChar() {
+    private String getLine(){
 
-        return this.mSelfReference.pChar();
+        return this.field_Line;
     }
 
-    private String rReference() {
+    private String getChar(){
 
-        return this.mSelfReference.pReference();
+        return this.field_Char;
     }
 
-    private String rContext() {
+    private String getContext(){
 
-        return this.mSelfReference.pContext();
+        return this.field_Context;
     }
 
-    private String rContextLine() {
+    private String getContextLine(){
 
-        return this.mSelfReference.pContextLine();
+        return this.field_ContextLine;
     }
 
-    private String rContextChar() {
+    private String getContextChar(){
 
-        return this.mSelfReference.pContextChar();
+        return this.field_ContextChar;
     }
+
+
+
+
 
     @Override
-    public String toString() {
+     void apply(
+             InternalsInitializer internalsInitializer){
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MSemanticErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line: ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char: ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("\"");
-        sb.append(rReference());
-        sb.append("\" is a self reference to \"");
-        sb.append(rContext());
-        sb.append("\" of line ");
-        sb.append(rContextLine());
-        sb.append(", char ");
-        sb.append(rContextChar());
-        sb.append(".");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+         internalsInitializer.setSelfReference(this);
+     }
+
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("SelfReference");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+
+
+
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+
+
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Line: ");
+        sb0.append(buildLine());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Char: ");
+        sb0.append(buildChar());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("\"");
+        sb0.append(buildReference());
+        sb0.append("\" is a self reference to \"");
+        sb0.append(buildContext());
+        sb0.append("\" of line ");
+        sb0.append(buildContextLine());
+        sb0.append(", char ");
+        sb0.append(buildContextChar());
+        sb0.append(".");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 
+
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
+
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

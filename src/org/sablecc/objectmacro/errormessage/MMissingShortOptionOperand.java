@@ -2,69 +2,153 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MMissingShortOptionOperand {
+import java.util.*;
 
-    private final String pOptionName;
-
-    private final String pOperandName;
-
-    private final MMissingShortOptionOperand mMissingShortOptionOperand = this;
-
-    public MMissingShortOptionOperand(
-            String pOptionName,
-            String pOperandName) {
-
-        if (pOptionName == null) {
-            throw new NullPointerException();
+public class MMissingShortOptionOperand extends Macro{
+    
+    private String field_OptionName;
+    
+    private String field_OperandName;
+    
+    
+    
+    
+    public MMissingShortOptionOperand(String pOptionName, String pOperandName){
+    
+            this.setPOptionName(pOptionName);
+            this.setPOperandName(pOperandName);
+    
+    }
+    
+    
+    private void setPOptionName( String pOptionName ){
+        if(pOptionName == null){
+            throw ObjectMacroException.parameterNull("OptionName");
         }
-        this.pOptionName = pOptionName;
-        if (pOperandName == null) {
-            throw new NullPointerException();
+    
+        this.field_OptionName = pOptionName;
+    }
+    
+    private void setPOperandName( String pOperandName ){
+        if(pOperandName == null){
+            throw ObjectMacroException.parameterNull("OperandName");
         }
-        this.pOperandName = pOperandName;
+    
+        this.field_OperandName = pOperandName;
     }
-
-    String pOptionName() {
-
-        return this.pOptionName;
+    
+    
+    private String buildOptionName(){
+    
+        return this.field_OptionName;
     }
-
-    String pOperandName() {
-
-        return this.pOperandName;
+    
+    private String buildOperandName(){
+    
+        return this.field_OperandName;
     }
-
-    private String rOptionName() {
-
-        return this.mMissingShortOptionOperand.pOptionName();
+    
+    
+    private String getOptionName(){
+    
+        return this.field_OptionName;
     }
-
-    private String rOperandName() {
-
-        return this.mMissingShortOptionOperand.pOperandName();
+    
+    private String getOperandName(){
+    
+        return this.field_OperandName;
     }
-
+    
+    
+    
+    
+    
     @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The following option is rejected:");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" -");
-        sb.append(rOptionName());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("This option expects an operand:");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" -");
-        sb.append(rOptionName());
-        sb.append("=");
-        sb.append(rOperandName());
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setMissingShortOptionOperand(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("MissingShortOptionOperand");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        
+    
+    
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        
+        
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("The following option is rejected:");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(" -");
+        sb0.append(buildOptionName());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("This option expects an operand:");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(" -");
+        sb0.append(buildOptionName());
+        sb0.append("=");
+        sb0.append(buildOperandName());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        
+        
+        sb0.append(minsert_2.build(null));
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

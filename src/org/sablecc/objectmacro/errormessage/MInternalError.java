@@ -2,70 +2,145 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MInternalError {
+import java.util.*;
 
-    private final String pStackTrace;
+public class MInternalError extends Macro{
 
-    private final String pMessage;
+    private String field_StackTrace;
 
-    private final MInternalError mInternalError = this;
+    private String field_Message;
 
-    public MInternalError(
-            String pStackTrace,
-            String pMessage) {
 
-        if (pStackTrace == null) {
-            throw new NullPointerException();
+
+
+    public MInternalError(String pStackTrace, String pMessage){
+
+            this.setPStackTrace(pStackTrace);
+            this.setPMessage(pMessage);
+
+    }
+
+
+    private void setPStackTrace( String pStackTrace ){
+        if(pStackTrace == null){
+            throw ObjectMacroException.parameterNull("StackTrace");
         }
-        this.pStackTrace = pStackTrace;
-        if (pMessage == null) {
-            throw new NullPointerException();
+
+        this.field_StackTrace = pStackTrace;
+    }
+
+    private void setPMessage( String pMessage ){
+        if(pMessage == null){
+            throw ObjectMacroException.parameterNull("Message");
         }
-        this.pMessage = pMessage;
+
+        this.field_Message = pMessage;
     }
 
-    String pStackTrace() {
 
-        return this.pStackTrace;
+    private String buildStackTrace(){
+
+        return this.field_StackTrace;
     }
 
-    String pMessage() {
+    private String buildMessage(){
 
-        return this.pMessage;
+        return this.field_Message;
     }
 
-    private String rStackTrace() {
 
-        return this.mInternalError.pStackTrace();
+    private String getStackTrace(){
+
+        return this.field_StackTrace;
     }
 
-    private String rMessage() {
+    private String getMessage(){
 
-        return this.mInternalError.pMessage();
+        return this.field_Message;
     }
+
+
+
+
 
     @Override
-    public String toString() {
+     void apply(
+             InternalsInitializer internalsInitializer){
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("*** INTERNAL ERROR ***");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(rStackTrace());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("An internal error was raised with the following message:");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" ");
-        sb.append(rMessage());
-        sb.append(".");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(
-                "Please submit a defect ticket with the full error trace above on:");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" http://sablecc.org/");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+         internalsInitializer.setInternalError(this);
+     }
+
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("InternalError");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+
+
+
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("*** INTERNAL ERROR ***");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(buildStackTrace());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("An internal error was raised with the following message:");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(" ");
+        sb0.append(buildMessage());
+        sb0.append(".");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Please submit a defect ticket with the full error trace above on:");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(" http://sablecc.org/");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 
+
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
+
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

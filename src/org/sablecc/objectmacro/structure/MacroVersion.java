@@ -52,7 +52,7 @@ public class MacroVersion {
         Macro firstDeclaration = this.macros.get(macro.getName());
         if(firstDeclaration != null){
             throw CompilerException.duplicateDeclaration(
-                    macro.getNameDeclaration(), firstDeclaration.getNameDeclaration());
+                    macro.getNameDeclaration(), firstDeclaration.getNameDeclaration(), this);
         }
 
         this.macros.put(macro.getName(), macro);
@@ -68,7 +68,7 @@ public class MacroVersion {
 
         Macro found = this.macros.get(macro_name.getText());
         if(found == null){
-            throw new InternalException("macro should be initialized before");
+            throw CompilerException.unknownMacro(macro_name);
         }
 
         return found;

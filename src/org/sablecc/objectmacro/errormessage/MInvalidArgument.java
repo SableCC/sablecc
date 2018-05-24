@@ -2,47 +2,127 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MInvalidArgument {
+import java.util.*;
 
-    private final String pArgumentText;
-
-    private final MInvalidArgument mInvalidArgument = this;
-
-    public MInvalidArgument(
-            String pArgumentText) {
-
-        if (pArgumentText == null) {
-            throw new NullPointerException();
+public class MInvalidArgument extends Macro{
+    
+    private String field_ArgumentText;
+    
+    
+    
+    
+    public MInvalidArgument(String pArgumentText){
+    
+            this.setPArgumentText(pArgumentText);
+    
+    }
+    
+    
+    private void setPArgumentText( String pArgumentText ){
+        if(pArgumentText == null){
+            throw ObjectMacroException.parameterNull("ArgumentText");
         }
-        this.pArgumentText = pArgumentText;
+    
+        this.field_ArgumentText = pArgumentText;
     }
-
-    String pArgumentText() {
-
-        return this.pArgumentText;
+    
+    
+    private String buildArgumentText(){
+    
+        return this.field_ArgumentText;
     }
-
-    private String rArgumentText() {
-
-        return this.mInvalidArgument.pArgumentText();
+    
+    
+    private String getArgumentText(){
+    
+        return this.field_ArgumentText;
     }
-
+    
+    
+    
+    
+    
     @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The following argument is rejected:");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" ");
-        sb.append(rArgumentText());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("It is invalid.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setInvalidArgument(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("InvalidArgument");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        
+    
+    
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        
+        
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("The following argument is rejected:");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(" ");
+        sb0.append(buildArgumentText());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("It is invalid.");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        
+        
+        sb0.append(minsert_2.build(null));
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

@@ -2,101 +2,189 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MDuplicateMacroRef {
+import java.util.*;
 
-    private final String pParam;
+public class MDuplicateMacroRef extends Macro{
 
-    private final String pMacro;
+    private String field_Param;
 
-    private final String pLine;
+    private String field_Macro;
 
-    private final String pChar;
+    private String field_Line;
 
-    private final MDuplicateMacroRef mDuplicateMacroRef = this;
+    private String field_Char;
 
-    public MDuplicateMacroRef(
-            String pParam,
-            String pMacro,
-            String pLine,
-            String pChar) {
 
-        if (pParam == null) {
-            throw new NullPointerException();
+
+
+    public MDuplicateMacroRef(String pParam, String pMacro, String pLine, String pChar){
+
+            this.setPParam(pParam);
+            this.setPMacro(pMacro);
+            this.setPLine(pLine);
+            this.setPChar(pChar);
+
+    }
+
+
+    private void setPParam( String pParam ){
+        if(pParam == null){
+            throw ObjectMacroException.parameterNull("Param");
         }
-        this.pParam = pParam;
-        if (pMacro == null) {
-            throw new NullPointerException();
+
+        this.field_Param = pParam;
+    }
+
+    private void setPMacro( String pMacro ){
+        if(pMacro == null){
+            throw ObjectMacroException.parameterNull("Macro");
         }
-        this.pMacro = pMacro;
-        if (pLine == null) {
-            throw new NullPointerException();
+
+        this.field_Macro = pMacro;
+    }
+
+    private void setPLine( String pLine ){
+        if(pLine == null){
+            throw ObjectMacroException.parameterNull("Line");
         }
-        this.pLine = pLine;
-        if (pChar == null) {
-            throw new NullPointerException();
+
+        this.field_Line = pLine;
+    }
+
+    private void setPChar( String pChar ){
+        if(pChar == null){
+            throw ObjectMacroException.parameterNull("Char");
         }
-        this.pChar = pChar;
+
+        this.field_Char = pChar;
     }
 
-    String pParam() {
 
-        return this.pParam;
+    private String buildParam(){
+
+        return this.field_Param;
     }
 
-    String pMacro() {
+    private String buildMacro(){
 
-        return this.pMacro;
+        return this.field_Macro;
     }
 
-    String pLine() {
+    private String buildLine(){
 
-        return this.pLine;
+        return this.field_Line;
     }
 
-    String pChar() {
+    private String buildChar(){
 
-        return this.pChar;
+        return this.field_Char;
     }
 
-    private String rLine() {
 
-        return this.mDuplicateMacroRef.pLine();
+    private String getParam(){
+
+        return this.field_Param;
     }
 
-    private String rChar() {
+    private String getMacro(){
 
-        return this.mDuplicateMacroRef.pChar();
+        return this.field_Macro;
     }
 
-    private String rParam() {
+    private String getLine(){
 
-        return this.mDuplicateMacroRef.pParam();
+        return this.field_Line;
     }
 
-    private String rMacro() {
+    private String getChar(){
 
-        return this.mDuplicateMacroRef.pMacro();
+        return this.field_Char;
     }
+
+
+
+
 
     @Override
-    public String toString() {
+     void apply(
+             InternalsInitializer internalsInitializer){
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MSemanticErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line: ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char: ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Parameter '");
-        sb.append(rParam());
-        sb.append("' has already referenced Macro '");
-        sb.append(rMacro());
-        sb.append("'.");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+         internalsInitializer.setDuplicateMacroRef(this);
+     }
+
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("DuplicateMacroRef");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+
+
+
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+
+
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Line: ");
+        sb0.append(buildLine());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Char: ");
+        sb0.append(buildChar());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Parameter '");
+        sb0.append(buildParam());
+        sb0.append("' has already referenced Macro '");
+        sb0.append(buildMacro());
+        sb0.append("'.");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 
+
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
+
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

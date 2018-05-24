@@ -2,63 +2,139 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MOutputError {
+import java.util.*;
 
-    private final String pFileName;
-
-    private final String pMessage;
-
-    private final MOutputError mOutputError = this;
-
-    public MOutputError(
-            String pFileName,
-            String pMessage) {
-
-        if (pFileName == null) {
-            throw new NullPointerException();
+public class MOutputError extends Macro{
+    
+    private String field_FileName;
+    
+    private String field_Message;
+    
+    
+    
+    
+    public MOutputError(String pFileName, String pMessage){
+    
+            this.setPFileName(pFileName);
+            this.setPMessage(pMessage);
+    
+    }
+    
+    
+    private void setPFileName( String pFileName ){
+        if(pFileName == null){
+            throw ObjectMacroException.parameterNull("FileName");
         }
-        this.pFileName = pFileName;
-        if (pMessage == null) {
-            throw new NullPointerException();
+    
+        this.field_FileName = pFileName;
+    }
+    
+    private void setPMessage( String pMessage ){
+        if(pMessage == null){
+            throw ObjectMacroException.parameterNull("Message");
         }
-        this.pMessage = pMessage;
+    
+        this.field_Message = pMessage;
     }
-
-    String pFileName() {
-
-        return this.pFileName;
+    
+    
+    private String buildFileName(){
+    
+        return this.field_FileName;
     }
-
-    String pMessage() {
-
-        return this.pMessage;
+    
+    private String buildMessage(){
+    
+        return this.field_Message;
     }
-
-    private String rFileName() {
-
-        return this.mOutputError.pFileName();
+    
+    
+    private String getFileName(){
+    
+        return this.field_FileName;
     }
-
-    private String rMessage() {
-
-        return this.mOutputError.pMessage();
+    
+    private String getMessage(){
+    
+        return this.field_Message;
     }
-
+    
+    
+    
+    
+    
     @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("*** I/O ERROR ***");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The following system error happened while writing \"");
-        sb.append(rFileName());
-        sb.append("\":");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" ");
-        sb.append(rMessage());
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setOutputError(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("OutputError");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        
+    
+    
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        sb0.append("*** I/O ERROR ***");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("The following system error happened while writing \"");
+        sb0.append(buildFileName());
+        sb0.append("\":");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(" ");
+        sb0.append(buildMessage());
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }
