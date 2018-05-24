@@ -7,29 +7,30 @@ import java.util.*;
 public class MIncorrectMacroType
         extends Macro {
 
-    private String field_Expected;
+    String field_Expected;
 
-    private String field_Found;
+    String field_Found;
 
-    private String field_Index;
+    String field_Index;
 
-    private String field_Line;
+    String field_Line;
 
-    private String field_Char;
+    String field_Char;
 
     public MIncorrectMacroType(
             String pExpected,
             String pFound,
             String pIndex,
             String pLine,
-            String pChar) {
+            String pChar,
+            Macros macros) {
 
+        setMacros(macros);
         setPExpected(pExpected);
         setPFound(pFound);
         setPIndex(pIndex);
         setPLine(pLine);
         setPChar(pChar);
-
     }
 
     private void setPExpected(
@@ -82,52 +83,52 @@ public class MIncorrectMacroType
         this.field_Char = pChar;
     }
 
-    private String buildExpected() {
+    String buildExpected() {
 
         return this.field_Expected;
     }
 
-    private String buildFound() {
+    String buildFound() {
 
         return this.field_Found;
     }
 
-    private String buildIndex() {
+    String buildIndex() {
 
         return this.field_Index;
     }
 
-    private String buildLine() {
+    String buildLine() {
 
         return this.field_Line;
     }
 
-    private String buildChar() {
+    String buildChar() {
 
         return this.field_Char;
     }
 
-    private String getExpected() {
+    String getExpected() {
 
         return this.field_Expected;
     }
 
-    private String getFound() {
+    String getFound() {
 
         return this.field_Found;
     }
 
-    private String getIndex() {
+    String getIndex() {
 
         return this.field_Index;
     }
 
-    private String getLine() {
+    String getLine() {
 
         return this.field_Line;
     }
 
-    private String getChar() {
+    String getChar() {
 
         return this.field_Char;
     }
@@ -159,9 +160,9 @@ public class MIncorrectMacroType
 
         StringBuilder sb0 = new StringBuilder();
 
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+        MSemanticErrorHead m1 = getMacros().newSemanticErrorHead();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line : ");
@@ -189,27 +190,13 @@ public class MIncorrectMacroType
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

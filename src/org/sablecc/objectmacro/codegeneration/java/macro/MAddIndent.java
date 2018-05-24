@@ -7,9 +7,13 @@ import java.util.*;
 public class MAddIndent
         extends Macro {
 
-    private String field_IndexBuilder;
+    String field_IndexBuilder;
 
-    private final List<Macro> list_IndentParts;
+    final List<Macro> list_IndentParts;
+
+    final Context IndentPartsContext = new Context();
+
+    final InternalValue IndentPartsValue;
 
     private DSeparator IndentPartsSeparator;
 
@@ -19,15 +23,13 @@ public class MAddIndent
 
     private DNone IndentPartsNone;
 
-    private final InternalValue IndentPartsValue;
-
-    private final Context IndentPartsContext = new Context();
-
     public MAddIndent(
-            String pIndexBuilder) {
+            String pIndexBuilder,
+            Macros macros) {
 
+        setMacros(macros);
         setPIndexBuilder(pIndexBuilder);
-        this.list_IndentParts = new ArrayList<>();
+        this.list_IndentParts = new LinkedList<>();
 
         this.IndentPartsValue = new InternalValue(this.list_IndentParts,
                 this.IndentPartsContext);
@@ -53,6 +55,10 @@ public class MAddIndent
             throw ObjectMacroException.cannotModify("InitStringBuilder");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_IndentParts.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -66,6 +72,10 @@ public class MAddIndent
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("StringPart");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_IndentParts.add(macro);
@@ -83,6 +93,10 @@ public class MAddIndent
             throw ObjectMacroException.cannotModify("ParamInsertPart");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_IndentParts.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -96,6 +110,10 @@ public class MAddIndent
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("EolPart");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_IndentParts.add(macro);
@@ -113,12 +131,16 @@ public class MAddIndent
             throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_IndentParts.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    private String buildIndexBuilder() {
+    String buildIndexBuilder() {
 
         return this.field_IndexBuilder;
     }
@@ -162,7 +184,7 @@ public class MAddIndent
         return sb.toString();
     }
 
-    private String getIndexBuilder() {
+    String getIndexBuilder() {
 
         return this.field_IndexBuilder;
     }
@@ -213,9 +235,9 @@ public class MAddIndent
 
     private void initIndentPartsDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.IndentPartsSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.IndentPartsSeparator = new DSeparator(sb1.toString());
         this.IndentPartsValue.setSeparator(this.IndentPartsSeparator);
     }
 
@@ -271,27 +293,13 @@ public class MAddIndent
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

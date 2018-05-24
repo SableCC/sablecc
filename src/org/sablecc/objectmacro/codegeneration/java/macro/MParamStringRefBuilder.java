@@ -7,9 +7,13 @@ import java.util.*;
 public class MParamStringRefBuilder
         extends Macro {
 
-    private String field_Name;
+    String field_Name;
 
-    private final List<Macro> list_ContextParam;
+    final List<Macro> list_ContextParam;
+
+    final Context ContextParamContext = new Context();
+
+    final InternalValue ContextParamValue;
 
     private DSeparator ContextParamSeparator;
 
@@ -19,9 +23,11 @@ public class MParamStringRefBuilder
 
     private DNone ContextParamNone;
 
-    private final InternalValue ContextParamValue;
+    final List<Macro> list_GetInternalTail;
 
-    private final List<Macro> list_GetInternalTail;
+    final Context GetInternalTailContext = new Context();
+
+    final InternalValue GetInternalTailValue;
 
     private DSeparator GetInternalTailSeparator;
 
@@ -31,18 +37,14 @@ public class MParamStringRefBuilder
 
     private DNone GetInternalTailNone;
 
-    private final InternalValue GetInternalTailValue;
-
-    private final Context ContextParamContext = new Context();
-
-    private final Context GetInternalTailContext = new Context();
-
     public MParamStringRefBuilder(
-            String pName) {
+            String pName,
+            Macros macros) {
 
+        setMacros(macros);
         setPName(pName);
-        this.list_ContextParam = new ArrayList<>();
-        this.list_GetInternalTail = new ArrayList<>();
+        this.list_ContextParam = new LinkedList<>();
+        this.list_GetInternalTail = new LinkedList<>();
 
         this.ContextParamValue = new InternalValue(this.list_ContextParam,
                 this.ContextParamContext);
@@ -70,6 +72,10 @@ public class MParamStringRefBuilder
             throw ObjectMacroException.cannotModify("ContextParam");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_ContextParam.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -85,12 +91,16 @@ public class MParamStringRefBuilder
             throw ObjectMacroException.cannotModify("GetInternalTail");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_GetInternalTail.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    private String buildName() {
+    String buildName() {
 
         return this.field_Name;
     }
@@ -173,7 +183,7 @@ public class MParamStringRefBuilder
         return sb.toString();
     }
 
-    private String getName() {
+    String getName() {
 
         return this.field_Name;
     }
@@ -285,27 +295,13 @@ public class MParamStringRefBuilder
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

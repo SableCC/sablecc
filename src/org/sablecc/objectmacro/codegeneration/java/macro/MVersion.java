@@ -7,13 +7,14 @@ import java.util.*;
 public class MVersion
         extends Macro {
 
-    private String field_DefaultCase;
+    String field_DefaultCase;
 
     public MVersion(
-            String pDefaultCase) {
+            String pDefaultCase,
+            Macros macros) {
 
+        setMacros(macros);
         setPDefaultCase(pDefaultCase);
-
     }
 
     private void setPDefaultCase(
@@ -26,12 +27,12 @@ public class MVersion
         this.field_DefaultCase = pDefaultCase;
     }
 
-    private String buildDefaultCase() {
+    String buildDefaultCase() {
 
         return this.field_DefaultCase;
     }
 
-    private String getDefaultCase() {
+    String getDefaultCase() {
 
         return this.field_DefaultCase;
     }
@@ -77,27 +78,13 @@ public class MVersion
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

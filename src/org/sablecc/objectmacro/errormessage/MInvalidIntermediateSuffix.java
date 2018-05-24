@@ -7,13 +7,14 @@ import java.util.*;
 public class MInvalidIntermediateSuffix
         extends Macro {
 
-    private String field_FileName;
+    String field_FileName;
 
     public MInvalidIntermediateSuffix(
-            String pFileName) {
+            String pFileName,
+            Macros macros) {
 
+        setMacros(macros);
         setPFileName(pFileName);
-
     }
 
     private void setPFileName(
@@ -26,12 +27,12 @@ public class MInvalidIntermediateSuffix
         this.field_FileName = pFileName;
     }
 
-    private String buildFileName() {
+    String buildFileName() {
 
         return this.field_FileName;
     }
 
-    private String getFileName() {
+    String getFileName() {
 
         return this.field_FileName;
     }
@@ -64,9 +65,9 @@ public class MInvalidIntermediateSuffix
 
         StringBuilder sb0 = new StringBuilder();
 
-        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        MCommandLineErrorHead m1 = getMacros().newCommandLineErrorHead();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("The macro file, \"");
@@ -74,9 +75,9 @@ public class MInvalidIntermediateSuffix
         sb0.append("\", does not have a .intermediate suffix.");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        MCommandLineErrorTail m2 = getMacros().newCommandLineErrorTail();
 
-        sb0.append(minsert_2.build(null));
+        sb0.append(m2.build(null));
 
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
@@ -89,27 +90,13 @@ public class MInvalidIntermediateSuffix
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

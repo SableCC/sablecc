@@ -7,17 +7,18 @@ import java.util.*;
 public class MSpuriousShortOptionOperand
         extends Macro {
 
-    private String field_OptionName;
+    String field_OptionName;
 
-    private String field_OperandText;
+    String field_OperandText;
 
     public MSpuriousShortOptionOperand(
             String pOptionName,
-            String pOperandText) {
+            String pOperandText,
+            Macros macros) {
 
+        setMacros(macros);
         setPOptionName(pOptionName);
         setPOperandText(pOperandText);
-
     }
 
     private void setPOptionName(
@@ -40,22 +41,22 @@ public class MSpuriousShortOptionOperand
         this.field_OperandText = pOperandText;
     }
 
-    private String buildOptionName() {
+    String buildOptionName() {
 
         return this.field_OptionName;
     }
 
-    private String buildOperandText() {
+    String buildOperandText() {
 
         return this.field_OperandText;
     }
 
-    private String getOptionName() {
+    String getOptionName() {
 
         return this.field_OptionName;
     }
 
-    private String getOperandText() {
+    String getOperandText() {
 
         return this.field_OperandText;
     }
@@ -88,9 +89,9 @@ public class MSpuriousShortOptionOperand
 
         StringBuilder sb0 = new StringBuilder();
 
-        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        MCommandLineErrorHead m1 = getMacros().newCommandLineErrorHead();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("The following option is rejected:");
@@ -103,9 +104,9 @@ public class MSpuriousShortOptionOperand
         sb0.append("This option does not accept an operand.");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        MCommandLineErrorTail m2 = getMacros().newCommandLineErrorTail();
 
-        sb0.append(minsert_2.build(null));
+        sb0.append(m2.build(null));
 
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
@@ -118,27 +119,13 @@ public class MSpuriousShortOptionOperand
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

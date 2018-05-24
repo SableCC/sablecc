@@ -7,21 +7,22 @@ import java.util.*;
 public class MUnknownVersion
         extends Macro {
 
-    private String field_Name;
+    String field_Name;
 
-    private String field_Line;
+    String field_Line;
 
-    private String field_Char;
+    String field_Char;
 
     public MUnknownVersion(
             String pName,
             String pLine,
-            String pChar) {
+            String pChar,
+            Macros macros) {
 
+        setMacros(macros);
         setPName(pName);
         setPLine(pLine);
         setPChar(pChar);
-
     }
 
     private void setPName(
@@ -54,32 +55,32 @@ public class MUnknownVersion
         this.field_Char = pChar;
     }
 
-    private String buildName() {
+    String buildName() {
 
         return this.field_Name;
     }
 
-    private String buildLine() {
+    String buildLine() {
 
         return this.field_Line;
     }
 
-    private String buildChar() {
+    String buildChar() {
 
         return this.field_Char;
     }
 
-    private String getName() {
+    String getName() {
 
         return this.field_Name;
     }
 
-    private String getLine() {
+    String getLine() {
 
         return this.field_Line;
     }
 
-    private String getChar() {
+    String getChar() {
 
         return this.field_Char;
     }
@@ -111,9 +112,9 @@ public class MUnknownVersion
 
         StringBuilder sb0 = new StringBuilder();
 
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+        MSemanticErrorHead m1 = getMacros().newSemanticErrorHead();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line: ");
@@ -137,27 +138,13 @@ public class MUnknownVersion
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

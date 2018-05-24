@@ -7,9 +7,13 @@ import java.util.*;
 public class MTextArgument
         extends Macro {
 
-    private String field_ParamName;
+    String field_ParamName;
 
-    private final List<Macro> list_TextParts;
+    final List<Macro> list_TextParts;
+
+    final Context TextPartsContext = new Context();
+
+    final InternalValue TextPartsValue;
 
     private DSeparator TextPartsSeparator;
 
@@ -19,15 +23,13 @@ public class MTextArgument
 
     private DNone TextPartsNone;
 
-    private final InternalValue TextPartsValue;
-
-    private final Context TextPartsContext = new Context();
-
     public MTextArgument(
-            String pParamName) {
+            String pParamName,
+            Macros macros) {
 
+        setMacros(macros);
         setPParamName(pParamName);
-        this.list_TextParts = new ArrayList<>();
+        this.list_TextParts = new LinkedList<>();
 
         this.TextPartsValue
                 = new InternalValue(this.list_TextParts, this.TextPartsContext);
@@ -53,6 +55,10 @@ public class MTextArgument
             throw ObjectMacroException.cannotModify("StringPart");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_TextParts.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -66,6 +72,10 @@ public class MTextArgument
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("EolPart");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_TextParts.add(macro);
@@ -83,6 +93,10 @@ public class MTextArgument
             throw ObjectMacroException.cannotModify("ParamInsert");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_TextParts.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -98,12 +112,16 @@ public class MTextArgument
             throw ObjectMacroException.cannotModify("MacroInsert");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_TextParts.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    private String buildParamName() {
+    String buildParamName() {
 
         return this.field_ParamName;
     }
@@ -147,7 +165,7 @@ public class MTextArgument
         return sb.toString();
     }
 
-    private String getParamName() {
+    String getParamName() {
 
         return this.field_ParamName;
     }
@@ -192,9 +210,9 @@ public class MTextArgument
 
     private void initTextPartsDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.TextPartsSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.TextPartsSeparator = new DSeparator(sb1.toString());
         this.TextPartsValue.setSeparator(this.TextPartsSeparator);
     }
 
@@ -233,13 +251,13 @@ public class MTextArgument
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
-        MParamName minsert_1 = new MParamName();
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
+        MParamName m1 = getMacros().newParamName();
 
-        minsert_1.setName(null, getParamName());
-        sb1.append(minsert_1.build(null));
+        m1.setName(null, getParamName());
+        sb1.append(m1.build(null));
         sb1.append(LINE_SEPARATOR);
         sb1.append(buildTextParts());
         sb0.append(applyIndent(sb1.toString(),
@@ -258,27 +276,13 @@ public class MTextArgument
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

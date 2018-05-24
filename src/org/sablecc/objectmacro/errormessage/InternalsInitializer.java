@@ -2,7 +2,7 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class InternalsInitializer {
+class InternalsInitializer {
 
     private final String _paramName;
 
@@ -309,6 +309,69 @@ public class InternalsInitializer {
             MInvalidInsert mInvalidInsert) {
 
         throw ObjectMacroException.incorrectType("MInvalidInsert",
+                this._paramName);
+    }
+
+    void setObjectMacroUserErrorHead(
+            MObjectMacroUserErrorHead mObjectMacroUserErrorHead) {
+
+        throw ObjectMacroException.incorrectType("MObjectMacroUserErrorHead",
+                this._paramName);
+    }
+
+    void setUserErrorIncorrectType(
+            MUserErrorIncorrectType mUserErrorIncorrectType) {
+
+        throw ObjectMacroException.incorrectType("MUserErrorIncorrectType",
+                this._paramName);
+    }
+
+    void setUserErrorMacroNullInList(
+            MUserErrorMacroNullInList mUserErrorMacroNullInList) {
+
+        throw ObjectMacroException.incorrectType("MUserErrorMacroNullInList",
+                this._paramName);
+    }
+
+    void setUserErrorCyclicReference(
+            MUserErrorCyclicReference mUserErrorCyclicReference) {
+
+        throw ObjectMacroException.incorrectType("MUserErrorCyclicReference",
+                this._paramName);
+    }
+
+    void setUserErrorParameterNull(
+            MUserErrorParameterNull mUserErrorParameterNull) {
+
+        throw ObjectMacroException.incorrectType("MUserErrorParameterNull",
+                this._paramName);
+    }
+
+    void setUserErrorCannotModify(
+            MUserErrorCannotModify mUserErrorCannotModify) {
+
+        throw ObjectMacroException.incorrectType("MUserErrorCannotModify",
+                this._paramName);
+    }
+
+    void setUserErrorVersionNull(
+            MUserErrorVersionNull mUserErrorVersionNull) {
+
+        throw ObjectMacroException.incorrectType("MUserErrorVersionNull",
+                this._paramName);
+    }
+
+    void setUserErrorVersionsDifferent(
+            MUserErrorVersionsDifferent mUserErrorVersionsDifferent) {
+
+        throw ObjectMacroException.incorrectType("MUserErrorVersionsDifferent",
+                this._paramName);
+    }
+
+    void setUserErrorInternalException(
+            MUserErrorInternalException mUserErrorInternalException) {
+
+        throw ObjectMacroException.incorrectType("MUserErrorInternalException",
                 this._paramName);
     }
 

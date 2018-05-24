@@ -7,11 +7,15 @@ import java.util.*;
 public class MSingleAdd
         extends Macro {
 
-    private String field_MacroName;
+    String field_MacroName;
 
-    private String field_ParamName;
+    String field_ParamName;
 
-    private final List<Macro> list_IsBuilt;
+    final List<Macro> list_IsBuilt;
+
+    final Context IsBuiltContext = new Context();
+
+    final InternalValue IsBuiltValue;
 
     private DSeparator IsBuiltSeparator;
 
@@ -21,17 +25,15 @@ public class MSingleAdd
 
     private DNone IsBuiltNone;
 
-    private final InternalValue IsBuiltValue;
-
-    private final Context IsBuiltContext = new Context();
-
     public MSingleAdd(
             String pMacroName,
-            String pParamName) {
+            String pParamName,
+            Macros macros) {
 
+        setMacros(macros);
         setPMacroName(pMacroName);
         setPParamName(pParamName);
-        this.list_IsBuilt = new ArrayList<>();
+        this.list_IsBuilt = new LinkedList<>();
 
         this.IsBuiltValue
                 = new InternalValue(this.list_IsBuilt, this.IsBuiltContext);
@@ -67,17 +69,21 @@ public class MSingleAdd
             throw ObjectMacroException.cannotModify("IsBuilt");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_IsBuilt.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    private String buildMacroName() {
+    String buildMacroName() {
 
         return this.field_MacroName;
     }
 
-    private String buildParamName() {
+    String buildParamName() {
 
         return this.field_ParamName;
     }
@@ -121,12 +127,12 @@ public class MSingleAdd
         return sb.toString();
     }
 
-    private String getMacroName() {
+    String getMacroName() {
 
         return this.field_MacroName;
     }
 
-    private String getParamName() {
+    String getParamName() {
 
         return this.field_ParamName;
     }
@@ -205,17 +211,17 @@ public class MSingleAdd
         sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildIsBuilt());
         sb1.append(LINE_SEPARATOR);
         sb1.append(LINE_SEPARATOR);
-        MFactoryComparison minsert_1 = new MFactoryComparison();
-        StringBuilder sbB = new StringBuilder();
-        sbB.append("macro");
-        minsert_1.setVarName(null, sbB.toString());
-        sb1.append(minsert_1.build(null));
+        MFactoryComparison m1 = getMacros().newFactoryComparison();
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append("macro");
+        m1.setVarName(null, sb3.toString());
+        sb1.append(m1.build(null));
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
@@ -241,27 +247,13 @@ public class MSingleAdd
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

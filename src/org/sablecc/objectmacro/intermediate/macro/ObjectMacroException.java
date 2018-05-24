@@ -35,7 +35,7 @@ public class ObjectMacroException
             String param_name) {
 
         return new ObjectMacroException(
-                new MIncorrectType(type, param_name).toString());
+                new MUserErrorIncorrectType(type, param_name).build());
     }
 
     static ObjectMacroException macroNull(
@@ -43,29 +43,39 @@ public class ObjectMacroException
             String paramName) {
 
         return new ObjectMacroException(
-                new MMacroNullInList(String.valueOf(index), paramName)
-                        .toString());
+                new MUserErrorMacroNullInList(String.valueOf(index), paramName)
+                        .build());
     }
 
     static ObjectMacroException parameterNull(
             String paramName) {
 
         return new ObjectMacroException(
-                new MParameterNull(paramName).toString());
+                new MUserErrorParameterNull(paramName).build());
     }
 
     static ObjectMacroException cyclicReference(
             String macroName) {
 
         return new ObjectMacroException(
-                new MCyclicReference(macroName).toString());
+                new MUserErrorCyclicReference(macroName).build());
     }
 
     static ObjectMacroException cannotModify(
             String macroName) {
 
         return new ObjectMacroException(
-                new MCannotModify(macroName).toString());
+                new MUserErrorCannotModify(macroName).build());
     }
 
+    static ObjectMacroException versionNull() {
+
+        return new ObjectMacroException(new MUserErrorVersionNull().build());
+    }
+
+    static ObjectMacroException diffMacros() {
+
+        return new ObjectMacroException(
+                new MUserErrorVersionsDifferent().build());
+    }
 }

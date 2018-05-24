@@ -7,11 +7,15 @@ import java.util.*;
 public class MNewDirective
         extends Macro {
 
-    private String field_DirectiveName;
+    String field_DirectiveName;
 
-    private String field_IndexBuilder;
+    String field_IndexBuilder;
 
-    private final List<Macro> list_TextParts;
+    final List<Macro> list_TextParts;
+
+    final Context TextPartsContext = new Context();
+
+    final InternalValue TextPartsValue;
 
     private DSeparator TextPartsSeparator;
 
@@ -21,19 +25,17 @@ public class MNewDirective
 
     private DNone TextPartsNone;
 
-    private final InternalValue TextPartsValue;
-
     private Map<Context, String> field_ParamName = new LinkedHashMap<>();
-
-    private final Context TextPartsContext = new Context();
 
     public MNewDirective(
             String pDirectiveName,
-            String pIndexBuilder) {
+            String pIndexBuilder,
+            Macros macros) {
 
+        setMacros(macros);
         setPDirectiveName(pDirectiveName);
         setPIndexBuilder(pIndexBuilder);
-        this.list_TextParts = new ArrayList<>();
+        this.list_TextParts = new LinkedList<>();
 
         this.TextPartsValue
                 = new InternalValue(this.list_TextParts, this.TextPartsContext);
@@ -66,6 +68,10 @@ public class MNewDirective
             throw ObjectMacroException.parameterNull("TextParts");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_TextParts.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -76,6 +82,10 @@ public class MNewDirective
 
         if (macro == null) {
             throw ObjectMacroException.parameterNull("TextParts");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_TextParts.add(macro);
@@ -90,6 +100,10 @@ public class MNewDirective
             throw ObjectMacroException.parameterNull("TextParts");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_TextParts.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -100,6 +114,10 @@ public class MNewDirective
 
         if (macro == null) {
             throw ObjectMacroException.parameterNull("TextParts");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_TextParts.add(macro);
@@ -118,12 +136,12 @@ public class MNewDirective
         this.field_ParamName.put(context, value);
     }
 
-    private String buildDirectiveName() {
+    String buildDirectiveName() {
 
         return this.field_DirectiveName;
     }
 
-    private String buildIndexBuilder() {
+    String buildIndexBuilder() {
 
         return this.field_IndexBuilder;
     }
@@ -167,18 +185,18 @@ public class MNewDirective
         return sb.toString();
     }
 
-    private String buildParamName(
+    String buildParamName(
             Context context) {
 
         return this.field_ParamName.get(context);
     }
 
-    private String getDirectiveName() {
+    String getDirectiveName() {
 
         return this.field_DirectiveName;
     }
 
-    private String getIndexBuilder() {
+    String getIndexBuilder() {
 
         return this.field_IndexBuilder;
     }
@@ -188,7 +206,7 @@ public class MNewDirective
         return this.TextPartsValue;
     }
 
-    private String getParamName(
+    String getParamName(
             Context context) {
 
         return this.field_ParamName.get(context);
@@ -229,9 +247,9 @@ public class MNewDirective
 
     private void initTextPartsDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.TextPartsSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.TextPartsSeparator = new DSeparator(sb1.toString());
         this.TextPartsValue.setSeparator(this.TextPartsSeparator);
     }
 
@@ -295,27 +313,13 @@ public class MNewDirective
         return sb0.toString();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

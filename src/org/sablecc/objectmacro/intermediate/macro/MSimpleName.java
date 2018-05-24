@@ -7,13 +7,14 @@ import java.util.*;
 public class MSimpleName
         extends Macro {
 
-    private String field_Name;
+    String field_Name;
 
     public MSimpleName(
-            String pName) {
+            String pName,
+            Macros macros) {
 
+        setMacros(macros);
         setPName(pName);
-
     }
 
     private void setPName(
@@ -26,12 +27,12 @@ public class MSimpleName
         this.field_Name = pName;
     }
 
-    private String buildName() {
+    String buildName() {
 
         return this.field_Name;
     }
 
-    private String getName() {
+    String getName() {
 
         return this.field_Name;
     }
@@ -78,27 +79,13 @@ public class MSimpleName
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

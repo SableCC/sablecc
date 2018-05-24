@@ -7,9 +7,13 @@ import java.util.*;
 public class MSetParam
         extends Macro {
 
-    private String field_Name;
+    String field_Name;
 
-    private final List<Macro> list_SetParam;
+    final List<Macro> list_SetParam;
+
+    final Context SetParamContext = new Context();
+
+    final InternalValue SetParamValue;
 
     private DSeparator SetParamSeparator;
 
@@ -19,15 +23,13 @@ public class MSetParam
 
     private DNone SetParamNone;
 
-    private final InternalValue SetParamValue;
-
-    private final Context SetParamContext = new Context();
-
     public MSetParam(
-            String pName) {
+            String pName,
+            Macros macros) {
 
+        setMacros(macros);
         setPName(pName);
-        this.list_SetParam = new ArrayList<>();
+        this.list_SetParam = new LinkedList<>();
 
         this.SetParamValue
                 = new InternalValue(this.list_SetParam, this.SetParamContext);
@@ -53,12 +55,16 @@ public class MSetParam
             throw ObjectMacroException.cannotModify("ParamArg");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_SetParam.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    private String buildName() {
+    String buildName() {
 
         return this.field_Name;
     }
@@ -102,7 +108,7 @@ public class MSetParam
         return sb.toString();
     }
 
-    private String getName() {
+    String getName() {
 
         return this.field_Name;
     }
@@ -179,27 +185,13 @@ public class MSetParam
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

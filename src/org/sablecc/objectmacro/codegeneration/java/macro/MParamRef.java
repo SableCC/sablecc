@@ -7,9 +7,13 @@ import java.util.*;
 public class MParamRef
         extends Macro {
 
-    private String field_Name;
+    String field_Name;
 
-    private final List<Macro> list_GetParams;
+    final List<Macro> list_GetParams;
+
+    final Context GetParamsContext = new Context();
+
+    final InternalValue GetParamsValue;
 
     private DSeparator GetParamsSeparator;
 
@@ -19,15 +23,13 @@ public class MParamRef
 
     private DNone GetParamsNone;
 
-    private final InternalValue GetParamsValue;
-
-    private final Context GetParamsContext = new Context();
-
     public MParamRef(
-            String pName) {
+            String pName,
+            Macros macros) {
 
+        setMacros(macros);
         setPName(pName);
-        this.list_GetParams = new ArrayList<>();
+        this.list_GetParams = new LinkedList<>();
 
         this.GetParamsValue
                 = new InternalValue(this.list_GetParams, this.GetParamsContext);
@@ -53,6 +55,10 @@ public class MParamRef
             throw ObjectMacroException.cannotModify("ContextArg");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_GetParams.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -68,12 +74,16 @@ public class MParamRef
             throw ObjectMacroException.cannotModify("PlainText");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_GetParams.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    private String buildName() {
+    String buildName() {
 
         return this.field_Name;
     }
@@ -117,7 +127,7 @@ public class MParamRef
         return sb.toString();
     }
 
-    private String getName() {
+    String getName() {
 
         return this.field_Name;
     }
@@ -200,27 +210,13 @@ public class MParamRef
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

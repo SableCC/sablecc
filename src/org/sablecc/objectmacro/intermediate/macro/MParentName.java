@@ -7,7 +7,11 @@ import java.util.*;
 public class MParentName
         extends Macro {
 
-    private final List<Macro> list_Parent;
+    final List<Macro> list_Parent;
+
+    final Context ParentContext = new Context();
+
+    final InternalValue ParentValue;
 
     private DSeparator ParentSeparator;
 
@@ -17,13 +21,11 @@ public class MParentName
 
     private DNone ParentNone;
 
-    private final InternalValue ParentValue;
+    public MParentName(
+            Macros macros) {
 
-    private final Context ParentContext = new Context();
-
-    public MParentName() {
-
-        this.list_Parent = new ArrayList<>();
+        setMacros(macros);
+        this.list_Parent = new LinkedList<>();
 
         this.ParentValue
                 = new InternalValue(this.list_Parent, this.ParentContext);
@@ -37,6 +39,10 @@ public class MParentName
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("Name");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_Parent.add(macro);
@@ -153,27 +159,13 @@ public class MParentName
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

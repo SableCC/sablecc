@@ -7,7 +7,11 @@ import java.util.*;
 public class MName
         extends Macro {
 
-    private final List<Macro> list_Value;
+    final List<Macro> list_Value;
+
+    final Context ValueContext = new Context();
+
+    final InternalValue ValueValue;
 
     private DSeparator ValueSeparator;
 
@@ -17,13 +21,11 @@ public class MName
 
     private DNone ValueNone;
 
-    private final InternalValue ValueValue;
+    public MName(
+            Macros macros) {
 
-    private final Context ValueContext = new Context();
-
-    public MName() {
-
-        this.list_Value = new ArrayList<>();
+        setMacros(macros);
+        this.list_Value = new LinkedList<>();
 
         this.ValueValue = new InternalValue(this.list_Value, this.ValueContext);
     }
@@ -36,6 +38,10 @@ public class MName
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("SimpleName");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_Value.add(macro);
@@ -102,18 +108,18 @@ public class MName
 
     private void initValueDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(", ");
-        this.ValueSeparator = new DSeparator(sb0.toString());
-        this.ValueValue.setSeparator(this.ValueSeparator);
         StringBuilder sb1 = new StringBuilder();
-        sb1.append("{");
-        sb1.append(" ");
-        this.ValueBeforeFirst = new DBeforeFirst(sb1.toString());
-        this.ValueValue.setBeforeFirst(this.ValueBeforeFirst);
+        sb1.append(", ");
+        this.ValueSeparator = new DSeparator(sb1.toString());
+        this.ValueValue.setSeparator(this.ValueSeparator);
         StringBuilder sb2 = new StringBuilder();
-        sb2.append(" }");
-        this.ValueAfterLast = new DAfterLast(sb2.toString());
+        sb2.append("{");
+        sb2.append(" ");
+        this.ValueBeforeFirst = new DBeforeFirst(sb2.toString());
+        this.ValueValue.setBeforeFirst(this.ValueBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(" }");
+        this.ValueAfterLast = new DAfterLast(sb3.toString());
         this.ValueValue.setAfterLast(this.ValueAfterLast);
     }
 
@@ -162,27 +168,13 @@ public class MName
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

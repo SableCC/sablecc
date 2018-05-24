@@ -7,7 +7,11 @@ import java.util.*;
 public class MDirective
         extends Macro {
 
-    private final List<Macro> list_DirectiveName;
+    final List<Macro> list_DirectiveName;
+
+    final Context DirectiveNameContext = new Context();
+
+    final InternalValue DirectiveNameValue;
 
     private DSeparator DirectiveNameSeparator;
 
@@ -17,9 +21,11 @@ public class MDirective
 
     private DNone DirectiveNameNone;
 
-    private final InternalValue DirectiveNameValue;
+    final List<Macro> list_DirectiveTextParts;
 
-    private final List<Macro> list_DirectiveTextParts;
+    final Context DirectiveTextPartsContext = new Context();
+
+    final InternalValue DirectiveTextPartsValue;
 
     private DSeparator DirectiveTextPartsSeparator;
 
@@ -29,16 +35,12 @@ public class MDirective
 
     private DNone DirectiveTextPartsNone;
 
-    private final InternalValue DirectiveTextPartsValue;
+    public MDirective(
+            Macros macros) {
 
-    private final Context DirectiveNameContext = new Context();
-
-    private final Context DirectiveTextPartsContext = new Context();
-
-    public MDirective() {
-
-        this.list_DirectiveName = new ArrayList<>();
-        this.list_DirectiveTextParts = new ArrayList<>();
+        setMacros(macros);
+        this.list_DirectiveName = new LinkedList<>();
+        this.list_DirectiveTextParts = new LinkedList<>();
 
         this.DirectiveNameValue = new InternalValue(this.list_DirectiveName,
                 this.DirectiveNameContext);
@@ -56,6 +58,10 @@ public class MDirective
             throw ObjectMacroException.cannotModify("Name");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_DirectiveName.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -69,6 +75,10 @@ public class MDirective
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("StringPart");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_DirectiveTextParts.add(macro);
@@ -86,6 +96,10 @@ public class MDirective
             throw ObjectMacroException.cannotModify("EolPart");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_DirectiveTextParts.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -101,6 +115,10 @@ public class MDirective
             throw ObjectMacroException.cannotModify("ParamInsert");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_DirectiveTextParts.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -114,6 +132,10 @@ public class MDirective
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroInsert");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_DirectiveTextParts.add(macro);
@@ -302,9 +324,9 @@ public class MDirective
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildDirectiveName());
         sb1.append(LINE_SEPARATOR);
         sb1.append(buildDirectiveTextParts());
@@ -324,27 +346,13 @@ public class MDirective
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

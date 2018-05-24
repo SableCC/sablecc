@@ -7,7 +7,11 @@ import java.util.*;
 public class MVersionEnumeration
         extends Macro {
 
-    private final List<Macro> list_PackageDeclaration;
+    final List<Macro> list_PackageDeclaration;
+
+    final Context PackageDeclarationContext = new Context();
+
+    final InternalValue PackageDeclarationValue;
 
     private DSeparator PackageDeclarationSeparator;
 
@@ -17,9 +21,11 @@ public class MVersionEnumeration
 
     private DNone PackageDeclarationNone;
 
-    private final InternalValue PackageDeclarationValue;
+    final List<Macro> list_Versions;
 
-    private final List<Macro> list_Versions;
+    final Context VersionsContext = new Context();
+
+    final InternalValue VersionsValue;
 
     private DSeparator VersionsSeparator;
 
@@ -29,16 +35,12 @@ public class MVersionEnumeration
 
     private DNone VersionsNone;
 
-    private final InternalValue VersionsValue;
+    public MVersionEnumeration(
+            Macros macros) {
 
-    private final Context PackageDeclarationContext = new Context();
-
-    private final Context VersionsContext = new Context();
-
-    public MVersionEnumeration() {
-
-        this.list_PackageDeclaration = new ArrayList<>();
-        this.list_Versions = new ArrayList<>();
+        setMacros(macros);
+        this.list_PackageDeclaration = new LinkedList<>();
+        this.list_Versions = new LinkedList<>();
 
         this.PackageDeclarationValue = new InternalValue(
                 this.list_PackageDeclaration, this.PackageDeclarationContext);
@@ -56,6 +58,10 @@ public class MVersionEnumeration
             throw ObjectMacroException.cannotModify("PackageDeclaration");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_PackageDeclaration.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -69,6 +75,10 @@ public class MVersionEnumeration
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("PlainText");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_Versions.add(macro);
@@ -196,18 +206,18 @@ public class MVersionEnumeration
 
     private void initPackageDeclarationDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb1.toString());
         this.PackageDeclarationValue
                 .setBeforeFirst(this.PackageDeclarationBeforeFirst);
     }
 
     private void initVersionsDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(", ");
-        this.VersionsSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(", ");
+        this.VersionsSeparator = new DSeparator(sb1.toString());
         this.VersionsValue.setSeparator(this.VersionsSeparator);
     }
 
@@ -244,9 +254,9 @@ public class MVersionEnumeration
 
         StringBuilder sb0 = new StringBuilder();
 
-        MHeader minsert_1 = new MHeader();
+        MHeader m1 = getMacros().newHeader();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(buildPackageDeclaration());
         sb0.append(LINE_SEPARATOR);
@@ -255,9 +265,9 @@ public class MVersionEnumeration
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildVersions());
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
@@ -275,27 +285,13 @@ public class MVersionEnumeration
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

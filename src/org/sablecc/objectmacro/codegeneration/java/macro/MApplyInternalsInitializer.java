@@ -7,7 +7,11 @@ import java.util.*;
 public class MApplyInternalsInitializer
         extends Macro {
 
-    private final List<Macro> list_RedefinedInternalsSetter;
+    final List<Macro> list_RedefinedInternalsSetter;
+
+    final Context RedefinedInternalsSetterContext = new Context();
+
+    final InternalValue RedefinedInternalsSetterValue;
 
     private DSeparator RedefinedInternalsSetterSeparator;
 
@@ -17,15 +21,13 @@ public class MApplyInternalsInitializer
 
     private DNone RedefinedInternalsSetterNone;
 
-    private final InternalValue RedefinedInternalsSetterValue;
-
     private Map<Context, String> field_InternalName = new LinkedHashMap<>();
 
-    private final Context RedefinedInternalsSetterContext = new Context();
+    public MApplyInternalsInitializer(
+            Macros macros) {
 
-    public MApplyInternalsInitializer() {
-
-        this.list_RedefinedInternalsSetter = new ArrayList<>();
+        setMacros(macros);
+        this.list_RedefinedInternalsSetter = new LinkedList<>();
 
         this.RedefinedInternalsSetterValue
                 = new InternalValue(this.list_RedefinedInternalsSetter,
@@ -38,6 +40,10 @@ public class MApplyInternalsInitializer
         if (macro == null) {
             throw ObjectMacroException
                     .parameterNull("RedefinedInternalsSetter");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_RedefinedInternalsSetter.add(macro);
@@ -96,7 +102,7 @@ public class MApplyInternalsInitializer
         return sb.toString();
     }
 
-    private String buildInternalName(
+    String buildInternalName(
             Context context) {
 
         return this.field_InternalName.get(context);
@@ -107,7 +113,7 @@ public class MApplyInternalsInitializer
         return this.RedefinedInternalsSetterValue;
     }
 
-    private String getInternalName(
+    String getInternalName(
             Context context) {
 
         return this.field_InternalName.get(context);
@@ -130,10 +136,10 @@ public class MApplyInternalsInitializer
 
     private void initRedefinedInternalsSetterDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        this.RedefinedInternalsSetterSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        sb1.append(LINE_SEPARATOR);
+        this.RedefinedInternalsSetterSeparator = new DSeparator(sb1.toString());
         this.RedefinedInternalsSetterValue
                 .setSeparator(this.RedefinedInternalsSetterSeparator);
     }
@@ -177,9 +183,9 @@ public class MApplyInternalsInitializer
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildRedefinedInternalsSetter());
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
@@ -190,27 +196,13 @@ public class MApplyInternalsInitializer
         return sb0.toString();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

@@ -7,17 +7,21 @@ import java.util.*;
 public class MDuplicateDeclaration
         extends Macro {
 
-    private String field_Name;
+    String field_Name;
 
-    private String field_Line;
+    String field_Line;
 
-    private String field_Char;
+    String field_Char;
 
-    private String field_RefLine;
+    String field_RefLine;
 
-    private String field_RefChar;
+    String field_RefChar;
 
-    private final List<Macro> list_Version;
+    final List<Macro> list_Version;
+
+    final Context VersionContext = new Context();
+
+    final InternalValue VersionValue;
 
     private DSeparator VersionSeparator;
 
@@ -27,23 +31,21 @@ public class MDuplicateDeclaration
 
     private DNone VersionNone;
 
-    private final InternalValue VersionValue;
-
-    private final Context VersionContext = new Context();
-
     public MDuplicateDeclaration(
             String pName,
             String pLine,
             String pChar,
             String pRefLine,
-            String pRefChar) {
+            String pRefChar,
+            Macros macros) {
 
+        setMacros(macros);
         setPName(pName);
         setPLine(pLine);
         setPChar(pChar);
         setPRefLine(pRefLine);
         setPRefChar(pRefChar);
-        this.list_Version = new ArrayList<>();
+        this.list_Version = new LinkedList<>();
 
         this.VersionValue
                 = new InternalValue(this.list_Version, this.VersionContext);
@@ -109,32 +111,36 @@ public class MDuplicateDeclaration
             throw ObjectMacroException.cannotModify("PlainText");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_Version.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    private String buildName() {
+    String buildName() {
 
         return this.field_Name;
     }
 
-    private String buildLine() {
+    String buildLine() {
 
         return this.field_Line;
     }
 
-    private String buildChar() {
+    String buildChar() {
 
         return this.field_Char;
     }
 
-    private String buildRefLine() {
+    String buildRefLine() {
 
         return this.field_RefLine;
     }
 
-    private String buildRefChar() {
+    String buildRefChar() {
 
         return this.field_RefChar;
     }
@@ -178,27 +184,27 @@ public class MDuplicateDeclaration
         return sb.toString();
     }
 
-    private String getName() {
+    String getName() {
 
         return this.field_Name;
     }
 
-    private String getLine() {
+    String getLine() {
 
         return this.field_Line;
     }
 
-    private String getChar() {
+    String getChar() {
 
         return this.field_Char;
     }
 
-    private String getRefLine() {
+    String getRefLine() {
 
         return this.field_RefLine;
     }
 
-    private String getRefChar() {
+    String getRefChar() {
 
         return this.field_RefChar;
     }
@@ -225,9 +231,9 @@ public class MDuplicateDeclaration
 
     private void initVersionDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append("in version: ");
-        this.VersionBeforeFirst = new DBeforeFirst(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append("in version: ");
+        this.VersionBeforeFirst = new DBeforeFirst(sb1.toString());
         this.VersionValue.setBeforeFirst(this.VersionBeforeFirst);
     }
 
@@ -262,9 +268,9 @@ public class MDuplicateDeclaration
 
         StringBuilder sb0 = new StringBuilder();
 
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+        MSemanticErrorHead m1 = getMacros().newSemanticErrorHead();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line: ");
@@ -296,27 +302,13 @@ public class MDuplicateDeclaration
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

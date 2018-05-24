@@ -7,7 +7,11 @@ import java.util.*;
 public class MMacroInsert
         extends Macro {
 
-    private final List<Macro> list_ReferencedMacro;
+    final List<Macro> list_ReferencedMacro;
+
+    final Context ReferencedMacroContext = new Context();
+
+    final InternalValue ReferencedMacroValue;
 
     private DSeparator ReferencedMacroSeparator;
 
@@ -17,13 +21,11 @@ public class MMacroInsert
 
     private DNone ReferencedMacroNone;
 
-    private final InternalValue ReferencedMacroValue;
+    public MMacroInsert(
+            Macros macros) {
 
-    private final Context ReferencedMacroContext = new Context();
-
-    public MMacroInsert() {
-
-        this.list_ReferencedMacro = new ArrayList<>();
+        setMacros(macros);
+        this.list_ReferencedMacro = new LinkedList<>();
 
         this.ReferencedMacroValue = new InternalValue(this.list_ReferencedMacro,
                 this.ReferencedMacroContext);
@@ -37,6 +39,10 @@ public class MMacroInsert
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroRef");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_ReferencedMacro.add(macro);
@@ -142,9 +148,9 @@ public class MMacroInsert
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildReferencedMacro());
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
@@ -162,27 +168,13 @@ public class MMacroInsert
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

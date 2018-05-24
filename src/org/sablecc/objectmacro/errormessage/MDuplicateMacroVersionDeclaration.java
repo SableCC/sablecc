@@ -7,17 +7,17 @@ import java.util.*;
 public class MDuplicateMacroVersionDeclaration
         extends Macro {
 
-    private String field_Name;
+    String field_Name;
 
-    private String field_Line;
+    String field_Line;
 
-    private String field_Char;
+    String field_Char;
 
-    private String field_RefLine;
+    String field_RefLine;
 
-    private String field_RefChar;
+    String field_RefChar;
 
-    private String field_Version;
+    String field_Version;
 
     public MDuplicateMacroVersionDeclaration(
             String pName,
@@ -25,15 +25,16 @@ public class MDuplicateMacroVersionDeclaration
             String pChar,
             String pRefLine,
             String pRefChar,
-            String pVersion) {
+            String pVersion,
+            Macros macros) {
 
+        setMacros(macros);
         setPName(pName);
         setPLine(pLine);
         setPChar(pChar);
         setPRefLine(pRefLine);
         setPRefChar(pRefChar);
         setPVersion(pVersion);
-
     }
 
     private void setPName(
@@ -96,62 +97,62 @@ public class MDuplicateMacroVersionDeclaration
         this.field_Version = pVersion;
     }
 
-    private String buildName() {
+    String buildName() {
 
         return this.field_Name;
     }
 
-    private String buildLine() {
+    String buildLine() {
 
         return this.field_Line;
     }
 
-    private String buildChar() {
+    String buildChar() {
 
         return this.field_Char;
     }
 
-    private String buildRefLine() {
+    String buildRefLine() {
 
         return this.field_RefLine;
     }
 
-    private String buildRefChar() {
+    String buildRefChar() {
 
         return this.field_RefChar;
     }
 
-    private String buildVersion() {
+    String buildVersion() {
 
         return this.field_Version;
     }
 
-    private String getName() {
+    String getName() {
 
         return this.field_Name;
     }
 
-    private String getLine() {
+    String getLine() {
 
         return this.field_Line;
     }
 
-    private String getChar() {
+    String getChar() {
 
         return this.field_Char;
     }
 
-    private String getRefLine() {
+    String getRefLine() {
 
         return this.field_RefLine;
     }
 
-    private String getRefChar() {
+    String getRefChar() {
 
         return this.field_RefChar;
     }
 
-    private String getVersion() {
+    String getVersion() {
 
         return this.field_Version;
     }
@@ -184,9 +185,9 @@ public class MDuplicateMacroVersionDeclaration
 
         StringBuilder sb0 = new StringBuilder();
 
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+        MSemanticErrorHead m1 = getMacros().newSemanticErrorHead();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line: ");
@@ -218,27 +219,13 @@ public class MDuplicateMacroVersionDeclaration
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

@@ -7,13 +7,14 @@ import java.util.*;
 public class MUnknownTarget
         extends Macro {
 
-    private String field_Target;
+    String field_Target;
 
     public MUnknownTarget(
-            String pTarget) {
+            String pTarget,
+            Macros macros) {
 
+        setMacros(macros);
         setPTarget(pTarget);
-
     }
 
     private void setPTarget(
@@ -26,12 +27,12 @@ public class MUnknownTarget
         this.field_Target = pTarget;
     }
 
-    private String buildTarget() {
+    String buildTarget() {
 
         return this.field_Target;
     }
 
-    private String getTarget() {
+    String getTarget() {
 
         return this.field_Target;
     }
@@ -63,9 +64,9 @@ public class MUnknownTarget
 
         StringBuilder sb0 = new StringBuilder();
 
-        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        MCommandLineErrorHead m1 = getMacros().newCommandLineErrorHead();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("The \"");
@@ -78,9 +79,9 @@ public class MUnknownTarget
         sb0.append(" objectmacro --list-targets");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        MCommandLineErrorTail m2 = getMacros().newCommandLineErrorTail();
 
-        sb0.append(minsert_2.build(null));
+        sb0.append(m2.build(null));
 
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
@@ -93,27 +94,13 @@ public class MUnknownTarget
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

@@ -7,8 +7,10 @@ import java.util.*;
 public class MInvalidArgumentCount
         extends Macro {
 
-    public MInvalidArgumentCount() {
+    public MInvalidArgumentCount(
+            Macros macros) {
 
+        setMacros(macros);
     }
 
     @Override
@@ -38,17 +40,17 @@ public class MInvalidArgumentCount
 
         StringBuilder sb0 = new StringBuilder();
 
-        MCommandLineErrorHead minsert_3 = new MCommandLineErrorHead();
+        MCommandLineErrorHead m3 = getMacros().newCommandLineErrorHead();
 
-        sb0.append(minsert_3.build(null));
+        sb0.append(m3.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("A single macro file must be provided.");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        MCommandLineErrorTail minsert_4 = new MCommandLineErrorTail();
+        MCommandLineErrorTail m4 = getMacros().newCommandLineErrorTail();
 
-        sb0.append(minsert_4.build(null));
+        sb0.append(m4.build(null));
 
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
@@ -61,27 +63,13 @@ public class MInvalidArgumentCount
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

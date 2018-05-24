@@ -7,7 +7,11 @@ import java.util.*;
 public class MIndentPart
         extends Macro {
 
-    private final List<Macro> list_IndentationText;
+    final List<Macro> list_IndentationText;
+
+    final Context IndentationTextContext = new Context();
+
+    final InternalValue IndentationTextValue;
 
     private DSeparator IndentationTextSeparator;
 
@@ -17,13 +21,11 @@ public class MIndentPart
 
     private DNone IndentationTextNone;
 
-    private final InternalValue IndentationTextValue;
+    public MIndentPart(
+            Macros macros) {
 
-    private final Context IndentationTextContext = new Context();
-
-    public MIndentPart() {
-
-        this.list_IndentationText = new ArrayList<>();
+        setMacros(macros);
+        this.list_IndentationText = new LinkedList<>();
 
         this.IndentationTextValue = new InternalValue(this.list_IndentationText,
                 this.IndentationTextContext);
@@ -37,6 +39,10 @@ public class MIndentPart
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("StringPart");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_IndentationText.add(macro);
@@ -54,6 +60,10 @@ public class MIndentPart
             throw ObjectMacroException.cannotModify("EolPart");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_IndentationText.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -69,6 +79,10 @@ public class MIndentPart
             throw ObjectMacroException.cannotModify("ParamInsert");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_IndentationText.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -82,6 +96,10 @@ public class MIndentPart
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("MacroInsert");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_IndentationText.add(macro);
@@ -168,9 +186,9 @@ public class MIndentPart
 
     private void initIndentationTextDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.IndentationTextSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(LINE_SEPARATOR);
+        this.IndentationTextSeparator = new DSeparator(sb3.toString());
         this.IndentationTextValue.setSeparator(this.IndentationTextSeparator);
     }
 
@@ -209,9 +227,9 @@ public class MIndentPart
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildIndentationText());
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
@@ -229,27 +247,13 @@ public class MIndentPart
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

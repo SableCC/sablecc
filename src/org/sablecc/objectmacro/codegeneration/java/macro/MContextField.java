@@ -9,8 +9,10 @@ public class MContextField
 
     private Map<Context, String> field_ParamName = new LinkedHashMap<>();
 
-    public MContextField() {
+    public MContextField(
+            Macros macros) {
 
+        setMacros(macros);
     }
 
     void setParamName(
@@ -24,13 +26,13 @@ public class MContextField
         this.field_ParamName.put(context, value);
     }
 
-    private String buildParamName(
+    String buildParamName(
             Context context) {
 
         return this.field_ParamName.get(context);
     }
 
-    private String getParamName(
+    String getParamName(
             Context context) {
 
         return this.field_ParamName.get(context);
@@ -72,27 +74,13 @@ public class MContextField
         return sb0.toString();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

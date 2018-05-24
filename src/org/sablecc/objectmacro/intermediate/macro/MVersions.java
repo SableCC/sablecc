@@ -7,7 +7,11 @@ import java.util.*;
 public class MVersions
         extends Macro {
 
-    private final List<Macro> list_Versions;
+    final List<Macro> list_Versions;
+
+    final Context VersionsContext = new Context();
+
+    final InternalValue VersionsValue;
 
     private DSeparator VersionsSeparator;
 
@@ -17,13 +21,11 @@ public class MVersions
 
     private DNone VersionsNone;
 
-    private final InternalValue VersionsValue;
+    public MVersions(
+            Macros macros) {
 
-    private final Context VersionsContext = new Context();
-
-    public MVersions() {
-
-        this.list_Versions = new ArrayList<>();
+        setMacros(macros);
+        this.list_Versions = new LinkedList<>();
 
         this.VersionsValue
                 = new InternalValue(this.list_Versions, this.VersionsContext);
@@ -37,6 +39,10 @@ public class MVersions
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("SimpleName");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_Versions.add(macro);
@@ -105,10 +111,10 @@ public class MVersions
 
     private void initVersionsDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(", ");
-        sb0.append(LINE_SEPARATOR);
-        this.VersionsSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(", ");
+        sb1.append(LINE_SEPARATOR);
+        this.VersionsSeparator = new DSeparator(sb1.toString());
         this.VersionsValue.setSeparator(this.VersionsSeparator);
     }
 
@@ -147,9 +153,9 @@ public class MVersions
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildVersions());
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
@@ -167,27 +173,13 @@ public class MVersions
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

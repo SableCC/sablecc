@@ -7,17 +7,18 @@ import java.util.*;
 public class MInternalError
         extends Macro {
 
-    private String field_StackTrace;
+    String field_StackTrace;
 
-    private String field_Message;
+    String field_Message;
 
     public MInternalError(
             String pStackTrace,
-            String pMessage) {
+            String pMessage,
+            Macros macros) {
 
+        setMacros(macros);
         setPStackTrace(pStackTrace);
         setPMessage(pMessage);
-
     }
 
     private void setPStackTrace(
@@ -40,22 +41,22 @@ public class MInternalError
         this.field_Message = pMessage;
     }
 
-    private String buildStackTrace() {
+    String buildStackTrace() {
 
         return this.field_StackTrace;
     }
 
-    private String buildMessage() {
+    String buildMessage() {
 
         return this.field_Message;
     }
 
-    private String getStackTrace() {
+    String getStackTrace() {
 
         return this.field_StackTrace;
     }
 
-    private String getMessage() {
+    String getMessage() {
 
         return this.field_Message;
     }
@@ -115,27 +116,13 @@ public class MInternalError
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

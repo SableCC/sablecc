@@ -7,21 +7,22 @@ import java.util.*;
 public class MLexicalError
         extends Macro {
 
-    private String field_Line;
+    String field_Line;
 
-    private String field_Char;
+    String field_Char;
 
-    private String field_Message;
+    String field_Message;
 
     public MLexicalError(
             String pLine,
             String pChar,
-            String pMessage) {
+            String pMessage,
+            Macros macros) {
 
+        setMacros(macros);
         setPLine(pLine);
         setPChar(pChar);
         setPMessage(pMessage);
-
     }
 
     private void setPLine(
@@ -54,32 +55,32 @@ public class MLexicalError
         this.field_Message = pMessage;
     }
 
-    private String buildLine() {
+    String buildLine() {
 
         return this.field_Line;
     }
 
-    private String buildChar() {
+    String buildChar() {
 
         return this.field_Char;
     }
 
-    private String buildMessage() {
+    String buildMessage() {
 
         return this.field_Message;
     }
 
-    private String getLine() {
+    String getLine() {
 
         return this.field_Line;
     }
 
-    private String getChar() {
+    String getChar() {
 
         return this.field_Char;
     }
 
-    private String getMessage() {
+    String getMessage() {
 
         return this.field_Message;
     }
@@ -134,27 +135,13 @@ public class MLexicalError
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

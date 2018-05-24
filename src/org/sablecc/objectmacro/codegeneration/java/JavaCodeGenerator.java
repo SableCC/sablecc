@@ -21,6 +21,7 @@ import java.io.*;
 import java.util.*;
 
 import org.sablecc.objectmacro.codegeneration.*;
+import org.sablecc.objectmacro.codegeneration.java.macro.*;
 import org.sablecc.objectmacro.codegeneration.java.structure.*;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.util.*;
@@ -74,14 +75,15 @@ public class JavaCodeGenerator
         }
 
         Map<String, SMacro> macros = new LinkedHashMap<>();
+        Macros factory = new Macros();
 
-        MacroCollector macroCollector = new MacroCollector(macros);
+        MacroCollector macroCollector = new MacroCollector(macros, factory);
         getIr().getAST().apply(macroCollector);
 
-        CodeGenerationWalker walker
-                = new CodeGenerationWalker(getIr(), packageDirectory, macros);
+        CodeGenerationWalker walker = new CodeGenerationWalker(getIr(),
+                packageDirectory, macros, factory);
         UtilsGenerationWalker utilsGenerationWalker
-                = new UtilsGenerationWalker(getIr(), packageDirectory);
+                = new UtilsGenerationWalker(getIr(), packageDirectory, factory);
         ChildrenCollector childrenCollector = new ChildrenCollector(macros);
 
         getIr().getAST().apply(childrenCollector);

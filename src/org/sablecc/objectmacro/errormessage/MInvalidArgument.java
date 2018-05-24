@@ -7,13 +7,14 @@ import java.util.*;
 public class MInvalidArgument
         extends Macro {
 
-    private String field_ArgumentText;
+    String field_ArgumentText;
 
     public MInvalidArgument(
-            String pArgumentText) {
+            String pArgumentText,
+            Macros macros) {
 
+        setMacros(macros);
         setPArgumentText(pArgumentText);
-
     }
 
     private void setPArgumentText(
@@ -26,12 +27,12 @@ public class MInvalidArgument
         this.field_ArgumentText = pArgumentText;
     }
 
-    private String buildArgumentText() {
+    String buildArgumentText() {
 
         return this.field_ArgumentText;
     }
 
-    private String getArgumentText() {
+    String getArgumentText() {
 
         return this.field_ArgumentText;
     }
@@ -63,9 +64,9 @@ public class MInvalidArgument
 
         StringBuilder sb0 = new StringBuilder();
 
-        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        MCommandLineErrorHead m1 = getMacros().newCommandLineErrorHead();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("The following argument is rejected:");
@@ -76,9 +77,9 @@ public class MInvalidArgument
         sb0.append("It is invalid.");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        MCommandLineErrorTail m2 = getMacros().newCommandLineErrorTail();
 
-        sb0.append(minsert_2.build(null));
+        sb0.append(m2.build(null));
 
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
@@ -91,27 +92,13 @@ public class MInvalidArgument
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

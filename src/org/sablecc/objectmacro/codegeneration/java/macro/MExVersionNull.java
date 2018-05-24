@@ -7,7 +7,11 @@ import java.util.*;
 public class MExVersionNull
         extends Macro {
 
-    private final List<Macro> list_PackageDeclaration;
+    final List<Macro> list_PackageDeclaration;
+
+    final Context PackageDeclarationContext = new Context();
+
+    final InternalValue PackageDeclarationValue;
 
     private DSeparator PackageDeclarationSeparator;
 
@@ -17,13 +21,11 @@ public class MExVersionNull
 
     private DNone PackageDeclarationNone;
 
-    private final InternalValue PackageDeclarationValue;
+    public MExVersionNull(
+            Macros macros) {
 
-    private final Context PackageDeclarationContext = new Context();
-
-    public MExVersionNull() {
-
-        this.list_PackageDeclaration = new ArrayList<>();
+        setMacros(macros);
+        this.list_PackageDeclaration = new LinkedList<>();
 
         this.PackageDeclarationValue = new InternalValue(
                 this.list_PackageDeclaration, this.PackageDeclarationContext);
@@ -37,6 +39,10 @@ public class MExVersionNull
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("PackageDeclaration");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_PackageDeclaration.add(macro);
@@ -105,9 +111,9 @@ public class MExVersionNull
 
     private void initPackageDeclarationDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb1.toString());
         this.PackageDeclarationValue
                 .setBeforeFirst(this.PackageDeclarationBeforeFirst);
     }
@@ -143,15 +149,15 @@ public class MExVersionNull
 
         StringBuilder sb0 = new StringBuilder();
 
-        MHeader minsert_1 = new MHeader();
+        MHeader m1 = getMacros().newHeader();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(buildPackageDeclaration());
         sb0.append(LINE_SEPARATOR);
-        MImportJavaUtil minsert_2 = new MImportJavaUtil();
+        MImportJavaUtil m2 = getMacros().newImportJavaUtil();
 
-        sb0.append(minsert_2.build(null));
+        sb0.append(m2.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("public class MUserErrorVersionNull extends Macro");
@@ -254,27 +260,13 @@ public class MExVersionNull
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

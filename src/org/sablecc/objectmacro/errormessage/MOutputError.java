@@ -7,17 +7,18 @@ import java.util.*;
 public class MOutputError
         extends Macro {
 
-    private String field_FileName;
+    String field_FileName;
 
-    private String field_Message;
+    String field_Message;
 
     public MOutputError(
             String pFileName,
-            String pMessage) {
+            String pMessage,
+            Macros macros) {
 
+        setMacros(macros);
         setPFileName(pFileName);
         setPMessage(pMessage);
-
     }
 
     private void setPFileName(
@@ -40,22 +41,22 @@ public class MOutputError
         this.field_Message = pMessage;
     }
 
-    private String buildFileName() {
+    String buildFileName() {
 
         return this.field_FileName;
     }
 
-    private String buildMessage() {
+    String buildMessage() {
 
         return this.field_Message;
     }
 
-    private String getFileName() {
+    String getFileName() {
 
         return this.field_FileName;
     }
 
-    private String getMessage() {
+    String getMessage() {
 
         return this.field_Message;
     }
@@ -108,27 +109,13 @@ public class MOutputError
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

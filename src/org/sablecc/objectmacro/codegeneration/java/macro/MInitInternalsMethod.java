@@ -7,9 +7,13 @@ import java.util.*;
 public class MInitInternalsMethod
         extends Macro {
 
-    private String field_InternalName;
+    String field_InternalName;
 
-    private final List<Macro> list_ApplyInternalsInitializer;
+    final List<Macro> list_ApplyInternalsInitializer;
+
+    final Context ApplyInternalsInitializerContext = new Context();
+
+    final InternalValue ApplyInternalsInitializerValue;
 
     private DSeparator ApplyInternalsInitializerSeparator;
 
@@ -19,15 +23,13 @@ public class MInitInternalsMethod
 
     private DNone ApplyInternalsInitializerNone;
 
-    private final InternalValue ApplyInternalsInitializerValue;
-
-    private final Context ApplyInternalsInitializerContext = new Context();
-
     public MInitInternalsMethod(
-            String pInternalName) {
+            String pInternalName,
+            Macros macros) {
 
+        setMacros(macros);
         setPInternalName(pInternalName);
-        this.list_ApplyInternalsInitializer = new ArrayList<>();
+        this.list_ApplyInternalsInitializer = new LinkedList<>();
 
         this.ApplyInternalsInitializerValue
                 = new InternalValue(this.list_ApplyInternalsInitializer,
@@ -56,12 +58,16 @@ public class MInitInternalsMethod
                     .cannotModify("ApplyInternalsInitializer");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_ApplyInternalsInitializer.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    private String buildInternalName() {
+    String buildInternalName() {
 
         return this.field_InternalName;
     }
@@ -106,7 +112,7 @@ public class MInitInternalsMethod
         return sb.toString();
     }
 
-    private String getInternalName() {
+    String getInternalName() {
 
         return this.field_InternalName;
     }
@@ -136,10 +142,10 @@ public class MInitInternalsMethod
 
     private void initApplyInternalsInitializerDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
         this.ApplyInternalsInitializerSeparator
-                = new DSeparator(sb0.toString());
+                = new DSeparator(sb1.toString());
         this.ApplyInternalsInitializerValue
                 .setSeparator(this.ApplyInternalsInitializerSeparator);
     }
@@ -186,10 +192,10 @@ public class MInitInternalsMethod
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildApplyInternalsInitializer());
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
@@ -209,27 +215,13 @@ public class MInitInternalsMethod
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

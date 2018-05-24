@@ -7,9 +7,9 @@ import java.util.*;
 public class MMacroCaseInit
         extends Macro {
 
-    private String field_Version;
+    String field_Version;
 
-    private String field_VersionClassName;
+    String field_VersionClassName;
 
     private Map<Context, String> field_ClassName = new LinkedHashMap<>();
 
@@ -17,11 +17,12 @@ public class MMacroCaseInit
 
     public MMacroCaseInit(
             String pVersion,
-            String pVersionClassName) {
+            String pVersionClassName,
+            Macros macros) {
 
+        setMacros(macros);
         setPVersion(pVersion);
         setPVersionClassName(pVersionClassName);
-
     }
 
     private void setPVersion(
@@ -66,17 +67,17 @@ public class MMacroCaseInit
         this.list_Args.put(context, internal_value);
     }
 
-    private String buildVersion() {
+    String buildVersion() {
 
         return this.field_Version;
     }
 
-    private String buildVersionClassName() {
+    String buildVersionClassName() {
 
         return this.field_VersionClassName;
     }
 
-    private String buildClassName(
+    String buildClassName(
             Context context) {
 
         return this.field_ClassName.get(context);
@@ -89,17 +90,17 @@ public class MMacroCaseInit
         return macros.build();
     }
 
-    private String getVersion() {
+    String getVersion() {
 
         return this.field_Version;
     }
 
-    private String getVersionClassName() {
+    String getVersionClassName() {
 
         return this.field_VersionClassName;
     }
 
-    private String getClassName(
+    String getClassName(
             Context context) {
 
         return this.field_ClassName.get(context);
@@ -157,27 +158,13 @@ public class MMacroCaseInit
         return sb0.toString();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

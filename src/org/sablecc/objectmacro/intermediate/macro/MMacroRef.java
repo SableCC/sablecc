@@ -7,7 +7,11 @@ import java.util.*;
 public class MMacroRef
         extends Macro {
 
-    private final List<Macro> list_ReferencedMacroName;
+    final List<Macro> list_ReferencedMacroName;
+
+    final Context ReferencedMacroNameContext = new Context();
+
+    final InternalValue ReferencedMacroNameValue;
 
     private DSeparator ReferencedMacroNameSeparator;
 
@@ -17,9 +21,11 @@ public class MMacroRef
 
     private DNone ReferencedMacroNameNone;
 
-    private final InternalValue ReferencedMacroNameValue;
+    final List<Macro> list_Arguments;
 
-    private final List<Macro> list_Arguments;
+    final Context ArgumentsContext = new Context();
+
+    final InternalValue ArgumentsValue;
 
     private DSeparator ArgumentsSeparator;
 
@@ -29,16 +35,12 @@ public class MMacroRef
 
     private DNone ArgumentsNone;
 
-    private final InternalValue ArgumentsValue;
+    public MMacroRef(
+            Macros macros) {
 
-    private final Context ReferencedMacroNameContext = new Context();
-
-    private final Context ArgumentsContext = new Context();
-
-    public MMacroRef() {
-
-        this.list_ReferencedMacroName = new ArrayList<>();
-        this.list_Arguments = new ArrayList<>();
+        setMacros(macros);
+        this.list_ReferencedMacroName = new LinkedList<>();
+        this.list_Arguments = new LinkedList<>();
 
         this.ReferencedMacroNameValue = new InternalValue(
                 this.list_ReferencedMacroName, this.ReferencedMacroNameContext);
@@ -56,6 +58,10 @@ public class MMacroRef
             throw ObjectMacroException.cannotModify("Name");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_ReferencedMacroName.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -69,6 +75,10 @@ public class MMacroRef
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("Args");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_Arguments.add(macro);
@@ -239,9 +249,9 @@ public class MMacroRef
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildReferencedMacroName());
         sb1.append(LINE_SEPARATOR);
         sb1.append(buildArguments());
@@ -261,27 +271,13 @@ public class MMacroRef
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

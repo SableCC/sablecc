@@ -7,13 +7,14 @@ import java.util.*;
 public class MPlainText
         extends Macro {
 
-    private String field_String;
+    String field_String;
 
     public MPlainText(
-            String pString) {
+            String pString,
+            Macros macros) {
 
+        setMacros(macros);
         setPString(pString);
-
     }
 
     private void setPString(
@@ -26,12 +27,12 @@ public class MPlainText
         this.field_String = pString;
     }
 
-    private String buildString() {
+    String buildString() {
 
         return this.field_String;
     }
 
-    private String getString() {
+    String getString() {
 
         return this.field_String;
     }
@@ -76,27 +77,13 @@ public class MPlainText
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

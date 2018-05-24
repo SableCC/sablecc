@@ -9,8 +9,10 @@ public class MFactoryComparison
 
     private Map<Context, String> field_VarName = new LinkedHashMap<>();
 
-    public MFactoryComparison() {
+    public MFactoryComparison(
+            Macros macros) {
 
+        setMacros(macros);
     }
 
     void setVarName(
@@ -24,13 +26,13 @@ public class MFactoryComparison
         this.field_VarName.put(context, value);
     }
 
-    private String buildVarName(
+    String buildVarName(
             Context context) {
 
         return this.field_VarName.get(context);
     }
 
-    private String getVarName(
+    String getVarName(
             Context context) {
 
         return this.field_VarName.get(context);
@@ -77,27 +79,13 @@ public class MFactoryComparison
         return sb0.toString();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

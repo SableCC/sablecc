@@ -7,17 +7,18 @@ import java.util.*;
 public class MBodyTokenMisused
         extends Macro {
 
-    private String field_Line;
+    String field_Line;
 
-    private String field_Char;
+    String field_Char;
 
     public MBodyTokenMisused(
             String pLine,
-            String pChar) {
+            String pChar,
+            Macros macros) {
 
+        setMacros(macros);
         setPLine(pLine);
         setPChar(pChar);
-
     }
 
     private void setPLine(
@@ -40,22 +41,22 @@ public class MBodyTokenMisused
         this.field_Char = pChar;
     }
 
-    private String buildLine() {
+    String buildLine() {
 
         return this.field_Line;
     }
 
-    private String buildChar() {
+    String buildChar() {
 
         return this.field_Char;
     }
 
-    private String getLine() {
+    String getLine() {
 
         return this.field_Line;
     }
 
-    private String getChar() {
+    String getChar() {
 
         return this.field_Char;
     }
@@ -112,27 +113,13 @@ public class MBodyTokenMisused
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

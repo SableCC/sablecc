@@ -7,11 +7,15 @@ import java.util.*;
 public class MSetInternal
         extends Macro {
 
-    private String field_ParamName;
+    String field_ParamName;
 
-    private String field_Context;
+    String field_Context;
 
-    private final List<Macro> list_SetParams;
+    final List<Macro> list_SetParams;
+
+    final Context SetParamsContext = new Context();
+
+    final InternalValue SetParamsValue;
 
     private DSeparator SetParamsSeparator;
 
@@ -21,19 +25,17 @@ public class MSetInternal
 
     private DNone SetParamsNone;
 
-    private final InternalValue SetParamsValue;
-
     private Map<Context, String> field_VarName = new LinkedHashMap<>();
-
-    private final Context SetParamsContext = new Context();
 
     public MSetInternal(
             String pParamName,
-            String pContext) {
+            String pContext,
+            Macros macros) {
 
+        setMacros(macros);
         setPParamName(pParamName);
         setPContext(pContext);
-        this.list_SetParams = new ArrayList<>();
+        this.list_SetParams = new LinkedList<>();
 
         this.SetParamsValue
                 = new InternalValue(this.list_SetParams, this.SetParamsContext);
@@ -66,6 +68,10 @@ public class MSetInternal
             throw ObjectMacroException.parameterNull("SetParams");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_SetParams.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -76,6 +82,10 @@ public class MSetInternal
 
         if (macro == null) {
             throw ObjectMacroException.parameterNull("SetParams");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_SetParams.add(macro);
@@ -94,12 +104,12 @@ public class MSetInternal
         this.field_VarName.put(context, value);
     }
 
-    private String buildParamName() {
+    String buildParamName() {
 
         return this.field_ParamName;
     }
 
-    private String buildContext() {
+    String buildContext() {
 
         return this.field_Context;
     }
@@ -143,18 +153,18 @@ public class MSetInternal
         return sb.toString();
     }
 
-    private String buildVarName(
+    String buildVarName(
             Context context) {
 
         return this.field_VarName.get(context);
     }
 
-    private String getParamName() {
+    String getParamName() {
 
         return this.field_ParamName;
     }
 
-    private String getContext() {
+    String getContext() {
 
         return this.field_Context;
     }
@@ -164,7 +174,7 @@ public class MSetInternal
         return this.SetParamsValue;
     }
 
-    private String getVarName(
+    String getVarName(
             Context context) {
 
         return this.field_VarName.get(context);
@@ -241,27 +251,13 @@ public class MSetInternal
         return sb0.toString();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

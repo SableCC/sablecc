@@ -7,17 +7,17 @@ import java.util.*;
 public class MParamCyclicReference
         extends Macro {
 
-    private String field_Reference;
+    String field_Reference;
 
-    private String field_Line;
+    String field_Line;
 
-    private String field_Char;
+    String field_Char;
 
-    private String field_Context;
+    String field_Context;
 
-    private String field_ContextLine;
+    String field_ContextLine;
 
-    private String field_ContextChar;
+    String field_ContextChar;
 
     public MParamCyclicReference(
             String pReference,
@@ -25,15 +25,16 @@ public class MParamCyclicReference
             String pChar,
             String pContext,
             String pContextLine,
-            String pContextChar) {
+            String pContextChar,
+            Macros macros) {
 
+        setMacros(macros);
         setPReference(pReference);
         setPLine(pLine);
         setPChar(pChar);
         setPContext(pContext);
         setPContextLine(pContextLine);
         setPContextChar(pContextChar);
-
     }
 
     private void setPReference(
@@ -96,62 +97,62 @@ public class MParamCyclicReference
         this.field_ContextChar = pContextChar;
     }
 
-    private String buildReference() {
+    String buildReference() {
 
         return this.field_Reference;
     }
 
-    private String buildLine() {
+    String buildLine() {
 
         return this.field_Line;
     }
 
-    private String buildChar() {
+    String buildChar() {
 
         return this.field_Char;
     }
 
-    private String buildContext() {
+    String buildContext() {
 
         return this.field_Context;
     }
 
-    private String buildContextLine() {
+    String buildContextLine() {
 
         return this.field_ContextLine;
     }
 
-    private String buildContextChar() {
+    String buildContextChar() {
 
         return this.field_ContextChar;
     }
 
-    private String getReference() {
+    String getReference() {
 
         return this.field_Reference;
     }
 
-    private String getLine() {
+    String getLine() {
 
         return this.field_Line;
     }
 
-    private String getChar() {
+    String getChar() {
 
         return this.field_Char;
     }
 
-    private String getContext() {
+    String getContext() {
 
         return this.field_Context;
     }
 
-    private String getContextLine() {
+    String getContextLine() {
 
         return this.field_ContextLine;
     }
 
-    private String getContextChar() {
+    String getContextChar() {
 
         return this.field_ContextChar;
     }
@@ -183,9 +184,9 @@ public class MParamCyclicReference
 
         StringBuilder sb0 = new StringBuilder();
 
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+        MSemanticErrorHead m1 = getMacros().newSemanticErrorHead();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line: ");
@@ -215,27 +216,13 @@ public class MParamCyclicReference
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

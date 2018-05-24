@@ -31,49 +31,59 @@ public class UtilsGenerationWalker
 
     private File packageDirectory;
 
+    private final Macros factory;
+
     public UtilsGenerationWalker(
             IntermediateRepresentation ir,
-            File packageDirectory) {
+            File packageDirectory,
+            Macros factory) {
 
         this.ir = ir;
         this.packageDirectory = packageDirectory;
+        this.factory = factory;
     }
 
     @Override
     public void caseAIntermediateRepresentation(
             AIntermediateRepresentation node) {
 
-        MContext mContext = new MContext();
+        MContext mContext = this.factory.newContext();
 
-        MExParameterNull mParameterNull = new MExParameterNull();
-        MExIncorrectType mIncorrectType = new MExIncorrectType();
+        MExParameterNull mParameterNull = this.factory.newExParameterNull();
+        MExIncorrectType mIncorrectType = this.factory.newExIncorrectType();
         MExObjectMacroErrorHead mObjectMacroErrorHead
-                = new MExObjectMacroErrorHead();
-        MExMacroNullInList mMacroNullInList = new MExMacroNullInList();
-        MExCyclicReference mCyclicReference = new MExCyclicReference();
-        MExCannotModify mCannotModify = new MExCannotModify();
+                = this.factory.newExObjectMacroErrorHead();
+        MExMacroNullInList mMacroNullInList
+                = this.factory.newExMacroNullInList();
+        MExCyclicReference mCyclicReference
+                = this.factory.newExCyclicReference();
+        MExCannotModify mCannotModify = this.factory.newExCannotModify();
         MExObjectMacroException mObjectMacroException
-                = new MExObjectMacroException();
-        MExVersionNull mExVersionNull = new MExVersionNull();
-        MExVersionsDifferent mExVersionsDifferent = new MExVersionsDifferent();
-        MExInternalException mExInternalException = new MExInternalException();
+                = this.factory.newExObjectMacroException();
+        MExVersionNull mExVersionNull = this.factory.newExVersionNull();
+        MExVersionsDifferent mExVersionsDifferent
+                = this.factory.newExVersionsDifferent();
+        MExInternalException mExInternalException
+                = this.factory.newExInternalException();
         MMacroInternalException mMacroInternalException
-                = new MMacroInternalException();
+                = this.factory.newMacroInternalException();
 
-        MClassInternalValue mClassInternalValue = new MClassInternalValue();
-        MClassBuildState mClassBuildState = new MClassBuildState();
-        MCycleDetectorClass mTarjanClass = new MCycleDetectorClass();
+        MClassInternalValue mClassInternalValue
+                = this.factory.newClassInternalValue();
+        MClassBuildState mClassBuildState = this.factory.newClassBuildState();
+        MCycleDetectorClass mTarjanClass = this.factory.newCycleDetectorClass();
 
-        MSuperDirective mSuperDirective = new MSuperDirective();
-        MClassAfterLast mClassAfterLast = new MClassAfterLast();
-        MClassBeforeFirst mClassBeforeFirst = new MClassBeforeFirst();
-        MClassNone mClassNone = new MClassNone();
-        MClassSeparator mClassSeparator = new MClassSeparator();
+        MSuperDirective mSuperDirective = this.factory.newSuperDirective();
+        MClassAfterLast mClassAfterLast = this.factory.newClassAfterLast();
+        MClassBeforeFirst mClassBeforeFirst
+                = this.factory.newClassBeforeFirst();
+        MClassNone mClassNone = this.factory.newClassNone();
+        MClassSeparator mClassSeparator = this.factory.newClassSeparator();
 
         if (!this.ir.getDestinationPackage().equals("")) {
             String destinationPackage = this.ir.getDestinationPackage();
             MPackageDeclaration mPackageDeclaration
-                    = new MPackageDeclaration(destinationPackage);
+                    = this.factory.newPackageDeclaration(destinationPackage);
             mContext.addPackageDeclaration(mPackageDeclaration);
             mIncorrectType.addPackageDeclaration(mPackageDeclaration);
             mParameterNull.addPackageDeclaration(mPackageDeclaration);

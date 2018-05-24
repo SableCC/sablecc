@@ -7,7 +7,11 @@ import java.util.*;
 public class MInternal
         extends Macro {
 
-    private final List<Macro> list_InternalName;
+    final List<Macro> list_InternalName;
+
+    final Context InternalNameContext = new Context();
+
+    final InternalValue InternalNameValue;
 
     private DSeparator InternalNameSeparator;
 
@@ -17,9 +21,11 @@ public class MInternal
 
     private DNone InternalNameNone;
 
-    private final InternalValue InternalNameValue;
+    final List<Macro> list_Type;
 
-    private final List<Macro> list_Type;
+    final Context TypeContext = new Context();
+
+    final InternalValue TypeValue;
 
     private DSeparator TypeSeparator;
 
@@ -29,9 +35,11 @@ public class MInternal
 
     private DNone TypeNone;
 
-    private final InternalValue TypeValue;
+    final List<Macro> list_Directives;
 
-    private final List<Macro> list_Directives;
+    final Context DirectivesContext = new Context();
+
+    final InternalValue DirectivesValue;
 
     private DSeparator DirectivesSeparator;
 
@@ -41,19 +49,13 @@ public class MInternal
 
     private DNone DirectivesNone;
 
-    private final InternalValue DirectivesValue;
+    public MInternal(
+            Macros macros) {
 
-    private final Context InternalNameContext = new Context();
-
-    private final Context TypeContext = new Context();
-
-    private final Context DirectivesContext = new Context();
-
-    public MInternal() {
-
-        this.list_InternalName = new ArrayList<>();
-        this.list_Type = new ArrayList<>();
-        this.list_Directives = new ArrayList<>();
+        setMacros(macros);
+        this.list_InternalName = new LinkedList<>();
+        this.list_Type = new LinkedList<>();
+        this.list_Directives = new LinkedList<>();
 
         this.InternalNameValue = new InternalValue(this.list_InternalName,
                 this.InternalNameContext);
@@ -72,6 +74,10 @@ public class MInternal
             throw ObjectMacroException.cannotModify("Name");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_InternalName.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -85,6 +91,10 @@ public class MInternal
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("StringType");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_Type.add(macro);
@@ -102,6 +112,10 @@ public class MInternal
             throw ObjectMacroException.cannotModify("MacroType");
         }
 
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
         this.list_Type.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
@@ -115,6 +129,10 @@ public class MInternal
         }
         if (this.build_state != null) {
             throw ObjectMacroException.cannotModify("Directive");
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
         }
 
         this.list_Directives.add(macro);
@@ -312,9 +330,9 @@ public class MInternal
 
     private void initDirectivesDirectives() {
 
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(", ");
-        this.DirectivesSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(", ");
+        this.DirectivesSeparator = new DSeparator(sb1.toString());
         this.DirectivesValue.setSeparator(this.DirectivesSeparator);
     }
 
@@ -357,9 +375,9 @@ public class MInternal
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildInternalName());
         sb1.append(LINE_SEPARATOR);
         sb1.append(buildType());
@@ -381,27 +399,13 @@ public class MInternal
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }

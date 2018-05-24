@@ -19,7 +19,7 @@ package org.sablecc.objectmacro.launcher;
 
 import java.io.*;
 
-import org.sablecc.exception.*;
+import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.codegeneration.*;
 import org.sablecc.objectmacro.codegeneration.java.*;
 import org.sablecc.objectmacro.errormessage.*;
@@ -44,6 +44,8 @@ public class ObjectMacroBack {
     public static void main(
             String[] args) {
 
+        Macros factory = new Macros();
+
         try {
             ObjectMacroBack.compile(args);
         }
@@ -54,12 +56,12 @@ public class ObjectMacroBack {
         }
         catch (ParserException e) {
             int start = e.getMessage().indexOf(' ');
-            System.err.print(new MSyntaxError(e.getToken().getLine() + "",
+            System.err.print(factory.newSyntaxError(e.getToken().getLine() + "",
                     e.getToken().getPos() + "",
                     e.getToken().getClass().getSimpleName().substring(1)
                             .toLowerCase(),
                     e.getToken().getText(), e.getMessage().substring(start))
-                            .build());
+                    .build());
             System.err.flush();
             System.exit(1);
         }
@@ -74,8 +76,9 @@ public class ObjectMacroBack {
 
             start = e.getMessage().indexOf(' ') + 1;
 
-            System.err.print(new MLexicalError(line, pos,
-                    e.getMessage().substring(start)).build());
+            System.err.print(factory
+                    .newLexicalError(line, pos, e.getMessage().substring(start))
+                    .build());
             System.err.flush();
             System.exit(1);
         }
@@ -84,8 +87,8 @@ public class ObjectMacroBack {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             pw.flush();
-            System.err.print(
-                    new MInternalError(sw.toString(), e.getMessage()).build());
+            System.err.print(factory
+                    .newInternalError(sw.toString(), e.getMessage()).build());
             System.err.flush();
             System.exit(1);
         }

@@ -7,25 +7,26 @@ import java.util.*;
 public class MDuplicateMacroRef
         extends Macro {
 
-    private String field_Param;
+    String field_Param;
 
-    private String field_Macro;
+    String field_Macro;
 
-    private String field_Line;
+    String field_Line;
 
-    private String field_Char;
+    String field_Char;
 
     public MDuplicateMacroRef(
             String pParam,
             String pMacro,
             String pLine,
-            String pChar) {
+            String pChar,
+            Macros macros) {
 
+        setMacros(macros);
         setPParam(pParam);
         setPMacro(pMacro);
         setPLine(pLine);
         setPChar(pChar);
-
     }
 
     private void setPParam(
@@ -68,42 +69,42 @@ public class MDuplicateMacroRef
         this.field_Char = pChar;
     }
 
-    private String buildParam() {
+    String buildParam() {
 
         return this.field_Param;
     }
 
-    private String buildMacro() {
+    String buildMacro() {
 
         return this.field_Macro;
     }
 
-    private String buildLine() {
+    String buildLine() {
 
         return this.field_Line;
     }
 
-    private String buildChar() {
+    String buildChar() {
 
         return this.field_Char;
     }
 
-    private String getParam() {
+    String getParam() {
 
         return this.field_Param;
     }
 
-    private String getMacro() {
+    String getMacro() {
 
         return this.field_Macro;
     }
 
-    private String getLine() {
+    String getLine() {
 
         return this.field_Line;
     }
 
-    private String getChar() {
+    String getChar() {
 
         return this.field_Char;
     }
@@ -135,9 +136,9 @@ public class MDuplicateMacroRef
 
         StringBuilder sb0 = new StringBuilder();
 
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+        MSemanticErrorHead m1 = getMacros().newSemanticErrorHead();
 
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line: ");
@@ -163,27 +164,13 @@ public class MDuplicateMacroRef
         return build();
     }
 
-    private String applyIndent(
-            String macro,
-            String indent) {
+    private void setMacros(
+            Macros macros) {
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
-        }
-        else {
-            sb.append(indent).append(macro);
+        if (macros == null) {
+            throw new InternalException("macros cannot be null");
         }
 
-        return sb.toString();
+        this.macros = macros;
     }
 }
