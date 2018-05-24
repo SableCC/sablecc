@@ -28,7 +28,7 @@ public class IntermediateObjectCollector
 
     private final GlobalIndex globalIndex;
 
-    private Macro currentMacro;
+    private MacroInfo currentMacroInfo;
 
     public IntermediateObjectCollector(
             GlobalIndex globalIndex) {
@@ -47,9 +47,9 @@ public class IntermediateObjectCollector
             TIdentifier version_identifier = iterator.next();
             MacroVersion version
                     = this.globalIndex.getVersion(version_identifier);
-            this.currentMacro
+            this.currentMacroInfo
                     = this.globalIndex.getMacro(node.getName(), version);
-            this.globalIndex.addIntermediateMacro(this.currentMacro);
+            this.globalIndex.addIntermediateMacro(this.currentMacroInfo);
 
             super.caseAMacro(node);
         }
@@ -59,13 +59,13 @@ public class IntermediateObjectCollector
     public void caseAParam(
             AParam node) {
 
-        Param param = this.currentMacro.getParam(node.getName());
+        Param param = this.currentMacroInfo.getParam(node.getName());
 
         for (MacroVersion version : this.globalIndex.getAllVersions()) {
-            Macro versionned_macro = version
-                    .getMacroOrNull(this.currentMacro.getNameDeclaration());
+            MacroInfo versionned_macro = version
+                    .getMacroOrNull(this.currentMacroInfo.getNameDeclaration());
 
-            if (this.currentMacro != versionned_macro) {
+            if (this.currentMacroInfo != versionned_macro) {
                 versionned_macro.containsParam(param);
             }
         }

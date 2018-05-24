@@ -27,32 +27,32 @@ public class GlobalIndex {
 
     private boolean hasVersions = true;
 
-    private final Set<Macro> allMacros = new LinkedHashSet<>();
+    private final Set<MacroInfo> allMacroInfos = new LinkedHashSet<>();
 
     private final Map<String, MacroVersion> allVersions = new LinkedHashMap<>();
 
-    private final SortedMap<String, Macro> macrosAllVersionned
+    private final SortedMap<String, MacroInfo> macrosAllVersionned
             = new TreeMap<>();
 
-    public Macro createMacro(
+    public MacroInfo createMacro(
             AMacro pDeclaration) {
 
         if (pDeclaration == null) {
             throw new InternalException("pDeclaration may not be null");
         }
 
-        return new Macro(this, pDeclaration);
+        return new MacroInfo(this, pDeclaration);
     }
 
     public void addAllVersionnedMacro(
-            Macro macro) {
+            MacroInfo macroInfo) {
 
-        if (macro == null) {
+        if (macroInfo == null) {
             throw new InternalException("declaration may not be null");
         }
 
-        TIdentifier macro_name = macro.getNameDeclaration();
-        Macro first_declaration
+        TIdentifier macro_name = macroInfo.getNameDeclaration();
+        MacroInfo first_declaration
                 = this.macrosAllVersionned.get(macro_name.getText());
 
         if (first_declaration != null) {
@@ -60,26 +60,26 @@ public class GlobalIndex {
                     first_declaration.getNameDeclaration());
         }
 
-        this.macrosAllVersionned.put(macro_name.getText(), macro);
-        this.allMacros.add(macro);
+        this.macrosAllVersionned.put(macro_name.getText(), macroInfo);
+        this.allMacroInfos.add(macroInfo);
     }
 
     public void addIntermediateMacro(
-            Macro macro) {
+            MacroInfo macroInfo) {
 
-        if (macro == null) {
+        if (macroInfo == null) {
             throw new InternalException("macro_name should not be null");
         }
 
-        if (this.allMacros.contains(macro)) {
+        if (this.allMacroInfos.contains(macroInfo)) {
             throw new InternalException(
-                    "macro should not be contained in the set");
+                    "macroInfo should not be contained in the set");
         }
 
-        this.allMacros.add(macro);
+        this.allMacroInfos.add(macroInfo);
     }
 
-    private Macro getMacroOrNull(
+    private MacroInfo getMacroOrNull(
             TIdentifier identifier) {
 
         if (identifier == null) {
@@ -89,7 +89,7 @@ public class GlobalIndex {
         return this.macrosAllVersionned.get(identifier.getText());
     }
 
-    public Macro getMacro(
+    public MacroInfo getMacro(
             TIdentifier identifier,
             MacroVersion version) {
 
@@ -101,12 +101,12 @@ public class GlobalIndex {
             return version.getMacro(identifier);
         }
 
-        Macro macro = getMacroOrNull(identifier);
-        if (macro == null) {
+        MacroInfo macroInfo = getMacroOrNull(identifier);
+        if (macroInfo == null) {
             throw CompilerException.unknownMacro(identifier);
         }
 
-        return macro;
+        return macroInfo;
     }
 
     boolean macroExists(
@@ -127,9 +127,9 @@ public class GlobalIndex {
         return false;
     }
 
-    public Set<Macro> getAllMacros() {
+    public Set<MacroInfo> getAllMacroInfos() {
 
-        return this.allMacros;
+        return this.allMacroInfos;
     }
 
     public void newVersion(

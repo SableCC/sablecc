@@ -31,7 +31,7 @@ public class DirectiveCollector
 
     private final MacroVersion currentVersion;
 
-    private Macro currentMacro;
+    private MacroInfo currentMacroInfo;
 
     private External currentParam;
 
@@ -51,8 +51,8 @@ public class DirectiveCollector
     public void caseAMacro(
             AMacro node) {
 
-        // if currentMacro is not of version 'currentVersion' then go to next
-        // macro node
+        // if currentMacroInfo is not of version 'currentVersion' then go to
+        // next macro node
         if (this.currentVersion != null && node.getVersions().size() > 0
                 && !Utils.containsVersion(node.getVersions(),
                         this.currentVersion)) {
@@ -66,9 +66,9 @@ public class DirectiveCollector
     public void inAMacro(
             AMacro node) {
 
-        this.currentMacro = this.globalIndex.getMacro(node.getName(),
+        this.currentMacroInfo = this.globalIndex.getMacro(node.getName(),
                 this.currentVersion);
-        if (this.currentMacro == null) {
+        if (this.currentMacroInfo == null) {
             throw CompilerException.unknownMacro(node.getName());
         }
     }
@@ -77,7 +77,7 @@ public class DirectiveCollector
     public void outAMacro(
             AMacro node) {
 
-        this.currentMacro = null;
+        this.currentMacroInfo = null;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class DirectiveCollector
             AParam node) {
 
         this.currentParam
-                = (External) this.currentMacro.getParam(node.getName());
+                = (External) this.currentMacroInfo.getParam(node.getName());
     }
 
     @Override

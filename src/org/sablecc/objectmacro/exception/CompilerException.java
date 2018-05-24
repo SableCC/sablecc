@@ -22,7 +22,6 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.objectmacro.errormessage.*;
 import org.sablecc.objectmacro.structure.*;
-import org.sablecc.objectmacro.structure.Macro;
 import org.sablecc.objectmacro.syntax3.node.*;
 
 @SuppressWarnings("serial")
@@ -311,12 +310,12 @@ public class CompilerException
 
     public static CompilerException incorrectArgumentCount(
             AMacroReference declaration,
-            Macro macroReferenced) {
+            MacroInfo macro_referenced) {
 
         String line = String.valueOf(declaration.getName().getLine());
         String pos = String.valueOf(declaration.getName().getPos());
         String expectedCount
-                = String.valueOf(macroReferenced.getAllInternals().size());
+                = String.valueOf(macro_referenced.getAllInternals().size());
         String currentCount = String.valueOf(declaration.getValues().size());
 
         return new CompilerException(new MIncorrectArgumentCount(line, pos,

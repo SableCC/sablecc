@@ -33,7 +33,7 @@ public class VarVerifier
 
     private final MacroVersion currentVersion;
 
-    private Macro currentMacro;
+    private MacroInfo currentMacroInfo;
 
     private Internal internalsList[];
 
@@ -69,9 +69,9 @@ public class VarVerifier
     public void inAMacro(
             AMacro node) {
 
-        this.currentMacro = this.globalIndex.getMacro(node.getName(),
+        this.currentMacroInfo = this.globalIndex.getMacro(node.getName(),
                 this.currentVersion);
-        if (this.currentMacro == null) {
+        if (this.currentMacroInfo == null) {
             throw CompilerException.unknownMacro(node.getName());
         }
     }
@@ -80,10 +80,10 @@ public class VarVerifier
     public void inAMacroReference(
             AMacroReference node) {
 
-        Macro referencedMacro;
+        MacroInfo referencedMacro;
         int nbArguments = node.getValues().size();
 
-        if (this.currentMacro.getDeclaration().getVersions().size() == 0) {
+        if (this.currentMacroInfo.getDeclaration().getVersions().size() == 0) {
             for (MacroVersion version : this.globalIndex.getAllVersions()) {
 
                 referencedMacro
@@ -116,7 +116,7 @@ public class VarVerifier
 
         // The internal corresponding to currentIndex must be of type String
         if (!currentParam.isString()) {
-            throw CompilerException.incorrectArgumentType("Macro", "String",
+            throw CompilerException.incorrectArgumentType("MacroInfo", "String",
                     node.getLDquote().getLine(), node.getLDquote().getPos());
         }
 
@@ -137,13 +137,14 @@ public class VarVerifier
             AVarStaticValue node) {
 
         Param expectedParam = this.internalsList[this.currentIndex++];
-        Param providedParam = this.currentMacro.getParam(node.getIdentifier());
+        Param providedParam
+                = this.currentMacroInfo.getParam(node.getIdentifier());
         Set<String> expectedMacrosType = new HashSet<>();
         Set<String> providedMacrosType = new HashSet<>();
 
         if (expectedParam.isString() && !providedParam.isString()) {
 
-            throw CompilerException.incorrectArgumentType("String", "Macro",
+            throw CompilerException.incorrectArgumentType("String", "MacroInfo",
                     node.getIdentifier().getLine(),
                     node.getIdentifier().getPos());
         }
@@ -164,14 +165,14 @@ public class VarVerifier
                     node.getIdentifier());
         }
 
-        this.currentMacro.setParamUsed(node.getIdentifier());
+        this.currentMacroInfo.setParamUsed(node.getIdentifier());
     }
 
     @Override
     public void caseAVarMacroBodyPart(
             AVarMacroBodyPart node) {
 
-        this.currentMacro.setParamUsed(new TIdentifier(
+        this.currentMacroInfo.setParamUsed(new TIdentifier(
                 Utils.getVarName(node.getVariable()),
                 node.getVariable().getLine(), node.getVariable().getPos()));
     }
@@ -180,7 +181,7 @@ public class VarVerifier
     public void caseAVarStringPart(
             AVarStringPart node) {
 
-        this.currentMacro.setParamUsed(new TIdentifier(
+        this.currentMacroInfo.setParamUsed(new TIdentifier(
                 Utils.getVarName(node.getVariable()),
                 node.getVariable().getLine(), node.getVariable().getPos()));
     }

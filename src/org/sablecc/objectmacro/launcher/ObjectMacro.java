@@ -26,7 +26,6 @@ import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.intermediate.macro.*;
 import org.sablecc.objectmacro.structure.*;
 import org.sablecc.objectmacro.structure.Directive;
-import org.sablecc.objectmacro.structure.Macro;
 import org.sablecc.objectmacro.syntax3.lexer.*;
 import org.sablecc.objectmacro.syntax3.node.*;
 import org.sablecc.objectmacro.syntax3.parser.*;
@@ -41,7 +40,7 @@ public class ObjectMacro {
 
     private static GlobalIndex globalIndex = null;
 
-    private static Macro macro = null;
+    private static MacroInfo macroInfo = null;
 
     private static String DEFAULT_TABULATION = "    ";
 
@@ -109,7 +108,7 @@ public class ObjectMacro {
     }
 
     /**
-     * Parses the provided arguments and launches macro compilation.
+     * Parses the provided arguments and launches macroInfo compilation.
      */
     public static void compile(
             String[] arguments)
@@ -319,23 +318,23 @@ public class ObjectMacro {
 
         ast.apply(new IntermediateObjectCollector(globalIndex));
 
-        for (Macro macro : globalIndex.getAllMacros()) {
-            macro.detectParamsCyclicReference();
+        for (MacroInfo macroInfo : globalIndex.getAllMacroInfos()) {
+            macroInfo.detectParamsCyclicReference();
         }
 
-        // if(strictness == Strictness.STRICT){
-        // for (Macro macro : globalIndex.getAllMacros()) {
-        // Set<Param> allParamsInternals = new LinkedHashSet<>();
-        // allParamsInternals.addAll(macro.getAllInternals());
-        // allParamsInternals.addAll(macro.getAllParams());
-        //
-        // for (Param param : allParamsInternals) {
-        // if (!param.isUsed()) {
-        // throw CompilerException.unusedParam(param);
-        // }
-        // }
-        // }
-        // }
+        if (strictness == Strictness.STRICT) {
+            for (MacroInfo macroInfo : globalIndex.getAllMacroInfos()) {
+                Set<Param> allParamsInternals = new LinkedHashSet<>();
+                allParamsInternals.addAll(macroInfo.getAllInternals());
+                allParamsInternals.addAll(macroInfo.getAllParams());
+
+                for (Param param : allParamsInternals) {
+                    if (!param.isUsed()) {
+                        throw CompilerException.unusedParam(param);
+                    }
+                }
+            }
+        }
 
         return globalIndex;
     }
@@ -366,17 +365,18 @@ public class ObjectMacro {
             }
         }
 
-        for (Macro l_macro : globalIndex.getAllMacros()) {
-            macro = l_macro;
-            if (!globalIndex.isAllVersionned(l_macro.getName())
-                    && !generated_abstract_macros.contains(l_macro.getName())) {
+        for (MacroInfo l_macroInfo : globalIndex.getAllMacroInfos()) {
+            macroInfo = l_macroInfo;
+            if (!globalIndex.isAllVersionned(l_macroInfo.getName())
+                    && !generated_abstract_macros
+                            .contains(l_macroInfo.getName())) {
 
                 mIntermediateRepresentation
-                        .addMacros(createAbstractMacro(l_macro));
-                generated_abstract_macros.add(l_macro.getName());
+                        .addMacros(createAbstractMacro(l_macroInfo));
+                generated_abstract_macros.add(l_macroInfo.getName());
             }
 
-            mIntermediateRepresentation.addMacros(createMacro(l_macro));
+            mIntermediateRepresentation.addMacros(createMacro(l_macroInfo));
         }
 
         String macroFileName = macroFile.getName();
@@ -428,12 +428,12 @@ public class ObjectMacro {
     }
 
     private static MMacro createAbstractMacro(
-            Macro macro) {
+            MacroInfo macroInfo) {
 
         MMacro mMacro = new MMacro();
         mMacro.addIsAbstract(new MIsAbstract());
-        mMacro.addMacroName(buildName(macro.getNameDeclaration()));
-        Set<External> macro_params = macro.getAllParams();
+        mMacro.addMacroName(buildName(macroInfo.getNameDeclaration()));
+        Set<External> macro_params = macroInfo.getAllParams();
 
         for (External param : macro_params) {
             mMacro.addParameters(createParam(param));
@@ -443,33 +443,34 @@ public class ObjectMacro {
     }
 
     private static MMacro createMacro(
-            Macro macro) {
+            MacroInfo macroInfo) {
 
         MMacro mMacro = new MMacro();
         MName mMacroName;
-        Integer index_concrete_class = getIndexConcreteClass(macro.getName());
+        Integer index_concrete_class
+                = getIndexConcreteClass(macroInfo.getName());
         MVersions mVersions = new MVersions();
 
-        if (globalIndex.isAllVersionned(macro.getName())) {
-            mMacroName = buildName(macro.getNameDeclaration());
+        if (globalIndex.isAllVersionned(macroInfo.getName())) {
+            mMacroName = buildName(macroInfo.getNameDeclaration());
             mMacro.addIsAllVersionned(new MIsAllVersionned());
         }
         else {
-            mMacroName = buildName(new TIdentifier(
-                    macro.getName().concat(index_concrete_class.toString())));
+            mMacroName = buildName(new TIdentifier(macroInfo.getName()
+                    .concat(index_concrete_class.toString())));
             MParentName mParentName = new MParentName();
-            mParentName.addParent(buildName(macro.getNameDeclaration()));
+            mParentName.addParent(buildName(macroInfo.getNameDeclaration()));
             mMacro.addParentName(mParentName);
         }
 
         mMacro.addMacroName(mMacroName);
 
-        Set<Internal> macro_internals = macro.getAllInternals();
-        Set<External> macro_params = macro.getAllParams();
-        Set<MacroVersion> versions = macro.getVersions();
+        Set<Internal> macro_internals = macroInfo.getAllInternals();
+        Set<External> macro_params = macroInfo.getAllParams();
+        Set<MacroVersion> versions = macroInfo.getVersions();
 
         List<PMacroBodyPart> macroBodyParts
-                = macro.getDeclaration().getMacroBodyParts();
+                = macroInfo.getDeclaration().getMacroBodyParts();
 
         createMacroBody(mMacro, macroBodyParts);
 
@@ -482,7 +483,7 @@ public class ObjectMacro {
         }
 
         if (versions.size() > 0
-                && !globalIndex.isAllVersionned(macro.getName())) {
+                && !globalIndex.isAllVersionned(macroInfo.getName())) {
 
             mMacro.addVersions(mVersions);
             for (MacroVersion version : versions) {
@@ -708,16 +709,16 @@ public class ObjectMacro {
             AMacroReference node) {
 
         MArgs mArgs = new MArgs();
-        Macro macroReferenced;
+        MacroInfo macro_referenced;
 
         if (globalIndex.hasVersions()) {
-            macroReferenced = getMacro(node.getName());
+            macro_referenced = getMacro(node.getName());
         }
         else {
-            macroReferenced = globalIndex.getMacro(node.getName(), null);
+            macro_referenced = globalIndex.getMacro(node.getName(), null);
         }
 
-        List<String> paramNames = macroReferenced.getInternalsName();
+        List<String> paramNames = macro_referenced.getInternalsName();
         List<PStaticValue> arguments = node.getValues();
         int i = 0;
 
@@ -803,11 +804,12 @@ public class ObjectMacro {
         return mDirective;
     }
 
-    private static Macro getMacro(
+    private static MacroInfo getMacro(
             TIdentifier name) {
 
-        Iterator<MacroVersion> versionIterator = macro.getVersions().iterator();
-        Macro toReturn = null;
+        Iterator<MacroVersion> versionIterator
+                = macroInfo.getVersions().iterator();
+        MacroInfo toReturn = null;
         while (versionIterator.hasNext()) {
             MacroVersion macroVersion = versionIterator.next();
             toReturn = macroVersion.getMacroOrNull(name);

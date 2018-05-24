@@ -24,7 +24,7 @@ import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.syntax3.node.*;
 import org.sablecc.util.*;
 
-public class Macro {
+public class MacroInfo {
 
     private final GlobalIndex globalIndex;
 
@@ -42,7 +42,7 @@ public class Macro {
 
     private Set<MacroVersion> versions = new HashSet<>();
 
-    Macro(
+    MacroInfo(
             GlobalIndex globalIndex,
             AMacro declaration) {
 

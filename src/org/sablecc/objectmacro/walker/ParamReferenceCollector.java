@@ -30,7 +30,7 @@ public class ParamReferenceCollector
 
     private final MacroVersion currentVersion;
 
-    private Macro currentMacro;
+    private MacroInfo currentMacroInfo;
 
     private Param currentParam;
 
@@ -64,7 +64,7 @@ public class ParamReferenceCollector
     public void inAMacro(
             AMacro node) {
 
-        this.currentMacro = this.globalIndex.getMacro(node.getName(),
+        this.currentMacroInfo = this.globalIndex.getMacro(node.getName(),
                 this.currentVersion);
     }
 
@@ -72,7 +72,7 @@ public class ParamReferenceCollector
     public void outAMacro(
             AMacro node) {
 
-        this.currentMacro = null;
+        this.currentMacroInfo = null;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class ParamReferenceCollector
     public void inAParam(
             AParam node) {
 
-        this.currentParam = this.currentMacro.getParam(node.getName());
+        this.currentParam = this.currentMacroInfo.getParam(node.getName());
     }
 
     @Override
@@ -113,7 +113,7 @@ public class ParamReferenceCollector
     public void inAInternal(
             AInternal node) {
 
-        this.currentParam = this.currentMacro.getParam(node.getName());
+        this.currentParam = this.currentMacroInfo.getParam(node.getName());
     }
 
     @Override
