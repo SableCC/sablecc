@@ -32,6 +32,7 @@ import org.sablecc.objectmacro.codegeneration.java.JavaCodeGenerator;
 import org.sablecc.objectmacro.errormessage.MInternalError;
 import org.sablecc.objectmacro.errormessage.MLexicalError;
 import org.sablecc.objectmacro.errormessage.MSyntaxError;
+import org.sablecc.objectmacro.errormessage.Macros;
 import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.intermediate.syntax3.lexer.Lexer;
 import org.sablecc.objectmacro.intermediate.syntax3.lexer.LexerException;
@@ -56,6 +57,8 @@ public class ObjectMacroBack {
     public static void main(
             String[] args) {
 
+        Macros factory = new Macros();
+
         try {
             ObjectMacroBack.compile(args);
         }
@@ -66,7 +69,7 @@ public class ObjectMacroBack {
         }
         catch (ParserException e) {
             int start = e.getMessage().indexOf(' ');
-            System.err.print(new MSyntaxError(e.getToken().getLine() + "",
+            System.err.print(factory.newSyntaxError(e.getToken().getLine() + "",
                     e.getToken().getPos() + "",
                     e.getToken().getClass().getSimpleName().substring(1)
                             .toLowerCase(),
@@ -85,7 +88,7 @@ public class ObjectMacroBack {
 
             start = e.getMessage().indexOf(' ') + 1;
 
-            System.err.print(new MLexicalError(line, pos,
+            System.err.print(factory.newLexicalError(line, pos,
                     e.getMessage().substring(start)).build());
             System.err.flush();
             System.exit(1);
@@ -95,7 +98,7 @@ public class ObjectMacroBack {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             pw.flush();
-            System.err.print(new MInternalError(sw.toString(), e.getMessage()).build());
+            System.err.print(factory.newInternalError(sw.toString(), e.getMessage()).build());
             System.err.flush();
             System.exit(1);
         }

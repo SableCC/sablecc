@@ -4,31 +4,28 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MSyntaxError extends Macro{
+public  class MSyntaxError extends Macro{
     
-    private String field_Line;
+    String field_Line;
     
-    private String field_Char;
+    String field_Char;
     
-    private String field_TokenType;
+    String field_TokenType;
     
-    private String field_TokenText;
+    String field_TokenText;
     
-    private String field_Message;
+    String field_Message;
     
-    
-    
-    
-    public MSyntaxError(String pLine, String pChar, String pTokenType, String pTokenText, String pMessage){
-    
-            this.setPLine(pLine);
-            this.setPChar(pChar);
-            this.setPTokenType(pTokenType);
-            this.setPTokenText(pTokenText);
-            this.setPMessage(pMessage);
-    
+    public MSyntaxError(String pLine, String pChar, String pTokenType, String pTokenText, String pMessage, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPLine(pLine);
+        this.setPChar(pChar);
+        this.setPTokenType(pTokenType);
+        this.setPTokenText(pTokenText);
+        this.setPMessage(pMessage);
     }
-    
     
     private void setPLine( String pLine ){
         if(pLine == null){
@@ -70,60 +67,55 @@ public class MSyntaxError extends Macro{
         this.field_Message = pMessage;
     }
     
-    
-    private String buildLine(){
-    
-        return this.field_Line;
-    }
-    
-    private String buildChar(){
-    
-        return this.field_Char;
-    }
-    
-    private String buildTokenType(){
-    
-        return this.field_TokenType;
-    }
-    
-    private String buildTokenText(){
-    
-        return this.field_TokenText;
-    }
-    
-    private String buildMessage(){
-    
-        return this.field_Message;
-    }
-    
-    
-    private String getLine(){
+    String buildLine(){
     
         return this.field_Line;
     }
     
-    private String getChar(){
+    String buildChar(){
     
         return this.field_Char;
     }
     
-    private String getTokenType(){
+    String buildTokenType(){
     
         return this.field_TokenType;
     }
     
-    private String getTokenText(){
+    String buildTokenText(){
     
         return this.field_TokenText;
     }
     
-    private String getMessage(){
+    String buildMessage(){
     
         return this.field_Message;
     }
     
+    String getLine(){
     
+        return this.field_Line;
+    }
     
+    String getChar(){
+    
+        return this.field_Char;
+    }
+    
+    String getTokenType(){
+    
+        return this.field_TokenType;
+    }
+    
+    String getTokenText(){
+    
+        return this.field_TokenText;
+    }
+    
+    String getMessage(){
+    
+        return this.field_Message;
+    }
     
     
     @Override
@@ -132,7 +124,6 @@ public class MSyntaxError extends Macro{
     
          internalsInitializer.setSyntaxError(this);
      }
-    
     
     @Override
     public String build(){
@@ -180,32 +171,17 @@ public class MSyntaxError extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

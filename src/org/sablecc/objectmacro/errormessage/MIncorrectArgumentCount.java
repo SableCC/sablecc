@@ -4,120 +4,111 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MIncorrectArgumentCount extends Macro{
-
-    private String field_Line;
-
-    private String field_Char;
-
-    private String field_ExpectedCount;
-
-    private String field_CurrentCount;
-
-
-
-
-    public MIncorrectArgumentCount(String pLine, String pChar, String pExpectedCount, String pCurrentCount){
-
-            this.setPLine(pLine);
-            this.setPChar(pChar);
-            this.setPExpectedCount(pExpectedCount);
-            this.setPCurrentCount(pCurrentCount);
-
+public  class MIncorrectArgumentCount extends Macro{
+    
+    String field_Line;
+    
+    String field_Char;
+    
+    String field_ExpectedCount;
+    
+    String field_CurrentCount;
+    
+    public MIncorrectArgumentCount(String pLine, String pChar, String pExpectedCount, String pCurrentCount, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPLine(pLine);
+        this.setPChar(pChar);
+        this.setPExpectedCount(pExpectedCount);
+        this.setPCurrentCount(pCurrentCount);
     }
-
-
+    
     private void setPLine( String pLine ){
         if(pLine == null){
             throw ObjectMacroException.parameterNull("Line");
         }
-
+    
         this.field_Line = pLine;
     }
-
+    
     private void setPChar( String pChar ){
         if(pChar == null){
             throw ObjectMacroException.parameterNull("Char");
         }
-
+    
         this.field_Char = pChar;
     }
-
+    
     private void setPExpectedCount( String pExpectedCount ){
         if(pExpectedCount == null){
             throw ObjectMacroException.parameterNull("ExpectedCount");
         }
-
+    
         this.field_ExpectedCount = pExpectedCount;
     }
-
+    
     private void setPCurrentCount( String pCurrentCount ){
         if(pCurrentCount == null){
             throw ObjectMacroException.parameterNull("CurrentCount");
         }
-
+    
         this.field_CurrentCount = pCurrentCount;
     }
-
-
-    private String buildLine(){
-
+    
+    String buildLine(){
+    
         return this.field_Line;
     }
-
-    private String buildChar(){
-
+    
+    String buildChar(){
+    
         return this.field_Char;
     }
-
-    private String buildExpectedCount(){
-
+    
+    String buildExpectedCount(){
+    
         return this.field_ExpectedCount;
     }
-
-    private String buildCurrentCount(){
-
+    
+    String buildCurrentCount(){
+    
         return this.field_CurrentCount;
     }
-
-
-    private String getLine(){
-
+    
+    String getLine(){
+    
         return this.field_Line;
     }
-
-    private String getChar(){
-
+    
+    String getChar(){
+    
         return this.field_Char;
     }
-
-    private String getExpectedCount(){
-
+    
+    String getExpectedCount(){
+    
         return this.field_ExpectedCount;
     }
-
-    private String getCurrentCount(){
-
+    
+    String getCurrentCount(){
+    
         return this.field_CurrentCount;
     }
-
-
-
-
-
+    
+    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
-
+    
          internalsInitializer.setIncorrectArgumentCount(this);
      }
-
-
+    
     @Override
     public String build(){
-
+    
         BuildState buildState = this.build_state;
-
+    
         if(buildState == null){
             buildState = new BuildState();
         }
@@ -130,17 +121,17 @@ public class MIncorrectArgumentCount extends Macro{
         this.build_state = buildState;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
-
-
-
-
-
+    
+        
+    
+    
+    
         StringBuilder sb0 = new StringBuilder();
-
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
-
-
-        sb0.append(minsert_1.build(null));
+    
+        MSemanticErrorHead m1 = this.getMacros().newSemanticErrorHead();
+        
+        
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line: ");
@@ -154,37 +145,22 @@ public class MIncorrectArgumentCount extends Macro{
         sb0.append(" arguments, instead of ");
         sb0.append(buildExpectedCount());
         sb0.append(" arguments.");
-
+    
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
-
-
+    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

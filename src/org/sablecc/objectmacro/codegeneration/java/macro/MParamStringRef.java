@@ -4,11 +4,15 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MParamStringRef extends Macro{
+public  class MParamStringRef extends Macro{
     
-    private String field_Name;
+    String field_Name;
     
-    private final List<Macro> list_ContextParam;
+    final List<Macro> list_ContextParam;
+    
+    final Context ContextParamContext = new Context();
+    
+    final InternalValue ContextParamValue;
     
     private DSeparator ContextParamSeparator;
     
@@ -18,9 +22,11 @@ public class MParamStringRef extends Macro{
     
     private DNone ContextParamNone;
     
-    private final InternalValue ContextParamValue;
+    final List<Macro> list_GetInternalTail;
     
-    private final List<Macro> list_GetInternalTail;
+    final Context GetInternalTailContext = new Context();
+    
+    final InternalValue GetInternalTailValue;
     
     private DSeparator GetInternalTailSeparator;
     
@@ -30,24 +36,17 @@ public class MParamStringRef extends Macro{
     
     private DNone GetInternalTailNone;
     
-    private final InternalValue GetInternalTailValue;
-    
-    
-    private final Context ContextParamContext = new Context();
-    
-    private final Context GetInternalTailContext = new Context();
-    
-    
-    public MParamStringRef(String pName){
-    
-            this.setPName(pName);
-        this.list_ContextParam = new ArrayList<>();
-        this.list_GetInternalTail = new ArrayList<>();
-    
+    public MParamStringRef(String pName, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPName(pName);
+        this.list_ContextParam = new LinkedList<>();
+        this.list_GetInternalTail = new LinkedList<>();
+        
         this.ContextParamValue = new InternalValue(this.list_ContextParam, this.ContextParamContext);
         this.GetInternalTailValue = new InternalValue(this.list_GetInternalTail, this.GetInternalTailContext);
     }
-    
     
     private void setPName( String pName ){
         if(pName == null){
@@ -61,9 +60,13 @@ public class MParamStringRef extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("ContextParam");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("ContextParam");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ContextParam");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_ContextParam.add(macro);
         this.children.add(macro);
@@ -74,17 +77,20 @@ public class MParamStringRef extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("GetInternalTail");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("GetInternalTail");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("GetInternalTail");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_GetInternalTail.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    
-    private String buildName(){
+    String buildName(){
     
         return this.field_Name;
     }
@@ -159,8 +165,7 @@ public class MParamStringRef extends Macro{
         return sb.toString();
     }
     
-    
-    private String getName(){
+    String getName(){
     
         return this.field_Name;
     }
@@ -172,7 +177,6 @@ public class MParamStringRef extends Macro{
     private InternalValue getGetInternalTail(){
         return this.GetInternalTailValue;
     }
-    
     private void initContextParamInternals(Context context){
         for(Macro macro : this.list_ContextParam){
             macro.apply(new InternalsInitializer("ContextParam"){
@@ -199,7 +203,6 @@ public class MParamStringRef extends Macro{
         }
     }
     
-    
     private void initContextParamDirectives(){
         
     }
@@ -207,14 +210,12 @@ public class MParamStringRef extends Macro{
     private void initGetInternalTailDirectives(){
         
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setParamStringRef(this);
      }
-    
     
     @Override
     public String build(){
@@ -261,32 +262,17 @@ public class MParamStringRef extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

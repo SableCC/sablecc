@@ -4,9 +4,13 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MAppliedVersion extends Macro{
+public  class MAppliedVersion extends Macro{
     
-    private final List<Macro> list_Versions;
+    final List<Macro> list_Versions;
+    
+    final Context VersionsContext = new Context();
+    
+    final InternalValue VersionsValue;
     
     private DSeparator VersionsSeparator;
     
@@ -16,33 +20,31 @@ public class MAppliedVersion extends Macro{
     
     private DNone VersionsNone;
     
-    private final InternalValue VersionsValue;
-    
-    
-    private final Context VersionsContext = new Context();
-    
-    
-    public MAppliedVersion(){
-    
-        this.list_Versions = new ArrayList<>();
-    
+    public MAppliedVersion(Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.list_Versions = new LinkedList<>();
+        
         this.VersionsValue = new InternalValue(this.list_Versions, this.VersionsContext);
     }
-    
     
     public void addVersions(MPlainText macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("Versions");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("PlainText");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("PlainText");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Versions.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
-    
     
     private String buildVersions(){
         StringBuilder sb = new StringBuilder();
@@ -79,11 +81,9 @@ public class MAppliedVersion extends Macro{
         return sb.toString();
     }
     
-    
     private InternalValue getVersions(){
         return this.VersionsValue;
     }
-    
     private void initVersionsInternals(Context context){
         for(Macro macro : this.list_Versions){
             macro.apply(new InternalsInitializer("Versions"){
@@ -97,21 +97,18 @@ public class MAppliedVersion extends Macro{
         }
     }
     
-    
     private void initVersionsDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(", ");
-        this.VersionsSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(", ");
+        this.VersionsSeparator = new DSeparator(sb3.toString());
         this.VersionsValue.setSeparator(this.VersionsSeparator);
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setAppliedVersion(this);
      }
-    
     
     @Override
     public String build(){
@@ -144,32 +141,17 @@ public class MAppliedVersion extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

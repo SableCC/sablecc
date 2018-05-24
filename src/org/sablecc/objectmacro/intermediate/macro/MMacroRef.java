@@ -4,9 +4,13 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public class MMacroRef extends Macro{
+public  class MMacroRef extends Macro{
     
-    private final List<Macro> list_ReferencedMacroName;
+    final List<Macro> list_ReferencedMacroName;
+    
+    final Context ReferencedMacroNameContext = new Context();
+    
+    final InternalValue ReferencedMacroNameValue;
     
     private DSeparator ReferencedMacroNameSeparator;
     
@@ -16,9 +20,11 @@ public class MMacroRef extends Macro{
     
     private DNone ReferencedMacroNameNone;
     
-    private final InternalValue ReferencedMacroNameValue;
+    final List<Macro> list_Arguments;
     
-    private final List<Macro> list_Arguments;
+    final Context ArgumentsContext = new Context();
+    
+    final InternalValue ArgumentsValue;
     
     private DSeparator ArgumentsSeparator;
     
@@ -28,31 +34,28 @@ public class MMacroRef extends Macro{
     
     private DNone ArgumentsNone;
     
-    private final InternalValue ArgumentsValue;
-    
-    
-    private final Context ReferencedMacroNameContext = new Context();
-    
-    private final Context ArgumentsContext = new Context();
-    
-    
-    public MMacroRef(){
-    
-        this.list_ReferencedMacroName = new ArrayList<>();
-        this.list_Arguments = new ArrayList<>();
-    
+    public MMacroRef(Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.list_ReferencedMacroName = new LinkedList<>();
+        this.list_Arguments = new LinkedList<>();
+        
         this.ReferencedMacroNameValue = new InternalValue(this.list_ReferencedMacroName, this.ReferencedMacroNameContext);
         this.ArgumentsValue = new InternalValue(this.list_Arguments, this.ArgumentsContext);
     }
-    
     
     public void addReferencedMacroName(MName macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ReferencedMacroName");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("Name");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Name");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_ReferencedMacroName.add(macro);
         this.children.add(macro);
@@ -63,15 +66,18 @@ public class MMacroRef extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Arguments");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("Args");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Args");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Arguments.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
-    
     
     private String buildReferencedMacroName(){
         StringBuilder sb = new StringBuilder();
@@ -143,7 +149,6 @@ public class MMacroRef extends Macro{
         return sb.toString();
     }
     
-    
     private InternalValue getReferencedMacroName(){
         return this.ReferencedMacroNameValue;
     }
@@ -151,7 +156,6 @@ public class MMacroRef extends Macro{
     private InternalValue getArguments(){
         return this.ArgumentsValue;
     }
-    
     private void initReferencedMacroNameInternals(Context context){
         for(Macro macro : this.list_ReferencedMacroName){
             macro.apply(new InternalsInitializer("ReferencedMacroName"){
@@ -178,7 +182,6 @@ public class MMacroRef extends Macro{
         }
     }
     
-    
     private void initReferencedMacroNameDirectives(){
         
     }
@@ -186,14 +189,12 @@ public class MMacroRef extends Macro{
     private void initArgumentsDirectives(){
         
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setMacroRef(this);
      }
-    
     
     @Override
     public String build(){
@@ -225,9 +226,9 @@ public class MMacroRef extends Macro{
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildReferencedMacroName());
         sb1.append(LINE_SEPARATOR);
         sb1.append(buildArguments());
@@ -239,32 +240,17 @@ public class MMacroRef extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

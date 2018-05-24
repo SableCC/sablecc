@@ -4,19 +4,16 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MUnknownTarget extends Macro{
+public  class MUnknownTarget extends Macro{
     
-    private String field_Target;
+    String field_Target;
     
-    
-    
-    
-    public MUnknownTarget(String pTarget){
-    
-            this.setPTarget(pTarget);
-    
+    public MUnknownTarget(String pTarget, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPTarget(pTarget);
     }
-    
     
     private void setPTarget( String pTarget ){
         if(pTarget == null){
@@ -26,20 +23,15 @@ public class MUnknownTarget extends Macro{
         this.field_Target = pTarget;
     }
     
-    
-    private String buildTarget(){
-    
-        return this.field_Target;
-    }
-    
-    
-    private String getTarget(){
+    String buildTarget(){
     
         return this.field_Target;
     }
     
+    String getTarget(){
     
-    
+        return this.field_Target;
+    }
     
     
     @Override
@@ -48,7 +40,6 @@ public class MUnknownTarget extends Macro{
     
          internalsInitializer.setUnknownTarget(this);
      }
-    
     
     @Override
     public String build(){
@@ -74,10 +65,10 @@ public class MUnknownTarget extends Macro{
     
         StringBuilder sb0 = new StringBuilder();
     
-        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        MCommandLineErrorHead m1 = this.getMacros().newCommandLineErrorHead();
         
         
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("The \"");
@@ -90,41 +81,26 @@ public class MUnknownTarget extends Macro{
         sb0.append(" objectmacro --list-targets");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        MCommandLineErrorTail m2 = this.getMacros().newCommandLineErrorTail();
         
         
-        sb0.append(minsert_2.build(null));
+        sb0.append(m2.build(null));
     
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

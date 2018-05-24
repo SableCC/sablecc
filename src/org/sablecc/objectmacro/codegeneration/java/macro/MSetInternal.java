@@ -4,13 +4,17 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MSetInternal extends Macro{
+public  class MSetInternal extends Macro{
     
-    private String field_ParamName;
+    String field_ParamName;
     
-    private String field_Context;
+    String field_Context;
     
-    private final List<Macro> list_SetParams;
+    final List<Macro> list_SetParams;
+    
+    final Context SetParamsContext = new Context();
+    
+    final InternalValue SetParamsValue;
     
     private DSeparator SetParamsSeparator;
     
@@ -20,23 +24,18 @@ public class MSetInternal extends Macro{
     
     private DNone SetParamsNone;
     
-    private final InternalValue SetParamsValue;
-    
     private Map<Context, String> field_VarName = new LinkedHashMap<>();
     
-    
-    private final Context SetParamsContext = new Context();
-    
-    
-    public MSetInternal(String pParamName, String pContext){
-    
-            this.setPParamName(pParamName);
-            this.setPContext(pContext);
-        this.list_SetParams = new ArrayList<>();
-    
+    public MSetInternal(String pParamName, String pContext, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPParamName(pParamName);
+        this.setPContext(pContext);
+        this.list_SetParams = new LinkedList<>();
+        
         this.SetParamsValue = new InternalValue(this.list_SetParams, this.SetParamsContext);
     }
-    
     
     private void setPParamName( String pParamName ){
         if(pParamName == null){
@@ -59,6 +58,10 @@ public class MSetInternal extends Macro{
             throw ObjectMacroException.parameterNull("SetParams");
         }
         
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_SetParams.add(macro);
         this.children.add(macro);
@@ -70,6 +73,10 @@ public class MSetInternal extends Macro{
             throw ObjectMacroException.parameterNull("SetParams");
         }
         
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_SetParams.add(macro);
         this.children.add(macro);
@@ -87,13 +94,12 @@ public class MSetInternal extends Macro{
             this.field_VarName.put(context, value);
         }
     
-    
-    private String buildParamName(){
+    String buildParamName(){
     
         return this.field_ParamName;
     }
     
-    private String buildContext(){
+    String buildContext(){
     
         return this.field_Context;
     }
@@ -133,18 +139,17 @@ public class MSetInternal extends Macro{
         return sb.toString();
     }
     
-    private String buildVarName(Context context){
+    String buildVarName(Context context){
     
         return this.field_VarName.get(context);
     }
     
-    
-    private String getParamName(){
+    String getParamName(){
     
         return this.field_ParamName;
     }
     
-    private String getContext(){
+    String getContext(){
     
         return this.field_Context;
     }
@@ -153,11 +158,10 @@ public class MSetInternal extends Macro{
         return this.SetParamsValue;
     }
     
-    private String getVarName(Context context){
+    String getVarName(Context context){
     
         return this.field_VarName.get(context);
     }
-    
     private void initSetParamsInternals(Context context){
         for(Macro macro : this.list_SetParams){
             macro.apply(new InternalsInitializer("SetParams"){
@@ -166,7 +170,9 @@ public class MSetInternal extends Macro{
                 
                     
                     
-                }@Override
+                }
+                
+                @Override
                 void setStringBuilderBuild(MStringBuilderBuild mStringBuilderBuild){
                 
                     
@@ -176,18 +182,15 @@ public class MSetInternal extends Macro{
         }
     }
     
-    
     private void initSetParamsDirectives(){
         
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setSetInternal(this);
      }
-    
     
     @Override
     public String build(Context context){
@@ -226,27 +229,14 @@ public class MSetInternal extends Macro{
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

@@ -4,9 +4,13 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public class MMacroType extends Macro{
+public  class MMacroType extends Macro{
     
-    private final List<Macro> list_References;
+    final List<Macro> list_References;
+    
+    final Context ReferencesContext = new Context();
+    
+    final InternalValue ReferencesValue;
     
     private DSeparator ReferencesSeparator;
     
@@ -16,33 +20,31 @@ public class MMacroType extends Macro{
     
     private DNone ReferencesNone;
     
-    private final InternalValue ReferencesValue;
-    
-    
-    private final Context ReferencesContext = new Context();
-    
-    
-    public MMacroType(){
-    
-        this.list_References = new ArrayList<>();
-    
+    public MMacroType(Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.list_References = new LinkedList<>();
+        
         this.ReferencesValue = new InternalValue(this.list_References, this.ReferencesContext);
     }
-    
     
     public void addReferences(MMacroRef macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("References");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("MacroRef");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("MacroRef");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_References.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
-    
     
     private String buildReferences(){
         StringBuilder sb = new StringBuilder();
@@ -79,11 +81,9 @@ public class MMacroType extends Macro{
         return sb.toString();
     }
     
-    
     private InternalValue getReferences(){
         return this.ReferencesValue;
     }
-    
     private void initReferencesInternals(Context context){
         for(Macro macro : this.list_References){
             macro.apply(new InternalsInitializer("References"){
@@ -97,18 +97,15 @@ public class MMacroType extends Macro{
         }
     }
     
-    
     private void initReferencesDirectives(){
         
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setMacroType(this);
      }
-    
     
     @Override
     public String build(){
@@ -138,9 +135,9 @@ public class MMacroType extends Macro{
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildReferences());
         sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
@@ -150,32 +147,17 @@ public class MMacroType extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

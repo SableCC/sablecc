@@ -4,9 +4,13 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MExVersionsDifferent extends Macro{
+public  class MExVersionsDifferent extends Macro{
     
-    private final List<Macro> list_PackageDeclaration;
+    final List<Macro> list_PackageDeclaration;
+    
+    final Context PackageDeclarationContext = new Context();
+    
+    final InternalValue PackageDeclarationValue;
     
     private DSeparator PackageDeclarationSeparator;
     
@@ -16,33 +20,31 @@ public class MExVersionsDifferent extends Macro{
     
     private DNone PackageDeclarationNone;
     
-    private final InternalValue PackageDeclarationValue;
-    
-    
-    private final Context PackageDeclarationContext = new Context();
-    
-    
-    public MExVersionsDifferent(){
-    
-        this.list_PackageDeclaration = new ArrayList<>();
-    
+    public MExVersionsDifferent(Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.list_PackageDeclaration = new LinkedList<>();
+        
         this.PackageDeclarationValue = new InternalValue(this.list_PackageDeclaration, this.PackageDeclarationContext);
     }
-    
     
     public void addPackageDeclaration(MPackageDeclaration macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("PackageDeclaration");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("PackageDeclaration");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_PackageDeclaration.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
-    
     
     private String buildPackageDeclaration(){
         StringBuilder sb = new StringBuilder();
@@ -79,11 +81,9 @@ public class MExVersionsDifferent extends Macro{
         return sb.toString();
     }
     
-    
     private InternalValue getPackageDeclaration(){
         return this.PackageDeclarationValue;
     }
-    
     private void initPackageDeclarationInternals(Context context){
         for(Macro macro : this.list_PackageDeclaration){
             macro.apply(new InternalsInitializer("PackageDeclaration"){
@@ -97,21 +97,18 @@ public class MExVersionsDifferent extends Macro{
         }
     }
     
-    
     private void initPackageDeclarationDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb1.toString());
         this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setExVersionsDifferent(this);
      }
-    
     
     @Override
     public String build(){
@@ -137,17 +134,17 @@ public class MExVersionsDifferent extends Macro{
     
         StringBuilder sb0 = new StringBuilder();
     
-        MHeader minsert_1 = new MHeader();
+        MHeader m1 = this.getMacros().newHeader();
         
         
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(buildPackageDeclaration());
         sb0.append(LINE_SEPARATOR);
-        MImportJavaUtil minsert_2 = new MImportJavaUtil();
+        MImportJavaUtil m2 = this.getMacros().newImportJavaUtil();
         
         
-        sb0.append(minsert_2.build(null));
+        sb0.append(m2.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("class MUserErrorVersionsDifferent extends Macro");
@@ -249,32 +246,17 @@ public class MExVersionsDifferent extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

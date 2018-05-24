@@ -4,9 +4,13 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public class MMacro extends Macro{
+public  class MMacro extends Macro{
     
-    private final List<Macro> list_MacroName;
+    final List<Macro> list_MacroName;
+    
+    final Context MacroNameContext = new Context();
+    
+    final InternalValue MacroNameValue;
     
     private DSeparator MacroNameSeparator;
     
@@ -16,9 +20,11 @@ public class MMacro extends Macro{
     
     private DNone MacroNameNone;
     
-    private final InternalValue MacroNameValue;
+    final List<Macro> list_ParentName;
     
-    private final List<Macro> list_ParentName;
+    final Context ParentNameContext = new Context();
+    
+    final InternalValue ParentNameValue;
     
     private DSeparator ParentNameSeparator;
     
@@ -28,9 +34,11 @@ public class MMacro extends Macro{
     
     private DNone ParentNameNone;
     
-    private final InternalValue ParentNameValue;
+    final List<Macro> list_IsAbstract;
     
-    private final List<Macro> list_IsAbstract;
+    final Context IsAbstractContext = new Context();
+    
+    final InternalValue IsAbstractValue;
     
     private DSeparator IsAbstractSeparator;
     
@@ -40,9 +48,11 @@ public class MMacro extends Macro{
     
     private DNone IsAbstractNone;
     
-    private final InternalValue IsAbstractValue;
+    final List<Macro> list_IsAllVersionned;
     
-    private final List<Macro> list_IsAllVersionned;
+    final Context IsAllVersionnedContext = new Context();
+    
+    final InternalValue IsAllVersionnedValue;
     
     private DSeparator IsAllVersionnedSeparator;
     
@@ -52,9 +62,11 @@ public class MMacro extends Macro{
     
     private DNone IsAllVersionnedNone;
     
-    private final InternalValue IsAllVersionnedValue;
+    final List<Macro> list_Parameters;
     
-    private final List<Macro> list_Parameters;
+    final Context ParametersContext = new Context();
+    
+    final InternalValue ParametersValue;
     
     private DSeparator ParametersSeparator;
     
@@ -64,9 +76,11 @@ public class MMacro extends Macro{
     
     private DNone ParametersNone;
     
-    private final InternalValue ParametersValue;
+    final List<Macro> list_Internals;
     
-    private final List<Macro> list_Internals;
+    final Context InternalsContext = new Context();
+    
+    final InternalValue InternalsValue;
     
     private DSeparator InternalsSeparator;
     
@@ -76,9 +90,11 @@ public class MMacro extends Macro{
     
     private DNone InternalsNone;
     
-    private final InternalValue InternalsValue;
+    final List<Macro> list_Body;
     
-    private final List<Macro> list_Body;
+    final Context BodyContext = new Context();
+    
+    final InternalValue BodyValue;
     
     private DSeparator BodySeparator;
     
@@ -88,9 +104,11 @@ public class MMacro extends Macro{
     
     private DNone BodyNone;
     
-    private final InternalValue BodyValue;
+    final List<Macro> list_Versions;
     
-    private final List<Macro> list_Versions;
+    final Context VersionsContext = new Context();
+    
+    final InternalValue VersionsValue;
     
     private DSeparator VersionsSeparator;
     
@@ -100,37 +118,19 @@ public class MMacro extends Macro{
     
     private DNone VersionsNone;
     
-    private final InternalValue VersionsValue;
-    
-    
-    private final Context MacroNameContext = new Context();
-    
-    private final Context ParentNameContext = new Context();
-    
-    private final Context IsAbstractContext = new Context();
-    
-    private final Context IsAllVersionnedContext = new Context();
-    
-    private final Context ParametersContext = new Context();
-    
-    private final Context InternalsContext = new Context();
-    
-    private final Context BodyContext = new Context();
-    
-    private final Context VersionsContext = new Context();
-    
-    
-    public MMacro(){
-    
-        this.list_MacroName = new ArrayList<>();
-        this.list_ParentName = new ArrayList<>();
-        this.list_IsAbstract = new ArrayList<>();
-        this.list_IsAllVersionned = new ArrayList<>();
-        this.list_Parameters = new ArrayList<>();
-        this.list_Internals = new ArrayList<>();
-        this.list_Body = new ArrayList<>();
-        this.list_Versions = new ArrayList<>();
-    
+    public MMacro(Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.list_MacroName = new LinkedList<>();
+        this.list_ParentName = new LinkedList<>();
+        this.list_IsAbstract = new LinkedList<>();
+        this.list_IsAllVersionned = new LinkedList<>();
+        this.list_Parameters = new LinkedList<>();
+        this.list_Internals = new LinkedList<>();
+        this.list_Body = new LinkedList<>();
+        this.list_Versions = new LinkedList<>();
+        
         this.MacroNameValue = new InternalValue(this.list_MacroName, this.MacroNameContext);
         this.ParentNameValue = new InternalValue(this.list_ParentName, this.ParentNameContext);
         this.IsAbstractValue = new InternalValue(this.list_IsAbstract, this.IsAbstractContext);
@@ -141,14 +141,17 @@ public class MMacro extends Macro{
         this.VersionsValue = new InternalValue(this.list_Versions, this.VersionsContext);
     }
     
-    
     public void addMacroName(MName macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroName");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("Name");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Name");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_MacroName.add(macro);
         this.children.add(macro);
@@ -159,9 +162,13 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("ParentName");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("ParentName");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ParentName");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_ParentName.add(macro);
         this.children.add(macro);
@@ -172,9 +179,13 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("IsAbstract");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("IsAbstract");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("IsAbstract");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_IsAbstract.add(macro);
         this.children.add(macro);
@@ -185,9 +196,13 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("IsAllVersionned");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("IsAllVersionned");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("IsAllVersionned");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_IsAllVersionned.add(macro);
         this.children.add(macro);
@@ -198,9 +213,13 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Parameters");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("Param");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Param");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Parameters.add(macro);
         this.children.add(macro);
@@ -211,9 +230,13 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Internals");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("Internal");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Internal");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Internals.add(macro);
         this.children.add(macro);
@@ -224,9 +247,13 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Body");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("StringPart");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("StringPart");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Body.add(macro);
         this.children.add(macro);
@@ -237,9 +264,13 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Body");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("EolPart");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("EolPart");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Body.add(macro);
         this.children.add(macro);
@@ -250,9 +281,13 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Body");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("ParamInsert");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ParamInsert");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Body.add(macro);
         this.children.add(macro);
@@ -263,9 +298,13 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Body");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("MacroInsert");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("MacroInsert");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Body.add(macro);
         this.children.add(macro);
@@ -276,9 +315,13 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Body");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("IndentPart");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("IndentPart");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Body.add(macro);
         this.children.add(macro);
@@ -289,9 +332,13 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Body");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("EndIndentPart");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("EndIndentPart");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Body.add(macro);
         this.children.add(macro);
@@ -302,15 +349,18 @@ public class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Versions");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("Versions");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Versions");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Versions.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
-    
     
     private String buildMacroName(){
         StringBuilder sb = new StringBuilder();
@@ -592,7 +642,6 @@ public class MMacro extends Macro{
         return sb.toString();
     }
     
-    
     private InternalValue getMacroName(){
         return this.MacroNameValue;
     }
@@ -624,7 +673,6 @@ public class MMacro extends Macro{
     private InternalValue getVersions(){
         return this.VersionsValue;
     }
-    
     private void initMacroNameInternals(Context context){
         for(Macro macro : this.list_MacroName){
             macro.apply(new InternalsInitializer("MacroName"){
@@ -711,27 +759,37 @@ public class MMacro extends Macro{
                 
                     
                     
-                }@Override
+                }
+                
+                @Override
                 void setEolPart(MEolPart mEolPart){
                 
                     
                     
-                }@Override
+                }
+                
+                @Override
                 void setParamInsert(MParamInsert mParamInsert){
                 
                     
                     
-                }@Override
+                }
+                
+                @Override
                 void setMacroInsert(MMacroInsert mMacroInsert){
                 
                     
                     
-                }@Override
+                }
+                
+                @Override
                 void setIndentPart(MIndentPart mIndentPart){
                 
                     
                     
-                }@Override
+                }
+                
+                @Override
                 void setEndIndentPart(MEndIndentPart mEndIndentPart){
                 
                     
@@ -754,7 +812,6 @@ public class MMacro extends Macro{
         }
     }
     
-    
     private void initMacroNameDirectives(){
         
     }
@@ -772,52 +829,55 @@ public class MMacro extends Macro{
     }
     
     private void initParametersDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.ParametersSeparator = new DSeparator(sb0.toString());
-        this.ParametersValue.setSeparator(this.ParametersSeparator);StringBuilder sb1 = new StringBuilder();
+        StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
-        this.ParametersBeforeFirst = new DBeforeFirst(sb1.toString());
+        this.ParametersSeparator = new DSeparator(sb1.toString());
+        this.ParametersValue.setSeparator(this.ParametersSeparator);StringBuilder sb2 = new StringBuilder();
+        sb2.append(LINE_SEPARATOR);
+        this.ParametersBeforeFirst = new DBeforeFirst(sb2.toString());
         this.ParametersValue.setBeforeFirst(this.ParametersBeforeFirst);
     }
     
     private void initInternalsDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.InternalsSeparator = new DSeparator(sb0.toString());
-        this.InternalsValue.setSeparator(this.InternalsSeparator);StringBuilder sb1 = new StringBuilder();
+        StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
-        this.InternalsBeforeFirst = new DBeforeFirst(sb1.toString());
+        this.InternalsSeparator = new DSeparator(sb1.toString());
+        this.InternalsValue.setSeparator(this.InternalsSeparator);StringBuilder sb2 = new StringBuilder();
+        sb2.append(LINE_SEPARATOR);
+        this.InternalsBeforeFirst = new DBeforeFirst(sb2.toString());
         this.InternalsValue.setBeforeFirst(this.InternalsBeforeFirst);
     }
     
     private void initBodyDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.BodySeparator = new DSeparator(sb0.toString());
-        this.BodyValue.setSeparator(this.BodySeparator);StringBuilder sb1 = new StringBuilder();
-        sb1.append(LINE_SEPARATOR);sb1.append("MacroBody");sb1.append("{");sb1.append(LINE_SEPARATOR);sb1.append("  ");
-        this.BodyBeforeFirst = new DBeforeFirst(sb1.toString());
-        this.BodyValue.setBeforeFirst(this.BodyBeforeFirst);StringBuilder sb2 = new StringBuilder();
-        sb2.append(LINE_SEPARATOR);sb2.append(" }");
-        this.BodyAfterLast = new DAfterLast(sb2.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.BodySeparator = new DSeparator(sb1.toString());
+        this.BodyValue.setSeparator(this.BodySeparator);StringBuilder sb2 = new StringBuilder();
+        sb2.append(LINE_SEPARATOR);
+        sb2.append("MacroBody");
+        sb2.append("{");
+        sb2.append(LINE_SEPARATOR);
+        sb2.append("  ");
+        this.BodyBeforeFirst = new DBeforeFirst(sb2.toString());
+        this.BodyValue.setBeforeFirst(this.BodyBeforeFirst);StringBuilder sb3 = new StringBuilder();
+        sb3.append(LINE_SEPARATOR);
+        sb3.append(" }");
+        this.BodyAfterLast = new DAfterLast(sb3.toString());
         this.BodyValue.setAfterLast(this.BodyAfterLast);
     }
     
     private void initVersionsDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.VersionsBeforeFirst = new DBeforeFirst(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.VersionsBeforeFirst = new DBeforeFirst(sb1.toString());
         this.VersionsValue.setBeforeFirst(this.VersionsBeforeFirst);
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setMacro(this);
      }
-    
     
     @Override
     public String build(){
@@ -861,9 +921,9 @@ public class MMacro extends Macro{
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildIsAbstract());
         sb1.append(LINE_SEPARATOR);
         sb1.append(buildIsAllVersionned());
@@ -876,12 +936,12 @@ public class MMacro extends Macro{
         sb1.append(LINE_SEPARATOR);
         sb1.append(buildInternals());
         sb1.append(LINE_SEPARATOR);
-        StringBuilder sb2 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
-        sb2.append(buildBody());
-        sb1.append(applyIndent(sb2.toString(), indentations.remove(indentations.size() - 1)));
+        StringBuilder sb3 = new StringBuilder();
+        StringBuilder sb4 = new StringBuilder();
+        sb4.append("    ");
+        indentations.add(sb4.toString());
+        sb3.append(buildBody());
+        sb1.append(applyIndent(sb3.toString(), indentations.remove(indentations.size() - 1)));
         sb1.append(LINE_SEPARATOR);
         sb1.append(buildVersions());
         sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
@@ -892,32 +952,17 @@ public class MMacro extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

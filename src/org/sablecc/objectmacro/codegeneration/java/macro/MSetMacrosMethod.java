@@ -4,22 +4,14 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MSetMacrosMethod extends Macro{
+public  class MSetMacrosMethod extends Macro{
     
     
-    
-    
-    
-    public MSetMacrosMethod(){
-    
-    
+    public MSetMacrosMethod(Macros macros){
+        
+        
+        this.setMacros(macros);
     }
-    
-    
-    
-    
-    
-    
     
     
     
@@ -31,7 +23,6 @@ public class MSetMacrosMethod extends Macro{
     
          internalsInitializer.setSetMacrosMethod(this);
      }
-    
     
     @Override
     public String build(){
@@ -76,32 +67,17 @@ public class MSetMacrosMethod extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

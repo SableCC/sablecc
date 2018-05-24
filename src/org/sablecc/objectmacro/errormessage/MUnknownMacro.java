@@ -4,15 +4,19 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MUnknownMacro extends Macro{
+public  class MUnknownMacro extends Macro{
     
-    private String field_Name;
+    String field_Name;
     
-    private String field_Line;
+    String field_Line;
     
-    private String field_Char;
+    String field_Char;
     
-    private final List<Macro> list_Versions;
+    final List<Macro> list_Versions;
+    
+    final Context VersionsContext = new Context();
+    
+    final InternalValue VersionsValue;
     
     private DSeparator VersionsSeparator;
     
@@ -22,22 +26,17 @@ public class MUnknownMacro extends Macro{
     
     private DNone VersionsNone;
     
-    private final InternalValue VersionsValue;
-    
-    
-    private final Context VersionsContext = new Context();
-    
-    
-    public MUnknownMacro(String pName, String pLine, String pChar){
-    
-            this.setPName(pName);
-            this.setPLine(pLine);
-            this.setPChar(pChar);
-        this.list_Versions = new ArrayList<>();
-    
+    public MUnknownMacro(String pName, String pLine, String pChar, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPName(pName);
+        this.setPLine(pLine);
+        this.setPChar(pChar);
+        this.list_Versions = new LinkedList<>();
+        
         this.VersionsValue = new InternalValue(this.list_Versions, this.VersionsContext);
     }
-    
     
     private void setPName( String pName ){
         if(pName == null){
@@ -67,27 +66,30 @@ public class MUnknownMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Versions");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("PlainText");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("PlainText");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Versions.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    
-    private String buildName(){
+    String buildName(){
     
         return this.field_Name;
     }
     
-    private String buildLine(){
+    String buildLine(){
     
         return this.field_Line;
     }
     
-    private String buildChar(){
+    String buildChar(){
     
         return this.field_Char;
     }
@@ -127,18 +129,17 @@ public class MUnknownMacro extends Macro{
         return sb.toString();
     }
     
-    
-    private String getName(){
+    String getName(){
     
         return this.field_Name;
     }
     
-    private String getLine(){
+    String getLine(){
     
         return this.field_Line;
     }
     
-    private String getChar(){
+    String getChar(){
     
         return this.field_Char;
     }
@@ -146,7 +147,6 @@ public class MUnknownMacro extends Macro{
     private InternalValue getVersions(){
         return this.VersionsValue;
     }
-    
     private void initVersionsInternals(Context context){
         for(Macro macro : this.list_Versions){
             macro.apply(new InternalsInitializer("Versions"){
@@ -160,30 +160,27 @@ public class MUnknownMacro extends Macro{
         }
     }
     
-    
     private void initVersionsDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(".");
-        this.VersionsNone = new DNone(sb0.toString());
-        this.VersionsValue.setNone(this.VersionsNone);StringBuilder sb1 = new StringBuilder();
-        sb1.append("in version: ");
-        this.VersionsBeforeFirst = new DBeforeFirst(sb1.toString());
-        this.VersionsValue.setBeforeFirst(this.VersionsBeforeFirst);StringBuilder sb2 = new StringBuilder();
-        sb2.append(".");
-        this.VersionsAfterLast = new DAfterLast(sb2.toString());
-        this.VersionsValue.setAfterLast(this.VersionsAfterLast);StringBuilder sb3 = new StringBuilder();
-        sb3.append(", ");
-        this.VersionsSeparator = new DSeparator(sb3.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(".");
+        this.VersionsNone = new DNone(sb1.toString());
+        this.VersionsValue.setNone(this.VersionsNone);StringBuilder sb2 = new StringBuilder();
+        sb2.append("in version: ");
+        this.VersionsBeforeFirst = new DBeforeFirst(sb2.toString());
+        this.VersionsValue.setBeforeFirst(this.VersionsBeforeFirst);StringBuilder sb3 = new StringBuilder();
+        sb3.append(".");
+        this.VersionsAfterLast = new DAfterLast(sb3.toString());
+        this.VersionsValue.setAfterLast(this.VersionsAfterLast);StringBuilder sb4 = new StringBuilder();
+        sb4.append(", ");
+        this.VersionsSeparator = new DSeparator(sb4.toString());
         this.VersionsValue.setSeparator(this.VersionsSeparator);
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setUnknownMacro(this);
      }
-    
     
     @Override
     public String build(){
@@ -209,10 +206,10 @@ public class MUnknownMacro extends Macro{
     
         StringBuilder sb0 = new StringBuilder();
     
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+        MSemanticErrorHead m1 = this.getMacros().newSemanticErrorHead();
         
         
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line: ");
@@ -230,32 +227,17 @@ public class MUnknownMacro extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

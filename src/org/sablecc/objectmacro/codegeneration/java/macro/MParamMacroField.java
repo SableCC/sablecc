@@ -4,19 +4,16 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MParamMacroField extends Macro{
+public  class MParamMacroField extends Macro{
     
-    private String field_ParamName;
+    String field_ParamName;
     
-    
-    
-    
-    public MParamMacroField(String pParamName){
-    
-            this.setPParamName(pParamName);
-    
+    public MParamMacroField(String pParamName, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPParamName(pParamName);
     }
-    
     
     private void setPParamName( String pParamName ){
         if(pParamName == null){
@@ -26,20 +23,15 @@ public class MParamMacroField extends Macro{
         this.field_ParamName = pParamName;
     }
     
-    
-    private String buildParamName(){
-    
-        return this.field_ParamName;
-    }
-    
-    
-    private String getParamName(){
+    String buildParamName(){
     
         return this.field_ParamName;
     }
     
+    String getParamName(){
     
-    
+        return this.field_ParamName;
+    }
     
     
     @Override
@@ -48,7 +40,6 @@ public class MParamMacroField extends Macro{
     
          internalsInitializer.setParamMacroField(this);
      }
-    
     
     @Override
     public String build(){
@@ -79,47 +70,32 @@ public class MParamMacroField extends Macro{
         sb0.append(";");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        MContextField minsert_1 = new MContextField();
+        MContextField m1 = this.getMacros().newContextField();
         
-        minsert_1.setParamName(null, getParamName());
-        sb0.append(minsert_1.build(null));
+        m1.setParamName(null, getParamName());
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        MInternalMacrosValueField minsert_2 = new MInternalMacrosValueField();
+        MInternalMacrosValueField m2 = this.getMacros().newInternalMacrosValueField();
         
-        minsert_2.setParamName(null, getParamName());
-        sb0.append(minsert_2.build(null));
+        m2.setParamName(null, getParamName());
+        sb0.append(m2.build(null));
     
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

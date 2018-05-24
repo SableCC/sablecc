@@ -4,18 +4,15 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MSetMacrosCall extends Macro{
+public  class MSetMacrosCall extends Macro{
     
     private Map<Context, String> field_MacrosParamName = new LinkedHashMap<>();
     
-    
-    
-    
-    public MSetMacrosCall(){
-    
-    
+    public MSetMacrosCall(Macros macros){
+        
+        
+        this.setMacros(macros);
     }
-    
     
         void setMacrosParamName(
                 Context context,
@@ -28,20 +25,15 @@ public class MSetMacrosCall extends Macro{
             this.field_MacrosParamName.put(context, value);
         }
     
-    
-    private String buildMacrosParamName(Context context){
-    
-        return this.field_MacrosParamName.get(context);
-    }
-    
-    
-    private String getMacrosParamName(Context context){
+    String buildMacrosParamName(Context context){
     
         return this.field_MacrosParamName.get(context);
     }
     
+    String getMacrosParamName(Context context){
     
-    
+        return this.field_MacrosParamName.get(context);
+    }
     
     
     @Override
@@ -50,7 +42,6 @@ public class MSetMacrosCall extends Macro{
     
          internalsInitializer.setSetMacrosCall(this);
      }
-    
     
     @Override
     public String build(Context context){
@@ -83,27 +74,14 @@ public class MSetMacrosCall extends Macro{
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }
