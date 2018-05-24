@@ -2,93 +2,379 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class MInternal {
-
-    private final List<Object> eSimpleName = new LinkedList<>();
-
-    private final List<Object> eStringType_MacroType = new LinkedList<>();
-
-    private final List<Object> eDirective = new LinkedList<>();
-
-    public MInternal() {
-
+public class MInternal extends Macro{
+    
+    private final List<Macro> list_InternalName;
+    
+    private DSeparator InternalNameSeparator;
+    
+    private DBeforeFirst InternalNameBeforeFirst;
+    
+    private DAfterLast InternalNameAfterLast;
+    
+    private DNone InternalNameNone;
+    
+    private final InternalValue InternalNameValue;
+    
+    private final List<Macro> list_Type;
+    
+    private DSeparator TypeSeparator;
+    
+    private DBeforeFirst TypeBeforeFirst;
+    
+    private DAfterLast TypeAfterLast;
+    
+    private DNone TypeNone;
+    
+    private final InternalValue TypeValue;
+    
+    private final List<Macro> list_Directives;
+    
+    private DSeparator DirectivesSeparator;
+    
+    private DBeforeFirst DirectivesBeforeFirst;
+    
+    private DAfterLast DirectivesAfterLast;
+    
+    private DNone DirectivesNone;
+    
+    private final InternalValue DirectivesValue;
+    
+    
+    private final Context InternalNameContext = new Context();
+    
+    private final Context TypeContext = new Context();
+    
+    private final Context DirectivesContext = new Context();
+    
+    
+    public MInternal(){
+    
+        this.list_InternalName = new ArrayList<>();
+        this.list_Type = new ArrayList<>();
+        this.list_Directives = new ArrayList<>();
+    
+        this.InternalNameValue = new InternalValue(this.list_InternalName, this.InternalNameContext);
+        this.TypeValue = new InternalValue(this.list_Type, this.TypeContext);
+        this.DirectivesValue = new InternalValue(this.list_Directives, this.DirectivesContext);
     }
-
-    public MSimpleName newSimpleName(
-            String pName) {
-
-        MSimpleName lSimpleName = new MSimpleName(pName);
-        this.eSimpleName.add(lSimpleName);
-        return lSimpleName;
+    
+    
+    public void addInternalName(MName macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("InternalName");
+        }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("Name");
+                }
+    
+        this.list_InternalName.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
-
-    public MStringType newStringType() {
-
-        MStringType lStringType = new MStringType();
-        this.eStringType_MacroType.add(lStringType);
-        return lStringType;
+    
+    public void addType(MStringType macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("Type");
+        }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("StringType");
+                }
+    
+        this.list_Type.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
-
-    public MMacroType newMacroType() {
-
-        MMacroType lMacroType = new MMacroType();
-        this.eStringType_MacroType.add(lMacroType);
-        return lMacroType;
+    
+    public void addType(MMacroType macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("Type");
+        }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("MacroType");
+                }
+    
+        this.list_Type.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
-
-    public MDirective newDirective() {
-
-        MDirective lDirective = new MDirective();
-        this.eDirective.add(lDirective);
-        return lDirective;
+    
+    public void addDirectives(MDirective macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("Directives");
+        }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("Directive");
+                }
+    
+        this.list_Directives.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
-
-    @Override
-    public String toString() {
-
+    
+    
+    private String buildInternalName(){
         StringBuilder sb = new StringBuilder();
-        sb.append(" Internal {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" Name = ");
-        if (this.eSimpleName.size() > 1) {
-            sb.append("{ ");
+        Context local_context = InternalNameContext;
+        List<Macro> macros = this.list_InternalName;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+    
+        if(this.InternalNameNone != null){
+            sb.append(this.InternalNameNone.apply(i, "", nb_macros));
         }
-        {
-            boolean first = true;
-            for (Object oSimpleName : this.eSimpleName) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    sb.append(", ");
-                }
-                sb.append(oSimpleName.toString());
+    
+        for(Macro macro : macros){
+            expansion = macro.build(local_context);
+    
+            if(this.InternalNameBeforeFirst != null){
+                expansion = this.InternalNameBeforeFirst.apply(i, expansion, nb_macros);
             }
-        }
-        if (this.eSimpleName.size() > 1) {
-            sb.append(" }");
-        }
-        for (Object oStringType_MacroType : this.eStringType_MacroType) {
-            sb.append(oStringType_MacroType.toString());
-        }
-        {
-            boolean first = true;
-            for (Object oDirective : this.eDirective) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    sb.append(", ");
-                }
-                sb.append(oDirective.toString());
+    
+            if(this.InternalNameAfterLast != null){
+                expansion = this.InternalNameAfterLast.apply(i, expansion, nb_macros);
             }
+    
+            if(this.InternalNameSeparator != null){
+                expansion = this.InternalNameSeparator.apply(i, expansion, nb_macros);
+            }
+    
+            sb.append(expansion);
+            i++;
         }
-        sb.append(" }");
-        sb.append(System.getProperty("line.separator"));
+    
         return sb.toString();
     }
+    
+    private String buildType(){
+        StringBuilder sb = new StringBuilder();
+        Context local_context = TypeContext;
+        List<Macro> macros = this.list_Type;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+    
+        if(this.TypeNone != null){
+            sb.append(this.TypeNone.apply(i, "", nb_macros));
+        }
+    
+        for(Macro macro : macros){
+            expansion = macro.build(local_context);
+    
+            if(this.TypeBeforeFirst != null){
+                expansion = this.TypeBeforeFirst.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.TypeAfterLast != null){
+                expansion = this.TypeAfterLast.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.TypeSeparator != null){
+                expansion = this.TypeSeparator.apply(i, expansion, nb_macros);
+            }
+    
+            sb.append(expansion);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    private String buildDirectives(){
+        StringBuilder sb = new StringBuilder();
+        Context local_context = DirectivesContext;
+        List<Macro> macros = this.list_Directives;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+    
+        if(this.DirectivesNone != null){
+            sb.append(this.DirectivesNone.apply(i, "", nb_macros));
+        }
+    
+        for(Macro macro : macros){
+            expansion = macro.build(local_context);
+    
+            if(this.DirectivesBeforeFirst != null){
+                expansion = this.DirectivesBeforeFirst.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.DirectivesAfterLast != null){
+                expansion = this.DirectivesAfterLast.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.DirectivesSeparator != null){
+                expansion = this.DirectivesSeparator.apply(i, expansion, nb_macros);
+            }
+    
+            sb.append(expansion);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    
+    private InternalValue getInternalName(){
+        return this.InternalNameValue;
+    }
+    
+    private InternalValue getType(){
+        return this.TypeValue;
+    }
+    
+    private InternalValue getDirectives(){
+        return this.DirectivesValue;
+    }
+    
+    private void initInternalNameInternals(Context context){
+        for(Macro macro : this.list_InternalName){
+            macro.apply(new InternalsInitializer("InternalName"){
+                @Override
+                void setName(MName mName){
+                
+                    
+                    
+                }
+            });
+        }
+    }
+    
+    private void initTypeInternals(Context context){
+        for(Macro macro : this.list_Type){
+            macro.apply(new InternalsInitializer("Type"){
+                @Override
+                void setStringType(MStringType mStringType){
+                
+                    
+                    
+                }@Override
+                void setMacroType(MMacroType mMacroType){
+                
+                    
+                    
+                }
+            });
+        }
+    }
+    
+    private void initDirectivesInternals(Context context){
+        for(Macro macro : this.list_Directives){
+            macro.apply(new InternalsInitializer("Directives"){
+                @Override
+                void setDirective(MDirective mDirective){
+                
+                    
+                    
+                }
+            });
+        }
+    }
+    
+    
+    private void initInternalNameDirectives(){
+        
+    }
+    
+    private void initTypeDirectives(){
+        
+    }
+    
+    private void initDirectivesDirectives(){
+        StringBuilder sb0 = new StringBuilder();
+        sb0.append(", ");
+        this.DirectivesSeparator = new DSeparator(sb0.toString());
+        this.DirectivesValue.setSeparator(this.DirectivesSeparator);
+    }
+    
+    @Override
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setInternal(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("Internal");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        initInternalNameDirectives();
+        initTypeDirectives();
+        initDirectivesDirectives();
+        
+        initInternalNameInternals(null);
+        initTypeInternals(null);
+        initDirectivesInternals(null);
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        sb0.append("Internal ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        StringBuilder sb1 = new StringBuilder();
+        sbIndentation = new StringBuilder();
+        sbIndentation.append("    ");
+        indentations.add(sbIndentation.toString());
+        sb1.append(buildInternalName());
+        sb1.append(LINE_SEPARATOR);
+        sb1.append(buildType());
+        sb1.append(LINE_SEPARATOR);
+        sb1.append(buildDirectives());
+        sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("}");
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

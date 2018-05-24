@@ -27,20 +27,21 @@ public class Main {
             String[] args){
 
         System.out.print("======== Main Test ===========\n");
-        MA ma = new MA("First argument of MA");
+        Macros m = new Macros();
+        MA ma = m.newA("First argument of MA");
         List<Macro> macros = new ArrayList<>();
-        MB mb = new MB("la");
-        MB mb2 = new MB("First argument in MB0");
+        MB mb = m.newB("la");
+        MB mb2 = m.newB("First argument in MB0");
         macros.add(mb2);
-        macros.add(new MB("First argument in MB1"));
-        macros.add(new MB("First argument in MB2"));
+        macros.add(m.newB("First argument in MB1"));
+        macros.add(m.newB("First argument in MB2"));
 
         try{
-            mb.addS(new MC());
-            ma.addZ(new MC());
+            mb.addS(m.newC());
+            ma.addZ(m.newC());
             ma.addY(mb);
-            ma.addZ(new MC());
-            mb2.addS(new MC());
+            ma.addZ(m.newC());
+            mb2.addS(m.newC());
             System.out.println(ma.build());
         }
         catch(ObjectMacroException e){

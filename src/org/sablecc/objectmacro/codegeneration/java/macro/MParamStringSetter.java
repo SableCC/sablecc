@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MParamStringSetter extends
+public class MParamStringSetter
+        extends
         Macro {
 
     private String field_Name;
@@ -51,8 +52,8 @@ public class MParamStringSetter extends
         this.StringParamValue = new InternalValue(this.list_StringParam,
                 this.StringParamContext);
 
-        this.ParamArgValue
-                = new InternalValue(this.list_ParamArg, this.ParamArgContext);
+        this.ParamArgValue = new InternalValue(this.list_ParamArg,
+                this.ParamArgContext);
 
     }
 
@@ -209,15 +210,15 @@ public class MParamStringSetter extends
 
             if (this.ParamArgAfterLast != null) {
 
-                expansion
-                        = this.ParamArgAfterLast.apply(i, expansion, nb_macros);
+                expansion = this.ParamArgAfterLast.apply(i, expansion,
+                        nb_macros);
 
             }
 
             if (this.ParamArgSeparator != null) {
 
-                expansion
-                        = this.ParamArgSeparator.apply(i, expansion, nb_macros);
+                expansion = this.ParamArgSeparator.apply(i, expansion,
+                        nb_macros);
 
             }
 
@@ -359,7 +360,7 @@ public class MParamStringSetter extends
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    if(");
 
@@ -369,7 +370,7 @@ public class MParamStringSetter extends
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("        throw ObjectMacroException.parameterNull(\"");
 
@@ -377,13 +378,13 @@ public class MParamStringSetter extends
 
         sb0.append("\");");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    }");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    this.field_");
 
@@ -395,7 +396,7 @@ public class MParamStringSetter extends
 
         sb0.append(";");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -427,7 +428,7 @@ public class MParamStringSetter extends
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

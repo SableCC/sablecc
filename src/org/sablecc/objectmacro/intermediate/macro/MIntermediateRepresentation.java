@@ -2,32 +2,265 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class MIntermediateRepresentation {
-
-    private final List<Object> eMacro = new LinkedList<>();
-
-    public MIntermediateRepresentation() {
-
+public class MIntermediateRepresentation extends Macro{
+    
+    private final List<Macro> list_Macros;
+    
+    private DSeparator MacrosSeparator;
+    
+    private DBeforeFirst MacrosBeforeFirst;
+    
+    private DAfterLast MacrosAfterLast;
+    
+    private DNone MacrosNone;
+    
+    private final InternalValue MacrosValue;
+    
+    private final List<Macro> list_VersionDefinition;
+    
+    private DSeparator VersionDefinitionSeparator;
+    
+    private DBeforeFirst VersionDefinitionBeforeFirst;
+    
+    private DAfterLast VersionDefinitionAfterLast;
+    
+    private DNone VersionDefinitionNone;
+    
+    private final InternalValue VersionDefinitionValue;
+    
+    
+    private final Context MacrosContext = new Context();
+    
+    private final Context VersionDefinitionContext = new Context();
+    
+    
+    public MIntermediateRepresentation(){
+    
+        this.list_Macros = new ArrayList<>();
+        this.list_VersionDefinition = new ArrayList<>();
+    
+        this.MacrosValue = new InternalValue(this.list_Macros, this.MacrosContext);
+        this.VersionDefinitionValue = new InternalValue(this.list_VersionDefinition, this.VersionDefinitionContext);
     }
-
-    public MMacro newMacro() {
-
-        MMacro lMacro = new MMacro();
-        this.eMacro.add(lMacro);
-        return lMacro;
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        for (Object oMacro : this.eMacro) {
-            sb.append(oMacro.toString());
+    
+    
+    public void addMacros(MMacro macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("Macros");
         }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("Macro");
+                }
+    
+        this.list_Macros.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+    
+    public void addVersionDefinition(MVersions macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("VersionDefinition");
+        }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("Versions");
+                }
+    
+        this.list_VersionDefinition.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+    
+    
+    private String buildMacros(){
+        StringBuilder sb = new StringBuilder();
+        Context local_context = MacrosContext;
+        List<Macro> macros = this.list_Macros;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+    
+        if(this.MacrosNone != null){
+            sb.append(this.MacrosNone.apply(i, "", nb_macros));
+        }
+    
+        for(Macro macro : macros){
+            expansion = macro.build(local_context);
+    
+            if(this.MacrosBeforeFirst != null){
+                expansion = this.MacrosBeforeFirst.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.MacrosAfterLast != null){
+                expansion = this.MacrosAfterLast.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.MacrosSeparator != null){
+                expansion = this.MacrosSeparator.apply(i, expansion, nb_macros);
+            }
+    
+            sb.append(expansion);
+            i++;
+        }
+    
         return sb.toString();
     }
+    
+    private String buildVersionDefinition(){
+        StringBuilder sb = new StringBuilder();
+        Context local_context = VersionDefinitionContext;
+        List<Macro> macros = this.list_VersionDefinition;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+    
+        if(this.VersionDefinitionNone != null){
+            sb.append(this.VersionDefinitionNone.apply(i, "", nb_macros));
+        }
+    
+        for(Macro macro : macros){
+            expansion = macro.build(local_context);
+    
+            if(this.VersionDefinitionBeforeFirst != null){
+                expansion = this.VersionDefinitionBeforeFirst.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.VersionDefinitionAfterLast != null){
+                expansion = this.VersionDefinitionAfterLast.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.VersionDefinitionSeparator != null){
+                expansion = this.VersionDefinitionSeparator.apply(i, expansion, nb_macros);
+            }
+    
+            sb.append(expansion);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    
+    private InternalValue getMacros(){
+        return this.MacrosValue;
+    }
+    
+    private InternalValue getVersionDefinition(){
+        return this.VersionDefinitionValue;
+    }
+    
+    private void initMacrosInternals(Context context){
+        for(Macro macro : this.list_Macros){
+            macro.apply(new InternalsInitializer("Macros"){
+                @Override
+                void setMacro(MMacro mMacro){
+                
+                    
+                    
+                }
+            });
+        }
+    }
+    
+    private void initVersionDefinitionInternals(Context context){
+        for(Macro macro : this.list_VersionDefinition){
+            macro.apply(new InternalsInitializer("VersionDefinition"){
+                @Override
+                void setVersions(MVersions mVersions){
+                
+                    
+                    
+                }
+            });
+        }
+    }
+    
+    
+    private void initMacrosDirectives(){
+        StringBuilder sb0 = new StringBuilder();
+        sb0.append(LINE_SEPARATOR);
+        this.MacrosSeparator = new DSeparator(sb0.toString());
+        this.MacrosValue.setSeparator(this.MacrosSeparator);StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.MacrosBeforeFirst = new DBeforeFirst(sb1.toString());
+        this.MacrosValue.setBeforeFirst(this.MacrosBeforeFirst);
+    }
+    
+    private void initVersionDefinitionDirectives(){
+        
+    }
+    
+    @Override
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setIntermediateRepresentation(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("IntermediateRepresentation");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        initMacrosDirectives();
+        initVersionDefinitionDirectives();
+        
+        initMacrosInternals(null);
+        initVersionDefinitionInternals(null);
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        sb0.append(buildVersionDefinition());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(buildMacros());
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

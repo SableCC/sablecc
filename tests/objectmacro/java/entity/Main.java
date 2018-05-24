@@ -25,6 +25,8 @@ import java.util.ArrayList;
 
 public class Main {
 
+    private static Macros m = new Macros();
+
     public static void main(
             String[] args){
 
@@ -63,24 +65,24 @@ public class Main {
     private static MEntity createEntity(
             String entity_name){
 
-        MEntity mEntity = new MEntity(entity_name);
-        mEntity.addPackage(new MPackageDeclaration("entities"));
-        MSetter setter = new MSetter("id_" + entity_name.toLowerCase(), Integer.class.getSimpleName());
-        MGetter getter = new MGetter("id_" + entity_name.toLowerCase(), Integer.class.getSimpleName());
+        MEntity mEntity = m.newEntity(entity_name);
+        mEntity.addPackage(m.newPackageDeclaration("entities"));
+        MSetter setter = m.newSetter("id_" + entity_name.toLowerCase(), Integer.class.getSimpleName());
+        MGetter getter = m.newGetter("id_" + entity_name.toLowerCase(), Integer.class.getSimpleName());
 
         mEntity.addAttributes(createId("id_" + entity_name.toLowerCase(), "AUTO"));
         mEntity.addAccessors(setter);
         mEntity.addAccessors(getter);
 
         mEntity.addAttributes(createAttribute("A", Integer.class.getSimpleName(), false));
-        setter = new MSetter("A", Integer.class.getSimpleName());
-        getter = new MGetter("A", Integer.class.getSimpleName());
+        setter = m.newSetter("A", Integer.class.getSimpleName());
+        getter = m.newGetter("A", Integer.class.getSimpleName());
         mEntity.addAccessors(setter);
         mEntity.addAccessors(getter);
 
         mEntity.addAttributes(createAttribute("B", String.class.getSimpleName(), true));
-        setter = new MSetter("B", String.class.getSimpleName());
-        getter = new MGetter("B", String.class.getSimpleName());
+        setter = m.newSetter("B", String.class.getSimpleName());
+        getter = m.newGetter("B", String.class.getSimpleName());
         mEntity.addAccessors(setter);
         mEntity.addAccessors(getter);
 
@@ -91,14 +93,14 @@ public class Main {
             String name,
             String generation_strategy){
 
-        MAttribute mAttribute = new MAttribute(name, "Integer");
-        MPrimaryKey mPrimaryKey = new MPrimaryKey();
+        MAttribute mAttribute = m.newAttribute(name, "Integer");
+        MPrimaryKey mPrimaryKey = m.newPrimaryKey();
         MIdIncrementationStrategy mIdIncrementationStrategy = null;
         if(!generation_strategy.equals("")){
-            mIdIncrementationStrategy = new MIdIncrementationStrategy(generation_strategy);
+            mIdIncrementationStrategy = m.newIdIncrementationStrategy(generation_strategy);
         }
 
-        mAttribute.addNotNull(new MNotNull());
+        mAttribute.addNotNull(m.newNotNull());
 
         if (mIdIncrementationStrategy == null) {
             mAttribute.addId(mPrimaryKey);
@@ -116,9 +118,9 @@ public class Main {
             String type,
             boolean notNull){
 
-        MAttribute mAttribute = new MAttribute(name, type);
+        MAttribute mAttribute = m.newAttribute(name, type);
         if(notNull) {
-            mAttribute.addNotNull(new MNotNull());
+            mAttribute.addNotNull(m.newNotNull());
         }
 
         return mAttribute;

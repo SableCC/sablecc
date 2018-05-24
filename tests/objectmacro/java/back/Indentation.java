@@ -34,23 +34,25 @@ public class Indentation {
 
     private static void composers(){
 
-        MFinalOutput mFinalOutput = new MFinalOutput();
+        Macros macros = new Macros();
 
-        MAuthor mAuthor = new MAuthor("Johann Sebastian Bach");
-        mAuthor.addDetails(new MDetail("BIRTH", "1685"));
-        mAuthor.addDetails(new MDetail("DEATH", "1750"));
+        MFinalOutput mFinalOutput = macros.newFinalOutput();
 
-        mFinalOutput.addAuthors(mAuthor);
-
-        mAuthor = new MAuthor("George Frideric Handel");
-        mAuthor.addDetails(new MDetail("BIRTH", "1685"));
-        mAuthor.addDetails(new MDetail("DEATH", "1759"));
+        MAuthor mAuthor = macros.newAuthor("Johann Sebastian Bach");
+        mAuthor.addDetails(macros.newDetail("BIRTH", "1685"));
+        mAuthor.addDetails(macros.newDetail("DEATH", "1750"));
 
         mFinalOutput.addAuthors(mAuthor);
 
-        mAuthor = new MAuthor("Wolfgang Amadeus Mozart");
-        mAuthor.addDetails(new MDetail("BIRTH", "1756"));
-        mAuthor.addDetails(new MDetail("DEATH", "1791"));
+        mAuthor = macros.newAuthor("George Frideric Handel");
+        mAuthor.addDetails(macros.newDetail("BIRTH", "1685"));
+        mAuthor.addDetails(macros.newDetail("DEATH", "1759"));
+
+        mFinalOutput.addAuthors(mAuthor);
+
+        mAuthor = macros.newAuthor("Wolfgang Amadeus Mozart");
+        mAuthor.addDetails(macros.newDetail("BIRTH", "1756"));
+        mAuthor.addDetails(macros.newDetail("DEATH", "1791"));
 
         mFinalOutput.addAuthors(mAuthor);
 
@@ -61,7 +63,9 @@ public class Indentation {
 
     private static void indent(){
 
-        MIndentA indentA = new MIndentA("B ");
+        Macros macros = new Macros();
+
+        MIndentA indentA = macros.newIndentA("B ");
         System.out.println(indentA.build());
     }
 }

@@ -2,266 +2,195 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class MSetParam extends
-        Macro {
-
+public class MSetParam extends Macro{
+    
     private String field_Name;
-
+    
     private final List<Macro> list_SetParam;
-
+    
     private DSeparator SetParamSeparator;
-
+    
     private DBeforeFirst SetParamBeforeFirst;
-
+    
     private DAfterLast SetParamAfterLast;
-
+    
     private DNone SetParamNone;
-
+    
     private final InternalValue SetParamValue;
-
+    
+    
     private final Context SetParamContext = new Context();
-
-    public MSetParam(
-            String pName) {
-
-        setPName(pName);
-
+    
+    
+    public MSetParam(String pName){
+    
+            this.setPName(pName);
         this.list_SetParam = new ArrayList<>();
-
-        this.SetParamValue
-                = new InternalValue(this.list_SetParam, this.SetParamContext);
-
+    
+        this.SetParamValue = new InternalValue(this.list_SetParam, this.SetParamContext);
     }
-
-    private void setPName(
-            String pName) {
-
-        if (pName == null) {
-
+    
+    
+    private void setPName( String pName ){
+        if(pName == null){
             throw ObjectMacroException.parameterNull("Name");
-
         }
-
+    
         this.field_Name = pName;
-
     }
-
-    public void addSetParam(
-            MParamArg macro) {
-
-        if (macro == null) {
-
+    
+    public void addSetParam(MParamArg macro){
+        if(macro == null){
             throw ObjectMacroException.parameterNull("SetParam");
-
         }
-
-        if (this.build_state != null) {
-
-            throw ObjectMacroException.cannotModify("ParamArg");
-
-        }
-
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("ParamArg");
+                }
+    
         this.list_SetParam.add(macro);
-
         this.children.add(macro);
-
         Macro.cycleDetector.detectCycle(this, macro);
-
     }
-
-    private String buildName() {
-
+    
+    
+    private String buildName(){
+    
         return this.field_Name;
-
     }
-
-    private String buildSetParam() {
-
+    
+    private String buildSetParam(){
         StringBuilder sb = new StringBuilder();
-
-        Context local_context = this.SetParamContext;
-
+        Context local_context = SetParamContext;
         List<Macro> macros = this.list_SetParam;
-
+    
         int i = 0;
-
         int nb_macros = macros.size();
-
         String expansion = null;
-
-        if (this.SetParamNone != null) {
-
+    
+        if(this.SetParamNone != null){
             sb.append(this.SetParamNone.apply(i, "", nb_macros));
-
         }
-
-        for (Macro macro : macros) {
-
+    
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
-
-            if (this.SetParamBeforeFirst != null) {
-
-                expansion = this.SetParamBeforeFirst.apply(i, expansion,
-                        nb_macros);
-
+    
+            if(this.SetParamBeforeFirst != null){
+                expansion = this.SetParamBeforeFirst.apply(i, expansion, nb_macros);
             }
-
-            if (this.SetParamAfterLast != null) {
-
-                expansion
-                        = this.SetParamAfterLast.apply(i, expansion, nb_macros);
-
+    
+            if(this.SetParamAfterLast != null){
+                expansion = this.SetParamAfterLast.apply(i, expansion, nb_macros);
             }
-
-            if (this.SetParamSeparator != null) {
-
-                expansion
-                        = this.SetParamSeparator.apply(i, expansion, nb_macros);
-
+    
+            if(this.SetParamSeparator != null){
+                expansion = this.SetParamSeparator.apply(i, expansion, nb_macros);
             }
-
+    
             sb.append(expansion);
-
             i++;
-
         }
-
+    
         return sb.toString();
-
     }
-
-    private String getName() {
-
+    
+    
+    private String getName(){
+    
         return this.field_Name;
-
     }
-
-    private InternalValue getSetParam() {
-
+    
+    private InternalValue getSetParam(){
         return this.SetParamValue;
-
     }
-
-    private void initSetParamInternals(
-            Context context) {
-
-        for (Macro macro : this.list_SetParam) {
-
-            macro.apply(new InternalsInitializer("SetParam") {
-
+    
+    private void initSetParamInternals(Context context){
+        for(Macro macro : this.list_SetParam){
+            macro.apply(new InternalsInitializer("SetParam"){
                 @Override
-
-                void setParamArg(
-                        MParamArg mParamArg) {
-
+                void setParamArg(MParamArg mParamArg){
+                
+                    
+                    
                 }
-
             });
-
         }
-
     }
-
-    private void initSetParamDirectives() {
-
+    
+    
+    private void initSetParamDirectives(){
+        
     }
-
+    
     @Override
-
-    void apply(
-
-            InternalsInitializer internalsInitializer) {
-
-        internalsInitializer.setSetParam(this);
-
-    }
-
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setSetParam(this);
+     }
+    
+    
     @Override
-
-    public String build() {
-
+    public String build(){
+    
         BuildState buildState = this.build_state;
-
-        if (buildState == null) {
-
+    
+        if(buildState == null){
             buildState = new BuildState();
-
         }
-
-        else if (buildState.getExpansion() == null) {
-
+        else if(buildState.getExpansion() == null){
             throw ObjectMacroException.cyclicReference("SetParam");
-
         }
-
-        else {
-
+        else{
             return buildState.getExpansion();
-
         }
-
         this.build_state = buildState;
-
         List<String> indentations = new LinkedList<>();
-
         StringBuilder sbIndentation = new StringBuilder();
-
+    
         initSetParamDirectives();
-
+        
         initSetParamInternals(null);
-
+    
         StringBuilder sb0 = new StringBuilder();
-
-        sb0.append("        this.setP");
-
+    
+        sb0.append("this.setP");
         sb0.append(buildName());
-
         sb0.append("(");
-
         sb0.append(buildSetParam());
-
         sb0.append(");");
-
+    
         buildState.setExpansion(sb0.toString());
-
         return sb0.toString();
-
     }
-
+    
+    
     @Override
-
-    String build(
-            Context context) {
-
-        return build();
-
+    String build(Context context) {
+     return build();
     }
-
     private String applyIndent(
-            String macro,
-            String indent) {
+                            String macro,
+                            String indent){
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
 
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
 
-                if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
                 }
             }
-        }
-        else {
-            sb.append(indent).append(macro);
-        }
+            else{
+                sb.append(indent).append(macro);
+            }
 
-        return sb.toString();
+            return sb.toString();
     }
 }

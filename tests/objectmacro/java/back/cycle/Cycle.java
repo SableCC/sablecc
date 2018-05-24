@@ -25,9 +25,11 @@ public class Cycle {
 
         System.out.print("---------- Cyclic Reference ----------\n");
 
-        MA ma = new MA();
-        MB mb = new MB();
-        MC mc = new MC();
+        Macros m = new Macros();
+
+        MA ma = m.newA();
+        MB mb = m.newB();
+        MC mc = m.newC();
 
         ma.addX(mb);
         mb.addY(mc);

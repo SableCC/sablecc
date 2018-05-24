@@ -55,19 +55,19 @@ public class DeclarationCollector extends
             throw CompilerException.bodyTokenMisused(node.getBody());
         }
 
-        Macro macro = this.globalIndex.newMacro(node);
-
-        List<PParam> params = node.getParams();
-        List<PInternal> internals = node.getInternals();
+        Macro newMacro = this.globalIndex.createMacro(node);
+        this.globalIndex.addAllVersionnedMacro(newMacro);
+        List<PParam> params = newMacro.getDeclaration().getParams();
+        List<PInternal> internals = newMacro.getDeclaration().getInternals();
 
         for (PParam param_production : params) {
             AParam param_node = (AParam) param_production;
-            macro.newParam(param_node);
+            newMacro.newParam(param_node);
         }
 
         for (PInternal param_production : internals) {
             AInternal param_node = (AInternal) param_production;
-            macro.newInternal(param_node);
+            newMacro.newInternal(param_node);
         }
 
         for (PMacroBodyPart pMacroBodyPart : node.getMacroBodyParts()) {

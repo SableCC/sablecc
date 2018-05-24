@@ -34,10 +34,13 @@ import org.sablecc.objectmacro.errormessage.MInternalError;
 import org.sablecc.objectmacro.errormessage.MLexicalError;
 import org.sablecc.objectmacro.errormessage.MSyntaxError;
 import org.sablecc.objectmacro.exception.CompilerException;
+import org.sablecc.objectmacro.structure.Macro;
+import org.sablecc.objectmacro.syntax3.lexer.LexerException;
+import org.sablecc.objectmacro.syntax3.parser.Parser;
+import org.sablecc.objectmacro.syntax3.parser.ParserException;
 import org.sablecc.objectmacro.intermediate.macro.MArgs;
 import org.sablecc.objectmacro.intermediate.macro.MDirective;
 import org.sablecc.objectmacro.intermediate.macro.MIndentPart;
-import org.sablecc.objectmacro.intermediate.macro.MInitializationOrder;
 import org.sablecc.objectmacro.intermediate.macro.MInternal;
 import org.sablecc.objectmacro.intermediate.macro.MMacro;
 import org.sablecc.objectmacro.intermediate.macro.MMacroInsert;
@@ -51,9 +54,7 @@ import org.sablecc.objectmacro.structure.Directive;
 import org.sablecc.objectmacro.structure.External;
 import org.sablecc.objectmacro.structure.GlobalIndex;
 import org.sablecc.objectmacro.structure.Internal;
-import org.sablecc.objectmacro.structure.Macro;
 import org.sablecc.objectmacro.structure.Param;
-import org.sablecc.objectmacro.syntax3.lexer.LexerException;
 import org.sablecc.objectmacro.syntax3.node.AEolMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.AEscapeMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.AEscapeStringPart;
@@ -76,16 +77,14 @@ import org.sablecc.objectmacro.syntax3.node.PStaticValue;
 import org.sablecc.objectmacro.syntax3.node.PStringPart;
 import org.sablecc.objectmacro.syntax3.node.Start;
 import org.sablecc.objectmacro.syntax3.node.TVariable;
-import org.sablecc.objectmacro.syntax3.parser.Parser;
-import org.sablecc.objectmacro.syntax3.parser.ParserException;
 import org.sablecc.objectmacro.util.Utils;
+import org.sablecc.util.Strictness;
+import org.sablecc.util.Verbosity;
 import org.sablecc.objectmacro.walker.DeclarationCollector;
 import org.sablecc.objectmacro.walker.DirectiveCollector;
 import org.sablecc.objectmacro.walker.MacroReferenceCollector;
 import org.sablecc.objectmacro.walker.ParamReferenceCollector;
 import org.sablecc.objectmacro.walker.VarVerifier;
-import org.sablecc.util.Strictness;
-import org.sablecc.util.Verbosity;
 
 /**
  * The main class of ObjectMacro.
@@ -94,7 +93,11 @@ public class ObjectMacro {
 
     private static GlobalIndex globalIndex = null;
 
+    private static Macro macro = null;
+
     private static String DEFAULT_TABULATION = "    ";
+
+    private static final Map<String, Integer> indexes_concrete_class = new HashMap<>();
 
     /** Prevents instantiation of this class. */
     private ObjectMacro() {
@@ -346,30 +349,46 @@ public class ObjectMacro {
         }
 
         GlobalIndex globalIndex = new GlobalIndex();
+        ast.apply(new VersionCollector(globalIndex));
 
-        ast.apply(new DeclarationCollector(globalIndex));
-        ast.apply(new MacroReferenceCollector(globalIndex));
-        ast.apply(new ParamReferenceCollector(globalIndex));
-        ast.apply(new DirectiveCollector(globalIndex));
-        ast.apply(new VarVerifier(globalIndex));
+        if(globalIndex.hasVersions()){
+            ast.apply(new VersionnedDeclarationCollector(globalIndex));
+            for(MacroVersion version : globalIndex.getAllVersions()){
+                ast.apply(new MacroReferenceCollector(globalIndex, version));
+                ast.apply(new ParamReferenceCollector(globalIndex, version));
+                ast.apply(new DirectiveCollector(globalIndex, version));
+                ast.apply(new VarVerifier(globalIndex, version));
+            }
+        }
+        else{
+            ast.apply(new DeclarationCollector(globalIndex));
+            ast.apply(new MacroReferenceCollector(globalIndex, null));
+            ast.apply(new ParamReferenceCollector(globalIndex, null));
+            ast.apply(new DirectiveCollector(globalIndex, null));
+            ast.apply(new VarVerifier(globalIndex, null));
+        }
+
+
+        ast.apply(new IntermediateObjectCollector(globalIndex));
 
         for (Macro macro : globalIndex.getAllMacros()) {
             macro.detectParamsCyclicReference();
         }
 
-        if (strictness == Strictness.STRICT) {
-            for (Macro macro : globalIndex.getAllMacros()) {
-                Set<Param> allParamsInternals = new LinkedHashSet<>();
-                allParamsInternals.addAll(macro.getAllInternals());
-                allParamsInternals.addAll(macro.getAllParams());
 
-                for (Param param : allParamsInternals) {
-                    if (!param.isUsed()) {
-                        throw CompilerException.unusedParam(param);
-                    }
-                }
-            }
-        }
+//        if(strictness == Strictness.STRICT){
+//            for (Macro macro : globalIndex.getAllMacros()) {
+//                Set<Param> allParamsInternals = new LinkedHashSet<>();
+//                allParamsInternals.addAll(macro.getAllInternals());
+//                allParamsInternals.addAll(macro.getAllParams());
+//
+//                for (Param param : allParamsInternals) {
+//                    if (!param.isUsed()) {
+//                        throw CompilerException.unusedParam(param);
+//                    }
+//                }
+//            }
+//        }
 
         return globalIndex;
     }
@@ -385,12 +404,29 @@ public class ObjectMacro {
             break;
         }
 
-        StringBuilder macros_string = new StringBuilder();
+        MIntermediateRepresentation mIntermediateRepresentation = new MIntermediateRepresentation();
+        Set<String> generated_abstract_macros = new HashSet<>();
 
-        for (Macro macro : ObjectMacro.globalIndex.getAllMacros()) {
-            MMacro macro_macro = ObjectMacro.createMacro(macro);
-            macros_string.append(macro_macro.toString());
-            macros_string.append(System.getProperty("line.separator"));
+        MVersions mVersions = new MVersions();
+
+        if(globalIndex.getAllVersions().size() > 0){
+            mIntermediateRepresentation.addVersionDefinition(mVersions);
+
+            for(MacroVersion version : globalIndex.getAllVersions()){
+                mVersions.addVersions(new MSimpleName(version.getName().getText()));
+            }
+        }
+
+        for (Macro l_macro : globalIndex.getAllMacros()) {
+            macro = l_macro;
+            if((!globalIndex.isAllVersionned(l_macro.getName()))
+                    && !generated_abstract_macros.contains(l_macro.getName())){
+
+                mIntermediateRepresentation.addMacros(createAbstractMacro(l_macro));
+                generated_abstract_macros.add(l_macro.getName());
+            }
+
+            mIntermediateRepresentation.addMacros(createMacro(l_macro));
         }
 
         String macroFileName = macroFile.getName();
@@ -399,12 +435,12 @@ public class ObjectMacro {
         String name = macroFile.getName().substring(0,
                 length - ".objectmacro".length());
 
-        File destination
-                = new File(destinationDirectory, name.concat(".intermediate"));
+        File destination = new File(destinationDirectory,
+                name.concat(".intermediate"));
 
         try {
             FileWriter fw = new FileWriter(destination);
-            fw.write(macros_string.toString());
+            fw.write(mIntermediateRepresentation.build());
             fw.close();
         }
         catch (IOException e) {
@@ -412,41 +448,144 @@ public class ObjectMacro {
         }
     }
 
+    private static Integer getIndexConcreteClass(
+            String concrete_class_name){
+
+        if(indexes_concrete_class.containsKey(concrete_class_name)){
+            Integer index_concrete_class = indexes_concrete_class.get(concrete_class_name);
+            indexes_concrete_class.put(concrete_class_name, index_concrete_class + 1);
+            return index_concrete_class + 1;
+        }
+        else {
+            indexes_concrete_class.put(concrete_class_name, 1);
+            return 1;
+        }
+    }
+
+    private static MName buildName(TIdentifier identifier){
+        MName name = new MName();
+        String splittedMacroName[] = Utils.splitName(identifier);
+        for(String part : splittedMacroName){
+            MSimpleName simpleName = new MSimpleName(part);
+            name.addValue(simpleName);
+        }
+
+        return name;
+    }
+
+    private static MMacro createAbstractMacro(
+            Macro macro){
+
+        MMacro mMacro = new MMacro();
+        mMacro.addIsAbstract(new MIsAbstract());
+        mMacro.addMacroName(buildName(macro.getNameDeclaration()));
+        Set<External> macro_params = macro.getAllParams();
+
+        for(External param : macro_params){
+            mMacro.addParameters(createParam(param));
+        }
+
+        return mMacro;
+    }
+
     private static MMacro createMacro(
             Macro macro) {
 
         MMacro mMacro = new MMacro();
-        String splittedMacroName[]
-                = Utils.splitName(macro.getNameDeclaration());
-        for (String part : splittedMacroName) {
-            mMacro.newSimpleName(part);
+        MName mMacroName;
+        Integer index_concrete_class = getIndexConcreteClass(macro.getName());
+        MVersions mVersions = new MVersions();
+
+        if(globalIndex.isAllVersionned(macro.getName())) {
+            mMacroName = buildName(macro.getNameDeclaration());
+            mMacro.addIsAllVersionned(new MIsAllVersionned());
         }
+        else {
+            mMacroName = buildName(new TIdentifier(macro.getName().concat(index_concrete_class.toString())));
+            MParentName mParentName = new MParentName();
+            mParentName.addParent(buildName(macro.getNameDeclaration()));
+            mMacro.addParentName(mParentName);
+        }
+
+        mMacro.addMacroName(mMacroName);
 
         Set<Internal> macro_internals = macro.getAllInternals();
         Set<External> macro_params = macro.getAllParams();
+        Set<MacroVersion> versions = macro.getVersions();
 
-        List<PMacroBodyPart> macroBodyParts
-                = macro.getDeclaration().getMacroBodyParts();
-        ObjectMacro.createMacroBody(mMacro, macroBodyParts);
+        List<PMacroBodyPart> macroBodyParts = macro.getDeclaration().getMacroBodyParts();
 
-        for (External param : macro_params) {
-            ObjectMacro.createParam(mMacro.newParam(), param);
+        createMacroBody(mMacro, macroBodyParts);
+
+        for(External param : macro_params){
+            mMacro.addParameters(createParam(param));
         }
 
-        for (Internal internal : macro_internals) {
-            ObjectMacro.createInternal(mMacro.newInternal(), internal);
+        for(Internal internal : macro_internals){
+            mMacro.addInternals(createInternal(internal));
         }
 
-        MInitializationOrder mInitializationOrder
-                = mMacro.newInitializationOrder();
+        if(versions.size() > 0
+                && !globalIndex.isAllVersionned(macro.getName())){
 
-        for (Param param : macro.getComponentFinder().getLinearization()) {
-            if (!param.isString()) {
-                mInitializationOrder.newSimpleName(param.getName());
+            mMacro.addVersions(mVersions);
+            for(MacroVersion version : versions){
+                mVersions.addVersions(new MSimpleName(version.getName().getText()));
             }
         }
 
         return mMacro;
+    }
+
+    private static MParam createParam(
+            External param){
+
+        MParam macro_param = new MParam();
+        macro_param.addParamName(buildName(param.getNameDeclaration()));
+
+        if(param.isString()){
+            macro_param.addType(new MStringType());
+        }
+        else{
+            MMacroType macro_param_type = new MMacroType();
+            Set<AMacroReference> macroReferences = param.getMacroReferences();
+
+            for(AMacroReference l_macroRef : macroReferences){
+                macro_param_type.addReferences(createMacroReference(l_macroRef));
+            }
+
+            macro_param.addType(macro_param_type);
+        }
+
+        Set<Directive> directives = param.getAllDirectives();
+        for(Directive l_directive : directives){
+            macro_param.addDirectives(createDirective(l_directive));
+        }
+
+        return macro_param;
+    }
+
+    private static MInternal createInternal(
+            Internal internal){
+
+        MInternal macro_internal = new MInternal();
+        macro_internal.addInternalName(buildName(internal.getNameDeclaration()));
+
+        if(internal.isString()){
+            macro_internal.addType(new MStringType());
+        }
+        else{
+            MMacroType macro_param_type = new MMacroType();
+            Set<AMacroReference> macroReferences = internal.getMacroReferences();
+
+            for(AMacroReference l_macroRef : macroReferences){
+                macro_param_type.addReferences(createMacroReference(l_macroRef));
+            }
+
+            macro_internal.addType(macro_param_type);
+        }
+
+        return macro_internal;
     }
 
     private static void createMacroBody(
@@ -455,139 +594,68 @@ public class ObjectMacro {
 
         for (PMacroBodyPart bodyPart : macroBodyParts) {
             if (bodyPart instanceof AEscapeMacroBodyPart) {
-                AEscapeMacroBodyPart escapeMacroBodyPart
-                        = (AEscapeMacroBodyPart) bodyPart;
+                AEscapeMacroBodyPart escapeMacroBodyPart = (AEscapeMacroBodyPart) bodyPart;
 
-                if (escapeMacroBodyPart.getTextEscape().getText()
-                        .equals("{{")) {
-                    mMacro.newStringPart("{");
+                if(escapeMacroBodyPart.getTextEscape().getText().equals("{{")){
+                    mMacro.addBody(new MStringPart("{"));
                 }
                 else {
                     throw new InternalException("case unhandled");
                 }
             }
-            else if (bodyPart instanceof ATextMacroBodyPart) {
+            else if (bodyPart instanceof ATextMacroBodyPart){
                 ATextMacroBodyPart textBodyPart = (ATextMacroBodyPart) bodyPart;
 
-                String macroTextPart = textBodyPart.getTextPart().getText()
-                        .replaceAll("'", "\\\\'");
-                mMacro.newStringPart(macroTextPart);
+                String macroTextPart = textBodyPart.getTextPart().getText().replaceAll("'","\\\\'");
+                mMacro.addBody(new MStringPart(macroTextPart));
             }
-            else if (bodyPart instanceof AInsertMacroBodyPart) {
-                AInsertMacroBodyPart insertPart
-                        = (AInsertMacroBodyPart) bodyPart;
+            else if (bodyPart instanceof AInsertMacroBodyPart){
+                AInsertMacroBodyPart insertPart = (AInsertMacroBodyPart) bodyPart;
+                AMacroReference macroReference = (AMacroReference) insertPart.getMacroReference();
+                MMacroInsert macroInsert = new MMacroInsert();
 
-                AMacroReference macroReference
-                        = (AMacroReference) insertPart.getMacroReference();
-                MMacroInsert macroInsert = mMacro.newMacroInsert();
-                MMacroRef mMacroRef = macroInsert.newMacroRef();
-
-                String macroRefName[]
-                        = Utils.splitName(macroReference.getName());
-                for (String part : macroRefName) {
-                    mMacroRef.newSimpleName(part);
-                }
-
-                if (macroReference.getValues().size() > 0) {
-                    ObjectMacro.createArgs(mMacroRef.newArgs(), macroReference);
-                }
-
+                macroInsert.addReferencedMacro(createMacroReference(macroReference));
+                mMacro.addBody(macroInsert);
             }
-            else if (bodyPart instanceof AVarMacroBodyPart) {
-                AVarMacroBodyPart aVarMacroBodyPart
-                        = (AVarMacroBodyPart) bodyPart;
+            else if (bodyPart instanceof AVarMacroBodyPart){
+                AVarMacroBodyPart aVarMacroBodyPart = (AVarMacroBodyPart) bodyPart;
+                String varNames[] = Utils.getVarName(aVarMacroBodyPart.getVariable()).split(Utils.NAME_SEPARATOR);
+                MName mName = new MName();
 
-                String varNames[]
-                        = Utils.getVarName(aVarMacroBodyPart.getVariable())
-                                .split(Utils.NAME_SEPARATOR);
-                MParamInsert mParamInsert = mMacro.newParamInsert();
-
-                for (String part : varNames) {
-                    mParamInsert.newSimpleName(part);
+                for(String part : varNames){
+                    mName.addValue(new MSimpleName(part));
                 }
+
+                MParamInsert mParamInsert = new MParamInsert();
+                mParamInsert.addReferencedParam(mName);
+
+                mMacro.addBody(mParamInsert);
             }
-            else if (bodyPart instanceof AEolMacroBodyPart) {
-                mMacro.newEolPart();
+            else if (bodyPart instanceof AEolMacroBodyPart){
+                mMacro.addBody(new MEolPart());
             }
-            else if (bodyPart instanceof AIndentMacroBodyPart) {
-                AIndentMacroBodyPart indentPart
-                        = (AIndentMacroBodyPart) bodyPart;
-                ObjectMacro.createIndentTextParts(mMacro.newIndentPart(),
-                        indentPart.getStringPart());
-                ObjectMacro.createMacroBody(mMacro,
-                        indentPart.getMacroBodyPart());
-                mMacro.newEndIndentPart();
-            }
-//            else if(bodyPart instanceof AEndIndentMacroBodyPart){
-//                mMacro.newEndIndentPart();
-//            }
-            else {
-                throw new InternalException("case unhandled");
-            }
-        }
-    }
+            else if (bodyPart instanceof AIndentMacroBodyPart){
+                AIndentMacroBodyPart indentPart = (AIndentMacroBodyPart) bodyPart;
+                MIndentPart mIndentPart = new MIndentPart();
+                mMacro.addBody(mIndentPart);
+                List<org.sablecc.objectmacro.intermediate.macro.Macro> text_parts = createTextParts(indentPart.getStringPart());
 
-    private static void createTextParts(
-            MTextArgument mTextArgument,
-            List<PStringPart> stringParts) {
-
-        for (PStringPart stringPart : stringParts) {
-            if (stringPart instanceof ATextStringPart) {
-                ATextStringPart textPart = (ATextStringPart) stringPart;
-
-                String text
-                        = textPart.getText().getText().replaceAll("'", "\\\\'");
-                mTextArgument.newStringPart(text);
-            }
-            else if (stringPart instanceof AInsertStringPart) {
-                AMacroReference macro_node
-                        = (AMacroReference) ((AInsertStringPart) stringPart)
-                                .getMacro();
-
-                MMacroRef macro_ref
-                        = mTextArgument.newMacroInsert().newMacroRef();
-
-                String macroRefName[] = Utils.splitName(macro_node.getName());
-                for (String part : macroRefName) {
-                    macro_ref.newSimpleName(part);
+                for(org.sablecc.objectmacro.intermediate.macro.Macro macro : text_parts){
+                    if(macro instanceof MStringPart){
+                        mIndentPart.addIndentationText((MStringPart) macro);
+                    }
+                    else if(macro instanceof MEolPart){
+                        mIndentPart.addIndentationText((MEolPart) macro);
+                    }
+                    else if(macro instanceof MMacroInsert){
+                        mIndentPart.addIndentationText((MMacroInsert) macro);
+                    }
+                    else if(macro instanceof MParamInsert){
+                        mIndentPart.addIndentationText((MParamInsert) macro);
+                    }
                 }
-
-                if (macro_node.getValues().size() > 0) {
-                    ObjectMacro.createArgs(macro_ref.newArgs(), macro_node);
-                }
-            }
-            else if (stringPart instanceof AVarStringPart) {
-                TVariable var_token
-                        = ((AVarStringPart) stringPart).getVariable();
-                MParamInsert mParamInsert = mTextArgument.newParamInsert();
-
-                String splittedVarName[] = Utils.getVarName(var_token)
-                        .split(Utils.NAME_SEPARATOR);
-                for (String part : splittedVarName) {
-                    mParamInsert.newSimpleName(part);
-                }
-            }
-            else if (stringPart instanceof AEscapeStringPart) {
-                AEscapeStringPart escapeStringPart
-                        = (AEscapeStringPart) stringPart;
-
-                String text = escapeStringPart.getStringEscape().getText();
-                if (text.equals("\\\\")) {
-                    mTextArgument.newStringPart("\\");
-                }
-                else if (text.equals("\\n")) {
-                    mTextArgument.newEolPart();
-                }
-                else if (text.equals("\\t")) {
-                    mTextArgument.newStringPart(ObjectMacro.DEFAULT_TABULATION);
-                }
-                else if (text.startsWith("\\")) {
-                    mTextArgument
-                            .newStringPart(text.substring(text.length() - 1));
-                }
-                else {
-                    throw new InternalException("case unhandled");
-                }
+                createMacroBody(mMacro, indentPart.getMacroBodyPart());
+                mMacro.addBody(new MEndIndentPart());
             }
             else {
                 throw new InternalException("case unhandled");
@@ -595,124 +663,54 @@ public class ObjectMacro {
         }
     }
 
-    private static void createIndentTextParts(
-            MIndentPart mIndentPart,
-            List<PStringPart> stringParts) {
+    private static List<org.sablecc.objectmacro.intermediate.macro.Macro> createTextParts(
+            List<PStringPart> stringParts){
 
-        for (PStringPart stringPart : stringParts) {
-            if (stringPart instanceof ATextStringPart) {
-                ATextStringPart textPart = (ATextStringPart) stringPart;
+        List<org.sablecc.objectmacro.intermediate.macro.Macro> macro_string_parts = new LinkedList<>();
 
-                String text
-                        = textPart.getText().getText().replaceAll("'", "\\\\'");
-                mIndentPart.newStringPart(text);
-            }
-            else if (stringPart instanceof AInsertStringPart) {
-                AMacroReference macro_node
-                        = (AMacroReference) ((AInsertStringPart) stringPart)
-                                .getMacro();
-
-                MMacroRef macro_ref
-                        = mIndentPart.newMacroInsert().newMacroRef();
-
-                String macroRefName[] = Utils.splitName(macro_node.getName());
-                for (String part : macroRefName) {
-                    macro_ref.newSimpleName(part);
-                }
-
-                if (macro_node.getValues().size() > 0) {
-                    ObjectMacro.createArgs(macro_ref.newArgs(), macro_node);
-                }
-            }
-            else if (stringPart instanceof AVarStringPart) {
-                TVariable var_token
-                        = ((AVarStringPart) stringPart).getVariable();
-                MParamInsert mParamInsert = mIndentPart.newParamInsert();
-
-                String splittedVarName[] = Utils.getVarName(var_token)
-                        .split(Utils.NAME_SEPARATOR);
-                for (String part : splittedVarName) {
-                    mParamInsert.newSimpleName(part);
-                }
-            }
-            else if (stringPart instanceof AEscapeStringPart) {
-                AEscapeStringPart escapeStringPart
-                        = (AEscapeStringPart) stringPart;
-
-                String text = escapeStringPart.getStringEscape().getText();
-                if (text.equals("\\\\")) {
-                    mIndentPart.newStringPart("\\");
-                }
-                else if (text.equals("\\n")) {
-                    mIndentPart.newEolPart();
-                }
-                else if (text.equals("\\t")) {
-                    mIndentPart.newStringPart(ObjectMacro.DEFAULT_TABULATION);
-                }
-                else if (text.startsWith("\\")) {
-                    mIndentPart
-                            .newStringPart(text.substring(text.length() - 1));
-                }
-                else {
-                    throw new InternalException("case unhandled");
-                }
-            }
-            else {
-                throw new InternalException("case unhandled");
-            }
-        }
-    }
-
-    private static void createDirectiveParts(
-            MDirective mDirective,
-            List<PStringPart> stringParts) {
-
-        for (PStringPart stringPart : stringParts) {
-            if (stringPart instanceof ATextStringPart) {
-                String stringPartText
-                        = ((ATextStringPart) stringPart).getText().getText();
+        for(PStringPart stringPart : stringParts){
+            if(stringPart instanceof ATextStringPart){
+                String stringPartText = ((ATextStringPart) stringPart).getText().getText();
 
                 stringPartText = stringPartText.replaceAll("'", "\\\\'");
-                mDirective.newStringPart(stringPartText);
+                macro_string_parts.add(new MStringPart(stringPartText));
             }
-            else if (stringPart instanceof AInsertStringPart) {
-                AMacroReference macro_node
-                        = (AMacroReference) ((AInsertStringPart) stringPart)
-                                .getMacro();
-
-                MMacroRef macro_ref = mDirective.newMacroInsert().newMacroRef();
-
-                String macroRefName[] = Utils.splitName(macro_node.getName());
-                for (String part : macroRefName) {
-                    macro_ref.newSimpleName(part);
-                }
-
-                if (macro_node.getValues().size() > 0) {
-                    ObjectMacro.createArgs(macro_ref.newArgs(), macro_node);
-                }
+            else if(stringPart instanceof AInsertStringPart){
+                AMacroReference macro_node = (AMacroReference) ((AInsertStringPart) stringPart).getMacro();
+                MMacroInsert mMacroInsert = new MMacroInsert();
+                mMacroInsert.addReferencedMacro(createMacroReference(macro_node));
+                macro_string_parts.add(mMacroInsert);
             }
             else if (stringPart instanceof AVarStringPart) {
-                TVariable tVariable
-                        = ((AVarStringPart) stringPart).getVariable();
+                TVariable tVariable = ((AVarStringPart) stringPart)
+                        .getVariable();
 
-                MParamInsert mParamInsert = mDirective.newParamInsert();
-                String splittedVarName[] = Utils.getVarName(tVariable)
-                        .split(Utils.NAME_SEPARATOR);
+                MParamInsert mParamInsert = new MParamInsert();
+                String splittedVarName[] = Utils.getVarName(tVariable).split(Utils.NAME_SEPARATOR);
+                MName name = new MName();
+                mParamInsert.addReferencedParam(name);
 
-                for (String part : splittedVarName) {
-                    mParamInsert.newSimpleName(part);
+                for(String part : splittedVarName){
+                    name.addValue(new MSimpleName(part));
                 }
+
+                macro_string_parts.add(mParamInsert);
             }
             else if (stringPart instanceof AEscapeStringPart) {
-                AEscapeStringPart escapeStringPart
-                        = (AEscapeStringPart) stringPart;
+                AEscapeStringPart escapeStringPart = (AEscapeStringPart) stringPart;
                 String text = escapeStringPart.getStringEscape().getText();
 
-                if (text.equals("\\\\")) {
-                    mDirective.newStringPart("\\");
+                if(text.equals("\\\\")){
+                    macro_string_parts.add(new MStringPart("\\"));
                 }
-                else if (text.equals("\\n")) {
-                    mDirective.newEolPart();
+                else if(text.equals("\\n")){
+                    macro_string_parts.add(new MEolPart());
+                }
+                else if(text.equals("\\t")){
+                    macro_string_parts.add(new MStringPart(DEFAULT_TABULATION));
+                }
+                else if(text.startsWith("\\")){
+                    macro_string_parts.add(new MStringPart(text.substring(text.length() - 1)));
                 }
                 else {
                     throw new InternalException("case unhandled");
@@ -722,118 +720,118 @@ public class ObjectMacro {
                 throw new InternalException("case unhandled");
             }
         }
+
+        return macro_string_parts;
     }
 
-    private static void createParam(
-            MParam macro_param,
-            External param) {
+    private static MArgs createArgs(
+            AMacroReference node){
 
-        String paramNames[] = Utils.splitName(param.getNameDeclaration());
-        for (String part : paramNames) {
-            macro_param.newSimpleName(part);
+        MArgs mArgs = new MArgs();
+        Macro macroReferenced;
+
+        if(globalIndex.hasVersions()){
+            macroReferenced = getMacro(node.getName());
+        }
+        else{
+            macroReferenced = globalIndex.getMacro(node.getName(), null);
         }
 
-        if (param.getDeclaration().getType() instanceof AStringType) {
-            macro_param.newStringType();
-        }
-        else if (param.getDeclaration().getType() instanceof AMacrosType) {
-            MMacroType macro_param_type = macro_param.newMacroType();
-
-            Set<AMacroReference> macroReferences = param.getMacroReferences();
-
-            for (AMacroReference l_macroRef : macroReferences) {
-                MMacroRef macroRef = macro_param_type.newMacroRef();
-
-                String splittedMacroName[]
-                        = Utils.splitName(l_macroRef.getName());
-                for (String part : splittedMacroName) {
-                    macroRef.newSimpleName(part);
-                }
-
-                if (l_macroRef.getValues().size() > 0) {
-                    ObjectMacro.createArgs(macroRef.newArgs(), l_macroRef);
-                }
-            }
-        }
-
-        Set<Directive> directives = param.getAllDirectives();
-        for (Directive l_directive : directives) {
-            MDirective mDirective = macro_param.newDirective();
-
-            String splittedDirectiveName[]
-                    = Utils.splitName(l_directive.getDeclaration().getName());
-            for (String part : splittedDirectiveName) {
-                mDirective.newSimpleName(part);
-            }
-
-            ObjectMacro.createDirectiveParts(mDirective,
-                    l_directive.getDeclaration().getParts());
-        }
-    }
-
-    private static void createInternal(
-            MInternal macro_internal,
-            Internal param) {
-
-        String paramNames[] = Utils.splitName(param.getNameDeclaration());
-        for (String part : paramNames) {
-            macro_internal.newSimpleName(part);
-        }
-
-        if (param.getDeclaration().getType() instanceof AStringInternalType) {
-            macro_internal.newStringType();
-        }
-        else if (param.getDeclaration()
-                .getType() instanceof AIdentifiersInternalType) {
-            MMacroType macro_param_type = macro_internal.newMacroType();
-
-            Set<AMacroReference> macroReferences = param.getMacroReferences();
-
-            for (AMacroReference l_macroRef : macroReferences) {
-                MMacroRef macroRef = macro_param_type.newMacroRef();
-
-                String splittedMacroName[]
-                        = Utils.splitName(l_macroRef.getName());
-                for (String part : splittedMacroName) {
-                    macroRef.newSimpleName(part);
-                }
-            }
-        }
-    }
-
-    private static void createArgs(
-            MArgs macro_args,
-            AMacroReference aMacroReference) {
-
-        Macro macroReferenced
-                = ObjectMacro.globalIndex.getMacro(aMacroReference.getName());
         List<String> paramNames = macroReferenced.getInternalsName();
-        List<PStaticValue> arguments = aMacroReference.getValues();
+        List<PStaticValue> arguments = node.getValues();
         int i = 0;
 
         for (PStaticValue argument : arguments) {
             if (argument instanceof AStringStaticValue) {
                 AStringStaticValue stringValue = (AStringStaticValue) argument;
 
-                MTextArgument textArgument = macro_args.newTextArgument();
-                textArgument.newParamName(paramNames.get(i));
+                MTextArgument textArgument = new MTextArgument(paramNames.get(i));
 
-                ObjectMacro.createTextParts(textArgument,
-                        stringValue.getParts());
+                List<org.sablecc.objectmacro.intermediate.macro.Macro> text_parts = createTextParts(stringValue.getParts());
+
+                for(org.sablecc.objectmacro.intermediate.macro.Macro macro : text_parts){
+                    if(macro instanceof MStringPart){
+                        textArgument.addTextParts((MStringPart) macro);
+                    }
+                    else if(macro instanceof MEolPart){
+                        textArgument.addTextParts((MEolPart) macro);
+                    }
+                    else if(macro instanceof MMacroInsert){
+                        textArgument.addTextParts((MMacroInsert) macro);
+                    }
+                    else if(macro instanceof MParamInsert){
+                        textArgument.addTextParts((MParamInsert) macro);
+                    }
+                }
+
+                mArgs.addArguments(textArgument);
             }
             else if (argument instanceof AVarStaticValue) {
                 AVarStaticValue varValue = (AVarStaticValue) argument;
 
-                MVarArgument varArgument = macro_args.newVarArgument();
-                varArgument.newParamName(paramNames.get(i));
-
-                String macroRefName[]
-                        = Utils.splitName(varValue.getIdentifier());
-                for (String part : macroRefName) {
-                    varArgument.newSimpleName(part);
-                }
+                MVarArgument varArgument = new MVarArgument(paramNames.get(i));
+                varArgument.addReferencedParam(buildName(varValue.getIdentifier()));
+                mArgs.addArguments(varArgument);
             }
             i++;
         }
+
+        return mArgs;
+    }
+
+    private static MMacroRef createMacroReference(
+            AMacroReference node){
+
+        MMacroRef macroRef = new MMacroRef();
+        macroRef.addReferencedMacroName(buildName(node.getName()));
+
+        if(node.getValues().size() > 0){
+            macroRef.addArguments(createArgs(node));
+        }
+
+        return macroRef;
+    }
+
+    private static MDirective createDirective(
+            Directive directive){
+
+        MDirective mDirective = new MDirective();
+
+        mDirective.addDirectiveName(buildName(directive.getDeclaration().getName()));
+
+        List<org.sablecc.objectmacro.intermediate.macro.Macro> text_parts = createTextParts(directive.getDeclaration().getParts());
+
+        for(org.sablecc.objectmacro.intermediate.macro.Macro macro : text_parts){
+            if(macro instanceof MStringPart){
+                mDirective.addDirectiveTextParts((MStringPart) macro);
+            }
+            else if(macro instanceof MEolPart){
+                mDirective.addDirectiveTextParts((MEolPart) macro);
+            }
+            else if(macro instanceof MMacroInsert){
+                mDirective.addDirectiveTextParts((MMacroInsert) macro);
+            }
+            else if(macro instanceof MParamInsert){
+                mDirective.addDirectiveTextParts((MParamInsert) macro);
+            }
+        }
+        return mDirective;
+    }
+
+    private static Macro getMacro(
+            TIdentifier name){
+
+        Iterator<MacroVersion> versionIterator = macro.getVersions().iterator();
+        Macro toReturn = null;
+        while(versionIterator.hasNext()){
+            MacroVersion macroVersion = versionIterator.next();
+            toReturn = macroVersion.getMacroOrNull(name);
+            if(toReturn != null
+                    && toReturn.getAllInternals().size() > 0){
+                break;
+            }
+        }
+
+        return toReturn;
     }
 }

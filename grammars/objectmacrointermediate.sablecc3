@@ -38,9 +38,12 @@ Tokens
     macro_insert_kw = 'MacroInsert';
     var_kw = 'Var';
     macro_body_kw = 'MacroBody';
-    initialization_kw = 'Initialization Order';
     indent_kw = 'Indent';
     end_indent_kw = 'EndIndent';
+    abstract_kw = 'Abstract';
+    version_kw = 'Version';
+    parent_kw = 'Parent';
+    all_versionned_kw = 'AllVersionned';
 
     l_brace = '{';
     r_brace = '}';
@@ -48,7 +51,6 @@ Tokens
     blank = (' ' | 13 | 10)+;
     string_kw = 'String';
     string = ''' (string_char | '\' ''' | '\\')* ''';
-    semicolon = ';';
     comma = ',';
 
 Ignored Tokens
@@ -58,13 +60,35 @@ Productions
 
     intermediate_representation
         =
-            [macros]:macro*
+            version? [macros]:macro*
+                {-> New intermediate_representation([version.versions], [macros])}
         ;
 
     macro
         =
-            macro_kw l_brace name [params]:param* [internals]:internal* initialization_order macro_body r_brace
-                {-> New macro([name.names], [params], [internals], [initialization_order.names], [macro_body.macro_parts])};
+            macro_kw l_brace abstract_kw? all_versionned_kw? parent_name? name [params]:param* [internals]:internal* macro_body? [versions]:version? r_brace
+                {-> New macro(abstract_kw, all_versionned_kw, [parent_name.parent], [name.names], [params], [internals], [macro_body.macro_parts], [versions.versions])};
+
+    version
+            {-> [versions]:string*}
+        =
+            version_kw l_brace [versions]:version_names r_brace
+                {-> [versions.versions]}
+        ;
+
+    version_names
+            {-> [versions]:string*}
+        =
+            string additional_version_name*
+                {-> [string, additional_version_name.version]}
+        ;
+
+    additional_version_name
+            {-> [version]:string}
+        =
+            comma string
+                {-> string}
+        ;
 
     macro_body
             {-> [macro_parts]:macro_part*}
@@ -80,13 +104,6 @@ Productions
         =
             internal_kw l_brace name type directives? r_brace
                 {-> New internal([name.names], type, [directives.directives])}
-        ;
-
-    initialization_order
-            {-> [names]:string*}
-        =
-            initialization_kw l_brace [names]:string* r_brace
-                {-> [names]}
         ;
 
 
@@ -161,6 +178,13 @@ Productions
             param_name_kw l_brace name r_brace
                 {-> [name.names]};
 
+    parent_name
+            {-> [parent]:string*}
+        =
+            parent_kw l_brace name r_brace
+                {-> [name.names]}
+        ;
+
     name
             {-> [names]:string*}
         =
@@ -188,22 +212,22 @@ Productions
     macro_part
             {-> macro_part }
         =
-            {string} string semicolon
+            {string} string
                 {-> New macro_part.string(string)}
         |
-            {eol} eol_kw semicolon
+            {eol} eol_kw
                 {-> New macro_part.eol()}
         |
-            {var} param_insert semicolon
+            {var} param_insert
                 {-> New macro_part.var([param_insert.names])}
         |
-            {insert} macro_insert semicolon
+            {insert} macro_insert
                 {-> New macro_part.insert(macro_insert.macro_ref)}
         |
-            {indent}  indent semicolon
+            {indent}  indent
                 {-> New macro_part.indent([indent.value])}
         |
-            {end_indent} end_indent_kw semicolon
+            {end_indent} end_indent_kw
                 {-> New macro_part.end_indent(end_indent_kw)}
         ;
 
@@ -224,16 +248,16 @@ Productions
     text_part
             {-> text_part }
         =
-            {string} string semicolon
+            {string} string
                 {-> New text_part.string(string)}
         |
-            {var} param_insert semicolon
+            {var} param_insert
                 {-> New text_part.var([param_insert.names])}
         |
-            {insert} macro_insert semicolon
+            {insert} macro_insert
                 {-> New text_part.insert(macro_insert.macro_ref)}
         |
-            {eol} eol_kw semicolon
+            {eol} eol_kw
                 {-> New text_part.eol()}
         ;
 
@@ -248,11 +272,10 @@ Abstract Syntax Tree
 
     intermediate_representation
         =
-            [macros]:macro*
-        ;
+            [versions]:string* [macros]:macro*;
 
     macro =
-        [names]:string* [params]:param* [internals]:internal* [init_order]:string* [macro_parts]:macro_part*;
+        [is_abstract]:abstract_kw? [is_all_versionned]:all_versionned_kw? [parent]:string* [names]:string* [params]:param* [internals]:internal* [macro_parts]:macro_part* [versions]:string*;
 
     param =
         [names]:string* type [directives]:directive*;

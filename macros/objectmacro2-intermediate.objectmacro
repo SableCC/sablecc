@@ -1,0 +1,309 @@
+# This file is part of SableCC ( http://sablecc.org ).
+#
+# See the NOTICE file distributed with this work for copyright information.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# ========= intermediate_representation ==============
+
+Macro intermediate_representation
+    Param
+        macros : macro, separator="\n", before_first="\n";
+        version_definition : versions;
+{Body}
+{version_definition}
+{macros}
+{End}
+
+# ========= macro ==============
+
+Macro macro
+    Param
+        macro_name : name;
+        parent_name : parent_name;
+        is_abstract : is_abstract;
+        is_all_versionned : is_all_versionned;
+        parameters : param, separator="\n", before_first="\n";
+        internals : internal, separator="\n", before_first="\n";
+        body : string_part, eol_part, param_insert, macro_insert, indent_part, end_indent_part, separator="\n",
+                            before_first="\nMacroBody\{\n  ", after_last="\n }";
+        versions : versions, before_first="\n";
+{Body}
+Macro {
+{Indent: "\t"}
+{is_abstract}
+{is_all_versionned}
+{parent_name}
+{macro_name}
+{parameters}
+{internals}
+{Indent: "\t"}
+{body}
+{End}
+{versions}
+{End}
+}
+{End}
+
+# ========= param ==============
+
+Macro param
+    Param
+        param_name : name;
+        type : string_type, macro_type;
+        directives : directive, separator=", \n";
+{Body}
+Param {
+{Indent: "\t"}
+{param_name}
+{type}
+{directives}
+{End}
+}
+{End}
+
+# ========= internal ==============
+
+Macro internal
+    Param
+        internal_name : name;
+        type : string_type, macro_type;
+        directives : directive, separator=", ";
+{Body}
+Internal {
+{Indent: "\t"}
+{internal_name}
+{type}
+{directives}
+{End}
+}
+{End}
+
+# ========= string_type ==============
+
+Macro string_type
+{Body}
+Type = String
+{End}
+
+# ========= macro_type ==============
+
+Macro macro_type
+    Param
+        references : macro_ref;
+{Body}
+Type {
+{Indent: "\t"}
+{references}
+{End}
+}
+{End}
+
+# ========= macro_ref ==============
+
+Macro macro_ref
+    Param
+        referenced_macro_name : name;
+        arguments : args;
+{Body}
+MacroRef{
+{Indent: "\t"}
+{referenced_macro_name}
+{arguments}
+{End}
+}
+{End}
+
+# ========= args ==============
+
+Macro args
+    Param
+        arguments : var_argument, text_argument, separator=", ";
+{Body}
+Args{
+{Indent: "\t"}
+{arguments}
+{End}
+}
+{End}
+
+# ========= var_argument ==============
+
+Macro var_argument
+    Param
+        param_name : String;
+        referenced_param : name;
+{Body}
+Var{
+{Indent: "\t"}
+{Insert: param_name(param_name)}
+{referenced_param}
+{End}
+}
+{End}
+
+# ========= text_argument ==============
+
+Macro text_argument
+    Param
+        param_name : String;
+        text_parts : string_part, eol_part, param_insert, macro_insert, separator="\n";
+{Body}
+Value{
+{Indent: "\t"}
+{Insert: param_name(param_name)}
+{text_parts}
+{End}
+}
+{End}
+
+# ========== param_name ==============
+
+Macro param_name
+    Internal
+        name : String;
+{Body}
+ParamName { Name = '{name}' }
+{End}
+
+# ========= string_part ==============
+
+Macro string_part
+    Param
+        text : String;
+{Body}
+'{text}'
+{End}
+
+# ========= eol_part ==============
+
+Macro eol_part
+{Body}
+eol
+{End}
+
+# ========= macro_insert ============== $
+
+Macro macro_insert
+    Param
+        referenced_macro : macro_ref;
+{Body}
+MacroInsert {
+{Indent: "\t"}
+{referenced_macro}
+{End}
+}
+{End}
+
+# ========= param_insert ==============
+
+Macro param_insert
+    Param
+        referenced_param : name;
+{Body}
+ParamInsert {
+{Indent: "\t"}
+{referenced_param}
+{End}
+}
+{End}
+
+# ========== indent_part ================
+
+Macro indent_part
+    Param
+        indentation_text : string_part, eol_part, param_insert, macro_insert, separator="\n";
+{Body}
+Indent {
+{Indent: "\t"}
+{indentation_text}
+{End}
+}
+{End}
+
+# =========== end_indent_part ==============
+
+Macro end_indent_part
+{Body}
+EndIndent
+{End}
+
+# ========= directive ==============
+
+Macro directive
+    Param
+        directive_name : name;
+        directive_text_parts : string_part, eol_part, param_insert, macro_insert;
+{Body}
+Directive {
+{Indent: "\t"}
+{directive_name}
+{directive_text_parts}
+{End}
+}
+{End}
+
+# ========= simple_name ==============
+
+Macro simple_name
+    Param
+        name : String;
+{Body}
+'{name}'
+{End}
+
+# ========= name ============
+
+Macro name
+    Param
+        value : simple_name, separator=", ", before_first="\{ ", after_last=" }";
+{Body}
+Name = {value}
+{End}
+
+# ========= parent_name ===========
+
+Macro parent_name
+    Param
+        parent : name;
+{Body}
+Parent { {parent} }
+{End}
+
+# =========== is_abstract =============
+
+Macro is_abstract
+{Body}
+Abstract
+{End}
+
+# =========== is_all_versionned ===========
+
+Macro is_all_versionned
+{Body}
+AllVersionned
+{End}
+
+# ============ versions ==============
+
+Macro versions
+    Param
+        versions : simple_name, separator=", \n";
+{Body}
+Version {
+{Indent: "\t"}
+{versions}
+{End}
+}
+{End}

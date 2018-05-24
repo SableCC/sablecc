@@ -5,7 +5,8 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MDirectiveFields extends
+public class MDirectiveFields
+        extends
         Macro {
 
     private String field_ParamName;
@@ -90,9 +91,9 @@ public class MDirectiveFields extends
 
         sb0.append("Separator;");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("private DBeforeFirst ");
 
@@ -100,9 +101,9 @@ public class MDirectiveFields extends
 
         sb0.append("BeforeFirst;");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("private DAfterLast ");
 
@@ -110,9 +111,9 @@ public class MDirectiveFields extends
 
         sb0.append("AfterLast;");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("private DNone ");
 
@@ -148,7 +149,7 @@ public class MDirectiveFields extends
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

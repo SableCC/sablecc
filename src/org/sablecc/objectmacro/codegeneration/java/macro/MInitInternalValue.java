@@ -2,138 +2,116 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class MInitInternalValue extends
-        Macro {
-
+public class MInitInternalValue extends Macro{
+    
     private String field_ParamName;
-
-    public MInitInternalValue(
-            String pParamName) {
-
-        setPParamName(pParamName);
-
+    
+    
+    
+    
+    public MInitInternalValue(String pParamName){
+    
+            this.setPParamName(pParamName);
+    
     }
-
-    private void setPParamName(
-            String pParamName) {
-
-        if (pParamName == null) {
-
+    
+    
+    private void setPParamName( String pParamName ){
+        if(pParamName == null){
             throw ObjectMacroException.parameterNull("ParamName");
-
         }
-
+    
         this.field_ParamName = pParamName;
-
     }
-
-    private String buildParamName() {
-
+    
+    
+    private String buildParamName(){
+    
         return this.field_ParamName;
-
     }
-
-    private String getParamName() {
-
+    
+    
+    private String getParamName(){
+    
         return this.field_ParamName;
-
     }
-
+    
+    
+    
+    
+    
     @Override
-
-    void apply(
-
-            InternalsInitializer internalsInitializer) {
-
-        internalsInitializer.setInitInternalValue(this);
-
-    }
-
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setInitInternalValue(this);
+     }
+    
+    
     @Override
-
-    public String build() {
-
+    public String build(){
+    
         BuildState buildState = this.build_state;
-
-        if (buildState == null) {
-
+    
+        if(buildState == null){
             buildState = new BuildState();
-
         }
-
-        else if (buildState.getExpansion() == null) {
-
+        else if(buildState.getExpansion() == null){
             throw ObjectMacroException.cyclicReference("InitInternalValue");
-
         }
-
-        else {
-
+        else{
             return buildState.getExpansion();
-
         }
-
         this.build_state = buildState;
-
         List<String> indentations = new LinkedList<>();
-
         StringBuilder sbIndentation = new StringBuilder();
-
+    
+        
+    
+    
+    
         StringBuilder sb0 = new StringBuilder();
-
-        sb0.append("    this.");
-
+    
+        sb0.append("this.");
         sb0.append(buildParamName());
-
         sb0.append("Value = new InternalValue(this.list_");
-
         sb0.append(buildParamName());
-
         sb0.append(", this.");
-
         sb0.append(buildParamName());
-
         sb0.append("Context);");
-
+    
         buildState.setExpansion(sb0.toString());
-
         return sb0.toString();
-
     }
-
+    
+    
     @Override
-
-    String build(
-            Context context) {
-
-        return build();
-
+    String build(Context context) {
+     return build();
     }
-
     private String applyIndent(
-            String macro,
-            String indent) {
+                            String macro,
+                            String indent){
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
 
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
 
-                if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
                 }
             }
-        }
-        else {
-            sb.append(indent).append(macro);
-        }
+            else{
+                sb.append(indent).append(macro);
+            }
 
-        return sb.toString();
+            return sb.toString();
     }
 }

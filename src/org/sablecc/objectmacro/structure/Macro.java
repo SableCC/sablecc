@@ -49,6 +49,8 @@ public class Macro {
 
     private ComponentFinder<Param> paramsComponentFinder;
 
+    private Set<MacroVersion> versions = new HashSet<>();
+
     Macro(
             GlobalIndex globalIndex,
             AMacro declaration) {
@@ -136,6 +138,19 @@ public class Macro {
         }
 
         return param;
+    }
+
+    public void containsParam(
+            Param param){
+
+        if(param == null){
+            throw new InternalException("param may not be null");
+        }
+
+        if(!this.namedParams.containsKey(param.getName())){
+            //TODO EXCEPTION
+            throw CompilerException.unknownParam(param.getNameDeclaration());
+        }
     }
 
     public void setParamUsed(
@@ -239,5 +254,25 @@ public class Macro {
     public ComponentFinder<Param> getComponentFinder() {
 
         return this.paramsComponentFinder;
+    }
+
+    void addVersion(
+            MacroVersion version){
+
+        this.versions.add(version);
+    }
+
+    public boolean isVersion(
+            MacroVersion version){
+
+        return this.versions.contains(version);
+    }
+
+    public boolean isVersionned(){
+        return this.versions.size() > 0;
+    }
+
+    public Set<MacroVersion> getVersions(){
+        return this.versions;
     }
 }

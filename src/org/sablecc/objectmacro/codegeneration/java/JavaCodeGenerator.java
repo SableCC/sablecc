@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.sablecc.objectmacro.codegeneration.CodeGenerator;
 import org.sablecc.objectmacro.codegeneration.IntermediateRepresentation;
-import org.sablecc.objectmacro.codegeneration.java.structure.Macro;
+import org.sablecc.objectmacro.codegeneration.java.structure.SMacro;
 import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.util.Strictness;
 
@@ -75,16 +75,18 @@ public class JavaCodeGenerator extends
             }
         }
 
-        Map<String, Macro> macros = new LinkedHashMap<>();
+        Map<String, SMacro> macros = new LinkedHashMap<>();
 
         MacroCollector macroCollector = new MacroCollector(macros);
         getIr().getAST().apply(macroCollector);
 
-        CodeGenerationWalker walker
-                = new CodeGenerationWalker(getIr(), packageDirectory, macros);
-        UtilsGenerationWalker utilsGenerationWalker
-                = new UtilsGenerationWalker(getIr(), packageDirectory);
+        CodeGenerationWalker walker = new CodeGenerationWalker(getIr(),
+                packageDirectory, macros);
+        UtilsGenerationWalker utilsGenerationWalker = new UtilsGenerationWalker(
+                getIr(), packageDirectory);
+        ChildrenCollector childrenCollector = new ChildrenCollector(macros);
 
+        getIr().getAST().apply(childrenCollector);
         getIr().getAST().apply(walker);
         getIr().getAST().apply(utilsGenerationWalker);
     }

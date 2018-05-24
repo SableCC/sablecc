@@ -2,39 +2,112 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-public class MSimpleName {
+import java.util.*;
 
-    private final String pName;
-
-    private final MSimpleName mSimpleName = this;
-
-    public MSimpleName(
-            String pName) {
-
-        if (pName == null) {
-            throw new NullPointerException();
+public class MSimpleName extends Macro{
+    
+    private String field_Name;
+    
+    
+    
+    
+    public MSimpleName(String pName){
+    
+            this.setPName(pName);
+    
+    }
+    
+    
+    private void setPName( String pName ){
+        if(pName == null){
+            throw ObjectMacroException.parameterNull("Name");
         }
-        this.pName = pName;
+    
+        this.field_Name = pName;
     }
-
-    String pName() {
-
-        return this.pName;
+    
+    
+    private String buildName(){
+    
+        return this.field_Name;
     }
-
-    private String rName() {
-
-        return this.mSimpleName.pName();
+    
+    
+    private String getName(){
+    
+        return this.field_Name;
     }
-
+    
+    
+    
+    
+    
     @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("'");
-        sb.append(rName());
-        sb.append("'");
-        return sb.toString();
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setSimpleName(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("SimpleName");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        
+    
+    
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        sb0.append("'");
+        sb0.append(buildName());
+        sb0.append("'");
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

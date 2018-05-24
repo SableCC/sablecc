@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MInitInternalsCall extends
+public class MInitInternalsCall
+        extends
         Macro {
 
     private String field_ParamName;
@@ -262,7 +263,7 @@ public class MInitInternalsCall extends
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

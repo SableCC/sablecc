@@ -22,9 +22,7 @@ import java.util.Set;
 
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.exception.CompilerException;
-import org.sablecc.objectmacro.structure.GlobalIndex;
-import org.sablecc.objectmacro.structure.Macro;
-import org.sablecc.objectmacro.structure.Param;
+import org.sablecc.objectmacro.structure.*;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.syntax3.node.AMacro;
 import org.sablecc.objectmacro.syntax3.node.AMacroReference;
@@ -41,43 +39,76 @@ public class VarVerifier extends
 
     private final GlobalIndex globalIndex;
 
+    private final MacroVersion currentVersion;
+
     private Macro currentMacro;
 
-    private Param paramsList[];
+    private Internal internalsList[];
 
     private Integer currentIndex = 0;
 
     public VarVerifier(
-            GlobalIndex globalIndex) {
+            GlobalIndex globalIndex,
+            MacroVersion version) {
 
         if (globalIndex == null) {
             throw new InternalException("globalIndex may not be null");
         }
 
         this.globalIndex = globalIndex;
+        this.currentVersion = version;
     }
+
+    @Override
+    public void caseAMacro(
+            AMacro node) {
+
+        //Looking if this macro contains the current version
+        if(this.currentVersion != null
+                && node.getVersions().size() > 0
+                && !Utils.containsVersion(node.getVersions(), this.currentVersion)){
+            return;
+        }
+
+        super.caseAMacro(node);
+    }
+
 
     @Override
     public void inAMacro(
             AMacro node) {
 
-        this.currentMacro = this.globalIndex.getMacro(node.getName());
+        this.currentMacro = this.globalIndex.getMacro(node.getName(), this.currentVersion);
+        if(this.currentMacro == null){
+            throw CompilerException.unknownMacro(node.getName());
+        }
     }
 
     @Override
     public void inAMacroReference(
             AMacroReference node) {
 
-        Macro referencedMacro = this.globalIndex.getMacro(node.getName());
+        Macro referencedMacro;
+        int nbArguments = node.getValues().size();
 
-        int internalsSize = referencedMacro.getAllInternals().size();
-        if (node.getValues().size() != internalsSize) {
-            throw CompilerException.incorrectArgumentCount(node,
-                    referencedMacro);
+        if(this.currentMacro.getDeclaration().getVersions().size() == 0){
+            for(MacroVersion version : this.globalIndex.getAllVersions()){
+
+                referencedMacro = this.globalIndex.getMacro(node.getName(), version);
+                if(nbArguments != referencedMacro.getAllInternals().size()){
+                    throw CompilerException.incorrectArgumentCount(node, referencedMacro);
+                }
+            }
         }
 
-        this.paramsList = new Param[internalsSize];
-        referencedMacro.getAllInternals().toArray(this.paramsList);
+        referencedMacro = this.globalIndex.getMacro(node.getName(), this.currentVersion);
+        int nbInternals = referencedMacro.getAllInternals().size();
+        if(nbArguments != nbInternals){
+            throw CompilerException.incorrectArgumentCount(node, referencedMacro);
+        }
+
+        this.internalsList = new Internal[nbInternals];
+        referencedMacro.getAllInternals().toArray(this.internalsList);
         this.currentIndex = 0;
     }
 
@@ -85,7 +116,7 @@ public class VarVerifier extends
     public void caseAStringStaticValue(
             AStringStaticValue node) {
 
-        Param currentParam = this.paramsList[this.currentIndex++];
+        Param currentParam = this.internalsList[this.currentIndex++];
 
         // The internal corresponding to currentIndex must be of type String
         if (!currentParam.isString()) {
@@ -95,21 +126,21 @@ public class VarVerifier extends
 
         // Apply to each part in case of recursive insert
         Integer tempIndex = this.currentIndex;
-        Param tempParams[] = this.paramsList;
+        Internal tempInternals[] = this.internalsList;
 
         for (PStringPart value : node.getParts()) {
             value.apply(this);
         }
 
         this.currentIndex = tempIndex;
-        this.paramsList = tempParams;
+        this.internalsList = tempInternals;
     }
 
     @Override
     public void caseAVarStaticValue(
             AVarStaticValue node) {
 
-        Param expectedParam = this.paramsList[this.currentIndex++];
+        Param expectedParam = this.internalsList[this.currentIndex++];
         Param providedParam = this.currentMacro.getParam(node.getIdentifier());
         Set<String> expectedMacrosType = new HashSet<>();
         Set<String> providedMacrosType = new HashSet<>();

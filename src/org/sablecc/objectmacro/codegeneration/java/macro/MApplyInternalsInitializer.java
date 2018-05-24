@@ -2,14 +2,9 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class MApplyInternalsInitializer extends
-        Macro {
-
-    private String field_ParamName;
+public class MApplyInternalsInitializer extends Macro{
 
     private final List<Macro> list_RedefinedInternalsSetter;
 
@@ -23,266 +18,184 @@ public class MApplyInternalsInitializer extends
 
     private final InternalValue RedefinedInternalsSetterValue;
 
+    private Map<Context, String> field_InternalName = new LinkedHashMap<>();
+
+
     private final Context RedefinedInternalsSetterContext = new Context();
 
-    public MApplyInternalsInitializer(
-            String pParamName) {
 
-        setPParamName(pParamName);
+    public MApplyInternalsInitializer(){
 
         this.list_RedefinedInternalsSetter = new ArrayList<>();
 
-        this.RedefinedInternalsSetterValue
-                = new InternalValue(this.list_RedefinedInternalsSetter,
-                        this.RedefinedInternalsSetterContext);
-
+        this.RedefinedInternalsSetterValue = new InternalValue(this.list_RedefinedInternalsSetter, this.RedefinedInternalsSetterContext);
     }
 
-    private void setPParamName(
-            String pParamName) {
 
-        if (pParamName == null) {
-
-            throw ObjectMacroException.parameterNull("ParamName");
-
+    public void addRedefinedInternalsSetter(MRedefinedInternalsSetter macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("RedefinedInternalsSetter");
         }
 
-        this.field_ParamName = pParamName;
-
-    }
-
-    public void addRedefinedInternalsSetter(
-            MRedefinedInternalsSetter macro) {
-
-        if (macro == null) {
-
-            throw ObjectMacroException
-                    .parameterNull("RedefinedInternalsSetter");
-
-        }
-
-        if (this.build_state != null) {
-
-            throw ObjectMacroException.cannotModify("RedefinedInternalsSetter");
-
-        }
 
         this.list_RedefinedInternalsSetter.add(macro);
-
         this.children.add(macro);
-
         Macro.cycleDetector.detectCycle(this, macro);
-
     }
 
-    private String buildParamName() {
+        void setInternalName(
+                Context context,
+                String value) {
 
-        return this.field_ParamName;
+            if(value == null){
+                throw new RuntimeException("value cannot be null here");
+            }
 
-    }
+            this.field_InternalName.put(context, value);
+        }
 
-    private String buildRedefinedInternalsSetter() {
 
+    private String buildRedefinedInternalsSetter(){
         StringBuilder sb = new StringBuilder();
-
-        Context local_context = this.RedefinedInternalsSetterContext;
-
+        Context local_context = RedefinedInternalsSetterContext;
         List<Macro> macros = this.list_RedefinedInternalsSetter;
 
         int i = 0;
-
         int nb_macros = macros.size();
-
         String expansion = null;
 
-        if (this.RedefinedInternalsSetterNone != null) {
-
-            sb.append(
-                    this.RedefinedInternalsSetterNone.apply(i, "", nb_macros));
-
+        if(this.RedefinedInternalsSetterNone != null){
+            sb.append(this.RedefinedInternalsSetterNone.apply(i, "", nb_macros));
         }
 
-        for (Macro macro : macros) {
-
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
 
-            if (this.RedefinedInternalsSetterBeforeFirst != null) {
-
-                expansion = this.RedefinedInternalsSetterBeforeFirst.apply(i,
-                        expansion, nb_macros);
-
+            if(this.RedefinedInternalsSetterBeforeFirst != null){
+                expansion = this.RedefinedInternalsSetterBeforeFirst.apply(i, expansion, nb_macros);
             }
 
-            if (this.RedefinedInternalsSetterAfterLast != null) {
-
-                expansion = this.RedefinedInternalsSetterAfterLast.apply(i,
-                        expansion, nb_macros);
-
+            if(this.RedefinedInternalsSetterAfterLast != null){
+                expansion = this.RedefinedInternalsSetterAfterLast.apply(i, expansion, nb_macros);
             }
 
-            if (this.RedefinedInternalsSetterSeparator != null) {
-
-                expansion = this.RedefinedInternalsSetterSeparator.apply(i,
-                        expansion, nb_macros);
-
+            if(this.RedefinedInternalsSetterSeparator != null){
+                expansion = this.RedefinedInternalsSetterSeparator.apply(i, expansion, nb_macros);
             }
 
             sb.append(expansion);
-
             i++;
-
         }
 
         return sb.toString();
-
     }
 
-    private String getParamName() {
+    private String buildInternalName(Context context){
 
-        return this.field_ParamName;
-
+        return this.field_InternalName.get(context);
     }
 
-    private InternalValue getRedefinedInternalsSetter() {
 
+    private InternalValue getRedefinedInternalsSetter(){
         return this.RedefinedInternalsSetterValue;
-
     }
 
-    private void initRedefinedInternalsSetterInternals(
-            Context context) {
+    private String getInternalName(Context context){
 
-        for (Macro macro : this.list_RedefinedInternalsSetter) {
+        return this.field_InternalName.get(context);
+    }
 
-            macro.apply(new InternalsInitializer("RedefinedInternalsSetter") {
-
+    private void initRedefinedInternalsSetterInternals(Context context){
+        for(Macro macro : this.list_RedefinedInternalsSetter){
+            macro.apply(new InternalsInitializer("RedefinedInternalsSetter"){
                 @Override
+                void setRedefinedInternalsSetter(MRedefinedInternalsSetter mRedefinedInternalsSetter){
 
-                void setRedefinedInternalsSetter(
-                        MRedefinedInternalsSetter mRedefinedInternalsSetter) {
+
 
                 }
-
             });
-
         }
-
     }
 
-    private void initRedefinedInternalsSetterDirectives() {
 
-    }
-
-    @Override
-
-    void apply(
-
-            InternalsInitializer internalsInitializer) {
-
-        internalsInitializer.setApplyInternalsInitializer(this);
-
+    private void initRedefinedInternalsSetterDirectives(){
+        StringBuilder sb0 = new StringBuilder();
+        sb0.append(LINE_SEPARATOR);sb0.append(LINE_SEPARATOR);
+        this.RedefinedInternalsSetterSeparator = new DSeparator(sb0.toString());
+        this.RedefinedInternalsSetterValue.setSeparator(this.RedefinedInternalsSetterSeparator);
     }
 
     @Override
+     void apply(
+             InternalsInitializer internalsInitializer){
 
-    public String build() {
+         internalsInitializer.setApplyInternalsInitializer(this);
+     }
 
-        BuildState buildState = this.build_state;
 
-        if (buildState == null) {
+    @Override
+    public String build(Context context){
 
+        BuildState buildState = this.build_states.get(context);
+
+        if(buildState == null){
             buildState = new BuildState();
-
         }
-
-        else if (buildState.getExpansion() == null) {
-
-            throw ObjectMacroException
-                    .cyclicReference("ApplyInternalsInitializer");
-
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("ApplyInternalsInitializer");
         }
-
-        else {
-
+        else{
             return buildState.getExpansion();
-
         }
-
-        this.build_state = buildState;
-
+        this.build_states.put(context, buildState);
         List<String> indentations = new LinkedList<>();
-
         StringBuilder sbIndentation = new StringBuilder();
 
         initRedefinedInternalsSetterDirectives();
 
-        initRedefinedInternalsSetterInternals(null);
+        initRedefinedInternalsSetterInternals(context);
 
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("macro.apply(new InternalsInitializer(\"");
-
-        sb0.append(buildParamName());
-
+        sb0.append(buildInternalName(context));
         sb0.append("\")");
-
         sb0.append("{");
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
+        sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-
         sbIndentation = new StringBuilder();
-
         sbIndentation.append("    ");
-
         indentations.add(sbIndentation.toString());
-
         sb1.append(buildRedefinedInternalsSetter());
-
-        sb0.append(applyIndent(sb1.toString(),
-                indentations.remove(indentations.size() - 1)));
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
+        sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
+        sb0.append(LINE_SEPARATOR);
         sb0.append("});");
 
         buildState.setExpansion(sb0.toString());
-
         return sb0.toString();
-
     }
-
-    @Override
-
-    String build(
-            Context context) {
-
-        return build();
-
-    }
-
     private String applyIndent(
-            String macro,
-            String indent) {
+                            String macro,
+                            String indent){
 
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
 
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
 
-                if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
                 }
             }
-        }
-        else {
-            sb.append(indent).append(macro);
-        }
+            else{
+                sb.append(indent).append(macro);
+            }
 
-        return sb.toString();
+            return sb.toString();
     }
 }
