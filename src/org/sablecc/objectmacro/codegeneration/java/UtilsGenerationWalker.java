@@ -63,13 +63,11 @@ public class UtilsGenerationWalker extends
 
         MExParameterNull mParameterNull = new MExParameterNull();
         MExIncorrectType mIncorrectType = new MExIncorrectType();
-        MExObjectMacroErrorHead mObjectMacroErrorHead
-                = new MExObjectMacroErrorHead();
+        MExObjectMacroErrorHead mObjectMacroErrorHead = new MExObjectMacroErrorHead();
         MExMacroNullInList mMacroNullInList = new MExMacroNullInList();
         MExCyclicReference mCyclicReference = new MExCyclicReference();
         MExCannotModify mCannotModify = new MExCannotModify();
-        MExObjectMacroException mObjectMacroException
-                = new MExObjectMacroException();
+        MExObjectMacroException mObjectMacroException = new MExObjectMacroException();
         MClassInternalValue mClassInternalValue = new MClassInternalValue();
         MClassBuildState mClassBuildState = new MClassBuildState();
         MCycleDetectorClass mTarjanClass = new MCycleDetectorClass();
@@ -82,8 +80,8 @@ public class UtilsGenerationWalker extends
 
         if (!this.ir.getDestinationPackage().equals("")) {
             String destinationPackage = this.ir.getDestinationPackage();
-            MPackageDeclaration mPackageDeclaration
-                    = new MPackageDeclaration(destinationPackage);
+            MPackageDeclaration mPackageDeclaration = new MPackageDeclaration(
+                    destinationPackage);
             mContext.addPackageDeclaration(mPackageDeclaration);
             mIncorrectType.addPackageDeclaration(mPackageDeclaration);
             mParameterNull.addPackageDeclaration(mPackageDeclaration);

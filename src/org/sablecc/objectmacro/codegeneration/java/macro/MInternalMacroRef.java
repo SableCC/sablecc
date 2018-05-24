@@ -5,7 +5,8 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MInternalMacroRef extends
+public class MInternalMacroRef
+        extends
         Macro {
 
     private String field_ParamName;
@@ -92,7 +93,7 @@ public class MInternalMacroRef extends
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    return this.list_");
 
@@ -100,7 +101,7 @@ public class MInternalMacroRef extends
 
         sb0.append(".get(context);");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -132,7 +133,7 @@ public class MInternalMacroRef extends
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

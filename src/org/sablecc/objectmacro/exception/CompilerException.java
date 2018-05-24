@@ -23,7 +23,7 @@ import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.errormessage.MBodyTokenMisused;
 import org.sablecc.objectmacro.errormessage.MCannotCreateDirectory;
 import org.sablecc.objectmacro.errormessage.MConflictingOption;
-import org.sablecc.objectmacro.errormessage.MCyclicReference;
+import org.sablecc.objectmacro.errormessage.MParamCyclicReference;
 import org.sablecc.objectmacro.errormessage.MDuplicateDeclaration;
 import org.sablecc.objectmacro.errormessage.MDuplicateMacroRef;
 import org.sablecc.objectmacro.errormessage.MDuplicateOption;
@@ -45,6 +45,8 @@ import org.sablecc.objectmacro.errormessage.MMissingLongOptionOperand;
 import org.sablecc.objectmacro.errormessage.MMissingMacroFile;
 import org.sablecc.objectmacro.errormessage.MMissingShortOptionOperand;
 import org.sablecc.objectmacro.errormessage.MOutputError;
+import org.sablecc.objectmacro.errormessage.MPlainText;
+import org.sablecc.objectmacro.errormessage.MUnknownVersion;
 import org.sablecc.objectmacro.errormessage.MSelfReference;
 import org.sablecc.objectmacro.errormessage.MSpuriousLongOptionOperand;
 import org.sablecc.objectmacro.errormessage.MSpuriousShortOptionOperand;
@@ -54,6 +56,7 @@ import org.sablecc.objectmacro.errormessage.MUnknownParam;
 import org.sablecc.objectmacro.errormessage.MUnknownTarget;
 import org.sablecc.objectmacro.errormessage.MUnusedParam;
 import org.sablecc.objectmacro.structure.Macro;
+import org.sablecc.objectmacro.structure.MacroVersion;
 import org.sablecc.objectmacro.structure.Param;
 import org.sablecc.objectmacro.syntax3.node.ADirective;
 import org.sablecc.objectmacro.syntax3.node.AMacroReference;
@@ -61,7 +64,8 @@ import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 import org.sablecc.objectmacro.syntax3.node.Token;
 
 @SuppressWarnings("serial")
-public class CompilerException extends
+public class CompilerException
+        extends
         RuntimeException {
 
     private CompilerException(
@@ -322,8 +326,8 @@ public class CompilerException extends
 
         String line = String.valueOf(declaration.getName().getLine());
         String pos = String.valueOf(declaration.getName().getPos());
-        String expectedCount
-                = String.valueOf(macroReferenced.getAllInternals().size());
+        String expectedCount = String
+                .valueOf(macroReferenced.getAllInternals().size());
         String currentCount = String.valueOf(declaration.getValues().size());
 
         return new CompilerException(new MIncorrectArgumentCount(line, pos,

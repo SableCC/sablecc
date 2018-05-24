@@ -30,34 +30,54 @@ import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 
 public class GlobalIndex {
 
+    private boolean hasVersions = true;
+
     private final Set<Macro> allMacros = new LinkedHashSet<>();
 
-    private final SortedMap<String, Macro> macroMap = new TreeMap<>();
+    private final Map<String, MacroVersion> allVersions = new LinkedHashMap<>();
 
-    public Macro newMacro(
-            PMacro pDeclaration) {
+    private final SortedMap<String, Macro> macrosAllVersionned = new TreeMap<>();
 
-        if (pDeclaration == null) {
+    public Macro createMacro(
+            AMacro pDeclaration){
+
+        if(pDeclaration == null){
             throw new InternalException("pDeclaration may not be null");
         }
 
-        AMacro declaration = (AMacro) pDeclaration;
-        String name = declaration.getName().getText();
+        return new Macro(this, pDeclaration);
+    }
 
-        TIdentifier duplicateDeclaration = declaration.getName();
+    public void addAllVersionnedMacro(
+            Macro macro){
 
-        Macro firstMacro = getMacroOrNull(duplicateDeclaration);
-        if (firstMacro != null) {
-            throw CompilerException.duplicateDeclaration(duplicateDeclaration,
-                    firstMacro.getNameDeclaration());
+        if(macro == null){
+            throw new InternalException("declaration may not be null");
         }
 
-        Macro macro = new Macro(this, declaration);
+        TIdentifier macro_name = macro.getNameDeclaration();
+        Macro first_declaration = this.macrosAllVersionned.get(macro_name.getText());
+
+        if(first_declaration != null){
+            throw CompilerException.duplicateDeclaration(macro_name, first_declaration.getNameDeclaration());
+        }
+
+        this.macrosAllVersionned.put(macro_name.getText(), macro);
+        this.allMacros.add(macro);
+    }
+
+    public void addIntermediateMacro(
+            Macro macro){
+
+        if(macro == null){
+            throw new InternalException("macro_name should not be null");
+        }
+
+        if(this.allMacros.contains(macro)){
+            throw new InternalException("macro should not be contained in the set");
+        }
 
         this.allMacros.add(macro);
-        this.macroMap.put(name, macro);
-
-        return macro;
     }
 
     private Macro getMacroOrNull(
@@ -67,14 +87,19 @@ public class GlobalIndex {
             throw new InternalException("identifier may not be null");
         }
 
-        return this.macroMap.get(identifier.getText());
+        return this.macrosAllVersionned.get(identifier.getText());
     }
 
     public Macro getMacro(
-            TIdentifier identifier) {
+            TIdentifier identifier,
+            MacroVersion version) {
 
         if (identifier == null) {
             throw new InternalException("identifier may not be null");
+        }
+
+        if(version != null){
+            return version.getMacro(identifier);
         }
 
         Macro macro = getMacroOrNull(identifier);
@@ -83,11 +108,80 @@ public class GlobalIndex {
         }
 
         return macro;
+    }
 
+    boolean macroExists(
+            TIdentifier macro_name){
+
+        for(MacroVersion version : this.allVersions.values()){
+            if(version.getMacroOrNull(macro_name) != null){
+                return true;
+            }
+        }
+
+        for(String macro : this.macrosAllVersionned.keySet()){
+            if(macro.equals(macro_name.getText())){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public Set<Macro> getAllMacros() {
 
         return this.allMacros;
+    }
+
+    public void newVersion(
+            TIdentifier identifier){
+
+        if(identifier == null){
+            throw new InternalException("identifier may not be null");
+        }
+
+        String version_name = identifier.getText();
+        MacroVersion first_declaration = this.allVersions.get(version_name);
+        if(first_declaration != null){
+            throw CompilerException.duplicateDeclaration(identifier, first_declaration.getName());
+        }
+
+        this.allVersions.put(version_name, new MacroVersion(identifier));
+    }
+
+    public Collection<MacroVersion> getAllVersions() {
+
+        return this.allVersions.values();
+    }
+
+    public MacroVersion getVersion(
+            TIdentifier version_name){
+
+        if(version_name == null){
+            throw new InternalException("name may not be null");
+        }
+
+        if(!this.allVersions.containsKey(version_name.getText())){
+            //TODO exception for version
+            throw CompilerException.unknownMacro(version_name);
+        }
+
+        return this.allVersions.get(version_name.getText());
+    }
+
+    public boolean hasVersions(){
+        return this.hasVersions;
+    }
+
+    public void setHasVersions(
+            boolean hasVersions) {
+
+        this.hasVersions = hasVersions;
+    }
+
+    public boolean isAllVersionned(
+            String macro_name){
+
+        return this.macrosAllVersionned.containsKey(macro_name);
     }
 }

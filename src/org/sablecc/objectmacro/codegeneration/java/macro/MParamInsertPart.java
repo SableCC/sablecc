@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MParamInsertPart extends
+public class MParamInsertPart
+        extends
         Macro {
 
     private String field_ParamName;
@@ -288,7 +289,7 @@ public class MParamInsertPart extends
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

@@ -5,7 +5,8 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MInternalMacroField extends
+public class MInternalMacroField
+        extends
         Macro {
 
     private String field_Name;
@@ -118,7 +119,7 @@ public class MInternalMacroField extends
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

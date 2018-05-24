@@ -20,14 +20,16 @@ package back;
 import back.macro.MCommaSeparator;
 import back.macro.MEmptyMacro;
 import back.macro.Macro;
+import back.macro.Macros;
 
 public class Separator {
 
     public static void main(
                 String[] args){
 
-        MEmptyMacro mEmptyMacro = new MEmptyMacro();
-        MCommaSeparator mCommaSeparator = new MCommaSeparator();
+        Macros m = new Macros();
+        MEmptyMacro mEmptyMacro = m.newEmptyMacro();
+        MCommaSeparator mCommaSeparator = m.newCommaSeparator();
         mCommaSeparator.addX(mEmptyMacro);
         mCommaSeparator.addX(mEmptyMacro);
         mCommaSeparator.addX(mEmptyMacro);

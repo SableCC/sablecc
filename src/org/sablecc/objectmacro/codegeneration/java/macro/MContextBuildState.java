@@ -5,7 +5,8 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MContextBuildState extends
+public class MContextBuildState
+        extends
         Macro {
 
     public MContextBuildState() {
@@ -84,7 +85,7 @@ public class MContextBuildState extends
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

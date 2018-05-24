@@ -33,8 +33,6 @@ java -jar lib/objectmacro-back.jar -d tests/objectmacro/java -p graph_generator.
 javac -cp tests/objectmacro/java/ -d classes/ tests/objectmacro/java/back/*.java tests/objectmacro/java/back/cycle/*.java
 
 # Refused tests
-java -cp classes/ back.MacroNullIndex
-java -cp classes/ back.ParameterNull
 java -cp classes/ back.cycle.Cycle
 java -cp classes/ back.cycle.Cycle2
 java -cp classes/ back.cycle.Cycle3

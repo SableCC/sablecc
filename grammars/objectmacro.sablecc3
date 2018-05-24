@@ -84,14 +84,18 @@ Helpers
   lowercase = ['a'..'z'];
   uppercase = ['A' .. 'Z'];
   digit = ['0'..'9'];
+  letter_or_digit = (lowercase | digit | uppercase);
 
-  normal_part = lowercase (lowercase | digit | uppercase)*;
+  normal_part = lowercase letter_or_digit*;
   normal_identifier = normal_part ('_' normal_part)*;
 
 States
   top_level, macro_definition, macro_body, command, string;
 
 Tokens
+
+  {top_level, macro_definition}
+  version_kw = 'Version';
 
   {top_level->macro_definition}
   macro_kw = 'Macro';
@@ -135,7 +139,7 @@ Tokens
   {top_level, command, macro_body, string}
   invalid_var = '{' ascii_id_start* ('_' digit+ ascii_id_continue*)+ '}';
 
-  {macro_definition, command}
+  {macro_definition, command, top_level}
   identifier = normal_identifier;
 
   {top_level, command, macro_definition}
@@ -150,7 +154,7 @@ Tokens
   /* custom transition *->previous state */
   r_brace = '}';
 
-  {macro_definition, command}
+  {macro_definition, command, top_level}
   comma = ',';
 
   {macro_definition}
@@ -193,9 +197,23 @@ Productions
 
   source_file
     =
-      [source_file_parts]:source_file_part* ctrl_z?
-        {-> New source_file([source_file_parts.source_file_part]) }
+      versions_definition? [source_file_parts]:source_file_part* ctrl_z?
+        {-> New source_file(versions_definition, [source_file_parts.source_file_part]) }
     ;
+
+  versions_definition
+    =
+      version_kw identifier [additional_versions]:additional_version*
+        {-> New versions_definition([identifier, additional_versions.identifier])}
+    ;
+
+  additional_version
+        {-> identifier}
+    =
+      comma identifier
+        {-> identifier}
+    ;
+
 
   source_file_part
         {-> source_file_part? }
@@ -206,16 +224,23 @@ Productions
   macro
     =
       macro_definition macro_body
-         {-> New macro(macro_definition.macro_kw, macro_definition.identifier,
+         {-> New macro(macro_definition.macro_kw, macro_definition.identifier, [macro_definition.versions],
             [macro_definition.params], [macro_definition.internals],
              macro_body.body, [macro_body.macro_body_parts])}
     ;
 
   macro_definition
-        {-> macro_kw identifier [params]:param* [internals]:internal* }
+        {-> macro_kw identifier [versions]:identifier* [params]:param* [internals]:internal* }
     =
-      macro_kw identifier macro_parameters
-        {-> macro_kw identifier [macro_parameters.params] [macro_parameters.internals] }
+      macro_kw identifier versions_ref? macro_parameters
+        {-> macro_kw identifier [versions_ref.versions] [macro_parameters.params] [macro_parameters.internals] }
+    ;
+
+  versions_ref
+        {-> [versions]:identifier*}
+    =
+      version_kw identifier [additional_versions]:additional_version* semi_colon
+        {-> [identifier, additional_versions.identifier]}
     ;
 
   macro_body
@@ -369,13 +394,16 @@ Productions
 Abstract Syntax Tree
 
   source_file =
-      [source_file_parts]:source_file_part*;
+      versions_definition? [source_file_parts]:source_file_part*;
+
+  versions_definition =
+      [versions]:identifier*;
 
   source_file_part =
       {macro} macro;
 
   macro =
-      macro_kw [name]:identifier [params]:param* [internals]:internal* body [macro_body_parts]:macro_body_part*;
+      macro_kw [name]:identifier [versions]:identifier* [params]:param* [internals]:internal* body [macro_body_parts]:macro_body_part*;
 
   macro_body_part =
       {insert} macro_reference |

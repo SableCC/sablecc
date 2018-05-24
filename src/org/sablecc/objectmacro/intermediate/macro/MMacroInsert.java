@@ -2,36 +2,180 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class MMacroInsert {
-
-    private final List<Object> eMacroRef = new LinkedList<>();
-
-    public MMacroInsert() {
-
+public class MMacroInsert extends Macro{
+    
+    private final List<Macro> list_ReferencedMacro;
+    
+    private DSeparator ReferencedMacroSeparator;
+    
+    private DBeforeFirst ReferencedMacroBeforeFirst;
+    
+    private DAfterLast ReferencedMacroAfterLast;
+    
+    private DNone ReferencedMacroNone;
+    
+    private final InternalValue ReferencedMacroValue;
+    
+    
+    private final Context ReferencedMacroContext = new Context();
+    
+    
+    public MMacroInsert(){
+    
+        this.list_ReferencedMacro = new ArrayList<>();
+    
+        this.ReferencedMacroValue = new InternalValue(this.list_ReferencedMacro, this.ReferencedMacroContext);
     }
-
-    public MMacroRef newMacroRef() {
-
-        MMacroRef lMacroRef = new MMacroRef();
-        this.eMacroRef.add(lMacroRef);
-        return lMacroRef;
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(" MacroInsert {");
-        sb.append(System.getProperty("line.separator"));
-        for (Object oMacroRef : this.eMacroRef) {
-            sb.append(oMacroRef.toString());
+    
+    
+    public void addReferencedMacro(MMacroRef macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("ReferencedMacro");
         }
-        sb.append(" };");
-        sb.append(System.getProperty("line.separator"));
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("MacroRef");
+                }
+    
+        this.list_ReferencedMacro.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+    
+    
+    private String buildReferencedMacro(){
+        StringBuilder sb = new StringBuilder();
+        Context local_context = ReferencedMacroContext;
+        List<Macro> macros = this.list_ReferencedMacro;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+    
+        if(this.ReferencedMacroNone != null){
+            sb.append(this.ReferencedMacroNone.apply(i, "", nb_macros));
+        }
+    
+        for(Macro macro : macros){
+            expansion = macro.build(local_context);
+    
+            if(this.ReferencedMacroBeforeFirst != null){
+                expansion = this.ReferencedMacroBeforeFirst.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.ReferencedMacroAfterLast != null){
+                expansion = this.ReferencedMacroAfterLast.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.ReferencedMacroSeparator != null){
+                expansion = this.ReferencedMacroSeparator.apply(i, expansion, nb_macros);
+            }
+    
+            sb.append(expansion);
+            i++;
+        }
+    
         return sb.toString();
     }
+    
+    
+    private InternalValue getReferencedMacro(){
+        return this.ReferencedMacroValue;
+    }
+    
+    private void initReferencedMacroInternals(Context context){
+        for(Macro macro : this.list_ReferencedMacro){
+            macro.apply(new InternalsInitializer("ReferencedMacro"){
+                @Override
+                void setMacroRef(MMacroRef mMacroRef){
+                
+                    
+                    
+                }
+            });
+        }
+    }
+    
+    
+    private void initReferencedMacroDirectives(){
+        
+    }
+    
+    @Override
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setMacroInsert(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("MacroInsert");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        initReferencedMacroDirectives();
+        
+        initReferencedMacroInternals(null);
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        sb0.append("MacroInsert ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        StringBuilder sb1 = new StringBuilder();
+        sbIndentation = new StringBuilder();
+        sbIndentation.append("    ");
+        indentations.add(sbIndentation.toString());
+        sb1.append(buildReferencedMacro());
+        sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("}");
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

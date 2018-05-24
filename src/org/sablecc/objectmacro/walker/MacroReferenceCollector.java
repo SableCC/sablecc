@@ -19,9 +19,11 @@ package org.sablecc.objectmacro.walker;
 
 import java.util.ArrayList;
 
+import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.structure.GlobalIndex;
 import org.sablecc.objectmacro.structure.Macro;
+import org.sablecc.objectmacro.structure.MacroVersion;
 import org.sablecc.objectmacro.structure.Param;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.syntax3.node.AIdentifiersInternalType;
@@ -34,27 +36,53 @@ import org.sablecc.objectmacro.syntax3.node.AParam;
 import org.sablecc.objectmacro.syntax3.node.AStringInternalType;
 import org.sablecc.objectmacro.syntax3.node.AStringType;
 import org.sablecc.objectmacro.syntax3.node.TIdentifier;
+import org.sablecc.objectmacro.util.Utils;
 
 public class MacroReferenceCollector extends
         DepthFirstAdapter {
 
     private final GlobalIndex globalIndex;
 
+    private final MacroVersion currentVersion;
+
     private Macro currentMacro;
 
     private Param currentParam;
 
     public MacroReferenceCollector(
-            GlobalIndex globalIndex) {
+            GlobalIndex globalIndex,
+            MacroVersion version) {
+
+        if (globalIndex == null) {
+            throw new InternalException("globalIndex may not be null");
+        }
 
         this.globalIndex = globalIndex;
+        this.currentVersion = version;
+    }
+
+    @Override
+    public void caseAMacro(
+            AMacro node) {
+
+        //Looking if this macro contains the current version
+        if(this.currentVersion != null
+                && node.getVersions().size() > 0
+                && !Utils.containsVersion(node.getVersions(), this.currentVersion)){
+            return;
+        }
+
+        super.caseAMacro(node);
     }
 
     @Override
     public void inAMacro(
             AMacro node) {
 
-        this.currentMacro = this.globalIndex.getMacro(node.getName());
+        this.currentMacro = this.globalIndex.getMacro(node.getName(), this.currentVersion);
+        if(this.currentMacro == null){
+            throw CompilerException.unknownMacro(node.getName());
+        }
     }
 
     @Override
@@ -68,11 +96,11 @@ public class MacroReferenceCollector extends
     public void caseAInsertMacroBodyPart(
             AInsertMacroBodyPart node) {
 
-        // Call to verify if the macro exist
-        AMacroReference macroReference
-                = (AMacroReference) node.getMacroReference();
-        Macro referenced_macro
-                = this.globalIndex.getMacro(macroReference.getName());
+        // getAnyMacro verify if macro exists
+        AMacroReference macroReference = (AMacroReference) node
+                .getMacroReference();
+        Macro referenced_macro = this.globalIndex
+                .getMacro(macroReference.getName(), this.currentVersion);
 
         if (!referenced_macro.getAllParams().isEmpty()) {
             throw CompilerException.invalidInsert(macroReference.getName());
@@ -92,10 +120,10 @@ public class MacroReferenceCollector extends
     public void caseAInsertStringPart(
             AInsertStringPart node) {
 
-        // Call to verify if the macro exist
+        // getAnyMacro verify if macro exists
         AMacroReference macroReference = (AMacroReference) node.getMacro();
-        Macro referenced_macro
-                = this.globalIndex.getMacro(macroReference.getName());
+        Macro referenced_macro = this.globalIndex
+                .getMacro(macroReference.getName(), this.currentVersion);
 
         if (!referenced_macro.getAllParams().isEmpty()) {
             throw CompilerException.invalidInsert(macroReference.getName());
@@ -125,8 +153,8 @@ public class MacroReferenceCollector extends
             TIdentifier node) {
 
         if (node.parent() instanceof AIdentifiersInternalType) {
-            AMacroReference aMacroReference
-                    = new AMacroReference(node, new ArrayList<>());
+            AMacroReference aMacroReference = new AMacroReference(node,
+                    new ArrayList<>());
             this.currentParam.addMacroReference(aMacroReference);
         }
     }

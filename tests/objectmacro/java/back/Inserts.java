@@ -23,8 +23,10 @@ public class Inserts {
     public static void main(
             String[] args){
 
+        Macros macros = new Macros();
+
         System.out.print("======== Inserts Test ===========\n");
-        Macro d = new MD();
+        Macro d = macros.newD();
         System.out.println(d.build());
     }
 

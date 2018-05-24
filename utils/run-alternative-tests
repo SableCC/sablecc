@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# This file is part of SableCC (http://sablecc.org/).
+#
+# See the NOTICE file distributed with this work for copyright information.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -e
+
+rm -f tests/objectmacro/java/alternative_displays/macro/*.java
+java -jar lib/objectmacro.jar -d intermediate tests/objectmacro/common/alternative_displays/java.objectmacro
+java -jar lib/objectmacro-back.jar -d tests/objectmacro/java -p alternative_displays.macro intermediate/java.intermediate
+javac -cp tests/objectmacro/java -d classes/ tests/objectmacro/java/alternative_displays/*.java
+java -cp classes/ alternative_displays.Main

@@ -96,8 +96,7 @@ class GenerationUtils {
 
         StringBuilder macroName = new StringBuilder();
         for (TString partName : name_parts) {
-            macroName.append(
-                    Utils.toCamelCase(GenerationUtils.string(partName)));
+            macroName.append(Utils.toCamelCase(string(partName)));
         }
 
         return macroName.toString();

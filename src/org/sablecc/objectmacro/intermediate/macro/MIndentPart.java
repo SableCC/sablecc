@@ -2,59 +2,237 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class MIndentPart {
-
-    private final List<Object> eStringPart_EolPart_ParamInsert_MacroInsert
-            = new LinkedList<>();
-
-    public MIndentPart() {
-
+public class MIndentPart extends Macro{
+    
+    private final List<Macro> list_IndentationText;
+    
+    private DSeparator IndentationTextSeparator;
+    
+    private DBeforeFirst IndentationTextBeforeFirst;
+    
+    private DAfterLast IndentationTextAfterLast;
+    
+    private DNone IndentationTextNone;
+    
+    private final InternalValue IndentationTextValue;
+    
+    
+    private final Context IndentationTextContext = new Context();
+    
+    
+    public MIndentPart(){
+    
+        this.list_IndentationText = new ArrayList<>();
+    
+        this.IndentationTextValue = new InternalValue(this.list_IndentationText, this.IndentationTextContext);
     }
-
-    public MStringPart newStringPart(
-            String pString) {
-
-        MStringPart lStringPart = new MStringPart(pString);
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lStringPart);
-        return lStringPart;
-    }
-
-    public MEolPart newEolPart() {
-
-        MEolPart lEolPart = new MEolPart();
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lEolPart);
-        return lEolPart;
-    }
-
-    public MParamInsert newParamInsert() {
-
-        MParamInsert lParamInsert = new MParamInsert();
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lParamInsert);
-        return lParamInsert;
-    }
-
-    public MMacroInsert newMacroInsert() {
-
-        MMacroInsert lMacroInsert = new MMacroInsert();
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lMacroInsert);
-        return lMacroInsert;
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(" Indent {");
-        sb.append(System.getProperty("line.separator"));
-        for (Object oStringPart_EolPart_ParamInsert_MacroInsert : this.eStringPart_EolPart_ParamInsert_MacroInsert) {
-            sb.append(oStringPart_EolPart_ParamInsert_MacroInsert.toString());
+    
+    
+    public void addIndentationText(MStringPart macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("IndentationText");
         }
-        sb.append(" };");
-        sb.append(System.getProperty("line.separator"));
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("StringPart");
+                }
+    
+        this.list_IndentationText.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+    
+    public void addIndentationText(MEolPart macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("IndentationText");
+        }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("EolPart");
+                }
+    
+        this.list_IndentationText.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+    
+    public void addIndentationText(MParamInsert macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("IndentationText");
+        }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("ParamInsert");
+                }
+    
+        this.list_IndentationText.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+    
+    public void addIndentationText(MMacroInsert macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("IndentationText");
+        }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("MacroInsert");
+                }
+    
+        this.list_IndentationText.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+    
+    
+    private String buildIndentationText(){
+        StringBuilder sb = new StringBuilder();
+        Context local_context = IndentationTextContext;
+        List<Macro> macros = this.list_IndentationText;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+    
+        if(this.IndentationTextNone != null){
+            sb.append(this.IndentationTextNone.apply(i, "", nb_macros));
+        }
+    
+        for(Macro macro : macros){
+            expansion = macro.build(local_context);
+    
+            if(this.IndentationTextBeforeFirst != null){
+                expansion = this.IndentationTextBeforeFirst.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.IndentationTextAfterLast != null){
+                expansion = this.IndentationTextAfterLast.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.IndentationTextSeparator != null){
+                expansion = this.IndentationTextSeparator.apply(i, expansion, nb_macros);
+            }
+    
+            sb.append(expansion);
+            i++;
+        }
+    
         return sb.toString();
     }
+    
+    
+    private InternalValue getIndentationText(){
+        return this.IndentationTextValue;
+    }
+    
+    private void initIndentationTextInternals(Context context){
+        for(Macro macro : this.list_IndentationText){
+            macro.apply(new InternalsInitializer("IndentationText"){
+                @Override
+                void setStringPart(MStringPart mStringPart){
+                
+                    
+                    
+                }@Override
+                void setEolPart(MEolPart mEolPart){
+                
+                    
+                    
+                }@Override
+                void setParamInsert(MParamInsert mParamInsert){
+                
+                    
+                    
+                }@Override
+                void setMacroInsert(MMacroInsert mMacroInsert){
+                
+                    
+                    
+                }
+            });
+        }
+    }
+    
+    
+    private void initIndentationTextDirectives(){
+        StringBuilder sb0 = new StringBuilder();
+        sb0.append(LINE_SEPARATOR);
+        this.IndentationTextSeparator = new DSeparator(sb0.toString());
+        this.IndentationTextValue.setSeparator(this.IndentationTextSeparator);
+    }
+    
+    @Override
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setIndentPart(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("IndentPart");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        initIndentationTextDirectives();
+        
+        initIndentationTextInternals(null);
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        sb0.append("Indent ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        StringBuilder sb1 = new StringBuilder();
+        sbIndentation = new StringBuilder();
+        sbIndentation.append("    ");
+        indentations.add(sbIndentation.toString());
+        sb1.append(buildIndentationText());
+        sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("}");
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

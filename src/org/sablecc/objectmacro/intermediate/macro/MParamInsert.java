@@ -2,51 +2,180 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class MParamInsert {
-
-    private final List<Object> eSimpleName = new LinkedList<>();
-
-    public MParamInsert() {
-
+public class MParamInsert extends Macro{
+    
+    private final List<Macro> list_ReferencedParam;
+    
+    private DSeparator ReferencedParamSeparator;
+    
+    private DBeforeFirst ReferencedParamBeforeFirst;
+    
+    private DAfterLast ReferencedParamAfterLast;
+    
+    private DNone ReferencedParamNone;
+    
+    private final InternalValue ReferencedParamValue;
+    
+    
+    private final Context ReferencedParamContext = new Context();
+    
+    
+    public MParamInsert(){
+    
+        this.list_ReferencedParam = new ArrayList<>();
+    
+        this.ReferencedParamValue = new InternalValue(this.list_ReferencedParam, this.ReferencedParamContext);
     }
-
-    public MSimpleName newSimpleName(
-            String pName) {
-
-        MSimpleName lSimpleName = new MSimpleName(pName);
-        this.eSimpleName.add(lSimpleName);
-        return lSimpleName;
+    
+    
+    public void addReferencedParam(MName macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("ReferencedParam");
+        }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("Name");
+                }
+    
+        this.list_ReferencedParam.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
-
-    @Override
-    public String toString() {
-
+    
+    
+    private String buildReferencedParam(){
         StringBuilder sb = new StringBuilder();
-        sb.append(" ParamInsert { Name = ");
-        if (this.eSimpleName.size() > 1) {
-            sb.append("{ ");
+        Context local_context = ReferencedParamContext;
+        List<Macro> macros = this.list_ReferencedParam;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+    
+        if(this.ReferencedParamNone != null){
+            sb.append(this.ReferencedParamNone.apply(i, "", nb_macros));
         }
-        {
-            boolean first = true;
-            for (Object oSimpleName : this.eSimpleName) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    sb.append(", ");
-                }
-                sb.append(oSimpleName.toString());
+    
+        for(Macro macro : macros){
+            expansion = macro.build(local_context);
+    
+            if(this.ReferencedParamBeforeFirst != null){
+                expansion = this.ReferencedParamBeforeFirst.apply(i, expansion, nb_macros);
             }
+    
+            if(this.ReferencedParamAfterLast != null){
+                expansion = this.ReferencedParamAfterLast.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.ReferencedParamSeparator != null){
+                expansion = this.ReferencedParamSeparator.apply(i, expansion, nb_macros);
+            }
+    
+            sb.append(expansion);
+            i++;
         }
-        if (this.eSimpleName.size() > 1) {
-            sb.append(" }");
-        }
-        sb.append(" } ;");
-        sb.append(System.getProperty("line.separator"));
+    
         return sb.toString();
     }
+    
+    
+    private InternalValue getReferencedParam(){
+        return this.ReferencedParamValue;
+    }
+    
+    private void initReferencedParamInternals(Context context){
+        for(Macro macro : this.list_ReferencedParam){
+            macro.apply(new InternalsInitializer("ReferencedParam"){
+                @Override
+                void setName(MName mName){
+                
+                    
+                    
+                }
+            });
+        }
+    }
+    
+    
+    private void initReferencedParamDirectives(){
+        
+    }
+    
+    @Override
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setParamInsert(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("ParamInsert");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        initReferencedParamDirectives();
+        
+        initReferencedParamInternals(null);
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        sb0.append("ParamInsert ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        StringBuilder sb1 = new StringBuilder();
+        sbIndentation = new StringBuilder();
+        sbIndentation.append("    ");
+        indentations.add(sbIndentation.toString());
+        sb1.append(buildReferencedParam());
+        sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("}");
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

@@ -72,7 +72,7 @@ public class Param {
 
         TIdentifier identifier = macroRef.getName();
 
-        if (this.globalIndex.getMacro(identifier) == null) {
+        if(!this.globalIndex.macroExists(identifier)){
             throw CompilerException.unknownMacro(identifier);
         }
 

@@ -1,0 +1,126 @@
+# This file is part of SableCC ( http://sablecc.org ).
+#
+# See the NOTICE file distributed with this work for copyright information.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+ 
+Version java4, java5
+
+Macro class
+    Param
+        name : String;
+        enums : enum, separator="\n\n";
+        test : for("aaaa");
+{Body}
+public class {name}{{
+{enums}
+}
+{End}
+
+Macro for
+    Version
+        java4;
+    Param
+        class_name : String;
+        parameter_name : String;
+        rests : for("lala");
+    Internal
+        lala : String;
+{Body}
+for({class_name} p{class_name} : {parameter_name}){{
+{rests}
+}
+{End}
+
+Macro for
+    Version
+        java5;
+    Param
+        class_name : String;
+        parameter_name : String;
+        rests : for("test");
+    Internal
+        lala : String;
+{Body}
+for(int i = 0; i < {parameter_name}; i++){{
+{rests}
+}
+{End}
+
+Macro enum
+    Version
+        java4;
+    Param
+        enum_name : String;
+        enum_constants : constant(enum_name), separator="\n";
+{Body}
+{Indent: "\t"}
+{enum_constants}
+{End}
+{End}
+
+Macro enum
+    Version
+        java5;
+    Param
+        enum_name : String;
+        enum_constants : constant, separator=", ";
+{Body}
+public enum {enum_name} {
+{Indent: "\t"}
+{enum_constants}
+{End}
+    private Integer value;
+
+
+    public {enum_name}(Integer value){
+        this.value = value;
+    }
+}
+{End}
+
+Macro constant
+    Version
+        java4;
+    Param
+        name : String;
+        values : value;
+    Internal
+        enum_name : String;
+{Body}
+public static final int {enum_name}_{name} = {values};
+{End}
+
+Macro constant
+    Version
+        java5;
+    Param
+        name : String;
+        values : value, before_first="(", after_last=")", separator=", ";
+{Body}
+{name}{values}
+{End}
+
+Macro value
+    Param
+        value : String;
+{Body}
+{value}
+{End}
+
+Macro test
+    Version
+        java4, java5;
+{Body}
+TEST
+{End}

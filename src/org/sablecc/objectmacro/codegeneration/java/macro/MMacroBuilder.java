@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MMacroBuilder extends
+public class MMacroBuilder
+        extends
         Macro {
 
     private String field_MacroName;
@@ -993,7 +994,7 @@ public class MMacroBuilder extends
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         this.DirectivesCallsSeparator = new DSeparator(sb0.toString());
 
@@ -1005,7 +1006,7 @@ public class MMacroBuilder extends
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         this.InternalsCallsSeparator = new DSeparator(sb0.toString());
 
@@ -1017,7 +1018,7 @@ public class MMacroBuilder extends
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         this.MacroBodyPartsSeparator = new DSeparator(sb0.toString());
 
@@ -1093,7 +1094,7 @@ public class MMacroBuilder extends
 
         sb0.append("@Override");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         MPublic minsert_1 = new MPublic();
 
@@ -1107,9 +1108,9 @@ public class MMacroBuilder extends
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    BuildState buildState = ");
 
@@ -1117,29 +1118,29 @@ public class MMacroBuilder extends
 
         sb0.append(";");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    if(buildState == null)");
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("        buildState = new BuildState();");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    }");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    else if(buildState.getExpansion() == null)");
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("        throw ObjectMacroException.cyclicReference(\"");
 
@@ -1147,25 +1148,25 @@ public class MMacroBuilder extends
 
         sb0.append("\");");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    }");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    else");
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("        return buildState.getExpansion();");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    }");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    ");
 
@@ -1173,17 +1174,17 @@ public class MMacroBuilder extends
 
         sb0.append(";");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    List<String> indentations = new LinkedList<>();");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    StringBuilder sbIndentation = new StringBuilder();");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         StringBuilder sb1 = new StringBuilder();
 
@@ -1195,24 +1196,24 @@ public class MMacroBuilder extends
 
         sb1.append(buildDirectivesCalls());
 
-        sb1.append(Macro.LINE_SEPARATOR);
+        sb1.append(LINE_SEPARATOR);
 
-        sb1.append(Macro.LINE_SEPARATOR);
+        sb1.append(LINE_SEPARATOR);
 
         sb1.append(buildInternalsCalls());
 
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    StringBuilder sb0 = new StringBuilder();");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         StringBuilder sb2 = new StringBuilder();
 
@@ -1227,17 +1228,17 @@ public class MMacroBuilder extends
         sb0.append(applyIndent(sb2.toString(),
                 indentations.remove(indentations.size() - 1)));
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    buildState.setExpansion(sb0.toString());");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    return sb0.toString();");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -1269,7 +1270,7 @@ public class MMacroBuilder extends
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

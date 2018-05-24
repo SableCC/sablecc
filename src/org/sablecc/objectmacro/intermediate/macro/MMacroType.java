@@ -2,57 +2,180 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class MMacroType {
-
-    private final List<Object> eMacroRef = new LinkedList<>();
-
-    private final List<Object> eDirective = new LinkedList<>();
-
-    public MMacroType() {
-
+public class MMacroType extends Macro{
+    
+    private final List<Macro> list_References;
+    
+    private DSeparator ReferencesSeparator;
+    
+    private DBeforeFirst ReferencesBeforeFirst;
+    
+    private DAfterLast ReferencesAfterLast;
+    
+    private DNone ReferencesNone;
+    
+    private final InternalValue ReferencesValue;
+    
+    
+    private final Context ReferencesContext = new Context();
+    
+    
+    public MMacroType(){
+    
+        this.list_References = new ArrayList<>();
+    
+        this.ReferencesValue = new InternalValue(this.list_References, this.ReferencesContext);
     }
-
-    public MMacroRef newMacroRef() {
-
-        MMacroRef lMacroRef = new MMacroRef();
-        this.eMacroRef.add(lMacroRef);
-        return lMacroRef;
+    
+    
+    public void addReferences(MMacroRef macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("References");
+        }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("MacroRef");
+                }
+    
+        this.list_References.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
-
-    public MDirective newDirective() {
-
-        MDirective lDirective = new MDirective();
-        this.eDirective.add(lDirective);
-        return lDirective;
-    }
-
-    @Override
-    public String toString() {
-
+    
+    
+    private String buildReferences(){
         StringBuilder sb = new StringBuilder();
-        sb.append(" Type {");
-        sb.append(System.getProperty("line.separator"));
-        for (Object oMacroRef : this.eMacroRef) {
-            sb.append(oMacroRef.toString());
+        Context local_context = ReferencesContext;
+        List<Macro> macros = this.list_References;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+    
+        if(this.ReferencesNone != null){
+            sb.append(this.ReferencesNone.apply(i, "", nb_macros));
         }
-        {
-            boolean first = true;
-            for (Object oDirective : this.eDirective) {
-                if (first) {
-                    first = false;
-                }
-                else {
-                    sb.append(", ");
-                }
-                sb.append(oDirective.toString());
+    
+        for(Macro macro : macros){
+            expansion = macro.build(local_context);
+    
+            if(this.ReferencesBeforeFirst != null){
+                expansion = this.ReferencesBeforeFirst.apply(i, expansion, nb_macros);
             }
+    
+            if(this.ReferencesAfterLast != null){
+                expansion = this.ReferencesAfterLast.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.ReferencesSeparator != null){
+                expansion = this.ReferencesSeparator.apply(i, expansion, nb_macros);
+            }
+    
+            sb.append(expansion);
+            i++;
         }
-        sb.append(" }");
-        sb.append(System.getProperty("line.separator"));
+    
         return sb.toString();
     }
+    
+    
+    private InternalValue getReferences(){
+        return this.ReferencesValue;
+    }
+    
+    private void initReferencesInternals(Context context){
+        for(Macro macro : this.list_References){
+            macro.apply(new InternalsInitializer("References"){
+                @Override
+                void setMacroRef(MMacroRef mMacroRef){
+                
+                    
+                    
+                }
+            });
+        }
+    }
+    
+    
+    private void initReferencesDirectives(){
+        
+    }
+    
+    @Override
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setMacroType(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("MacroType");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        initReferencesDirectives();
+        
+        initReferencesInternals(null);
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        sb0.append("Type ");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        StringBuilder sb1 = new StringBuilder();
+        sbIndentation = new StringBuilder();
+        sbIndentation.append("    ");
+        indentations.add(sbIndentation.toString());
+        sb1.append(buildReferences());
+        sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("}");
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }
