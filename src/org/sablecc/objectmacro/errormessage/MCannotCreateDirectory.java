@@ -2,44 +2,124 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MCannotCreateDirectory {
+import java.util.*;
 
-    private final String pLocation;
-
-    private final MCannotCreateDirectory mCannotCreateDirectory = this;
-
-    public MCannotCreateDirectory(
-            String pLocation) {
-
-        if (pLocation == null) {
-            throw new NullPointerException();
+public class MCannotCreateDirectory extends Macro{
+    
+    private String field_Location;
+    
+    
+    
+    
+    public MCannotCreateDirectory(String pLocation){
+    
+            this.setPLocation(pLocation);
+    
+    }
+    
+    
+    private void setPLocation( String pLocation ){
+        if(pLocation == null){
+            throw ObjectMacroException.parameterNull("Location");
         }
-        this.pLocation = pLocation;
+    
+        this.field_Location = pLocation;
     }
-
-    String pLocation() {
-
-        return this.pLocation;
+    
+    
+    private String buildLocation(){
+    
+        return this.field_Location;
     }
-
-    private String rLocation() {
-
-        return this.mCannotCreateDirectory.pLocation();
+    
+    
+    private String getLocation(){
+    
+        return this.field_Location;
     }
-
+    
+    
+    
+    
+    
     @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The directory \"");
-        sb.append(rLocation());
-        sb.append("\" could not be created.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setCannotCreateDirectory(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("CannotCreateDirectory");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        
+    
+    
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        
+        
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("The directory \"");
+        sb0.append(buildLocation());
+        sb0.append("\" could not be created.");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        
+        
+        sb0.append(minsert_2.build(null));
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

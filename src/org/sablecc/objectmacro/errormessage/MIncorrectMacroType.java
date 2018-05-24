@@ -2,120 +2,212 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MIncorrectMacroType {
+import java.util.*;
 
-    private final String pExpected;
+public class MIncorrectMacroType extends Macro{
 
-    private final String pFound;
+    private String field_Expected;
 
-    private final String pIndex;
+    private String field_Found;
 
-    private final String pLine;
+    private String field_Index;
 
-    private final String pChar;
+    private String field_Line;
 
-    private final MIncorrectMacroType mIncorrectMacroType = this;
+    private String field_Char;
 
-    public MIncorrectMacroType(
-            String pExpected,
-            String pFound,
-            String pIndex,
-            String pLine,
-            String pChar) {
 
-        if (pExpected == null) {
-            throw new NullPointerException();
+
+
+    public MIncorrectMacroType(String pExpected, String pFound, String pIndex, String pLine, String pChar){
+
+            this.setPExpected(pExpected);
+            this.setPFound(pFound);
+            this.setPIndex(pIndex);
+            this.setPLine(pLine);
+            this.setPChar(pChar);
+
+    }
+
+
+    private void setPExpected( String pExpected ){
+        if(pExpected == null){
+            throw ObjectMacroException.parameterNull("Expected");
         }
-        this.pExpected = pExpected;
-        if (pFound == null) {
-            throw new NullPointerException();
+
+        this.field_Expected = pExpected;
+    }
+
+    private void setPFound( String pFound ){
+        if(pFound == null){
+            throw ObjectMacroException.parameterNull("Found");
         }
-        this.pFound = pFound;
-        if (pIndex == null) {
-            throw new NullPointerException();
+
+        this.field_Found = pFound;
+    }
+
+    private void setPIndex( String pIndex ){
+        if(pIndex == null){
+            throw ObjectMacroException.parameterNull("Index");
         }
-        this.pIndex = pIndex;
-        if (pLine == null) {
-            throw new NullPointerException();
+
+        this.field_Index = pIndex;
+    }
+
+    private void setPLine( String pLine ){
+        if(pLine == null){
+            throw ObjectMacroException.parameterNull("Line");
         }
-        this.pLine = pLine;
-        if (pChar == null) {
-            throw new NullPointerException();
+
+        this.field_Line = pLine;
+    }
+
+    private void setPChar( String pChar ){
+        if(pChar == null){
+            throw ObjectMacroException.parameterNull("Char");
         }
-        this.pChar = pChar;
+
+        this.field_Char = pChar;
     }
 
-    String pExpected() {
 
-        return this.pExpected;
+    private String buildExpected(){
+
+        return this.field_Expected;
     }
 
-    String pFound() {
+    private String buildFound(){
 
-        return this.pFound;
+        return this.field_Found;
     }
 
-    String pIndex() {
+    private String buildIndex(){
 
-        return this.pIndex;
+        return this.field_Index;
     }
 
-    String pLine() {
+    private String buildLine(){
 
-        return this.pLine;
+        return this.field_Line;
     }
 
-    String pChar() {
+    private String buildChar(){
 
-        return this.pChar;
+        return this.field_Char;
     }
 
-    private String rLine() {
 
-        return this.mIncorrectMacroType.pLine();
+    private String getExpected(){
+
+        return this.field_Expected;
     }
 
-    private String rChar() {
+    private String getFound(){
 
-        return this.mIncorrectMacroType.pChar();
+        return this.field_Found;
     }
 
-    private String rIndex() {
+    private String getIndex(){
 
-        return this.mIncorrectMacroType.pIndex();
+        return this.field_Index;
     }
 
-    private String rExpected() {
+    private String getLine(){
 
-        return this.mIncorrectMacroType.pExpected();
+        return this.field_Line;
     }
 
-    private String rFound() {
+    private String getChar(){
 
-        return this.mIncorrectMacroType.pFound();
+        return this.field_Char;
     }
+
+
+
+
 
     @Override
-    public String toString() {
+     void apply(
+             InternalsInitializer internalsInitializer){
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MSemanticErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line : ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char : ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Incorrect macro type at index ");
-        sb.append(rIndex());
-        sb.append(". (expected : ");
-        sb.append(rExpected());
-        sb.append(", found : ");
-        sb.append(rFound());
-        sb.append(")");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+         internalsInitializer.setIncorrectMacroType(this);
+     }
+
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("IncorrectMacroType");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+
+
+
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+
+
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Line : ");
+        sb0.append(buildLine());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Char : ");
+        sb0.append(buildChar());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Incorrect macro type at index ");
+        sb0.append(buildIndex());
+        sb0.append(". (expected : ");
+        sb0.append(buildExpected());
+        sb0.append(", found : ");
+        sb0.append(buildFound());
+        sb0.append(")");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 
+
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
+
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

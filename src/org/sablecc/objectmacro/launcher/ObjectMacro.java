@@ -25,66 +25,24 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.PushbackReader;
 import java.io.StringWriter;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.errormessage.MInternalError;
 import org.sablecc.objectmacro.errormessage.MLexicalError;
 import org.sablecc.objectmacro.errormessage.MSyntaxError;
 import org.sablecc.objectmacro.exception.CompilerException;
+import org.sablecc.objectmacro.intermediate.macro.*;
+import org.sablecc.objectmacro.structure.*;
 import org.sablecc.objectmacro.structure.Macro;
 import org.sablecc.objectmacro.syntax3.lexer.LexerException;
+import org.sablecc.objectmacro.syntax3.node.*;
 import org.sablecc.objectmacro.syntax3.parser.Parser;
 import org.sablecc.objectmacro.syntax3.parser.ParserException;
-import org.sablecc.objectmacro.intermediate.macro.MArgs;
-import org.sablecc.objectmacro.intermediate.macro.MDirective;
-import org.sablecc.objectmacro.intermediate.macro.MIndentPart;
-import org.sablecc.objectmacro.intermediate.macro.MInternal;
-import org.sablecc.objectmacro.intermediate.macro.MMacro;
-import org.sablecc.objectmacro.intermediate.macro.MMacroInsert;
-import org.sablecc.objectmacro.intermediate.macro.MMacroRef;
-import org.sablecc.objectmacro.intermediate.macro.MMacroType;
-import org.sablecc.objectmacro.intermediate.macro.MParam;
-import org.sablecc.objectmacro.intermediate.macro.MParamInsert;
-import org.sablecc.objectmacro.intermediate.macro.MTextArgument;
-import org.sablecc.objectmacro.intermediate.macro.MVarArgument;
-import org.sablecc.objectmacro.structure.Directive;
-import org.sablecc.objectmacro.structure.External;
-import org.sablecc.objectmacro.structure.GlobalIndex;
-import org.sablecc.objectmacro.structure.Internal;
-import org.sablecc.objectmacro.structure.Param;
-import org.sablecc.objectmacro.syntax3.node.AEolMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AEscapeMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AEscapeStringPart;
-import org.sablecc.objectmacro.syntax3.node.AIdentifiersInternalType;
-import org.sablecc.objectmacro.syntax3.node.AIndentMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AInsertMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AInsertStringPart;
-import org.sablecc.objectmacro.syntax3.node.AMacroReference;
-import org.sablecc.objectmacro.syntax3.node.AMacrosType;
-import org.sablecc.objectmacro.syntax3.node.AStringInternalType;
-import org.sablecc.objectmacro.syntax3.node.AStringStaticValue;
-import org.sablecc.objectmacro.syntax3.node.AStringType;
-import org.sablecc.objectmacro.syntax3.node.ATextMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.ATextStringPart;
-import org.sablecc.objectmacro.syntax3.node.AVarMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.AVarStaticValue;
-import org.sablecc.objectmacro.syntax3.node.AVarStringPart;
-import org.sablecc.objectmacro.syntax3.node.PMacroBodyPart;
-import org.sablecc.objectmacro.syntax3.node.PStaticValue;
-import org.sablecc.objectmacro.syntax3.node.PStringPart;
-import org.sablecc.objectmacro.syntax3.node.Start;
-import org.sablecc.objectmacro.syntax3.node.TVariable;
 import org.sablecc.objectmacro.util.Utils;
+import org.sablecc.objectmacro.walker.*;
 import org.sablecc.util.Strictness;
 import org.sablecc.util.Verbosity;
-import org.sablecc.objectmacro.walker.DeclarationCollector;
-import org.sablecc.objectmacro.walker.DirectiveCollector;
-import org.sablecc.objectmacro.walker.MacroReferenceCollector;
-import org.sablecc.objectmacro.walker.ParamReferenceCollector;
-import org.sablecc.objectmacro.walker.VarVerifier;
 
 /**
  * The main class of ObjectMacro.
@@ -123,7 +81,7 @@ public class ObjectMacro {
                     e.getToken().getPos() + "",
                     e.getToken().getClass().getSimpleName().substring(1)
                             .toLowerCase(),
-                    e.getToken().getText(), e.getMessage().substring(start)));
+                    e.getToken().getText(), e.getMessage().substring(start)).build());
             System.err.flush();
             System.exit(1);
         }
@@ -139,7 +97,7 @@ public class ObjectMacro {
             start = e.getMessage().indexOf(' ') + 1;
 
             System.err.print(new MLexicalError(line, pos,
-                    e.getMessage().substring(start)));
+                    e.getMessage().substring(start)).build());
             System.err.flush();
             System.exit(1);
         }
@@ -148,7 +106,7 @@ public class ObjectMacro {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             pw.flush();
-            System.err.print(new MInternalError(sw.toString(), e.getMessage()));
+            System.err.print(new MInternalError(sw.toString(), e.getMessage()).build());
             System.err.flush();
             System.exit(1);
         }

@@ -348,9 +348,7 @@ public class MMacroFactory extends Macro{
         sb0.append("        if(version == null)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("            //TODO");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("            //throw ObjectMacroException(\"version cannot be null\");");
+        sb0.append("            throw ObjectMacroException.versionNull();");
         sb0.append(LINE_SEPARATOR);
         sb0.append("        }");
         sb0.append(LINE_SEPARATOR);

@@ -2,64 +2,142 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MBodyTokenMisused {
+import java.util.*;
 
-    private final String pLine;
+public class MBodyTokenMisused extends Macro{
 
-    private final String pChar;
+    private String field_Line;
 
-    private final MBodyTokenMisused mBodyTokenMisused = this;
+    private String field_Char;
 
-    public MBodyTokenMisused(
-            String pLine,
-            String pChar) {
 
-        if (pLine == null) {
-            throw new NullPointerException();
+
+
+    public MBodyTokenMisused(String pLine, String pChar){
+
+            this.setPLine(pLine);
+            this.setPChar(pChar);
+
+    }
+
+
+    private void setPLine( String pLine ){
+        if(pLine == null){
+            throw ObjectMacroException.parameterNull("Line");
         }
-        this.pLine = pLine;
-        if (pChar == null) {
-            throw new NullPointerException();
+
+        this.field_Line = pLine;
+    }
+
+    private void setPChar( String pChar ){
+        if(pChar == null){
+            throw ObjectMacroException.parameterNull("Char");
         }
-        this.pChar = pChar;
+
+        this.field_Char = pChar;
     }
 
-    String pLine() {
 
-        return this.pLine;
+    private String buildLine(){
+
+        return this.field_Line;
     }
 
-    String pChar() {
+    private String buildChar(){
 
-        return this.pChar;
+        return this.field_Char;
     }
 
-    private String rLine() {
 
-        return this.mBodyTokenMisused.pLine();
+    private String getLine(){
+
+        return this.field_Line;
     }
 
-    private String rChar() {
+    private String getChar(){
 
-        return this.mBodyTokenMisused.pChar();
+        return this.field_Char;
     }
+
+
+
+
 
     @Override
-    public String toString() {
+     void apply(
+             InternalsInitializer internalsInitializer){
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("*** SYNTAX ERROR ***");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line: ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char: ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The token {Body} must be at the beginning of the line.");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+         internalsInitializer.setBodyTokenMisused(this);
+     }
+
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("BodyTokenMisused");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+
+
+
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("*** SYNTAX ERROR ***");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Line: ");
+        sb0.append(buildLine());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Char: ");
+        sb0.append(buildChar());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("The token ");
+        sb0.append("{");
+        sb0.append("Body} must be at the beginning of the line, at position 0.");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
 
+
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
+
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

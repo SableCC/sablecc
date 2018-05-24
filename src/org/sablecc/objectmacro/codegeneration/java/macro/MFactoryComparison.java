@@ -81,9 +81,7 @@ public class MFactoryComparison extends Macro{
         sb0.append(".getMacros())");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    //TODO EXCEPTION");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    throw new RuntimeException(\"factory different\");");
+        sb0.append("    throw ObjectMacroException.diffMacros();");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
     

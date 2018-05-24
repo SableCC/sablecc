@@ -2,44 +2,124 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MMacroNotFile {
+import java.util.*;
 
-    private final String pFileName;
-
-    private final MMacroNotFile mMacroNotFile = this;
-
-    public MMacroNotFile(
-            String pFileName) {
-
-        if (pFileName == null) {
-            throw new NullPointerException();
+public class MMacroNotFile extends Macro{
+    
+    private String field_FileName;
+    
+    
+    
+    
+    public MMacroNotFile(String pFileName){
+    
+            this.setPFileName(pFileName);
+    
+    }
+    
+    
+    private void setPFileName( String pFileName ){
+        if(pFileName == null){
+            throw ObjectMacroException.parameterNull("FileName");
         }
-        this.pFileName = pFileName;
+    
+        this.field_FileName = pFileName;
     }
-
-    String pFileName() {
-
-        return this.pFileName;
+    
+    
+    private String buildFileName(){
+    
+        return this.field_FileName;
     }
-
-    private String rFileName() {
-
-        return this.mMacroNotFile.pFileName();
+    
+    
+    private String getFileName(){
+    
+        return this.field_FileName;
     }
-
+    
+    
+    
+    
+    
     @Override
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MCommandLineErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The macro argument, \"");
-        sb.append(rFileName());
-        sb.append("\", is not a file.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(new MCommandLineErrorTail().toString());
-        return sb.toString();
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setMacroNotFile(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("MacroNotFile");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        
+    
+    
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        
+        
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("The macro argument, \"");
+        sb0.append(buildFileName());
+        sb0.append("\", is not a file.");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        
+        
+        sb0.append(minsert_2.build(null));
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
     }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

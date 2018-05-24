@@ -20,23 +20,7 @@ package org.sablecc.objectmacro.codegeneration.java;
 import java.io.File;
 
 import org.sablecc.objectmacro.codegeneration.IntermediateRepresentation;
-import org.sablecc.objectmacro.codegeneration.java.macro.MClassAfterLast;
-import org.sablecc.objectmacro.codegeneration.java.macro.MClassBeforeFirst;
-import org.sablecc.objectmacro.codegeneration.java.macro.MClassBuildState;
-import org.sablecc.objectmacro.codegeneration.java.macro.MClassInternalValue;
-import org.sablecc.objectmacro.codegeneration.java.macro.MClassNone;
-import org.sablecc.objectmacro.codegeneration.java.macro.MClassSeparator;
-import org.sablecc.objectmacro.codegeneration.java.macro.MContext;
-import org.sablecc.objectmacro.codegeneration.java.macro.MCycleDetectorClass;
-import org.sablecc.objectmacro.codegeneration.java.macro.MExCannotModify;
-import org.sablecc.objectmacro.codegeneration.java.macro.MExCyclicReference;
-import org.sablecc.objectmacro.codegeneration.java.macro.MExIncorrectType;
-import org.sablecc.objectmacro.codegeneration.java.macro.MExMacroNullInList;
-import org.sablecc.objectmacro.codegeneration.java.macro.MExObjectMacroErrorHead;
-import org.sablecc.objectmacro.codegeneration.java.macro.MExObjectMacroException;
-import org.sablecc.objectmacro.codegeneration.java.macro.MExParameterNull;
-import org.sablecc.objectmacro.codegeneration.java.macro.MPackageDeclaration;
-import org.sablecc.objectmacro.codegeneration.java.macro.MSuperDirective;
+import org.sablecc.objectmacro.codegeneration.java.macro.*;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AIntermediateRepresentation;
 
@@ -68,6 +52,11 @@ public class UtilsGenerationWalker extends
         MExCyclicReference mCyclicReference = new MExCyclicReference();
         MExCannotModify mCannotModify = new MExCannotModify();
         MExObjectMacroException mObjectMacroException = new MExObjectMacroException();
+        MExVersionNull mExVersionNull = new MExVersionNull();
+        MExVersionsDifferent mExVersionsDifferent = new MExVersionsDifferent();
+        MExInternalException mExInternalException = new MExInternalException();
+        MMacroInternalException mMacroInternalException = new MMacroInternalException();
+
         MClassInternalValue mClassInternalValue = new MClassInternalValue();
         MClassBuildState mClassBuildState = new MClassBuildState();
         MCycleDetectorClass mTarjanClass = new MCycleDetectorClass();
@@ -98,50 +87,25 @@ public class UtilsGenerationWalker extends
             mClassSeparator.addPackageDeclaration(mPackageDeclaration);
             mClassBuildState.addPackageDeclaration(mPackageDeclaration);
             mTarjanClass.addPackageDeclaration(mPackageDeclaration);
+            mExVersionNull.addPackageDeclaration(mPackageDeclaration);
+            mExVersionsDifferent.addPackageDeclaration(mPackageDeclaration);
+            mExInternalException.addPackageDeclaration(mPackageDeclaration);
+            mMacroInternalException.addPackageDeclaration(mPackageDeclaration);
         }
 
         GenerationUtils.writeFile(this.packageDirectory, "Context.java",
                 mContext.build());
-        GenerationUtils.writeFile(this.packageDirectory, "MIncorrectType.java",
+        GenerationUtils.writeFile(this.packageDirectory, "MUserErrorIncorrectType.java",
                 mIncorrectType.build());
-        GenerationUtils.writeFile(this.packageDirectory, "MParameterNull.java",
+        GenerationUtils.writeFile(this.packageDirectory, "MUserErrorParameterNull.java",
                 mParameterNull.build());
         GenerationUtils.writeFile(this.packageDirectory,
-                "MObjectMacroErrorHead.java", mObjectMacroErrorHead.build());
+                "MObjectMacroUserErrorHead.java", mObjectMacroErrorHead.build());
         GenerationUtils.writeFile(this.packageDirectory,
-                "MMacroNullInList.java", mMacroNullInList.build());
+                "MUserErrorMacroNullInList.java", mMacroNullInList.build());
         GenerationUtils.writeFile(this.packageDirectory,
-                "MCyclicReference.java", mCyclicReference.build());
-        GenerationUtils.writeFile(this.packageDirectory, "MCannotModify.java",
-                mCannotModify.build());
-        GenerationUtils.writeFile(this.packageDirectory,
-                "ObjectMacroException.java", mObjectMacroException.build());
-        GenerationUtils.writeFile(this.packageDirectory, "InternalValue.java",
-                mClassInternalValue.build());
-        GenerationUtils.writeFile(this.packageDirectory, "Directive.java",
-                mSuperDirective.build());
-        GenerationUtils.writeFile(this.packageDirectory, "DAfterLast.java",
-                mClassAfterLast.build());
-        GenerationUtils.writeFile(this.packageDirectory, "DBeforeFirst.java",
-                mClassBeforeFirst.build());
-        GenerationUtils.writeFile(this.packageDirectory, "DNone.java",
-                mClassNone.build());
-        GenerationUtils.writeFile(this.packageDirectory, "DSeparator.java",
-                mClassSeparator.build());
-
-        GenerationUtils.writeFile(this.packageDirectory, "Context.java",
-                mContext.build());
-        GenerationUtils.writeFile(this.packageDirectory, "MIncorrectType.java",
-                mIncorrectType.build());
-        GenerationUtils.writeFile(this.packageDirectory, "MParameterNull.java",
-                mParameterNull.build());
-        GenerationUtils.writeFile(this.packageDirectory,
-                "MObjectMacroErrorHead.java", mObjectMacroErrorHead.build());
-        GenerationUtils.writeFile(this.packageDirectory,
-                "MMacroNullInList.java", mMacroNullInList.build());
-        GenerationUtils.writeFile(this.packageDirectory,
-                "MCyclicReference.java", mCyclicReference.build());
-        GenerationUtils.writeFile(this.packageDirectory, "MCannotModify.java",
+                "MUserErrorCyclicReference.java", mCyclicReference.build());
+        GenerationUtils.writeFile(this.packageDirectory, "MUserErrorCannotModify.java",
                 mCannotModify.build());
         GenerationUtils.writeFile(this.packageDirectory,
                 "ObjectMacroException.java", mObjectMacroException.build());
@@ -162,5 +126,17 @@ public class UtilsGenerationWalker extends
                 mClassBuildState.build());
         GenerationUtils.writeFile(this.packageDirectory, "CycleDetector.java",
                 mTarjanClass.build());
+
+        GenerationUtils.writeFile(this.packageDirectory, "MUserErrorVersionNull.java",
+                mExVersionNull.build());
+
+        GenerationUtils.writeFile(this.packageDirectory, "MUserErrorVersionsDifferent.java",
+                mExVersionsDifferent.build());
+
+        GenerationUtils.writeFile(this.packageDirectory, "InternalException.java",
+                mExInternalException.build());
+
+        GenerationUtils.writeFile(this.packageDirectory, "MUserErrorInternalException.java",
+                mMacroInternalException.build());
     }
 }

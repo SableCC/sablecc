@@ -2,122 +2,300 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MDuplicateDeclaration {
+import java.util.*;
 
-    private final String pName;
-
-    private final String pLine;
-
-    private final String pChar;
-
-    private final String pRefLine;
-
-    private final String pRefChar;
-
-    private final MDuplicateDeclaration mDuplicateDeclaration = this;
-
-    public MDuplicateDeclaration(
-            String pName,
-            String pLine,
-            String pChar,
-            String pRefLine,
-            String pRefChar) {
-
-        if (pName == null) {
-            throw new NullPointerException();
+public class MDuplicateDeclaration extends Macro{
+    
+    private String field_Name;
+    
+    private String field_Line;
+    
+    private String field_Char;
+    
+    private String field_RefLine;
+    
+    private String field_RefChar;
+    
+    private final List<Macro> list_Version;
+    
+    private DSeparator VersionSeparator;
+    
+    private DBeforeFirst VersionBeforeFirst;
+    
+    private DAfterLast VersionAfterLast;
+    
+    private DNone VersionNone;
+    
+    private final InternalValue VersionValue;
+    
+    
+    private final Context VersionContext = new Context();
+    
+    
+    public MDuplicateDeclaration(String pName, String pLine, String pChar, String pRefLine, String pRefChar){
+    
+            this.setPName(pName);
+            this.setPLine(pLine);
+            this.setPChar(pChar);
+            this.setPRefLine(pRefLine);
+            this.setPRefChar(pRefChar);
+        this.list_Version = new ArrayList<>();
+    
+        this.VersionValue = new InternalValue(this.list_Version, this.VersionContext);
+    }
+    
+    
+    private void setPName( String pName ){
+        if(pName == null){
+            throw ObjectMacroException.parameterNull("Name");
         }
-        this.pName = pName;
-        if (pLine == null) {
-            throw new NullPointerException();
+    
+        this.field_Name = pName;
+    }
+    
+    private void setPLine( String pLine ){
+        if(pLine == null){
+            throw ObjectMacroException.parameterNull("Line");
         }
-        this.pLine = pLine;
-        if (pChar == null) {
-            throw new NullPointerException();
+    
+        this.field_Line = pLine;
+    }
+    
+    private void setPChar( String pChar ){
+        if(pChar == null){
+            throw ObjectMacroException.parameterNull("Char");
         }
-        this.pChar = pChar;
-        if (pRefLine == null) {
-            throw new NullPointerException();
+    
+        this.field_Char = pChar;
+    }
+    
+    private void setPRefLine( String pRefLine ){
+        if(pRefLine == null){
+            throw ObjectMacroException.parameterNull("RefLine");
         }
-        this.pRefLine = pRefLine;
-        if (pRefChar == null) {
-            throw new NullPointerException();
+    
+        this.field_RefLine = pRefLine;
+    }
+    
+    private void setPRefChar( String pRefChar ){
+        if(pRefChar == null){
+            throw ObjectMacroException.parameterNull("RefChar");
         }
-        this.pRefChar = pRefChar;
+    
+        this.field_RefChar = pRefChar;
     }
-
-    String pName() {
-
-        return this.pName;
+    
+    public void addVersion(MPlainText macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("Version");
+        }
+                if(this.build_state != null){
+                    throw ObjectMacroException.cannotModify("PlainText");
+                }
+    
+        this.list_Version.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
-
-    String pLine() {
-
-        return this.pLine;
+    
+    
+    private String buildName(){
+    
+        return this.field_Name;
     }
-
-    String pChar() {
-
-        return this.pChar;
+    
+    private String buildLine(){
+    
+        return this.field_Line;
     }
-
-    String pRefLine() {
-
-        return this.pRefLine;
+    
+    private String buildChar(){
+    
+        return this.field_Char;
     }
-
-    String pRefChar() {
-
-        return this.pRefChar;
+    
+    private String buildRefLine(){
+    
+        return this.field_RefLine;
     }
-
-    private String rLine() {
-
-        return this.mDuplicateDeclaration.pLine();
+    
+    private String buildRefChar(){
+    
+        return this.field_RefChar;
     }
-
-    private String rChar() {
-
-        return this.mDuplicateDeclaration.pChar();
-    }
-
-    private String rName() {
-
-        return this.mDuplicateDeclaration.pName();
-    }
-
-    private String rRefLine() {
-
-        return this.mDuplicateDeclaration.pRefLine();
-    }
-
-    private String rRefChar() {
-
-        return this.mDuplicateDeclaration.pRefChar();
-    }
-
-    @Override
-    public String toString() {
-
+    
+    private String buildVersion(){
         StringBuilder sb = new StringBuilder();
-        sb.append(new MSemanticErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line: ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char: ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Duplicate declaration of \"");
-        sb.append(rName());
-        sb.append("\".");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("It was already declared at line ");
-        sb.append(rRefLine());
-        sb.append(", char ");
-        sb.append(rRefChar());
-        sb.append(".");
-        sb.append(System.getProperty("line.separator"));
+        Context local_context = VersionContext;
+        List<Macro> macros = this.list_Version;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+    
+        if(this.VersionNone != null){
+            sb.append(this.VersionNone.apply(i, "", nb_macros));
+        }
+    
+        for(Macro macro : macros){
+            expansion = macro.build(local_context);
+    
+            if(this.VersionBeforeFirst != null){
+                expansion = this.VersionBeforeFirst.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.VersionAfterLast != null){
+                expansion = this.VersionAfterLast.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.VersionSeparator != null){
+                expansion = this.VersionSeparator.apply(i, expansion, nb_macros);
+            }
+    
+            sb.append(expansion);
+            i++;
+        }
+    
         return sb.toString();
     }
+    
+    
+    private String getName(){
+    
+        return this.field_Name;
+    }
+    
+    private String getLine(){
+    
+        return this.field_Line;
+    }
+    
+    private String getChar(){
+    
+        return this.field_Char;
+    }
+    
+    private String getRefLine(){
+    
+        return this.field_RefLine;
+    }
+    
+    private String getRefChar(){
+    
+        return this.field_RefChar;
+    }
+    
+    private InternalValue getVersion(){
+        return this.VersionValue;
+    }
+    
+    private void initVersionInternals(Context context){
+        for(Macro macro : this.list_Version){
+            macro.apply(new InternalsInitializer("Version"){
+                @Override
+                void setPlainText(MPlainText mPlainText){
+                
+                    
+                    
+                }
+            });
+        }
+    }
+    
+    
+    private void initVersionDirectives(){
+        StringBuilder sb0 = new StringBuilder();
+        sb0.append("in version: ");
+        this.VersionBeforeFirst = new DBeforeFirst(sb0.toString());
+        this.VersionValue.setBeforeFirst(this.VersionBeforeFirst);
+    }
+    
+    @Override
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setDuplicateDeclaration(this);
+     }
+    
+    
+    @Override
+    public String build(){
+    
+        BuildState buildState = this.build_state;
+    
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("DuplicateDeclaration");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+    
+        initVersionDirectives();
+        
+        initVersionInternals(null);
+    
+        StringBuilder sb0 = new StringBuilder();
+    
+        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+        
+        
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Line: ");
+        sb0.append(buildLine());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Char: ");
+        sb0.append(buildChar());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Duplicate declaration of \"");
+        sb0.append(buildName());
+        sb0.append("\" ");
+        sb0.append(buildVersion());
+        sb0.append(".");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("It was already declared at line ");
+        sb0.append(buildRefLine());
+        sb0.append(", char ");
+        sb0.append(buildRefChar());
+        sb0.append(".");
+    
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+    
+    
+    @Override
+    String build(Context context) {
+     return build();
+    }
+    private String applyIndent(
+                            String macro,
+                            String indent){
 
+            StringBuilder sb = new StringBuilder();
+            String[] lines = macro.split( "\n");
+
+            if(lines.length > 1){
+                for(int i = 0; i < lines.length; i++){
+                    String line = lines[i];
+                    sb.append(indent).append(line);
+
+                    if(i < lines.length - 1){
+                        sb.append(LINE_SEPARATOR);
+                    }
+                }
+            }
+            else{
+                sb.append(indent).append(macro);
+            }
+
+            return sb.toString();
+    }
 }

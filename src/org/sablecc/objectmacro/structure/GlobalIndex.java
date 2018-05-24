@@ -17,10 +17,7 @@
 
 package org.sablecc.objectmacro.structure;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.exception.CompilerException;
@@ -162,8 +159,7 @@ public class GlobalIndex {
         }
 
         if(!this.allVersions.containsKey(version_name.getText())){
-            //TODO exception for version
-            throw CompilerException.unknownMacro(version_name);
+            throw CompilerException.unknownVersion(version_name);
         }
 
         return this.allVersions.get(version_name.getText());

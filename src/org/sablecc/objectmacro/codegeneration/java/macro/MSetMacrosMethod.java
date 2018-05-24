@@ -63,9 +63,7 @@ public class MSetMacrosMethod extends Macro{
         sb0.append("    if(macros == null)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("        //TODO INTERNAL EXCEPTION");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        throw new RuntimeException(\"macros cannot be null\");");
+        sb0.append("        throw new InternalException(\"macros cannot be null\");");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
