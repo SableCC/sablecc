@@ -89,36 +89,36 @@ public class MInternalStringSetter
 
         sb0.append("(");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("            Context context,");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("            String value) ");
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("        if(value == null)");
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append(
                 "            throw new RuntimeException(\"value cannot be null here\");");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("        }");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("        this.field_");
 
@@ -126,7 +126,7 @@ public class MInternalStringSetter
 
         sb0.append(".put(context, value);");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    }");
 
@@ -158,7 +158,7 @@ public class MInternalStringSetter
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

@@ -7,101 +7,87 @@ import java.util.*;
 public class MParamMacroField
         extends Macro {
 
-    private String field_Name;
+    private String field_ParamName;
 
     public MParamMacroField(
-            String pName) {
+            String pParamName) {
 
-        setPName(pName);
+        setPParamName(pParamName);
 
     }
 
-    private void setPName(
-            String pName) {
+    private void setPParamName(
+            String pParamName) {
 
-        if (pName == null) {
-
-            throw ObjectMacroException.parameterNull("Name");
-
+        if (pParamName == null) {
+            throw ObjectMacroException.parameterNull("ParamName");
         }
 
-        this.field_Name = pName;
-
+        this.field_ParamName = pParamName;
     }
 
-    private String buildName() {
+    private String buildParamName() {
 
-        return this.field_Name;
-
+        return this.field_ParamName;
     }
 
-    private String getName() {
+    private String getParamName() {
 
-        return this.field_Name;
-
+        return this.field_ParamName;
     }
 
     @Override
-
     void apply(
-
             InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setParamMacroField(this);
-
     }
 
     @Override
-
     public String build() {
 
         BuildState buildState = this.build_state;
 
         if (buildState == null) {
-
             buildState = new BuildState();
-
         }
-
         else if (buildState.getExpansion() == null) {
-
             throw ObjectMacroException.cyclicReference("ParamMacroField");
-
         }
-
         else {
-
             return buildState.getExpansion();
-
         }
-
         this.build_state = buildState;
-
         List<String> indentations = new LinkedList<>();
-
         StringBuilder sbIndentation = new StringBuilder();
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append("private final List<Macro> list_");
-
-        sb0.append(buildName());
-
+        sb0.append("final List<Macro> list_");
+        sb0.append(buildParamName());
         sb0.append(";");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        MContextField minsert_1 = new MContextField();
+
+        minsert_1.setParamName(null, getParamName());
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        MInternalMacrosValueField minsert_2 = new MInternalMacrosValueField();
+
+        minsert_2.setParamName(null, getParamName());
+        sb0.append(minsert_2.build(null));
 
         buildState.setExpansion(sb0.toString());
-
         return sb0.toString();
-
     }
 
     @Override
-
     String build(
             Context context) {
 
         return build();
-
     }
 
     private String applyIndent(
@@ -117,7 +103,7 @@ public class MParamMacroField
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

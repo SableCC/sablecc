@@ -7,326 +7,268 @@ import java.util.*;
 public class MAddIndent
         extends Macro {
 
-    private final List<Macro> list_MacroBodyParts;
+    private String field_IndexBuilder;
 
-    private DSeparator MacroBodyPartsSeparator;
+    private final List<Macro> list_IndentParts;
 
-    private DBeforeFirst MacroBodyPartsBeforeFirst;
+    private DSeparator IndentPartsSeparator;
 
-    private DAfterLast MacroBodyPartsAfterLast;
+    private DBeforeFirst IndentPartsBeforeFirst;
 
-    private DNone MacroBodyPartsNone;
+    private DAfterLast IndentPartsAfterLast;
 
-    private final InternalValue MacroBodyPartsValue;
+    private DNone IndentPartsNone;
 
-    private final Context MacroBodyPartsContext = new Context();
+    private final InternalValue IndentPartsValue;
 
-    public MAddIndent() {
+    private final Context IndentPartsContext = new Context();
 
-        this.list_MacroBodyParts = new ArrayList<>();
+    public MAddIndent(
+            String pIndexBuilder) {
 
-        this.MacroBodyPartsValue = new InternalValue(this.list_MacroBodyParts,
-                this.MacroBodyPartsContext);
+        setPIndexBuilder(pIndexBuilder);
+        this.list_IndentParts = new ArrayList<>();
 
+        this.IndentPartsValue = new InternalValue(this.list_IndentParts,
+                this.IndentPartsContext);
     }
 
-    public void addMacroBodyParts(
+    private void setPIndexBuilder(
+            String pIndexBuilder) {
+
+        if (pIndexBuilder == null) {
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+
+        this.field_IndexBuilder = pIndexBuilder;
+    }
+
+    public void addIndentParts(
             MInitStringBuilder macro) {
 
         if (macro == null) {
-
-            throw ObjectMacroException.parameterNull("MacroBodyParts");
-
+            throw ObjectMacroException.parameterNull("IndentParts");
         }
-
         if (this.build_state != null) {
-
             throw ObjectMacroException.cannotModify("InitStringBuilder");
-
         }
 
-        this.list_MacroBodyParts.add(macro);
-
+        this.list_IndentParts.add(macro);
         this.children.add(macro);
-
         Macro.cycleDetector.detectCycle(this, macro);
-
     }
 
-    public void addMacroBodyParts(
+    public void addIndentParts(
             MStringPart macro) {
 
         if (macro == null) {
-
-            throw ObjectMacroException.parameterNull("MacroBodyParts");
-
+            throw ObjectMacroException.parameterNull("IndentParts");
         }
-
         if (this.build_state != null) {
-
             throw ObjectMacroException.cannotModify("StringPart");
-
         }
 
-        this.list_MacroBodyParts.add(macro);
-
+        this.list_IndentParts.add(macro);
         this.children.add(macro);
-
         Macro.cycleDetector.detectCycle(this, macro);
-
     }
 
-    public void addMacroBodyParts(
+    public void addIndentParts(
             MParamInsertPart macro) {
 
         if (macro == null) {
-
-            throw ObjectMacroException.parameterNull("MacroBodyParts");
-
+            throw ObjectMacroException.parameterNull("IndentParts");
         }
-
         if (this.build_state != null) {
-
             throw ObjectMacroException.cannotModify("ParamInsertPart");
-
         }
 
-        this.list_MacroBodyParts.add(macro);
-
+        this.list_IndentParts.add(macro);
         this.children.add(macro);
-
         Macro.cycleDetector.detectCycle(this, macro);
-
     }
 
-    public void addMacroBodyParts(
+    public void addIndentParts(
             MEolPart macro) {
 
         if (macro == null) {
-
-            throw ObjectMacroException.parameterNull("MacroBodyParts");
-
+            throw ObjectMacroException.parameterNull("IndentParts");
         }
-
         if (this.build_state != null) {
-
             throw ObjectMacroException.cannotModify("EolPart");
-
         }
 
-        this.list_MacroBodyParts.add(macro);
-
+        this.list_IndentParts.add(macro);
         this.children.add(macro);
-
         Macro.cycleDetector.detectCycle(this, macro);
-
     }
 
-    public void addMacroBodyParts(
+    public void addIndentParts(
             MInsertMacroPart macro) {
 
         if (macro == null) {
-
-            throw ObjectMacroException.parameterNull("MacroBodyParts");
-
+            throw ObjectMacroException.parameterNull("IndentParts");
         }
-
         if (this.build_state != null) {
-
             throw ObjectMacroException.cannotModify("InsertMacroPart");
-
         }
 
-        this.list_MacroBodyParts.add(macro);
-
+        this.list_IndentParts.add(macro);
         this.children.add(macro);
-
         Macro.cycleDetector.detectCycle(this, macro);
-
     }
 
-    private String buildMacroBodyParts() {
+    private String buildIndexBuilder() {
+
+        return this.field_IndexBuilder;
+    }
+
+    private String buildIndentParts() {
 
         StringBuilder sb = new StringBuilder();
-
-        Context local_context = this.MacroBodyPartsContext;
-
-        List<Macro> macros = this.list_MacroBodyParts;
+        Context local_context = this.IndentPartsContext;
+        List<Macro> macros = this.list_IndentParts;
 
         int i = 0;
-
         int nb_macros = macros.size();
-
         String expansion = null;
 
-        if (this.MacroBodyPartsNone != null) {
-
-            sb.append(this.MacroBodyPartsNone.apply(i, "", nb_macros));
-
+        if (this.IndentPartsNone != null) {
+            sb.append(this.IndentPartsNone.apply(i, "", nb_macros));
         }
 
         for (Macro macro : macros) {
-
             expansion = macro.build(local_context);
 
-            if (this.MacroBodyPartsBeforeFirst != null) {
-
-                expansion = this.MacroBodyPartsBeforeFirst.apply(i, expansion,
+            if (this.IndentPartsBeforeFirst != null) {
+                expansion = this.IndentPartsBeforeFirst.apply(i, expansion,
                         nb_macros);
-
             }
 
-            if (this.MacroBodyPartsAfterLast != null) {
-
-                expansion = this.MacroBodyPartsAfterLast.apply(i, expansion,
+            if (this.IndentPartsAfterLast != null) {
+                expansion = this.IndentPartsAfterLast.apply(i, expansion,
                         nb_macros);
-
             }
 
-            if (this.MacroBodyPartsSeparator != null) {
-
-                expansion = this.MacroBodyPartsSeparator.apply(i, expansion,
+            if (this.IndentPartsSeparator != null) {
+                expansion = this.IndentPartsSeparator.apply(i, expansion,
                         nb_macros);
-
             }
 
             sb.append(expansion);
-
             i++;
-
         }
 
         return sb.toString();
-
     }
 
-    private InternalValue getMacroBodyParts() {
+    private String getIndexBuilder() {
 
-        return this.MacroBodyPartsValue;
-
+        return this.field_IndexBuilder;
     }
 
-    private void initMacroBodyPartsInternals(
+    private InternalValue getIndentParts() {
+
+        return this.IndentPartsValue;
+    }
+
+    private void initIndentPartsInternals(
             Context context) {
 
-        for (Macro macro : this.list_MacroBodyParts) {
-
-            macro.apply(new InternalsInitializer("MacroBodyParts") {
+        for (Macro macro : this.list_IndentParts) {
+            macro.apply(new InternalsInitializer("IndentParts") {
 
                 @Override
-
                 void setInitStringBuilder(
                         MInitStringBuilder mInitStringBuilder) {
 
                 }
 
                 @Override
-
                 void setStringPart(
                         MStringPart mStringPart) {
 
                 }
 
                 @Override
-
                 void setParamInsertPart(
                         MParamInsertPart mParamInsertPart) {
 
                 }
 
                 @Override
-
                 void setEolPart(
                         MEolPart mEolPart) {
 
                 }
 
                 @Override
-
                 void setInsertMacroPart(
                         MInsertMacroPart mInsertMacroPart) {
 
                 }
-
             });
-
         }
-
     }
 
-    private void initMacroBodyPartsDirectives() {
+    private void initIndentPartsDirectives() {
 
+        StringBuilder sb0 = new StringBuilder();
+        sb0.append(LINE_SEPARATOR);
+        this.IndentPartsSeparator = new DSeparator(sb0.toString());
+        this.IndentPartsValue.setSeparator(this.IndentPartsSeparator);
     }
 
     @Override
-
     void apply(
-
             InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setAddIndent(this);
-
     }
 
     @Override
-
     public String build() {
 
         BuildState buildState = this.build_state;
 
         if (buildState == null) {
-
             buildState = new BuildState();
-
         }
-
         else if (buildState.getExpansion() == null) {
-
             throw ObjectMacroException.cyclicReference("AddIndent");
-
         }
-
         else {
-
             return buildState.getExpansion();
-
         }
-
         this.build_state = buildState;
-
         List<String> indentations = new LinkedList<>();
-
         StringBuilder sbIndentation = new StringBuilder();
 
-        initMacroBodyPartsDirectives();
+        initIndentPartsDirectives();
 
-        initMacroBodyPartsInternals(null);
+        initIndentPartsInternals(null);
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append("sbIndentation = new StringBuilder();");
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
-        sb0.append(buildMacroBodyParts());
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
-        sb0.append("indentations.add(sbIndentation.toString());");
+        sb0.append("StringBuilder sb");
+        sb0.append(buildIndexBuilder());
+        sb0.append(" = new StringBuilder();");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(buildIndentParts());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("indentations.add(sb");
+        sb0.append(buildIndexBuilder());
+        sb0.append(".toString());");
 
         buildState.setExpansion(sb0.toString());
-
         return sb0.toString();
-
     }
 
     @Override
-
     String build(
             Context context) {
 
         return build();
-
     }
 
     private String applyIndent(
@@ -342,7 +284,7 @@ public class MAddIndent
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

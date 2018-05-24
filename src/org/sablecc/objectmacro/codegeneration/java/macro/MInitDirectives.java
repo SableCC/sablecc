@@ -9,255 +9,186 @@ public class MInitDirectives
 
     private String field_ParamName;
 
-    private final List<Macro> list_NewDirective;
+    private final List<Macro> list_NewDirectives;
 
-    private DSeparator NewDirectiveSeparator;
+    private DSeparator NewDirectivesSeparator;
 
-    private DBeforeFirst NewDirectiveBeforeFirst;
+    private DBeforeFirst NewDirectivesBeforeFirst;
 
-    private DAfterLast NewDirectiveAfterLast;
+    private DAfterLast NewDirectivesAfterLast;
 
-    private DNone NewDirectiveNone;
+    private DNone NewDirectivesNone;
 
-    private final InternalValue NewDirectiveValue;
+    private final InternalValue NewDirectivesValue;
 
-    private final Context NewDirectiveContext = new Context();
+    private final Context NewDirectivesContext = new Context();
 
     public MInitDirectives(
             String pParamName) {
 
         setPParamName(pParamName);
+        this.list_NewDirectives = new ArrayList<>();
 
-        this.list_NewDirective = new ArrayList<>();
-
-        this.NewDirectiveValue = new InternalValue(this.list_NewDirective,
-                this.NewDirectiveContext);
-
+        this.NewDirectivesValue = new InternalValue(this.list_NewDirectives,
+                this.NewDirectivesContext);
     }
 
     private void setPParamName(
             String pParamName) {
 
         if (pParamName == null) {
-
             throw ObjectMacroException.parameterNull("ParamName");
-
         }
 
         this.field_ParamName = pParamName;
-
     }
 
-    public void addNewDirective(
+    public void addNewDirectives(
             MNewDirective macro) {
 
         if (macro == null) {
-
-            throw ObjectMacroException.parameterNull("NewDirective");
-
+            throw ObjectMacroException.parameterNull("NewDirectives");
         }
-
         if (this.build_state != null) {
-
             throw ObjectMacroException.cannotModify("NewDirective");
-
         }
 
-        this.list_NewDirective.add(macro);
-
+        this.list_NewDirectives.add(macro);
         this.children.add(macro);
-
         Macro.cycleDetector.detectCycle(this, macro);
-
     }
 
     private String buildParamName() {
 
         return this.field_ParamName;
-
     }
 
-    private String buildNewDirective() {
+    private String buildNewDirectives() {
 
         StringBuilder sb = new StringBuilder();
-
-        Context local_context = this.NewDirectiveContext;
-
-        List<Macro> macros = this.list_NewDirective;
+        Context local_context = this.NewDirectivesContext;
+        List<Macro> macros = this.list_NewDirectives;
 
         int i = 0;
-
         int nb_macros = macros.size();
-
         String expansion = null;
 
-        if (this.NewDirectiveNone != null) {
-
-            sb.append(this.NewDirectiveNone.apply(i, "", nb_macros));
-
+        if (this.NewDirectivesNone != null) {
+            sb.append(this.NewDirectivesNone.apply(i, "", nb_macros));
         }
 
         for (Macro macro : macros) {
-
             expansion = macro.build(local_context);
 
-            if (this.NewDirectiveBeforeFirst != null) {
-
-                expansion = this.NewDirectiveBeforeFirst.apply(i, expansion,
+            if (this.NewDirectivesBeforeFirst != null) {
+                expansion = this.NewDirectivesBeforeFirst.apply(i, expansion,
                         nb_macros);
-
             }
 
-            if (this.NewDirectiveAfterLast != null) {
-
-                expansion = this.NewDirectiveAfterLast.apply(i, expansion,
+            if (this.NewDirectivesAfterLast != null) {
+                expansion = this.NewDirectivesAfterLast.apply(i, expansion,
                         nb_macros);
-
             }
 
-            if (this.NewDirectiveSeparator != null) {
-
-                expansion = this.NewDirectiveSeparator.apply(i, expansion,
+            if (this.NewDirectivesSeparator != null) {
+                expansion = this.NewDirectivesSeparator.apply(i, expansion,
                         nb_macros);
-
             }
 
             sb.append(expansion);
-
             i++;
-
         }
 
         return sb.toString();
-
     }
 
     private String getParamName() {
 
         return this.field_ParamName;
-
     }
 
-    private InternalValue getNewDirective() {
+    private InternalValue getNewDirectives() {
 
-        return this.NewDirectiveValue;
-
+        return this.NewDirectivesValue;
     }
 
-    private void initNewDirectiveInternals(
+    private void initNewDirectivesInternals(
             Context context) {
 
-        for (Macro macro : this.list_NewDirective) {
-
-            macro.apply(new InternalsInitializer("NewDirective") {
+        for (Macro macro : this.list_NewDirectives) {
+            macro.apply(new InternalsInitializer("NewDirectives") {
 
                 @Override
-
                 void setNewDirective(
                         MNewDirective mNewDirective) {
 
                     mNewDirective.setParamName(
-                            MInitDirectives.this.NewDirectiveContext,
+                            MInitDirectives.this.NewDirectivesContext,
                             getParamName());
-
                 }
-
             });
-
         }
-
     }
 
-    private void initNewDirectiveDirectives() {
+    private void initNewDirectivesDirectives() {
 
     }
 
     @Override
-
     void apply(
-
             InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setInitDirectives(this);
-
     }
 
     @Override
-
     public String build() {
 
         BuildState buildState = this.build_state;
 
         if (buildState == null) {
-
             buildState = new BuildState();
-
         }
-
         else if (buildState.getExpansion() == null) {
-
             throw ObjectMacroException.cyclicReference("InitDirectives");
-
         }
-
         else {
-
             return buildState.getExpansion();
-
         }
-
         this.build_state = buildState;
-
         List<String> indentations = new LinkedList<>();
-
         StringBuilder sbIndentation = new StringBuilder();
 
-        initNewDirectiveDirectives();
+        initNewDirectivesDirectives();
 
-        initNewDirectiveInternals(null);
+        initNewDirectivesInternals(null);
 
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("private void init");
-
         sb0.append(buildParamName());
-
         sb0.append("Directives()");
-
         sb0.append("{");
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
+        sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-
         sbIndentation = new StringBuilder();
-
         sbIndentation.append("    ");
-
         indentations.add(sbIndentation.toString());
-
-        sb1.append(buildNewDirective());
-
+        sb1.append(buildNewDirectives());
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
+        sb0.append(LINE_SEPARATOR);
         sb0.append("}");
 
         buildState.setExpansion(sb0.toString());
-
         return sb0.toString();
-
     }
 
     @Override
-
     String build(
             Context context) {
 
         return build();
-
     }
 
     private String applyIndent(
@@ -273,7 +204,7 @@ public class MInitDirectives
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

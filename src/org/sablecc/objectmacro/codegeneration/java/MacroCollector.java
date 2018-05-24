@@ -20,21 +20,23 @@ package org.sablecc.objectmacro.codegeneration.java;
 import java.util.*;
 
 import org.sablecc.objectmacro.codegeneration.java.macro.*;
-import org.sablecc.objectmacro.codegeneration.java.structure.Macro;
+import org.sablecc.objectmacro.codegeneration.java.structure.*;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.*;
 import org.sablecc.objectmacro.intermediate.syntax3.node.*;
 
 public class MacroCollector
         extends DepthFirstAdapter {
 
-    private final Map<String, Macro> macros;
+    private final Map<String, SMacro> macros;
 
     private List<String> currentParameters = new LinkedList<>();
 
     private List<String> currentInternals = new LinkedList<>();
 
+    private List<String> allVersions = new LinkedList<>();
+
     public MacroCollector(
-            Map<String, Macro> macros) {
+            Map<String, SMacro> macros) {
 
         this.macros = macros;
     }
@@ -52,9 +54,25 @@ public class MacroCollector
             AMacro node) {
 
         String macro_name = GenerationUtils.buildNameCamelCase(node.getNames());
-        this.macros.put(macro_name, new Macro(new MMacro(macro_name),
-                this.currentParameters, this.currentInternals, macro_name));
+        String parent_name;
+        Set<String> applied_versions = new HashSet<>();
 
+        if (node.getIsAllVersionned() != null || node.getIsAbstract() != null) {
+
+            parent_name = "acro";
+        }
+        else {
+            parent_name = GenerationUtils.buildNameCamelCase(node.getParent());
+        }
+
+        for (TString version : node.getVersions()) {
+            applied_versions.add(GenerationUtils.string(version).toUpperCase());
+        }
+
+        this.macros.put(macro_name,
+                new SMacro(new MMacro(macro_name, parent_name),
+                        this.currentParameters, this.currentInternals,
+                        macro_name, applied_versions));
     }
 
     @Override

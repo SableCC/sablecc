@@ -19,390 +19,365 @@ public class MInternalsInitializer
 
     private final InternalValue PackageDeclarationValue;
 
-    private final List<Macro> list_ParentInternalSetter;
+    private final List<Macro> list_ParentInternalSetters;
 
-    private DSeparator ParentInternalSetterSeparator;
+    private DSeparator ParentInternalSettersSeparator;
 
-    private DBeforeFirst ParentInternalSetterBeforeFirst;
+    private DBeforeFirst ParentInternalSettersBeforeFirst;
 
-    private DAfterLast ParentInternalSetterAfterLast;
+    private DAfterLast ParentInternalSettersAfterLast;
 
-    private DNone ParentInternalSetterNone;
+    private DNone ParentInternalSettersNone;
 
-    private final InternalValue ParentInternalSetterValue;
+    private final InternalValue ParentInternalSettersValue;
 
     private final Context PackageDeclarationContext = new Context();
 
-    private final Context ParentInternalSetterContext = new Context();
+    private final Context ParentInternalSettersContext = new Context();
 
     public MInternalsInitializer() {
 
         this.list_PackageDeclaration = new ArrayList<>();
-
-        this.list_ParentInternalSetter = new ArrayList<>();
+        this.list_ParentInternalSetters = new ArrayList<>();
 
         this.PackageDeclarationValue = new InternalValue(
                 this.list_PackageDeclaration, this.PackageDeclarationContext);
-
-        this.ParentInternalSetterValue
-                = new InternalValue(this.list_ParentInternalSetter,
-                        this.ParentInternalSetterContext);
-
+        this.ParentInternalSettersValue
+                = new InternalValue(this.list_ParentInternalSetters,
+                        this.ParentInternalSettersContext);
     }
 
     public void addPackageDeclaration(
             MPackageDeclaration macro) {
 
         if (macro == null) {
-
             throw ObjectMacroException.parameterNull("PackageDeclaration");
-
         }
-
         if (this.build_state != null) {
-
             throw ObjectMacroException.cannotModify("PackageDeclaration");
-
         }
 
         this.list_PackageDeclaration.add(macro);
-
         this.children.add(macro);
-
         Macro.cycleDetector.detectCycle(this, macro);
-
     }
 
-    public void addParentInternalSetter(
+    public void addParentInternalSetters(
             MParentInternalsSetter macro) {
 
         if (macro == null) {
-
-            throw ObjectMacroException.parameterNull("ParentInternalSetter");
-
+            throw ObjectMacroException.parameterNull("ParentInternalSetters");
         }
-
         if (this.build_state != null) {
-
             throw ObjectMacroException.cannotModify("ParentInternalsSetter");
-
         }
 
-        this.list_ParentInternalSetter.add(macro);
-
+        this.list_ParentInternalSetters.add(macro);
         this.children.add(macro);
-
         Macro.cycleDetector.detectCycle(this, macro);
-
     }
 
     private String buildPackageDeclaration() {
 
         StringBuilder sb = new StringBuilder();
-
         Context local_context = this.PackageDeclarationContext;
-
         List<Macro> macros = this.list_PackageDeclaration;
 
         int i = 0;
-
         int nb_macros = macros.size();
-
         String expansion = null;
 
         if (this.PackageDeclarationNone != null) {
-
             sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
-
         }
 
         for (Macro macro : macros) {
-
             expansion = macro.build(local_context);
 
             if (this.PackageDeclarationBeforeFirst != null) {
-
                 expansion = this.PackageDeclarationBeforeFirst.apply(i,
                         expansion, nb_macros);
-
             }
 
             if (this.PackageDeclarationAfterLast != null) {
-
                 expansion = this.PackageDeclarationAfterLast.apply(i, expansion,
                         nb_macros);
-
             }
 
             if (this.PackageDeclarationSeparator != null) {
-
                 expansion = this.PackageDeclarationSeparator.apply(i, expansion,
                         nb_macros);
-
             }
 
             sb.append(expansion);
-
             i++;
-
         }
 
         return sb.toString();
-
     }
 
-    private String buildParentInternalSetter() {
+    private String buildParentInternalSetters() {
 
         StringBuilder sb = new StringBuilder();
-
-        Context local_context = this.ParentInternalSetterContext;
-
-        List<Macro> macros = this.list_ParentInternalSetter;
+        Context local_context = this.ParentInternalSettersContext;
+        List<Macro> macros = this.list_ParentInternalSetters;
 
         int i = 0;
-
         int nb_macros = macros.size();
-
         String expansion = null;
 
-        if (this.ParentInternalSetterNone != null) {
-
-            sb.append(this.ParentInternalSetterNone.apply(i, "", nb_macros));
-
+        if (this.ParentInternalSettersNone != null) {
+            sb.append(this.ParentInternalSettersNone.apply(i, "", nb_macros));
         }
 
         for (Macro macro : macros) {
-
             expansion = macro.build(local_context);
 
-            if (this.ParentInternalSetterBeforeFirst != null) {
-
-                expansion = this.ParentInternalSetterBeforeFirst.apply(i,
+            if (this.ParentInternalSettersBeforeFirst != null) {
+                expansion = this.ParentInternalSettersBeforeFirst.apply(i,
                         expansion, nb_macros);
-
             }
 
-            if (this.ParentInternalSetterAfterLast != null) {
-
-                expansion = this.ParentInternalSetterAfterLast.apply(i,
+            if (this.ParentInternalSettersAfterLast != null) {
+                expansion = this.ParentInternalSettersAfterLast.apply(i,
                         expansion, nb_macros);
-
             }
 
-            if (this.ParentInternalSetterSeparator != null) {
-
-                expansion = this.ParentInternalSetterSeparator.apply(i,
+            if (this.ParentInternalSettersSeparator != null) {
+                expansion = this.ParentInternalSettersSeparator.apply(i,
                         expansion, nb_macros);
-
             }
 
             sb.append(expansion);
-
             i++;
-
         }
 
         return sb.toString();
-
     }
 
     private InternalValue getPackageDeclaration() {
 
         return this.PackageDeclarationValue;
-
     }
 
-    private InternalValue getParentInternalSetter() {
+    private InternalValue getParentInternalSetters() {
 
-        return this.ParentInternalSetterValue;
-
+        return this.ParentInternalSettersValue;
     }
 
     private void initPackageDeclarationInternals(
             Context context) {
 
         for (Macro macro : this.list_PackageDeclaration) {
-
             macro.apply(new InternalsInitializer("PackageDeclaration") {
 
                 @Override
-
                 void setPackageDeclaration(
                         MPackageDeclaration mPackageDeclaration) {
 
                 }
-
             });
-
         }
-
     }
 
-    private void initParentInternalSetterInternals(
+    private void initParentInternalSettersInternals(
             Context context) {
 
-        for (Macro macro : this.list_ParentInternalSetter) {
-
-            macro.apply(new InternalsInitializer("ParentInternalSetter") {
+        for (Macro macro : this.list_ParentInternalSetters) {
+            macro.apply(new InternalsInitializer("ParentInternalSetters") {
 
                 @Override
-
                 void setParentInternalsSetter(
                         MParentInternalsSetter mParentInternalsSetter) {
 
                 }
-
             });
-
         }
-
     }
 
     private void initPackageDeclarationDirectives() {
 
         StringBuilder sb0 = new StringBuilder();
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
+        sb0.append(LINE_SEPARATOR);
         this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb0.toString());
-
         this.PackageDeclarationValue
                 .setBeforeFirst(this.PackageDeclarationBeforeFirst);
-
     }
 
-    private void initParentInternalSetterDirectives() {
+    private void initParentInternalSettersDirectives() {
 
         StringBuilder sb0 = new StringBuilder();
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
-        this.ParentInternalSetterSeparator = new DSeparator(sb0.toString());
-
-        this.ParentInternalSetterValue
-                .setSeparator(this.ParentInternalSetterSeparator);
-
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        this.ParentInternalSettersSeparator = new DSeparator(sb0.toString());
+        this.ParentInternalSettersValue
+                .setSeparator(this.ParentInternalSettersSeparator);
     }
 
     @Override
-
     void apply(
-
             InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setInternalsInitializer(this);
-
     }
 
     @Override
-
     public String build() {
 
         BuildState buildState = this.build_state;
 
         if (buildState == null) {
-
             buildState = new BuildState();
-
         }
-
         else if (buildState.getExpansion() == null) {
-
             throw ObjectMacroException.cyclicReference("InternalsInitializer");
-
         }
-
         else {
-
             return buildState.getExpansion();
-
         }
-
         this.build_state = buildState;
-
         List<String> indentations = new LinkedList<>();
-
         StringBuilder sbIndentation = new StringBuilder();
 
         initPackageDeclarationDirectives();
-
-        initParentInternalSetterDirectives();
+        initParentInternalSettersDirectives();
 
         initPackageDeclarationInternals(null);
-
-        initParentInternalSetterInternals(null);
+        initParentInternalSettersInternals(null);
 
         StringBuilder sb0 = new StringBuilder();
 
         MHeader minsert_1 = new MHeader();
 
         sb0.append(minsert_1.build(null));
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
+        sb0.append(LINE_SEPARATOR);
         sb0.append(buildPackageDeclaration());
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
-        MImportJavaUtil minsert_2 = new MImportJavaUtil();
-
-        sb0.append(minsert_2.build(null));
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
-        sb0.append("public class InternalsInitializer ");
-
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("class InternalsInitializer ");
         sb0.append("{");
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
         sb0.append("    private final String _paramName;");
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
         sb0.append("    InternalsInitializer(String paramName)");
-
         sb0.append("{");
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
+        sb0.append(LINE_SEPARATOR);
         sb0.append("        this._paramName = paramName;");
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
+        sb0.append(LINE_SEPARATOR);
         sb0.append("    }");
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
-        sb0.append(buildParentInternalSetter());
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
-        sb0.append(Macro.LINE_SEPARATOR);
-
+        sb0.append(LINE_SEPARATOR);
+        StringBuilder sb1 = new StringBuilder();
+        sbIndentation = new StringBuilder();
+        sbIndentation.append("    ");
+        indentations.add(sbIndentation.toString());
+        sb1.append(buildParentInternalSetters());
+        sb0.append(applyIndent(sb1.toString(),
+                indentations.remove(indentations.size() - 1)));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "    void setObjectMacroUserErrorHead(MObjectMacroUserErrorHead mObjectMacroUserErrorHead)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "        throw ObjectMacroException.incorrectType(\"MObjectMacroUserErrorHead\", this._paramName);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "    void setUserErrorIncorrectType(MUserErrorIncorrectType mUserErrorIncorrectType)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "        throw ObjectMacroException.incorrectType(\"MUserErrorIncorrectType\", this._paramName);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "    void setUserErrorMacroNullInList(MUserErrorMacroNullInList mUserErrorMacroNullInList)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "        throw ObjectMacroException.incorrectType(\"MUserErrorMacroNullInList\", this._paramName);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "    void setUserErrorCyclicReference(MUserErrorCyclicReference mUserErrorCyclicReference)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "        throw ObjectMacroException.incorrectType(\"MUserErrorCyclicReference\", this._paramName);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "    void setUserErrorParameterNull(MUserErrorParameterNull mUserErrorParameterNull)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "        throw ObjectMacroException.incorrectType(\"MUserErrorParameterNull\", this._paramName);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "    void setUserErrorCannotModify(MUserErrorCannotModify mUserErrorCannotModify)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "        throw ObjectMacroException.incorrectType(\"MUserErrorCannotModify\", this._paramName);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "    void setUserErrorVersionNull(MUserErrorVersionNull mUserErrorVersionNull)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "        throw ObjectMacroException.incorrectType(\"MUserErrorVersionNull\", this._paramName);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "    void setUserErrorVersionsDifferent(MUserErrorVersionsDifferent mUserErrorVersionsDifferent)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "        throw ObjectMacroException.incorrectType(\"MUserErrorVersionsDifferent\", this._paramName);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "    void setUserErrorInternalException(MUserErrorInternalException mUserErrorInternalException)");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(
+                "        throw ObjectMacroException.incorrectType(\"MUserErrorInternalException\", this._paramName);");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
         sb0.append("}");
 
         buildState.setExpansion(sb0.toString());
-
         return sb0.toString();
-
     }
 
     @Override
-
     String build(
             Context context) {
 
         return build();
-
     }
 
     private String applyIndent(
@@ -418,7 +393,7 @@ public class MInternalsInitializer
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

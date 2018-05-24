@@ -87,10 +87,58 @@ public class InternalsInitializer {
                 this._paramName);
     }
 
+    void setVersionEnumeration(
+            MVersionEnumeration mVersionEnumeration) {
+
+        throw ObjectMacroException.incorrectType("MVersionEnumeration",
+                this._paramName);
+    }
+
+    void setMacroFactory(
+            MMacroFactory mMacroFactory) {
+
+        throw ObjectMacroException.incorrectType("MMacroFactory",
+                this._paramName);
+    }
+
+    void setMacroCreatorMethod(
+            MMacroCreatorMethod mMacroCreatorMethod) {
+
+        throw ObjectMacroException.incorrectType("MMacroCreatorMethod",
+                this._paramName);
+    }
+
+    void setSwitchVersion(
+            MSwitchVersion mSwitchVersion) {
+
+        throw ObjectMacroException.incorrectType("MSwitchVersion",
+                this._paramName);
+    }
+
+    void setMacroCaseInit(
+            MMacroCaseInit mMacroCaseInit) {
+
+        throw ObjectMacroException.incorrectType("MMacroCaseInit",
+                this._paramName);
+    }
+
+    void setVersion(
+            MVersion mVersion) {
+
+        throw ObjectMacroException.incorrectType("MVersion", this._paramName);
+    }
+
     void setMacro(
             MMacro mMacro) {
 
         throw ObjectMacroException.incorrectType("MMacro", this._paramName);
+    }
+
+    void setAppliedVersion(
+            MAppliedVersion mAppliedVersion) {
+
+        throw ObjectMacroException.incorrectType("MAppliedVersion",
+                this._paramName);
     }
 
     void setConstructor(
@@ -134,10 +182,30 @@ public class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MSetParam", this._paramName);
     }
 
+    void setSetMacrosCall(
+            MSetMacrosCall mSetMacrosCall) {
+
+        throw ObjectMacroException.incorrectType("MSetMacrosCall",
+                this._paramName);
+    }
+
+    void setSuperCall(
+            MSuperCall mSuperCall) {
+
+        throw ObjectMacroException.incorrectType("MSuperCall", this._paramName);
+    }
+
     void setSingleAdd(
             MSingleAdd mSingleAdd) {
 
         throw ObjectMacroException.incorrectType("MSingleAdd", this._paramName);
+    }
+
+    void setFactoryComparison(
+            MFactoryComparison mFactoryComparison) {
+
+        throw ObjectMacroException.incorrectType("MFactoryComparison",
+                this._paramName);
     }
 
     void setIsBuilt(
@@ -227,6 +295,13 @@ public class InternalsInitializer {
             MNewDirective mNewDirective) {
 
         throw ObjectMacroException.incorrectType("MNewDirective",
+                this._paramName);
+    }
+
+    void setSetMacrosMethod(
+            MSetMacrosMethod mSetMacrosMethod) {
+
+        throw ObjectMacroException.incorrectType("MSetMacrosMethod",
                 this._paramName);
     }
 
@@ -440,11 +515,10 @@ public class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MParamArg", this._paramName);
     }
 
-    void setContextName(
-            MContextName mContextName) {
+    void setPlainText(
+            MPlainText mPlainText) {
 
-        throw ObjectMacroException.incorrectType("MContextName",
-                this._paramName);
+        throw ObjectMacroException.incorrectType("MPlainText", this._paramName);
     }
 
     void setContextParam(
@@ -475,6 +549,19 @@ public class InternalsInitializer {
                 this._paramName);
     }
 
+    void setAbstract(
+            MAbstract mAbstract) {
+
+        throw ObjectMacroException.incorrectType("MAbstract", this._paramName);
+    }
+
+    void setMacrosParam(
+            MMacrosParam mMacrosParam) {
+
+        throw ObjectMacroException.incorrectType("MMacrosParam",
+                this._paramName);
+    }
+
     void setClassNone(
             MClassNone mClassNone) {
 
@@ -499,6 +586,13 @@ public class InternalsInitializer {
             MClassSeparator mClassSeparator) {
 
         throw ObjectMacroException.incorrectType("MClassSeparator",
+                this._paramName);
+    }
+
+    void setExInternalException(
+            MExInternalException mExInternalException) {
+
+        throw ObjectMacroException.incorrectType("MExInternalException",
                 this._paramName);
     }
 
@@ -548,6 +642,27 @@ public class InternalsInitializer {
             MExCyclicReference mExCyclicReference) {
 
         throw ObjectMacroException.incorrectType("MExCyclicReference",
+                this._paramName);
+    }
+
+    void setExVersionNull(
+            MExVersionNull mExVersionNull) {
+
+        throw ObjectMacroException.incorrectType("MExVersionNull",
+                this._paramName);
+    }
+
+    void setMacroInternalException(
+            MMacroInternalException mMacroInternalException) {
+
+        throw ObjectMacroException.incorrectType("MMacroInternalException",
+                this._paramName);
+    }
+
+    void setExVersionsDifferent(
+            MExVersionsDifferent mExVersionsDifferent) {
+
+        throw ObjectMacroException.incorrectType("MExVersionsDifferent",
                 this._paramName);
     }
 

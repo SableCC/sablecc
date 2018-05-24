@@ -22,3 +22,4 @@ mkdir -p tests/objectmacro/common/intermediate
 ./utils/run-back-tests
 ./utils/run-front-tests
 ./utils/run-realistic-tests
+./utils/run-alternative-tests

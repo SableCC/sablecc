@@ -1,18 +1,18 @@
-#This file is part of SableCC ( http://sablecc.org ).
+# This file is part of SableCC ( http://sablecc.org ).
 #
-#See the NOTICE file distributed with this work for copyright information.
+# See the NOTICE file distributed with this work for copyright information.
 #
-#Licensed under the Apache License, Version 2.0 (the "License");
-#you may not use this file except in compliance with the License.
-#You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
 #    http://www.apache.org/licenses/LICENSE-2.0
 #
-#Unless required by applicable law or agreed to in writing, software
-#distributed under the License is distributed on an "AS IS" BASIS,
-#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#See the License for the specific language governing permissions and
-#limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 #========== header ==========
 Macro header
@@ -51,21 +51,57 @@ public class Context {
 Macro internals_initializer
   Param
     package_declaration : package_declaration, before_first="\n";
-    parent_internal_setter : parent_internals_setter, separator="\n";
+    parent_internal_setters : parent_internals_setter, separator="\n\n";
 {Body}
 {Insert: header}
 {package_declaration}
-{Insert: import_java_util}
 
-public class InternalsInitializer {
+class InternalsInitializer {
 
     private final String _paramName;
 
     InternalsInitializer(String paramName){
         this._paramName = paramName;
     }
+{Indent: "\t"}
+{parent_internal_setters}
+{End}
 
-{parent_internal_setter}
+    void setObjectMacroUserErrorHead(MObjectMacroUserErrorHead mObjectMacroUserErrorHead){
+        throw ObjectMacroException.incorrectType("MObjectMacroUserErrorHead", this._paramName);
+    }
+
+    void setUserErrorIncorrectType(MUserErrorIncorrectType mUserErrorIncorrectType){
+        throw ObjectMacroException.incorrectType("MUserErrorIncorrectType", this._paramName);
+    }
+
+    void setUserErrorMacroNullInList(MUserErrorMacroNullInList mUserErrorMacroNullInList){
+        throw ObjectMacroException.incorrectType("MUserErrorMacroNullInList", this._paramName);
+    }
+
+    void setUserErrorCyclicReference(MUserErrorCyclicReference mUserErrorCyclicReference){
+        throw ObjectMacroException.incorrectType("MUserErrorCyclicReference", this._paramName);
+    }
+
+    void setUserErrorParameterNull(MUserErrorParameterNull mUserErrorParameterNull){
+        throw ObjectMacroException.incorrectType("MUserErrorParameterNull", this._paramName);
+    }
+
+    void setUserErrorCannotModify(MUserErrorCannotModify mUserErrorCannotModify){
+        throw ObjectMacroException.incorrectType("MUserErrorCannotModify", this._paramName);
+    }
+
+    void setUserErrorVersionNull(MUserErrorVersionNull mUserErrorVersionNull){
+        throw ObjectMacroException.incorrectType("MUserErrorVersionNull", this._paramName);
+    }
+
+    void setUserErrorVersionsDifferent(MUserErrorVersionsDifferent mUserErrorVersionsDifferent){
+        throw ObjectMacroException.incorrectType("MUserErrorVersionsDifferent", this._paramName);
+    }
+
+    void setUserErrorInternalException(MUserErrorInternalException mUserErrorInternalException){
+        throw ObjectMacroException.incorrectType("MUserErrorInternalException", this._paramName);
+    }
 
 }
 {End}
@@ -76,7 +112,7 @@ Macro parent_internals_setter
     name : String;
 {Body}
 void set{name}(M{name} m{name}){
-  throw ObjectMacroException.incorrectType("M{name}", this._paramName);
+    throw ObjectMacroException.incorrectType("M{name}", this._paramName);
 }
 {End}
 
@@ -146,6 +182,8 @@ public abstract class Macro {
 
     static final CycleDetector cycleDetector = new CycleDetector();
 
+    Macros macros;
+
     public String build(){
 
         throw new RuntimeException("build cannot be invoked here");
@@ -165,6 +203,34 @@ public abstract class Macro {
 
     LinkedList<Macro> getChildren(){
         return this.children;
+    }
+
+    Macros getMacros(){
+        return this.macros;
+    }
+
+    String applyIndent(
+                String macro,
+                String indent){
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split( "\\n");
+
+        if(lines.length > 1){
+            for(int i = 0; i < lines.length; i++){
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if(i < lines.length - 1){
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else{
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
     }
 }
 {End}
@@ -312,94 +378,200 @@ class BuildState {
 }
 {End}
 
+# ============ version_enumeration =========
+
+Macro version_enumeration
+    Param
+        package_declaration : package_declaration, before_first="\n";
+        versions : plain_text, separator=", ";
+{Body}
+{Insert: header}
+{package_declaration}
+
+public enum VERSIONS{
+{Indent: "\t"}
+{versions}
+{End}
+}
+{End}
+
+# ======================================================
+# ===================== FACTORIES ======================
+# ======================================================
+
+#============== macro_factory ============
+
+Macro macro_factory
+    Param
+        default_version : version, none="null";
+        package_declaration : package_declaration, before_first="\n";
+        new_macro_methods : macro_creator_method, separator="\n\n", before_first="\n";
+{Body}
+{Insert: header}
+{package_declaration}
+{Insert: import_java_util}
+
+public class Macros{
+    private VERSIONS version;
+
+    public Macros(
+            VERSIONS version){
+
+        if(version == null){
+            throw ObjectMacroException.versionNull();
+        }
+
+        this.version = version;
+    }
+
+    public Macros(){
+        this.version = {default_version};
+    }
+{Indent: "\t"}
+{new_macro_methods}
+{End}
+}
+{End}
+
+# ========== macro_creator_method ===========
+
+Macro macro_creator_method
+    Param
+        class_name : String;
+        args : param_arg, separator=", ", after_last=", ";
+        parameters : string_param, separator=", ";
+        version_factory : switch_version(class_name, args), before_first="\n", none="m{class_name} = new M{class_name}({args}this);";
+{Body}
+public M{class_name} new{class_name}({parameters}){
+    M{class_name} m{class_name};
+
+{Indent: "\t"}
+{version_factory}
+{End}
+
+    return m{class_name};
+}
+{End}
+
+# ============ switch_version ===========
+
+Macro switch_version
+    Param
+        version_cases : macro_case_init(class_name, args), separator="\n";
+    Internal
+        class_name : String;
+        args : param_arg;
+{Body}
+switch(this.version){
+{Indent: "\t"}
+{version_cases}
+{End}
+    default :
+        throw new RuntimeException("unknown version");
+}
+{End}
+
+# ============ macro_case_init ==========
+
+Macro macro_case_init
+    Param
+        version : String;
+        version_class_name : String;
+    Internal
+        class_name : String;
+        args : param_arg;
+{Body}
+case {version} :
+    m{class_name} = new M{version_class_name}({args} this);
+    break;
+{End}
+
+# =========== version =============
+
+Macro version
+    Param
+        default_case : String;
+{Body}
+VERSIONS.{default_case}
+{End}
+
+# ======================================================
+# ===================== MACRO CLASS ====================
+# ======================================================
+
 #========== macro ==========
 Macro macro
   Param
-    name : String;
+    class_name : String;
+    parent_class : String;
     package_declaration : package_declaration, before_first="\n";
-    fields : param_macro_field, param_string_field, internal_macro_field, internal_string_field, internal_macros_value_field, directive_fields, separator="\n\n", before_first="\n";
-    context_fields : context_field, before_first="\n", separator="\n\n";
-    constructor : constructor, before_first="\n";
+    fields : param_macro_field, param_string_field, internal_macro_field, internal_string_field, directive_fields, separator="\n\n", before_first="\n";
+    constructor : constructor(class_name), before_first="\n";
     setters : param_string_setter, single_add, internal_string_setter, internal_macro_setter, separator="\n\n", before_first="\n";
     builders : param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, separator="\n\n", before_first="\n";
     getters : param_string_ref, param_macro_ref, internal_macro_ref, separator="\n\n", before_first="\n";
     init_internals_methods : init_internals_method, separator="\n\n";
     init_directives : init_directives, separator="\n\n", before_first="\n";
-    redefined_apply_initializer : redefined_apply_initializer;
+    redefined_apply_initializer : redefined_apply_initializer(class_name);
     macro_builder : macro_builder, before_first="\n";
     empty_builder_with_context : empty_builder_with_context, before_first="\n";
+    abstract : abstract;
+    applied_version : applied_version, before_first="\n";
+    init_macros_method : set_macros_method, before_first="\n";
 {Body}
 {Insert: header}
 {package_declaration}
 
 {Insert: import_java_util}
-
-public class M{name} extends Macro{
+{applied_version}
+public {abstract} class M{class_name} extends M{parent_class}{
 {Indent: "\t"}
 {fields}
-
-{context_fields}
-
 {constructor}
-
 {setters}
-
 {builders}
-
 {getters}
-
 {init_internals_methods}
-
 {init_directives}
-
 {redefined_apply_initializer}
-
 {macro_builder}
-
 {empty_builder_with_context}
 
+{init_macros_method}
 {End}
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
-    }
 }
 {End}
 
-#======================================================
-#===================== CONSTRUCTOR ====================
-#======================================================
+# ============ applied_version =========
+
+Macro applied_version
+    Param
+        versions : plain_text, separator=", ";
+{Body}
+// Class applied to version(s) : {versions}
+{End}
+
+# ======================================================
+# ===================== CONSTRUCTOR ====================
+# ======================================================
 
 #========== constructor ==========
+
 Macro constructor
-  Param
-    name : String;
-    field_initializers : set_param, init_macro_param, init_macro_internal, init_string_internal, before_first="\n", separator="\n";
-    parameters : string_param, separator=", ";
-    internal_values_initializers : init_internal_value, before_first="\n", separator="\n";
+    Param
+        field_initializers : set_param, init_macro_param, init_macro_internal, init_string_internal, set_macros_call("macros"), before_first="\n", separator="\n";
+        parameters : string_param, macros_param("macros"), separator=", ";
+        internal_values_initializers : init_internal_value, before_first="\n", separator="\n";
+        super : super_call, before_first="\n";
+    Internal
+        class_name : String;
 {Body}
-public M{name}({parameters}){
+public M{class_name}({parameters}){
+{Indent: "\t"}
+{super}
 {field_initializers}
 {internal_values_initializers}
+{End}
 }
 {End}
 
@@ -408,7 +580,7 @@ Macro init_macro_internal
   Param
     name : String;
 {Body}
-    this.list_{name} = new LinkedHashMap<>();
+this.list_{name} = new LinkedHashMap<>();
 {End}
 
 #========== init_macro_param ===========
@@ -416,7 +588,7 @@ Macro init_macro_param
     Param
         name: String;
 {Body}
-    this.list_{name} = new ArrayList<>();
+this.list_{name} = new LinkedList<>();
 {End}
 
 #========== init_string_internal ===========
@@ -424,7 +596,7 @@ Macro init_string_internal
   Param
     name : String;
 {Body}
-    this.field_{name} = new LinkedHashMap<>();
+this.field_{name} = new LinkedHashMap<>();
 {End}
 
 #========== init_internal_value ============
@@ -433,7 +605,7 @@ Macro init_internal_value
     Param
         param_name: String;
 {Body}
-    this.{param_name}Value = new InternalValue(this.list_{param_name}, this.{param_name}Context);
+this.{param_name}Value = new InternalValue(this.list_{param_name}, this.{param_name}Context);
 {End}
 
 #========== set_param ==========
@@ -442,7 +614,23 @@ Macro set_param
     name : String;
     set_param : param_arg;
 {Body}
-        this.setP{name}({set_param});
+this.setP{name}({set_param});
+{End}
+
+#========== set_macros_call ==========
+
+Macro set_macros_call
+    Internal
+        macros_param_name : String;
+{Body}
+this.setMacros({macros_param_name});
+{End}
+
+#========== super_call ========
+
+Macro super_call
+{Body}
+super();
 {End}
 
 #================================================================
@@ -462,6 +650,8 @@ public void add{param_name}(M{macro_name} macro){
     }
 {Indent: "\t"}
 {is_built}
+
+{Insert: factory_comparison("macro")}
 {End}
 
     this.list_{param_name}.add(macro);
@@ -470,14 +660,25 @@ public void add{param_name}(M{macro_name} macro){
 }
 {End}
 
+# ============= factory_comparison ==============
+
+Macro factory_comparison
+    Internal
+        var_name : String;
+{Body}
+if(this.getMacros() != {var_name}.getMacros()){
+    throw ObjectMacroException.diffMacros();
+}
+{End}
+
 #=========== is_built ===========
 Macro is_built
     Internal
         macro_name: String;
 {Body}
-        if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("{macro_name}");
-        }
+if(this.build_state != null){
+    throw ObjectMacroException.cannotModify("{macro_name}");
+}
 {End}
 
 #=========== param_string_ref_builder =============
@@ -487,7 +688,7 @@ Macro param_string_ref_builder
     context_param : context_param;
     get_internal_tail : get_internal_tail;
 {Body}
-private String build{name}({context_param}){
+String build{name}({context_param}){
 
     return this.field_{name}{get_internal_tail};
 }
@@ -497,7 +698,7 @@ private String build{name}({context_param}){
 Macro param_macro_ref_builder
     Param
         name: String;
-        context_name: context_name, none="context";
+        context_name: plain_text, none="context";
 {Body}
 private String build{name}(){
     StringBuilder sb = new StringBuilder();
@@ -609,7 +810,7 @@ Macro param_string_ref
     context_param : context_param;
     get_internal_tail : get_internal_tail;
 {Body}
-private String get{name}({context_param}){
+String get{name}({context_param}){
 
     return this.field_{name}{get_internal_tail};
 }
@@ -635,11 +836,11 @@ Macro internal_string_setter
 #========= init_internals_method ========
 Macro init_internals_method
     Param
-        name: String;
-        apply_internals_initializer: apply_internals_initializer, separator = "\n";
+        internal_name: String;
+        apply_internals_initializer: apply_internals_initializer(internal_name), separator = "\n";
 {Body}
-private void init{name}Internals(Context context){
-    for(Macro macro : this.list_{name}){
+private void init{internal_name}Internals(Context context){
+    for(Macro macro : this.list_{internal_name}){
 {Indent: "\t\t"}
 {apply_internals_initializer}
 {End}
@@ -652,28 +853,42 @@ private void init{name}Internals(Context context){
 Macro init_directives
     Param
         param_name: String;
-        new_directive: new_directive(param_name);
+        new_directives: new_directive(param_name);
 {Body}
 private void init{param_name}Directives(){
 {Indent: "\t"}
-{new_directive}
+{new_directives}
 {End}
 }
 {End}
 
-#=========== new_directives ===========
+#=========== new_directive ===========
+
 Macro new_directive
     Param
         directive_name: String;
         index_builder: String;
-        macro_body_parts: string_part, param_insert_part, eol_part, insert_macro_part;
+        text_parts: string_part, param_insert_part, eol_part, insert_macro_part, separator="\n";
     Internal
         param_name: String;
 {Body}
 StringBuilder sb{index_builder} = new StringBuilder();
-{macro_body_parts}
+{text_parts}
 this.{param_name}{directive_name} = new D{directive_name}(sb{index_builder}.toString());
 this.{param_name}Value.set{directive_name}(this.{param_name}{directive_name});
+{End}
+
+#=========== set_macros_method ==========
+
+Macro set_macros_method
+{Body}
+private void setMacros(Macros macros){
+    if(macros == null){
+        throw new InternalException("macros cannot be null");
+    }
+
+    this.macros = macros;
+}
 {End}
 
 #============================================
@@ -770,14 +985,14 @@ this.build_states.put(context, buildState)
 
 #========= redefined_apply_initializer =======
 Macro redefined_apply_initializer
-  Param
-    name : String;
+    Internal
+        class_name : String;
 {Body}
 @Override
  void apply(
          InternalsInitializer internalsInitializer){
 
-     internalsInitializer.set{name}(this);
+     internalsInitializer.set{class_name}(this);
  }
 {End}
 
@@ -788,9 +1003,13 @@ Macro redefined_apply_initializer
 #========== param_macro_field ==========
 Macro param_macro_field
   Param
-    name : String;
+    param_name : String;
 {Body}
-private final List<Macro> list_{name};
+final List<Macro> list_{param_name};
+
+{Insert: context_field(param_name)}
+
+{Insert: internal_macros_value_field(param_name)}
 {End}
 
 #========== param_string_field ==========
@@ -798,7 +1017,7 @@ Macro param_string_field
   Param
     name : String;
 {Body}
-private String field_{name};
+String field_{name};
 {End}
 
 #========== internal_macro_field ==========
@@ -811,26 +1030,26 @@ private Map<Context, InternalValue> list_{name} = new LinkedHashMap<>();
 
 #========== internal_string_field ==========
 Macro internal_string_field
-  Param
-    name : String;
+    Param
+        name : String;
 {Body}
 private Map<Context, String> field_{name} = new LinkedHashMap<>();
 {End}
 
 #========== context_field =========
 Macro context_field
-  Param
-    name : String;
+    Internal
+        param_name : String;
 {Body}
-private final Context {name}Context = new Context();
+final Context {param_name}Context = new Context();
 {End}
 
 # =========== internal_macros_value_field ========
 Macro internal_macros_value_field
-    Param
+    Internal
         param_name: String;
 {Body}
-private final InternalValue {param_name}Value;
+final InternalValue {param_name}Value;
 {End}
 
 #========== directive_fields ==========
@@ -854,11 +1073,12 @@ private DNone {param_name}None;
 
 #========== apply_internals_initializer =======
 Macro apply_internals_initializer
-  Param
-    param_name : String;
-    redefined_internals_setter : redefined_internals_setter;
+    Param
+        redefined_internals_setter : redefined_internals_setter, separator="\n\n";
+    Internal
+        internal_name : String;
 {Body}
-macro.apply(new InternalsInitializer("{param_name}"){
+macro.apply(new InternalsInitializer("{internal_name}"){
 {Indent: "\t"}
 {redefined_internals_setter}
 {End}
@@ -868,14 +1088,14 @@ macro.apply(new InternalsInitializer("{param_name}"){
 #========== redefined_internals_setter =========
 Macro redefined_internals_setter
   Param
-    name : String;
-    macro_body_parts : init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part, separator="\n";
-    set_internals : set_internal;
+    macro_name : String;
+    text_parts : init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part, separator="\n";
+    set_internals : set_internal(macro_name), separator="\n";
 {Body}
 @Override
-void set{name}(M{name} m{name}){
+void set{macro_name}(M{macro_name} m{macro_name}){
 
-    {macro_body_parts}
+    {text_parts}
     {set_internals}
 }
 {End}
@@ -926,13 +1146,13 @@ Macro insert_macro_part
     name : String;
     index_builder : String;
     index_insert : String;
-    macro_body_parts : init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part;
-    set_internals : set_internal;
+    macro_body_parts : init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part, separator="\n";
+    set_internals : set_internal(index_insert), separator="\n";
 {Body}
-M{name} minsert_{index_insert} = new M{name}();
+M{name} m{index_insert} = this.getMacros().new{name}();
 {macro_body_parts}
 {set_internals}
-sb{index_builder}.append(minsert_{index_insert}.build(null));
+sb{index_builder}.append(m{index_insert}.build(null));
 {End}
 
 #========= init_string_builder =========
@@ -946,12 +1166,13 @@ StringBuilder sb{index_builder} = new StringBuilder();
 #========== set_internal ==================
 Macro set_internal
   Param
-    macro_name : String;
     param_name : String;
     context : String;
     set_params : param_ref, string_builder_build;
+  Internal
+    var_name : String;
 {Body}
-m{macro_name}.set{param_name}({context}, {set_params});
+m{var_name}.set{param_name}({context}, {set_params});
 {End}
 
 #========== string_builder_build ==========
@@ -966,7 +1187,7 @@ sb{index_builder}.toString()
 Macro param_ref
   Param
     name : String;
-    get_params : context_arg, context_name;
+    get_params : context_arg, plain_text;
 {Body}
 get{name}({get_params})
 {End}
@@ -974,11 +1195,12 @@ get{name}({get_params})
 #========= add_indent ===================
 Macro add_indent
     Param
-        macro_body_parts : init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part;
+        index_builder : String;
+        indent_parts : init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part, separator="\n";
 {Body}
-sbIndentation = new StringBuilder();
-{macro_body_parts}
-indentations.add(sbIndentation.toString());
+StringBuilder sb{index_builder} = new StringBuilder();
+{indent_parts}
+indentations.add(sb{index_builder}.toString());
 {End}
 
 #===================================================
@@ -1017,12 +1239,12 @@ Macro param_arg
 p{name}
 {End}
 
-#=========== context_name =============
-Macro context_name
+#=========== plain_text =============
+Macro plain_text
   Param
-    context_name : String;
+    plain_text : String;
 {Body}
-{context_name}
+{plain_text}
 {End}
 
 #======== context_param ============
@@ -1051,6 +1273,21 @@ Macro string_param
 String p{name}
 {End}
 
+#========== abstract ===========
+
+Macro abstract
+{Body}
+abstract
+{End}
+
+#========== macros_param ========
+
+Macro macros_param
+    Internal
+        name : String;
+{Body}
+Macros {name}
+{End}
 
 #===================================================
 #===================== DIRECTIVES ==================
@@ -1188,6 +1425,45 @@ class DSeparator
 #=====================  EXCEPTIONS =======================
 #=========================================================
 
+#============ ex_internal_exception ===========
+
+Macro ex_internal_exception
+    Param
+        package_declaration: package_declaration, before_first="\n";
+{Body}
+{Insert: header}
+{package_declaration}
+
+public class InternalException
+        extends RuntimeException{
+
+    InternalException(
+            String message){
+
+        super(message);
+
+        if(message == null){
+            throw new RuntimeException("message may not be null");
+        }
+    }
+
+    InternalException(
+            String message,
+            Throwable cause) {
+
+        super(new MUserErrorInternalException(message).build(), cause);
+
+        if (message == null) {
+            throw new RuntimeException("message may not be null");
+        }
+
+        if (cause == null) {
+            throw new RuntimeException("cause may not be null");
+        }
+    }
+}
+{End}
+
 #============ object_macro_exception ===========
 Macro ex_object_macro_exception
     Param
@@ -1231,7 +1507,7 @@ public class ObjectMacroException
 
 
         return new ObjectMacroException(
-                new MIncorrectType(type, param_name).toString());
+                new MUserErrorIncorrectType(type, param_name).build());
     }
 
     static ObjectMacroException macroNull(
@@ -1239,196 +1515,394 @@ public class ObjectMacroException
             String paramName){
 
         return new ObjectMacroException(
-                new MMacroNullInList(String.valueOf(index), paramName).toString());
+                new MUserErrorMacroNullInList(String.valueOf(index), paramName).build());
     }
 
     static ObjectMacroException parameterNull(
             String paramName){
 
-        return new ObjectMacroException(new MParameterNull(paramName).toString());
+        return new ObjectMacroException(new MUserErrorParameterNull(paramName).build());
     }
 
     static ObjectMacroException cyclicReference(
             String macroName){
 
-        return new ObjectMacroException(new MCyclicReference(macroName).toString());
+        return new ObjectMacroException(new MUserErrorCyclicReference(macroName).build());
     }
 
     static ObjectMacroException cannotModify(
             String macroName){
 
-        return new ObjectMacroException(new MCannotModify(macroName).toString());
+        return new ObjectMacroException(new MUserErrorCannotModify(macroName).build());
     }
 
+    static ObjectMacroException versionNull(){
+        return new ObjectMacroException(new MUserErrorVersionNull().build());
+    }
+
+    static ObjectMacroException diffMacros(){
+        return new ObjectMacroException(new MUserErrorVersionsDifferent().build());
+    }
 }
 {End}
 
-#============ incorrect_type ===========
+# ============ ex_incorrect_type ===========
+
 Macro ex_incorrect_type
-  Param
-    package_declaration : package_declaration, before_first="\n";
+    Param
+        package_declaration : package_declaration, before_first="\n";
 {Body}
 {Insert: header}
 {package_declaration}
+{Insert: import_java_util}
 
-public class MIncorrectType {
+class MUserErrorIncorrectType extends Macro{
 
-  private final String pType;
-  private final String pParamName;
-  private final MIncorrectType mIncorrectType = this;
+       private String field_Type;
 
-  public MIncorrectType(String pType, String pParamName) {
-    if(pType == null) throw new NullPointerException();
-    this.pType = pType;
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+       private String field_ParamName;
 
-  String pType() {
-    return this.pType;
-  }
+       public MUserErrorIncorrectType(
+                    String pType,
+                    String pParamName){
 
-  String pParamName() {
-    return this.pParamName;
-  }
+           this.setPType(pType);
+           this.setPParamName(pParamName);
+       }
 
-  private String rType() {
-    return this.mIncorrectType.pType();
-  }
+       private void setPType( String pType ){
+           if(pType == null){
+               throw ObjectMacroException.parameterNull("Type");
+           }
 
-  private String rParamName() {
-    return this.mIncorrectType.pParamName();
-  }
+           this.field_Type = pType;
+       }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MObjectMacroErrorHead().toString());
-    sb.append(System.getProperty("line.separator"));
-    sb.append(rType());
-    sb.append(" was not expected in parameter '");
-    sb.append(rParamName());
-    sb.append("'.");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+       private void setPParamName( String pParamName ){
+           if(pParamName == null){
+               throw ObjectMacroException.parameterNull("ParamName");
+           }
 
-}
+           this.field_ParamName = pParamName;
+       }
+
+       private String buildType(){
+
+           return this.field_Type;
+       }
+
+       private String buildParamName(){
+
+           return this.field_ParamName;
+       }
+
+       private String getType(){
+
+           return this.field_Type;
+       }
+
+       private String getParamName(){
+
+           return this.field_ParamName;
+       }
+
+       @Override
+       void apply(
+               InternalsInitializer internalsInitializer){
+
+           internalsInitializer.setUserErrorIncorrectType(this);
+       }
+
+       @Override
+       public String build(){
+
+           BuildState buildState = this.build_state;
+
+           if(buildState == null){
+               buildState = new BuildState();
+           }
+           else if(buildState.getExpansion() == null){
+               throw ObjectMacroException.cyclicReference("UserErrorIncorrectType");
+           }
+           else{
+               return buildState.getExpansion();
+           }
+           this.build_state = buildState;
+           List<String> indentations = new LinkedList<>();
+           StringBuilder sbIndentation = new StringBuilder();
+
+           StringBuilder sb0 = new StringBuilder();
+
+           MObjectMacroUserErrorHead minsert_1 = new MObjectMacroUserErrorHead();
+
+           sb0.append(minsert_1.build(null));
+           sb0.append(LINE_SEPARATOR);
+           sb0.append(LINE_SEPARATOR);
+           sb0.append(buildType());
+           sb0.append(" was not expected in parameter '");
+           sb0.append(buildParamName());
+           sb0.append("'.");
+
+           buildState.setExpansion(sb0.toString());
+           return sb0.toString();
+       }
+
+       @Override
+       String build(Context context) {
+           return build();
+       }
+   }
 {End}
 
 #============== ex_object_macro_error_head ===========
+
 Macro ex_object_macro_error_head
-  Param
-    package_declaration : package_declaration, before_first="\n";
+    Param
+        package_declaration : package_declaration, before_first="\n";
 {Body}
 {Insert: header}
 {package_declaration}
+{Insert: import_java_util}
 
-class MObjectMacroErrorHead {
+class MObjectMacroUserErrorHead extends Macro{
 
-  MObjectMacroErrorHead() {
-  }
+    MObjectMacroUserErrorHead(){
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("*** OBJECT MACRO ERROR ***");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setObjectMacroUserErrorHead(this);
+    }
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("ObjectMacroUserErrorHead");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("*** OBJECT MACRO ERROR ***");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
+
 
 }
 {End}
 
 #=============== ex_parameter_null ==============
 Macro ex_parameter_null
-  Param
-    package_declaration : package_declaration, before_first="\n";
+    Param
+        package_declaration : package_declaration, before_first="\n";
 {Body}
 {Insert: header}
 {package_declaration}
+{Insert: import_java_util}
 
-public class MParameterNull {
+class MUserErrorParameterNull extends Macro{
 
-  private final String pParamName;
-  private final MParameterNull mParameterNull = this;
+    private String field_ParamName;
 
-  public MParameterNull(String pParamName) {
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    public MUserErrorParameterNull(String pParamName){
+        this.setPParamName(pParamName);
+    }
 
-  String pParamName() {
-    return this.pParamName;
-  }
+    private void setPParamName( String pParamName ){
+        if(pParamName == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
 
-  private String rParamName() {
-    return this.mParameterNull.pParamName();
-  }
+        this.field_ParamName = pParamName;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("Parameter '");
-    sb.append(rParamName());
-    sb.append("' cannot be null.");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+    private String buildParamName(){
 
+        return this.field_ParamName;
+    }
+
+    private String getParamName(){
+
+        return this.field_ParamName;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setUserErrorParameterNull(this);
+    }
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("UserErrorParameterNull");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MObjectMacroUserErrorHead minsert_1 = new MObjectMacroUserErrorHead();
+
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Parameter '");
+        sb0.append(buildParamName());
+        sb0.append("' cannot be null.");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }
 
 {End}
 
 #============ ex_macro_null_in_list ============
+
 Macro ex_macro_null_in_list
-  Param
-    package_declaration : package_declaration, before_first="\n";
+    Param
+        package_declaration : package_declaration, before_first="\n";
 {Body}
 {Insert: header}
 {package_declaration}
+{Insert: import_java_util}
 
-public class MMacroNullInList {
+class MUserErrorMacroNullInList extends Macro{
 
-  private final String pIndex;
-  private final String pParamName;
-  private final MMacroNullInList mMacroNullInList = this;
+    private String field_Index;
 
-  public MMacroNullInList(String pIndex, String pParamName) {
-    if(pIndex == null) throw new NullPointerException();
-    this.pIndex = pIndex;
-    if(pParamName == null) throw new NullPointerException();
-    this.pParamName = pParamName;
-  }
+    private String field_ParamName;
 
-  String pIndex() {
-    return this.pIndex;
-  }
+    public MUserErrorMacroNullInList(String pIndex, String pParamName){
 
-  String pParamName() {
-    return this.pParamName;
-  }
+        this.setPIndex(pIndex);
+        this.setPParamName(pParamName);
 
-  private String rIndex() {
-    return this.mMacroNullInList.pIndex();
-  }
+    }
 
-  private String rParamName() {
-    return this.mMacroNullInList.pParamName();
-  }
+    private void setPIndex( String pIndex ){
+        if(pIndex == null){
+            throw ObjectMacroException.parameterNull("Index");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("A macro is null at index ");
-    sb.append(rIndex());
-    sb.append(" in the list '");
-    sb.append(rParamName());
-    sb.append("'.");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.field_Index = pIndex;
+    }
 
+    private void setPParamName( String pParamName ){
+        if(pParamName == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+
+        this.field_ParamName = pParamName;
+    }
+
+    private String buildIndex(){
+
+        return this.field_Index;
+    }
+
+    private String buildParamName(){
+
+        return this.field_ParamName;
+    }
+
+    private String getIndex(){
+
+        return this.field_Index;
+    }
+
+    private String getParamName(){
+
+        return this.field_ParamName;
+    }
+
+    @Override
+    void apply(
+             InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setUserErrorMacroNullInList(this);
+    }
+
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("UserErrorMacroNullInList");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MObjectMacroUserErrorHead minsert_1 = new MObjectMacroUserErrorHead();
+
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("A macro is null at index ");
+        sb0.append(buildIndex());
+        sb0.append(" in the list '");
+        sb0.append(buildParamName());
+        sb0.append("'.");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }
 {End}
 
@@ -1439,41 +1913,84 @@ Macro ex_cannot_modify
 {Body}
 {Insert: header}
 {package_declaration}
+{Insert: import_java_util}
 
-public class MCannotModify {
+class MUserErrorCannotModify extends Macro{
 
-  private final String pMacroName;
-  private final MCannotModify mCannotModify = this;
+    private String field_MacroName;
 
-  public MCannotModify(String pMacroName) {
-    if(pMacroName == null) throw new NullPointerException();
-    this.pMacroName = pMacroName;
-  }
+    public MUserErrorCannotModify(String pMacroName){
 
-  String pMacroName() {
-    return this.pMacroName;
-  }
+        this.setPMacroName(pMacroName);
+    }
 
-  private String rMacroName() {
-    return this.mCannotModify.pMacroName();
-  }
+    private void setPMacroName( String pMacroName ){
+        if(pMacroName == null){
+            throw ObjectMacroException.parameterNull("MacroName");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MObjectMacroErrorHead().toString());
-    sb.append(System.getProperty("line.separator"));
-    sb.append("Instance of M");
-    sb.append(rMacroName());
-    sb.append(" cannot be updated after calling the method built.");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.field_MacroName = pMacroName;
+    }
 
+    private String buildMacroName(){
+
+        return this.field_MacroName;
+    }
+
+    private String getMacroName(){
+
+        return this.field_MacroName;
+    }
+
+    @Override
+    void apply(
+         InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setUserErrorCannotModify(this);
+    }
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("UserErrorCannotModify");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MObjectMacroUserErrorHead minsert_1 = new MObjectMacroUserErrorHead();
+
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Instance of M");
+        sb0.append(buildMacroName());
+        sb0.append(" cannot be updated after the macro has been built.");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }
 {End}
 
-#============ ex_cyclic_reference ============
+# ============ ex_cyclic_reference ============
 
 Macro ex_cyclic_reference
     Param
@@ -1481,36 +1998,291 @@ Macro ex_cyclic_reference
 {Body}
 {Insert: header}
 {package_declaration}
+{Insert: import_java_util}
 
-public class MCyclicReference {
+class MUserErrorCyclicReference extends Macro{
 
-  private final String pMacroName;
-  private final MCyclicReference mCyclicReference = this;
+    private String field_MacroName;
 
-  public MCyclicReference(String pMacroName) {
-    if(pMacroName == null) throw new NullPointerException();
-    this.pMacroName = pMacroName;
-  }
+    public MUserErrorCyclicReference(String pMacroName){
 
-  String pMacroName() {
-    return this.pMacroName;
-  }
+        this.setPMacroName(pMacroName);
+    }
 
-  private String rMacroName() {
-    return this.mCyclicReference.pMacroName();
-  }
+    private void setPMacroName( String pMacroName ){
+        if(pMacroName == null){
+            throw ObjectMacroException.parameterNull("MacroName");
+        }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(new MObjectMacroErrorHead().toString());
-    sb.append(System.getProperty("line.separator"));
-    sb.append("An instance of \\"");
-    sb.append(rMacroName());
-    sb.append("\\" is a cyclic reference to the same instance.");
-    sb.append(System.getProperty("line.separator"));
-    return sb.toString();
-  }
+        this.field_MacroName = pMacroName;
+    }
 
+    private String buildMacroName(){
+
+        return this.field_MacroName;
+    }
+
+    private String getMacroName(){
+
+        return this.field_MacroName;
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setUserErrorCyclicReference(this);
+    }
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("UserErrorCyclicReference");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MObjectMacroUserErrorHead minsert_1 = new MObjectMacroUserErrorHead();
+
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("An instance of \"");
+        sb0.append(buildMacroName());
+        sb0.append("\" is a cyclic reference to the same instance.");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
+}
+{End}
+
+# ============ ex_version_null ============
+
+Macro ex_version_null
+    Param
+        package_declaration: package_declaration, before_first="\n";
+{Body}
+{Insert: header}
+{package_declaration}
+{Insert: import_java_util}
+
+public class MUserErrorVersionNull extends Macro{
+
+    public MUserErrorVersionNull(){
+
+    }
+
+    @Override
+    void apply(
+         InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setUserErrorVersionNull(this);
+    }
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("VersionNull");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("The version may not be null.");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
+}
+{End}
+
+# ============ macro_internal_exception ===========
+
+Macro macro_internal_exception
+    Param
+        package_declaration : package_declaration, before_first="\n";
+{Body}
+{Insert: header}
+{package_declaration}
+{Insert: import_java_util}
+
+class MUserErrorInternalException extends Macro{
+
+    private String field_StackTrace;
+
+    private String field_Message;
+
+    public MUserErrorInternalException(String pMessage){
+
+        this.setPMessage(pMessage);
+    }
+
+    private void setPMessage( String pMessage ){
+        if(pMessage == null){
+            throw ObjectMacroException.parameterNull("Message");
+        }
+
+        this.field_Message = pMessage;
+    }
+
+    private String buildMessage(){
+
+        return this.field_Message;
+    }
+
+    private String getMessage(){
+
+        return this.field_Message;
+    }
+
+    @Override
+     void apply(
+             InternalsInitializer internalsInitializer){
+
+         internalsInitializer.setUserErrorInternalException(this);
+     }
+
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("UserErrorInternalException");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("*** INTERNAL ERROR ***");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("An internal error was raised with the following message:");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(" ");
+        sb0.append(buildMessage());
+        sb0.append(".");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Please submit a defect ticket with the full error trace above on:");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(" http://sablecc.org/");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+
+    @Override
+    String build(Context context) {
+     return build();
+    }
+}
+{End}
+
+# ============ ex_versions_different ===========
+
+Macro ex_versions_different
+    Param
+        package_declaration : package_declaration, before_first="\n";
+{Body}
+{Insert: header}
+{package_declaration}
+{Insert: import_java_util}
+
+class MUserErrorVersionsDifferent extends Macro{
+
+    public MUserErrorVersionsDifferent(){
+
+    }
+
+    @Override
+    void apply(
+             InternalsInitializer internalsInitializer){
+
+        internalsInitializer.setUserErrorVersionsDifferent(this);
+    }
+
+    @Override
+    public String build(){
+
+        BuildState buildState = this.build_state;
+
+        if(buildState == null){
+            buildState = new BuildState();
+        }
+        else if(buildState.getExpansion() == null){
+            throw ObjectMacroException.cyclicReference("UserErrorVersionsDifferent");
+        }
+        else{
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MObjectMacroUserErrorHead minsert_3 = new MObjectMacroUserErrorHead();
+
+        sb0.append(minsert_3.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("The Macros of the child macro must be equal to the Macros of the parent.");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+
+    @Override
+    String build(Context context) {
+        return build();
+    }
 }
 {End}

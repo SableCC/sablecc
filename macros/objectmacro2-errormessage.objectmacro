@@ -1,0 +1,655 @@
+# This file is part of SableCC ( http://sablecc.org ).
+#
+# See the NOTICE file distributed with this work for copyright information.
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# ========== syntax_error ==========
+
+Macro syntax_error
+    Param
+        line: String;
+        char: String;
+        token_type: String;
+        token_text: String;
+        message: String;
+{Body}
+*** SYNTAX ERROR ***
+
+Line: {line}
+Char: {char}
+Syntax error on unexpected {token_type} token "{token_text}":
+{message}.
+{End}
+
+# ========== lexical_error ==========
+
+Macro lexical_error
+    Param
+        line: String;
+        char: String;
+        message: String;
+{Body}
+*** LEXICAL ERROR ***
+
+Line: {line}
+Char: {char}
+{message}.
+{End}
+
+# ========== internal_error ==========
+
+Macro internal_error
+    Param
+        stack_trace: String;
+        message: String;
+{Body}
+*** INTERNAL ERROR ***
+
+{stack_trace}
+An internal error was raised with the following message:
+ {message}.
+
+Please submit a defect ticket with the full error trace above on:
+ http://sablecc.org/
+{End}
+
+# ========== command_line_error_head ==========
+
+Macro command_line_error_head
+{Body}
+*** COMMAND ERROR ***
+{End}
+
+# ========== command_line_error_tail ==========
+
+Macro command_line_error_tail
+{Body}
+The following command provides usage information:
+ objectmacro --help
+{End}
+
+# ========== invalid_argument ==========
+
+Macro invalid_argument
+    Param
+        argument_text: String;
+{Body}
+{Insert: command_line_error_head}
+
+The following argument is rejected:
+ {argument_text}
+It is invalid.
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== missing_long_option_operand ==========
+
+Macro missing_long_option_operand
+    Param
+        option_name: String;
+        operand_name: String;
+{Body}
+{Insert: command_line_error_head}
+
+The following option is rejected:
+ --{option_name}
+This option expects an operand:
+ --{option_name}={operand_name}
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== missing_short_option_operand ==========
+
+Macro missing_short_option_operand
+    Param
+        option_name: String;
+        operand_name: String;
+{Body}
+{Insert: command_line_error_head}
+
+The following option is rejected:
+ -{option_name}
+This option expects an operand:
+ -{option_name}={operand_name}
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== invalid_long_option ==========
+
+Macro invalid_long_option
+    Param
+        option_name: String;
+{Body}
+{Insert: command_line_error_head}
+
+The following option is rejected:
+ --{option_name}
+It is not a valid option.
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== spurious_long_option_operand ==========
+
+Macro spurious_long_option_operand
+    Param
+        option_name: String;
+        operand_text: String;
+{Body}
+{Insert: command_line_error_head}
+
+The following option is rejected:
+ --{option_name}={operand_text}
+This option does not accept an operand.
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== invalid_short_option ==========
+
+Macro invalid_short_option
+    Param
+        option_name: String;
+{Body}
+{Insert: command_line_error_head}
+
+The following option is rejected:
+ -{option_name}
+It is not a valid option.
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== spurious_short_option_operand ==========
+
+Macro spurious_short_option_operand
+    Param
+        option_name: String;
+        operand_text: String;
+{Body}
+{Insert: command_line_error_head}
+
+The following option is rejected:
+ -{option_name}={operand_text}
+This option does not accept an operand.
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== unknown_target ==========
+
+Macro unknown_target
+    Param
+        target: String;
+{Body}
+{Insert: command_line_error_head}
+
+The "{target}" target is not supported.
+
+The following command lists available target languages:
+ objectmacro --list-targets
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== invalid_argument_count ==========
+
+Macro invalid_argument_count
+{Body}
+{Insert: command_line_error_head}
+
+A single macro file must be provided.
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== invalid_objectmacro_suffix ==========
+
+Macro invalid_objectmacro_suffix
+    Param
+        file_name: String;
+{Body}
+{Insert: command_line_error_head}
+
+The macro file, "{file_name}", does not have a .objectmacro suffix.
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== invalid_intermediate_suffix ==========
+
+Macro invalid_intermediate_suffix
+    Param
+        file_name: String;
+{Body}
+{Insert: command_line_error_head}
+
+The macro file, "{file_name}", does not have a .intermediate suffix.
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== missing_macro_file ==========
+
+Macro missing_macro_file
+    Param
+        file_name: String;
+{Body}
+{Insert: command_line_error_head}
+
+The macro file, "{file_name}", does not exist.
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== macro_not_file ==========
+
+Macro macro_not_file
+    Param
+        file_name: String;
+{Body}
+{Insert: command_line_error_head}
+
+The macro argument, "{file_name}", is not a file.
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========== input_error ==========
+
+Macro input_error
+    Param
+        file_name: String;
+        message: String;
+{Body}
+*** I/O ERROR ***
+
+The following system error happened while reading "{file_name}":
+ {message}.
+{End}
+
+# ========== output_error ==========
+
+Macro output_error
+    Param
+        file_name: String;
+        message: String;
+{Body}
+*** I/O ERROR ***
+
+The following system error happened while writing "{file_name}":
+ {message}
+{End}
+
+# ========== semantic_error_head ==========
+
+Macro semantic_error_head
+{Body}
+*** SEMANTIC ERROR ***
+{End}
+
+# ========== unknown_macro ==========
+
+Macro unknown_macro
+    Param
+        name: String;
+        line: String;
+        char: String;
+        versions: plain_text, none = ".", before_first="in version: ", after_last=".", separator=", ";
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+Macro "{name}" does not exist {versions}
+{End}
+
+# ============ plain_text =============
+
+Macro plain_text
+    Param
+        string: String;
+{Body}
+{string}
+{End}
+
+
+# ========== unknown_version ==========
+
+Macro unknown_version
+    Param
+        name: String;
+        line: String;
+        char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+Version "{name}" does not exist.
+{End}
+
+# ========== duplicate_declaration ==========
+
+Macro duplicate_declaration
+    Param
+        name: String;
+        line: String;
+        char: String;
+        ref_line: String;
+        ref_char: String;
+        version : plain_text, before_first="in version: ";
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+Duplicate declaration of "{name}" {version}.
+It was already declared at line {ref_line}, char {ref_char}.
+{End}
+
+# ========== duplicate_macro_version_declaration ==========
+
+Macro duplicate_macro_version_declaration
+    Param
+        name: String;
+        line: String;
+        char: String;
+        ref_line: String;
+        ref_char: String;
+        version: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+Duplicate macro declaration of "{name}" in version "{version}".
+It was already declared at line {ref_line}, char {ref_char}.
+{End}
+
+# ========== duplicate_option ==========
+
+Macro duplicate_option
+    Param
+        name: String;
+        line: String;
+        char: String;
+        ref_line: String;
+        ref_char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+Duplicate "{name}" option.
+It was already provided at line {ref_line}, char {ref_char}.
+{End}
+
+# ========== conflicting_option ==========
+
+Macro conflicting_option
+    Param
+        name: String;
+        line: String;
+        char: String;
+        ref_name: String;
+        ref_line: String;
+        ref_char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+Option "{name}" conflicts with "{ref_name}" option at line {ref_line}, char {ref_char}.
+{End}
+
+# ========== unknown_option ==========
+
+Macro unknown_option
+    Param
+        name: String;
+        line: String;
+        char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+Option "{name}" is invalid.
+{End}
+
+# ========== end_mismatch ==========
+
+Macro end_mismatch
+    Param
+        name: String;
+        line: String;
+        char: String;
+        ref_name: String;
+        ref_line: String;
+        ref_char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+End "{name}" does not match "{ref_name}" of line {ref_line}, char {ref_char}.
+{End}
+
+# ========== unknown_param ==========
+
+Macro unknown_param
+    Param
+        name: String;
+        line: String;
+        char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+Parameter "{name}" does not exist.
+{End}
+
+# ========== param_cyclic_reference ==========
+
+Macro param_cyclic_reference
+    Param
+        reference: String;
+        line: String;
+        char: String;
+        context: String;
+        context_line: String;
+        context_char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+"{reference}" is a cyclic reference to "{context}" of line {context_line}, char {context_char}.
+{End}
+
+# ========== self_reference ==========
+
+Macro self_reference
+    Param
+        reference: String;
+        line: String;
+        char: String;
+        context: String;
+        context_line: String;
+        context_char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+"{reference}" is a self reference to "{context}" of line {context_line}, char {context_char}.
+{End}
+
+# ========== unused_text_block ==========
+
+Macro unused_text_block
+    Param
+        name: String;
+        line: String;
+        char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+The "{name}" text block is not useful.
+{End}
+
+# ========== unused_param ==========
+
+Macro unused_param
+    Param
+        name: String;
+        line: String;
+        char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+The "{name}" parameter is not used.
+{End}
+
+# ========== incorrect_argument_count ==========
+
+Macro incorrect_argument_count
+    Param
+        line: String;
+        char: String;
+        expected_count: String;
+        current_count: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+The macro reference has {current_count} arguments, instead of {expected_count} arguments.
+{End}
+
+# ========== incorrect_argument_type ==========
+
+Macro incorrect_argument_type
+    Param
+        expected: String;
+        found: String;
+        line: String;
+        char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+The parameter type found is "{found}", instead of "{expected}";
+{End}
+
+# ========== cannot_create_directory ==========
+
+Macro cannot_create_directory
+    Param
+        location: String;
+{Body}
+{Insert: command_line_error_head}
+
+The directory "{location}" could not be created.
+
+{Insert: command_line_error_tail}
+{End}
+
+# ========= body_token_misused ==========
+
+Macro body_token_misused
+    Param
+        line: String;
+        char: String;
+{Body}
+*** SYNTAX ERROR ***
+
+Line: {line}
+Char: {char}
+The token {{Body} must be at the beginning of the line, at position 0.
+{End}
+
+# ========= indent_token_misused ==========
+
+Macro indent_token_misused
+    Param
+        line: String;
+        char: String;
+{Body}
+*** SYNTAX ERROR ***
+
+Line: {line}
+Char: {char}
+The command {{Indent:} must be at the beginning of the line, at position 0.
+{End}
+
+# =========== duplicate_macro_ref ===========
+
+Macro duplicate_macro_ref
+    Param
+        param: String;
+        macro: String;
+        line: String;
+        char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line: {line}
+Char: {char}
+Parameter '{param}' has already referenced Macro '{macro}'.
+{End}
+
+# ========== incorrect_macro_type ============
+
+Macro incorrect_macro_type
+    Param
+        expected: String;
+        found: String;
+        index: String;
+        line: String;
+        char: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line : {line}
+Char : {char}
+Incorrect macro type at index {index}. (expected : {expected}, found : {found})
+{End}
+
+# ========== invalid_insert ==========
+
+Macro invalid_insert
+    Param
+        line: String;
+        char: String;
+        name: String;
+{Body}
+{Insert: semantic_error_head}
+
+Line : {line}
+Char : {char}
+Macro '{name}' cannot be inserted because it also has parameters.
+{End}
+
+

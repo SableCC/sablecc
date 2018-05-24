@@ -20,96 +20,66 @@ public class MInitInternalValue
             String pParamName) {
 
         if (pParamName == null) {
-
             throw ObjectMacroException.parameterNull("ParamName");
-
         }
 
         this.field_ParamName = pParamName;
-
     }
 
     private String buildParamName() {
 
         return this.field_ParamName;
-
     }
 
     private String getParamName() {
 
         return this.field_ParamName;
-
     }
 
     @Override
-
     void apply(
-
             InternalsInitializer internalsInitializer) {
 
         internalsInitializer.setInitInternalValue(this);
-
     }
 
     @Override
-
     public String build() {
 
         BuildState buildState = this.build_state;
 
         if (buildState == null) {
-
             buildState = new BuildState();
-
         }
-
         else if (buildState.getExpansion() == null) {
-
             throw ObjectMacroException.cyclicReference("InitInternalValue");
-
         }
-
         else {
-
             return buildState.getExpansion();
-
         }
-
         this.build_state = buildState;
-
         List<String> indentations = new LinkedList<>();
-
         StringBuilder sbIndentation = new StringBuilder();
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append("    this.");
-
+        sb0.append("this.");
         sb0.append(buildParamName());
-
         sb0.append("Value = new InternalValue(this.list_");
-
         sb0.append(buildParamName());
-
         sb0.append(", this.");
-
         sb0.append(buildParamName());
-
         sb0.append("Context);");
 
         buildState.setExpansion(sb0.toString());
-
         return sb0.toString();
-
     }
 
     @Override
-
     String build(
             Context context) {
 
         return build();
-
     }
 
     private String applyIndent(
@@ -125,7 +95,7 @@ public class MInitInternalValue
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

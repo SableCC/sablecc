@@ -22,6 +22,7 @@ import java.util.*;
 import org.sablecc.exception.*;
 import org.sablecc.objectmacro.errormessage.*;
 import org.sablecc.objectmacro.structure.*;
+import org.sablecc.objectmacro.structure.Macro;
 import org.sablecc.objectmacro.syntax3.node.*;
 
 @SuppressWarnings("serial")
@@ -57,8 +58,8 @@ public class CompilerException
             String argumentText,
             Throwable cause) {
 
-        return new CompilerException(
-                new MInvalidArgument(argumentText).toString(), cause);
+        return new CompilerException(new MInvalidArgument(argumentText).build(),
+                cause);
     }
 
     public static CompilerException missingLongOptionOperand(
@@ -66,8 +67,7 @@ public class CompilerException
             String operandName) {
 
         return new CompilerException(
-                new MMissingLongOptionOperand(optionName, operandName)
-                        .toString());
+                new MMissingLongOptionOperand(optionName, operandName).build());
     }
 
     public static CompilerException missingShortOptionOperand(
@@ -76,14 +76,14 @@ public class CompilerException
 
         return new CompilerException(
                 new MMissingShortOptionOperand(optionName, operandName)
-                        .toString());
+                        .build());
     }
 
     public static CompilerException invalidLongOption(
             String optionName) {
 
         return new CompilerException(
-                new MInvalidLongOption(optionName).toString());
+                new MInvalidLongOption(optionName).build());
     }
 
     public static CompilerException spuriousLongOptionOperand(
@@ -92,14 +92,14 @@ public class CompilerException
 
         return new CompilerException(
                 new MSpuriousLongOptionOperand(optionName, operandText)
-                        .toString());
+                        .build());
     }
 
     public static CompilerException invalidShortOption(
             String optionName) {
 
         return new CompilerException(
-                new MInvalidShortOption(optionName).toString());
+                new MInvalidShortOption(optionName).build());
     }
 
     public static CompilerException spuriousShortOptionOperand(
@@ -108,46 +108,45 @@ public class CompilerException
 
         return new CompilerException(
                 new MSpuriousShortOptionOperand(optionName, operandText)
-                        .toString());
+                        .build());
     }
 
     public static CompilerException unknownTarget(
             String targetLanguage) {
 
         return new CompilerException(
-                new MUnknownTarget(targetLanguage).toString());
+                new MUnknownTarget(targetLanguage).build());
     }
 
     public static CompilerException invalidArgumentCount() {
 
-        return new CompilerException(new MInvalidArgumentCount().toString());
+        return new CompilerException(new MInvalidArgumentCount().build());
     }
 
     public static CompilerException invalidObjectmacroSuffix(
             String fileName) {
 
         return new CompilerException(
-                new MInvalidObjectmacroSuffix(fileName).toString());
+                new MInvalidObjectmacroSuffix(fileName).build());
     }
 
     public static CompilerException invalidIntermediateSuffix(
             String fileName) {
 
         return new CompilerException(
-                new MInvalidIntermediateSuffix(fileName).toString());
+                new MInvalidIntermediateSuffix(fileName).build());
     }
 
     public static CompilerException missingMacroFile(
             String fileName) {
 
-        return new CompilerException(
-                new MMissingMacroFile(fileName).toString());
+        return new CompilerException(new MMissingMacroFile(fileName).build());
     }
 
     public static CompilerException macroNotFile(
             String fileName) {
 
-        return new CompilerException(new MMacroNotFile(fileName).toString());
+        return new CompilerException(new MMacroNotFile(fileName).build());
     }
 
     public static CompilerException inputError(
@@ -155,8 +154,7 @@ public class CompilerException
             Throwable cause) {
 
         return new CompilerException(
-                new MInputError(fileName, cause.getMessage()).toString(),
-                cause);
+                new MInputError(fileName, cause.getMessage()).build(), cause);
     }
 
     public static CompilerException outputError(
@@ -164,16 +162,21 @@ public class CompilerException
             Throwable cause) {
 
         return new CompilerException(
-                new MOutputError(fileName, cause.getMessage()).toString(),
-                cause);
+                new MOutputError(fileName, cause.getMessage()).build(), cause);
     }
 
     public static CompilerException unknownMacro(
             TIdentifier identifier) {
 
         return new CompilerException(new MUnknownMacro(identifier.getText(),
-                identifier.getLine() + "", identifier.getPos() + "")
-                        .toString());
+                identifier.getLine() + "", identifier.getPos() + "").build());
+    }
+
+    public static CompilerException unknownVersion(
+            TIdentifier identifier) {
+
+        return new CompilerException(new MUnknownVersion(identifier.getText(),
+                identifier.getLine() + "", identifier.getPos() + "").build());
     }
 
     public static CompilerException duplicateDeclaration(
@@ -189,7 +192,33 @@ public class CompilerException
                 duplicateDeclaration.getLine() + "",
                 duplicateDeclaration.getPos() + "",
                 firstDeclaration.getLine() + "", firstDeclaration.getPos() + "")
-                        .toString());
+                        .build());
+    }
+
+    public static CompilerException duplicateDeclaration(
+            TIdentifier duplicateDeclaration,
+            TIdentifier firstDeclaration,
+            MacroVersion version) {
+
+        String name = duplicateDeclaration.getText();
+        if (!name.equals(firstDeclaration.getText())) {
+            throw new InternalException("name must be identical");
+        }
+
+        if (version == null) {
+            throw new InternalException("version may not be null");
+        }
+
+        MDuplicateDeclaration mDuplicateDeclaration = new MDuplicateDeclaration(
+                name, duplicateDeclaration.getLine() + "",
+                duplicateDeclaration.getPos() + "",
+                firstDeclaration.getLine() + "",
+                firstDeclaration.getPos() + "");
+
+        mDuplicateDeclaration
+                .addVersion(new MPlainText(version.getName().getText()));
+
+        return new CompilerException(mDuplicateDeclaration.build());
     }
 
     public static CompilerException duplicateOption(
@@ -205,7 +234,7 @@ public class CompilerException
                 duplicateOption.getName().getLine() + "",
                 duplicateOption.getName().getPos() + "",
                 firstOption.getName().getLine() + "",
-                firstOption.getName().getPos() + "").toString());
+                firstOption.getName().getPos() + "").build());
     }
 
     public static CompilerException conflictingOption(
@@ -219,7 +248,7 @@ public class CompilerException
                 conflictingOption.getName().getLine() + "",
                 conflictingOption.getName().getPos() + "", firstName,
                 firstOption.getName().getLine() + "",
-                firstOption.getName().getPos() + "").toString());
+                firstOption.getName().getPos() + "").build());
     }
 
     public static CompilerException unknownOption(
@@ -229,7 +258,7 @@ public class CompilerException
         String name = nameId.getText();
 
         return new CompilerException(new MUnknownOption(name,
-                nameId.getLine() + "", nameId.getPos() + "").toString());
+                nameId.getLine() + "", nameId.getPos() + "").build());
     }
 
     public static CompilerException endMismatch(
@@ -238,7 +267,7 @@ public class CompilerException
 
         return new CompilerException(new MEndMismatch(name.getText(),
                 name.getLine() + "", name.getPos() + "", refName.getText(),
-                refName.getLine() + "", refName.getPos() + "").toString());
+                refName.getLine() + "", refName.getPos() + "").build());
     }
 
     public static CompilerException unknownParam(
@@ -248,17 +277,17 @@ public class CompilerException
 
         return new CompilerException(
                 new MUnknownParam(name, var.getLine() + "", var.getPos() + "")
-                        .toString());
+                        .build());
     }
 
     public static CompilerException cyclicReference(
             TIdentifier reference,
             TIdentifier context) {
 
-        return new CompilerException(new MCyclicReference(reference.getText(),
-                reference.getLine() + "", reference.getPos() + "",
-                context.getText(), context.getLine() + "",
-                context.getPos() + "").toString());
+        return new CompilerException(new MParamCyclicReference(
+                reference.getText(), reference.getLine() + "",
+                reference.getPos() + "", context.getText(),
+                context.getLine() + "", context.getPos() + "").build());
     }
 
     public static CompilerException selfReference(
@@ -268,7 +297,7 @@ public class CompilerException
         return new CompilerException(new MSelfReference(reference.getText(),
                 reference.getLine() + "", reference.getPos() + "",
                 context.getText(), context.getLine() + "",
-                context.getPos() + "").toString());
+                context.getPos() + "").build());
     }
 
     public static CompilerException unusedParam(
@@ -277,7 +306,7 @@ public class CompilerException
         TIdentifier name = param.getNameDeclaration();
 
         return new CompilerException(new MUnusedParam(name.getText(),
-                name.getLine() + "", name.getPos() + "").toString());
+                name.getLine() + "", name.getPos() + "").build());
     }
 
     public static CompilerException incorrectArgumentCount(
@@ -291,7 +320,7 @@ public class CompilerException
         String currentCount = String.valueOf(declaration.getValues().size());
 
         return new CompilerException(new MIncorrectArgumentCount(line, pos,
-                expectedCount, currentCount).toString());
+                expectedCount, currentCount).build());
     }
 
     public static CompilerException incorrectArgumentType(
@@ -304,14 +333,14 @@ public class CompilerException
         String stringPos = String.valueOf(pos);
 
         return new CompilerException(new MIncorrectArgumentType(expected, found,
-                stringLine, stringPos).toString());
+                stringLine, stringPos).build());
     }
 
     public static CompilerException cannotCreateDirectory(
             String location) {
 
         return new CompilerException(
-                new MCannotCreateDirectory(location).toString());
+                new MCannotCreateDirectory(location).build());
     }
 
     public static CompilerException bodyTokenMisused(
@@ -320,8 +349,7 @@ public class CompilerException
         String line = String.valueOf(body.getLine());
         String pos = String.valueOf(body.getPos());
 
-        return new CompilerException(
-                new MBodyTokenMisused(line, pos).toString());
+        return new CompilerException(new MBodyTokenMisused(line, pos).build());
     }
 
     public static CompilerException indentTokenMisused(
@@ -331,7 +359,7 @@ public class CompilerException
         String pos = String.valueOf(indent.getPos());
 
         return new CompilerException(
-                new MIndentTokenMisused(line, pos).toString());
+                new MIndentTokenMisused(line, pos).build());
     }
 
     public static CompilerException duplicateMacroRef(
@@ -342,7 +370,7 @@ public class CompilerException
         String pos = String.valueOf(macroRef.getPos());
 
         return new CompilerException(new MDuplicateMacroRef(paramName.getText(),
-                macroRef.getText(), line, pos).toString());
+                macroRef.getText(), line, pos).build());
 
     }
 
@@ -367,7 +395,7 @@ public class CompilerException
         return new CompilerException(new MIncorrectMacroType(
                 expectedBuilder.toString(), providedBuilder.toString(),
                 String.valueOf(index), String.valueOf(parameter_name.getLine()),
-                String.valueOf(parameter_name.getPos())).toString());
+                String.valueOf(parameter_name.getPos())).build());
     }
 
     public static CompilerException invalidInsert(
@@ -377,6 +405,6 @@ public class CompilerException
         String pos = String.valueOf(name.getPos());
 
         return new CompilerException(
-                new MInvalidInsert(line, pos, name.getText()).toString());
+                new MInvalidInsert(line, pos, name.getText()).build());
     }
 }

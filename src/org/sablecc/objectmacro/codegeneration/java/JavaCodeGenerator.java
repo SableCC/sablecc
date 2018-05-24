@@ -73,7 +73,7 @@ public class JavaCodeGenerator
             }
         }
 
-        Map<String, Macro> macros = new LinkedHashMap<>();
+        Map<String, SMacro> macros = new LinkedHashMap<>();
 
         MacroCollector macroCollector = new MacroCollector(macros);
         getIr().getAST().apply(macroCollector);
@@ -82,7 +82,9 @@ public class JavaCodeGenerator
                 = new CodeGenerationWalker(getIr(), packageDirectory, macros);
         UtilsGenerationWalker utilsGenerationWalker
                 = new UtilsGenerationWalker(getIr(), packageDirectory);
+        ChildrenCollector childrenCollector = new ChildrenCollector(macros);
 
+        getIr().getAST().apply(childrenCollector);
         getIr().getAST().apply(walker);
         getIr().getAST().apply(utilsGenerationWalker);
     }

@@ -21,15 +21,18 @@ import back.cycle.macro.*;
 
 public class Cycle4 {
 
-    public static void main(String[] args){
+    public static void main(
+            String[] args){
 
-        MA ma = new MA();
-        MB mb = new MB();
-        MC mc = new MC();
-        MC mc1 = new MC();
-        MA ma1 = new MA();
-        MB mb1 = new MB();
-        MA ma2 = new MA();
+        Macros m = new Macros();
+
+        MA ma = m.newA();
+        MB mb = m.newB();
+        MC mc = m.newC();
+        MC mc1 = m.newC();
+        MA ma1 = m.newA();
+        MB mb1 = m.newB();
+        MA ma2 = m.newA();
 
         ma.addX(mb);
         mb.addY(mc);
@@ -40,7 +43,7 @@ public class Cycle4 {
         mc1.addZ(mb1);
         mb1.addY(mc);
         ma.addX(mb1);
-        MC mc2 = new MC();
+        MC mc2 = m.newC();
         mc2.addY(ma);
 
         try{

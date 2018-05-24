@@ -4,70 +4,281 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public class MTextArgument {
+public class MTextArgument
+        extends Macro {
 
-    private final List<Object> eParamName = new LinkedList<>();
+    private String field_ParamName;
 
-    private final List<Object> eStringPart_EolPart_ParamInsert_MacroInsert
-            = new LinkedList<>();
+    private final List<Macro> list_TextParts;
 
-    public MTextArgument() {
+    private DSeparator TextPartsSeparator;
 
-    }
+    private DBeforeFirst TextPartsBeforeFirst;
 
-    public MParamName newParamName(
+    private DAfterLast TextPartsAfterLast;
+
+    private DNone TextPartsNone;
+
+    private final InternalValue TextPartsValue;
+
+    private final Context TextPartsContext = new Context();
+
+    public MTextArgument(
             String pParamName) {
 
-        MParamName lParamName = new MParamName(pParamName);
-        this.eParamName.add(lParamName);
-        return lParamName;
+        setPParamName(pParamName);
+        this.list_TextParts = new ArrayList<>();
+
+        this.TextPartsValue
+                = new InternalValue(this.list_TextParts, this.TextPartsContext);
     }
 
-    public MStringPart newStringPart(
-            String pString) {
+    private void setPParamName(
+            String pParamName) {
 
-        MStringPart lStringPart = new MStringPart(pString);
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lStringPart);
-        return lStringPart;
+        if (pParamName == null) {
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+
+        this.field_ParamName = pParamName;
     }
 
-    public MEolPart newEolPart() {
+    public void addTextParts(
+            MStringPart macro) {
 
-        MEolPart lEolPart = new MEolPart();
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lEolPart);
-        return lEolPart;
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("TextParts");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("StringPart");
+        }
+
+        this.list_TextParts.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    public MParamInsert newParamInsert() {
+    public void addTextParts(
+            MEolPart macro) {
 
-        MParamInsert lParamInsert = new MParamInsert();
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lParamInsert);
-        return lParamInsert;
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("TextParts");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("EolPart");
+        }
+
+        this.list_TextParts.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    public MMacroInsert newMacroInsert() {
+    public void addTextParts(
+            MParamInsert macro) {
 
-        MMacroInsert lMacroInsert = new MMacroInsert();
-        this.eStringPart_EolPart_ParamInsert_MacroInsert.add(lMacroInsert);
-        return lMacroInsert;
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("TextParts");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("ParamInsert");
+        }
+
+        this.list_TextParts.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    @Override
-    public String toString() {
+    public void addTextParts(
+            MMacroInsert macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("TextParts");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("MacroInsert");
+        }
+
+        this.list_TextParts.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+
+    private String buildParamName() {
+
+        return this.field_ParamName;
+    }
+
+    private String buildTextParts() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append(" Value {");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    ");
-        for (Object oParamName : this.eParamName) {
-            sb.append(oParamName.toString());
+        Context local_context = this.TextPartsContext;
+        List<Macro> macros = this.list_TextParts;
+
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if (this.TextPartsNone != null) {
+            sb.append(this.TextPartsNone.apply(i, "", nb_macros));
         }
-        for (Object oStringPart_EolPart_ParamInsert_MacroInsert : this.eStringPart_EolPart_ParamInsert_MacroInsert) {
-            sb.append(oStringPart_EolPart_ParamInsert_MacroInsert.toString());
+
+        for (Macro macro : macros) {
+            expansion = macro.build(local_context);
+
+            if (this.TextPartsBeforeFirst != null) {
+                expansion = this.TextPartsBeforeFirst.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.TextPartsAfterLast != null) {
+                expansion = this.TextPartsAfterLast.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.TextPartsSeparator != null) {
+                expansion = this.TextPartsSeparator.apply(i, expansion,
+                        nb_macros);
+            }
+
+            sb.append(expansion);
+            i++;
         }
-        sb.append(" }");
-        sb.append(System.getProperty("line.separator"));
+
         return sb.toString();
     }
 
+    private String getParamName() {
+
+        return this.field_ParamName;
+    }
+
+    private InternalValue getTextParts() {
+
+        return this.TextPartsValue;
+    }
+
+    private void initTextPartsInternals(
+            Context context) {
+
+        for (Macro macro : this.list_TextParts) {
+            macro.apply(new InternalsInitializer("TextParts") {
+
+                @Override
+                void setStringPart(
+                        MStringPart mStringPart) {
+
+                }
+
+                @Override
+                void setEolPart(
+                        MEolPart mEolPart) {
+
+                }
+
+                @Override
+                void setParamInsert(
+                        MParamInsert mParamInsert) {
+
+                }
+
+                @Override
+                void setMacroInsert(
+                        MMacroInsert mMacroInsert) {
+
+                }
+            });
+        }
+    }
+
+    private void initTextPartsDirectives() {
+
+        StringBuilder sb0 = new StringBuilder();
+        sb0.append(LINE_SEPARATOR);
+        this.TextPartsSeparator = new DSeparator(sb0.toString());
+        this.TextPartsValue.setSeparator(this.TextPartsSeparator);
+    }
+
+    @Override
+    void apply(
+            InternalsInitializer internalsInitializer) {
+
+        internalsInitializer.setTextArgument(this);
+    }
+
+    @Override
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+            buildState = new BuildState();
+        }
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException.cyclicReference("TextArgument");
+        }
+        else {
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        initTextPartsDirectives();
+
+        initTextPartsInternals(null);
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("Value");
+        sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
+        StringBuilder sb1 = new StringBuilder();
+        sbIndentation = new StringBuilder();
+        sbIndentation.append("    ");
+        indentations.add(sbIndentation.toString());
+        MParamName minsert_1 = new MParamName();
+
+        minsert_1.setName(null, getParamName());
+        sb1.append(minsert_1.build(null));
+        sb1.append(LINE_SEPARATOR);
+        sb1.append(buildTextParts());
+        sb0.append(applyIndent(sb1.toString(),
+                indentations.remove(indentations.size() - 1)));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("}");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(
+            Context context) {
+
+        return build();
+    }
+
+    private String applyIndent(
+            String macro,
+            String indent) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if (i < lines.length - 1) {
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else {
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
+    }
 }

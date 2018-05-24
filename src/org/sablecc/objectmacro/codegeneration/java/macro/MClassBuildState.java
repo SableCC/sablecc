@@ -138,7 +138,7 @@ public class MClassBuildState
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb0.toString());
 
@@ -197,63 +197,63 @@ public class MClassBuildState
 
         sb0.append(minsert_1.build(null));
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append(buildPackageDeclaration());
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("class BuildState ");
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    private String expansion = null;");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    public String getExpansion() ");
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("        return expansion;");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    }");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    public void setExpansion(");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("            String expansion) ");
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("        this.expansion = expansion;");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    }");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -285,7 +285,7 @@ public class MClassBuildState
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

@@ -2,19 +2,20 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MSyntaxError {
+import java.util.*;
 
-    private final String pLine;
+public class MSyntaxError
+        extends Macro {
 
-    private final String pChar;
+    private String field_Line;
 
-    private final String pTokenType;
+    private String field_Char;
 
-    private final String pTokenText;
+    private String field_TokenType;
 
-    private final String pMessage;
+    private String field_TokenText;
 
-    private final MSyntaxError mSyntaxError = this;
+    private String field_Message;
 
     public MSyntaxError(
             String pLine,
@@ -23,101 +24,191 @@ public class MSyntaxError {
             String pTokenText,
             String pMessage) {
 
+        setPLine(pLine);
+        setPChar(pChar);
+        setPTokenType(pTokenType);
+        setPTokenText(pTokenText);
+        setPMessage(pMessage);
+
+    }
+
+    private void setPLine(
+            String pLine) {
+
         if (pLine == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("Line");
         }
-        this.pLine = pLine;
+
+        this.field_Line = pLine;
+    }
+
+    private void setPChar(
+            String pChar) {
+
         if (pChar == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("Char");
         }
-        this.pChar = pChar;
+
+        this.field_Char = pChar;
+    }
+
+    private void setPTokenType(
+            String pTokenType) {
+
         if (pTokenType == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("TokenType");
         }
-        this.pTokenType = pTokenType;
+
+        this.field_TokenType = pTokenType;
+    }
+
+    private void setPTokenText(
+            String pTokenText) {
+
         if (pTokenText == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("TokenText");
         }
-        this.pTokenText = pTokenText;
+
+        this.field_TokenText = pTokenText;
+    }
+
+    private void setPMessage(
+            String pMessage) {
+
         if (pMessage == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("Message");
         }
-        this.pMessage = pMessage;
+
+        this.field_Message = pMessage;
     }
 
-    String pLine() {
+    private String buildLine() {
 
-        return this.pLine;
+        return this.field_Line;
     }
 
-    String pChar() {
+    private String buildChar() {
 
-        return this.pChar;
+        return this.field_Char;
     }
 
-    String pTokenType() {
+    private String buildTokenType() {
 
-        return this.pTokenType;
+        return this.field_TokenType;
     }
 
-    String pTokenText() {
+    private String buildTokenText() {
 
-        return this.pTokenText;
+        return this.field_TokenText;
     }
 
-    String pMessage() {
+    private String buildMessage() {
 
-        return this.pMessage;
+        return this.field_Message;
     }
 
-    private String rLine() {
+    private String getLine() {
 
-        return this.mSyntaxError.pLine();
+        return this.field_Line;
     }
 
-    private String rChar() {
+    private String getChar() {
 
-        return this.mSyntaxError.pChar();
+        return this.field_Char;
     }
 
-    private String rTokenType() {
+    private String getTokenType() {
 
-        return this.mSyntaxError.pTokenType();
+        return this.field_TokenType;
     }
 
-    private String rTokenText() {
+    private String getTokenText() {
 
-        return this.mSyntaxError.pTokenText();
+        return this.field_TokenText;
     }
 
-    private String rMessage() {
+    private String getMessage() {
 
-        return this.mSyntaxError.pMessage();
+        return this.field_Message;
     }
 
     @Override
-    public String toString() {
+    void apply(
+            InternalsInitializer internalsInitializer) {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("*** SYNTAX ERROR ***");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line: ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char: ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Syntax error on unexpected ");
-        sb.append(rTokenType());
-        sb.append(" token \"");
-        sb.append(rTokenText());
-        sb.append("\":");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(rMessage());
-        sb.append(".");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+        internalsInitializer.setSyntaxError(this);
     }
 
+    @Override
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+            buildState = new BuildState();
+        }
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException.cyclicReference("SyntaxError");
+        }
+        else {
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("*** SYNTAX ERROR ***");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Line: ");
+        sb0.append(buildLine());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Char: ");
+        sb0.append(buildChar());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Syntax error on unexpected ");
+        sb0.append(buildTokenType());
+        sb0.append(" token \"");
+        sb0.append(buildTokenText());
+        sb0.append("\":");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(buildMessage());
+        sb0.append(".");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(
+            Context context) {
+
+        return build();
+    }
+
+    private String applyIndent(
+            String macro,
+            String indent) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if (i < lines.length - 1) {
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else {
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
+    }
 }

@@ -17,31 +17,60 @@
 
 package org.sablecc.objectmacro.walker;
 
+import org.sablecc.exception.*;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.structure.*;
 import org.sablecc.objectmacro.syntax3.analysis.*;
 import org.sablecc.objectmacro.syntax3.node.*;
+import org.sablecc.objectmacro.util.*;
 
 public class DirectiveCollector
         extends DepthFirstAdapter {
 
-    private GlobalIndex globalIndex;
+    private final GlobalIndex globalIndex;
+
+    private final MacroVersion currentVersion;
 
     private Macro currentMacro;
 
     private External currentParam;
 
     public DirectiveCollector(
-            GlobalIndex globalIndex) {
+            GlobalIndex globalIndex,
+            MacroVersion version) {
+
+        if (globalIndex == null) {
+            throw new InternalException("globalIndex may not be null");
+        }
 
         this.globalIndex = globalIndex;
+        this.currentVersion = version;
+    }
+
+    @Override
+    public void caseAMacro(
+            AMacro node) {
+
+        // if currentMacro is not of version 'currentVersion' then go to next
+        // macro node
+        if (this.currentVersion != null && node.getVersions().size() > 0
+                && !Utils.containsVersion(node.getVersions(),
+                        this.currentVersion)) {
+            return;
+        }
+
+        super.caseAMacro(node);
     }
 
     @Override
     public void inAMacro(
             AMacro node) {
 
-        this.currentMacro = this.globalIndex.getMacro(node.getName());
+        this.currentMacro = this.globalIndex.getMacro(node.getName(),
+                this.currentVersion);
+        if (this.currentMacro == null) {
+            throw CompilerException.unknownMacro(node.getName());
+        }
     }
 
     @Override

@@ -21,7 +21,7 @@ import java.util.*;
 
 import org.sablecc.objectmacro.codegeneration.java.macro.*;
 
-public class Macro {
+public class SMacro {
 
     private final MMacro macro;
 
@@ -31,16 +31,24 @@ public class Macro {
 
     private final List<String> internalsName;
 
-    public Macro(
+    private final Set<String> children = new HashSet<>();
+
+    private final Map<String, String> childByVersion = new LinkedHashMap<>();
+
+    private final Set<String> applied_versions;
+
+    public SMacro(
             MMacro macro,
             List<String> parametersName,
             List<String> internalsName,
-            String name) {
+            String name,
+            Set<String> applied_versions) {
 
         this.macro = macro;
         this.parametersName = parametersName;
         this.internalsName = internalsName;
         this.name = name;
+        this.applied_versions = applied_versions;
     }
 
     public List<String> getInternalsName() {
@@ -61,5 +69,33 @@ public class Macro {
     public String getName() {
 
         return this.name;
+    }
+
+    public void addChild(
+            String version,
+            String macro_name) {
+
+        this.childByVersion.put(version, macro_name);
+        this.children.add(macro_name);
+    }
+
+    public Set<String> getChildren() {
+
+        return this.children;
+    }
+
+    public String getChildByVersion(
+            String version) {
+
+        if (this.children.size() == 0) {
+            return this.name;
+        }
+
+        return this.childByVersion.get(version);
+    }
+
+    public Set<String> getApplied_versions() {
+
+        return this.applied_versions;
     }
 }

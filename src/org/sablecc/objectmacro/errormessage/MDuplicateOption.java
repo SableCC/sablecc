@@ -2,19 +2,20 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MDuplicateOption {
+import java.util.*;
 
-    private final String pName;
+public class MDuplicateOption
+        extends Macro {
 
-    private final String pLine;
+    private String field_Name;
 
-    private final String pChar;
+    private String field_Line;
 
-    private final String pRefLine;
+    private String field_Char;
 
-    private final String pRefChar;
+    private String field_RefLine;
 
-    private final MDuplicateOption mDuplicateOption = this;
+    private String field_RefChar;
 
     public MDuplicateOption(
             String pName,
@@ -23,101 +24,194 @@ public class MDuplicateOption {
             String pRefLine,
             String pRefChar) {
 
+        setPName(pName);
+        setPLine(pLine);
+        setPChar(pChar);
+        setPRefLine(pRefLine);
+        setPRefChar(pRefChar);
+
+    }
+
+    private void setPName(
+            String pName) {
+
         if (pName == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("Name");
         }
-        this.pName = pName;
+
+        this.field_Name = pName;
+    }
+
+    private void setPLine(
+            String pLine) {
+
         if (pLine == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("Line");
         }
-        this.pLine = pLine;
+
+        this.field_Line = pLine;
+    }
+
+    private void setPChar(
+            String pChar) {
+
         if (pChar == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("Char");
         }
-        this.pChar = pChar;
+
+        this.field_Char = pChar;
+    }
+
+    private void setPRefLine(
+            String pRefLine) {
+
         if (pRefLine == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("RefLine");
         }
-        this.pRefLine = pRefLine;
+
+        this.field_RefLine = pRefLine;
+    }
+
+    private void setPRefChar(
+            String pRefChar) {
+
         if (pRefChar == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("RefChar");
         }
-        this.pRefChar = pRefChar;
+
+        this.field_RefChar = pRefChar;
     }
 
-    String pName() {
+    private String buildName() {
 
-        return this.pName;
+        return this.field_Name;
     }
 
-    String pLine() {
+    private String buildLine() {
 
-        return this.pLine;
+        return this.field_Line;
     }
 
-    String pChar() {
+    private String buildChar() {
 
-        return this.pChar;
+        return this.field_Char;
     }
 
-    String pRefLine() {
+    private String buildRefLine() {
 
-        return this.pRefLine;
+        return this.field_RefLine;
     }
 
-    String pRefChar() {
+    private String buildRefChar() {
 
-        return this.pRefChar;
+        return this.field_RefChar;
     }
 
-    private String rLine() {
+    private String getName() {
 
-        return this.mDuplicateOption.pLine();
+        return this.field_Name;
     }
 
-    private String rChar() {
+    private String getLine() {
 
-        return this.mDuplicateOption.pChar();
+        return this.field_Line;
     }
 
-    private String rName() {
+    private String getChar() {
 
-        return this.mDuplicateOption.pName();
+        return this.field_Char;
     }
 
-    private String rRefLine() {
+    private String getRefLine() {
 
-        return this.mDuplicateOption.pRefLine();
+        return this.field_RefLine;
     }
 
-    private String rRefChar() {
+    private String getRefChar() {
 
-        return this.mDuplicateOption.pRefChar();
+        return this.field_RefChar;
     }
 
     @Override
-    public String toString() {
+    void apply(
+            InternalsInitializer internalsInitializer) {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(new MSemanticErrorHead().toString());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line: ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char: ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Duplicate \"");
-        sb.append(rName());
-        sb.append("\" option.");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("It was already provided at line ");
-        sb.append(rRefLine());
-        sb.append(", char ");
-        sb.append(rRefChar());
-        sb.append(".");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+        internalsInitializer.setDuplicateOption(this);
     }
 
+    @Override
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+            buildState = new BuildState();
+        }
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException.cyclicReference("DuplicateOption");
+        }
+        else {
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+
+        sb0.append(minsert_1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Line: ");
+        sb0.append(buildLine());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Char: ");
+        sb0.append(buildChar());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Duplicate \"");
+        sb0.append(buildName());
+        sb0.append("\" option.");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("It was already provided at line ");
+        sb0.append(buildRefLine());
+        sb0.append(", char ");
+        sb0.append(buildRefChar());
+        sb0.append(".");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(
+            Context context) {
+
+        return build();
+    }
+
+    private String applyIndent(
+            String macro,
+            String indent) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if (i < lines.length - 1) {
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else {
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
+    }
 }

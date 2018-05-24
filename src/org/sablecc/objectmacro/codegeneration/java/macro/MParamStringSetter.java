@@ -357,7 +357,7 @@ public class MParamStringSetter
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    if(");
 
@@ -367,7 +367,7 @@ public class MParamStringSetter
 
         sb0.append("{");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("        throw ObjectMacroException.parameterNull(\"");
 
@@ -375,13 +375,13 @@ public class MParamStringSetter
 
         sb0.append("\");");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    }");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("    this.field_");
 
@@ -393,7 +393,7 @@ public class MParamStringSetter
 
         sb0.append(";");
 
-        sb0.append(Macro.LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
 
         sb0.append("}");
 
@@ -425,7 +425,7 @@ public class MParamStringSetter
                 sb.append(indent).append(line);
 
                 if (i < lines.length - 1) {
-                    sb.append(Macro.LINE_SEPARATOR);
+                    sb.append(LINE_SEPARATOR);
                 }
             }
         }

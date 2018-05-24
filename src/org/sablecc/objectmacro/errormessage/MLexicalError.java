@@ -2,82 +2,159 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MLexicalError {
+import java.util.*;
 
-    private final String pLine;
+public class MLexicalError
+        extends Macro {
 
-    private final String pChar;
+    private String field_Line;
 
-    private final String pMessage;
+    private String field_Char;
 
-    private final MLexicalError mLexicalError = this;
+    private String field_Message;
 
     public MLexicalError(
             String pLine,
             String pChar,
             String pMessage) {
 
+        setPLine(pLine);
+        setPChar(pChar);
+        setPMessage(pMessage);
+
+    }
+
+    private void setPLine(
+            String pLine) {
+
         if (pLine == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("Line");
         }
-        this.pLine = pLine;
+
+        this.field_Line = pLine;
+    }
+
+    private void setPChar(
+            String pChar) {
+
         if (pChar == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("Char");
         }
-        this.pChar = pChar;
+
+        this.field_Char = pChar;
+    }
+
+    private void setPMessage(
+            String pMessage) {
+
         if (pMessage == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("Message");
         }
-        this.pMessage = pMessage;
+
+        this.field_Message = pMessage;
     }
 
-    String pLine() {
+    private String buildLine() {
 
-        return this.pLine;
+        return this.field_Line;
     }
 
-    String pChar() {
+    private String buildChar() {
 
-        return this.pChar;
+        return this.field_Char;
     }
 
-    String pMessage() {
+    private String buildMessage() {
 
-        return this.pMessage;
+        return this.field_Message;
     }
 
-    private String rLine() {
+    private String getLine() {
 
-        return this.mLexicalError.pLine();
+        return this.field_Line;
     }
 
-    private String rChar() {
+    private String getChar() {
 
-        return this.mLexicalError.pChar();
+        return this.field_Char;
     }
 
-    private String rMessage() {
+    private String getMessage() {
 
-        return this.mLexicalError.pMessage();
+        return this.field_Message;
     }
 
     @Override
-    public String toString() {
+    void apply(
+            InternalsInitializer internalsInitializer) {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("*** LEXICAL ERROR ***");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Line: ");
-        sb.append(rLine());
-        sb.append(System.getProperty("line.separator"));
-        sb.append("Char: ");
-        sb.append(rChar());
-        sb.append(System.getProperty("line.separator"));
-        sb.append(rMessage());
-        sb.append(".");
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+        internalsInitializer.setLexicalError(this);
     }
 
+    @Override
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+            buildState = new BuildState();
+        }
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException.cyclicReference("LexicalError");
+        }
+        else {
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("*** LEXICAL ERROR ***");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Line: ");
+        sb0.append(buildLine());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("Char: ");
+        sb0.append(buildChar());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(buildMessage());
+        sb0.append(".");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(
+            Context context) {
+
+        return build();
+    }
+
+    private String applyIndent(
+            String macro,
+            String indent) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if (i < lines.length - 1) {
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else {
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
+    }
 }

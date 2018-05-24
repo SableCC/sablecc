@@ -2,63 +2,134 @@
 
 package org.sablecc.objectmacro.errormessage;
 
-public class MInputError {
+import java.util.*;
 
-    private final String pFileName;
+public class MInputError
+        extends Macro {
 
-    private final String pMessage;
+    private String field_FileName;
 
-    private final MInputError mInputError = this;
+    private String field_Message;
 
     public MInputError(
             String pFileName,
             String pMessage) {
 
+        setPFileName(pFileName);
+        setPMessage(pMessage);
+
+    }
+
+    private void setPFileName(
+            String pFileName) {
+
         if (pFileName == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("FileName");
         }
-        this.pFileName = pFileName;
+
+        this.field_FileName = pFileName;
+    }
+
+    private void setPMessage(
+            String pMessage) {
+
         if (pMessage == null) {
-            throw new NullPointerException();
+            throw ObjectMacroException.parameterNull("Message");
         }
-        this.pMessage = pMessage;
+
+        this.field_Message = pMessage;
     }
 
-    String pFileName() {
+    private String buildFileName() {
 
-        return this.pFileName;
+        return this.field_FileName;
     }
 
-    String pMessage() {
+    private String buildMessage() {
 
-        return this.pMessage;
+        return this.field_Message;
     }
 
-    private String rFileName() {
+    private String getFileName() {
 
-        return this.mInputError.pFileName();
+        return this.field_FileName;
     }
 
-    private String rMessage() {
+    private String getMessage() {
 
-        return this.mInputError.pMessage();
+        return this.field_Message;
     }
 
     @Override
-    public String toString() {
+    void apply(
+            InternalsInitializer internalsInitializer) {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("*** I/O ERROR ***");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-        sb.append("The following system error happened while reading \"");
-        sb.append(rFileName());
-        sb.append("\":");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(" ");
-        sb.append(rMessage());
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+        internalsInitializer.setInputError(this);
     }
 
+    @Override
+    public String build() {
+
+        BuildState buildState = this.build_state;
+
+        if (buildState == null) {
+            buildState = new BuildState();
+        }
+        else if (buildState.getExpansion() == null) {
+            throw ObjectMacroException.cyclicReference("InputError");
+        }
+        else {
+            return buildState.getExpansion();
+        }
+        this.build_state = buildState;
+        List<String> indentations = new LinkedList<>();
+        StringBuilder sbIndentation = new StringBuilder();
+
+        StringBuilder sb0 = new StringBuilder();
+
+        sb0.append("*** I/O ERROR ***");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        sb0.append("The following system error happened while reading \"");
+        sb0.append(buildFileName());
+        sb0.append("\":");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(" ");
+        sb0.append(buildMessage());
+        sb0.append(".");
+
+        buildState.setExpansion(sb0.toString());
+        return sb0.toString();
+    }
+
+    @Override
+    String build(
+            Context context) {
+
+        return build();
+    }
+
+    private String applyIndent(
+            String macro,
+            String indent) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = macro.split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                sb.append(indent).append(line);
+
+                if (i < lines.length - 1) {
+                    sb.append(LINE_SEPARATOR);
+                }
+            }
+        }
+        else {
+            sb.append(indent).append(macro);
+        }
+
+        return sb.toString();
+    }
 }

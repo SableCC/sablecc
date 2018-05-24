@@ -21,14 +21,17 @@ import back.cycle.macro.*;
 
 public class Cycle2 {
 
-    public static void main(String[] args){
+    public static void main(
+            String[] args){
 
-        MA ma = new MA();
-        MB mb = new MB();
-        MC mc = new MC();
-        MC mc1 = new MC();
-        MA ma1 = new MA();
-        MA ma2 = new MA();
+        Macros m = new Macros();
+
+        MA ma = m.newA();
+        MB mb = m.newB();
+        MC mc = m.newC();
+        MC mc1 = m.newC();
+        MA ma1 = m.newA();
+        MA ma2 = m.newA();
 
         ma.addX(mb);
         mb.addY(mc);
