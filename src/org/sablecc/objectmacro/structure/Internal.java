@@ -28,10 +28,10 @@ public class Internal extends
 
     Internal(
             AInternal declaration,
-            Macro macro,
+            MacroInfo macroInfo,
             GlobalIndex globalIndex) {
 
-        super(macro, globalIndex);
+        super(macroInfo, globalIndex);
 
         if (declaration == null) {
             throw new InternalException("declaration may not be null");

@@ -18,7 +18,7 @@
 package org.sablecc.objectmacro.walker;
 
 import org.sablecc.objectmacro.structure.GlobalIndex;
-import org.sablecc.objectmacro.structure.Macro;
+import org.sablecc.objectmacro.structure.MacroInfo;
 import org.sablecc.objectmacro.structure.MacroVersion;
 import org.sablecc.objectmacro.structure.Param;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
@@ -33,7 +33,7 @@ public class IntermediateObjectCollector
 
     private final GlobalIndex globalIndex;
 
-    private Macro currentMacro;
+    private MacroInfo currentMacroInfo;
 
     public IntermediateObjectCollector(
             GlobalIndex globalIndex){
@@ -51,8 +51,8 @@ public class IntermediateObjectCollector
             Iterator<TIdentifier> iterator = node.getVersions().iterator();
             TIdentifier version_identifier = iterator.next();
             MacroVersion version = this.globalIndex.getVersion(version_identifier);
-            this.currentMacro = this.globalIndex.getMacro(node.getName(), version);
-            this.globalIndex.addIntermediateMacro(this.currentMacro);
+            this.currentMacroInfo = this.globalIndex.getMacro(node.getName(), version);
+            this.globalIndex.addIntermediateMacro(this.currentMacroInfo);
 
             super.caseAMacro(node);
         }
@@ -62,12 +62,13 @@ public class IntermediateObjectCollector
     public void caseAParam(
             AParam node) {
 
-        Param param = this.currentMacro.getParam(node.getName());
+        Param param = this.currentMacroInfo.getParam(node.getName());
 
         for(MacroVersion version : this.globalIndex.getAllVersions()){
-            Macro versionned_macro = version.getMacroOrNull(this.currentMacro.getNameDeclaration());
+            MacroInfo versionned_macro = version.getMacroOrNull(this.currentMacroInfo
+                    .getNameDeclaration());
 
-            if(this.currentMacro != versionned_macro){
+            if(this.currentMacroInfo != versionned_macro){
                 versionned_macro.containsParam(param);
             }
         }

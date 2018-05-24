@@ -27,7 +27,7 @@ public class MacroVersion {
 
     private TIdentifier name;
 
-    private final Map<String, Macro> macros = new LinkedHashMap<>();
+    private final Map<String, MacroInfo> macros = new LinkedHashMap<>();
 
     public MacroVersion(
             TIdentifier name){
@@ -43,30 +43,30 @@ public class MacroVersion {
     }
 
     public void newMacro(
-            Macro macro){
+            MacroInfo macroInfo){
 
-        if(macro == null){
-            throw new InternalException("macro may not be null");
+        if(macroInfo == null){
+            throw new InternalException("macroInfo may not be null");
         }
 
-        Macro firstDeclaration = this.macros.get(macro.getName());
+        MacroInfo firstDeclaration = this.macros.get(macroInfo.getName());
         if(firstDeclaration != null){
             throw CompilerException.duplicateDeclaration(
-                    macro.getNameDeclaration(), firstDeclaration.getNameDeclaration(), this);
+                    macroInfo.getNameDeclaration(), firstDeclaration.getNameDeclaration(), this);
         }
 
-        this.macros.put(macro.getName(), macro);
-        macro.addVersion(this);
+        this.macros.put(macroInfo.getName(), macroInfo);
+        macroInfo.addVersion(this);
     }
 
-    Macro getMacro(
+    MacroInfo getMacro(
             TIdentifier macro_name){
 
         if(macro_name == null){
             throw new InternalException("macro_name may not be null");
         }
 
-        Macro found = this.macros.get(macro_name.getText());
+        MacroInfo found = this.macros.get(macro_name.getText());
         if(found == null){
             throw CompilerException.unknownMacro(macro_name);
         }
@@ -74,13 +74,13 @@ public class MacroVersion {
         return found;
     }
 
-    public Macro getMacroOrNull(
+    public MacroInfo getMacroOrNull(
             TIdentifier macro_name){
 
         return this.macros.get(macro_name.getText());
     }
 
-    public Collection<Macro> getMacros() {
+    public Collection<MacroInfo> getMacros() {
 
         return macros.values();
     }

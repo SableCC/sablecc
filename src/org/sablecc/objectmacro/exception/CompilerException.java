@@ -55,7 +55,7 @@ import org.sablecc.objectmacro.errormessage.MUnknownOption;
 import org.sablecc.objectmacro.errormessage.MUnknownParam;
 import org.sablecc.objectmacro.errormessage.MUnknownTarget;
 import org.sablecc.objectmacro.errormessage.MUnusedParam;
-import org.sablecc.objectmacro.structure.Macro;
+import org.sablecc.objectmacro.structure.MacroInfo;
 import org.sablecc.objectmacro.structure.MacroVersion;
 import org.sablecc.objectmacro.structure.Param;
 import org.sablecc.objectmacro.syntax3.node.ADirective;
@@ -354,12 +354,12 @@ public class CompilerException
 
     public static CompilerException incorrectArgumentCount(
             AMacroReference declaration,
-            Macro macroReferenced) {
+            MacroInfo macro_referenced) {
 
         String line = String.valueOf(declaration.getName().getLine());
         String pos = String.valueOf(declaration.getName().getPos());
         String expectedCount = String
-                .valueOf(macroReferenced.getAllInternals().size());
+                .valueOf(macro_referenced.getAllInternals().size());
         String currentCount = String.valueOf(declaration.getValues().size());
 
         return new CompilerException(new MIncorrectArgumentCount(line, pos,
