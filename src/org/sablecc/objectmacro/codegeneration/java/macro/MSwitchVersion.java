@@ -4,9 +4,13 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MSwitchVersion extends Macro{
+public  class MSwitchVersion extends Macro{
     
-    private final List<Macro> list_VersionCases;
+    final List<Macro> list_VersionCases;
+    
+    final Context VersionCasesContext = new Context();
+    
+    final InternalValue VersionCasesValue;
     
     private DSeparator VersionCasesSeparator;
     
@@ -16,29 +20,28 @@ public class MSwitchVersion extends Macro{
     
     private DNone VersionCasesNone;
     
-    private final InternalValue VersionCasesValue;
-    
     private Map<Context, String> field_ClassName = new LinkedHashMap<>();
     
     private Map<Context, InternalValue> list_Args = new LinkedHashMap<>();
     
-    
-    private final Context VersionCasesContext = new Context();
-    
-    
-    public MSwitchVersion(){
-    
-        this.list_VersionCases = new ArrayList<>();
-    
+    public MSwitchVersion(Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.list_VersionCases = new LinkedList<>();
+        
         this.VersionCasesValue = new InternalValue(this.list_VersionCases, this.VersionCasesContext);
     }
-    
     
     public void addVersionCases(MMacroCaseInit macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("VersionCases");
         }
         
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_VersionCases.add(macro);
         this.children.add(macro);
@@ -66,7 +69,6 @@ public class MSwitchVersion extends Macro{
     
                 this.list_Args.put(context, internal_value);
             }
-    
     
     private String buildVersionCases(){
         StringBuilder sb = new StringBuilder();
@@ -103,7 +105,7 @@ public class MSwitchVersion extends Macro{
         return sb.toString();
     }
     
-    private String buildClassName(Context context){
+    String buildClassName(Context context){
     
         return this.field_ClassName.get(context);
     }
@@ -114,12 +116,11 @@ public class MSwitchVersion extends Macro{
         return macros.build();
     }
     
-    
     private InternalValue getVersionCases(){
         return this.VersionCasesValue;
     }
     
-    private String getClassName(Context context){
+    String getClassName(Context context){
     
         return this.field_ClassName.get(context);
     }
@@ -127,7 +128,6 @@ public class MSwitchVersion extends Macro{
     private InternalValue getArgs(Context context){
         return this.list_Args.get(context);
     }
-    
     private void initVersionCasesInternals(Context context){
         for(Macro macro : this.list_VersionCases){
             macro.apply(new InternalsInitializer("VersionCases"){
@@ -135,27 +135,25 @@ public class MSwitchVersion extends Macro{
                 void setMacroCaseInit(MMacroCaseInit mMacroCaseInit){
                 
                     
-                    mMacroCaseInit.setClassName(VersionCasesContext, getClassName(context));mMacroCaseInit.setArgs(VersionCasesContext, getArgs(context));
+                    mMacroCaseInit.setClassName(VersionCasesContext, getClassName(context));
+                mMacroCaseInit.setArgs(VersionCasesContext, getArgs(context));
                 }
             });
         }
     }
     
-    
     private void initVersionCasesDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(LINE_SEPARATOR);
-        this.VersionCasesSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(LINE_SEPARATOR);
+        this.VersionCasesSeparator = new DSeparator(sb3.toString());
         this.VersionCasesValue.setSeparator(this.VersionCasesSeparator);
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setSwitchVersion(this);
      }
-    
     
     @Override
     public String build(Context context){
@@ -185,9 +183,9 @@ public class MSwitchVersion extends Macro{
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildVersionCases());
         sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
@@ -200,27 +198,14 @@ public class MSwitchVersion extends Macro{
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

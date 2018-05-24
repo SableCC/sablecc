@@ -4,11 +4,15 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MSetParam extends Macro{
+public  class MSetParam extends Macro{
     
-    private String field_Name;
+    String field_Name;
     
-    private final List<Macro> list_SetParam;
+    final List<Macro> list_SetParam;
+    
+    final Context SetParamContext = new Context();
+    
+    final InternalValue SetParamValue;
     
     private DSeparator SetParamSeparator;
     
@@ -18,20 +22,15 @@ public class MSetParam extends Macro{
     
     private DNone SetParamNone;
     
-    private final InternalValue SetParamValue;
-    
-    
-    private final Context SetParamContext = new Context();
-    
-    
-    public MSetParam(String pName){
-    
-            this.setPName(pName);
-        this.list_SetParam = new ArrayList<>();
-    
+    public MSetParam(String pName, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPName(pName);
+        this.list_SetParam = new LinkedList<>();
+        
         this.SetParamValue = new InternalValue(this.list_SetParam, this.SetParamContext);
     }
-    
     
     private void setPName( String pName ){
         if(pName == null){
@@ -45,17 +44,20 @@ public class MSetParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("SetParam");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("ParamArg");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ParamArg");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_SetParam.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    
-    private String buildName(){
+    String buildName(){
     
         return this.field_Name;
     }
@@ -95,8 +97,7 @@ public class MSetParam extends Macro{
         return sb.toString();
     }
     
-    
-    private String getName(){
+    String getName(){
     
         return this.field_Name;
     }
@@ -104,7 +105,6 @@ public class MSetParam extends Macro{
     private InternalValue getSetParam(){
         return this.SetParamValue;
     }
-    
     private void initSetParamInternals(Context context){
         for(Macro macro : this.list_SetParam){
             macro.apply(new InternalsInitializer("SetParam"){
@@ -118,18 +118,15 @@ public class MSetParam extends Macro{
         }
     }
     
-    
     private void initSetParamDirectives(){
         
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setSetParam(this);
      }
-    
     
     @Override
     public String build(){
@@ -165,32 +162,17 @@ public class MSetParam extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

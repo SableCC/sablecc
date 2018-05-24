@@ -20,6 +20,7 @@ package org.sablecc.objectmacro.codegeneration.java;
 import java.util.*;
 
 import org.sablecc.objectmacro.codegeneration.java.macro.MMacro;
+import org.sablecc.objectmacro.codegeneration.java.macro.Macros;
 import org.sablecc.objectmacro.codegeneration.java.structure.SMacro;
 import org.sablecc.objectmacro.intermediate.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.intermediate.syntax3.node.AInternal;
@@ -36,12 +37,14 @@ public class MacroCollector extends
 
     private List<String> currentInternals = new LinkedList<>();
 
-    private List<String> allVersions = new LinkedList<>();
+    private final Macros factory;
 
     public MacroCollector(
-            Map<String, SMacro> macros) {
+            Map<String, SMacro> macros,
+            Macros factory) {
 
         this.macros = macros;
+        this.factory = factory;
     }
 
     @Override
@@ -73,7 +76,7 @@ public class MacroCollector extends
             applied_versions.add(GenerationUtils.string(version).toUpperCase());
         }
 
-        this.macros.put(macro_name, new SMacro(new MMacro(macro_name, parent_name),
+        this.macros.put(macro_name, new SMacro(this.factory.newMacro(macro_name, parent_name),
                 this.currentParameters, this.currentInternals, macro_name, applied_versions));
     }
 

@@ -4,19 +4,16 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MMissingMacroFile extends Macro{
+public  class MMissingMacroFile extends Macro{
     
-    private String field_FileName;
+    String field_FileName;
     
-    
-    
-    
-    public MMissingMacroFile(String pFileName){
-    
-            this.setPFileName(pFileName);
-    
+    public MMissingMacroFile(String pFileName, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPFileName(pFileName);
     }
-    
     
     private void setPFileName( String pFileName ){
         if(pFileName == null){
@@ -26,20 +23,15 @@ public class MMissingMacroFile extends Macro{
         this.field_FileName = pFileName;
     }
     
-    
-    private String buildFileName(){
-    
-        return this.field_FileName;
-    }
-    
-    
-    private String getFileName(){
+    String buildFileName(){
     
         return this.field_FileName;
     }
     
+    String getFileName(){
     
-    
+        return this.field_FileName;
+    }
     
     
     @Override
@@ -48,7 +40,6 @@ public class MMissingMacroFile extends Macro{
     
          internalsInitializer.setMissingMacroFile(this);
      }
-    
     
     @Override
     public String build(){
@@ -74,10 +65,10 @@ public class MMissingMacroFile extends Macro{
     
         StringBuilder sb0 = new StringBuilder();
     
-        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        MCommandLineErrorHead m1 = this.getMacros().newCommandLineErrorHead();
         
         
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("The macro file, \"");
@@ -85,41 +76,26 @@ public class MMissingMacroFile extends Macro{
         sb0.append("\", does not exist.");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        MCommandLineErrorTail m2 = this.getMacros().newCommandLineErrorTail();
         
         
-        sb0.append(minsert_2.build(null));
+        sb0.append(m2.build(null));
     
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

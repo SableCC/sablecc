@@ -4,120 +4,111 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MIncorrectArgumentType extends Macro{
-
-    private String field_Expected;
-
-    private String field_Found;
-
-    private String field_Line;
-
-    private String field_Char;
-
-
-
-
-    public MIncorrectArgumentType(String pExpected, String pFound, String pLine, String pChar){
-
-            this.setPExpected(pExpected);
-            this.setPFound(pFound);
-            this.setPLine(pLine);
-            this.setPChar(pChar);
-
+public  class MIncorrectArgumentType extends Macro{
+    
+    String field_Expected;
+    
+    String field_Found;
+    
+    String field_Line;
+    
+    String field_Char;
+    
+    public MIncorrectArgumentType(String pExpected, String pFound, String pLine, String pChar, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPExpected(pExpected);
+        this.setPFound(pFound);
+        this.setPLine(pLine);
+        this.setPChar(pChar);
     }
-
-
+    
     private void setPExpected( String pExpected ){
         if(pExpected == null){
             throw ObjectMacroException.parameterNull("Expected");
         }
-
+    
         this.field_Expected = pExpected;
     }
-
+    
     private void setPFound( String pFound ){
         if(pFound == null){
             throw ObjectMacroException.parameterNull("Found");
         }
-
+    
         this.field_Found = pFound;
     }
-
+    
     private void setPLine( String pLine ){
         if(pLine == null){
             throw ObjectMacroException.parameterNull("Line");
         }
-
+    
         this.field_Line = pLine;
     }
-
+    
     private void setPChar( String pChar ){
         if(pChar == null){
             throw ObjectMacroException.parameterNull("Char");
         }
-
+    
         this.field_Char = pChar;
     }
-
-
-    private String buildExpected(){
-
+    
+    String buildExpected(){
+    
         return this.field_Expected;
     }
-
-    private String buildFound(){
-
+    
+    String buildFound(){
+    
         return this.field_Found;
     }
-
-    private String buildLine(){
-
+    
+    String buildLine(){
+    
         return this.field_Line;
     }
-
-    private String buildChar(){
-
+    
+    String buildChar(){
+    
         return this.field_Char;
     }
-
-
-    private String getExpected(){
-
+    
+    String getExpected(){
+    
         return this.field_Expected;
     }
-
-    private String getFound(){
-
+    
+    String getFound(){
+    
         return this.field_Found;
     }
-
-    private String getLine(){
-
+    
+    String getLine(){
+    
         return this.field_Line;
     }
-
-    private String getChar(){
-
+    
+    String getChar(){
+    
         return this.field_Char;
     }
-
-
-
-
-
+    
+    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
-
+    
          internalsInitializer.setIncorrectArgumentType(this);
      }
-
-
+    
     @Override
     public String build(){
-
+    
         BuildState buildState = this.build_state;
-
+    
         if(buildState == null){
             buildState = new BuildState();
         }
@@ -130,17 +121,17 @@ public class MIncorrectArgumentType extends Macro{
         this.build_state = buildState;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
-
-
-
-
-
+    
+        
+    
+    
+    
         StringBuilder sb0 = new StringBuilder();
-
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
-
-
-        sb0.append(minsert_1.build(null));
+    
+        MSemanticErrorHead m1 = this.getMacros().newSemanticErrorHead();
+        
+        
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line: ");
@@ -154,37 +145,22 @@ public class MIncorrectArgumentType extends Macro{
         sb0.append("\", instead of \"");
         sb0.append(buildExpected());
         sb0.append("\";");
-
+    
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
-
-
+    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

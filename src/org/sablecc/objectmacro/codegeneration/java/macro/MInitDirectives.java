@@ -4,11 +4,15 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MInitDirectives extends Macro{
+public  class MInitDirectives extends Macro{
     
-    private String field_ParamName;
+    String field_ParamName;
     
-    private final List<Macro> list_NewDirectives;
+    final List<Macro> list_NewDirectives;
+    
+    final Context NewDirectivesContext = new Context();
+    
+    final InternalValue NewDirectivesValue;
     
     private DSeparator NewDirectivesSeparator;
     
@@ -18,20 +22,15 @@ public class MInitDirectives extends Macro{
     
     private DNone NewDirectivesNone;
     
-    private final InternalValue NewDirectivesValue;
-    
-    
-    private final Context NewDirectivesContext = new Context();
-    
-    
-    public MInitDirectives(String pParamName){
-    
-            this.setPParamName(pParamName);
-        this.list_NewDirectives = new ArrayList<>();
-    
+    public MInitDirectives(String pParamName, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPParamName(pParamName);
+        this.list_NewDirectives = new LinkedList<>();
+        
         this.NewDirectivesValue = new InternalValue(this.list_NewDirectives, this.NewDirectivesContext);
     }
-    
     
     private void setPParamName( String pParamName ){
         if(pParamName == null){
@@ -45,17 +44,20 @@ public class MInitDirectives extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("NewDirectives");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("NewDirective");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("NewDirective");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_NewDirectives.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    
-    private String buildParamName(){
+    String buildParamName(){
     
         return this.field_ParamName;
     }
@@ -95,8 +97,7 @@ public class MInitDirectives extends Macro{
         return sb.toString();
     }
     
-    
-    private String getParamName(){
+    String getParamName(){
     
         return this.field_ParamName;
     }
@@ -104,7 +105,6 @@ public class MInitDirectives extends Macro{
     private InternalValue getNewDirectives(){
         return this.NewDirectivesValue;
     }
-    
     private void initNewDirectivesInternals(Context context){
         for(Macro macro : this.list_NewDirectives){
             macro.apply(new InternalsInitializer("NewDirectives"){
@@ -118,18 +118,15 @@ public class MInitDirectives extends Macro{
         }
     }
     
-    
     private void initNewDirectivesDirectives(){
         
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setInitDirectives(this);
      }
-    
     
     @Override
     public String build(){
@@ -161,9 +158,9 @@ public class MInitDirectives extends Macro{
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildNewDirectives());
         sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
@@ -173,32 +170,17 @@ public class MInitDirectives extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

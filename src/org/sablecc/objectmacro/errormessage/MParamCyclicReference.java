@@ -4,34 +4,31 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MParamCyclicReference extends Macro{
+public  class MParamCyclicReference extends Macro{
     
-    private String field_Reference;
+    String field_Reference;
     
-    private String field_Line;
+    String field_Line;
     
-    private String field_Char;
+    String field_Char;
     
-    private String field_Context;
+    String field_Context;
     
-    private String field_ContextLine;
+    String field_ContextLine;
     
-    private String field_ContextChar;
+    String field_ContextChar;
     
-    
-    
-    
-    public MParamCyclicReference(String pReference, String pLine, String pChar, String pContext, String pContextLine, String pContextChar){
-    
-            this.setPReference(pReference);
-            this.setPLine(pLine);
-            this.setPChar(pChar);
-            this.setPContext(pContext);
-            this.setPContextLine(pContextLine);
-            this.setPContextChar(pContextChar);
-    
+    public MParamCyclicReference(String pReference, String pLine, String pChar, String pContext, String pContextLine, String pContextChar, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPReference(pReference);
+        this.setPLine(pLine);
+        this.setPChar(pChar);
+        this.setPContext(pContext);
+        this.setPContextLine(pContextLine);
+        this.setPContextChar(pContextChar);
     }
-    
     
     private void setPReference( String pReference ){
         if(pReference == null){
@@ -81,70 +78,65 @@ public class MParamCyclicReference extends Macro{
         this.field_ContextChar = pContextChar;
     }
     
-    
-    private String buildReference(){
-    
-        return this.field_Reference;
-    }
-    
-    private String buildLine(){
-    
-        return this.field_Line;
-    }
-    
-    private String buildChar(){
-    
-        return this.field_Char;
-    }
-    
-    private String buildContext(){
-    
-        return this.field_Context;
-    }
-    
-    private String buildContextLine(){
-    
-        return this.field_ContextLine;
-    }
-    
-    private String buildContextChar(){
-    
-        return this.field_ContextChar;
-    }
-    
-    
-    private String getReference(){
+    String buildReference(){
     
         return this.field_Reference;
     }
     
-    private String getLine(){
+    String buildLine(){
     
         return this.field_Line;
     }
     
-    private String getChar(){
+    String buildChar(){
     
         return this.field_Char;
     }
     
-    private String getContext(){
+    String buildContext(){
     
         return this.field_Context;
     }
     
-    private String getContextLine(){
+    String buildContextLine(){
     
         return this.field_ContextLine;
     }
     
-    private String getContextChar(){
+    String buildContextChar(){
     
         return this.field_ContextChar;
     }
     
+    String getReference(){
     
+        return this.field_Reference;
+    }
     
+    String getLine(){
+    
+        return this.field_Line;
+    }
+    
+    String getChar(){
+    
+        return this.field_Char;
+    }
+    
+    String getContext(){
+    
+        return this.field_Context;
+    }
+    
+    String getContextLine(){
+    
+        return this.field_ContextLine;
+    }
+    
+    String getContextChar(){
+    
+        return this.field_ContextChar;
+    }
     
     
     @Override
@@ -153,7 +145,6 @@ public class MParamCyclicReference extends Macro{
     
          internalsInitializer.setParamCyclicReference(this);
      }
-    
     
     @Override
     public String build(){
@@ -179,10 +170,10 @@ public class MParamCyclicReference extends Macro{
     
         StringBuilder sb0 = new StringBuilder();
     
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+        MSemanticErrorHead m1 = this.getMacros().newSemanticErrorHead();
         
         
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line: ");
@@ -205,32 +196,17 @@ public class MParamCyclicReference extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

@@ -4,34 +4,31 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MEndMismatch extends Macro{
+public  class MEndMismatch extends Macro{
     
-    private String field_Name;
+    String field_Name;
     
-    private String field_Line;
+    String field_Line;
     
-    private String field_Char;
+    String field_Char;
     
-    private String field_RefName;
+    String field_RefName;
     
-    private String field_RefLine;
+    String field_RefLine;
     
-    private String field_RefChar;
+    String field_RefChar;
     
-    
-    
-    
-    public MEndMismatch(String pName, String pLine, String pChar, String pRefName, String pRefLine, String pRefChar){
-    
-            this.setPName(pName);
-            this.setPLine(pLine);
-            this.setPChar(pChar);
-            this.setPRefName(pRefName);
-            this.setPRefLine(pRefLine);
-            this.setPRefChar(pRefChar);
-    
+    public MEndMismatch(String pName, String pLine, String pChar, String pRefName, String pRefLine, String pRefChar, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPName(pName);
+        this.setPLine(pLine);
+        this.setPChar(pChar);
+        this.setPRefName(pRefName);
+        this.setPRefLine(pRefLine);
+        this.setPRefChar(pRefChar);
     }
-    
     
     private void setPName( String pName ){
         if(pName == null){
@@ -81,70 +78,65 @@ public class MEndMismatch extends Macro{
         this.field_RefChar = pRefChar;
     }
     
-    
-    private String buildName(){
-    
-        return this.field_Name;
-    }
-    
-    private String buildLine(){
-    
-        return this.field_Line;
-    }
-    
-    private String buildChar(){
-    
-        return this.field_Char;
-    }
-    
-    private String buildRefName(){
-    
-        return this.field_RefName;
-    }
-    
-    private String buildRefLine(){
-    
-        return this.field_RefLine;
-    }
-    
-    private String buildRefChar(){
-    
-        return this.field_RefChar;
-    }
-    
-    
-    private String getName(){
+    String buildName(){
     
         return this.field_Name;
     }
     
-    private String getLine(){
+    String buildLine(){
     
         return this.field_Line;
     }
     
-    private String getChar(){
+    String buildChar(){
     
         return this.field_Char;
     }
     
-    private String getRefName(){
+    String buildRefName(){
     
         return this.field_RefName;
     }
     
-    private String getRefLine(){
+    String buildRefLine(){
     
         return this.field_RefLine;
     }
     
-    private String getRefChar(){
+    String buildRefChar(){
     
         return this.field_RefChar;
     }
     
+    String getName(){
     
+        return this.field_Name;
+    }
     
+    String getLine(){
+    
+        return this.field_Line;
+    }
+    
+    String getChar(){
+    
+        return this.field_Char;
+    }
+    
+    String getRefName(){
+    
+        return this.field_RefName;
+    }
+    
+    String getRefLine(){
+    
+        return this.field_RefLine;
+    }
+    
+    String getRefChar(){
+    
+        return this.field_RefChar;
+    }
     
     
     @Override
@@ -153,7 +145,6 @@ public class MEndMismatch extends Macro{
     
          internalsInitializer.setEndMismatch(this);
      }
-    
     
     @Override
     public String build(){
@@ -179,10 +170,10 @@ public class MEndMismatch extends Macro{
     
         StringBuilder sb0 = new StringBuilder();
     
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
+        MSemanticErrorHead m1 = this.getMacros().newSemanticErrorHead();
         
         
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line: ");
@@ -205,32 +196,17 @@ public class MEndMismatch extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

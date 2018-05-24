@@ -19,11 +19,11 @@
 
 Macro intermediate_representation
     Param
-        macros : macro, separator="\n", before_first="\n";
+        defined_macros : macro, separator="\n", before_first="\n";
         version_definition : versions;
 {Body}
 {version_definition}
-{macros}
+{defined_macros}
 {End}
 
 # ========= macro ==============

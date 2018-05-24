@@ -4,22 +4,19 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MOutputError extends Macro{
+public  class MOutputError extends Macro{
     
-    private String field_FileName;
+    String field_FileName;
     
-    private String field_Message;
+    String field_Message;
     
-    
-    
-    
-    public MOutputError(String pFileName, String pMessage){
-    
-            this.setPFileName(pFileName);
-            this.setPMessage(pMessage);
-    
+    public MOutputError(String pFileName, String pMessage, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPFileName(pFileName);
+        this.setPMessage(pMessage);
     }
-    
     
     private void setPFileName( String pFileName ){
         if(pFileName == null){
@@ -37,30 +34,25 @@ public class MOutputError extends Macro{
         this.field_Message = pMessage;
     }
     
-    
-    private String buildFileName(){
-    
-        return this.field_FileName;
-    }
-    
-    private String buildMessage(){
-    
-        return this.field_Message;
-    }
-    
-    
-    private String getFileName(){
+    String buildFileName(){
     
         return this.field_FileName;
     }
     
-    private String getMessage(){
+    String buildMessage(){
     
         return this.field_Message;
     }
     
+    String getFileName(){
     
+        return this.field_FileName;
+    }
     
+    String getMessage(){
+    
+        return this.field_Message;
+    }
     
     
     @Override
@@ -69,7 +61,6 @@ public class MOutputError extends Macro{
     
          internalsInitializer.setOutputError(this);
      }
-    
     
     @Override
     public String build(){
@@ -109,32 +100,17 @@ public class MOutputError extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

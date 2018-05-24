@@ -4,162 +4,153 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MSelfReference extends Macro{
-
-    private String field_Reference;
-
-    private String field_Line;
-
-    private String field_Char;
-
-    private String field_Context;
-
-    private String field_ContextLine;
-
-    private String field_ContextChar;
-
-
-
-
-    public MSelfReference(String pReference, String pLine, String pChar, String pContext, String pContextLine, String pContextChar){
-
-            this.setPReference(pReference);
-            this.setPLine(pLine);
-            this.setPChar(pChar);
-            this.setPContext(pContext);
-            this.setPContextLine(pContextLine);
-            this.setPContextChar(pContextChar);
-
+public  class MSelfReference extends Macro{
+    
+    String field_Reference;
+    
+    String field_Line;
+    
+    String field_Char;
+    
+    String field_Context;
+    
+    String field_ContextLine;
+    
+    String field_ContextChar;
+    
+    public MSelfReference(String pReference, String pLine, String pChar, String pContext, String pContextLine, String pContextChar, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPReference(pReference);
+        this.setPLine(pLine);
+        this.setPChar(pChar);
+        this.setPContext(pContext);
+        this.setPContextLine(pContextLine);
+        this.setPContextChar(pContextChar);
     }
-
-
+    
     private void setPReference( String pReference ){
         if(pReference == null){
             throw ObjectMacroException.parameterNull("Reference");
         }
-
+    
         this.field_Reference = pReference;
     }
-
+    
     private void setPLine( String pLine ){
         if(pLine == null){
             throw ObjectMacroException.parameterNull("Line");
         }
-
+    
         this.field_Line = pLine;
     }
-
+    
     private void setPChar( String pChar ){
         if(pChar == null){
             throw ObjectMacroException.parameterNull("Char");
         }
-
+    
         this.field_Char = pChar;
     }
-
+    
     private void setPContext( String pContext ){
         if(pContext == null){
             throw ObjectMacroException.parameterNull("Context");
         }
-
+    
         this.field_Context = pContext;
     }
-
+    
     private void setPContextLine( String pContextLine ){
         if(pContextLine == null){
             throw ObjectMacroException.parameterNull("ContextLine");
         }
-
+    
         this.field_ContextLine = pContextLine;
     }
-
+    
     private void setPContextChar( String pContextChar ){
         if(pContextChar == null){
             throw ObjectMacroException.parameterNull("ContextChar");
         }
-
+    
         this.field_ContextChar = pContextChar;
     }
-
-
-    private String buildReference(){
-
+    
+    String buildReference(){
+    
         return this.field_Reference;
     }
-
-    private String buildLine(){
-
+    
+    String buildLine(){
+    
         return this.field_Line;
     }
-
-    private String buildChar(){
-
+    
+    String buildChar(){
+    
         return this.field_Char;
     }
-
-    private String buildContext(){
-
+    
+    String buildContext(){
+    
         return this.field_Context;
     }
-
-    private String buildContextLine(){
-
+    
+    String buildContextLine(){
+    
         return this.field_ContextLine;
     }
-
-    private String buildContextChar(){
-
+    
+    String buildContextChar(){
+    
         return this.field_ContextChar;
     }
-
-
-    private String getReference(){
-
+    
+    String getReference(){
+    
         return this.field_Reference;
     }
-
-    private String getLine(){
-
+    
+    String getLine(){
+    
         return this.field_Line;
     }
-
-    private String getChar(){
-
+    
+    String getChar(){
+    
         return this.field_Char;
     }
-
-    private String getContext(){
-
+    
+    String getContext(){
+    
         return this.field_Context;
     }
-
-    private String getContextLine(){
-
+    
+    String getContextLine(){
+    
         return this.field_ContextLine;
     }
-
-    private String getContextChar(){
-
+    
+    String getContextChar(){
+    
         return this.field_ContextChar;
     }
-
-
-
-
-
+    
+    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
-
+    
          internalsInitializer.setSelfReference(this);
      }
-
-
+    
     @Override
     public String build(){
-
+    
         BuildState buildState = this.build_state;
-
+    
         if(buildState == null){
             buildState = new BuildState();
         }
@@ -172,17 +163,17 @@ public class MSelfReference extends Macro{
         this.build_state = buildState;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
-
-
-
-
-
+    
+        
+    
+    
+    
         StringBuilder sb0 = new StringBuilder();
-
-        MSemanticErrorHead minsert_1 = new MSemanticErrorHead();
-
-
-        sb0.append(minsert_1.build(null));
+    
+        MSemanticErrorHead m1 = this.getMacros().newSemanticErrorHead();
+        
+        
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("Line: ");
@@ -200,37 +191,22 @@ public class MSelfReference extends Macro{
         sb0.append(", char ");
         sb0.append(buildContextChar());
         sb0.append(".");
-
+    
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
-
-
+    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

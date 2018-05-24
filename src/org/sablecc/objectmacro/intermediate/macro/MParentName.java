@@ -4,9 +4,13 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public class MParentName extends Macro{
+public  class MParentName extends Macro{
     
-    private final List<Macro> list_Parent;
+    final List<Macro> list_Parent;
+    
+    final Context ParentContext = new Context();
+    
+    final InternalValue ParentValue;
     
     private DSeparator ParentSeparator;
     
@@ -16,33 +20,31 @@ public class MParentName extends Macro{
     
     private DNone ParentNone;
     
-    private final InternalValue ParentValue;
-    
-    
-    private final Context ParentContext = new Context();
-    
-    
-    public MParentName(){
-    
-        this.list_Parent = new ArrayList<>();
-    
+    public MParentName(Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.list_Parent = new LinkedList<>();
+        
         this.ParentValue = new InternalValue(this.list_Parent, this.ParentContext);
     }
-    
     
     public void addParent(MName macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("Parent");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("Name");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Name");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Parent.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
-    
     
     private String buildParent(){
         StringBuilder sb = new StringBuilder();
@@ -79,11 +81,9 @@ public class MParentName extends Macro{
         return sb.toString();
     }
     
-    
     private InternalValue getParent(){
         return this.ParentValue;
     }
-    
     private void initParentInternals(Context context){
         for(Macro macro : this.list_Parent){
             macro.apply(new InternalsInitializer("Parent"){
@@ -97,18 +97,15 @@ public class MParentName extends Macro{
         }
     }
     
-    
     private void initParentDirectives(){
         
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setParentName(this);
      }
-    
     
     @Override
     public String build(){
@@ -144,32 +141,17 @@ public class MParentName extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

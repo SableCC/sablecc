@@ -4,9 +4,13 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public class MArgs extends Macro{
+public  class MArgs extends Macro{
     
-    private final List<Macro> list_Arguments;
+    final List<Macro> list_Arguments;
+    
+    final Context ArgumentsContext = new Context();
+    
+    final InternalValue ArgumentsValue;
     
     private DSeparator ArgumentsSeparator;
     
@@ -16,27 +20,26 @@ public class MArgs extends Macro{
     
     private DNone ArgumentsNone;
     
-    private final InternalValue ArgumentsValue;
-    
-    
-    private final Context ArgumentsContext = new Context();
-    
-    
-    public MArgs(){
-    
-        this.list_Arguments = new ArrayList<>();
-    
+    public MArgs(Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.list_Arguments = new LinkedList<>();
+        
         this.ArgumentsValue = new InternalValue(this.list_Arguments, this.ArgumentsContext);
     }
-    
     
     public void addArguments(MVarArgument macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("Arguments");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("VarArgument");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("VarArgument");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Arguments.add(macro);
         this.children.add(macro);
@@ -47,15 +50,18 @@ public class MArgs extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Arguments");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("TextArgument");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("TextArgument");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Arguments.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
-    
     
     private String buildArguments(){
         StringBuilder sb = new StringBuilder();
@@ -92,11 +98,9 @@ public class MArgs extends Macro{
         return sb.toString();
     }
     
-    
     private InternalValue getArguments(){
         return this.ArgumentsValue;
     }
-    
     private void initArgumentsInternals(Context context){
         for(Macro macro : this.list_Arguments){
             macro.apply(new InternalsInitializer("Arguments"){
@@ -105,7 +109,9 @@ public class MArgs extends Macro{
                 
                     
                     
-                }@Override
+                }
+                
+                @Override
                 void setTextArgument(MTextArgument mTextArgument){
                 
                     
@@ -115,21 +121,18 @@ public class MArgs extends Macro{
         }
     }
     
-    
     private void initArgumentsDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(", ");
-        this.ArgumentsSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(", ");
+        this.ArgumentsSeparator = new DSeparator(sb3.toString());
         this.ArgumentsValue.setSeparator(this.ArgumentsSeparator);
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setArgs(this);
      }
-    
     
     @Override
     public String build(){
@@ -159,9 +162,9 @@ public class MArgs extends Macro{
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildArguments());
         sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
@@ -171,32 +174,17 @@ public class MArgs extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

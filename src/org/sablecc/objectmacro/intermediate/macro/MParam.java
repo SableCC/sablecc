@@ -4,9 +4,13 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public class MParam extends Macro{
+public  class MParam extends Macro{
     
-    private final List<Macro> list_ParamName;
+    final List<Macro> list_ParamName;
+    
+    final Context ParamNameContext = new Context();
+    
+    final InternalValue ParamNameValue;
     
     private DSeparator ParamNameSeparator;
     
@@ -16,9 +20,11 @@ public class MParam extends Macro{
     
     private DNone ParamNameNone;
     
-    private final InternalValue ParamNameValue;
+    final List<Macro> list_Type;
     
-    private final List<Macro> list_Type;
+    final Context TypeContext = new Context();
+    
+    final InternalValue TypeValue;
     
     private DSeparator TypeSeparator;
     
@@ -28,9 +34,11 @@ public class MParam extends Macro{
     
     private DNone TypeNone;
     
-    private final InternalValue TypeValue;
+    final List<Macro> list_Directives;
     
-    private final List<Macro> list_Directives;
+    final Context DirectivesContext = new Context();
+    
+    final InternalValue DirectivesValue;
     
     private DSeparator DirectivesSeparator;
     
@@ -40,35 +48,30 @@ public class MParam extends Macro{
     
     private DNone DirectivesNone;
     
-    private final InternalValue DirectivesValue;
-    
-    
-    private final Context ParamNameContext = new Context();
-    
-    private final Context TypeContext = new Context();
-    
-    private final Context DirectivesContext = new Context();
-    
-    
-    public MParam(){
-    
-        this.list_ParamName = new ArrayList<>();
-        this.list_Type = new ArrayList<>();
-        this.list_Directives = new ArrayList<>();
-    
+    public MParam(Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.list_ParamName = new LinkedList<>();
+        this.list_Type = new LinkedList<>();
+        this.list_Directives = new LinkedList<>();
+        
         this.ParamNameValue = new InternalValue(this.list_ParamName, this.ParamNameContext);
         this.TypeValue = new InternalValue(this.list_Type, this.TypeContext);
         this.DirectivesValue = new InternalValue(this.list_Directives, this.DirectivesContext);
     }
     
-    
     public void addParamName(MName macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("Name");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Name");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_ParamName.add(macro);
         this.children.add(macro);
@@ -79,9 +82,13 @@ public class MParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Type");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("StringType");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("StringType");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Type.add(macro);
         this.children.add(macro);
@@ -92,9 +99,13 @@ public class MParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Type");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("MacroType");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("MacroType");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Type.add(macro);
         this.children.add(macro);
@@ -105,15 +116,18 @@ public class MParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Directives");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("Directive");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Directive");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Directives.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
-    
     
     private String buildParamName(){
         StringBuilder sb = new StringBuilder();
@@ -220,7 +234,6 @@ public class MParam extends Macro{
         return sb.toString();
     }
     
-    
     private InternalValue getParamName(){
         return this.ParamNameValue;
     }
@@ -232,7 +245,6 @@ public class MParam extends Macro{
     private InternalValue getDirectives(){
         return this.DirectivesValue;
     }
-    
     private void initParamNameInternals(Context context){
         for(Macro macro : this.list_ParamName){
             macro.apply(new InternalsInitializer("ParamName"){
@@ -254,7 +266,9 @@ public class MParam extends Macro{
                 
                     
                     
-                }@Override
+                }
+                
+                @Override
                 void setMacroType(MMacroType mMacroType){
                 
                     
@@ -277,7 +291,6 @@ public class MParam extends Macro{
         }
     }
     
-    
     private void initParamNameDirectives(){
         
     }
@@ -287,19 +300,18 @@ public class MParam extends Macro{
     }
     
     private void initDirectivesDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(", ");sb0.append(LINE_SEPARATOR);
-        this.DirectivesSeparator = new DSeparator(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(", ");
+        sb1.append(LINE_SEPARATOR);
+        this.DirectivesSeparator = new DSeparator(sb1.toString());
         this.DirectivesValue.setSeparator(this.DirectivesSeparator);
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setParam(this);
      }
-    
     
     @Override
     public String build(){
@@ -333,9 +345,9 @@ public class MParam extends Macro{
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
-        sbIndentation = new StringBuilder();
-        sbIndentation.append("    ");
-        indentations.add(sbIndentation.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
         sb1.append(buildParamName());
         sb1.append(LINE_SEPARATOR);
         sb1.append(buildType());
@@ -349,32 +361,17 @@ public class MParam extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

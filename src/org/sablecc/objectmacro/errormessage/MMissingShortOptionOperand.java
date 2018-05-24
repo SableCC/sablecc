@@ -4,22 +4,19 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MMissingShortOptionOperand extends Macro{
+public  class MMissingShortOptionOperand extends Macro{
     
-    private String field_OptionName;
+    String field_OptionName;
     
-    private String field_OperandName;
+    String field_OperandName;
     
-    
-    
-    
-    public MMissingShortOptionOperand(String pOptionName, String pOperandName){
-    
-            this.setPOptionName(pOptionName);
-            this.setPOperandName(pOperandName);
-    
+    public MMissingShortOptionOperand(String pOptionName, String pOperandName, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPOptionName(pOptionName);
+        this.setPOperandName(pOperandName);
     }
-    
     
     private void setPOptionName( String pOptionName ){
         if(pOptionName == null){
@@ -37,30 +34,25 @@ public class MMissingShortOptionOperand extends Macro{
         this.field_OperandName = pOperandName;
     }
     
-    
-    private String buildOptionName(){
-    
-        return this.field_OptionName;
-    }
-    
-    private String buildOperandName(){
-    
-        return this.field_OperandName;
-    }
-    
-    
-    private String getOptionName(){
+    String buildOptionName(){
     
         return this.field_OptionName;
     }
     
-    private String getOperandName(){
+    String buildOperandName(){
     
         return this.field_OperandName;
     }
     
+    String getOptionName(){
     
+        return this.field_OptionName;
+    }
     
+    String getOperandName(){
+    
+        return this.field_OperandName;
+    }
     
     
     @Override
@@ -69,7 +61,6 @@ public class MMissingShortOptionOperand extends Macro{
     
          internalsInitializer.setMissingShortOptionOperand(this);
      }
-    
     
     @Override
     public String build(){
@@ -95,10 +86,10 @@ public class MMissingShortOptionOperand extends Macro{
     
         StringBuilder sb0 = new StringBuilder();
     
-        MCommandLineErrorHead minsert_1 = new MCommandLineErrorHead();
+        MCommandLineErrorHead m1 = this.getMacros().newCommandLineErrorHead();
         
         
-        sb0.append(minsert_1.build(null));
+        sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("The following option is rejected:");
@@ -114,41 +105,26 @@ public class MMissingShortOptionOperand extends Macro{
         sb0.append(buildOperandName());
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        MCommandLineErrorTail minsert_2 = new MCommandLineErrorTail();
+        MCommandLineErrorTail m2 = this.getMacros().newCommandLineErrorTail();
         
         
-        sb0.append(minsert_2.build(null));
+        sb0.append(m2.build(null));
     
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

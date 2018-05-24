@@ -2,131 +2,88 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class MEolPart
-        extends
-        Macro {
-
-    private String field_IndexBuilder;
-
-    public MEolPart(
-            String pIndexBuilder) {
-
-        setPIndexBuilder(pIndexBuilder);
-
+public  class MEolPart extends Macro{
+    
+    String field_IndexBuilder;
+    
+    public MEolPart(String pIndexBuilder, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPIndexBuilder(pIndexBuilder);
     }
-
-    private void setPIndexBuilder(
-            String pIndexBuilder) {
-
-        if (pIndexBuilder == null) {
-
+    
+    private void setPIndexBuilder( String pIndexBuilder ){
+        if(pIndexBuilder == null){
             throw ObjectMacroException.parameterNull("IndexBuilder");
-
         }
-
+    
         this.field_IndexBuilder = pIndexBuilder;
-
     }
-
-    private String buildIndexBuilder() {
-
+    
+    String buildIndexBuilder(){
+    
         return this.field_IndexBuilder;
-
     }
-
-    private String getIndexBuilder() {
-
+    
+    String getIndexBuilder(){
+    
         return this.field_IndexBuilder;
-
     }
-
+    
+    
     @Override
-
-    void apply(
-
-            InternalsInitializer internalsInitializer) {
-
-        internalsInitializer.setEolPart(this);
-
-    }
-
+     void apply(
+             InternalsInitializer internalsInitializer){
+    
+         internalsInitializer.setEolPart(this);
+     }
+    
     @Override
-
-    public String build() {
-
+    public String build(){
+    
         BuildState buildState = this.build_state;
-
-        if (buildState == null) {
-
+    
+        if(buildState == null){
             buildState = new BuildState();
-
         }
-
-        else if (buildState.getExpansion() == null) {
-
+        else if(buildState.getExpansion() == null){
             throw ObjectMacroException.cyclicReference("EolPart");
-
         }
-
-        else {
-
+        else{
             return buildState.getExpansion();
-
         }
-
         this.build_state = buildState;
-
         List<String> indentations = new LinkedList<>();
-
         StringBuilder sbIndentation = new StringBuilder();
-
+    
+        
+    
+    
+    
         StringBuilder sb0 = new StringBuilder();
-
+    
         sb0.append("sb");
-
         sb0.append(buildIndexBuilder());
-
         sb0.append(".append(LINE_SEPARATOR);");
-
+    
         buildState.setExpansion(sb0.toString());
-
         return sb0.toString();
-
     }
-
+    
     @Override
-
-    String build(
-            Context context) {
-
-        return build();
-
+    String build(Context context) {
+     return build();
     }
-
-    private String applyIndent(
-            String macro,
-            String indent) {
-
-        StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
-
-        if (lines.length > 1) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                sb.append(indent).append(line);
-
-                if (i < lines.length - 1) {
-                    sb.append(LINE_SEPARATOR);
-                }
-            }
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
         }
-        else {
-            sb.append(indent).append(macro);
-        }
-
-        return sb.toString();
+    
+        this.macros = macros;
     }
 }

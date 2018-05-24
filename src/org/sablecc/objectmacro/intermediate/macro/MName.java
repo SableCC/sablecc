@@ -4,9 +4,13 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public class MName extends Macro{
+public  class MName extends Macro{
     
-    private final List<Macro> list_Value;
+    final List<Macro> list_Value;
+    
+    final Context ValueContext = new Context();
+    
+    final InternalValue ValueValue;
     
     private DSeparator ValueSeparator;
     
@@ -16,33 +20,31 @@ public class MName extends Macro{
     
     private DNone ValueNone;
     
-    private final InternalValue ValueValue;
-    
-    
-    private final Context ValueContext = new Context();
-    
-    
-    public MName(){
-    
-        this.list_Value = new ArrayList<>();
-    
+    public MName(Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.list_Value = new LinkedList<>();
+        
         this.ValueValue = new InternalValue(this.list_Value, this.ValueContext);
     }
-    
     
     public void addValue(MSimpleName macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("Value");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("SimpleName");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("SimpleName");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_Value.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
-    
     
     private String buildValue(){
         StringBuilder sb = new StringBuilder();
@@ -79,11 +81,9 @@ public class MName extends Macro{
         return sb.toString();
     }
     
-    
     private InternalValue getValue(){
         return this.ValueValue;
     }
-    
     private void initValueInternals(Context context){
         for(Macro macro : this.list_Value){
             macro.apply(new InternalsInitializer("Value"){
@@ -97,27 +97,25 @@ public class MName extends Macro{
         }
     }
     
-    
     private void initValueDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append(", ");
-        this.ValueSeparator = new DSeparator(sb0.toString());
-        this.ValueValue.setSeparator(this.ValueSeparator);StringBuilder sb1 = new StringBuilder();
-        sb1.append("{");sb1.append(" ");
-        this.ValueBeforeFirst = new DBeforeFirst(sb1.toString());
-        this.ValueValue.setBeforeFirst(this.ValueBeforeFirst);StringBuilder sb2 = new StringBuilder();
-        sb2.append(" }");
-        this.ValueAfterLast = new DAfterLast(sb2.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(", ");
+        this.ValueSeparator = new DSeparator(sb1.toString());
+        this.ValueValue.setSeparator(this.ValueSeparator);StringBuilder sb2 = new StringBuilder();
+        sb2.append("{");
+        sb2.append(" ");
+        this.ValueBeforeFirst = new DBeforeFirst(sb2.toString());
+        this.ValueValue.setBeforeFirst(this.ValueBeforeFirst);StringBuilder sb3 = new StringBuilder();
+        sb3.append(" }");
+        this.ValueAfterLast = new DAfterLast(sb3.toString());
         this.ValueValue.setAfterLast(this.ValueAfterLast);
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setName(this);
      }
-    
     
     @Override
     public String build(){
@@ -150,32 +148,17 @@ public class MName extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

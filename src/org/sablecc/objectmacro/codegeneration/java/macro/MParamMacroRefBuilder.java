@@ -4,11 +4,15 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MParamMacroRefBuilder extends Macro{
+public  class MParamMacroRefBuilder extends Macro{
     
-    private String field_Name;
+    String field_Name;
     
-    private final List<Macro> list_ContextName;
+    final List<Macro> list_ContextName;
+    
+    final Context ContextNameContext = new Context();
+    
+    final InternalValue ContextNameValue;
     
     private DSeparator ContextNameSeparator;
     
@@ -18,20 +22,15 @@ public class MParamMacroRefBuilder extends Macro{
     
     private DNone ContextNameNone;
     
-    private final InternalValue ContextNameValue;
-    
-    
-    private final Context ContextNameContext = new Context();
-    
-    
-    public MParamMacroRefBuilder(String pName){
-    
-            this.setPName(pName);
-        this.list_ContextName = new ArrayList<>();
-    
+    public MParamMacroRefBuilder(String pName, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPName(pName);
+        this.list_ContextName = new LinkedList<>();
+        
         this.ContextNameValue = new InternalValue(this.list_ContextName, this.ContextNameContext);
     }
-    
     
     private void setPName( String pName ){
         if(pName == null){
@@ -45,17 +44,20 @@ public class MParamMacroRefBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("ContextName");
         }
-                if(this.build_state != null){
-                    throw ObjectMacroException.cannotModify("PlainText");
-                }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("PlainText");
+        }
+        
+        if(this.getMacros() != macro.getMacros()){
+            throw ObjectMacroException.diffMacros();
+        }
     
         this.list_ContextName.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    
-    private String buildName(){
+    String buildName(){
     
         return this.field_Name;
     }
@@ -95,8 +97,7 @@ public class MParamMacroRefBuilder extends Macro{
         return sb.toString();
     }
     
-    
-    private String getName(){
+    String getName(){
     
         return this.field_Name;
     }
@@ -104,7 +105,6 @@ public class MParamMacroRefBuilder extends Macro{
     private InternalValue getContextName(){
         return this.ContextNameValue;
     }
-    
     private void initContextNameInternals(Context context){
         for(Macro macro : this.list_ContextName){
             macro.apply(new InternalsInitializer("ContextName"){
@@ -118,21 +118,18 @@ public class MParamMacroRefBuilder extends Macro{
         }
     }
     
-    
     private void initContextNameDirectives(){
-        StringBuilder sb0 = new StringBuilder();
-        sb0.append("context");
-        this.ContextNameNone = new DNone(sb0.toString());
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append("context");
+        this.ContextNameNone = new DNone(sb1.toString());
         this.ContextNameValue.setNone(this.ContextNameNone);
     }
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setParamMacroRefBuilder(this);
      }
-    
     
     @Override
     public String build(){
@@ -250,32 +247,17 @@ public class MParamMacroRefBuilder extends Macro{
         return sb0.toString();
     }
     
-    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

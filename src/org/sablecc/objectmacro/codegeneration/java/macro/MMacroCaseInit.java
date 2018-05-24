@@ -4,26 +4,23 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MMacroCaseInit extends Macro{
+public  class MMacroCaseInit extends Macro{
     
-    private String field_Version;
+    String field_Version;
     
-    private String field_VersionClassName;
+    String field_VersionClassName;
     
     private Map<Context, String> field_ClassName = new LinkedHashMap<>();
     
     private Map<Context, InternalValue> list_Args = new LinkedHashMap<>();
     
-    
-    
-    
-    public MMacroCaseInit(String pVersion, String pVersionClassName){
-    
-            this.setPVersion(pVersion);
-            this.setPVersionClassName(pVersionClassName);
-    
+    public MMacroCaseInit(String pVersion, String pVersionClassName, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPVersion(pVersion);
+        this.setPVersionClassName(pVersionClassName);
     }
-    
     
     private void setPVersion( String pVersion ){
         if(pVersion == null){
@@ -63,18 +60,17 @@ public class MMacroCaseInit extends Macro{
                 this.list_Args.put(context, internal_value);
             }
     
-    
-    private String buildVersion(){
+    String buildVersion(){
     
         return this.field_Version;
     }
     
-    private String buildVersionClassName(){
+    String buildVersionClassName(){
     
         return this.field_VersionClassName;
     }
     
-    private String buildClassName(Context context){
+    String buildClassName(Context context){
     
         return this.field_ClassName.get(context);
     }
@@ -85,18 +81,17 @@ public class MMacroCaseInit extends Macro{
         return macros.build();
     }
     
-    
-    private String getVersion(){
+    String getVersion(){
     
         return this.field_Version;
     }
     
-    private String getVersionClassName(){
+    String getVersionClassName(){
     
         return this.field_VersionClassName;
     }
     
-    private String getClassName(Context context){
+    String getClassName(Context context){
     
         return this.field_ClassName.get(context);
     }
@@ -106,16 +101,12 @@ public class MMacroCaseInit extends Macro{
     }
     
     
-    
-    
-    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
     
          internalsInitializer.setMacroCaseInit(this);
      }
-    
     
     @Override
     public String build(Context context){
@@ -158,27 +149,14 @@ public class MMacroCaseInit extends Macro{
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }

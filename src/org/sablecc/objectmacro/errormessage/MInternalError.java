@@ -4,78 +4,69 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MInternalError extends Macro{
-
-    private String field_StackTrace;
-
-    private String field_Message;
-
-
-
-
-    public MInternalError(String pStackTrace, String pMessage){
-
-            this.setPStackTrace(pStackTrace);
-            this.setPMessage(pMessage);
-
+public  class MInternalError extends Macro{
+    
+    String field_StackTrace;
+    
+    String field_Message;
+    
+    public MInternalError(String pStackTrace, String pMessage, Macros macros){
+        
+        
+        this.setMacros(macros);
+        this.setPStackTrace(pStackTrace);
+        this.setPMessage(pMessage);
     }
-
-
+    
     private void setPStackTrace( String pStackTrace ){
         if(pStackTrace == null){
             throw ObjectMacroException.parameterNull("StackTrace");
         }
-
+    
         this.field_StackTrace = pStackTrace;
     }
-
+    
     private void setPMessage( String pMessage ){
         if(pMessage == null){
             throw ObjectMacroException.parameterNull("Message");
         }
-
+    
         this.field_Message = pMessage;
     }
-
-
-    private String buildStackTrace(){
-
+    
+    String buildStackTrace(){
+    
         return this.field_StackTrace;
     }
-
-    private String buildMessage(){
-
+    
+    String buildMessage(){
+    
         return this.field_Message;
     }
-
-
-    private String getStackTrace(){
-
+    
+    String getStackTrace(){
+    
         return this.field_StackTrace;
     }
-
-    private String getMessage(){
-
+    
+    String getMessage(){
+    
         return this.field_Message;
     }
-
-
-
-
-
+    
+    
     @Override
      void apply(
              InternalsInitializer internalsInitializer){
-
+    
          internalsInitializer.setInternalError(this);
      }
-
-
+    
     @Override
     public String build(){
-
+    
         BuildState buildState = this.build_state;
-
+    
         if(buildState == null){
             buildState = new BuildState();
         }
@@ -88,13 +79,13 @@ public class MInternalError extends Macro{
         this.build_state = buildState;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
-
-
-
-
-
+    
+        
+    
+    
+    
         StringBuilder sb0 = new StringBuilder();
-
+    
         sb0.append("*** INTERNAL ERROR ***");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
@@ -110,37 +101,22 @@ public class MInternalError extends Macro{
         sb0.append("Please submit a defect ticket with the full error trace above on:");
         sb0.append(LINE_SEPARATOR);
         sb0.append(" http://sablecc.org/");
-
+    
         buildState.setExpansion(sb0.toString());
         return sb0.toString();
     }
-
-
+    
     @Override
     String build(Context context) {
      return build();
     }
-    private String applyIndent(
-                            String macro,
-                            String indent){
-
-            StringBuilder sb = new StringBuilder();
-            String[] lines = macro.split( "\n");
-
-            if(lines.length > 1){
-                for(int i = 0; i < lines.length; i++){
-                    String line = lines[i];
-                    sb.append(indent).append(line);
-
-                    if(i < lines.length - 1){
-                        sb.append(LINE_SEPARATOR);
-                    }
-                }
-            }
-            else{
-                sb.append(indent).append(macro);
-            }
-
-            return sb.toString();
+    
+    
+    private void setMacros(Macros macros){
+        if(macros == null){
+            throw new InternalException("macros cannot be null");
+        }
+    
+        this.macros = macros;
     }
 }
