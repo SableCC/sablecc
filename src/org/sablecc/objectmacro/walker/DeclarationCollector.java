@@ -22,7 +22,7 @@ import java.util.List;
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.structure.GlobalIndex;
-import org.sablecc.objectmacro.structure.Macro;
+import org.sablecc.objectmacro.structure.MacroInfo;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.syntax3.node.AIndentMacroBodyPart;
 import org.sablecc.objectmacro.syntax3.node.AInternal;
@@ -55,19 +55,19 @@ public class DeclarationCollector extends
             throw CompilerException.bodyTokenMisused(node.getBody());
         }
 
-        Macro newMacro = this.globalIndex.createMacro(node);
-        this.globalIndex.addAllVersionnedMacro(newMacro);
-        List<PParam> params = newMacro.getDeclaration().getParams();
-        List<PInternal> internals = newMacro.getDeclaration().getInternals();
+        MacroInfo newMacroInfo = this.globalIndex.createMacro(node);
+        this.globalIndex.addAllVersionnedMacro(newMacroInfo);
+        List<PParam> params = newMacroInfo.getDeclaration().getParams();
+        List<PInternal> internals = newMacroInfo.getDeclaration().getInternals();
 
         for (PParam param_production : params) {
             AParam param_node = (AParam) param_production;
-            newMacro.newParam(param_node);
+            newMacroInfo.newParam(param_node);
         }
 
         for (PInternal param_production : internals) {
             AInternal param_node = (AInternal) param_production;
-            newMacro.newInternal(param_node);
+            newMacroInfo.newInternal(param_node);
         }
 
         for (PMacroBodyPart pMacroBodyPart : node.getMacroBodyParts()) {

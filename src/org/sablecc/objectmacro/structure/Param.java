@@ -34,7 +34,7 @@ public class Param {
 
     private final GlobalIndex globalIndex;
 
-    private final Macro parent;
+    private final MacroInfo parent;
 
     private final Set<AMacroReference> macroReferences = new LinkedHashSet<>();
 
@@ -48,57 +48,57 @@ public class Param {
     private boolean isString;
 
     Param(
-            Macro macro,
-            GlobalIndex globalIndex) {
+            MacroInfo macro_info,
+            GlobalIndex global_index) {
 
-        if (macro == null) {
+        if (macro_info == null) {
             throw new InternalException("scope may not be null");
         }
 
-        if (globalIndex == null) {
+        if (global_index == null) {
             throw new InternalException("globalIndex may not be null");
         }
 
-        this.parent = macro;
-        this.globalIndex = globalIndex;
+        this.parent = macro_info;
+        this.globalIndex = global_index;
     }
 
     public void addMacroReference(
-            AMacroReference macroRef) {
+            AMacroReference macro_ref) {
 
-        if (macroRef == null) {
+        if (macro_ref == null) {
             throw new InternalException("Macro reference cannot be null");
         }
 
-        TIdentifier identifier = macroRef.getName();
+        TIdentifier identifier = macro_ref.getName();
 
         if(!this.globalIndex.macroExists(identifier)){
             throw CompilerException.unknownMacro(identifier);
         }
 
         if (this.macroReferencesName.containsKey(identifier.getText())) {
-            throw CompilerException.duplicateMacroRef(macroRef.getName(),
+            throw CompilerException.duplicateMacroRef(macro_ref.getName(),
                     getNameDeclaration());
         }
 
-        this.macroReferences.add(macroRef);
-        this.macroReferencesName.put(identifier.getText(), macroRef);
+        this.macroReferences.add(macro_ref);
+        this.macroReferencesName.put(identifier.getText(), macro_ref);
     }
 
     public void addParamReference(
-            TIdentifier paramName) {
+            TIdentifier param_name) {
 
-        if (paramName == null) {
+        if (param_name == null) {
             throw new InternalException("param cannot be null");
         }
 
-        String name = paramName.getText();
+        String name = param_name.getText();
         if (name.equals(getName())) {
-            throw CompilerException.selfReference(paramName,
+            throw CompilerException.selfReference(param_name,
                     getNameDeclaration());
         }
 
-        Param newParamRef = this.parent.getParam(paramName);
+        Param newParamRef = this.parent.getParam(param_name);
         if (newParamRef == null) {
             throw new InternalException("parameter may not be null");
         }
@@ -151,7 +151,7 @@ public class Param {
         return Collections.unmodifiableSet(directlyParams);
     }
 
-    public Macro getParent() {
+    public MacroInfo getParent() {
 
         return this.parent;
     }

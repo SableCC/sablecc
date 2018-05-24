@@ -28,7 +28,7 @@ import org.sablecc.objectmacro.syntax3.node.TIdentifier;
 import org.sablecc.util.ComponentFinder;
 import org.sablecc.util.Progeny;
 
-public class Macro {
+public class MacroInfo {
 
     private final GlobalIndex globalIndex;
 
@@ -46,7 +46,7 @@ public class Macro {
 
     private Set<MacroVersion> versions = new HashSet<>();
 
-    Macro(
+    MacroInfo(
             GlobalIndex globalIndex,
             AMacro declaration) {
 

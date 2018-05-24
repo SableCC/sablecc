@@ -19,7 +19,7 @@ package org.sablecc.objectmacro.walker;
 
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.structure.GlobalIndex;
-import org.sablecc.objectmacro.structure.Macro;
+import org.sablecc.objectmacro.structure.MacroInfo;
 import org.sablecc.objectmacro.structure.MacroVersion;
 import org.sablecc.objectmacro.structure.Param;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
@@ -38,7 +38,7 @@ public class ParamReferenceCollector extends
 
     private final MacroVersion currentVersion;
 
-    private Macro currentMacro;
+    private MacroInfo currentMacroInfo;
 
     private Param currentParam;
 
@@ -71,14 +71,14 @@ public class ParamReferenceCollector extends
     public void inAMacro(
             AMacro node) {
 
-        this.currentMacro = this.globalIndex.getMacro(node.getName(), this.currentVersion);
+        this.currentMacroInfo = this.globalIndex.getMacro(node.getName(), this.currentVersion);
     }
 
     @Override
     public void outAMacro(
             AMacro node) {
 
-        this.currentMacro = null;
+        this.currentMacroInfo = null;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class ParamReferenceCollector extends
     public void inAParam(
             AParam node) {
 
-        this.currentParam = this.currentMacro.getParam(node.getName());
+        this.currentParam = this.currentMacroInfo.getParam(node.getName());
     }
 
     @Override
@@ -119,7 +119,7 @@ public class ParamReferenceCollector extends
     public void inAInternal(
             AInternal node) {
 
-        this.currentParam = this.currentMacro.getParam(node.getName());
+        this.currentParam = this.currentMacroInfo.getParam(node.getName());
     }
 
     @Override

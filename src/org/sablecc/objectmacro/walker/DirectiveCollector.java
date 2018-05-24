@@ -21,7 +21,7 @@ import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.structure.External;
 import org.sablecc.objectmacro.structure.GlobalIndex;
-import org.sablecc.objectmacro.structure.Macro;
+import org.sablecc.objectmacro.structure.MacroInfo;
 import org.sablecc.objectmacro.structure.MacroVersion;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
 import org.sablecc.objectmacro.syntax3.node.ADirective;
@@ -36,7 +36,7 @@ public class DirectiveCollector extends
 
     private final MacroVersion currentVersion;
 
-    private Macro currentMacro;
+    private MacroInfo currentMacroInfo;
 
     private External currentParam;
 
@@ -56,7 +56,7 @@ public class DirectiveCollector extends
     public void caseAMacro(
             AMacro node) {
 
-        //if currentMacro is not of version 'currentVersion' then go to next macro node
+        //if currentMacroInfo is not of version 'currentVersion' then go to next macro node
         if(this.currentVersion != null
                 && node.getVersions().size() > 0
                 && !Utils.containsVersion(node.getVersions(), this.currentVersion)){
@@ -70,8 +70,8 @@ public class DirectiveCollector extends
     public void inAMacro(
             AMacro node) {
 
-        this.currentMacro = this.globalIndex.getMacro(node.getName(), this.currentVersion);
-        if(this.currentMacro == null){
+        this.currentMacroInfo = this.globalIndex.getMacro(node.getName(), this.currentVersion);
+        if(this.currentMacroInfo == null){
             throw CompilerException.unknownMacro(node.getName());
         }
     }
@@ -80,14 +80,14 @@ public class DirectiveCollector extends
     public void outAMacro(
             AMacro node) {
 
-        this.currentMacro = null;
+        this.currentMacroInfo = null;
     }
 
     @Override
     public void inAParam(
             AParam node) {
 
-        this.currentParam = (External) this.currentMacro
+        this.currentParam = (External) this.currentMacroInfo
                 .getParam(node.getName());
     }
 

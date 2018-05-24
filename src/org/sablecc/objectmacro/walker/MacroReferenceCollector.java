@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import org.sablecc.exception.InternalException;
 import org.sablecc.objectmacro.exception.CompilerException;
 import org.sablecc.objectmacro.structure.GlobalIndex;
-import org.sablecc.objectmacro.structure.Macro;
+import org.sablecc.objectmacro.structure.MacroInfo;
 import org.sablecc.objectmacro.structure.MacroVersion;
 import org.sablecc.objectmacro.structure.Param;
 import org.sablecc.objectmacro.syntax3.analysis.DepthFirstAdapter;
@@ -45,7 +45,7 @@ public class MacroReferenceCollector extends
 
     private final MacroVersion currentVersion;
 
-    private Macro currentMacro;
+    private MacroInfo currentMacroInfo;
 
     private Param currentParam;
 
@@ -79,8 +79,8 @@ public class MacroReferenceCollector extends
     public void inAMacro(
             AMacro node) {
 
-        this.currentMacro = this.globalIndex.getMacro(node.getName(), this.currentVersion);
-        if(this.currentMacro == null){
+        this.currentMacroInfo = this.globalIndex.getMacro(node.getName(), this.currentVersion);
+        if(this.currentMacroInfo == null){
             throw CompilerException.unknownMacro(node.getName());
         }
     }
@@ -89,7 +89,7 @@ public class MacroReferenceCollector extends
     public void outAMacro(
             AMacro node) {
 
-        this.currentMacro = null;
+        this.currentMacroInfo = null;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class MacroReferenceCollector extends
         // getAnyMacro verify if macro exists
         AMacroReference macroReference = (AMacroReference) node
                 .getMacroReference();
-        Macro referenced_macro = this.globalIndex
+        MacroInfo referenced_macro = this.globalIndex
                 .getMacro(macroReference.getName(), this.currentVersion);
 
         if (!referenced_macro.getAllParams().isEmpty()) {
@@ -122,7 +122,7 @@ public class MacroReferenceCollector extends
 
         // getAnyMacro verify if macro exists
         AMacroReference macroReference = (AMacroReference) node.getMacro();
-        Macro referenced_macro = this.globalIndex
+        MacroInfo referenced_macro = this.globalIndex
                 .getMacro(macroReference.getName(), this.currentVersion);
 
         if (!referenced_macro.getAllParams().isEmpty()) {
@@ -163,7 +163,7 @@ public class MacroReferenceCollector extends
     public void inAParam(
             AParam node) {
 
-        this.currentParam = this.currentMacro.getParam(node.getName());
+        this.currentParam = this.currentMacroInfo.getParam(node.getName());
     }
 
     @Override
@@ -177,7 +177,7 @@ public class MacroReferenceCollector extends
     public void inAInternal(
             AInternal node) {
 
-        this.currentParam = this.currentMacro.getParam(node.getName());
+        this.currentParam = this.currentMacroInfo.getParam(node.getName());
     }
 
     @Override
@@ -191,7 +191,7 @@ public class MacroReferenceCollector extends
     public void caseAStringType(
             AStringType node) {
 
-        this.currentMacro
+        this.currentMacroInfo
                 .setParamToString(this.currentParam.getNameDeclaration());
     }
 
@@ -199,7 +199,7 @@ public class MacroReferenceCollector extends
     public void caseAStringInternalType(
             AStringInternalType node) {
 
-        this.currentMacro
+        this.currentMacroInfo
                 .setParamToString(this.currentParam.getNameDeclaration());
     }
 }

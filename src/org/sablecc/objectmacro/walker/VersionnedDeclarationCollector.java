@@ -50,7 +50,7 @@ public class VersionnedDeclarationCollector
         }
 
         List<MacroVersion> versions = new LinkedList<>();
-        Macro newMacro = this.globalIndex.createMacro(node);
+        MacroInfo newMacroInfo = this.globalIndex.createMacro(node);
         boolean isAllVersionned = false;
 
         if(node.getVersions().size() > 0){
@@ -66,25 +66,25 @@ public class VersionnedDeclarationCollector
         }
 
         for(MacroVersion version : versions){
-            newMacro = this.globalIndex.createMacro(node);
-            version.newMacro(newMacro);
+            newMacroInfo = this.globalIndex.createMacro(node);
+            version.newMacro(newMacroInfo);
 
-            List<PParam> params = newMacro.getDeclaration().getParams();
-            List<PInternal> internals = newMacro.getDeclaration().getInternals();
+            List<PParam> params = newMacroInfo.getDeclaration().getParams();
+            List<PInternal> internals = newMacroInfo.getDeclaration().getInternals();
 
             for (PParam param_production : params) {
                 AParam param_node = (AParam) param_production;
-                newMacro.newParam(param_node);
+                newMacroInfo.newParam(param_node);
             }
 
             for (PInternal param_production : internals) {
                 AInternal param_node = (AInternal) param_production;
-                newMacro.newInternal(param_node);
+                newMacroInfo.newInternal(param_node);
             }
         }
 
         if(isAllVersionned){
-            this.globalIndex.addAllVersionnedMacro(newMacro);
+            this.globalIndex.addAllVersionnedMacro(newMacroInfo);
         }
 
         for(PMacroBodyPart pMacroBodyPart : node.getMacroBodyParts()){
