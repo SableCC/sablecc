@@ -559,14 +559,14 @@ Macro applied_version
 
 Macro constructor
     Param
-        field_initializers : set_param, init_macro_param, init_macro_internal, init_string_internal, set_macros_call("macros"), before_first="\n", separator="\n";
-        parameters : string_param, macros_param("macros"), separator=", ";
-        internal_values_initializers : init_internal_value, before_first="\n", separator="\n";
-        super : super_call, before_first="\n";
+        field_initializers: set_param, init_macro_param, init_macro_internal, init_string_internal, set_macros_call("macros"), before_first="\n", separator="\n";
+        parameters: string_param, macros_param("macros"), separator=", ";
+        internal_values_initializers: init_internal_value, before_first="\n", separator="\n";
+        super: super_call, before_first="\n";
     Internal
         class_name : String;
 {Body}
-public M{class_name}({parameters}){
+M{class_name}({parameters}){
 {Indent: "\t"}
 {super}
 {field_initializers}
