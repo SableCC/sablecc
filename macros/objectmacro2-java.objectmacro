@@ -507,7 +507,7 @@ Macro macro
     package_declaration : package_declaration, before_first="\n";
     fields : param_macro_field, param_string_field, internal_macro_field, internal_string_field, directive_fields, separator="\n\n", before_first="\n";
     constructor : constructor(class_name), before_first="\n";
-    setters : param_string_setter, single_add, internal_string_setter, internal_macro_setter, separator="\n\n", before_first="\n";
+    setters : single_add, add_all, abstract_type_verifier, type_verifier,  param_string_setter, internal_string_setter, internal_macro_setter, separator="\n\n", before_first="\n";
     builders : param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, separator="\n\n", before_first="\n";
     getters : param_string_ref, param_macro_ref, internal_macro_ref, separator="\n\n", before_first="\n";
     init_internals_methods : init_internals_method, separator="\n\n";
@@ -636,20 +636,21 @@ super();
 #================================================================
 #===================== MACRO FUNCTIONS ==========================
 #================================================================
-#========= single_add ===========
+
+# ========= single_add ===========
 
 Macro single_add
     Param
-        macro_name: String;
+        referenced_macro_name: String;
+        current_macro_name: String;
         param_name: String;
-        is_built: is_built(macro_name);
 {Body}
-public void add{param_name}(M{macro_name} macro){
+public void add{param_name}(M{referenced_macro_name} macro){
     if(macro == null){
         throw ObjectMacroException.parameterNull("{param_name}");
     }
 {Indent: "\t"}
-{is_built}
+{Insert: is_built(current_macro_name)}
 
 {Insert: factory_comparison("macro")}
 {End}
@@ -658,6 +659,70 @@ public void add{param_name}(M{macro_name} macro){
     this.children.add(macro);
     Macro.cycleDetector.detectCycle(this, macro);
 }
+{End}
+
+# ============= add_all ==============
+
+Macro add_all
+    Param
+        macro_name: String;
+        param_name: String;
+{Body}
+public void addAll{param_name}(
+                List<Macro> macros){
+
+    if(macros == null){
+        throw ObjectMacroException.parameterNull("{param_name}");
+    }
+{Indent: "\t"}
+{Insert: is_built(macro_name)}
+
+int i = 0;
+
+for(Macro macro : macros) {
+    if(macro == null) {
+        throw ObjectMacroException.macroNull(i, "{param_name}");
+    }
+
+{Indent: "\t"}
+{Insert: factory_comparison("macro")}
+{End}
+
+    this.verifyType{param_name}(macro);
+    this.list_{param_name}.add(macro);
+    this.children.add(macro);
+    Macro.cycleDetector.detectCycle(this, macro);
+
+    i++;
+}
+
+{End}
+}
+{End}
+
+# ============= type_verifier ===================
+
+Macro type_verifier
+    Param
+        param_name: String;
+        type_verification: apply_internals_initializer(param_name);
+        override: override;
+{Body}
+{override}
+void verifyType{param_name} (Macro macro) {
+{Indent: "\t"}
+{type_verification}
+{End}
+}
+{End}
+
+# ============= abstract_type_verifier ========
+
+Macro abstract_type_verifier
+    Param
+        param_name: String;
+{Body}
+abstract void verifyType{param_name}(Macro macro);
 {End}
 
 # ============= factory_comparison ==============
@@ -836,11 +901,11 @@ Macro internal_string_setter
 #========= init_internals_method ========
 Macro init_internals_method
     Param
-        internal_name: String;
-        apply_internals_initializer: apply_internals_initializer(internal_name), separator = "\n";
+        param_name: String;
+        apply_internals_initializer: apply_internals_initializer(param_name), separator = "\n";
 {Body}
-private void init{internal_name}Internals(Context context){
-    for(Macro macro : this.list_{internal_name}){
+private void init{param_name}Internals(Context context){
+    for(Macro macro : this.list_{param_name}){
 {Indent: "\t\t"}
 {apply_internals_initializer}
 {End}
@@ -894,12 +959,6 @@ private void setMacros(Macros macros){
 #============================================
 #============== MACRO BUILDER ===============
 #============================================
-
-#========= public =============
-Macro public
-{Body}
-public
-{End}
 
 #========== macro_builder =======
 Macro macro_builder
@@ -1076,9 +1135,9 @@ Macro apply_internals_initializer
     Param
         redefined_internals_setter : redefined_internals_setter, separator="\n\n";
     Internal
-        internal_name : String;
+        param_name : String;
 {Body}
-macro.apply(new InternalsInitializer("{internal_name}"){
+macro.apply(new InternalsInitializer("{param_name}"){
 {Indent: "\t"}
 {redefined_internals_setter}
 {End}
@@ -1287,6 +1346,20 @@ Macro macros_param
         name : String;
 {Body}
 Macros {name}
+{End}
+
+# ========= public =============
+
+Macro public
+{Body}
+public
+{End}
+
+# ========= override ============
+
+Macro override
+{Body}
+@Override
 {End}
 
 #===================================================

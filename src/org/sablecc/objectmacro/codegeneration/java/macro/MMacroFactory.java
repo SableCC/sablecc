@@ -65,6 +65,49 @@ public class MMacroFactory
                 this.NewMacroMethodsContext);
     }
 
+    public void addAllDefaultVersion(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("DefaultVersion");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("MacroFactory");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "DefaultVersion");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeDefaultVersion(macro);
+            this.list_DefaultVersion.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeDefaultVersion(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("DefaultVersion") {
+
+            @Override
+            void setVersion(
+                    MVersion mVersion) {
+
+            }
+        });
+    }
+
     public void addDefaultVersion(
             MVersion macro) {
 
@@ -72,7 +115,7 @@ public class MMacroFactory
             throw ObjectMacroException.parameterNull("DefaultVersion");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("Version");
+            throw ObjectMacroException.cannotModify("MacroFactory");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -84,6 +127,49 @@ public class MMacroFactory
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
+    public void addAllPackageDeclaration(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("PackageDeclaration");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("MacroFactory");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "PackageDeclaration");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypePackageDeclaration(macro);
+            this.list_PackageDeclaration.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypePackageDeclaration(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("PackageDeclaration") {
+
+            @Override
+            void setPackageDeclaration(
+                    MPackageDeclaration mPackageDeclaration) {
+
+            }
+        });
+    }
+
     public void addPackageDeclaration(
             MPackageDeclaration macro) {
 
@@ -91,7 +177,7 @@ public class MMacroFactory
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("PackageDeclaration");
+            throw ObjectMacroException.cannotModify("MacroFactory");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -103,6 +189,49 @@ public class MMacroFactory
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
+    public void addAllNewMacroMethods(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("NewMacroMethods");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("MacroFactory");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "NewMacroMethods");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeNewMacroMethods(macro);
+            this.list_NewMacroMethods.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeNewMacroMethods(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("NewMacroMethods") {
+
+            @Override
+            void setMacroCreatorMethod(
+                    MMacroCreatorMethod mMacroCreatorMethod) {
+
+            }
+        });
+    }
+
     public void addNewMacroMethods(
             MMacroCreatorMethod macro) {
 
@@ -110,7 +239,7 @@ public class MMacroFactory
             throw ObjectMacroException.parameterNull("NewMacroMethods");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("MacroCreatorMethod");
+            throw ObjectMacroException.cannotModify("MacroFactory");
         }
 
         if (getMacros() != macro.getMacros()) {

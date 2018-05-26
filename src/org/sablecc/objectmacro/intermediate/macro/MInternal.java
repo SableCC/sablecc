@@ -64,6 +64,49 @@ public class MInternal
                 this.DirectivesContext);
     }
 
+    public void addAllInternalName(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("InternalName");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Internal");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "InternalName");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeInternalName(macro);
+            this.list_InternalName.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeInternalName(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("InternalName") {
+
+            @Override
+            void setName(
+                    MName mName) {
+
+            }
+        });
+    }
+
     public void addInternalName(
             MName macro) {
 
@@ -71,7 +114,7 @@ public class MInternal
             throw ObjectMacroException.parameterNull("InternalName");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("Name");
+            throw ObjectMacroException.cannotModify("Internal");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -83,6 +126,55 @@ public class MInternal
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
+    public void addAllType(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("Type");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Internal");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "Type");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeType(macro);
+            this.list_Type.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeType(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("Type") {
+
+            @Override
+            void setStringType(
+                    MStringType mStringType) {
+
+            }
+
+            @Override
+            void setMacroType(
+                    MMacroType mMacroType) {
+
+            }
+        });
+    }
+
     public void addType(
             MStringType macro) {
 
@@ -90,7 +182,7 @@ public class MInternal
             throw ObjectMacroException.parameterNull("Type");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("StringType");
+            throw ObjectMacroException.cannotModify("Internal");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -109,7 +201,7 @@ public class MInternal
             throw ObjectMacroException.parameterNull("Type");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("MacroType");
+            throw ObjectMacroException.cannotModify("Internal");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -121,6 +213,49 @@ public class MInternal
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
+    public void addAllDirectives(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("Directives");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Internal");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "Directives");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeDirectives(macro);
+            this.list_Directives.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeDirectives(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("Directives") {
+
+            @Override
+            void setDirective(
+                    MDirective mDirective) {
+
+            }
+        });
+    }
+
     public void addDirectives(
             MDirective macro) {
 
@@ -128,7 +263,7 @@ public class MInternal
             throw ObjectMacroException.parameterNull("Directives");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("Directive");
+            throw ObjectMacroException.cannotModify("Internal");
         }
 
         if (getMacros() != macro.getMacros()) {

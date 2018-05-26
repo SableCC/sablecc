@@ -45,6 +45,73 @@ public class MAddIndent
         this.field_IndexBuilder = pIndexBuilder;
     }
 
+    public void addAllIndentParts(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("IndentParts");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("AddIndent");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "IndentParts");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeIndentParts(macro);
+            this.list_IndentParts.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeIndentParts(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("IndentParts") {
+
+            @Override
+            void setInitStringBuilder(
+                    MInitStringBuilder mInitStringBuilder) {
+
+            }
+
+            @Override
+            void setStringPart(
+                    MStringPart mStringPart) {
+
+            }
+
+            @Override
+            void setParamInsertPart(
+                    MParamInsertPart mParamInsertPart) {
+
+            }
+
+            @Override
+            void setEolPart(
+                    MEolPart mEolPart) {
+
+            }
+
+            @Override
+            void setInsertMacroPart(
+                    MInsertMacroPart mInsertMacroPart) {
+
+            }
+        });
+    }
+
     public void addIndentParts(
             MInitStringBuilder macro) {
 
@@ -52,7 +119,7 @@ public class MAddIndent
             throw ObjectMacroException.parameterNull("IndentParts");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("InitStringBuilder");
+            throw ObjectMacroException.cannotModify("AddIndent");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -71,7 +138,7 @@ public class MAddIndent
             throw ObjectMacroException.parameterNull("IndentParts");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("StringPart");
+            throw ObjectMacroException.cannotModify("AddIndent");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -90,7 +157,7 @@ public class MAddIndent
             throw ObjectMacroException.parameterNull("IndentParts");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("ParamInsertPart");
+            throw ObjectMacroException.cannotModify("AddIndent");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -109,7 +176,7 @@ public class MAddIndent
             throw ObjectMacroException.parameterNull("IndentParts");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("EolPart");
+            throw ObjectMacroException.cannotModify("AddIndent");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -128,7 +195,7 @@ public class MAddIndent
             throw ObjectMacroException.parameterNull("IndentParts");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("InsertMacroPart");
+            throw ObjectMacroException.cannotModify("AddIndent");
         }
 
         if (getMacros() != macro.getMacros()) {

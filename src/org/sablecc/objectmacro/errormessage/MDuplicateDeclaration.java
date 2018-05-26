@@ -101,6 +101,49 @@ public class MDuplicateDeclaration
         this.field_RefChar = pRefChar;
     }
 
+    public void addAllVersion(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("Version");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("DuplicateDeclaration");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "Version");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeVersion(macro);
+            this.list_Version.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeVersion(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("Version") {
+
+            @Override
+            void setPlainText(
+                    MPlainText mPlainText) {
+
+            }
+        });
+    }
+
     public void addVersion(
             MPlainText macro) {
 
@@ -108,7 +151,7 @@ public class MDuplicateDeclaration
             throw ObjectMacroException.parameterNull("Version");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("PlainText");
+            throw ObjectMacroException.cannotModify("DuplicateDeclaration");
         }
 
         if (getMacros() != macro.getMacros()) {

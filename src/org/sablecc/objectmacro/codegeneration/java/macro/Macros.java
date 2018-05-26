@@ -278,14 +278,47 @@ public class Macros {
     }
 
     public MSingleAdd newSingleAdd(
-            String pMacroName,
+            String pReferencedMacroName,
+            String pCurrentMacroName,
             String pParamName) {
 
         MSingleAdd mSingleAdd;
 
-        mSingleAdd = new MSingleAdd(pMacroName, pParamName, this);
+        mSingleAdd = new MSingleAdd(pReferencedMacroName, pCurrentMacroName,
+                pParamName, this);
 
         return mSingleAdd;
+    }
+
+    public MAddAll newAddAll(
+            String pMacroName,
+            String pParamName) {
+
+        MAddAll mAddAll;
+
+        mAddAll = new MAddAll(pMacroName, pParamName, this);
+
+        return mAddAll;
+    }
+
+    public MTypeVerifier newTypeVerifier(
+            String pParamName) {
+
+        MTypeVerifier mTypeVerifier;
+
+        mTypeVerifier = new MTypeVerifier(pParamName, this);
+
+        return mTypeVerifier;
+    }
+
+    public MAbstractTypeVerifier newAbstractTypeVerifier(
+            String pParamName) {
+
+        MAbstractTypeVerifier mAbstractTypeVerifier;
+
+        mAbstractTypeVerifier = new MAbstractTypeVerifier(pParamName, this);
+
+        return mAbstractTypeVerifier;
     }
 
     public MFactoryComparison newFactoryComparison() {
@@ -398,11 +431,11 @@ public class Macros {
     }
 
     public MInitInternalsMethod newInitInternalsMethod(
-            String pInternalName) {
+            String pParamName) {
 
         MInitInternalsMethod mInitInternalsMethod;
 
-        mInitInternalsMethod = new MInitInternalsMethod(pInternalName, this);
+        mInitInternalsMethod = new MInitInternalsMethod(pParamName, this);
 
         return mInitInternalsMethod;
     }
@@ -435,15 +468,6 @@ public class Macros {
         mSetMacrosMethod = new MSetMacrosMethod(this);
 
         return mSetMacrosMethod;
-    }
-
-    public MPublic newPublic() {
-
-        MPublic mPublic;
-
-        mPublic = new MPublic(this);
-
-        return mPublic;
     }
 
     public MMacroBuilder newMacroBuilder(
@@ -811,6 +835,24 @@ public class Macros {
         mMacrosParam = new MMacrosParam(this);
 
         return mMacrosParam;
+    }
+
+    public MPublic newPublic() {
+
+        MPublic mPublic;
+
+        mPublic = new MPublic(this);
+
+        return mPublic;
+    }
+
+    public MOverride newOverride() {
+
+        MOverride mOverride;
+
+        mOverride = new MOverride(this);
+
+        return mOverride;
     }
 
     public MClassNone newClassNone() {

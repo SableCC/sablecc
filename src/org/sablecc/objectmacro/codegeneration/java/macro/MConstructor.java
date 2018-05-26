@@ -84,11 +84,81 @@ public class MConstructor
         this.SuperValue = new InternalValue(this.list_Super, this.SuperContext);
     }
 
+    public void addAllFieldInitializers(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("FieldInitializers");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "FieldInitializers");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeFieldInitializers(macro);
+            this.list_FieldInitializers.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeFieldInitializers(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("FieldInitializers") {
+
+            @Override
+            void setSetParam(
+                    MSetParam mSetParam) {
+
+            }
+
+            @Override
+            void setInitMacroParam(
+                    MInitMacroParam mInitMacroParam) {
+
+            }
+
+            @Override
+            void setInitMacroInternal(
+                    MInitMacroInternal mInitMacroInternal) {
+
+            }
+
+            @Override
+            void setInitStringInternal(
+                    MInitStringInternal mInitStringInternal) {
+
+            }
+
+            @Override
+            void setSetMacrosCall(
+                    MSetMacrosCall mSetMacrosCall) {
+
+            }
+        });
+    }
+
     public void addFieldInitializers(
             MSetParam macro) {
 
         if (macro == null) {
             throw ObjectMacroException.parameterNull("FieldInitializers");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -106,6 +176,9 @@ public class MConstructor
         if (macro == null) {
             throw ObjectMacroException.parameterNull("FieldInitializers");
         }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
+        }
 
         if (getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
@@ -121,6 +194,9 @@ public class MConstructor
 
         if (macro == null) {
             throw ObjectMacroException.parameterNull("FieldInitializers");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -138,6 +214,9 @@ public class MConstructor
         if (macro == null) {
             throw ObjectMacroException.parameterNull("FieldInitializers");
         }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
+        }
 
         if (getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
@@ -154,6 +233,9 @@ public class MConstructor
         if (macro == null) {
             throw ObjectMacroException.parameterNull("FieldInitializers");
         }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
+        }
 
         if (getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
@@ -164,11 +246,63 @@ public class MConstructor
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
+    public void addAllParameters(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("Parameters");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "Parameters");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeParameters(macro);
+            this.list_Parameters.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeParameters(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("Parameters") {
+
+            @Override
+            void setStringParam(
+                    MStringParam mStringParam) {
+
+            }
+
+            @Override
+            void setMacrosParam(
+                    MMacrosParam mMacrosParam) {
+
+            }
+        });
+    }
+
     public void addParameters(
             MStringParam macro) {
 
         if (macro == null) {
             throw ObjectMacroException.parameterNull("Parameters");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -186,6 +320,9 @@ public class MConstructor
         if (macro == null) {
             throw ObjectMacroException.parameterNull("Parameters");
         }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
+        }
 
         if (getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
@@ -196,12 +333,60 @@ public class MConstructor
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
+    public void addAllInternalValuesInitializers(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException
+                    .parameterNull("InternalValuesInitializers");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i,
+                        "InternalValuesInitializers");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeInternalValuesInitializers(macro);
+            this.list_InternalValuesInitializers.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeInternalValuesInitializers(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("InternalValuesInitializers") {
+
+            @Override
+            void setInitInternalValue(
+                    MInitInternalValue mInitInternalValue) {
+
+            }
+        });
+    }
+
     public void addInternalValuesInitializers(
             MInitInternalValue macro) {
 
         if (macro == null) {
             throw ObjectMacroException
                     .parameterNull("InternalValuesInitializers");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -213,11 +398,57 @@ public class MConstructor
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
+    public void addAllSuper(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("Super");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "Super");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeSuper(macro);
+            this.list_Super.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeSuper(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("Super") {
+
+            @Override
+            void setSuperCall(
+                    MSuperCall mSuperCall) {
+
+            }
+        });
+    }
+
     public void addSuper(
             MSuperCall macro) {
 
         if (macro == null) {
             throw ObjectMacroException.parameterNull("Super");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Constructor");
         }
 
         if (getMacros() != macro.getMacros()) {

@@ -31,6 +31,49 @@ public class MMacroInsert
                 this.ReferencedMacroContext);
     }
 
+    public void addAllReferencedMacro(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("ReferencedMacro");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("MacroInsert");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "ReferencedMacro");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeReferencedMacro(macro);
+            this.list_ReferencedMacro.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeReferencedMacro(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("ReferencedMacro") {
+
+            @Override
+            void setMacroRef(
+                    MMacroRef mMacroRef) {
+
+            }
+        });
+    }
+
     public void addReferencedMacro(
             MMacroRef macro) {
 
@@ -38,7 +81,7 @@ public class MMacroInsert
             throw ObjectMacroException.parameterNull("ReferencedMacro");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("MacroRef");
+            throw ObjectMacroException.cannotModify("MacroInsert");
         }
 
         if (getMacros() != macro.getMacros()) {

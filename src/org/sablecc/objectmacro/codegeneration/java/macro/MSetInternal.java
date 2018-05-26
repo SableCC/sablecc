@@ -61,11 +61,63 @@ public class MSetInternal
         this.field_Context = pContext;
     }
 
+    public void addAllSetParams(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("SetParams");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("SetInternal");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "SetParams");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeSetParams(macro);
+            this.list_SetParams.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeSetParams(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("SetParams") {
+
+            @Override
+            void setParamRef(
+                    MParamRef mParamRef) {
+
+            }
+
+            @Override
+            void setStringBuilderBuild(
+                    MStringBuilderBuild mStringBuilderBuild) {
+
+            }
+        });
+    }
+
     public void addSetParams(
             MParamRef macro) {
 
         if (macro == null) {
             throw ObjectMacroException.parameterNull("SetParams");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("SetInternal");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -82,6 +134,9 @@ public class MSetInternal
 
         if (macro == null) {
             throw ObjectMacroException.parameterNull("SetParams");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("SetInternal");
         }
 
         if (getMacros() != macro.getMacros()) {

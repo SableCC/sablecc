@@ -81,6 +81,12 @@ public class CodeGenerationWalker
     private MApplyInternalsInitializer currentApplyInitializer;
 
     /**
+     * Macro representing the apply internal initializer inside the method init
+     * internals
+     */
+    private MApplyInternalsInitializer currentAddAllTypeVerifier;
+
+    /**
      * Index of the current builder to avoid creating 2 StringBuilder of the
      * same name
      */
@@ -519,6 +525,14 @@ public class CodeGenerationWalker
 
                 this.currentContextName
                         = param_name.concat(GenerationUtils.CONTEXT_STRING);
+
+                this.currentMacroToBuild.addSetters(this.factory.newAddAll(
+                        this.currentMacro.getName(), this.currentParamName));
+            }
+
+            if (this.currentMacroIsAbstract) {
+                this.currentMacroToBuild.addSetters(this.factory
+                        .newAbstractTypeVerifier(this.currentParamName));
             }
 
             if (!this.currentMacroIsAbstract) {
@@ -570,8 +584,22 @@ public class CodeGenerationWalker
                         = this.factory.newInitInternalsMethod(param_name);
                 mInitInternalsMethod.addApplyInternalsInitializer(
                         this.currentApplyInitializer);
+
                 this.currentMacroToBuild
                         .addInitInternalsMethods(mInitInternalsMethod);
+
+                this.currentAddAllTypeVerifier
+                        = this.factory.newApplyInternalsInitializer();
+                MTypeVerifier mTypeVerifier
+                        = this.factory.newTypeVerifier(this.currentParamName);
+                mTypeVerifier
+                        .addTypeVerification(this.currentAddAllTypeVerifier);
+
+                if (!this.currentMacroIsAllVersionned) {
+                    mTypeVerifier.addOverride(this.factory.newOverride());
+                }
+
+                this.currentMacroToBuild.addSetters(mTypeVerifier);
 
                 if (this.currentMacroHasInternals) {
                     mInitInternalsCall
@@ -623,25 +651,7 @@ public class CodeGenerationWalker
         List<Macro> temp = this.tempMacros;
 
         List<Macro> text_parts = evalMacros(node.getParts());
-
-        for (Macro text_part : text_parts) {
-
-            if (text_part instanceof MEolPart) {
-                mNewDirective.addTextParts((MEolPart) text_part);
-            }
-            else if (text_part instanceof MStringPart) {
-                mNewDirective.addTextParts((MStringPart) text_part);
-            }
-            else if (text_part instanceof MParamInsertPart) {
-                mNewDirective.addTextParts((MParamInsertPart) text_part);
-            }
-            else if (text_part instanceof MInsertMacroPart) {
-                mNewDirective.addTextParts((MInsertMacroPart) text_part);
-            }
-            else {
-                throw new InternalException("case unhandled");
-            }
-        }
+        mNewDirective.addAllTextParts(text_parts);
 
         this.tempMacros = temp;
     }
@@ -668,7 +678,7 @@ public class CodeGenerationWalker
                     referenced_macros.addAll(referenced_macro.getChildren());
                 }
             }
-            else if (!this.currentMacroIsAbstract) {
+            else {
                 for (String version : this.currentMacro.getApplied_versions()) {
                     String macro_name
                             = referenced_macro.getChildByVersion(version);
@@ -683,6 +693,14 @@ public class CodeGenerationWalker
                 this.currentMacroRefName = child;
                 MRedefinedInternalsSetter mRedefinedInternalsSetter
                         = this.factory.newRedefinedInternalsSetter(child);
+
+                if (this.currentAddAllTypeVerifier != null) {
+                    MRedefinedInternalsSetter mAddAllRedefinedInternalsSetter
+                            = this.factory.newRedefinedInternalsSetter(child);
+                    this.currentAddAllTypeVerifier.addRedefinedInternalsSetter(
+                            mAddAllRedefinedInternalsSetter);
+                }
+
                 this.currentApplyInitializer
                         .addRedefinedInternalsSetter(mRedefinedInternalsSetter);
 
@@ -726,12 +744,10 @@ public class CodeGenerationWalker
             if (this.currentMacroIsAbstract
                     || this.currentMacroIsAllVersionned) {
 
-                MSingleAdd mSingleAdd = this.factory
-                        .newSingleAdd(macro_ref_name, this.currentParamName);
+                MSingleAdd mSingleAdd = this.factory.newSingleAdd(
+                        macro_ref_name, this.currentMacro.getName(),
+                        this.currentParamName);
                 this.currentMacroToBuild.addSetters(mSingleAdd);
-                if (!this.currentMacroHasInternals) {
-                    mSingleAdd.addIsBuilt(this.factory.newIsBuilt());
-                }
             }
 
         }
@@ -926,27 +942,7 @@ public class CodeGenerationWalker
         Integer tempIndexInsert = this.indexInsert;
 
         List<Macro> text_parts = evalMacros(node.getTextPart());
-        for (Macro text_part : text_parts) {
-
-            if (text_part instanceof MInitStringBuilder) {
-                mAddIndent.addIndentParts((MInitStringBuilder) text_part);
-            }
-            else if (text_part instanceof MStringPart) {
-                mAddIndent.addIndentParts((MStringPart) text_part);
-            }
-            else if (text_part instanceof MParamInsertPart) {
-                mAddIndent.addIndentParts((MParamInsertPart) text_part);
-            }
-            else if (text_part instanceof MEolPart) {
-                mAddIndent.addIndentParts((MEolPart) text_part);
-            }
-            else if (text_part instanceof MInsertMacroPart) {
-                mAddIndent.addIndentParts((MInsertMacroPart) text_part);
-            }
-            else {
-                throw new InternalException("case unhandled");
-            }
-        }
+        mAddIndent.addAllIndentParts(text_parts);
 
         this.indexBuilder
                 = this.previouslyUsed.remove(this.previouslyUsed.size() - 1);

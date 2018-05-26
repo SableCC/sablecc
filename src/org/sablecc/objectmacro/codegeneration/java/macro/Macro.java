@@ -50,7 +50,7 @@ public abstract class Macro {
             String indent) {
 
         StringBuilder sb = new StringBuilder();
-        String[] lines = macro.split("\n");
+        String[] lines = macro.split("\\n");
 
         if (lines.length > 1) {
             for (int i = 0; i < lines.length; i++) {

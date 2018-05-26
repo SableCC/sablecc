@@ -21,7 +21,7 @@ public class MApplyInternalsInitializer
 
     private DNone RedefinedInternalsSetterNone;
 
-    private Map<Context, String> field_InternalName = new LinkedHashMap<>();
+    private Map<Context, String> field_ParamName = new LinkedHashMap<>();
 
     public MApplyInternalsInitializer(
             Macros macros) {
@@ -34,12 +34,62 @@ public class MApplyInternalsInitializer
                         this.RedefinedInternalsSetterContext);
     }
 
+    public void addAllRedefinedInternalsSetter(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException
+                    .parameterNull("RedefinedInternalsSetter");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException
+                    .cannotModify("ApplyInternalsInitializer");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i,
+                        "RedefinedInternalsSetter");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeRedefinedInternalsSetter(macro);
+            this.list_RedefinedInternalsSetter.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeRedefinedInternalsSetter(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("RedefinedInternalsSetter") {
+
+            @Override
+            void setRedefinedInternalsSetter(
+                    MRedefinedInternalsSetter mRedefinedInternalsSetter) {
+
+            }
+        });
+    }
+
     public void addRedefinedInternalsSetter(
             MRedefinedInternalsSetter macro) {
 
         if (macro == null) {
             throw ObjectMacroException
                     .parameterNull("RedefinedInternalsSetter");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException
+                    .cannotModify("ApplyInternalsInitializer");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -51,7 +101,7 @@ public class MApplyInternalsInitializer
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    void setInternalName(
+    void setParamName(
             Context context,
             String value) {
 
@@ -59,7 +109,7 @@ public class MApplyInternalsInitializer
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_InternalName.put(context, value);
+        this.field_ParamName.put(context, value);
     }
 
     private String buildRedefinedInternalsSetter() {
@@ -102,10 +152,10 @@ public class MApplyInternalsInitializer
         return sb.toString();
     }
 
-    String buildInternalName(
+    String buildParamName(
             Context context) {
 
-        return this.field_InternalName.get(context);
+        return this.field_ParamName.get(context);
     }
 
     private InternalValue getRedefinedInternalsSetter() {
@@ -113,10 +163,10 @@ public class MApplyInternalsInitializer
         return this.RedefinedInternalsSetterValue;
     }
 
-    String getInternalName(
+    String getParamName(
             Context context) {
 
-        return this.field_InternalName.get(context);
+        return this.field_ParamName.get(context);
     }
 
     private void initRedefinedInternalsSetterInternals(
@@ -178,7 +228,7 @@ public class MApplyInternalsInitializer
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("macro.apply(new InternalsInitializer(\"");
-        sb0.append(buildInternalName(context));
+        sb0.append(buildParamName(context));
         sb0.append("\")");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);

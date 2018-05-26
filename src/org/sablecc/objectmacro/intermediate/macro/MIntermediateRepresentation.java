@@ -48,6 +48,50 @@ public class MIntermediateRepresentation
                 this.list_VersionDefinition, this.VersionDefinitionContext);
     }
 
+    public void addAllDefinedMacros(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("DefinedMacros");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException
+                    .cannotModify("IntermediateRepresentation");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "DefinedMacros");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeDefinedMacros(macro);
+            this.list_DefinedMacros.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeDefinedMacros(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("DefinedMacros") {
+
+            @Override
+            void setMacro(
+                    MMacro mMacro) {
+
+            }
+        });
+    }
+
     public void addDefinedMacros(
             MMacro macro) {
 
@@ -55,7 +99,8 @@ public class MIntermediateRepresentation
             throw ObjectMacroException.parameterNull("DefinedMacros");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify("IntermediateRepresentation");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -67,6 +112,50 @@ public class MIntermediateRepresentation
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
+    public void addAllVersionDefinition(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("VersionDefinition");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException
+                    .cannotModify("IntermediateRepresentation");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "VersionDefinition");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeVersionDefinition(macro);
+            this.list_VersionDefinition.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeVersionDefinition(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("VersionDefinition") {
+
+            @Override
+            void setVersions(
+                    MVersions mVersions) {
+
+            }
+        });
+    }
+
     public void addVersionDefinition(
             MVersions macro) {
 
@@ -74,7 +163,8 @@ public class MIntermediateRepresentation
             throw ObjectMacroException.parameterNull("VersionDefinition");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("Versions");
+            throw ObjectMacroException
+                    .cannotModify("IntermediateRepresentation");
         }
 
         if (getMacros() != macro.getMacros()) {

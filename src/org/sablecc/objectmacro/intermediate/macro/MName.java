@@ -30,6 +30,49 @@ public class MName
         this.ValueValue = new InternalValue(this.list_Value, this.ValueContext);
     }
 
+    public void addAllValue(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("Value");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("Name");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "Value");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeValue(macro);
+            this.list_Value.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeValue(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("Value") {
+
+            @Override
+            void setSimpleName(
+                    MSimpleName mSimpleName) {
+
+            }
+        });
+    }
+
     public void addValue(
             MSimpleName macro) {
 
@@ -37,7 +80,7 @@ public class MName
             throw ObjectMacroException.parameterNull("Value");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("SimpleName");
+            throw ObjectMacroException.cannotModify("Name");
         }
 
         if (getMacros() != macro.getMacros()) {

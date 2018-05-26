@@ -45,6 +45,67 @@ public class MTextArgument
         this.field_ParamName = pParamName;
     }
 
+    public void addAllTextParts(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("TextParts");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("TextArgument");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "TextParts");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeTextParts(macro);
+            this.list_TextParts.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeTextParts(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("TextParts") {
+
+            @Override
+            void setStringPart(
+                    MStringPart mStringPart) {
+
+            }
+
+            @Override
+            void setEolPart(
+                    MEolPart mEolPart) {
+
+            }
+
+            @Override
+            void setParamInsert(
+                    MParamInsert mParamInsert) {
+
+            }
+
+            @Override
+            void setMacroInsert(
+                    MMacroInsert mMacroInsert) {
+
+            }
+        });
+    }
+
     public void addTextParts(
             MStringPart macro) {
 
@@ -52,7 +113,7 @@ public class MTextArgument
             throw ObjectMacroException.parameterNull("TextParts");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("StringPart");
+            throw ObjectMacroException.cannotModify("TextArgument");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -71,7 +132,7 @@ public class MTextArgument
             throw ObjectMacroException.parameterNull("TextParts");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("EolPart");
+            throw ObjectMacroException.cannotModify("TextArgument");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -90,7 +151,7 @@ public class MTextArgument
             throw ObjectMacroException.parameterNull("TextParts");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("ParamInsert");
+            throw ObjectMacroException.cannotModify("TextArgument");
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -109,7 +170,7 @@ public class MTextArgument
             throw ObjectMacroException.parameterNull("TextParts");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("MacroInsert");
+            throw ObjectMacroException.cannotModify("TextArgument");
         }
 
         if (getMacros() != macro.getMacros()) {

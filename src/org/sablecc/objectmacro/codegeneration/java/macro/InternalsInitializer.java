@@ -201,6 +201,26 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MSingleAdd", this._paramName);
     }
 
+    void setAddAll(
+            MAddAll mAddAll) {
+
+        throw ObjectMacroException.incorrectType("MAddAll", this._paramName);
+    }
+
+    void setTypeVerifier(
+            MTypeVerifier mTypeVerifier) {
+
+        throw ObjectMacroException.incorrectType("MTypeVerifier",
+                this._paramName);
+    }
+
+    void setAbstractTypeVerifier(
+            MAbstractTypeVerifier mAbstractTypeVerifier) {
+
+        throw ObjectMacroException.incorrectType("MAbstractTypeVerifier",
+                this._paramName);
+    }
+
     void setFactoryComparison(
             MFactoryComparison mFactoryComparison) {
 
@@ -303,12 +323,6 @@ class InternalsInitializer {
 
         throw ObjectMacroException.incorrectType("MSetMacrosMethod",
                 this._paramName);
-    }
-
-    void setPublic(
-            MPublic mPublic) {
-
-        throw ObjectMacroException.incorrectType("MPublic", this._paramName);
     }
 
     void setMacroBuilder(
@@ -560,6 +574,18 @@ class InternalsInitializer {
 
         throw ObjectMacroException.incorrectType("MMacrosParam",
                 this._paramName);
+    }
+
+    void setPublic(
+            MPublic mPublic) {
+
+        throw ObjectMacroException.incorrectType("MPublic", this._paramName);
+    }
+
+    void setOverride(
+            MOverride mOverride) {
+
+        throw ObjectMacroException.incorrectType("MOverride", this._paramName);
     }
 
     void setClassNone(

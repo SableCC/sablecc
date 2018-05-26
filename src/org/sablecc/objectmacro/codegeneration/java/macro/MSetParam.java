@@ -45,6 +45,49 @@ public class MSetParam
         this.field_Name = pName;
     }
 
+    public void addAllSetParam(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("SetParam");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("SetParam");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "SetParam");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeSetParam(macro);
+            this.list_SetParam.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeSetParam(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("SetParam") {
+
+            @Override
+            void setParamArg(
+                    MParamArg mParamArg) {
+
+            }
+        });
+    }
+
     public void addSetParam(
             MParamArg macro) {
 
@@ -52,7 +95,7 @@ public class MSetParam
             throw ObjectMacroException.parameterNull("SetParam");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("ParamArg");
+            throw ObjectMacroException.cannotModify("SetParam");
         }
 
         if (getMacros() != macro.getMacros()) {

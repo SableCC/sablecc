@@ -31,6 +31,49 @@ public class MParentName
                 = new InternalValue(this.list_Parent, this.ParentContext);
     }
 
+    public void addAllParent(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("Parent");
+        }
+        if (this.build_state != null) {
+            throw ObjectMacroException.cannotModify("ParentName");
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "Parent");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeParent(macro);
+            this.list_Parent.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeParent(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("Parent") {
+
+            @Override
+            void setName(
+                    MName mName) {
+
+            }
+        });
+    }
+
     public void addParent(
             MName macro) {
 
@@ -38,7 +81,7 @@ public class MParentName
             throw ObjectMacroException.parameterNull("Parent");
         }
         if (this.build_state != null) {
-            throw ObjectMacroException.cannotModify("Name");
+            throw ObjectMacroException.cannotModify("ParentName");
         }
 
         if (getMacros() != macro.getMacros()) {
