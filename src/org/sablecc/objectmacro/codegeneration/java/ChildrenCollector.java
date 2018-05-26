@@ -62,7 +62,7 @@ class ChildrenCollector
 
         String macro_name = GenerationUtils.buildNameCamelCase(node.getNames());
         if(this.currentMacro == null){
-            this.currentMacro = macros.get(macro_name);
+            this.currentMacro = this.macros.get(macro_name);
         }
 
         if(node.getParent() != null){

@@ -29,12 +29,54 @@ public  class MExCyclicReference extends Macro{
         this.PackageDeclarationValue = new InternalValue(this.list_PackageDeclaration, this.PackageDeclarationContext);
     }
     
+    public void addAllPackageDeclaration(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("PackageDeclaration");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ExCyclicReference");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "PackageDeclaration");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypePackageDeclaration(macro);
+            this.list_PackageDeclaration.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypePackageDeclaration (Macro macro) {
+        macro.apply(new InternalsInitializer("PackageDeclaration"){
+            @Override
+            void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addPackageDeclaration(MPackageDeclaration macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("PackageDeclaration");
+            throw ObjectMacroException.cannotModify("ExCyclicReference");
         }
         
         if(this.getMacros() != macro.getMacros()){

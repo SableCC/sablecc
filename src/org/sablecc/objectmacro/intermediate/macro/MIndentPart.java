@@ -29,12 +29,75 @@ public  class MIndentPart extends Macro{
         this.IndentationTextValue = new InternalValue(this.list_IndentationText, this.IndentationTextContext);
     }
     
+    public void addAllIndentationText(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("IndentationText");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("IndentPart");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "IndentationText");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeIndentationText(macro);
+            this.list_IndentationText.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeIndentationText (Macro macro) {
+        macro.apply(new InternalsInitializer("IndentationText"){
+            @Override
+            void setStringPart(MStringPart mStringPart){
+            
+                
+                
+            }
+            
+            @Override
+            void setEolPart(MEolPart mEolPart){
+            
+                
+                
+            }
+            
+            @Override
+            void setParamInsert(MParamInsert mParamInsert){
+            
+                
+                
+            }
+            
+            @Override
+            void setMacroInsert(MMacroInsert mMacroInsert){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addIndentationText(MStringPart macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("IndentationText");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("StringPart");
+            throw ObjectMacroException.cannotModify("IndentPart");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -51,7 +114,7 @@ public  class MIndentPart extends Macro{
             throw ObjectMacroException.parameterNull("IndentationText");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("EolPart");
+            throw ObjectMacroException.cannotModify("IndentPart");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -68,7 +131,7 @@ public  class MIndentPart extends Macro{
             throw ObjectMacroException.parameterNull("IndentationText");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ParamInsert");
+            throw ObjectMacroException.cannotModify("IndentPart");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -85,7 +148,7 @@ public  class MIndentPart extends Macro{
             throw ObjectMacroException.parameterNull("IndentationText");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("MacroInsert");
+            throw ObjectMacroException.cannotModify("IndentPart");
         }
         
         if(this.getMacros() != macro.getMacros()){

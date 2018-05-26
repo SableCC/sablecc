@@ -45,12 +45,54 @@ public  class MDirective extends Macro{
         this.DirectiveTextPartsValue = new InternalValue(this.list_DirectiveTextParts, this.DirectiveTextPartsContext);
     }
     
+    public void addAllDirectiveName(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("DirectiveName");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Directive");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "DirectiveName");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeDirectiveName(macro);
+            this.list_DirectiveName.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeDirectiveName (Macro macro) {
+        macro.apply(new InternalsInitializer("DirectiveName"){
+            @Override
+            void setName(MName mName){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addDirectiveName(MName macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("DirectiveName");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("Name");
+            throw ObjectMacroException.cannotModify("Directive");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -62,12 +104,75 @@ public  class MDirective extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
+    public void addAllDirectiveTextParts(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("DirectiveTextParts");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Directive");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "DirectiveTextParts");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeDirectiveTextParts(macro);
+            this.list_DirectiveTextParts.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeDirectiveTextParts (Macro macro) {
+        macro.apply(new InternalsInitializer("DirectiveTextParts"){
+            @Override
+            void setStringPart(MStringPart mStringPart){
+            
+                
+                
+            }
+            
+            @Override
+            void setEolPart(MEolPart mEolPart){
+            
+                
+                
+            }
+            
+            @Override
+            void setParamInsert(MParamInsert mParamInsert){
+            
+                
+                
+            }
+            
+            @Override
+            void setMacroInsert(MMacroInsert mMacroInsert){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addDirectiveTextParts(MStringPart macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("DirectiveTextParts");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("StringPart");
+            throw ObjectMacroException.cannotModify("Directive");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -84,7 +189,7 @@ public  class MDirective extends Macro{
             throw ObjectMacroException.parameterNull("DirectiveTextParts");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("EolPart");
+            throw ObjectMacroException.cannotModify("Directive");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -101,7 +206,7 @@ public  class MDirective extends Macro{
             throw ObjectMacroException.parameterNull("DirectiveTextParts");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ParamInsert");
+            throw ObjectMacroException.cannotModify("Directive");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -118,7 +223,7 @@ public  class MDirective extends Macro{
             throw ObjectMacroException.parameterNull("DirectiveTextParts");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("MacroInsert");
+            throw ObjectMacroException.cannotModify("Directive");
         }
         
         if(this.getMacros() != macro.getMacros()){

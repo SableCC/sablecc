@@ -29,12 +29,50 @@ public  class MContext extends Macro{
         this.PackageDeclarationValue = new InternalValue(this.list_PackageDeclaration, this.PackageDeclarationContext);
     }
     
+    public void addAllPackageDeclaration(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("PackageDeclaration");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Context");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "PackageDeclaration");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+            
+            macro.apply(new InternalsInitializer("PackageDeclaration"){
+                @Override
+                void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
+                
+                    
+                    
+                }
+            });
+        
+            this.list_PackageDeclaration.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
     public void addPackageDeclaration(MPackageDeclaration macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("PackageDeclaration");
+            throw ObjectMacroException.cannotModify("Context");
         }
         
         if(this.getMacros() != macro.getMacros()){

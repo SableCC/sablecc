@@ -45,12 +45,54 @@ public  class MVersionEnumeration extends Macro{
         this.VersionsValue = new InternalValue(this.list_Versions, this.VersionsContext);
     }
     
+    public void addAllPackageDeclaration(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("PackageDeclaration");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("VersionEnumeration");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "PackageDeclaration");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypePackageDeclaration(macro);
+            this.list_PackageDeclaration.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypePackageDeclaration (Macro macro) {
+        macro.apply(new InternalsInitializer("PackageDeclaration"){
+            @Override
+            void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addPackageDeclaration(MPackageDeclaration macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("PackageDeclaration");
+            throw ObjectMacroException.cannotModify("VersionEnumeration");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -62,12 +104,54 @@ public  class MVersionEnumeration extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
+    public void addAllVersions(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("Versions");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("VersionEnumeration");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "Versions");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeVersions(macro);
+            this.list_Versions.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeVersions (Macro macro) {
+        macro.apply(new InternalsInitializer("Versions"){
+            @Override
+            void setPlainText(MPlainText mPlainText){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addVersions(MPlainText macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("Versions");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("PlainText");
+            throw ObjectMacroException.cannotModify("VersionEnumeration");
         }
         
         if(this.getMacros() != macro.getMacros()){

@@ -29,12 +29,54 @@ public  class MMacroType extends Macro{
         this.ReferencesValue = new InternalValue(this.list_References, this.ReferencesContext);
     }
     
+    public void addAllReferences(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("References");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("MacroType");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "References");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeReferences(macro);
+            this.list_References.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeReferences (Macro macro) {
+        macro.apply(new InternalsInitializer("References"){
+            @Override
+            void setMacroRef(MMacroRef mMacroRef){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addReferences(MMacroRef macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("References");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("MacroRef");
+            throw ObjectMacroException.cannotModify("MacroType");
         }
         
         if(this.getMacros() != macro.getMacros()){

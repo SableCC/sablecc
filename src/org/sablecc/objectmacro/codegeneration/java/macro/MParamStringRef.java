@@ -56,12 +56,54 @@ public  class MParamStringRef extends Macro{
         this.field_Name = pName;
     }
     
+    public void addAllContextParam(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("ContextParam");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ParamStringRef");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "ContextParam");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeContextParam(macro);
+            this.list_ContextParam.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeContextParam (Macro macro) {
+        macro.apply(new InternalsInitializer("ContextParam"){
+            @Override
+            void setContextParam(MContextParam mContextParam){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addContextParam(MContextParam macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ContextParam");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ContextParam");
+            throw ObjectMacroException.cannotModify("ParamStringRef");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -73,12 +115,54 @@ public  class MParamStringRef extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
+    public void addAllGetInternalTail(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("GetInternalTail");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ParamStringRef");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "GetInternalTail");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeGetInternalTail(macro);
+            this.list_GetInternalTail.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeGetInternalTail (Macro macro) {
+        macro.apply(new InternalsInitializer("GetInternalTail"){
+            @Override
+            void setGetInternalTail(MGetInternalTail mGetInternalTail){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addGetInternalTail(MGetInternalTail macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("GetInternalTail");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("GetInternalTail");
+            throw ObjectMacroException.cannotModify("ParamStringRef");
         }
         
         if(this.getMacros() != macro.getMacros()){

@@ -40,12 +40,54 @@ public  class MParamMacroRefBuilder extends Macro{
         this.field_Name = pName;
     }
     
+    public void addAllContextName(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("ContextName");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ParamMacroRefBuilder");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "ContextName");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeContextName(macro);
+            this.list_ContextName.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeContextName (Macro macro) {
+        macro.apply(new InternalsInitializer("ContextName"){
+            @Override
+            void setPlainText(MPlainText mPlainText){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addContextName(MPlainText macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ContextName");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("PlainText");
+            throw ObjectMacroException.cannotModify("ParamMacroRefBuilder");
         }
         
         if(this.getMacros() != macro.getMacros()){

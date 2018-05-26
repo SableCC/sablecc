@@ -51,12 +51,54 @@ public  class MParamInsertPart extends Macro{
         this.field_IndexBuilder = pIndexBuilder;
     }
     
+    public void addAllContextArg(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("ContextArg");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ParamInsertPart");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "ContextArg");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeContextArg(macro);
+            this.list_ContextArg.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeContextArg (Macro macro) {
+        macro.apply(new InternalsInitializer("ContextArg"){
+            @Override
+            void setContextArg(MContextArg mContextArg){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addContextArg(MContextArg macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ContextArg");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ContextArg");
+            throw ObjectMacroException.cannotModify("ParamInsertPart");
         }
         
         if(this.getMacros() != macro.getMacros()){

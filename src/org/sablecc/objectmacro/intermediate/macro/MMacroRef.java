@@ -45,12 +45,54 @@ public  class MMacroRef extends Macro{
         this.ArgumentsValue = new InternalValue(this.list_Arguments, this.ArgumentsContext);
     }
     
+    public void addAllReferencedMacroName(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("ReferencedMacroName");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("MacroRef");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "ReferencedMacroName");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeReferencedMacroName(macro);
+            this.list_ReferencedMacroName.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeReferencedMacroName (Macro macro) {
+        macro.apply(new InternalsInitializer("ReferencedMacroName"){
+            @Override
+            void setName(MName mName){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addReferencedMacroName(MName macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ReferencedMacroName");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("Name");
+            throw ObjectMacroException.cannotModify("MacroRef");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -62,12 +104,54 @@ public  class MMacroRef extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
+    public void addAllArguments(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("Arguments");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("MacroRef");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "Arguments");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeArguments(macro);
+            this.list_Arguments.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeArguments (Macro macro) {
+        macro.apply(new InternalsInitializer("Arguments"){
+            @Override
+            void setArgs(MArgs mArgs){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addArguments(MArgs macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("Arguments");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("Args");
+            throw ObjectMacroException.cannotModify("MacroRef");
         }
         
         if(this.getMacros() != macro.getMacros()){
