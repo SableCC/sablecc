@@ -45,12 +45,54 @@ public  class MIntermediateRepresentation extends Macro{
         this.VersionDefinitionValue = new InternalValue(this.list_VersionDefinition, this.VersionDefinitionContext);
     }
     
+    public void addAllDefinedMacros(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("DefinedMacros");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("IntermediateRepresentation");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "DefinedMacros");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeDefinedMacros(macro);
+            this.list_DefinedMacros.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeDefinedMacros (Macro macro) {
+        macro.apply(new InternalsInitializer("DefinedMacros"){
+            @Override
+            void setMacro(MMacro mMacro){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addDefinedMacros(MMacro macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("DefinedMacros");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException.cannotModify("IntermediateRepresentation");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -62,12 +104,54 @@ public  class MIntermediateRepresentation extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
+    public void addAllVersionDefinition(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("VersionDefinition");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("IntermediateRepresentation");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "VersionDefinition");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeVersionDefinition(macro);
+            this.list_VersionDefinition.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeVersionDefinition (Macro macro) {
+        macro.apply(new InternalsInitializer("VersionDefinition"){
+            @Override
+            void setVersions(MVersions mVersions){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addVersionDefinition(MVersions macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("VersionDefinition");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("Versions");
+            throw ObjectMacroException.cannotModify("IntermediateRepresentation");
         }
         
         if(this.getMacros() != macro.getMacros()){

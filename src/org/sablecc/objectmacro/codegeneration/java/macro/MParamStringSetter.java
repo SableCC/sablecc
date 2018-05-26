@@ -56,12 +56,54 @@ public  class MParamStringSetter extends Macro{
         this.field_Name = pName;
     }
     
+    public void addAllStringParam(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("StringParam");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ParamStringSetter");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "StringParam");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeStringParam(macro);
+            this.list_StringParam.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeStringParam (Macro macro) {
+        macro.apply(new InternalsInitializer("StringParam"){
+            @Override
+            void setStringParam(MStringParam mStringParam){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addStringParam(MStringParam macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("StringParam");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("StringParam");
+            throw ObjectMacroException.cannotModify("ParamStringSetter");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -73,12 +115,54 @@ public  class MParamStringSetter extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
+    public void addAllParamArg(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("ParamArg");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ParamStringSetter");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "ParamArg");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeParamArg(macro);
+            this.list_ParamArg.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeParamArg (Macro macro) {
+        macro.apply(new InternalsInitializer("ParamArg"){
+            @Override
+            void setParamArg(MParamArg mParamArg){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addParamArg(MParamArg macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ParamArg");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ParamArg");
+            throw ObjectMacroException.cannotModify("ParamStringSetter");
         }
         
         if(this.getMacros() != macro.getMacros()){

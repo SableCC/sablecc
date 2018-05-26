@@ -40,12 +40,54 @@ public  class MInitDirectives extends Macro{
         this.field_ParamName = pParamName;
     }
     
+    public void addAllNewDirectives(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("NewDirectives");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("InitDirectives");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "NewDirectives");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeNewDirectives(macro);
+            this.list_NewDirectives.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeNewDirectives (Macro macro) {
+        macro.apply(new InternalsInitializer("NewDirectives"){
+            @Override
+            void setNewDirective(MNewDirective mNewDirective){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addNewDirectives(MNewDirective macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("NewDirectives");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("NewDirective");
+            throw ObjectMacroException.cannotModify("InitDirectives");
         }
         
         if(this.getMacros() != macro.getMacros()){

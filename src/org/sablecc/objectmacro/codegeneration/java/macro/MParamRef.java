@@ -40,12 +40,61 @@ public  class MParamRef extends Macro{
         this.field_Name = pName;
     }
     
+    public void addAllGetParams(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("GetParams");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ParamRef");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "GetParams");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeGetParams(macro);
+            this.list_GetParams.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeGetParams (Macro macro) {
+        macro.apply(new InternalsInitializer("GetParams"){
+            @Override
+            void setContextArg(MContextArg mContextArg){
+            
+                
+                
+            }
+            
+            @Override
+            void setPlainText(MPlainText mPlainText){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addGetParams(MContextArg macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("GetParams");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ContextArg");
+            throw ObjectMacroException.cannotModify("ParamRef");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -62,7 +111,7 @@ public  class MParamRef extends Macro{
             throw ObjectMacroException.parameterNull("GetParams");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("PlainText");
+            throw ObjectMacroException.cannotModify("ParamRef");
         }
         
         if(this.getMacros() != macro.getMacros()){

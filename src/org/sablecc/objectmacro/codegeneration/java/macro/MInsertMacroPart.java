@@ -78,12 +78,82 @@ public  class MInsertMacroPart extends Macro{
         this.field_IndexInsert = pIndexInsert;
     }
     
+    public void addAllMacroBodyParts(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("MacroBodyParts");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("InsertMacroPart");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "MacroBodyParts");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeMacroBodyParts(macro);
+            this.list_MacroBodyParts.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeMacroBodyParts (Macro macro) {
+        macro.apply(new InternalsInitializer("MacroBodyParts"){
+            @Override
+            void setInitStringBuilder(MInitStringBuilder mInitStringBuilder){
+            
+                
+                
+            }
+            
+            @Override
+            void setStringPart(MStringPart mStringPart){
+            
+                
+                
+            }
+            
+            @Override
+            void setParamInsertPart(MParamInsertPart mParamInsertPart){
+            
+                
+                
+            }
+            
+            @Override
+            void setEolPart(MEolPart mEolPart){
+            
+                
+                
+            }
+            
+            @Override
+            void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addMacroBodyParts(MInitStringBuilder macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("InitStringBuilder");
+            throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -100,7 +170,7 @@ public  class MInsertMacroPart extends Macro{
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("StringPart");
+            throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -117,7 +187,7 @@ public  class MInsertMacroPart extends Macro{
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ParamInsertPart");
+            throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -134,7 +204,7 @@ public  class MInsertMacroPart extends Macro{
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("EolPart");
+            throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -163,12 +233,54 @@ public  class MInsertMacroPart extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
+    public void addAllSetInternals(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("SetInternals");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("InsertMacroPart");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "SetInternals");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeSetInternals(macro);
+            this.list_SetInternals.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeSetInternals (Macro macro) {
+        macro.apply(new InternalsInitializer("SetInternals"){
+            @Override
+            void setSetInternal(MSetInternal mSetInternal){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addSetInternals(MSetInternal macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("SetInternals");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("SetInternal");
+            throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
         if(this.getMacros() != macro.getMacros()){

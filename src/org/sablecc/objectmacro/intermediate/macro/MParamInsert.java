@@ -29,12 +29,54 @@ public  class MParamInsert extends Macro{
         this.ReferencedParamValue = new InternalValue(this.list_ReferencedParam, this.ReferencedParamContext);
     }
     
+    public void addAllReferencedParam(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("ReferencedParam");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("ParamInsert");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "ReferencedParam");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeReferencedParam(macro);
+            this.list_ReferencedParam.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeReferencedParam (Macro macro) {
+        macro.apply(new InternalsInitializer("ReferencedParam"){
+            @Override
+            void setName(MName mName){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addReferencedParam(MName macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("ReferencedParam");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("Name");
+            throw ObjectMacroException.cannotModify("ParamInsert");
         }
         
         if(this.getMacros() != macro.getMacros()){

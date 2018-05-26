@@ -6,7 +6,7 @@ import java.util.*;
 
 public  class MInitInternalsMethod extends Macro{
     
-    String field_InternalName;
+    String field_ParamName;
     
     final List<Macro> list_ApplyInternalsInitializer;
     
@@ -22,22 +22,64 @@ public  class MInitInternalsMethod extends Macro{
     
     private DNone ApplyInternalsInitializerNone;
     
-    public MInitInternalsMethod(String pInternalName, Macros macros){
+    public MInitInternalsMethod(String pParamName, Macros macros){
         
         
         this.setMacros(macros);
-        this.setPInternalName(pInternalName);
+        this.setPParamName(pParamName);
         this.list_ApplyInternalsInitializer = new LinkedList<>();
         
         this.ApplyInternalsInitializerValue = new InternalValue(this.list_ApplyInternalsInitializer, this.ApplyInternalsInitializerContext);
     }
     
-    private void setPInternalName( String pInternalName ){
-        if(pInternalName == null){
-            throw ObjectMacroException.parameterNull("InternalName");
+    private void setPParamName( String pParamName ){
+        if(pParamName == null){
+            throw ObjectMacroException.parameterNull("ParamName");
         }
     
-        this.field_InternalName = pInternalName;
+        this.field_ParamName = pParamName;
+    }
+    
+    public void addAllApplyInternalsInitializer(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("ApplyInternalsInitializer");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("InitInternalsMethod");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "ApplyInternalsInitializer");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeApplyInternalsInitializer(macro);
+            this.list_ApplyInternalsInitializer.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeApplyInternalsInitializer (Macro macro) {
+        macro.apply(new InternalsInitializer("ApplyInternalsInitializer"){
+            @Override
+            void setApplyInternalsInitializer(MApplyInternalsInitializer mApplyInternalsInitializer){
+            
+                
+                
+            }
+        });
     }
     
     public void addApplyInternalsInitializer(MApplyInternalsInitializer macro){
@@ -45,7 +87,7 @@ public  class MInitInternalsMethod extends Macro{
             throw ObjectMacroException.parameterNull("ApplyInternalsInitializer");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ApplyInternalsInitializer");
+            throw ObjectMacroException.cannotModify("InitInternalsMethod");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -57,9 +99,9 @@ public  class MInitInternalsMethod extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    String buildInternalName(){
+    String buildParamName(){
     
-        return this.field_InternalName;
+        return this.field_ParamName;
     }
     
     private String buildApplyInternalsInitializer(){
@@ -97,9 +139,9 @@ public  class MInitInternalsMethod extends Macro{
         return sb.toString();
     }
     
-    String getInternalName(){
+    String getParamName(){
     
-        return this.field_InternalName;
+        return this.field_ParamName;
     }
     
     private InternalValue getApplyInternalsInitializer(){
@@ -112,7 +154,7 @@ public  class MInitInternalsMethod extends Macro{
                 void setApplyInternalsInitializer(MApplyInternalsInitializer mApplyInternalsInitializer){
                 
                     
-                    mApplyInternalsInitializer.setInternalName(ApplyInternalsInitializerContext, getInternalName());
+                    mApplyInternalsInitializer.setParamName(ApplyInternalsInitializerContext, getParamName());
                 }
             });
         }
@@ -156,12 +198,12 @@ public  class MInitInternalsMethod extends Macro{
         StringBuilder sb0 = new StringBuilder();
     
         sb0.append("private void init");
-        sb0.append(buildInternalName());
+        sb0.append(buildParamName());
         sb0.append("Internals(Context context)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    for(Macro macro : this.list_");
-        sb0.append(buildInternalName());
+        sb0.append(buildParamName());
         sb0.append(")");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);

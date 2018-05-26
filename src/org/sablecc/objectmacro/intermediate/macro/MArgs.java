@@ -29,12 +29,61 @@ public  class MArgs extends Macro{
         this.ArgumentsValue = new InternalValue(this.list_Arguments, this.ArgumentsContext);
     }
     
+    public void addAllArguments(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("Arguments");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("Args");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "Arguments");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeArguments(macro);
+            this.list_Arguments.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeArguments (Macro macro) {
+        macro.apply(new InternalsInitializer("Arguments"){
+            @Override
+            void setVarArgument(MVarArgument mVarArgument){
+            
+                
+                
+            }
+            
+            @Override
+            void setTextArgument(MTextArgument mTextArgument){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addArguments(MVarArgument macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("Arguments");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("VarArgument");
+            throw ObjectMacroException.cannotModify("Args");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -51,7 +100,7 @@ public  class MArgs extends Macro{
             throw ObjectMacroException.parameterNull("Arguments");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("TextArgument");
+            throw ObjectMacroException.cannotModify("Args");
         }
         
         if(this.getMacros() != macro.getMacros()){

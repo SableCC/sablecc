@@ -599,22 +599,9 @@ public class ObjectMacro {
                 AIndentMacroBodyPart indentPart = (AIndentMacroBodyPart) bodyPart;
                 MIndentPart mIndentPart = factory.newIndentPart();
                 mMacro.addBody(mIndentPart);
-                List<org.sablecc.objectmacro.intermediate.macro.Macro> text_parts = createTextParts(indentPart.getStringPart());
+                List<Macro> text_parts = createTextParts(indentPart.getStringPart());
 
-                for(org.sablecc.objectmacro.intermediate.macro.Macro macro : text_parts){
-                    if(macro instanceof MStringPart){
-                        mIndentPart.addIndentationText((MStringPart) macro);
-                    }
-                    else if(macro instanceof MEolPart){
-                        mIndentPart.addIndentationText((MEolPart) macro);
-                    }
-                    else if(macro instanceof MMacroInsert){
-                        mIndentPart.addIndentationText((MMacroInsert) macro);
-                    }
-                    else if(macro instanceof MParamInsert){
-                        mIndentPart.addIndentationText((MParamInsert) macro);
-                    }
-                }
+                mIndentPart.addAllIndentationText(text_parts);
                 createMacroBody(mMacro, indentPart.getMacroBodyPart());
                 mMacro.addBody(factory.newEndIndentPart());
             }
@@ -624,10 +611,10 @@ public class ObjectMacro {
         }
     }
 
-    private static List<org.sablecc.objectmacro.intermediate.macro.Macro> createTextParts(
+    private static List<Macro> createTextParts(
             List<PStringPart> stringParts){
 
-        List<org.sablecc.objectmacro.intermediate.macro.Macro> macro_string_parts = new LinkedList<>();
+        List<Macro> macro_string_parts = new LinkedList<>();
 
         for(PStringPart stringPart : stringParts){
             if(stringPart instanceof ATextStringPart){
@@ -708,22 +695,9 @@ public class ObjectMacro {
 
                 MTextArgument textArgument = factory.newTextArgument(paramNames.get(i));
 
-                List<org.sablecc.objectmacro.intermediate.macro.Macro> text_parts = createTextParts(stringValue.getParts());
+                List<Macro> text_parts = createTextParts(stringValue.getParts());
 
-                for(org.sablecc.objectmacro.intermediate.macro.Macro macro : text_parts){
-                    if(macro instanceof MStringPart){
-                        textArgument.addTextParts((MStringPart) macro);
-                    }
-                    else if(macro instanceof MEolPart){
-                        textArgument.addTextParts((MEolPart) macro);
-                    }
-                    else if(macro instanceof MMacroInsert){
-                        textArgument.addTextParts((MMacroInsert) macro);
-                    }
-                    else if(macro instanceof MParamInsert){
-                        textArgument.addTextParts((MParamInsert) macro);
-                    }
-                }
+                textArgument.addAllTextParts(text_parts);
 
                 mArgs.addArguments(textArgument);
             }
@@ -757,25 +731,10 @@ public class ObjectMacro {
             Directive directive){
 
         MDirective mDirective = factory.newDirective();
-
         mDirective.addDirectiveName(buildName(directive.getDeclaration().getName()));
+        List<Macro> text_parts = createTextParts(directive.getDeclaration().getParts());
+        mDirective.addAllDirectiveTextParts(text_parts);
 
-        List<org.sablecc.objectmacro.intermediate.macro.Macro> text_parts = createTextParts(directive.getDeclaration().getParts());
-
-        for(org.sablecc.objectmacro.intermediate.macro.Macro macro : text_parts){
-            if(macro instanceof MStringPart){
-                mDirective.addDirectiveTextParts((MStringPart) macro);
-            }
-            else if(macro instanceof MEolPart){
-                mDirective.addDirectiveTextParts((MEolPart) macro);
-            }
-            else if(macro instanceof MMacroInsert){
-                mDirective.addDirectiveTextParts((MMacroInsert) macro);
-            }
-            else if(macro instanceof MParamInsert){
-                mDirective.addDirectiveTextParts((MParamInsert) macro);
-            }
-        }
         return mDirective;
     }
 

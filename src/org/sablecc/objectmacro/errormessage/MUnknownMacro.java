@@ -62,12 +62,54 @@ public  class MUnknownMacro extends Macro{
         this.field_Char = pChar;
     }
     
+    public void addAllVersions(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("Versions");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("UnknownMacro");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "Versions");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeVersions(macro);
+            this.list_Versions.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeVersions (Macro macro) {
+        macro.apply(new InternalsInitializer("Versions"){
+            @Override
+            void setPlainText(MPlainText mPlainText){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addVersions(MPlainText macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("Versions");
         }
         if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("PlainText");
+            throw ObjectMacroException.cannotModify("UnknownMacro");
         }
         
         if(this.getMacros() != macro.getMacros()){

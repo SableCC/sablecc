@@ -33,11 +33,55 @@ public  class MSwitchVersion extends Macro{
         this.VersionCasesValue = new InternalValue(this.list_VersionCases, this.VersionCasesContext);
     }
     
+    public void addAllVersionCases(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("VersionCases");
+        }
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("SwitchVersion");
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "VersionCases");
+            }
+        
+            if(this.getMacros() != macro.getMacros()){
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeVersionCases(macro);
+            this.list_VersionCases.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeVersionCases (Macro macro) {
+        macro.apply(new InternalsInitializer("VersionCases"){
+            @Override
+            void setMacroCaseInit(MMacroCaseInit mMacroCaseInit){
+            
+                
+                
+            }
+        });
+    }
+    
     public void addVersionCases(MMacroCaseInit macro){
         if(macro == null){
             throw ObjectMacroException.parameterNull("VersionCases");
         }
-        
+        if(this.build_state != null){
+            throw ObjectMacroException.cannotModify("SwitchVersion");
+        }
         
         if(this.getMacros() != macro.getMacros()){
             throw ObjectMacroException.diffMacros();
