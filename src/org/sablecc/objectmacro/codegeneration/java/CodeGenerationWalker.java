@@ -350,7 +350,16 @@ public class CodeGenerationWalker
 
         if(!this.currentMacroIsAbstract
                 && !this.currentMacroIsAllVersionned){
+
             this.currentConstructor.addSuper(this.factory.newSuperCall());
+            MAppliedVersion appliedVersion = this.factory.newAppliedVersion();
+
+            for(TString version : node.getVersions()){
+                String version_name = GenerationUtils.string(version).toUpperCase();
+                appliedVersion.addVersions(this.factory.newPlainText(version_name));
+            }
+
+            this.currentMacroToBuild.addAppliedVersion(appliedVersion);
         }
 
         this.currentMacroHasInternals = node.getInternals().size() > 0;
