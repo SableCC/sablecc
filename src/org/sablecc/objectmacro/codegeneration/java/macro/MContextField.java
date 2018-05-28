@@ -14,16 +14,16 @@ public  class MContextField extends Macro{
         this.setMacros(macros);
     }
     
-        void setParamName(
-                Context context,
-                String value) {
+    void setParamName(
+            Context context,
+            String value) {
     
-            if(value == null){
-                throw new RuntimeException("value cannot be null here");
-            }
-    
-            this.field_ParamName.put(context, value);
+        if(value == null){
+            throw new RuntimeException("value cannot be null here");
         }
+    
+        this.field_ParamName.put(context, value);
+    }
     
     String buildParamName(Context context){
     
@@ -37,14 +37,14 @@ public  class MContextField extends Macro{
     
     
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setContextField(this);
-     }
+        internalsInitializer.setContextField(this);
+    }
     
-    @Override
-    public String build(Context context){
+    
+    String build(Context context){
     
         CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
@@ -74,7 +74,6 @@ public  class MContextField extends Macro{
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    
     
     
     private void setMacros(Macros macros){

@@ -193,16 +193,7 @@ public abstract class Macro {
 
     Macros macros;
 
-    public String build(){
-
-        throw new RuntimeException("build cannot be invoked here");
-    }
-
-    String build(
-            Context context){
-
-        throw new RuntimeException("build cannot be invoked here");
-    }
+    abstract String build(Context context);
 
     void apply(
             InternalsInitializer internalsInitializer){
@@ -525,8 +516,7 @@ Macro macro
         init_internals_methods: init_internals_method, separator="\n\n";
         init_directives: init_directives, separator="\n\n", before_first="\n";
         redefined_apply_initializer: redefined_apply_initializer(class_name);
-        macro_builder: macro_builder, before_first="\n";
-        empty_builder_with_context: empty_builder_with_context, before_first="\n";
+        macro_builders: macro_builder, abstract_builder, empty_builder_with_context, separator="\n\n", before_first="\n";
         abstract: abstract;
         applied_version: applied_version, before_first="\n";
         init_macros_method: set_macros_method, before_first="\n";
@@ -546,8 +536,7 @@ public {abstract} class M{class_name} extends M{parent_class}{
 {init_internals_methods}
 {init_directives}
 {redefined_apply_initializer}
-{macro_builder}
-{empty_builder_with_context}
+{macro_builders}
 
 {init_macros_method}
 {End}
@@ -695,7 +684,7 @@ public void addAll{param_name}(
 
 int i = 0;
 
-for(Macro macro: macros) {
+for(Macro macro : macros) {
     if(macro == null) {
         throw ObjectMacroException.macroNull(i, "{param_name}");
     }
@@ -797,7 +786,7 @@ private String build{name}(){
         sb.append(this.{name}None.apply(i, "", nb_macros));
     }
 
-    for(Macro macro: macros){
+    for(Macro macro : macros){
         expansion = macro.build(local_context);
 
         if(this.{name}BeforeFirst != null){
@@ -839,16 +828,16 @@ Macro internal_macro_setter
     Param
         param_name: String;
 {Body}
-    void set{param_name}(
-                Context context,
-                InternalValue internal_value) {
+void set{param_name}(
+            Context context,
+            InternalValue internal_value) {
 
-            if(internal_value == null){
-                throw new RuntimeException("macros cannot be null");
-            }
+    if(internal_value == null){
+        throw new RuntimeException("macros cannot be null");
+    }
 
-            this.list_{param_name}.put(context, internal_value);
-        }
+    this.list_{param_name}.put(context, internal_value);
+}
 {End}
 
 # =========== param_string_setter =========
@@ -910,16 +899,16 @@ Macro internal_string_setter
     Param
         name: String;
 {Body}
-    void set{name}(
-            Context context,
-            String value) {
+void set{name}(
+        Context context,
+        String value) {
 
-        if(value == null){
-            throw new RuntimeException("value cannot be null here");
-        }
-
-        this.field_{name}.put(context, value);
+    if(value == null){
+        throw new RuntimeException("value cannot be null here");
     }
+
+    this.field_{name}.put(context, value);
+}
 {End}
 
 # ========= init_internals_method ========
@@ -995,9 +984,11 @@ Macro macro_builder
         directives_calls: init_directive_call, separator="\n";
         internals_calls: init_internals_call, separator="\n";
         macro_body_parts: init_string_builder, string_part, param_insert_part,  eol_part, insert_macro_part, add_indent, indent_part, separator="\n";
+        public: public, after_last=" ";
+        override: override;
 {Body}
-@Override
-{Insert: public} String build({context_param}){
+{override}
+{public}String build({context_param}){
 
     CacheBuilder cache_builder = {context_cache_builder};
 
@@ -1046,13 +1037,20 @@ Macro init_internals_call
 init{param_name}Internals({context_arg});
 {End}
 
+# ============ abstract_builder ===========
+
+Macro abstract_builder
+{Body}
+public abstract String build();
+{End}
+
 # ============ empty_builder_with_context ============
 
 Macro empty_builder_with_context
 {Body}
 @Override
 String build(Context context) {
- return build();
+    return build();
 }
 {End}
 
@@ -1077,11 +1075,11 @@ Macro redefined_apply_initializer
         class_name: String;
 {Body}
 @Override
- void apply(
-         InternalsInitializer internalsInitializer){
+void apply(
+        InternalsInitializer internalsInitializer){
 
-     internalsInitializer.set{class_name}(this);
- }
+    internalsInitializer.set{class_name}(this);
+}
 {End}
 
 # ===================================================
@@ -1748,7 +1746,6 @@ class MUserErrorIncorrectType extends Macro{
            internalsInitializer.setUserErrorIncorrectType(this);
        }
 
-       @Override
        public String build(){
 
            CacheBuilder cache_builder = this.cacheBuilder;
@@ -1809,7 +1806,6 @@ class MObjectMacroUserErrorHead extends Macro{
         internalsInitializer.setObjectMacroUserErrorHead(this);
     }
 
-    @Override
     public String build(){
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -1885,7 +1881,6 @@ class MUserErrorParameterNull extends Macro{
         internalsInitializer.setUserErrorParameterNull(this);
     }
 
-    @Override
     public String build(){
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -1990,7 +1985,6 @@ class MUserErrorMacroNullInList extends Macro{
     }
 
 
-    @Override
     public String build(){
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -2074,7 +2068,6 @@ class MUserErrorCannotModify extends Macro{
         internalsInitializer.setUserErrorCannotModify(this);
     }
 
-    @Override
     public String build(){
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -2156,7 +2149,6 @@ class MUserErrorCyclicReference extends Macro{
         internalsInitializer.setUserErrorCyclicReference(this);
     }
 
-    @Override
     public String build(){
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -2217,7 +2209,6 @@ public class MUserErrorVersionNull extends Macro{
         internalsInitializer.setUserErrorVersionNull(this);
     }
 
-    @Override
     public String build(){
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -2288,14 +2279,13 @@ class MUserErrorInternalException extends Macro{
     }
 
     @Override
-     void apply(
+    void apply(
              InternalsInitializer internalsInitializer){
 
-         internalsInitializer.setUserErrorInternalException(this);
-     }
+        internalsInitializer.setUserErrorInternalException(this);
+    }
 
 
-    @Override
     public String build(){
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -2361,7 +2351,6 @@ class MUserErrorVersionsDifferent extends Macro{
         internalsInitializer.setUserErrorVersionsDifferent(this);
     }
 
-    @Override
     public String build(){
 
         CacheBuilder cache_builder = this.cacheBuilder;

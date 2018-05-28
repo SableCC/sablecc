@@ -35,13 +35,13 @@ public  class MInvalidLongOption extends Macro{
     
     
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setInvalidLongOption(this);
-     }
+        internalsInitializer.setInvalidLongOption(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -90,7 +90,7 @@ public  class MInvalidLongOption extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

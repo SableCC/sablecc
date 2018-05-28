@@ -17,16 +17,7 @@ public abstract class Macro {
 
     Macros macros;
 
-    public String build(){
-
-        throw new RuntimeException("build cannot be invoked here");
-    }
-
-    String build(
-            Context context){
-
-        throw new RuntimeException("build cannot be invoked here");
-    }
+    abstract String build(Context context);
 
     void apply(
             InternalsInitializer internalsInitializer){

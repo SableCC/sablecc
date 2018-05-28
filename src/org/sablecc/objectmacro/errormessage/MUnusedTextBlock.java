@@ -77,13 +77,13 @@ public  class MUnusedTextBlock extends Macro{
     
     
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setUnusedTextBlock(this);
-     }
+        internalsInitializer.setUnusedTextBlock(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -129,7 +129,7 @@ public  class MUnusedTextBlock extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

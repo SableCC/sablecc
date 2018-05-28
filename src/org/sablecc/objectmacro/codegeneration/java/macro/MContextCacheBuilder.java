@@ -18,13 +18,13 @@ public  class MContextCacheBuilder extends Macro{
     
     
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setContextCacheBuilder(this);
-     }
+        internalsInitializer.setContextCacheBuilder(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -56,7 +56,7 @@ public  class MContextCacheBuilder extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

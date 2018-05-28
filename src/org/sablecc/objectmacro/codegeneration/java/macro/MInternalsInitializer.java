@@ -57,7 +57,7 @@ public  class MInternalsInitializer extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "PackageDeclaration");
             }
@@ -116,7 +116,7 @@ public  class MInternalsInitializer extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "ParentInternalSetters");
             }
@@ -176,7 +176,7 @@ public  class MInternalsInitializer extends Macro{
             sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.PackageDeclarationBeforeFirst != null){
@@ -211,7 +211,7 @@ public  class MInternalsInitializer extends Macro{
             sb.append(this.ParentInternalSettersNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ParentInternalSettersBeforeFirst != null){
@@ -281,13 +281,13 @@ public  class MInternalsInitializer extends Macro{
         this.ParentInternalSettersValue.setSeparator(this.ParentInternalSettersSeparator);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setInternalsInitializer(this);
-     }
+        internalsInitializer.setInternalsInitializer(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -424,7 +424,7 @@ public  class MInternalsInitializer extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

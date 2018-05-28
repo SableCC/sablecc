@@ -52,7 +52,7 @@ public  class MParamMacroRefBuilder extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "ContextName");
             }
@@ -117,7 +117,7 @@ public  class MParamMacroRefBuilder extends Macro{
             sb.append(this.ContextNameNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ContextNameBeforeFirst != null){
@@ -167,13 +167,13 @@ public  class MParamMacroRefBuilder extends Macro{
         this.ContextNameValue.setNone(this.ContextNameNone);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setParamMacroRefBuilder(this);
-     }
+        internalsInitializer.setParamMacroRefBuilder(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -232,7 +232,7 @@ public  class MParamMacroRefBuilder extends Macro{
         sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    for(Macro macro: macros)");
+        sb0.append("    for(Macro macro : macros)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append("        expansion = macro.build(local_context);");
@@ -291,7 +291,7 @@ public  class MParamMacroRefBuilder extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

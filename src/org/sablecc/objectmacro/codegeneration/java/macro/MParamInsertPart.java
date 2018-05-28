@@ -63,7 +63,7 @@ public  class MParamInsertPart extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "ContextArg");
             }
@@ -133,7 +133,7 @@ public  class MParamInsertPart extends Macro{
             sb.append(this.ContextArgNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ContextArgBeforeFirst != null){
@@ -185,13 +185,13 @@ public  class MParamInsertPart extends Macro{
         
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setParamInsertPart(this);
-     }
+        internalsInitializer.setParamInsertPart(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -229,7 +229,7 @@ public  class MParamInsertPart extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

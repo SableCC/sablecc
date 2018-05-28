@@ -41,7 +41,7 @@ public  class MAppliedVersion extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "Versions");
             }
@@ -101,7 +101,7 @@ public  class MAppliedVersion extends Macro{
             sb.append(this.VersionsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.VersionsBeforeFirst != null){
@@ -146,13 +146,13 @@ public  class MAppliedVersion extends Macro{
         this.VersionsValue.setSeparator(this.VersionsSeparator);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setAppliedVersion(this);
-     }
+        internalsInitializer.setAppliedVersion(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -185,7 +185,7 @@ public  class MAppliedVersion extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

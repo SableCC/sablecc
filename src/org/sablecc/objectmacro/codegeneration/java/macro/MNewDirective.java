@@ -65,7 +65,7 @@ public  class MNewDirective extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "TextParts");
             }
@@ -184,16 +184,16 @@ public  class MNewDirective extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-        void setParamName(
-                Context context,
-                String value) {
+    void setParamName(
+            Context context,
+            String value) {
     
-            if(value == null){
-                throw new RuntimeException("value cannot be null here");
-            }
-    
-            this.field_ParamName.put(context, value);
+        if(value == null){
+            throw new RuntimeException("value cannot be null here");
         }
+    
+        this.field_ParamName.put(context, value);
+    }
     
     String buildDirectiveName(){
     
@@ -218,7 +218,7 @@ public  class MNewDirective extends Macro{
             sb.append(this.TextPartsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.TextPartsBeforeFirst != null){
@@ -304,14 +304,14 @@ public  class MNewDirective extends Macro{
         this.TextPartsValue.setSeparator(this.TextPartsSeparator);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setNewDirective(this);
-     }
+        internalsInitializer.setNewDirective(this);
+    }
     
-    @Override
-    public String build(Context context){
+    
+    String build(Context context){
     
         CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
@@ -361,7 +361,6 @@ public  class MNewDirective extends Macro{
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    
     
     
     private void setMacros(Macros macros){

@@ -101,7 +101,7 @@ public  class MParentName extends Macro{
             sb.append(this.ParentNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ParentBeforeFirst != null){
@@ -143,13 +143,13 @@ public  class MParentName extends Macro{
         
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setParentName(this);
-     }
+        internalsInitializer.setParentName(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -185,7 +185,7 @@ public  class MParentName extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

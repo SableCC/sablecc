@@ -52,7 +52,7 @@ public  class MParamRef extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "GetParams");
             }
@@ -141,7 +141,7 @@ public  class MParamRef extends Macro{
             sb.append(this.GetParamsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.GetParamsBeforeFirst != null){
@@ -195,13 +195,13 @@ public  class MParamRef extends Macro{
         
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setParamRef(this);
-     }
+        internalsInitializer.setParamRef(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -237,7 +237,7 @@ public  class MParamRef extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

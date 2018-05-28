@@ -52,7 +52,7 @@ public  class MAddIndent extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "IndentParts");
             }
@@ -213,7 +213,7 @@ public  class MAddIndent extends Macro{
             sb.append(this.IndentPartsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.IndentPartsBeforeFirst != null){
@@ -291,13 +291,13 @@ public  class MAddIndent extends Macro{
         this.IndentPartsValue.setSeparator(this.IndentPartsSeparator);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setAddIndent(this);
-     }
+        internalsInitializer.setAddIndent(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -337,7 +337,7 @@ public  class MAddIndent extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

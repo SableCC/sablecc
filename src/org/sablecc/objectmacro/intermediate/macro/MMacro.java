@@ -746,7 +746,7 @@ public  class MMacro extends Macro{
             sb.append(this.MacroNameNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.MacroNameBeforeFirst != null){
@@ -781,7 +781,7 @@ public  class MMacro extends Macro{
             sb.append(this.ParentNameNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ParentNameBeforeFirst != null){
@@ -816,7 +816,7 @@ public  class MMacro extends Macro{
             sb.append(this.IsAbstractNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.IsAbstractBeforeFirst != null){
@@ -851,7 +851,7 @@ public  class MMacro extends Macro{
             sb.append(this.IsAllVersionnedNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.IsAllVersionnedBeforeFirst != null){
@@ -886,7 +886,7 @@ public  class MMacro extends Macro{
             sb.append(this.ParametersNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ParametersBeforeFirst != null){
@@ -921,7 +921,7 @@ public  class MMacro extends Macro{
             sb.append(this.InternalsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.InternalsBeforeFirst != null){
@@ -956,7 +956,7 @@ public  class MMacro extends Macro{
             sb.append(this.BodyNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.BodyBeforeFirst != null){
@@ -991,7 +991,7 @@ public  class MMacro extends Macro{
             sb.append(this.VersionsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.VersionsBeforeFirst != null){
@@ -1244,13 +1244,13 @@ public  class MMacro extends Macro{
         this.VersionsValue.setBeforeFirst(this.VersionsBeforeFirst);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setMacro(this);
-     }
+        internalsInitializer.setMacro(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -1325,7 +1325,7 @@ public  class MMacro extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

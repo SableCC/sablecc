@@ -33,14 +33,13 @@ class MUserErrorInternalException extends Macro{
     }
 
     @Override
-     void apply(
+    void apply(
              InternalsInitializer internalsInitializer){
 
-         internalsInitializer.setUserErrorInternalException(this);
-     }
+        internalsInitializer.setUserErrorInternalException(this);
+    }
 
 
-    @Override
     public String build(){
 
         CacheBuilder cache_builder = this.cacheBuilder;

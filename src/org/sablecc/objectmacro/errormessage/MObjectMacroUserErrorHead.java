@@ -16,7 +16,6 @@ class MObjectMacroUserErrorHead extends Macro{
         internalsInitializer.setObjectMacroUserErrorHead(this);
     }
 
-    @Override
     public String build(){
 
         CacheBuilder cache_builder = this.cacheBuilder;

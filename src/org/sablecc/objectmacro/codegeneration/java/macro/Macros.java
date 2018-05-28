@@ -412,6 +412,14 @@ public class Macros{
         return mInitInternalsCall;
     }
     
+    public MAbstractBuilder newAbstractBuilder(){
+        MAbstractBuilder mAbstractBuilder;
+    
+        mAbstractBuilder = new MAbstractBuilder(this);
+    
+        return mAbstractBuilder;
+    }
+    
     public MEmptyBuilderWithContext newEmptyBuilderWithContext(){
         MEmptyBuilderWithContext mEmptyBuilderWithContext;
     

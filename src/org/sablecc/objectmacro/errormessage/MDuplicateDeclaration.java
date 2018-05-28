@@ -181,7 +181,7 @@ public  class MDuplicateDeclaration extends Macro{
             sb.append(this.VersionNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.VersionBeforeFirst != null){
@@ -251,13 +251,13 @@ public  class MDuplicateDeclaration extends Macro{
         this.VersionValue.setBeforeFirst(this.VersionBeforeFirst);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setDuplicateDeclaration(this);
-     }
+        internalsInitializer.setDuplicateDeclaration(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -311,7 +311,7 @@ public  class MDuplicateDeclaration extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

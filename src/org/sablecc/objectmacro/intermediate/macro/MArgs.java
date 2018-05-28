@@ -125,7 +125,7 @@ public  class MArgs extends Macro{
             sb.append(this.ArgumentsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ArgumentsBeforeFirst != null){
@@ -177,13 +177,13 @@ public  class MArgs extends Macro{
         this.ArgumentsValue.setSeparator(this.ArgumentsSeparator);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setArgs(this);
-     }
+        internalsInitializer.setArgs(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -225,7 +225,7 @@ public  class MArgs extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     
