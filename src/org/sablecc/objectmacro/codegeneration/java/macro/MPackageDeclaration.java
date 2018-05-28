@@ -44,7 +44,6 @@ public class MPackageDeclaration
         internalsInitializer.setPackageDeclaration(this);
     }
 
-    @Override
     public String build() {
 
         CacheBuilder cache_builder = this.cacheBuilder;

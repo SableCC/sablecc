@@ -287,7 +287,6 @@ public class MDuplicateDeclaration
         internalsInitializer.setDuplicateDeclaration(this);
     }
 
-    @Override
     public String build() {
 
         CacheBuilder cache_builder = this.cacheBuilder;

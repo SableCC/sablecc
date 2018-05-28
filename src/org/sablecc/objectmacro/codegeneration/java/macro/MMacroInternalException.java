@@ -168,7 +168,6 @@ public class MMacroInternalException
         internalsInitializer.setMacroInternalException(this);
     }
 
-    @Override
     public String build() {
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -259,20 +258,18 @@ public class MMacroInternalException
         sb0.append(LINE_SEPARATOR);
         sb0.append("    @Override");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("     void apply(");
+        sb0.append("    void apply(");
         sb0.append(LINE_SEPARATOR);
         sb0.append("             InternalsInitializer internalsInitializer)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(
-                "         internalsInitializer.setUserErrorInternalException(this);");
+                "        internalsInitializer.setUserErrorInternalException(this);");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("     }");
+        sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    @Override");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    public String build()");
         sb0.append("{");

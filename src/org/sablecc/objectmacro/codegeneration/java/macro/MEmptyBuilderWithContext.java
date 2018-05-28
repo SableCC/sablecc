@@ -20,7 +20,6 @@ public class MEmptyBuilderWithContext
         internalsInitializer.setEmptyBuilderWithContext(this);
     }
 
-    @Override
     public String build() {
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -45,7 +44,7 @@ public class MEmptyBuilderWithContext
         sb0.append("String build(Context context) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
-        sb0.append(" return build();");
+        sb0.append("    return build();");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
 

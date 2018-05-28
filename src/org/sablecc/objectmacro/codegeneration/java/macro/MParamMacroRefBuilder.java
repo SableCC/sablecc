@@ -191,7 +191,6 @@ public class MParamMacroRefBuilder
         internalsInitializer.setParamMacroRefBuilder(this);
     }
 
-    @Override
     public String build() {
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -250,7 +249,7 @@ public class MParamMacroRefBuilder
         sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    for(Macro macro: macros)");
+        sb0.append("    for(Macro macro : macros)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append("        expansion = macro.build(local_context);");

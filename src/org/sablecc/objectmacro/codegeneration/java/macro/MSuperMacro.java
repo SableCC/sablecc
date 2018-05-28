@@ -168,7 +168,6 @@ public class MSuperMacro
         internalsInitializer.setSuperMacro(this);
     }
 
-    @Override
     public String build() {
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -229,26 +228,7 @@ public class MSuperMacro
         sb0.append("    Macros macros;");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    public String build()");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(
-                "        throw new RuntimeException(\"build cannot be invoked here\");");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    }");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    String build(");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("            Context context)");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(
-                "        throw new RuntimeException(\"build cannot be invoked here\");");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    }");
+        sb0.append("    abstract String build(Context context);");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("    void apply(");

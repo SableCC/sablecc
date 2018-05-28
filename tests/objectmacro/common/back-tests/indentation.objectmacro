@@ -1,0 +1,33 @@
+Macro a
+    Param
+        x : b;
+        y : c;
+        z : d;
+{Body}
+{Indent: "\t"}
+{x}
+{y}
+{z}
+{End}
+{End}
+
+Macro b
+    Param
+        x : c;
+{Body}
+{
+{Indent: "\t"}
+{x}
+{End}
+}
+{End}
+
+Macro c
+{Body}
+C++
+{End}
+
+Macro d
+{Body}
+INDEED
+{End}

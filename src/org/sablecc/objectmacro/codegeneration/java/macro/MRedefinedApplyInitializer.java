@@ -46,7 +46,7 @@ public class MRedefinedApplyInitializer
     }
 
     @Override
-    public String build(
+    String build(
             Context context) {
 
         CacheBuilder cache_builder = this.cacheBuilders.get(context);
@@ -68,17 +68,17 @@ public class MRedefinedApplyInitializer
 
         sb0.append("@Override");
         sb0.append(LINE_SEPARATOR);
-        sb0.append(" void apply(");
+        sb0.append("void apply(");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("         InternalsInitializer internalsInitializer)");
+        sb0.append("        InternalsInitializer internalsInitializer)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("     internalsInitializer.set");
+        sb0.append("    internalsInitializer.set");
         sb0.append(buildClassName(context));
         sb0.append("(this);");
         sb0.append(LINE_SEPARATOR);
-        sb0.append(" }");
+        sb0.append("}");
 
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();

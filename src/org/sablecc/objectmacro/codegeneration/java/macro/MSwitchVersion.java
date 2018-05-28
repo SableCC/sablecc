@@ -225,7 +225,7 @@ public class MSwitchVersion
     }
 
     @Override
-    public String build(
+    String build(
             Context context) {
 
         CacheBuilder cache_builder = this.cacheBuilders.get(context);

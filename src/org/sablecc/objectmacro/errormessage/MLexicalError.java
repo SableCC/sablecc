@@ -92,7 +92,6 @@ public class MLexicalError
         internalsInitializer.setLexicalError(this);
     }
 
-    @Override
     public String build() {
 
         CacheBuilder cache_builder = this.cacheBuilder;

@@ -1,0 +1,11 @@
+Macro escape
+    Param
+        text : escape2, before_first="\"";
+{Body}
+{text}
+{End}
+
+Macro escape2
+{Body}
+
+{End}

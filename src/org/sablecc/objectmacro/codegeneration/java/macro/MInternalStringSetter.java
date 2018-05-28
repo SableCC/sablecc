@@ -44,7 +44,6 @@ public class MInternalStringSetter
         internalsInitializer.setInternalStringSetter(this);
     }
 
-    @Override
     public String build() {
 
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -64,30 +63,30 @@ public class MInternalStringSetter
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append("    void set");
+        sb0.append("void set");
         sb0.append(buildName());
         sb0.append("(");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("            Context context,");
+        sb0.append("        Context context,");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("            String value) ");
+        sb0.append("        String value) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("        if(value == null)");
+        sb0.append("    if(value == null)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(
-                "            throw new RuntimeException(\"value cannot be null here\");");
+                "        throw new RuntimeException(\"value cannot be null here\");");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("        }");
+        sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("        this.field_");
+        sb0.append("    this.field_");
         sb0.append(buildName());
         sb0.append(".put(context, value);");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    }");
+        sb0.append("}");
 
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();

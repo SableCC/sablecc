@@ -164,7 +164,6 @@ public class MDuplicateMacroVersionDeclaration
         internalsInitializer.setDuplicateMacroVersionDeclaration(this);
     }
 
-    @Override
     public String build() {
 
         CacheBuilder cache_builder = this.cacheBuilder;

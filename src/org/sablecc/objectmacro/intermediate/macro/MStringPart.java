@@ -44,7 +44,6 @@ public class MStringPart
         internalsInitializer.setStringPart(this);
     }
 
-    @Override
     public String build() {
 
         CacheBuilder cache_builder = this.cacheBuilder;

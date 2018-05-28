@@ -71,6 +71,7 @@ class ChildrenCollector
                     String version_name
                             = GenerationUtils.string(version).toUpperCase();
                     this.currentMacro.addChild(version_name, macro_name);
+                    this.macros.get(macro_name).setParent(this.currentMacro);
                 }
             }
         }

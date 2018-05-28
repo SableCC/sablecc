@@ -346,6 +346,13 @@ class InternalsInitializer {
                 this._paramName);
     }
 
+    void setAbstractBuilder(
+            MAbstractBuilder mAbstractBuilder) {
+
+        throw ObjectMacroException.incorrectType("MAbstractBuilder",
+                this._paramName);
+    }
+
     void setEmptyBuilderWithContext(
             MEmptyBuilderWithContext mEmptyBuilderWithContext) {
 
