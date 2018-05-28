@@ -20,7 +20,7 @@ public  class MExIncorrectType extends Macro{
     
     private DNone PackageDeclarationNone;
     
-    public MExIncorrectType(Macros macros){
+    MExIncorrectType(Macros macros){
         
         
         this.setMacros(macros);
@@ -35,13 +35,13 @@ public  class MExIncorrectType extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("ExIncorrectType");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "PackageDeclaration");
             }
@@ -75,7 +75,7 @@ public  class MExIncorrectType extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("ExIncorrectType");
         }
         
@@ -101,7 +101,7 @@ public  class MExIncorrectType extends Macro{
             sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.PackageDeclarationBeforeFirst != null){
@@ -155,18 +155,18 @@ public  class MExIncorrectType extends Macro{
     @Override
     public String build(){
     
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("ExIncorrectType");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -301,31 +301,24 @@ public  class MExIncorrectType extends Macro{
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("           BuildState buildState = this.build_state;");
+        sb0.append("           CacheBuilder cache_builder = this.cacheBuilder;");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("           if(buildState == null)");
+        sb0.append("           if(cache_builder == null)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("               buildState = new BuildState();");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("           }");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("           else if(buildState.getExpansion() == null)");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("               throw ObjectMacroException.cyclicReference(\"UserErrorIncorrectType\");");
+        sb0.append("               cache_builder = new CacheBuilder();");
         sb0.append(LINE_SEPARATOR);
         sb0.append("           }");
         sb0.append(LINE_SEPARATOR);
         sb0.append("           else");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("               return buildState.getExpansion();");
+        sb0.append("               return cache_builder.getExpansion();");
         sb0.append(LINE_SEPARATOR);
         sb0.append("           }");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("           this.build_state = buildState;");
+        sb0.append("           this.cacheBuilder = cache_builder;");
         sb0.append(LINE_SEPARATOR);
         sb0.append("           List<String> indentations = new LinkedList<>();");
         sb0.append(LINE_SEPARATOR);
@@ -353,7 +346,7 @@ public  class MExIncorrectType extends Macro{
         sb0.append("           sb0.append(\"'.\");");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("           buildState.setExpansion(sb0.toString());");
+        sb0.append("           cache_builder.setExpansion(sb0.toString());");
         sb0.append(LINE_SEPARATOR);
         sb0.append("           return sb0.toString();");
         sb0.append(LINE_SEPARATOR);
@@ -371,7 +364,7 @@ public  class MExIncorrectType extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("   }");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     

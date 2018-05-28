@@ -24,7 +24,7 @@ public  class MSwitchVersion extends Macro{
     
     private Map<Context, InternalValue> list_Args = new LinkedHashMap<>();
     
-    public MSwitchVersion(Macros macros){
+    MSwitchVersion(Macros macros){
         
         
         this.setMacros(macros);
@@ -39,13 +39,13 @@ public  class MSwitchVersion extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("VersionCases");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("SwitchVersion");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "VersionCases");
             }
@@ -79,7 +79,7 @@ public  class MSwitchVersion extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("VersionCases");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("SwitchVersion");
         }
         
@@ -127,7 +127,7 @@ public  class MSwitchVersion extends Macro{
             sb.append(this.VersionCasesNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.VersionCasesBeforeFirst != null){
@@ -202,18 +202,18 @@ public  class MSwitchVersion extends Macro{
     @Override
     public String build(Context context){
     
-        BuildState buildState = this.build_states.get(context);
+        CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("SwitchVersion");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_states.put(context, buildState);
+        this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -239,7 +239,7 @@ public  class MSwitchVersion extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     

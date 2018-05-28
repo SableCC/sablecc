@@ -8,7 +8,7 @@ public  class MInternalStringField extends Macro{
     
     String field_Name;
     
-    public MInternalStringField(String pName, Macros macros){
+    MInternalStringField(String pName, Macros macros){
         
         
         this.setMacros(macros);
@@ -44,18 +44,18 @@ public  class MInternalStringField extends Macro{
     @Override
     public String build(){
     
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("InternalStringField");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -69,7 +69,7 @@ public  class MInternalStringField extends Macro{
         sb0.append(buildName());
         sb0.append(" = new LinkedHashMap<>();");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     

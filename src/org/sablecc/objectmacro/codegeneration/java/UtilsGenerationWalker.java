@@ -62,7 +62,7 @@ public class UtilsGenerationWalker extends
         MMacroInternalException mMacroInternalException = this.factory.newMacroInternalException();
 
         MClassInternalValue mClassInternalValue = this.factory.newClassInternalValue();
-        MClassBuildState mClassBuildState = this.factory.newClassBuildState();
+        MClassCacheBuilder mClassCacheBuilder = this.factory.newClassCacheBuilder();
         MCycleDetectorClass mTarjanClass = this.factory.newCycleDetectorClass();
 
         MSuperDirective mSuperDirective = this.factory.newSuperDirective();
@@ -89,7 +89,7 @@ public class UtilsGenerationWalker extends
             mClassBeforeFirst.addPackageDeclaration(mPackageDeclaration);
             mClassNone.addPackageDeclaration(mPackageDeclaration);
             mClassSeparator.addPackageDeclaration(mPackageDeclaration);
-            mClassBuildState.addPackageDeclaration(mPackageDeclaration);
+            mClassCacheBuilder.addPackageDeclaration(mPackageDeclaration);
             mTarjanClass.addPackageDeclaration(mPackageDeclaration);
             mExVersionNull.addPackageDeclaration(mPackageDeclaration);
             mExVersionsDifferent.addPackageDeclaration(mPackageDeclaration);
@@ -126,8 +126,8 @@ public class UtilsGenerationWalker extends
         GenerationUtils.writeFile(this.packageDirectory, "DSeparator.java",
                 mClassSeparator.build());
 
-        GenerationUtils.writeFile(this.packageDirectory, "BuildState.java",
-                mClassBuildState.build());
+        GenerationUtils.writeFile(this.packageDirectory, "CacheBuilder.java",
+                mClassCacheBuilder.build());
         GenerationUtils.writeFile(this.packageDirectory, "CycleDetector.java",
                 mTarjanClass.build());
 

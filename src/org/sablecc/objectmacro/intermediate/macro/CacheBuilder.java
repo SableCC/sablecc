@@ -2,7 +2,7 @@
 
 package org.sablecc.objectmacro.intermediate.macro;
 
-class BuildState {
+class CacheBuilder {
 
     private String expansion = null;
 

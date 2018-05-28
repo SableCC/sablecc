@@ -48,7 +48,7 @@ public  class MParam extends Macro{
     
     private DNone DirectivesNone;
     
-    public MParam(Macros macros){
+    MParam(Macros macros){
         
         
         this.setMacros(macros);
@@ -67,7 +67,7 @@ public  class MParam extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Param");
         }
         
@@ -107,7 +107,7 @@ public  class MParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Param");
         }
         
@@ -126,7 +126,7 @@ public  class MParam extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Type");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Param");
         }
         
@@ -173,7 +173,7 @@ public  class MParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Type");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Param");
         }
         
@@ -190,7 +190,7 @@ public  class MParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Type");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Param");
         }
         
@@ -209,7 +209,7 @@ public  class MParam extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Directives");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Param");
         }
         
@@ -249,7 +249,7 @@ public  class MParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Directives");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Param");
         }
         
@@ -275,7 +275,7 @@ public  class MParam extends Macro{
             sb.append(this.ParamNameNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.ParamNameBeforeFirst != null){
@@ -310,7 +310,7 @@ public  class MParam extends Macro{
             sb.append(this.TypeNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.TypeBeforeFirst != null){
@@ -345,7 +345,7 @@ public  class MParam extends Macro{
             sb.append(this.DirectivesNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.DirectivesBeforeFirst != null){
@@ -449,18 +449,18 @@ public  class MParam extends Macro{
     @Override
     public String build(){
     
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("Param");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -490,7 +490,7 @@ public  class MParam extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     

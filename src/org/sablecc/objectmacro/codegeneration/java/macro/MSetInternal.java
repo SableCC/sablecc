@@ -26,7 +26,7 @@ public  class MSetInternal extends Macro{
     
     private Map<Context, String> field_VarName = new LinkedHashMap<>();
     
-    public MSetInternal(String pParamName, String pContext, Macros macros){
+    MSetInternal(String pParamName, String pContext, Macros macros){
         
         
         this.setMacros(macros);
@@ -59,13 +59,13 @@ public  class MSetInternal extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("SetParams");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("SetInternal");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "SetParams");
             }
@@ -106,7 +106,7 @@ public  class MSetInternal extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("SetParams");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("SetInternal");
         }
         
@@ -123,7 +123,7 @@ public  class MSetInternal extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("SetParams");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("SetInternal");
         }
         
@@ -170,7 +170,7 @@ public  class MSetInternal extends Macro{
             sb.append(this.SetParamsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.SetParamsBeforeFirst != null){
@@ -248,18 +248,18 @@ public  class MSetInternal extends Macro{
     @Override
     public String build(Context context){
     
-        BuildState buildState = this.build_states.get(context);
+        CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("SetInternal");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_states.put(context, buildState);
+        this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -279,7 +279,7 @@ public  class MSetInternal extends Macro{
         sb0.append(buildSetParams());
         sb0.append(");");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     

@@ -22,7 +22,7 @@ public  class MParamRef extends Macro{
     
     private DNone GetParamsNone;
     
-    public MParamRef(String pName, Macros macros){
+    MParamRef(String pName, Macros macros){
         
         
         this.setMacros(macros);
@@ -46,13 +46,13 @@ public  class MParamRef extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("GetParams");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("ParamRef");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "GetParams");
             }
@@ -93,7 +93,7 @@ public  class MParamRef extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("GetParams");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("ParamRef");
         }
         
@@ -110,7 +110,7 @@ public  class MParamRef extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("GetParams");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("ParamRef");
         }
         
@@ -141,7 +141,7 @@ public  class MParamRef extends Macro{
             sb.append(this.GetParamsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.GetParamsBeforeFirst != null){
@@ -204,18 +204,18 @@ public  class MParamRef extends Macro{
     @Override
     public String build(){
     
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("ParamRef");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -231,7 +231,7 @@ public  class MParamRef extends Macro{
         sb0.append(buildGetParams());
         sb0.append(")");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     
