@@ -50,7 +50,7 @@ public  class MMacroCreatorMethod extends Macro{
     
     private DNone VersionFactoryNone;
     
-    public MMacroCreatorMethod(String pClassName, Macros macros){
+    MMacroCreatorMethod(String pClassName, Macros macros){
         
         
         this.setMacros(macros);
@@ -78,13 +78,13 @@ public  class MMacroCreatorMethod extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Args");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("MacroCreatorMethod");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "Args");
             }
@@ -118,7 +118,7 @@ public  class MMacroCreatorMethod extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Args");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("MacroCreatorMethod");
         }
         
@@ -137,13 +137,13 @@ public  class MMacroCreatorMethod extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Parameters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("MacroCreatorMethod");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "Parameters");
             }
@@ -177,7 +177,7 @@ public  class MMacroCreatorMethod extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Parameters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("MacroCreatorMethod");
         }
         
@@ -196,13 +196,13 @@ public  class MMacroCreatorMethod extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("VersionFactory");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("MacroCreatorMethod");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "VersionFactory");
             }
@@ -236,7 +236,7 @@ public  class MMacroCreatorMethod extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("VersionFactory");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("MacroCreatorMethod");
         }
         
@@ -267,7 +267,7 @@ public  class MMacroCreatorMethod extends Macro{
             sb.append(this.ArgsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.ArgsBeforeFirst != null){
@@ -302,7 +302,7 @@ public  class MMacroCreatorMethod extends Macro{
             sb.append(this.ParametersNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.ParametersBeforeFirst != null){
@@ -337,7 +337,7 @@ public  class MMacroCreatorMethod extends Macro{
             sb.append(this.VersionFactoryNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.VersionFactoryBeforeFirst != null){
@@ -457,18 +457,18 @@ public  class MMacroCreatorMethod extends Macro{
     @Override
     public String build(){
     
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("MacroCreatorMethod");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -512,7 +512,7 @@ public  class MMacroCreatorMethod extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     

@@ -40,7 +40,7 @@ public  class MInsertMacroPart extends Macro{
     
     private DNone SetInternalsNone;
     
-    public MInsertMacroPart(String pName, String pIndexBuilder, String pIndexInsert, Macros macros){
+    MInsertMacroPart(String pName, String pIndexBuilder, String pIndexInsert, Macros macros){
         
         
         this.setMacros(macros);
@@ -84,13 +84,13 @@ public  class MInsertMacroPart extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "MacroBodyParts");
             }
@@ -152,7 +152,7 @@ public  class MInsertMacroPart extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
@@ -169,7 +169,7 @@ public  class MInsertMacroPart extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
@@ -186,7 +186,7 @@ public  class MInsertMacroPart extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
@@ -203,7 +203,7 @@ public  class MInsertMacroPart extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
@@ -220,7 +220,7 @@ public  class MInsertMacroPart extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
@@ -239,13 +239,13 @@ public  class MInsertMacroPart extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("SetInternals");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "SetInternals");
             }
@@ -279,7 +279,7 @@ public  class MInsertMacroPart extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("SetInternals");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("InsertMacroPart");
         }
         
@@ -320,7 +320,7 @@ public  class MInsertMacroPart extends Macro{
             sb.append(this.MacroBodyPartsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.MacroBodyPartsBeforeFirst != null){
@@ -355,7 +355,7 @@ public  class MInsertMacroPart extends Macro{
             sb.append(this.SetInternalsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.SetInternalsBeforeFirst != null){
@@ -476,18 +476,18 @@ public  class MInsertMacroPart extends Macro{
     @Override
     public String build(){
     
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("InsertMacroPart");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -517,7 +517,7 @@ public  class MInsertMacroPart extends Macro{
         sb0.append(buildIndexInsert());
         sb0.append(".build(null));");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     

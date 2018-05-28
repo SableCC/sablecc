@@ -337,7 +337,7 @@ public class CodeGenerationWalker
             this.currentMacroToBuild.addAbstract(this.factory.newAbstract());
         }
         else {
-            this.currentMacroBuilder = this.factory.newMacroBuilder(macro_name);
+            this.currentMacroBuilder = this.factory.newMacroBuilder();
             this.currentMacroToBuild.addMacroBuilder(this.currentMacroBuilder);
             this.currentMacroToBuild.addInitMacrosMethod(this.factory.newSetMacrosMethod());
             this.currentConstructor.addFieldInitializers(this.factory.newSetMacrosCall());
@@ -360,8 +360,8 @@ public class CodeGenerationWalker
             // the current macro
             this.currentMacroBuilder.addContextParam(this.factory.newContextParam());
             this.currentMacroBuilder
-                    .addContextBuildState(this.factory.newContextBuildState());
-            this.currentMacroBuilder.addNewBuildState(this.factory.newNewBuildState());
+                    .addContextCacheBuilder(this.factory.newContextCacheBuilder());
+            this.currentMacroBuilder.addNewCacheBuilder(this.factory.newNewCacheBuilder());
         }
         else {
             if(!this.currentMacroIsAbstract){

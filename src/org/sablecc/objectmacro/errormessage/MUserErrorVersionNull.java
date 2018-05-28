@@ -19,18 +19,15 @@ public class MUserErrorVersionNull extends Macro{
     @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if(buildState == null){
-            buildState = new BuildState();
-        }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("VersionNull");
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -38,7 +35,7 @@ public class MUserErrorVersionNull extends Macro{
 
         sb0.append("The version may not be null.");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

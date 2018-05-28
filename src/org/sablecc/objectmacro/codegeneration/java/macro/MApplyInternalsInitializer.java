@@ -22,7 +22,7 @@ public  class MApplyInternalsInitializer extends Macro{
     
     private Map<Context, String> field_ParamName = new LinkedHashMap<>();
     
-    public MApplyInternalsInitializer(Macros macros){
+    MApplyInternalsInitializer(Macros macros){
         
         
         this.setMacros(macros);
@@ -37,13 +37,13 @@ public  class MApplyInternalsInitializer extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("RedefinedInternalsSetter");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("ApplyInternalsInitializer");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "RedefinedInternalsSetter");
             }
@@ -77,7 +77,7 @@ public  class MApplyInternalsInitializer extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("RedefinedInternalsSetter");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("ApplyInternalsInitializer");
         }
         
@@ -114,7 +114,7 @@ public  class MApplyInternalsInitializer extends Macro{
             sb.append(this.RedefinedInternalsSetterNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.RedefinedInternalsSetterBeforeFirst != null){
@@ -179,18 +179,18 @@ public  class MApplyInternalsInitializer extends Macro{
     @Override
     public String build(Context context){
     
-        BuildState buildState = this.build_states.get(context);
+        CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("ApplyInternalsInitializer");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_states.put(context, buildState);
+        this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -214,7 +214,7 @@ public  class MApplyInternalsInitializer extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("});");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     

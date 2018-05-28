@@ -22,7 +22,7 @@ public  class MTextArgument extends Macro{
     
     private DNone TextPartsNone;
     
-    public MTextArgument(String pParamName, Macros macros){
+    MTextArgument(String pParamName, Macros macros){
         
         
         this.setMacros(macros);
@@ -46,7 +46,7 @@ public  class MTextArgument extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("TextArgument");
         }
         
@@ -107,7 +107,7 @@ public  class MTextArgument extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("TextArgument");
         }
         
@@ -124,7 +124,7 @@ public  class MTextArgument extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("TextArgument");
         }
         
@@ -141,7 +141,7 @@ public  class MTextArgument extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("TextArgument");
         }
         
@@ -158,7 +158,7 @@ public  class MTextArgument extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("TextArgument");
         }
         
@@ -189,7 +189,7 @@ public  class MTextArgument extends Macro{
             sb.append(this.TextPartsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.TextPartsBeforeFirst != null){
@@ -269,18 +269,18 @@ public  class MTextArgument extends Macro{
     @Override
     public String build(){
     
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("TextArgument");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -307,7 +307,7 @@ public  class MTextArgument extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     

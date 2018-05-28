@@ -206,7 +206,7 @@ public  class MMacro extends Macro{
     
     private DNone InitMacrosMethodNone;
     
-    public MMacro(String pClassName, String pParentClass, Macros macros){
+    MMacro(String pClassName, String pParentClass, Macros macros){
         
         
         this.setMacros(macros);
@@ -265,13 +265,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "PackageDeclaration");
             }
@@ -305,7 +305,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -324,13 +324,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Fields");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "Fields");
             }
@@ -392,7 +392,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Fields");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -409,7 +409,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Fields");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -426,7 +426,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Fields");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -443,7 +443,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Fields");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -460,7 +460,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Fields");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -479,13 +479,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Constructor");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "Constructor");
             }
@@ -519,7 +519,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Constructor");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -538,13 +538,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Setters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "Setters");
             }
@@ -620,7 +620,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Setters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -637,7 +637,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Setters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -654,7 +654,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Setters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -671,7 +671,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Setters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -688,7 +688,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Setters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -705,7 +705,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Setters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -722,7 +722,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Setters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -741,13 +741,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Builders");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "Builders");
             }
@@ -795,7 +795,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Builders");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -812,7 +812,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Builders");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -829,7 +829,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Builders");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -848,13 +848,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Getters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "Getters");
             }
@@ -902,7 +902,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Getters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -919,7 +919,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Getters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -936,7 +936,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Getters");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -955,13 +955,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("InitInternalsMethods");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "InitInternalsMethods");
             }
@@ -995,7 +995,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("InitInternalsMethods");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -1014,13 +1014,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("InitDirectives");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "InitDirectives");
             }
@@ -1054,7 +1054,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("InitDirectives");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -1073,13 +1073,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("RedefinedApplyInitializer");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "RedefinedApplyInitializer");
             }
@@ -1113,7 +1113,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("RedefinedApplyInitializer");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -1132,13 +1132,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("MacroBuilder");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "MacroBuilder");
             }
@@ -1172,7 +1172,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBuilder");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -1191,13 +1191,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("EmptyBuilderWithContext");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "EmptyBuilderWithContext");
             }
@@ -1231,7 +1231,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("EmptyBuilderWithContext");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -1250,13 +1250,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Abstract");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "Abstract");
             }
@@ -1290,7 +1290,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Abstract");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -1309,13 +1309,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("AppliedVersion");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "AppliedVersion");
             }
@@ -1349,7 +1349,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("AppliedVersion");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -1368,13 +1368,13 @@ public  class MMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("InitMacrosMethod");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "InitMacrosMethod");
             }
@@ -1408,7 +1408,7 @@ public  class MMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("InitMacrosMethod");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Macro");
         }
         
@@ -1444,7 +1444,7 @@ public  class MMacro extends Macro{
             sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.PackageDeclarationBeforeFirst != null){
@@ -1479,7 +1479,7 @@ public  class MMacro extends Macro{
             sb.append(this.FieldsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.FieldsBeforeFirst != null){
@@ -1514,7 +1514,7 @@ public  class MMacro extends Macro{
             sb.append(this.ConstructorNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.ConstructorBeforeFirst != null){
@@ -1549,7 +1549,7 @@ public  class MMacro extends Macro{
             sb.append(this.SettersNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.SettersBeforeFirst != null){
@@ -1584,7 +1584,7 @@ public  class MMacro extends Macro{
             sb.append(this.BuildersNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.BuildersBeforeFirst != null){
@@ -1619,7 +1619,7 @@ public  class MMacro extends Macro{
             sb.append(this.GettersNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.GettersBeforeFirst != null){
@@ -1654,7 +1654,7 @@ public  class MMacro extends Macro{
             sb.append(this.InitInternalsMethodsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.InitInternalsMethodsBeforeFirst != null){
@@ -1689,7 +1689,7 @@ public  class MMacro extends Macro{
             sb.append(this.InitDirectivesNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.InitDirectivesBeforeFirst != null){
@@ -1724,7 +1724,7 @@ public  class MMacro extends Macro{
             sb.append(this.RedefinedApplyInitializerNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.RedefinedApplyInitializerBeforeFirst != null){
@@ -1759,7 +1759,7 @@ public  class MMacro extends Macro{
             sb.append(this.MacroBuilderNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.MacroBuilderBeforeFirst != null){
@@ -1794,7 +1794,7 @@ public  class MMacro extends Macro{
             sb.append(this.EmptyBuilderWithContextNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.EmptyBuilderWithContextBeforeFirst != null){
@@ -1829,7 +1829,7 @@ public  class MMacro extends Macro{
             sb.append(this.AbstractNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.AbstractBeforeFirst != null){
@@ -1864,7 +1864,7 @@ public  class MMacro extends Macro{
             sb.append(this.AppliedVersionNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.AppliedVersionBeforeFirst != null){
@@ -1899,7 +1899,7 @@ public  class MMacro extends Macro{
             sb.append(this.InitMacrosMethodNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.InitMacrosMethodBeforeFirst != null){
@@ -2388,18 +2388,18 @@ public  class MMacro extends Macro{
     @Override
     public String build(){
     
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("Macro");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -2488,7 +2488,7 @@ public  class MMacro extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     

@@ -7,9 +7,9 @@ public abstract class Macro {
 
     final static String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    BuildState build_state = null;
+    CacheBuilder cacheBuilder = null;
 
-    final Map<Context, BuildState> build_states = new LinkedHashMap<>();
+    final Map<Context, CacheBuilder> cacheBuilders = new LinkedHashMap<>();
 
     final LinkedList<Macro> children = new LinkedList<>();
 

@@ -40,18 +40,15 @@ class MUserErrorCannotModify extends Macro{
     @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if(buildState == null){
-            buildState = new BuildState();
-        }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("UserErrorCannotModify");
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -66,7 +63,7 @@ class MUserErrorCannotModify extends Macro{
         sb0.append(buildMacroName());
         sb0.append(" cannot be updated after the macro has been built.");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

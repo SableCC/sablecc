@@ -20,7 +20,7 @@ public  class MName extends Macro{
     
     private DNone ValueNone;
     
-    public MName(Macros macros){
+    MName(Macros macros){
         
         
         this.setMacros(macros);
@@ -35,7 +35,7 @@ public  class MName extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Value");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Name");
         }
         
@@ -75,7 +75,7 @@ public  class MName extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Value");
         }
-        if(this.build_state != null){
+        if(this.cacheBuilder != null){
             throw ObjectMacroException.cannotModify("Name");
         }
         
@@ -101,7 +101,7 @@ public  class MName extends Macro{
             sb.append(this.ValueNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.ValueBeforeFirst != null){
@@ -162,18 +162,18 @@ public  class MName extends Macro{
     @Override
     public String build(){
     
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("Name");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -186,7 +186,7 @@ public  class MName extends Macro{
         sb0.append("Name = ");
         sb0.append(buildValue());
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     

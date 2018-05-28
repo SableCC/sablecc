@@ -49,8 +49,8 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MClassInternalValue", this._paramName);
     }
     
-    void setClassBuildState(MClassBuildState mClassBuildState){
-        throw ObjectMacroException.incorrectType("MClassBuildState", this._paramName);
+    void setClassCacheBuilder(MClassCacheBuilder mClassCacheBuilder){
+        throw ObjectMacroException.incorrectType("MClassCacheBuilder", this._paramName);
     }
     
     void setVersionEnumeration(MVersionEnumeration mVersionEnumeration){
@@ -209,12 +209,12 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MEmptyBuilderWithContext", this._paramName);
     }
     
-    void setContextBuildState(MContextBuildState mContextBuildState){
-        throw ObjectMacroException.incorrectType("MContextBuildState", this._paramName);
+    void setContextCacheBuilder(MContextCacheBuilder mContextCacheBuilder){
+        throw ObjectMacroException.incorrectType("MContextCacheBuilder", this._paramName);
     }
     
-    void setNewBuildState(MNewBuildState mNewBuildState){
-        throw ObjectMacroException.incorrectType("MNewBuildState", this._paramName);
+    void setNewCacheBuilder(MNewCacheBuilder mNewCacheBuilder){
+        throw ObjectMacroException.incorrectType("MNewCacheBuilder", this._paramName);
     }
     
     void setRedefinedApplyInitializer(MRedefinedApplyInitializer mRedefinedApplyInitializer){

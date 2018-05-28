@@ -4,7 +4,7 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MClassBuildState extends Macro{
+public  class MClassCacheBuilder extends Macro{
     
     final List<Macro> list_PackageDeclaration;
     
@@ -20,7 +20,7 @@ public  class MClassBuildState extends Macro{
     
     private DNone PackageDeclarationNone;
     
-    public MClassBuildState(Macros macros){
+    MClassCacheBuilder(Macros macros){
         
         
         this.setMacros(macros);
@@ -35,13 +35,13 @@ public  class MClassBuildState extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ClassBuildState");
+        if(this.cacheBuilder != null){
+            throw ObjectMacroException.cannotModify("ClassCacheBuilder");
         }
         
         int i = 0;
         
-        for(Macro macro : macros) {
+        for(Macro macro: macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "PackageDeclaration");
             }
@@ -75,8 +75,8 @@ public  class MClassBuildState extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if(this.build_state != null){
-            throw ObjectMacroException.cannotModify("ClassBuildState");
+        if(this.cacheBuilder != null){
+            throw ObjectMacroException.cannotModify("ClassCacheBuilder");
         }
         
         if(this.getMacros() != macro.getMacros()){
@@ -101,7 +101,7 @@ public  class MClassBuildState extends Macro{
             sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro: macros){
             expansion = macro.build(local_context);
     
             if(this.PackageDeclarationBeforeFirst != null){
@@ -149,24 +149,24 @@ public  class MClassBuildState extends Macro{
      void apply(
              InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setClassBuildState(this);
+         internalsInitializer.setClassCacheBuilder(this);
      }
     
     @Override
     public String build(){
     
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(buildState == null){
-            buildState = new BuildState();
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("ClassBuildState");
+        else if(cache_builder.getExpansion() == null){
+            throw new InternalException("Cycle detection detected lately");
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
     
@@ -184,7 +184,7 @@ public  class MClassBuildState extends Macro{
         sb0.append(buildPackageDeclaration());
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("class BuildState ");
+        sb0.append("class CacheBuilder ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
@@ -211,7 +211,7 @@ public  class MClassBuildState extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
     
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
     
