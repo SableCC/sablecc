@@ -275,7 +275,7 @@ public  class MInternal extends Macro{
             sb.append(this.InternalNameNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.InternalNameBeforeFirst != null){
@@ -310,7 +310,7 @@ public  class MInternal extends Macro{
             sb.append(this.TypeNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.TypeBeforeFirst != null){
@@ -345,7 +345,7 @@ public  class MInternal extends Macro{
             sb.append(this.DirectivesNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.DirectivesBeforeFirst != null){
@@ -439,13 +439,13 @@ public  class MInternal extends Macro{
         this.DirectivesValue.setSeparator(this.DirectivesSeparator);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setInternal(this);
-     }
+        internalsInitializer.setInternal(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -495,7 +495,7 @@ public  class MInternal extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

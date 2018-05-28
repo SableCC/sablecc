@@ -117,7 +117,7 @@ public  class MVarArgument extends Macro{
             sb.append(this.ReferencedParamNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ReferencedParamBeforeFirst != null){
@@ -164,13 +164,13 @@ public  class MVarArgument extends Macro{
         
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setVarArgument(this);
-     }
+        internalsInitializer.setVarArgument(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -217,7 +217,7 @@ public  class MVarArgument extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

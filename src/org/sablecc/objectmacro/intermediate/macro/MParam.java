@@ -275,7 +275,7 @@ public  class MParam extends Macro{
             sb.append(this.ParamNameNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ParamNameBeforeFirst != null){
@@ -310,7 +310,7 @@ public  class MParam extends Macro{
             sb.append(this.TypeNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.TypeBeforeFirst != null){
@@ -345,7 +345,7 @@ public  class MParam extends Macro{
             sb.append(this.DirectivesNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.DirectivesBeforeFirst != null){
@@ -440,13 +440,13 @@ public  class MParam extends Macro{
         this.DirectivesValue.setSeparator(this.DirectivesSeparator);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setParam(this);
-     }
+        internalsInitializer.setParam(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -496,7 +496,7 @@ public  class MParam extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

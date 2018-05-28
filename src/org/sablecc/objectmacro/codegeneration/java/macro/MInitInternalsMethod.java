@@ -52,7 +52,7 @@ public  class MInitInternalsMethod extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "ApplyInternalsInitializer");
             }
@@ -117,7 +117,7 @@ public  class MInitInternalsMethod extends Macro{
             sb.append(this.ApplyInternalsInitializerNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ApplyInternalsInitializerBeforeFirst != null){
@@ -167,13 +167,13 @@ public  class MInitInternalsMethod extends Macro{
         this.ApplyInternalsInitializerValue.setSeparator(this.ApplyInternalsInitializerSeparator);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setInitInternalsMethod(this);
-     }
+        internalsInitializer.setInitInternalsMethod(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -225,7 +225,7 @@ public  class MInitInternalsMethod extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

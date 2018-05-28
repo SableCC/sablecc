@@ -176,7 +176,7 @@ public  class MIntermediateRepresentation extends Macro{
             sb.append(this.DefinedMacrosNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.DefinedMacrosBeforeFirst != null){
@@ -211,7 +211,7 @@ public  class MIntermediateRepresentation extends Macro{
             sb.append(this.VersionDefinitionNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.VersionDefinitionBeforeFirst != null){
@@ -280,13 +280,13 @@ public  class MIntermediateRepresentation extends Macro{
         
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setIntermediateRepresentation(this);
-     }
+        internalsInitializer.setIntermediateRepresentation(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -322,7 +322,7 @@ public  class MIntermediateRepresentation extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

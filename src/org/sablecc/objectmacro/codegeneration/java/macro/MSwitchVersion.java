@@ -45,7 +45,7 @@ public  class MSwitchVersion extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "VersionCases");
             }
@@ -92,27 +92,27 @@ public  class MSwitchVersion extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-        void setClassName(
-                Context context,
-                String value) {
+    void setClassName(
+            Context context,
+            String value) {
     
-            if(value == null){
-                throw new RuntimeException("value cannot be null here");
-            }
-    
-            this.field_ClassName.put(context, value);
+        if(value == null){
+            throw new RuntimeException("value cannot be null here");
         }
     
-        void setArgs(
-                    Context context,
-                    InternalValue internal_value) {
+        this.field_ClassName.put(context, value);
+    }
     
-                if(internal_value == null){
-                    throw new RuntimeException("macros cannot be null");
-                }
+    void setArgs(
+                Context context,
+                InternalValue internal_value) {
     
-                this.list_Args.put(context, internal_value);
-            }
+        if(internal_value == null){
+            throw new RuntimeException("macros cannot be null");
+        }
+    
+        this.list_Args.put(context, internal_value);
+    }
     
     private String buildVersionCases(){
         StringBuilder sb = new StringBuilder();
@@ -127,7 +127,7 @@ public  class MSwitchVersion extends Macro{
             sb.append(this.VersionCasesNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.VersionCasesBeforeFirst != null){
@@ -193,14 +193,14 @@ public  class MSwitchVersion extends Macro{
         this.VersionCasesValue.setSeparator(this.VersionCasesSeparator);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setSwitchVersion(this);
-     }
+        internalsInitializer.setSwitchVersion(this);
+    }
     
-    @Override
-    public String build(Context context){
+    
+    String build(Context context){
     
         CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
@@ -242,7 +242,6 @@ public  class MSwitchVersion extends Macro{
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    
     
     
     private void setMacros(Macros macros){

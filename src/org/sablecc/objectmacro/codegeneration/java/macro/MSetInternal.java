@@ -65,7 +65,7 @@ public  class MSetInternal extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "SetParams");
             }
@@ -136,16 +136,16 @@ public  class MSetInternal extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-        void setVarName(
-                Context context,
-                String value) {
+    void setVarName(
+            Context context,
+            String value) {
     
-            if(value == null){
-                throw new RuntimeException("value cannot be null here");
-            }
-    
-            this.field_VarName.put(context, value);
+        if(value == null){
+            throw new RuntimeException("value cannot be null here");
         }
+    
+        this.field_VarName.put(context, value);
+    }
     
     String buildParamName(){
     
@@ -170,7 +170,7 @@ public  class MSetInternal extends Macro{
             sb.append(this.SetParamsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.SetParamsBeforeFirst != null){
@@ -239,14 +239,14 @@ public  class MSetInternal extends Macro{
         
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setSetInternal(this);
-     }
+        internalsInitializer.setSetInternal(this);
+    }
     
-    @Override
-    public String build(Context context){
+    
+    String build(Context context){
     
         CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
@@ -282,7 +282,6 @@ public  class MSetInternal extends Macro{
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    
     
     
     private void setMacros(Macros macros){

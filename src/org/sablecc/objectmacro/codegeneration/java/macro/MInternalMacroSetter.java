@@ -35,13 +35,13 @@ public  class MInternalMacroSetter extends Macro{
     
     
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setInternalMacroSetter(this);
-     }
+        internalsInitializer.setInternalMacroSetter(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -65,29 +65,29 @@ public  class MInternalMacroSetter extends Macro{
     
         StringBuilder sb0 = new StringBuilder();
     
-        sb0.append("    void set");
+        sb0.append("void set");
         sb0.append(buildParamName());
         sb0.append("(");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("                Context context,");
+        sb0.append("            Context context,");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("                InternalValue internal_value) ");
+        sb0.append("            InternalValue internal_value) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("            if(internal_value == null)");
+        sb0.append("    if(internal_value == null)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("                throw new RuntimeException(\"macros cannot be null\");");
+        sb0.append("        throw new RuntimeException(\"macros cannot be null\");");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("            }");
+        sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("            this.list_");
+        sb0.append("    this.list_");
         sb0.append(buildParamName());
         sb0.append(".put(context, internal_value);");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("        }");
+        sb0.append("}");
     
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
@@ -95,7 +95,7 @@ public  class MInternalMacroSetter extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

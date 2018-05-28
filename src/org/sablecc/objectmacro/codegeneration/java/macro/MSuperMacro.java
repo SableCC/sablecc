@@ -41,7 +41,7 @@ public  class MSuperMacro extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "PackageDeclaration");
             }
@@ -101,7 +101,7 @@ public  class MSuperMacro extends Macro{
             sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.PackageDeclarationBeforeFirst != null){
@@ -146,13 +146,13 @@ public  class MSuperMacro extends Macro{
         this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setSuperMacro(this);
-     }
+        internalsInitializer.setSuperMacro(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -211,24 +211,7 @@ public  class MSuperMacro extends Macro{
         sb0.append("    Macros macros;");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    public String build()");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        throw new RuntimeException(\"build cannot be invoked here\");");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    }");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    String build(");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("            Context context)");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        throw new RuntimeException(\"build cannot be invoked here\");");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    }");
+        sb0.append("    abstract String build(Context context);");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("    void apply(");
@@ -313,7 +296,7 @@ public  class MSuperMacro extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

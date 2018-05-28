@@ -173,7 +173,7 @@ public  class MIndentPart extends Macro{
             sb.append(this.IndentationTextNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.IndentationTextBeforeFirst != null){
@@ -239,13 +239,13 @@ public  class MIndentPart extends Macro{
         this.IndentationTextValue.setSeparator(this.IndentationTextSeparator);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setIndentPart(this);
-     }
+        internalsInitializer.setIndentPart(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -287,7 +287,7 @@ public  class MIndentPart extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

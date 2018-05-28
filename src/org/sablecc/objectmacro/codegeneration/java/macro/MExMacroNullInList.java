@@ -41,7 +41,7 @@ public  class MExMacroNullInList extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "PackageDeclaration");
             }
@@ -101,7 +101,7 @@ public  class MExMacroNullInList extends Macro{
             sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.PackageDeclarationBeforeFirst != null){
@@ -146,13 +146,13 @@ public  class MExMacroNullInList extends Macro{
         this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setExMacroNullInList(this);
-     }
+        internalsInitializer.setExMacroNullInList(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -293,8 +293,6 @@ public  class MExMacroNullInList extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    @Override");
-        sb0.append(LINE_SEPARATOR);
         sb0.append("    public String build()");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
@@ -371,7 +369,7 @@ public  class MExMacroNullInList extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

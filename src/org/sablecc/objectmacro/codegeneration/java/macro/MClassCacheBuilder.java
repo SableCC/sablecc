@@ -41,7 +41,7 @@ public  class MClassCacheBuilder extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "PackageDeclaration");
             }
@@ -101,7 +101,7 @@ public  class MClassCacheBuilder extends Macro{
             sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.PackageDeclarationBeforeFirst != null){
@@ -146,13 +146,13 @@ public  class MClassCacheBuilder extends Macro{
         this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setClassCacheBuilder(this);
-     }
+        internalsInitializer.setClassCacheBuilder(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -217,7 +217,7 @@ public  class MClassCacheBuilder extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

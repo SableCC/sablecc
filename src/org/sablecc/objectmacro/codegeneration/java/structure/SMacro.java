@@ -25,6 +25,8 @@ public class SMacro {
 
     private final MMacro macro;
 
+    private SMacro parent;
+
     private final String name;
 
     private final List<String> parametersName;
@@ -36,6 +38,8 @@ public class SMacro {
     private final Map<String, String> childByVersion = new LinkedHashMap<>();
 
     private final Set<String> applied_versions;
+
+    private boolean childrenHasInternals = false;
 
     public SMacro(
             MMacro macro,
@@ -97,5 +101,27 @@ public class SMacro {
     public Set<String> getApplied_versions() {
 
         return applied_versions;
+    }
+
+    public void setParent(
+            SMacro parent) {
+
+        this.parent = parent;
+    }
+
+    public SMacro getParent() {
+
+        return parent;
+    }
+
+    public boolean isChildrenHasInternals() {
+
+        return childrenHasInternals;
+    }
+
+    public void setChildrenHasInternals(
+            boolean childrenHasInternals) {
+
+        this.childrenHasInternals = childrenHasInternals;
     }
 }

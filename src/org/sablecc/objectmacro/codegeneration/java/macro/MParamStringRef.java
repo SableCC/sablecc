@@ -68,7 +68,7 @@ public  class MParamStringRef extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "ContextParam");
             }
@@ -127,7 +127,7 @@ public  class MParamStringRef extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "GetInternalTail");
             }
@@ -192,7 +192,7 @@ public  class MParamStringRef extends Macro{
             sb.append(this.ContextParamNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ContextParamBeforeFirst != null){
@@ -227,7 +227,7 @@ public  class MParamStringRef extends Macro{
             sb.append(this.GetInternalTailNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.GetInternalTailBeforeFirst != null){
@@ -295,13 +295,13 @@ public  class MParamStringRef extends Macro{
         
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setParamStringRef(this);
-     }
+        internalsInitializer.setParamStringRef(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -348,7 +348,7 @@ public  class MParamStringRef extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

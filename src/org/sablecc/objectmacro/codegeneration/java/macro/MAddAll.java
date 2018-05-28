@@ -33,7 +33,7 @@ public  class MAddAll extends Macro{
     
         this.field_ParamName = pParamName;
     }
-    
+
     String buildMacroName(){
     
         return this.field_MacroName;
@@ -43,7 +43,7 @@ public  class MAddAll extends Macro{
     
         return this.field_ParamName;
     }
-    
+
     String getMacroName(){
     
         return this.field_MacroName;
@@ -53,16 +53,16 @@ public  class MAddAll extends Macro{
     
         return this.field_ParamName;
     }
-    
-    
+
+
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setAddAll(this);
-     }
+        internalsInitializer.setAddAll(this);
+    }
     
-    @Override
+
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -79,13 +79,13 @@ public  class MAddAll extends Macro{
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
+
+
     
-        
-    
-    
-    
+
+
         StringBuilder sb0 = new StringBuilder();
-    
+
         sb0.append("public void addAll");
         sb0.append(buildParamName());
         sb0.append("(");
@@ -168,7 +168,7 @@ public  class MAddAll extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

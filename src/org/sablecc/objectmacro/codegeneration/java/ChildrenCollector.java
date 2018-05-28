@@ -72,6 +72,7 @@ class ChildrenCollector
                 for(TString version : node.getVersions()){
                     String version_name = GenerationUtils.string(version).toUpperCase();
                     this.currentMacro.addChild(version_name, macro_name);
+                    macros.get(macro_name).setParent(this.currentMacro);
                 }
             }
         }

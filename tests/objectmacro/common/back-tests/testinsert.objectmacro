@@ -1,0 +1,29 @@
+Macro c
+    Internal
+        q : String;
+        r : String;
+{Body}
+=============== C ==============
+Q : {q}
+R : {r}
+{End}
+
+Macro d
+{Body}
+{Insert: e(
+    "y1 {Insert: c("y2 {Insert: c("y3", "yz3")}", "{Insert: c("a", "b")}")}",
+    "{Insert: c("y4", "z4")}",
+    "{Insert: c("y4", "z4")}")
+}
+{End}
+
+Macro e
+    Internal
+        s : String;
+        t : String;
+        u : String;
+{Body}
+{s}
+{t}
+{u}
+{End}

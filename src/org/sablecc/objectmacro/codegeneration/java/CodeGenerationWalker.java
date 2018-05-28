@@ -141,24 +141,49 @@ public class CodeGenerationWalker
      */
     private MPackageDeclaration currentPackageDeclaration;
 
+    /**
+     * Macro representing the factory Macros
+     */
     private MMacroFactory macroFactory;
 
-    private MSwitchVersion currentSwitchVersion;
-
+    /**
+     * Macro representing the macro creating method
+     */
     private MMacroCreatorMethod currentMacroCreatorMethod;
 
-    private final Set<TString> versions = new HashSet<>();
+    /**
+     * Macro representing the switch statement in a macro creating method contained in the factory
+     */
+    private MSwitchVersion currentSwitchVersion;
 
+    /**
+     * Previously used string builder index
+     */
     private List<Integer> previouslyUsed = new LinkedList<>();
 
+    /**
+     * Set of method names created through the walker
+     */
     private Set<String> createdFactoryMethods = new HashSet<>();
 
+    /**
+     * Boolean that designates if the current macro is all versionned
+     */
     private boolean currentMacroIsAllVersionned = false;
 
+    /**
+     * Boolean that designates if the current macro is the abstract macro
+     */
     private boolean currentMacroIsAbstract = false;
 
+    /**
+     * Temporary macros collected during the walk
+     */
     private List<Macro> tempMacros = null;
 
+    /**
+     * Factory used to create macro
+     */
     private final Macros factory;
 
     CodeGenerationWalker(
@@ -228,7 +253,6 @@ public class CodeGenerationWalker
             }
 
             mVersionEnumeration.addVersions(this.factory.newPlainText(version_name));
-            versions.add(version);
         }
 
         GenerationUtils.writeFile(this.packageDirectory,
@@ -257,6 +281,7 @@ public class CodeGenerationWalker
 
         this.currentMacroIsAbstract = node.getIsAbstract() != null;
         this.currentMacroIsAllVersionned = node.getIsAllVersionned() != null;
+        this.currentMacroHasInternals = node.getInternals().size() > 0;
 
         if(this.currentMacroIsAbstract){
             inAMacro(node);
@@ -335,10 +360,22 @@ public class CodeGenerationWalker
 
         if(this.currentMacroIsAbstract){
             this.currentMacroToBuild.addAbstract(this.factory.newAbstract());
+
+            for(String child: this.currentMacro.getChildren()){
+                SMacro macro = this.macros.get(child);
+                if(macro.getInternalsName().size() > 0){
+                    this.currentMacro.setChildrenHasInternals(true);
+                    break;
+                }
+            }
+
+            if(!this.currentMacro.isChildrenHasInternals()){
+                this.currentMacroToBuild.addMacroBuilders(this.factory.newAbstractBuilder());
+            }
         }
         else {
             this.currentMacroBuilder = this.factory.newMacroBuilder();
-            this.currentMacroToBuild.addMacroBuilder(this.currentMacroBuilder);
+            this.currentMacroToBuild.addMacroBuilders(this.currentMacroBuilder);
             this.currentMacroToBuild.addInitMacrosMethod(this.factory.newSetMacrosMethod());
             this.currentConstructor.addFieldInitializers(this.factory.newSetMacrosCall());
 
@@ -362,10 +399,8 @@ public class CodeGenerationWalker
             this.currentMacroToBuild.addAppliedVersion(appliedVersion);
         }
 
-        this.currentMacroHasInternals = node.getInternals().size() > 0;
-
         if (this.currentMacroHasInternals) {
-            // method build is package protected so a context parameter to build
+            // method build is package protected so a context parameter is needed to build
             // the current macro
             this.currentMacroBuilder.addContextParam(this.factory.newContextParam());
             this.currentMacroBuilder
@@ -375,7 +410,17 @@ public class CodeGenerationWalker
         else {
             if(!this.currentMacroIsAbstract){
                 this.currentMacroToBuild
-                        .addEmptyBuilderWithContext(this.factory.newEmptyBuilderWithContext());
+                        .addMacroBuilders(this.factory.newEmptyBuilderWithContext());
+
+                if((this.currentMacro.getParent() != null
+                        && !this.currentMacro.getParent().isChildrenHasInternals())
+                        || this.currentMacroIsAllVersionned){
+
+                    this.currentMacroBuilder.addPublic(this.factory.newPublic());
+                    if(!this.currentMacroIsAllVersionned){
+                        this.currentMacroBuilder.addOverride(this.factory.newOverride());
+                    }
+                }
             }
         }
     }

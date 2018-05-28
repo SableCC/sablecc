@@ -1,0 +1,82 @@
+Macro class
+    Param
+        name : String;
+        enums : enum_java4, separator="\n\n";
+        fors : for_java4("size");
+{Body}
+public class {name}{{
+{enums}
+{fors}
+}
+{End}
+
+Macro for_java5
+    Param
+        class_name : String;
+        parameter_name : String;
+        statements : for_java5("size");
+    Internal
+        size_method : String;
+{Body}
+for({class_name} p{class_name} : {parameter_name}){{
+{statements}
+{size_method}
+}
+{End}
+
+Macro for_java4
+    Param
+        class_name : String;
+        parameter_name : String;
+        statements : for_java4("size");
+    Internal
+        size_method : String;
+{Body}
+for(int i = 0; i < {parameter_name}.{size_method}; i++){{
+{statements}
+}
+{class_name}
+{End}
+
+Macro enum_java4
+    Param
+        enum_name : String;
+        enum_constants : constant_java4(enum_name), separator="\n";
+{Body}
+{enum_constants}
+{End}
+
+Macro enum_java5
+    Param
+        enum_name : String;
+        enum_constants : constant_java5, separator=", ";
+{Body}
+public enum {enum_name} {{
+{enum_constants}
+}
+{End}
+
+Macro constant_java4
+    Param
+        name : String;
+        values : value;
+    Internal
+        enum_name : String;
+{Body}
+public static final int {enum_name}_{name} = {values};
+{End}
+
+Macro constant_java5
+    Param
+        name : String;
+        values : value, before_first="(", after_last=")", separator=", ";
+{Body}
+{name}{values}
+{End}
+
+Macro value
+    Param
+        value : String;
+{Body}
+{value}
+{End}

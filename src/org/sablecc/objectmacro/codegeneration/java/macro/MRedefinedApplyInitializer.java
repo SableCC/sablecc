@@ -14,16 +14,16 @@ public  class MRedefinedApplyInitializer extends Macro{
         this.setMacros(macros);
     }
     
-        void setClassName(
-                Context context,
-                String value) {
+    void setClassName(
+            Context context,
+            String value) {
     
-            if(value == null){
-                throw new RuntimeException("value cannot be null here");
-            }
-    
-            this.field_ClassName.put(context, value);
+        if(value == null){
+            throw new RuntimeException("value cannot be null here");
         }
+    
+        this.field_ClassName.put(context, value);
+    }
     
     String buildClassName(Context context){
     
@@ -37,14 +37,14 @@ public  class MRedefinedApplyInitializer extends Macro{
     
     
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setRedefinedApplyInitializer(this);
-     }
+        internalsInitializer.setRedefinedApplyInitializer(this);
+    }
     
-    @Override
-    public String build(Context context){
+    
+    String build(Context context){
     
         CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
@@ -69,22 +69,21 @@ public  class MRedefinedApplyInitializer extends Macro{
     
         sb0.append("@Override");
         sb0.append(LINE_SEPARATOR);
-        sb0.append(" void apply(");
+        sb0.append("void apply(");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("         InternalsInitializer internalsInitializer)");
+        sb0.append("        InternalsInitializer internalsInitializer)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("     internalsInitializer.set");
+        sb0.append("    internalsInitializer.set");
         sb0.append(buildClassName(context));
         sb0.append("(this);");
         sb0.append(LINE_SEPARATOR);
-        sb0.append(" }");
+        sb0.append("}");
     
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    
     
     
     private void setMacros(Macros macros){

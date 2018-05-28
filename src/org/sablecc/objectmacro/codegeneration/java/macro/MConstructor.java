@@ -91,7 +91,7 @@ public  class MConstructor extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "FieldInitializers");
             }
@@ -246,7 +246,7 @@ public  class MConstructor extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "Parameters");
             }
@@ -329,7 +329,7 @@ public  class MConstructor extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "InternalValuesInitializers");
             }
@@ -388,7 +388,7 @@ public  class MConstructor extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "Super");
             }
@@ -435,16 +435,16 @@ public  class MConstructor extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-        void setClassName(
-                Context context,
-                String value) {
+    void setClassName(
+            Context context,
+            String value) {
     
-            if(value == null){
-                throw new RuntimeException("value cannot be null here");
-            }
-    
-            this.field_ClassName.put(context, value);
+        if(value == null){
+            throw new RuntimeException("value cannot be null here");
         }
+    
+        this.field_ClassName.put(context, value);
+    }
     
     private String buildFieldInitializers(){
         StringBuilder sb = new StringBuilder();
@@ -459,7 +459,7 @@ public  class MConstructor extends Macro{
             sb.append(this.FieldInitializersNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.FieldInitializersBeforeFirst != null){
@@ -494,7 +494,7 @@ public  class MConstructor extends Macro{
             sb.append(this.ParametersNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.ParametersBeforeFirst != null){
@@ -529,7 +529,7 @@ public  class MConstructor extends Macro{
             sb.append(this.InternalValuesInitializersNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.InternalValuesInitializersBeforeFirst != null){
@@ -564,7 +564,7 @@ public  class MConstructor extends Macro{
             sb.append(this.SuperNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.SuperBeforeFirst != null){
@@ -734,14 +734,14 @@ public  class MConstructor extends Macro{
         this.SuperValue.setBeforeFirst(this.SuperBeforeFirst);
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setConstructor(this);
-     }
+        internalsInitializer.setConstructor(this);
+    }
     
-    @Override
-    public String build(Context context){
+    
+    String build(Context context){
     
         CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
@@ -793,7 +793,6 @@ public  class MConstructor extends Macro{
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    
     
     
     private void setMacros(Macros macros){

@@ -52,7 +52,7 @@ public  class MSetParam extends Macro{
         
         int i = 0;
         
-        for(Macro macro: macros) {
+        for(Macro macro : macros) {
             if(macro == null) {
                 throw ObjectMacroException.macroNull(i, "SetParam");
             }
@@ -117,7 +117,7 @@ public  class MSetParam extends Macro{
             sb.append(this.SetParamNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro: macros){
+        for(Macro macro : macros){
             expansion = macro.build(local_context);
     
             if(this.SetParamBeforeFirst != null){
@@ -164,13 +164,13 @@ public  class MSetParam extends Macro{
         
     }
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setSetParam(this);
-     }
+        internalsInitializer.setSetParam(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -206,7 +206,7 @@ public  class MSetParam extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     

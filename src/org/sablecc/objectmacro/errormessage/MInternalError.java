@@ -56,13 +56,13 @@ public  class MInternalError extends Macro{
     
     
     @Override
-     void apply(
-             InternalsInitializer internalsInitializer){
+    void apply(
+            InternalsInitializer internalsInitializer){
     
-         internalsInitializer.setInternalError(this);
-     }
+        internalsInitializer.setInternalError(this);
+    }
     
-    @Override
+    
     public String build(){
     
         CacheBuilder cache_builder = this.cacheBuilder;
@@ -108,7 +108,7 @@ public  class MInternalError extends Macro{
     
     @Override
     String build(Context context) {
-     return build();
+        return build();
     }
     
     
