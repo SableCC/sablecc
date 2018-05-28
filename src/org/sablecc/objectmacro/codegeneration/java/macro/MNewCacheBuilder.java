@@ -4,10 +4,10 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MContextBuildState
+public class MNewCacheBuilder
         extends Macro {
 
-    public MContextBuildState(
+    MNewCacheBuilder(
             Macros macros) {
 
         setMacros(macros);
@@ -17,32 +17,32 @@ public class MContextBuildState
     void apply(
             InternalsInitializer internalsInitializer) {
 
-        internalsInitializer.setContextBuildState(this);
+        internalsInitializer.setNewCacheBuilder(this);
     }
 
     @Override
     public String build() {
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if (buildState == null) {
-            buildState = new BuildState();
+        if (cache_builder == null) {
+            cache_builder = new CacheBuilder();
         }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("ContextBuildState");
+        else if (cache_builder.getExpansion() == null) {
+            throw new InternalException("Cycle detection detected lately");
         }
         else {
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append("this.build_states.get(context)");
+        sb0.append("this.cacheBuilders.put(context, cache_builder)");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

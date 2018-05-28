@@ -9,7 +9,7 @@ public class MParamName
 
     private Map<Context, String> field_Name = new LinkedHashMap<>();
 
-    public MParamName(
+    MParamName(
             Macros macros) {
 
         setMacros(macros);
@@ -49,18 +49,18 @@ public class MParamName
     public String build(
             Context context) {
 
-        BuildState buildState = this.build_states.get(context);
+        CacheBuilder cache_builder = this.cacheBuilders.get(context);
 
-        if (buildState == null) {
-            buildState = new BuildState();
+        if (cache_builder == null) {
+            cache_builder = new CacheBuilder();
         }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("ParamName");
+        else if (cache_builder.getExpansion() == null) {
+            throw new InternalException("Cycle detection detected lately");
         }
         else {
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_states.put(context, buildState);
+        this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -72,7 +72,7 @@ public class MParamName
         sb0.append(buildName(context));
         sb0.append("' }");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

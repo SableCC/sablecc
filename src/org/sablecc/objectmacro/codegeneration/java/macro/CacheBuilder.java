@@ -2,7 +2,7 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
-class BuildState {
+class CacheBuilder {
 
     private String expansion = null;
 

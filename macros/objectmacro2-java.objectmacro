@@ -183,9 +183,9 @@ public abstract class Macro {
 
     final static String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    BuildState build_state = null;
+    CacheBuilder cacheBuilder = null;
 
-    final Map<Context, BuildState> build_states = new LinkedHashMap<>();
+    final Map<Context, CacheBuilder> cacheBuilders = new LinkedHashMap<>();
 
     final LinkedList<Macro> children = new LinkedList<>();
 
@@ -364,16 +364,16 @@ class InternalValue {
 }
 {End}
 
-# =============== class_build_state =========
+# =============== class_cache_builder =========
 
-Macro class_build_state
+Macro class_cache_builder
     Param
         package_declaration: package_declaration,before_first="\n";
 {Body}
 {Insert: header}
 {package_declaration}
 
-class BuildState {
+class CacheBuilder {
 
     private String expansion = null;
 
@@ -758,7 +758,7 @@ Macro is_built
     Internal
         macro_name: String;
 {Body}
-if(this.build_state != null){
+if(this.cacheBuilder != null){
     throw ObjectMacroException.cannotModify("{macro_name}");
 }
 {End}
@@ -989,10 +989,9 @@ private void setMacros(Macros macros){
 
 Macro macro_builder
     Param
-        macro_name: String;
         context_param: context_param;
-        context_build_state: context_build_state, none="this.build_state";
-        new_build_state: new_build_state, none="this.build_state = buildState";
+        context_cache_builder: context_cache_builder, none="this.cacheBuilder";
+        new_cache_builder: new_cache_builder, none="this.cacheBuilder = cache_builder";
         directives_calls: init_directive_call, separator="\n";
         internals_calls: init_internals_call, separator="\n";
         macro_body_parts: init_string_builder, string_part, param_insert_part,  eol_part, insert_macro_part, add_indent, indent_part, separator="\n";
@@ -1000,18 +999,18 @@ Macro macro_builder
 @Override
 {Insert: public} String build({context_param}){
 
-    BuildState buildState = {context_build_state};
+    CacheBuilder cache_builder = {context_cache_builder};
 
-    if(buildState == null){
-        buildState = new BuildState();
+    if(cache_builder == null){
+        cache_builder = new CacheBuilder();
     }
-    else if(buildState.getExpansion() == null){
-        throw ObjectMacroException.cyclicReference("{macro_name}");
+    else if(cache_builder.getExpansion() == null){
+        throw new InternalException("Cycle detection detected lately");
     }
     else{
-        return buildState.getExpansion();
+        return cache_builder.getExpansion();
     }
-    {new_build_state};
+    {new_cache_builder};
     List<String> indentations = new LinkedList<>();
     StringBuilder sbIndentation = new StringBuilder();
 
@@ -1027,7 +1026,7 @@ Macro macro_builder
 {macro_body_parts}
 {End}
 
-    buildState.setExpansion(sb0.toString());
+    cache_builder.setExpansion(sb0.toString());
     return sb0.toString();
 }
 {End}
@@ -1057,18 +1056,18 @@ String build(Context context) {
 }
 {End}
 
-# ========== context_build_state =======
+# ========== context_cache_builder =======
 
-Macro context_build_state
+Macro context_cache_builder
 {Body}
-this.build_states.get(context)
+this.cacheBuilders.get(context)
 {End}
 
-# ========== new_build_state =========
+# ========== new_cache_builder =========
 
-Macro new_build_state
+Macro new_cache_builder
 {Body}
-this.build_states.put(context, buildState)
+this.cacheBuilders.put(context, cache_builder)
 {End}
 
 # ========= redefined_apply_initializer =======
@@ -1752,18 +1751,15 @@ class MUserErrorIncorrectType extends Macro{
        @Override
        public String build(){
 
-           BuildState buildState = this.build_state;
+           CacheBuilder cache_builder = this.cacheBuilder;
 
-           if(buildState == null){
-               buildState = new BuildState();
-           }
-           else if(buildState.getExpansion() == null){
-               throw ObjectMacroException.cyclicReference("UserErrorIncorrectType");
+           if(cache_builder == null){
+               cache_builder = new CacheBuilder();
            }
            else{
-               return buildState.getExpansion();
+               return cache_builder.getExpansion();
            }
-           this.build_state = buildState;
+           this.cacheBuilder = cache_builder;
            List<String> indentations = new LinkedList<>();
            StringBuilder sbIndentation = new StringBuilder();
 
@@ -1779,7 +1775,7 @@ class MUserErrorIncorrectType extends Macro{
            sb0.append(buildParamName());
            sb0.append("'.");
 
-           buildState.setExpansion(sb0.toString());
+           cache_builder.setExpansion(sb0.toString());
            return sb0.toString();
        }
 
@@ -1816,18 +1812,15 @@ class MObjectMacroUserErrorHead extends Macro{
     @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if(buildState == null){
-            buildState = new BuildState();
-        }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("ObjectMacroUserErrorHead");
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -1835,7 +1828,7 @@ class MObjectMacroUserErrorHead extends Macro{
 
         sb0.append("*** OBJECT MACRO ERROR ***");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 
@@ -1895,18 +1888,15 @@ class MUserErrorParameterNull extends Macro{
     @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if(buildState == null){
-            buildState = new BuildState();
-        }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("UserErrorParameterNull");
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -1921,7 +1911,7 @@ class MUserErrorParameterNull extends Macro{
         sb0.append(buildParamName());
         sb0.append("' cannot be null.");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 
@@ -2003,18 +1993,15 @@ class MUserErrorMacroNullInList extends Macro{
     @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if(buildState == null){
-            buildState = new BuildState();
-        }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("UserErrorMacroNullInList");
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -2031,7 +2018,7 @@ class MUserErrorMacroNullInList extends Macro{
         sb0.append(buildParamName());
         sb0.append("'.");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 
@@ -2090,18 +2077,15 @@ class MUserErrorCannotModify extends Macro{
     @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if(buildState == null){
-            buildState = new BuildState();
-        }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("UserErrorCannotModify");
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -2116,7 +2100,7 @@ class MUserErrorCannotModify extends Macro{
         sb0.append(buildMacroName());
         sb0.append(" cannot be updated after the macro has been built.");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 
@@ -2175,18 +2159,15 @@ class MUserErrorCyclicReference extends Macro{
     @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if(buildState == null){
-            buildState = new BuildState();
-        }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("UserErrorCyclicReference");
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -2201,7 +2182,7 @@ class MUserErrorCyclicReference extends Macro{
         sb0.append(buildMacroName());
         sb0.append("\" is a cyclic reference to the same instance.");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 
@@ -2239,18 +2220,15 @@ public class MUserErrorVersionNull extends Macro{
     @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if(buildState == null){
-            buildState = new BuildState();
-        }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("VersionNull");
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -2258,7 +2236,7 @@ public class MUserErrorVersionNull extends Macro{
 
         sb0.append("The version may not be null.");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 
@@ -2320,18 +2298,15 @@ class MUserErrorInternalException extends Macro{
     @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if(buildState == null){
-            buildState = new BuildState();
-        }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("UserErrorInternalException");
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -2351,7 +2326,7 @@ class MUserErrorInternalException extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append(" http://sablecc.org/");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 
@@ -2389,18 +2364,15 @@ class MUserErrorVersionsDifferent extends Macro{
     @Override
     public String build(){
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if(buildState == null){
-            buildState = new BuildState();
-        }
-        else if(buildState.getExpansion() == null){
-            throw ObjectMacroException.cyclicReference("UserErrorVersionsDifferent");
+        if(cache_builder == null){
+            cache_builder = new CacheBuilder();
         }
         else{
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -2413,7 +2385,7 @@ class MUserErrorVersionsDifferent extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("The Macros of the child macro must be equal to the Macros of the parent.");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

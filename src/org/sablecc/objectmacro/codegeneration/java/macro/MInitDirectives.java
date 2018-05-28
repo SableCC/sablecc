@@ -23,7 +23,7 @@ public class MInitDirectives
 
     private DNone NewDirectivesNone;
 
-    public MInitDirectives(
+    MInitDirectives(
             String pParamName,
             Macros macros) {
 
@@ -51,7 +51,7 @@ public class MInitDirectives
         if (macros == null) {
             throw ObjectMacroException.parameterNull("NewDirectives");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("InitDirectives");
         }
 
@@ -94,7 +94,7 @@ public class MInitDirectives
         if (macro == null) {
             throw ObjectMacroException.parameterNull("NewDirectives");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("InitDirectives");
         }
 
@@ -193,18 +193,18 @@ public class MInitDirectives
     @Override
     public String build() {
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if (buildState == null) {
-            buildState = new BuildState();
+        if (cache_builder == null) {
+            cache_builder = new CacheBuilder();
         }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("InitDirectives");
+        else if (cache_builder.getExpansion() == null) {
+            throw new InternalException("Cycle detection detected lately");
         }
         else {
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -229,7 +229,7 @@ public class MInitDirectives
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

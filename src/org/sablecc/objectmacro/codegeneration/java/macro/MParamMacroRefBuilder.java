@@ -23,7 +23,7 @@ public class MParamMacroRefBuilder
 
     private DNone ContextNameNone;
 
-    public MParamMacroRefBuilder(
+    MParamMacroRefBuilder(
             String pName,
             Macros macros) {
 
@@ -51,7 +51,7 @@ public class MParamMacroRefBuilder
         if (macros == null) {
             throw ObjectMacroException.parameterNull("ContextName");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("ParamMacroRefBuilder");
         }
 
@@ -94,7 +94,7 @@ public class MParamMacroRefBuilder
         if (macro == null) {
             throw ObjectMacroException.parameterNull("ContextName");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("ParamMacroRefBuilder");
         }
 
@@ -194,18 +194,18 @@ public class MParamMacroRefBuilder
     @Override
     public String build() {
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if (buildState == null) {
-            buildState = new BuildState();
+        if (cache_builder == null) {
+            cache_builder = new CacheBuilder();
         }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("ParamMacroRefBuilder");
+        else if (cache_builder.getExpansion() == null) {
+            throw new InternalException("Cycle detection detected lately");
         }
         else {
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -250,7 +250,7 @@ public class MParamMacroRefBuilder
         sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    for(Macro macro : macros)");
+        sb0.append("    for(Macro macro: macros)");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append("        expansion = macro.build(local_context);");
@@ -303,7 +303,7 @@ public class MParamMacroRefBuilder
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

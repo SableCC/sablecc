@@ -27,7 +27,7 @@ public class MUnknownMacro
 
     private DNone VersionsNone;
 
-    public MUnknownMacro(
+    MUnknownMacro(
             String pName,
             String pLine,
             String pChar,
@@ -79,7 +79,7 @@ public class MUnknownMacro
         if (macros == null) {
             throw ObjectMacroException.parameterNull("Versions");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("UnknownMacro");
         }
 
@@ -122,7 +122,7 @@ public class MUnknownMacro
         if (macro == null) {
             throw ObjectMacroException.parameterNull("Versions");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("UnknownMacro");
         }
 
@@ -254,18 +254,18 @@ public class MUnknownMacro
     @Override
     public String build() {
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if (buildState == null) {
-            buildState = new BuildState();
+        if (cache_builder == null) {
+            cache_builder = new CacheBuilder();
         }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("UnknownMacro");
+        else if (cache_builder.getExpansion() == null) {
+            throw new InternalException("Cycle detection detected lately");
         }
         else {
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -291,7 +291,7 @@ public class MUnknownMacro
         sb0.append("\" does not exist ");
         sb0.append(buildVersions());
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

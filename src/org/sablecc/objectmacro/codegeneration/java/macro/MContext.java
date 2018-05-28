@@ -21,7 +21,7 @@ public class MContext
 
     private DNone PackageDeclarationNone;
 
-    public MContext(
+    MContext(
             Macros macros) {
 
         setMacros(macros);
@@ -37,7 +37,7 @@ public class MContext
         if (macros == null) {
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("Context");
         }
 
@@ -52,15 +52,7 @@ public class MContext
                 throw ObjectMacroException.diffMacros();
             }
 
-            macro.apply(new InternalsInitializer("PackageDeclaration") {
-
-                @Override
-                void setPackageDeclaration(
-                        MPackageDeclaration mPackageDeclaration) {
-
-                }
-            });
-
+            verifyTypePackageDeclaration(macro);
             this.list_PackageDeclaration.add(macro);
             this.children.add(macro);
             Macro.cycleDetector.detectCycle(this, macro);
@@ -69,13 +61,26 @@ public class MContext
         }
     }
 
+    void verifyTypePackageDeclaration(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("PackageDeclaration") {
+
+            @Override
+            void setPackageDeclaration(
+                    MPackageDeclaration mPackageDeclaration) {
+
+            }
+        });
+    }
+
     public void addPackageDeclaration(
             MPackageDeclaration macro) {
 
         if (macro == null) {
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("Context");
         }
 
@@ -166,18 +171,18 @@ public class MContext
     @Override
     public String build() {
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if (buildState == null) {
-            buildState = new BuildState();
+        if (cache_builder == null) {
+            cache_builder = new CacheBuilder();
         }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("Context");
+        else if (cache_builder.getExpansion() == null) {
+            throw new InternalException("Cycle detection detected lately");
         }
         else {
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -200,7 +205,7 @@ public class MContext
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

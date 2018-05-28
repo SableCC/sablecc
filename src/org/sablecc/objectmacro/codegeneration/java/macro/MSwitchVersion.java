@@ -25,7 +25,7 @@ public class MSwitchVersion
 
     private Map<Context, InternalValue> list_Args = new LinkedHashMap<>();
 
-    public MSwitchVersion(
+    MSwitchVersion(
             Macros macros) {
 
         setMacros(macros);
@@ -41,7 +41,7 @@ public class MSwitchVersion
         if (macros == null) {
             throw ObjectMacroException.parameterNull("VersionCases");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("SwitchVersion");
         }
 
@@ -84,7 +84,7 @@ public class MSwitchVersion
         if (macro == null) {
             throw ObjectMacroException.parameterNull("VersionCases");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("SwitchVersion");
         }
 
@@ -228,18 +228,18 @@ public class MSwitchVersion
     public String build(
             Context context) {
 
-        BuildState buildState = this.build_states.get(context);
+        CacheBuilder cache_builder = this.cacheBuilders.get(context);
 
-        if (buildState == null) {
-            buildState = new BuildState();
+        if (cache_builder == null) {
+            cache_builder = new CacheBuilder();
         }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("SwitchVersion");
+        else if (cache_builder.getExpansion() == null) {
+            throw new InternalException("Cycle detection detected lately");
         }
         else {
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_states.put(context, buildState);
+        this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -266,7 +266,7 @@ public class MSwitchVersion
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

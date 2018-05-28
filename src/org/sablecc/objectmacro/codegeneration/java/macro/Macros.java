@@ -113,13 +113,13 @@ public class Macros {
         return mClassInternalValue;
     }
 
-    public MClassBuildState newClassBuildState() {
+    public MClassCacheBuilder newClassCacheBuilder() {
 
-        MClassBuildState mClassBuildState;
+        MClassCacheBuilder mClassCacheBuilder;
 
-        mClassBuildState = new MClassBuildState(this);
+        mClassCacheBuilder = new MClassCacheBuilder(this);
 
-        return mClassBuildState;
+        return mClassCacheBuilder;
     }
 
     public MVersionEnumeration newVersionEnumeration() {
@@ -470,12 +470,11 @@ public class Macros {
         return mSetMacrosMethod;
     }
 
-    public MMacroBuilder newMacroBuilder(
-            String pMacroName) {
+    public MMacroBuilder newMacroBuilder() {
 
         MMacroBuilder mMacroBuilder;
 
-        mMacroBuilder = new MMacroBuilder(pMacroName, this);
+        mMacroBuilder = new MMacroBuilder(this);
 
         return mMacroBuilder;
     }
@@ -509,22 +508,22 @@ public class Macros {
         return mEmptyBuilderWithContext;
     }
 
-    public MContextBuildState newContextBuildState() {
+    public MContextCacheBuilder newContextCacheBuilder() {
 
-        MContextBuildState mContextBuildState;
+        MContextCacheBuilder mContextCacheBuilder;
 
-        mContextBuildState = new MContextBuildState(this);
+        mContextCacheBuilder = new MContextCacheBuilder(this);
 
-        return mContextBuildState;
+        return mContextCacheBuilder;
     }
 
-    public MNewBuildState newNewBuildState() {
+    public MNewCacheBuilder newNewCacheBuilder() {
 
-        MNewBuildState mNewBuildState;
+        MNewCacheBuilder mNewCacheBuilder;
 
-        mNewBuildState = new MNewBuildState(this);
+        mNewCacheBuilder = new MNewCacheBuilder(this);
 
-        return mNewBuildState;
+        return mNewCacheBuilder;
     }
 
     public MRedefinedApplyInitializer newRedefinedApplyInitializer() {

@@ -23,7 +23,7 @@ public class MSetParam
 
     private DNone SetParamNone;
 
-    public MSetParam(
+    MSetParam(
             String pName,
             Macros macros) {
 
@@ -51,7 +51,7 @@ public class MSetParam
         if (macros == null) {
             throw ObjectMacroException.parameterNull("SetParam");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("SetParam");
         }
 
@@ -94,7 +94,7 @@ public class MSetParam
         if (macro == null) {
             throw ObjectMacroException.parameterNull("SetParam");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("SetParam");
         }
 
@@ -190,18 +190,18 @@ public class MSetParam
     @Override
     public String build() {
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if (buildState == null) {
-            buildState = new BuildState();
+        if (cache_builder == null) {
+            cache_builder = new CacheBuilder();
         }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("SetParam");
+        else if (cache_builder.getExpansion() == null) {
+            throw new InternalException("Cycle detection detected lately");
         }
         else {
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -217,7 +217,7 @@ public class MSetParam
         sb0.append(buildSetParam());
         sb0.append(");");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

@@ -35,7 +35,7 @@ public class MInternalsInitializer
 
     private DNone ParentInternalSettersNone;
 
-    public MInternalsInitializer(
+    MInternalsInitializer(
             Macros macros) {
 
         setMacros(macros);
@@ -55,7 +55,7 @@ public class MInternalsInitializer
         if (macros == null) {
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("InternalsInitializer");
         }
 
@@ -98,7 +98,7 @@ public class MInternalsInitializer
         if (macro == null) {
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("InternalsInitializer");
         }
 
@@ -117,7 +117,7 @@ public class MInternalsInitializer
         if (macros == null) {
             throw ObjectMacroException.parameterNull("ParentInternalSetters");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("InternalsInitializer");
         }
 
@@ -161,7 +161,7 @@ public class MInternalsInitializer
         if (macro == null) {
             throw ObjectMacroException.parameterNull("ParentInternalSetters");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("InternalsInitializer");
         }
 
@@ -321,18 +321,18 @@ public class MInternalsInitializer
     @Override
     public String build() {
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if (buildState == null) {
-            buildState = new BuildState();
+        if (cache_builder == null) {
+            cache_builder = new CacheBuilder();
         }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("InternalsInitializer");
+        else if (cache_builder.getExpansion() == null) {
+            throw new InternalException("Cycle detection detected lately");
         }
         else {
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -358,12 +358,13 @@ public class MInternalsInitializer
         sb0.append("    private final String _paramName;");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    InternalsInitializer(String paramName)");
+        sb0.append("    InternalsInitializer(String paramName) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append("        this._paramName = paramName;");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    }");
+        sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
         StringBuilder sb2 = new StringBuilder();
@@ -375,7 +376,7 @@ public class MInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(
-                "    void setObjectMacroUserErrorHead(MObjectMacroUserErrorHead mObjectMacroUserErrorHead)");
+                "    void setObjectMacroUserErrorHead(MObjectMacroUserErrorHead mObjectMacroUserErrorHead) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(
@@ -385,7 +386,7 @@ public class MInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(
-                "    void setUserErrorIncorrectType(MUserErrorIncorrectType mUserErrorIncorrectType)");
+                "    void setUserErrorIncorrectType(MUserErrorIncorrectType mUserErrorIncorrectType) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(
@@ -395,7 +396,7 @@ public class MInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(
-                "    void setUserErrorMacroNullInList(MUserErrorMacroNullInList mUserErrorMacroNullInList)");
+                "    void setUserErrorMacroNullInList(MUserErrorMacroNullInList mUserErrorMacroNullInList) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(
@@ -405,7 +406,7 @@ public class MInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(
-                "    void setUserErrorCyclicReference(MUserErrorCyclicReference mUserErrorCyclicReference)");
+                "    void setUserErrorCyclicReference(MUserErrorCyclicReference mUserErrorCyclicReference) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(
@@ -415,7 +416,7 @@ public class MInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(
-                "    void setUserErrorParameterNull(MUserErrorParameterNull mUserErrorParameterNull)");
+                "    void setUserErrorParameterNull(MUserErrorParameterNull mUserErrorParameterNull) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(
@@ -425,7 +426,7 @@ public class MInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(
-                "    void setUserErrorCannotModify(MUserErrorCannotModify mUserErrorCannotModify)");
+                "    void setUserErrorCannotModify(MUserErrorCannotModify mUserErrorCannotModify) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(
@@ -435,7 +436,7 @@ public class MInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(
-                "    void setUserErrorVersionNull(MUserErrorVersionNull mUserErrorVersionNull)");
+                "    void setUserErrorVersionNull(MUserErrorVersionNull mUserErrorVersionNull) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(
@@ -445,7 +446,7 @@ public class MInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(
-                "    void setUserErrorVersionsDifferent(MUserErrorVersionsDifferent mUserErrorVersionsDifferent)");
+                "    void setUserErrorVersionsDifferent(MUserErrorVersionsDifferent mUserErrorVersionsDifferent) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(
@@ -455,7 +456,7 @@ public class MInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append(
-                "    void setUserErrorInternalException(MUserErrorInternalException mUserErrorInternalException)");
+                "    void setUserErrorInternalException(MUserErrorInternalException mUserErrorInternalException) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(
@@ -466,7 +467,7 @@ public class MInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

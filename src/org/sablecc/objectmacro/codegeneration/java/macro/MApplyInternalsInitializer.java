@@ -23,7 +23,7 @@ public class MApplyInternalsInitializer
 
     private Map<Context, String> field_ParamName = new LinkedHashMap<>();
 
-    public MApplyInternalsInitializer(
+    MApplyInternalsInitializer(
             Macros macros) {
 
         setMacros(macros);
@@ -41,7 +41,7 @@ public class MApplyInternalsInitializer
             throw ObjectMacroException
                     .parameterNull("RedefinedInternalsSetter");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException
                     .cannotModify("ApplyInternalsInitializer");
         }
@@ -87,7 +87,7 @@ public class MApplyInternalsInitializer
             throw ObjectMacroException
                     .parameterNull("RedefinedInternalsSetter");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException
                     .cannotModify("ApplyInternalsInitializer");
         }
@@ -205,19 +205,18 @@ public class MApplyInternalsInitializer
     public String build(
             Context context) {
 
-        BuildState buildState = this.build_states.get(context);
+        CacheBuilder cache_builder = this.cacheBuilders.get(context);
 
-        if (buildState == null) {
-            buildState = new BuildState();
+        if (cache_builder == null) {
+            cache_builder = new CacheBuilder();
         }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException
-                    .cyclicReference("ApplyInternalsInitializer");
+        else if (cache_builder.getExpansion() == null) {
+            throw new InternalException("Cycle detection detected lately");
         }
         else {
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_states.put(context, buildState);
+        this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -242,7 +241,7 @@ public class MApplyInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append("});");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 

@@ -21,7 +21,7 @@ public class MMacroInsert
 
     private DNone ReferencedMacroNone;
 
-    public MMacroInsert(
+    MMacroInsert(
             Macros macros) {
 
         setMacros(macros);
@@ -37,7 +37,7 @@ public class MMacroInsert
         if (macros == null) {
             throw ObjectMacroException.parameterNull("ReferencedMacro");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("MacroInsert");
         }
 
@@ -80,7 +80,7 @@ public class MMacroInsert
         if (macro == null) {
             throw ObjectMacroException.parameterNull("ReferencedMacro");
         }
-        if (this.build_state != null) {
+        if (this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify("MacroInsert");
         }
 
@@ -166,18 +166,18 @@ public class MMacroInsert
     @Override
     public String build() {
 
-        BuildState buildState = this.build_state;
+        CacheBuilder cache_builder = this.cacheBuilder;
 
-        if (buildState == null) {
-            buildState = new BuildState();
+        if (cache_builder == null) {
+            cache_builder = new CacheBuilder();
         }
-        else if (buildState.getExpansion() == null) {
-            throw ObjectMacroException.cyclicReference("MacroInsert");
+        else if (cache_builder.getExpansion() == null) {
+            throw new InternalException("Cycle detection detected lately");
         }
         else {
-            return buildState.getExpansion();
+            return cache_builder.getExpansion();
         }
-        this.build_state = buildState;
+        this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
         StringBuilder sbIndentation = new StringBuilder();
 
@@ -200,7 +200,7 @@ public class MMacroInsert
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
 
-        buildState.setExpansion(sb0.toString());
+        cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
 
