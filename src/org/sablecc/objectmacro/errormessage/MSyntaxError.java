@@ -4,148 +4,469 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MSyntaxError extends Macro{
+public class MSyntaxError extends Macro {
     
-    String field_Line;
+    private DSeparator LineSeparator;
     
-    String field_Char;
+    private DBeforeFirst LineBeforeFirst;
     
-    String field_TokenType;
+    private DAfterLast LineAfterLast;
     
-    String field_TokenText;
+    private DNone LineNone;
     
-    String field_Message;
+    final List<String> list_Line;
     
-    MSyntaxError(String pLine, String pChar, String pTokenType, String pTokenText, String pMessage, Macros macros){
+    final Context LineContext = new Context();
+    
+    final StringValue LineValue;
+    
+    private DSeparator CharSeparator;
+    
+    private DBeforeFirst CharBeforeFirst;
+    
+    private DAfterLast CharAfterLast;
+    
+    private DNone CharNone;
+    
+    final List<String> list_Char;
+    
+    final Context CharContext = new Context();
+    
+    final StringValue CharValue;
+    
+    private DSeparator TokenTypeSeparator;
+    
+    private DBeforeFirst TokenTypeBeforeFirst;
+    
+    private DAfterLast TokenTypeAfterLast;
+    
+    private DNone TokenTypeNone;
+    
+    final List<String> list_TokenType;
+    
+    final Context TokenTypeContext = new Context();
+    
+    final StringValue TokenTypeValue;
+    
+    private DSeparator TokenTextSeparator;
+    
+    private DBeforeFirst TokenTextBeforeFirst;
+    
+    private DAfterLast TokenTextAfterLast;
+    
+    private DNone TokenTextNone;
+    
+    final List<String> list_TokenText;
+    
+    final Context TokenTextContext = new Context();
+    
+    final StringValue TokenTextValue;
+    
+    private DSeparator MessageSeparator;
+    
+    private DBeforeFirst MessageBeforeFirst;
+    
+    private DAfterLast MessageAfterLast;
+    
+    private DNone MessageNone;
+    
+    final List<String> list_Message;
+    
+    final Context MessageContext = new Context();
+    
+    final StringValue MessageValue;
+    
+    MSyntaxError(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPLine(pLine);
-        this.setPChar(pChar);
-        this.setPTokenType(pTokenType);
-        this.setPTokenText(pTokenText);
-        this.setPMessage(pMessage);
+        this.list_Line = new LinkedList<>();
+        this.list_Char = new LinkedList<>();
+        this.list_TokenType = new LinkedList<>();
+        this.list_TokenText = new LinkedList<>();
+        this.list_Message = new LinkedList<>();
+        
+        this.LineValue = new StringValue(this.list_Line, this.LineContext);
+        this.CharValue = new StringValue(this.list_Char, this.CharContext);
+        this.TokenTypeValue = new StringValue(this.list_TokenType, this.TokenTypeContext);
+        this.TokenTextValue = new StringValue(this.list_TokenText, this.TokenTextContext);
+        this.MessageValue = new StringValue(this.list_Message, this.MessageContext);
     }
     
-    private void setPLine( String pLine ){
-        if(pLine == null){
+    public void addAllLine(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Line");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Line");
+            }
     
-        this.field_Line = pLine;
+            this.list_Line.add(string);
+        }
     }
     
-    private void setPChar( String pChar ){
-        if(pChar == null){
+    public void addLine(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Line");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_Line.add(string);
+    }
+    
+    public void addAllChar(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Char");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Char");
+            }
     
-        this.field_Char = pChar;
+            this.list_Char.add(string);
+        }
     }
     
-    private void setPTokenType( String pTokenType ){
-        if(pTokenType == null){
+    public void addChar(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_Char.add(string);
+    }
+    
+    public void addAllTokenType(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("TokenType");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("TokenType");
+            }
     
-        this.field_TokenType = pTokenType;
+            this.list_TokenType.add(string);
+        }
     }
     
-    private void setPTokenText( String pTokenText ){
-        if(pTokenText == null){
+    public void addTokenType(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("TokenType");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_TokenType.add(string);
+    }
+    
+    public void addAllTokenText(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("TokenText");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("TokenText");
+            }
     
-        this.field_TokenText = pTokenText;
+            this.list_TokenText.add(string);
+        }
     }
     
-    private void setPMessage( String pMessage ){
-        if(pMessage == null){
-            throw ObjectMacroException.parameterNull("Message");
+    public void addTokenText(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("TokenText");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.field_Message = pMessage;
+        this.list_TokenText.add(string);
     }
     
-    String buildLine(){
+    public void addAllMessage(
+                    List<String> strings){
     
-        return this.field_Line;
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("Message");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Message");
+            }
+    
+            this.list_Message.add(string);
+        }
     }
     
-    String buildChar(){
+    public void addMessage(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Message");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_Char;
+        this.list_Message.add(string);
     }
     
-    String buildTokenType(){
+    private String buildLine() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Line;
     
-        return this.field_TokenType;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.LineNone != null) {
+            sb.append(this.LineNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.LineBeforeFirst != null) {
+                string = this.LineBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.LineAfterLast != null) {
+                string = this.LineAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.LineSeparator != null) {
+                string = this.LineSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String buildTokenText(){
+    private String buildChar() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Char;
     
-        return this.field_TokenText;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.CharNone != null) {
+            sb.append(this.CharNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.CharBeforeFirst != null) {
+                string = this.CharBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.CharAfterLast != null) {
+                string = this.CharAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.CharSeparator != null) {
+                string = this.CharSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String buildMessage(){
+    private String buildTokenType() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_TokenType;
     
-        return this.field_Message;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.TokenTypeNone != null) {
+            sb.append(this.TokenTypeNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.TokenTypeBeforeFirst != null) {
+                string = this.TokenTypeBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.TokenTypeAfterLast != null) {
+                string = this.TokenTypeAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.TokenTypeSeparator != null) {
+                string = this.TokenTypeSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getLine(){
+    private String buildTokenText() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_TokenText;
     
-        return this.field_Line;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.TokenTextNone != null) {
+            sb.append(this.TokenTextNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.TokenTextBeforeFirst != null) {
+                string = this.TokenTextBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.TokenTextAfterLast != null) {
+                string = this.TokenTextAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.TokenTextSeparator != null) {
+                string = this.TokenTextSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getChar(){
+    private String buildMessage() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Message;
     
-        return this.field_Char;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.MessageNone != null) {
+            sb.append(this.MessageNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.MessageBeforeFirst != null) {
+                string = this.MessageBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.MessageAfterLast != null) {
+                string = this.MessageAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.MessageSeparator != null) {
+                string = this.MessageSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getTokenType(){
-    
-        return this.field_TokenType;
+    StringValue getLine() {
+        return this.LineValue;
     }
     
-    String getTokenText(){
-    
-        return this.field_TokenText;
+    StringValue getChar() {
+        return this.CharValue;
     }
     
-    String getMessage(){
+    StringValue getTokenType() {
+        return this.TokenTypeValue;
+    }
     
-        return this.field_Message;
+    StringValue getTokenText() {
+        return this.TokenTextValue;
+    }
+    
+    StringValue getMessage() {
+        return this.MessageValue;
     }
     
     
+    private void initLineDirectives() {
+        
+    }
+    
+    private void initCharDirectives() {
+        
+    }
+    
+    private void initTokenTypeDirectives() {
+        
+    }
+    
+    private void initTokenTextDirectives() {
+        
+    }
+    
+    private void initMessageDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setSyntaxError(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
-    
-    
+        initLineDirectives();
+        initCharDirectives();
+        initTokenTypeDirectives();
+        initTokenTextDirectives();
+        initMessageDirectives();
     
         StringBuilder sb0 = new StringBuilder();
     
@@ -175,7 +496,6 @@ public  class MSyntaxError extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

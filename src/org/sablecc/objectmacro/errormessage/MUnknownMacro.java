@@ -4,19 +4,49 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MUnknownMacro extends Macro{
+public class MUnknownMacro extends Macro {
     
-    String field_Name;
+    private DSeparator NameSeparator;
     
-    String field_Line;
+    private DBeforeFirst NameBeforeFirst;
     
-    String field_Char;
+    private DAfterLast NameAfterLast;
     
-    final List<Macro> list_Versions;
+    private DNone NameNone;
     
-    final Context VersionsContext = new Context();
+    final List<String> list_Name;
     
-    final InternalValue VersionsValue;
+    final Context NameContext = new Context();
+    
+    final StringValue NameValue;
+    
+    private DSeparator LineSeparator;
+    
+    private DBeforeFirst LineBeforeFirst;
+    
+    private DAfterLast LineAfterLast;
+    
+    private DNone LineNone;
+    
+    final List<String> list_Line;
+    
+    final Context LineContext = new Context();
+    
+    final StringValue LineValue;
+    
+    private DSeparator CharSeparator;
+    
+    private DBeforeFirst CharBeforeFirst;
+    
+    private DAfterLast CharAfterLast;
+    
+    private DNone CharNone;
+    
+    final List<String> list_Char;
+    
+    final Context CharContext = new Context();
+    
+    final StringValue CharValue;
     
     private DSeparator VersionsSeparator;
     
@@ -26,40 +56,112 @@ public  class MUnknownMacro extends Macro{
     
     private DNone VersionsNone;
     
-    MUnknownMacro(String pName, String pLine, String pChar, Macros macros){
+    final List<Macro> list_Versions;
+    
+    final Context VersionsContext = new Context();
+    
+    final MacroValue VersionsValue;
+    
+    MUnknownMacro(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPName(pName);
-        this.setPLine(pLine);
-        this.setPChar(pChar);
+        this.list_Name = new LinkedList<>();
+        this.list_Line = new LinkedList<>();
+        this.list_Char = new LinkedList<>();
         this.list_Versions = new LinkedList<>();
         
-        this.VersionsValue = new InternalValue(this.list_Versions, this.VersionsContext);
+        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+        this.LineValue = new StringValue(this.list_Line, this.LineContext);
+        this.CharValue = new StringValue(this.list_Char, this.CharContext);
+        this.VersionsValue = new MacroValue(this.list_Versions, this.VersionsContext);
     }
     
-    private void setPName( String pName ){
-        if(pName == null){
+    public void addAllName(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Name");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Name");
+            }
     
-        this.field_Name = pName;
+            this.list_Name.add(string);
+        }
     }
     
-    private void setPLine( String pLine ){
-        if(pLine == null){
+    public void addName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Name");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_Name.add(string);
+    }
+    
+    public void addAllLine(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Line");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Line");
+            }
     
-        this.field_Line = pLine;
+            this.list_Line.add(string);
+        }
     }
     
-    private void setPChar( String pChar ){
-        if(pChar == null){
-            throw ObjectMacroException.parameterNull("Char");
+    public void addLine(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Line");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.field_Char = pChar;
+        this.list_Line.add(string);
+    }
+    
+    public void addAllChar(
+                    List<String> strings){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Char");
+            }
+    
+            this.list_Char.add(string);
+        }
+    }
+    
+    public void addChar(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_Char.add(string);
     }
     
     public void addAllVersions(
@@ -68,8 +170,8 @@ public  class MUnknownMacro extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Versions");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("UnknownMacro");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -79,7 +181,7 @@ public  class MUnknownMacro extends Macro{
                 throw ObjectMacroException.macroNull(i, "Versions");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -97,9 +199,9 @@ public  class MUnknownMacro extends Macro{
         macro.apply(new InternalsInitializer("Versions"){
             @Override
             void setPlainText(MPlainText mPlainText){
+                
             
-                
-                
+            
             }
         });
     }
@@ -108,11 +210,11 @@ public  class MUnknownMacro extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Versions");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("UnknownMacro");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -121,46 +223,127 @@ public  class MUnknownMacro extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    String buildName(){
-    
-        return this.field_Name;
-    }
-    
-    String buildLine(){
-    
-        return this.field_Line;
-    }
-    
-    String buildChar(){
-    
-        return this.field_Char;
-    }
-    
-    private String buildVersions(){
+    private String buildName() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = VersionsContext;
+        List<String> strings = this.list_Name;
+    
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.NameNone != null) {
+            sb.append(this.NameNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.NameBeforeFirst != null) {
+                string = this.NameBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.NameAfterLast != null) {
+                string = this.NameAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.NameSeparator != null) {
+                string = this.NameSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    private String buildLine() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Line;
+    
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.LineNone != null) {
+            sb.append(this.LineNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.LineBeforeFirst != null) {
+                string = this.LineBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.LineAfterLast != null) {
+                string = this.LineAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.LineSeparator != null) {
+                string = this.LineSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    private String buildChar() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Char;
+    
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.CharNone != null) {
+            sb.append(this.CharNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.CharBeforeFirst != null) {
+                string = this.CharBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.CharAfterLast != null) {
+                string = this.CharAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.CharSeparator != null) {
+                string = this.CharSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    private String buildVersions() {
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.VersionsContext;
         List<Macro> macros = this.list_Versions;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.VersionsNone != null){
+        if(this.VersionsNone != null) {
             sb.append(this.VersionsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.VersionsBeforeFirst != null){
+            if(this.VersionsBeforeFirst != null) {
                 expansion = this.VersionsBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.VersionsAfterLast != null){
+            if(this.VersionsAfterLast != null) {
                 expansion = this.VersionsAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.VersionsSeparator != null){
+            if(this.VersionsSeparator != null) {
                 expansion = this.VersionsSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -171,38 +354,47 @@ public  class MUnknownMacro extends Macro{
         return sb.toString();
     }
     
-    String getName(){
-    
-        return this.field_Name;
+    StringValue getName() {
+        return this.NameValue;
     }
     
-    String getLine(){
-    
-        return this.field_Line;
+    StringValue getLine() {
+        return this.LineValue;
     }
     
-    String getChar(){
-    
-        return this.field_Char;
+    StringValue getChar() {
+        return this.CharValue;
     }
     
-    private InternalValue getVersions(){
+    MacroValue getVersions() {
         return this.VersionsValue;
     }
-    private void initVersionsInternals(Context context){
-        for(Macro macro : this.list_Versions){
+    private void initVersionsInternals(Context context) {
+        for(Macro macro : this.list_Versions) {
             macro.apply(new InternalsInitializer("Versions"){
                 @Override
                 void setPlainText(MPlainText mPlainText){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initVersionsDirectives(){
+    private void initNameDirectives() {
+        
+    }
+    
+    private void initLineDirectives() {
+        
+    }
+    
+    private void initCharDirectives() {
+        
+    }
+    
+    private void initVersionsDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(".");
         this.VersionsNone = new DNone(sb1.toString());
@@ -219,29 +411,32 @@ public  class MUnknownMacro extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setUnknownMacro(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initNameDirectives();
+        initLineDirectives();
+        initCharDirectives();
+        initVersionsDirectives();
         initVersionsDirectives();
         
         initVersionsInternals(null);
@@ -249,6 +444,7 @@ public  class MUnknownMacro extends Macro{
         StringBuilder sb0 = new StringBuilder();
     
         MSemanticErrorHead m1 = this.getMacros().newSemanticErrorHead();
+        
         
         
         sb0.append(m1.build(null));
@@ -273,7 +469,6 @@ public  class MUnknownMacro extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

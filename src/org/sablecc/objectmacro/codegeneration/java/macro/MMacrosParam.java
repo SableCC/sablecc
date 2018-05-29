@@ -4,62 +4,63 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MMacrosParam extends Macro{
+public class MMacrosParam extends Macro {
     
-    private Map<Context, String> field_Name = new LinkedHashMap<>();
+    private Map<Context, StringValue> list_Name = new LinkedHashMap<>();
     
     MMacrosParam(Macros macros){
         
         
         this.setMacros(macros);
+        this.list_Name = new LinkedHashMap<>();
     }
     
     void setName(
             Context context,
-            String value) {
+            StringValue value) {
     
         if(value == null){
             throw new RuntimeException("value cannot be null here");
         }
     
-        this.field_Name.put(context, value);
+        this.list_Name.put(context, value);
     }
     
-    String buildName(Context context){
+    private String buildName(Context context) {
     
-        return this.field_Name.get(context);
+        StringValue stringValue = this.list_Name.get(context);
+        return stringValue.build();
     }
     
-    String getName(Context context){
+    private StringValue getName(Context context) {
     
-        return this.field_Name.get(context);
+        return this.list_Name.get(context);
     }
     
     
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setMacrosParam(this);
     }
     
     
-    String build(Context context){
+    String build(Context context) {
     
         CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
         
     
@@ -73,7 +74,6 @@ public  class MMacrosParam extends Macro{
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

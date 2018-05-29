@@ -4,13 +4,7 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public  class MName extends Macro{
-    
-    final List<Macro> list_Value;
-    
-    final Context ValueContext = new Context();
-    
-    final InternalValue ValueValue;
+public class MName extends Macro {
     
     private DSeparator ValueSeparator;
     
@@ -20,13 +14,19 @@ public  class MName extends Macro{
     
     private DNone ValueNone;
     
+    final List<Macro> list_Value;
+    
+    final Context ValueContext = new Context();
+    
+    final MacroValue ValueValue;
+    
     MName(Macros macros){
         
         
         this.setMacros(macros);
         this.list_Value = new LinkedList<>();
         
-        this.ValueValue = new InternalValue(this.list_Value, this.ValueContext);
+        this.ValueValue = new MacroValue(this.list_Value, this.ValueContext);
     }
     
     public void addAllValue(
@@ -35,8 +35,8 @@ public  class MName extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Value");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Name");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -46,7 +46,7 @@ public  class MName extends Macro{
                 throw ObjectMacroException.macroNull(i, "Value");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -64,9 +64,9 @@ public  class MName extends Macro{
         macro.apply(new InternalsInitializer("Value"){
             @Override
             void setSimpleName(MSimpleName mSimpleName){
+                
             
-                
-                
+            
             }
         });
     }
@@ -75,11 +75,11 @@ public  class MName extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Value");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Name");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -88,31 +88,31 @@ public  class MName extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    private String buildValue(){
+    private String buildValue() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = ValueContext;
+        Context local_context = this.ValueContext;
         List<Macro> macros = this.list_Value;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.ValueNone != null){
+        if(this.ValueNone != null) {
             sb.append(this.ValueNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.ValueBeforeFirst != null){
+            if(this.ValueBeforeFirst != null) {
                 expansion = this.ValueBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.ValueAfterLast != null){
+            if(this.ValueAfterLast != null) {
                 expansion = this.ValueAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.ValueSeparator != null){
+            if(this.ValueSeparator != null) {
                 expansion = this.ValueSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -123,23 +123,23 @@ public  class MName extends Macro{
         return sb.toString();
     }
     
-    private InternalValue getValue(){
+    MacroValue getValue() {
         return this.ValueValue;
     }
-    private void initValueInternals(Context context){
-        for(Macro macro : this.list_Value){
+    private void initValueInternals(Context context) {
+        for(Macro macro : this.list_Value) {
             macro.apply(new InternalsInitializer("Value"){
                 @Override
                 void setSimpleName(MSimpleName mSimpleName){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initValueDirectives(){
+    private void initValueDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(", ");
         this.ValueSeparator = new DSeparator(sb1.toString());
@@ -154,29 +154,29 @@ public  class MName extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setName(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initValueDirectives();
         initValueDirectives();
         
         initValueInternals(null);
@@ -194,7 +194,6 @@ public  class MName extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

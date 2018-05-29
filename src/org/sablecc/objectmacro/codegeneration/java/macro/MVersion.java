@@ -4,62 +4,125 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MVersion extends Macro{
+public class MVersion extends Macro {
     
-    String field_DefaultCase;
+    private DSeparator DefaultCaseSeparator;
     
-    MVersion(String pDefaultCase, Macros macros){
+    private DBeforeFirst DefaultCaseBeforeFirst;
+    
+    private DAfterLast DefaultCaseAfterLast;
+    
+    private DNone DefaultCaseNone;
+    
+    final List<String> list_DefaultCase;
+    
+    final Context DefaultCaseContext = new Context();
+    
+    final StringValue DefaultCaseValue;
+    
+    MVersion(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPDefaultCase(pDefaultCase);
+        this.list_DefaultCase = new LinkedList<>();
+        
+        this.DefaultCaseValue = new StringValue(this.list_DefaultCase, this.DefaultCaseContext);
     }
     
-    private void setPDefaultCase( String pDefaultCase ){
-        if(pDefaultCase == null){
+    public void addAllDefaultCase(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("DefaultCase");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("DefaultCase");
+            }
     
-        this.field_DefaultCase = pDefaultCase;
+            this.list_DefaultCase.add(string);
+        }
     }
     
-    String buildDefaultCase(){
+    public void addDefaultCase(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("DefaultCase");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_DefaultCase;
+        this.list_DefaultCase.add(string);
     }
     
-    String getDefaultCase(){
+    private String buildDefaultCase() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_DefaultCase;
     
-        return this.field_DefaultCase;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.DefaultCaseNone != null) {
+            sb.append(this.DefaultCaseNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.DefaultCaseBeforeFirst != null) {
+                string = this.DefaultCaseBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.DefaultCaseAfterLast != null) {
+                string = this.DefaultCaseAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.DefaultCaseSeparator != null) {
+                string = this.DefaultCaseSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getDefaultCase() {
+        return this.DefaultCaseValue;
     }
     
     
+    private void initDefaultCaseDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setVersion(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
+        initDefaultCaseDirectives();
     
     
     
@@ -76,7 +139,6 @@ public  class MVersion extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

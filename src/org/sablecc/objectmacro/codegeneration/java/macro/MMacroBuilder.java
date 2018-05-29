@@ -4,13 +4,7 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MMacroBuilder extends Macro{
-    
-    final List<Macro> list_ContextParam;
-    
-    final Context ContextParamContext = new Context();
-    
-    final InternalValue ContextParamValue;
+public class MMacroBuilder extends Macro {
     
     private DSeparator ContextParamSeparator;
     
@@ -20,11 +14,11 @@ public  class MMacroBuilder extends Macro{
     
     private DNone ContextParamNone;
     
-    final List<Macro> list_ContextCacheBuilder;
+    final List<Macro> list_ContextParam;
     
-    final Context ContextCacheBuilderContext = new Context();
+    final Context ContextParamContext = new Context();
     
-    final InternalValue ContextCacheBuilderValue;
+    final MacroValue ContextParamValue;
     
     private DSeparator ContextCacheBuilderSeparator;
     
@@ -34,11 +28,11 @@ public  class MMacroBuilder extends Macro{
     
     private DNone ContextCacheBuilderNone;
     
-    final List<Macro> list_NewCacheBuilder;
+    final List<Macro> list_ContextCacheBuilder;
     
-    final Context NewCacheBuilderContext = new Context();
+    final Context ContextCacheBuilderContext = new Context();
     
-    final InternalValue NewCacheBuilderValue;
+    final MacroValue ContextCacheBuilderValue;
     
     private DSeparator NewCacheBuilderSeparator;
     
@@ -48,11 +42,11 @@ public  class MMacroBuilder extends Macro{
     
     private DNone NewCacheBuilderNone;
     
-    final List<Macro> list_DirectivesCalls;
+    final List<Macro> list_NewCacheBuilder;
     
-    final Context DirectivesCallsContext = new Context();
+    final Context NewCacheBuilderContext = new Context();
     
-    final InternalValue DirectivesCallsValue;
+    final MacroValue NewCacheBuilderValue;
     
     private DSeparator DirectivesCallsSeparator;
     
@@ -62,11 +56,11 @@ public  class MMacroBuilder extends Macro{
     
     private DNone DirectivesCallsNone;
     
-    final List<Macro> list_InternalsCalls;
+    final List<Macro> list_DirectivesCalls;
     
-    final Context InternalsCallsContext = new Context();
+    final Context DirectivesCallsContext = new Context();
     
-    final InternalValue InternalsCallsValue;
+    final MacroValue DirectivesCallsValue;
     
     private DSeparator InternalsCallsSeparator;
     
@@ -76,11 +70,11 @@ public  class MMacroBuilder extends Macro{
     
     private DNone InternalsCallsNone;
     
-    final List<Macro> list_MacroBodyParts;
+    final List<Macro> list_InternalsCalls;
     
-    final Context MacroBodyPartsContext = new Context();
+    final Context InternalsCallsContext = new Context();
     
-    final InternalValue MacroBodyPartsValue;
+    final MacroValue InternalsCallsValue;
     
     private DSeparator MacroBodyPartsSeparator;
     
@@ -90,11 +84,11 @@ public  class MMacroBuilder extends Macro{
     
     private DNone MacroBodyPartsNone;
     
-    final List<Macro> list_Public;
+    final List<Macro> list_MacroBodyParts;
     
-    final Context PublicContext = new Context();
+    final Context MacroBodyPartsContext = new Context();
     
-    final InternalValue PublicValue;
+    final MacroValue MacroBodyPartsValue;
     
     private DSeparator PublicSeparator;
     
@@ -104,11 +98,11 @@ public  class MMacroBuilder extends Macro{
     
     private DNone PublicNone;
     
-    final List<Macro> list_Override;
+    final List<Macro> list_Public;
     
-    final Context OverrideContext = new Context();
+    final Context PublicContext = new Context();
     
-    final InternalValue OverrideValue;
+    final MacroValue PublicValue;
     
     private DSeparator OverrideSeparator;
     
@@ -117,6 +111,12 @@ public  class MMacroBuilder extends Macro{
     private DAfterLast OverrideAfterLast;
     
     private DNone OverrideNone;
+    
+    final List<Macro> list_Override;
+    
+    final Context OverrideContext = new Context();
+    
+    final MacroValue OverrideValue;
     
     MMacroBuilder(Macros macros){
         
@@ -131,14 +131,14 @@ public  class MMacroBuilder extends Macro{
         this.list_Public = new LinkedList<>();
         this.list_Override = new LinkedList<>();
         
-        this.ContextParamValue = new InternalValue(this.list_ContextParam, this.ContextParamContext);
-        this.ContextCacheBuilderValue = new InternalValue(this.list_ContextCacheBuilder, this.ContextCacheBuilderContext);
-        this.NewCacheBuilderValue = new InternalValue(this.list_NewCacheBuilder, this.NewCacheBuilderContext);
-        this.DirectivesCallsValue = new InternalValue(this.list_DirectivesCalls, this.DirectivesCallsContext);
-        this.InternalsCallsValue = new InternalValue(this.list_InternalsCalls, this.InternalsCallsContext);
-        this.MacroBodyPartsValue = new InternalValue(this.list_MacroBodyParts, this.MacroBodyPartsContext);
-        this.PublicValue = new InternalValue(this.list_Public, this.PublicContext);
-        this.OverrideValue = new InternalValue(this.list_Override, this.OverrideContext);
+        this.ContextParamValue = new MacroValue(this.list_ContextParam, this.ContextParamContext);
+        this.ContextCacheBuilderValue = new MacroValue(this.list_ContextCacheBuilder, this.ContextCacheBuilderContext);
+        this.NewCacheBuilderValue = new MacroValue(this.list_NewCacheBuilder, this.NewCacheBuilderContext);
+        this.DirectivesCallsValue = new MacroValue(this.list_DirectivesCalls, this.DirectivesCallsContext);
+        this.InternalsCallsValue = new MacroValue(this.list_InternalsCalls, this.InternalsCallsContext);
+        this.MacroBodyPartsValue = new MacroValue(this.list_MacroBodyParts, this.MacroBodyPartsContext);
+        this.PublicValue = new MacroValue(this.list_Public, this.PublicContext);
+        this.OverrideValue = new MacroValue(this.list_Override, this.OverrideContext);
     }
     
     public void addAllContextParam(
@@ -147,8 +147,8 @@ public  class MMacroBuilder extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("ContextParam");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -158,7 +158,7 @@ public  class MMacroBuilder extends Macro{
                 throw ObjectMacroException.macroNull(i, "ContextParam");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -176,9 +176,9 @@ public  class MMacroBuilder extends Macro{
         macro.apply(new InternalsInitializer("ContextParam"){
             @Override
             void setContextParam(MContextParam mContextParam){
+                
             
-                
-                
+            
             }
         });
     }
@@ -187,11 +187,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("ContextParam");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -206,8 +206,8 @@ public  class MMacroBuilder extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("ContextCacheBuilder");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -217,7 +217,7 @@ public  class MMacroBuilder extends Macro{
                 throw ObjectMacroException.macroNull(i, "ContextCacheBuilder");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -235,9 +235,9 @@ public  class MMacroBuilder extends Macro{
         macro.apply(new InternalsInitializer("ContextCacheBuilder"){
             @Override
             void setContextCacheBuilder(MContextCacheBuilder mContextCacheBuilder){
+                
             
-                
-                
+            
             }
         });
     }
@@ -246,11 +246,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("ContextCacheBuilder");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -265,8 +265,8 @@ public  class MMacroBuilder extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("NewCacheBuilder");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -276,7 +276,7 @@ public  class MMacroBuilder extends Macro{
                 throw ObjectMacroException.macroNull(i, "NewCacheBuilder");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -294,9 +294,9 @@ public  class MMacroBuilder extends Macro{
         macro.apply(new InternalsInitializer("NewCacheBuilder"){
             @Override
             void setNewCacheBuilder(MNewCacheBuilder mNewCacheBuilder){
+                
             
-                
-                
+            
             }
         });
     }
@@ -305,11 +305,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("NewCacheBuilder");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -324,8 +324,8 @@ public  class MMacroBuilder extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("DirectivesCalls");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -335,7 +335,7 @@ public  class MMacroBuilder extends Macro{
                 throw ObjectMacroException.macroNull(i, "DirectivesCalls");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -353,9 +353,9 @@ public  class MMacroBuilder extends Macro{
         macro.apply(new InternalsInitializer("DirectivesCalls"){
             @Override
             void setInitDirectiveCall(MInitDirectiveCall mInitDirectiveCall){
+                
             
-                
-                
+            
             }
         });
     }
@@ -364,11 +364,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("DirectivesCalls");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -383,8 +383,8 @@ public  class MMacroBuilder extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("InternalsCalls");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -394,7 +394,7 @@ public  class MMacroBuilder extends Macro{
                 throw ObjectMacroException.macroNull(i, "InternalsCalls");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -412,9 +412,9 @@ public  class MMacroBuilder extends Macro{
         macro.apply(new InternalsInitializer("InternalsCalls"){
             @Override
             void setInitInternalsCall(MInitInternalsCall mInitInternalsCall){
+                
             
-                
-                
+            
             }
         });
     }
@@ -423,11 +423,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("InternalsCalls");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -442,8 +442,8 @@ public  class MMacroBuilder extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -453,7 +453,7 @@ public  class MMacroBuilder extends Macro{
                 throw ObjectMacroException.macroNull(i, "MacroBodyParts");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -471,51 +471,51 @@ public  class MMacroBuilder extends Macro{
         macro.apply(new InternalsInitializer("MacroBodyParts"){
             @Override
             void setInitStringBuilder(MInitStringBuilder mInitStringBuilder){
+                
             
-                
-                
+            
             }
             
             @Override
             void setStringPart(MStringPart mStringPart){
+                
             
-                
-                
+            
             }
             
             @Override
             void setParamInsertPart(MParamInsertPart mParamInsertPart){
+                
             
-                
-                
+            
             }
             
             @Override
             void setEolPart(MEolPart mEolPart){
+                
             
-                
-                
+            
             }
             
             @Override
             void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
+                
             
-                
-                
+            
             }
             
             @Override
             void setAddIndent(MAddIndent mAddIndent){
+                
             
-                
-                
+            
             }
             
             @Override
             void setIndentPart(MIndentPart mIndentPart){
+                
             
-                
-                
+            
             }
         });
     }
@@ -524,11 +524,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -541,11 +541,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -558,11 +558,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -575,11 +575,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -592,11 +592,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -609,11 +609,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -626,11 +626,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -645,8 +645,8 @@ public  class MMacroBuilder extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Public");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -656,7 +656,7 @@ public  class MMacroBuilder extends Macro{
                 throw ObjectMacroException.macroNull(i, "Public");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -674,9 +674,9 @@ public  class MMacroBuilder extends Macro{
         macro.apply(new InternalsInitializer("Public"){
             @Override
             void setPublic(MPublic mPublic){
+                
             
-                
-                
+            
             }
         });
     }
@@ -685,11 +685,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Public");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -704,8 +704,8 @@ public  class MMacroBuilder extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Override");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -715,7 +715,7 @@ public  class MMacroBuilder extends Macro{
                 throw ObjectMacroException.macroNull(i, "Override");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -733,9 +733,9 @@ public  class MMacroBuilder extends Macro{
         macro.apply(new InternalsInitializer("Override"){
             @Override
             void setOverride(MOverride mOverride){
+                
             
-                
-                
+            
             }
         });
     }
@@ -744,11 +744,11 @@ public  class MMacroBuilder extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Override");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroBuilder");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -757,31 +757,31 @@ public  class MMacroBuilder extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    private String buildContextParam(){
+    private String buildContextParam() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = ContextParamContext;
+        Context local_context = this.ContextParamContext;
         List<Macro> macros = this.list_ContextParam;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.ContextParamNone != null){
+        if(this.ContextParamNone != null) {
             sb.append(this.ContextParamNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.ContextParamBeforeFirst != null){
+            if(this.ContextParamBeforeFirst != null) {
                 expansion = this.ContextParamBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.ContextParamAfterLast != null){
+            if(this.ContextParamAfterLast != null) {
                 expansion = this.ContextParamAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.ContextParamSeparator != null){
+            if(this.ContextParamSeparator != null) {
                 expansion = this.ContextParamSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -792,31 +792,31 @@ public  class MMacroBuilder extends Macro{
         return sb.toString();
     }
     
-    private String buildContextCacheBuilder(){
+    private String buildContextCacheBuilder() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = ContextCacheBuilderContext;
+        Context local_context = this.ContextCacheBuilderContext;
         List<Macro> macros = this.list_ContextCacheBuilder;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.ContextCacheBuilderNone != null){
+        if(this.ContextCacheBuilderNone != null) {
             sb.append(this.ContextCacheBuilderNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.ContextCacheBuilderBeforeFirst != null){
+            if(this.ContextCacheBuilderBeforeFirst != null) {
                 expansion = this.ContextCacheBuilderBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.ContextCacheBuilderAfterLast != null){
+            if(this.ContextCacheBuilderAfterLast != null) {
                 expansion = this.ContextCacheBuilderAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.ContextCacheBuilderSeparator != null){
+            if(this.ContextCacheBuilderSeparator != null) {
                 expansion = this.ContextCacheBuilderSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -827,31 +827,31 @@ public  class MMacroBuilder extends Macro{
         return sb.toString();
     }
     
-    private String buildNewCacheBuilder(){
+    private String buildNewCacheBuilder() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = NewCacheBuilderContext;
+        Context local_context = this.NewCacheBuilderContext;
         List<Macro> macros = this.list_NewCacheBuilder;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.NewCacheBuilderNone != null){
+        if(this.NewCacheBuilderNone != null) {
             sb.append(this.NewCacheBuilderNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.NewCacheBuilderBeforeFirst != null){
+            if(this.NewCacheBuilderBeforeFirst != null) {
                 expansion = this.NewCacheBuilderBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.NewCacheBuilderAfterLast != null){
+            if(this.NewCacheBuilderAfterLast != null) {
                 expansion = this.NewCacheBuilderAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.NewCacheBuilderSeparator != null){
+            if(this.NewCacheBuilderSeparator != null) {
                 expansion = this.NewCacheBuilderSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -862,31 +862,31 @@ public  class MMacroBuilder extends Macro{
         return sb.toString();
     }
     
-    private String buildDirectivesCalls(){
+    private String buildDirectivesCalls() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = DirectivesCallsContext;
+        Context local_context = this.DirectivesCallsContext;
         List<Macro> macros = this.list_DirectivesCalls;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.DirectivesCallsNone != null){
+        if(this.DirectivesCallsNone != null) {
             sb.append(this.DirectivesCallsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.DirectivesCallsBeforeFirst != null){
+            if(this.DirectivesCallsBeforeFirst != null) {
                 expansion = this.DirectivesCallsBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.DirectivesCallsAfterLast != null){
+            if(this.DirectivesCallsAfterLast != null) {
                 expansion = this.DirectivesCallsAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.DirectivesCallsSeparator != null){
+            if(this.DirectivesCallsSeparator != null) {
                 expansion = this.DirectivesCallsSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -897,31 +897,31 @@ public  class MMacroBuilder extends Macro{
         return sb.toString();
     }
     
-    private String buildInternalsCalls(){
+    private String buildInternalsCalls() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = InternalsCallsContext;
+        Context local_context = this.InternalsCallsContext;
         List<Macro> macros = this.list_InternalsCalls;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.InternalsCallsNone != null){
+        if(this.InternalsCallsNone != null) {
             sb.append(this.InternalsCallsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.InternalsCallsBeforeFirst != null){
+            if(this.InternalsCallsBeforeFirst != null) {
                 expansion = this.InternalsCallsBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.InternalsCallsAfterLast != null){
+            if(this.InternalsCallsAfterLast != null) {
                 expansion = this.InternalsCallsAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.InternalsCallsSeparator != null){
+            if(this.InternalsCallsSeparator != null) {
                 expansion = this.InternalsCallsSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -932,31 +932,31 @@ public  class MMacroBuilder extends Macro{
         return sb.toString();
     }
     
-    private String buildMacroBodyParts(){
+    private String buildMacroBodyParts() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = MacroBodyPartsContext;
+        Context local_context = this.MacroBodyPartsContext;
         List<Macro> macros = this.list_MacroBodyParts;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.MacroBodyPartsNone != null){
+        if(this.MacroBodyPartsNone != null) {
             sb.append(this.MacroBodyPartsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.MacroBodyPartsBeforeFirst != null){
+            if(this.MacroBodyPartsBeforeFirst != null) {
                 expansion = this.MacroBodyPartsBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.MacroBodyPartsAfterLast != null){
+            if(this.MacroBodyPartsAfterLast != null) {
                 expansion = this.MacroBodyPartsAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.MacroBodyPartsSeparator != null){
+            if(this.MacroBodyPartsSeparator != null) {
                 expansion = this.MacroBodyPartsSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -967,31 +967,31 @@ public  class MMacroBuilder extends Macro{
         return sb.toString();
     }
     
-    private String buildPublic(){
+    private String buildPublic() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = PublicContext;
+        Context local_context = this.PublicContext;
         List<Macro> macros = this.list_Public;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.PublicNone != null){
+        if(this.PublicNone != null) {
             sb.append(this.PublicNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.PublicBeforeFirst != null){
+            if(this.PublicBeforeFirst != null) {
                 expansion = this.PublicBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.PublicAfterLast != null){
+            if(this.PublicAfterLast != null) {
                 expansion = this.PublicAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.PublicSeparator != null){
+            if(this.PublicSeparator != null) {
                 expansion = this.PublicSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -1002,31 +1002,31 @@ public  class MMacroBuilder extends Macro{
         return sb.toString();
     }
     
-    private String buildOverride(){
+    private String buildOverride() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = OverrideContext;
+        Context local_context = this.OverrideContext;
         List<Macro> macros = this.list_Override;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.OverrideNone != null){
+        if(this.OverrideNone != null) {
             sb.append(this.OverrideNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.OverrideBeforeFirst != null){
+            if(this.OverrideBeforeFirst != null) {
                 expansion = this.OverrideBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.OverrideAfterLast != null){
+            if(this.OverrideAfterLast != null) {
                 expansion = this.OverrideAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.OverrideSeparator != null){
+            if(this.OverrideSeparator != null) {
                 expansion = this.OverrideSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -1037,256 +1037,255 @@ public  class MMacroBuilder extends Macro{
         return sb.toString();
     }
     
-    private InternalValue getContextParam(){
+    MacroValue getContextParam() {
         return this.ContextParamValue;
     }
     
-    private InternalValue getContextCacheBuilder(){
+    MacroValue getContextCacheBuilder() {
         return this.ContextCacheBuilderValue;
     }
     
-    private InternalValue getNewCacheBuilder(){
+    MacroValue getNewCacheBuilder() {
         return this.NewCacheBuilderValue;
     }
     
-    private InternalValue getDirectivesCalls(){
+    MacroValue getDirectivesCalls() {
         return this.DirectivesCallsValue;
     }
     
-    private InternalValue getInternalsCalls(){
+    MacroValue getInternalsCalls() {
         return this.InternalsCallsValue;
     }
     
-    private InternalValue getMacroBodyParts(){
+    MacroValue getMacroBodyParts() {
         return this.MacroBodyPartsValue;
     }
     
-    private InternalValue getPublic(){
+    MacroValue getPublic() {
         return this.PublicValue;
     }
     
-    private InternalValue getOverride(){
+    MacroValue getOverride() {
         return this.OverrideValue;
     }
-    private void initContextParamInternals(Context context){
-        for(Macro macro : this.list_ContextParam){
+    private void initContextParamInternals(Context context) {
+        for(Macro macro : this.list_ContextParam) {
             macro.apply(new InternalsInitializer("ContextParam"){
                 @Override
                 void setContextParam(MContextParam mContextParam){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initContextCacheBuilderInternals(Context context){
-        for(Macro macro : this.list_ContextCacheBuilder){
+    private void initContextCacheBuilderInternals(Context context) {
+        for(Macro macro : this.list_ContextCacheBuilder) {
             macro.apply(new InternalsInitializer("ContextCacheBuilder"){
                 @Override
                 void setContextCacheBuilder(MContextCacheBuilder mContextCacheBuilder){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initNewCacheBuilderInternals(Context context){
-        for(Macro macro : this.list_NewCacheBuilder){
+    private void initNewCacheBuilderInternals(Context context) {
+        for(Macro macro : this.list_NewCacheBuilder) {
             macro.apply(new InternalsInitializer("NewCacheBuilder"){
                 @Override
                 void setNewCacheBuilder(MNewCacheBuilder mNewCacheBuilder){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initDirectivesCallsInternals(Context context){
-        for(Macro macro : this.list_DirectivesCalls){
+    private void initDirectivesCallsInternals(Context context) {
+        for(Macro macro : this.list_DirectivesCalls) {
             macro.apply(new InternalsInitializer("DirectivesCalls"){
                 @Override
                 void setInitDirectiveCall(MInitDirectiveCall mInitDirectiveCall){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initInternalsCallsInternals(Context context){
-        for(Macro macro : this.list_InternalsCalls){
+    private void initInternalsCallsInternals(Context context) {
+        for(Macro macro : this.list_InternalsCalls) {
             macro.apply(new InternalsInitializer("InternalsCalls"){
                 @Override
                 void setInitInternalsCall(MInitInternalsCall mInitInternalsCall){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initMacroBodyPartsInternals(Context context){
-        for(Macro macro : this.list_MacroBodyParts){
+    private void initMacroBodyPartsInternals(Context context) {
+        for(Macro macro : this.list_MacroBodyParts) {
             macro.apply(new InternalsInitializer("MacroBodyParts"){
                 @Override
                 void setInitStringBuilder(MInitStringBuilder mInitStringBuilder){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setStringPart(MStringPart mStringPart){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setParamInsertPart(MParamInsertPart mParamInsertPart){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setEolPart(MEolPart mEolPart){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setAddIndent(MAddIndent mAddIndent){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setIndentPart(MIndentPart mIndentPart){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initPublicInternals(Context context){
-        for(Macro macro : this.list_Public){
+    private void initPublicInternals(Context context) {
+        for(Macro macro : this.list_Public) {
             macro.apply(new InternalsInitializer("Public"){
                 @Override
                 void setPublic(MPublic mPublic){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initOverrideInternals(Context context){
-        for(Macro macro : this.list_Override){
+    private void initOverrideInternals(Context context) {
+        for(Macro macro : this.list_Override) {
             macro.apply(new InternalsInitializer("Override"){
                 @Override
                 void setOverride(MOverride mOverride){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initContextParamDirectives(){
+    private void initContextParamDirectives() {
         
     }
     
-    private void initContextCacheBuilderDirectives(){
+    private void initContextCacheBuilderDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append("this.cacheBuilder");
         this.ContextCacheBuilderNone = new DNone(sb1.toString());
         this.ContextCacheBuilderValue.setNone(this.ContextCacheBuilderNone);
     }
     
-    private void initNewCacheBuilderDirectives(){
+    private void initNewCacheBuilderDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append("this.cacheBuilder = cache_builder");
         this.NewCacheBuilderNone = new DNone(sb1.toString());
         this.NewCacheBuilderValue.setNone(this.NewCacheBuilderNone);
     }
     
-    private void initDirectivesCallsDirectives(){
+    private void initDirectivesCallsDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.DirectivesCallsSeparator = new DSeparator(sb1.toString());
         this.DirectivesCallsValue.setSeparator(this.DirectivesCallsSeparator);
     }
     
-    private void initInternalsCallsDirectives(){
+    private void initInternalsCallsDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.InternalsCallsSeparator = new DSeparator(sb1.toString());
         this.InternalsCallsValue.setSeparator(this.InternalsCallsSeparator);
     }
     
-    private void initMacroBodyPartsDirectives(){
+    private void initMacroBodyPartsDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.MacroBodyPartsSeparator = new DSeparator(sb1.toString());
         this.MacroBodyPartsValue.setSeparator(this.MacroBodyPartsSeparator);
     }
     
-    private void initPublicDirectives(){
+    private void initPublicDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(" ");
         this.PublicAfterLast = new DAfterLast(sb1.toString());
         this.PublicValue.setAfterLast(this.PublicAfterLast);
     }
     
-    private void initOverrideDirectives(){
+    private void initOverrideDirectives() {
         
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setMacroBuilder(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
         initContextParamDirectives();
         initContextCacheBuilderDirectives();
@@ -1313,7 +1312,7 @@ public  class MMacroBuilder extends Macro{
         sb0.append(buildPublic());
         sb0.append("String build(");
         sb0.append(buildContextParam());
-        sb0.append(")");
+        sb0.append(") ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
@@ -1322,21 +1321,21 @@ public  class MMacroBuilder extends Macro{
         sb0.append(";");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    if(cache_builder == null)");
+        sb0.append("    if(cache_builder == null) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append("        cache_builder = new CacheBuilder();");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    else if(cache_builder.getExpansion() == null)");
+        sb0.append("    else if(cache_builder.getExpansion() == null) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append("        throw new InternalException(\"Cycle detection detected lately\");");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    else");
+        sb0.append("    else ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append("        return cache_builder.getExpansion();");
@@ -1348,8 +1347,6 @@ public  class MMacroBuilder extends Macro{
         sb0.append(";");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    List<String> indentations = new LinkedList<>();");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    StringBuilder sbIndentation = new StringBuilder();");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
@@ -1388,7 +1385,6 @@ public  class MMacroBuilder extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

@@ -4,13 +4,7 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public  class MVersions extends Macro{
-    
-    final List<Macro> list_Versions;
-    
-    final Context VersionsContext = new Context();
-    
-    final InternalValue VersionsValue;
+public class MVersions extends Macro {
     
     private DSeparator VersionsSeparator;
     
@@ -20,13 +14,19 @@ public  class MVersions extends Macro{
     
     private DNone VersionsNone;
     
+    final List<Macro> list_Versions;
+    
+    final Context VersionsContext = new Context();
+    
+    final MacroValue VersionsValue;
+    
     MVersions(Macros macros){
         
         
         this.setMacros(macros);
         this.list_Versions = new LinkedList<>();
         
-        this.VersionsValue = new InternalValue(this.list_Versions, this.VersionsContext);
+        this.VersionsValue = new MacroValue(this.list_Versions, this.VersionsContext);
     }
     
     public void addAllVersions(
@@ -35,8 +35,8 @@ public  class MVersions extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Versions");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Versions");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -46,7 +46,7 @@ public  class MVersions extends Macro{
                 throw ObjectMacroException.macroNull(i, "Versions");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -64,9 +64,9 @@ public  class MVersions extends Macro{
         macro.apply(new InternalsInitializer("Versions"){
             @Override
             void setSimpleName(MSimpleName mSimpleName){
+                
             
-                
-                
+            
             }
         });
     }
@@ -75,11 +75,11 @@ public  class MVersions extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Versions");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Versions");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -88,31 +88,31 @@ public  class MVersions extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    private String buildVersions(){
+    private String buildVersions() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = VersionsContext;
+        Context local_context = this.VersionsContext;
         List<Macro> macros = this.list_Versions;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.VersionsNone != null){
+        if(this.VersionsNone != null) {
             sb.append(this.VersionsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.VersionsBeforeFirst != null){
+            if(this.VersionsBeforeFirst != null) {
                 expansion = this.VersionsBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.VersionsAfterLast != null){
+            if(this.VersionsAfterLast != null) {
                 expansion = this.VersionsAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.VersionsSeparator != null){
+            if(this.VersionsSeparator != null) {
                 expansion = this.VersionsSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -123,23 +123,23 @@ public  class MVersions extends Macro{
         return sb.toString();
     }
     
-    private InternalValue getVersions(){
+    MacroValue getVersions() {
         return this.VersionsValue;
     }
-    private void initVersionsInternals(Context context){
-        for(Macro macro : this.list_Versions){
+    private void initVersionsInternals(Context context) {
+        for(Macro macro : this.list_Versions) {
             macro.apply(new InternalsInitializer("Versions"){
                 @Override
                 void setSimpleName(MSimpleName mSimpleName){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initVersionsDirectives(){
+    private void initVersionsDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(", ");
         sb1.append(LINE_SEPARATOR);
@@ -148,29 +148,29 @@ public  class MVersions extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setVersions(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initVersionsDirectives();
         initVersionsDirectives();
         
         initVersionsInternals(null);
@@ -197,7 +197,6 @@ public  class MVersions extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

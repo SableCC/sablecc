@@ -4,7 +4,7 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MInvalidArgumentCount extends Macro{
+public class MInvalidArgumentCount extends Macro {
     
     
     MInvalidArgumentCount(Macros macros){
@@ -19,28 +19,27 @@ public  class MInvalidArgumentCount extends Macro{
     
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setInvalidArgumentCount(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
         
     
@@ -51,6 +50,7 @@ public  class MInvalidArgumentCount extends Macro{
         MCommandLineErrorHead m3 = this.getMacros().newCommandLineErrorHead();
         
         
+        
         sb0.append(m3.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
@@ -58,6 +58,7 @@ public  class MInvalidArgumentCount extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         MCommandLineErrorTail m4 = this.getMacros().newCommandLineErrorTail();
+        
         
         
         sb0.append(m4.build(null));
@@ -70,7 +71,6 @@ public  class MInvalidArgumentCount extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

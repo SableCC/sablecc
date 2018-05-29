@@ -76,7 +76,11 @@ public class MacroCollector extends
             applied_versions.add(GenerationUtils.string(version).toUpperCase());
         }
 
-        this.macros.put(macro_name, new SMacro(this.factory.newMacro(macro_name, parent_name),
+        MMacro macro = this.factory.newMacro();
+        macro.addClassName(macro_name);
+        macro.addParentClass(parent_name);
+        
+        this.macros.put(macro_name, new SMacro(macro,
                 this.currentParameters, this.currentInternals, macro_name, applied_versions));
     }
 

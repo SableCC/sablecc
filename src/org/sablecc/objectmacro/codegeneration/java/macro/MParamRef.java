@@ -4,15 +4,21 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MParamRef extends Macro{
+public class MParamRef extends Macro {
     
-    String field_Name;
+    private DSeparator NameSeparator;
     
-    final List<Macro> list_GetParams;
+    private DBeforeFirst NameBeforeFirst;
     
-    final Context GetParamsContext = new Context();
+    private DAfterLast NameAfterLast;
     
-    final InternalValue GetParamsValue;
+    private DNone NameNone;
+    
+    final List<String> list_Name;
+    
+    final Context NameContext = new Context();
+    
+    final StringValue NameValue;
     
     private DSeparator GetParamsSeparator;
     
@@ -22,206 +28,187 @@ public  class MParamRef extends Macro{
     
     private DNone GetParamsNone;
     
-    MParamRef(String pName, Macros macros){
+    final List<String> list_GetParams;
+    
+    final Context GetParamsContext = new Context();
+    
+    final StringValue GetParamsValue;
+    
+    MParamRef(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPName(pName);
+        this.list_Name = new LinkedList<>();
         this.list_GetParams = new LinkedList<>();
         
-        this.GetParamsValue = new InternalValue(this.list_GetParams, this.GetParamsContext);
+        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+        this.GetParamsValue = new StringValue(this.list_GetParams, this.GetParamsContext);
     }
     
-    private void setPName( String pName ){
-        if(pName == null){
+    public void addAllName(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Name");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Name");
+            }
     
-        this.field_Name = pName;
+            this.list_Name.add(string);
+        }
+    }
+    
+    public void addName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Name");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_Name.add(string);
     }
     
     public void addAllGetParams(
-                    List<Macro> macros){
+                    List<String> strings){
     
         if(macros == null){
             throw ObjectMacroException.parameterNull("GetParams");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("ParamRef");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
-        
-        int i = 0;
-        
-        for(Macro macro : macros) {
-            if(macro == null) {
-                throw ObjectMacroException.macroNull(i, "GetParams");
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("GetParams");
             }
-        
-            if(this.getMacros() != macro.getMacros()){
-                throw ObjectMacroException.diffMacros();
-            }
-        
-            this.verifyTypeGetParams(macro);
-            this.list_GetParams.add(macro);
-            this.children.add(macro);
-            Macro.cycleDetector.detectCycle(this, macro);
-        
-            i++;
+    
+            this.list_GetParams.add(string);
         }
     }
     
-    
-    void verifyTypeGetParams (Macro macro) {
-        macro.apply(new InternalsInitializer("GetParams"){
-            @Override
-            void setContextArg(MContextArg mContextArg){
-            
-                
-                
-            }
-            
-            @Override
-            void setPlainText(MPlainText mPlainText){
-            
-                
-                
-            }
-        });
-    }
-    
-    public void addGetParams(MContextArg macro){
-        if(macro == null){
+    public void addGetParams(String string){
+        if(string == null){
             throw ObjectMacroException.parameterNull("GetParams");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("ParamRef");
-        }
-        
-        if(this.getMacros() != macro.getMacros()){
-            throw ObjectMacroException.diffMacros();
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.list_GetParams.add(macro);
-        this.children.add(macro);
-        Macro.cycleDetector.detectCycle(this, macro);
+        this.list_GetParams.add(string);
     }
     
-    public void addGetParams(MPlainText macro){
-        if(macro == null){
-            throw ObjectMacroException.parameterNull("GetParams");
-        }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("ParamRef");
-        }
-        
-        if(this.getMacros() != macro.getMacros()){
-            throw ObjectMacroException.diffMacros();
-        }
-    
-        this.list_GetParams.add(macro);
-        this.children.add(macro);
-        Macro.cycleDetector.detectCycle(this, macro);
-    }
-    
-    String buildName(){
-    
-        return this.field_Name;
-    }
-    
-    private String buildGetParams(){
+    private String buildName() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = GetParamsContext;
-        List<Macro> macros = this.list_GetParams;
+        List<String> strings = this.list_Name;
     
         int i = 0;
-        int nb_macros = macros.size();
-        String expansion = null;
+        int nb_strings = strings.size();
     
-        if(this.GetParamsNone != null){
-            sb.append(this.GetParamsNone.apply(i, "", nb_macros));
+        if(this.NameNone != null) {
+            sb.append(this.NameNone.apply(i, "", nb_strings));
         }
     
-        for(Macro macro : macros){
-            expansion = macro.build(local_context);
+        for(String string : strings) {
     
-            if(this.GetParamsBeforeFirst != null){
-                expansion = this.GetParamsBeforeFirst.apply(i, expansion, nb_macros);
+            if(this.NameBeforeFirst != null) {
+                string = this.NameBeforeFirst.apply(i, string, nb_strings);
             }
     
-            if(this.GetParamsAfterLast != null){
-                expansion = this.GetParamsAfterLast.apply(i, expansion, nb_macros);
+            if(this.NameAfterLast != null) {
+                string = this.NameAfterLast.apply(i, string, nb_strings);
             }
     
-            if(this.GetParamsSeparator != null){
-                expansion = this.GetParamsSeparator.apply(i, expansion, nb_macros);
+            if(this.NameSeparator != null) {
+                string = this.NameSeparator.apply(i, string, nb_strings);
             }
     
-            sb.append(expansion);
+            sb.append(string);
             i++;
         }
     
         return sb.toString();
     }
     
-    String getName(){
+    private String buildGetParams() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_GetParams;
     
-        return this.field_Name;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.GetParamsNone != null) {
+            sb.append(this.GetParamsNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.GetParamsBeforeFirst != null) {
+                string = this.GetParamsBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.GetParamsAfterLast != null) {
+                string = this.GetParamsAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.GetParamsSeparator != null) {
+                string = this.GetParamsSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    private InternalValue getGetParams(){
+    StringValue getName() {
+        return this.NameValue;
+    }
+    
+    StringValue getGetParams() {
         return this.GetParamsValue;
     }
-    private void initGetParamsInternals(Context context){
-        for(Macro macro : this.list_GetParams){
-            macro.apply(new InternalsInitializer("GetParams"){
-                @Override
-                void setContextArg(MContextArg mContextArg){
-                
-                    
-                    
-                }
-                
-                @Override
-                void setPlainText(MPlainText mPlainText){
-                
-                    
-                    
-                }
-            });
-        }
+    
+    
+    private void initNameDirectives() {
+        
     }
     
-    private void initGetParamsDirectives(){
+    private void initGetParamsDirectives() {
         
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setParamRef(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initNameDirectives();
         initGetParamsDirectives();
-        
-        initGetParamsInternals(null);
     
         StringBuilder sb0 = new StringBuilder();
     
@@ -239,7 +226,6 @@ public  class MParamRef extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

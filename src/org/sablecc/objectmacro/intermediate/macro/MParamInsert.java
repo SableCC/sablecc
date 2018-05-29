@@ -4,13 +4,7 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public  class MParamInsert extends Macro{
-    
-    final List<Macro> list_ReferencedParam;
-    
-    final Context ReferencedParamContext = new Context();
-    
-    final InternalValue ReferencedParamValue;
+public class MParamInsert extends Macro {
     
     private DSeparator ReferencedParamSeparator;
     
@@ -20,13 +14,19 @@ public  class MParamInsert extends Macro{
     
     private DNone ReferencedParamNone;
     
+    final List<Macro> list_ReferencedParam;
+    
+    final Context ReferencedParamContext = new Context();
+    
+    final MacroValue ReferencedParamValue;
+    
     MParamInsert(Macros macros){
         
         
         this.setMacros(macros);
         this.list_ReferencedParam = new LinkedList<>();
         
-        this.ReferencedParamValue = new InternalValue(this.list_ReferencedParam, this.ReferencedParamContext);
+        this.ReferencedParamValue = new MacroValue(this.list_ReferencedParam, this.ReferencedParamContext);
     }
     
     public void addAllReferencedParam(
@@ -35,8 +35,8 @@ public  class MParamInsert extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("ReferencedParam");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("ParamInsert");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -46,7 +46,7 @@ public  class MParamInsert extends Macro{
                 throw ObjectMacroException.macroNull(i, "ReferencedParam");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -64,9 +64,9 @@ public  class MParamInsert extends Macro{
         macro.apply(new InternalsInitializer("ReferencedParam"){
             @Override
             void setName(MName mName){
+                
             
-                
-                
+            
             }
         });
     }
@@ -75,11 +75,11 @@ public  class MParamInsert extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("ReferencedParam");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("ParamInsert");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -88,31 +88,31 @@ public  class MParamInsert extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    private String buildReferencedParam(){
+    private String buildReferencedParam() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = ReferencedParamContext;
+        Context local_context = this.ReferencedParamContext;
         List<Macro> macros = this.list_ReferencedParam;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.ReferencedParamNone != null){
+        if(this.ReferencedParamNone != null) {
             sb.append(this.ReferencedParamNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.ReferencedParamBeforeFirst != null){
+            if(this.ReferencedParamBeforeFirst != null) {
                 expansion = this.ReferencedParamBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.ReferencedParamAfterLast != null){
+            if(this.ReferencedParamAfterLast != null) {
                 expansion = this.ReferencedParamAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.ReferencedParamSeparator != null){
+            if(this.ReferencedParamSeparator != null) {
                 expansion = this.ReferencedParamSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -123,50 +123,50 @@ public  class MParamInsert extends Macro{
         return sb.toString();
     }
     
-    private InternalValue getReferencedParam(){
+    MacroValue getReferencedParam() {
         return this.ReferencedParamValue;
     }
-    private void initReferencedParamInternals(Context context){
-        for(Macro macro : this.list_ReferencedParam){
+    private void initReferencedParamInternals(Context context) {
+        for(Macro macro : this.list_ReferencedParam) {
             macro.apply(new InternalsInitializer("ReferencedParam"){
                 @Override
                 void setName(MName mName){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initReferencedParamDirectives(){
+    private void initReferencedParamDirectives() {
         
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setParamInsert(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initReferencedParamDirectives();
         initReferencedParamDirectives();
         
         initReferencedParamInternals(null);
@@ -193,7 +193,6 @@ public  class MParamInsert extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

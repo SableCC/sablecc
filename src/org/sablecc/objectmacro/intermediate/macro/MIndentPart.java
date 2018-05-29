@@ -4,13 +4,7 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public  class MIndentPart extends Macro{
-    
-    final List<Macro> list_IndentationText;
-    
-    final Context IndentationTextContext = new Context();
-    
-    final InternalValue IndentationTextValue;
+public class MIndentPart extends Macro {
     
     private DSeparator IndentationTextSeparator;
     
@@ -20,13 +14,19 @@ public  class MIndentPart extends Macro{
     
     private DNone IndentationTextNone;
     
+    final List<Macro> list_IndentationText;
+    
+    final Context IndentationTextContext = new Context();
+    
+    final MacroValue IndentationTextValue;
+    
     MIndentPart(Macros macros){
         
         
         this.setMacros(macros);
         this.list_IndentationText = new LinkedList<>();
         
-        this.IndentationTextValue = new InternalValue(this.list_IndentationText, this.IndentationTextContext);
+        this.IndentationTextValue = new MacroValue(this.list_IndentationText, this.IndentationTextContext);
     }
     
     public void addAllIndentationText(
@@ -35,8 +35,8 @@ public  class MIndentPart extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("IndentationText");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("IndentPart");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -46,7 +46,7 @@ public  class MIndentPart extends Macro{
                 throw ObjectMacroException.macroNull(i, "IndentationText");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -64,30 +64,30 @@ public  class MIndentPart extends Macro{
         macro.apply(new InternalsInitializer("IndentationText"){
             @Override
             void setStringPart(MStringPart mStringPart){
+                
             
-                
-                
+            
             }
             
             @Override
             void setEolPart(MEolPart mEolPart){
+                
             
-                
-                
+            
             }
             
             @Override
             void setParamInsert(MParamInsert mParamInsert){
+                
             
-                
-                
+            
             }
             
             @Override
             void setMacroInsert(MMacroInsert mMacroInsert){
+                
             
-                
-                
+            
             }
         });
     }
@@ -96,11 +96,11 @@ public  class MIndentPart extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("IndentationText");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("IndentPart");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -113,11 +113,11 @@ public  class MIndentPart extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("IndentationText");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("IndentPart");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -130,11 +130,11 @@ public  class MIndentPart extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("IndentationText");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("IndentPart");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -147,11 +147,11 @@ public  class MIndentPart extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("IndentationText");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("IndentPart");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -160,31 +160,31 @@ public  class MIndentPart extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    private String buildIndentationText(){
+    private String buildIndentationText() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = IndentationTextContext;
+        Context local_context = this.IndentationTextContext;
         List<Macro> macros = this.list_IndentationText;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.IndentationTextNone != null){
+        if(this.IndentationTextNone != null) {
             sb.append(this.IndentationTextNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.IndentationTextBeforeFirst != null){
+            if(this.IndentationTextBeforeFirst != null) {
                 expansion = this.IndentationTextBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.IndentationTextAfterLast != null){
+            if(this.IndentationTextAfterLast != null) {
                 expansion = this.IndentationTextAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.IndentationTextSeparator != null){
+            if(this.IndentationTextSeparator != null) {
                 expansion = this.IndentationTextSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -195,44 +195,44 @@ public  class MIndentPart extends Macro{
         return sb.toString();
     }
     
-    private InternalValue getIndentationText(){
+    MacroValue getIndentationText() {
         return this.IndentationTextValue;
     }
-    private void initIndentationTextInternals(Context context){
-        for(Macro macro : this.list_IndentationText){
+    private void initIndentationTextInternals(Context context) {
+        for(Macro macro : this.list_IndentationText) {
             macro.apply(new InternalsInitializer("IndentationText"){
                 @Override
                 void setStringPart(MStringPart mStringPart){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setEolPart(MEolPart mEolPart){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setParamInsert(MParamInsert mParamInsert){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setMacroInsert(MMacroInsert mMacroInsert){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initIndentationTextDirectives(){
+    private void initIndentationTextDirectives() {
         StringBuilder sb3 = new StringBuilder();
         sb3.append(LINE_SEPARATOR);
         this.IndentationTextSeparator = new DSeparator(sb3.toString());
@@ -240,29 +240,29 @@ public  class MIndentPart extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setIndentPart(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initIndentationTextDirectives();
         initIndentationTextDirectives();
         
         initIndentationTextInternals(null);
@@ -289,7 +289,6 @@ public  class MIndentPart extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

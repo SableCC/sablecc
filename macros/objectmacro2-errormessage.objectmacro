@@ -352,7 +352,7 @@ Macro duplicate_declaration
         char: String;
         ref_line: String;
         ref_char: String;
-        version : plain_text, before_first="in version: ";
+        version : String, before_first="in version: ";
 {Body}
 {Insert: semantic_error_head}
 

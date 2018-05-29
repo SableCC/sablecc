@@ -4,62 +4,125 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MEolPart extends Macro{
+public class MEolPart extends Macro {
     
-    String field_IndexBuilder;
+    private DSeparator IndexBuilderSeparator;
     
-    MEolPart(String pIndexBuilder, Macros macros){
+    private DBeforeFirst IndexBuilderBeforeFirst;
+    
+    private DAfterLast IndexBuilderAfterLast;
+    
+    private DNone IndexBuilderNone;
+    
+    final List<String> list_IndexBuilder;
+    
+    final Context IndexBuilderContext = new Context();
+    
+    final StringValue IndexBuilderValue;
+    
+    MEolPart(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPIndexBuilder(pIndexBuilder);
+        this.list_IndexBuilder = new LinkedList<>();
+        
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder, this.IndexBuilderContext);
     }
     
-    private void setPIndexBuilder( String pIndexBuilder ){
-        if(pIndexBuilder == null){
+    public void addAllIndexBuilder(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("IndexBuilder");
+            }
     
-        this.field_IndexBuilder = pIndexBuilder;
+            this.list_IndexBuilder.add(string);
+        }
     }
     
-    String buildIndexBuilder(){
+    public void addIndexBuilder(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_IndexBuilder;
+        this.list_IndexBuilder.add(string);
     }
     
-    String getIndexBuilder(){
+    private String buildIndexBuilder() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_IndexBuilder;
     
-        return this.field_IndexBuilder;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.IndexBuilderNone != null) {
+            sb.append(this.IndexBuilderNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.IndexBuilderBeforeFirst != null) {
+                string = this.IndexBuilderBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.IndexBuilderAfterLast != null) {
+                string = this.IndexBuilderAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.IndexBuilderSeparator != null) {
+                string = this.IndexBuilderSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getIndexBuilder() {
+        return this.IndexBuilderValue;
     }
     
     
+    private void initIndexBuilderDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setEolPart(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
+        initIndexBuilderDirectives();
     
     
     
@@ -77,7 +140,6 @@ public  class MEolPart extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

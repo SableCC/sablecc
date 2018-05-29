@@ -4,62 +4,125 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MInternalStringSetter extends Macro{
+public class MInternalStringSetter extends Macro {
     
-    String field_Name;
+    private DSeparator NameSeparator;
     
-    MInternalStringSetter(String pName, Macros macros){
+    private DBeforeFirst NameBeforeFirst;
+    
+    private DAfterLast NameAfterLast;
+    
+    private DNone NameNone;
+    
+    final List<String> list_Name;
+    
+    final Context NameContext = new Context();
+    
+    final StringValue NameValue;
+    
+    MInternalStringSetter(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPName(pName);
+        this.list_Name = new LinkedList<>();
+        
+        this.NameValue = new StringValue(this.list_Name, this.NameContext);
     }
     
-    private void setPName( String pName ){
-        if(pName == null){
+    public void addAllName(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Name");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Name");
+            }
     
-        this.field_Name = pName;
+            this.list_Name.add(string);
+        }
     }
     
-    String buildName(){
+    public void addName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Name");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_Name;
+        this.list_Name.add(string);
     }
     
-    String getName(){
+    private String buildName() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Name;
     
-        return this.field_Name;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.NameNone != null) {
+            sb.append(this.NameNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.NameBeforeFirst != null) {
+                string = this.NameBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.NameAfterLast != null) {
+                string = this.NameAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.NameSeparator != null) {
+                string = this.NameSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getName() {
+        return this.NameValue;
     }
     
     
+    private void initNameDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setInternalStringSetter(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
+        initNameDirectives();
     
     
     
@@ -71,7 +134,7 @@ public  class MInternalStringSetter extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("        Context context,");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("        String value) ");
+        sb0.append("        StringValue value) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
@@ -83,7 +146,7 @@ public  class MInternalStringSetter extends Macro{
         sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    this.field_");
+        sb0.append("    this.list_");
         sb0.append(buildName());
         sb0.append(".put(context, value);");
         sb0.append(LINE_SEPARATOR);
@@ -97,7 +160,6 @@ public  class MInternalStringSetter extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

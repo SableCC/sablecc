@@ -4,23 +4,77 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MDuplicateDeclaration extends Macro{
+public class MDuplicateDeclaration extends Macro {
     
-    String field_Name;
+    private DSeparator NameSeparator;
     
-    String field_Line;
+    private DBeforeFirst NameBeforeFirst;
     
-    String field_Char;
+    private DAfterLast NameAfterLast;
     
-    String field_RefLine;
+    private DNone NameNone;
     
-    String field_RefChar;
+    final List<String> list_Name;
     
-    final List<Macro> list_Version;
+    final Context NameContext = new Context();
     
-    final Context VersionContext = new Context();
+    final StringValue NameValue;
     
-    final InternalValue VersionValue;
+    private DSeparator LineSeparator;
+    
+    private DBeforeFirst LineBeforeFirst;
+    
+    private DAfterLast LineAfterLast;
+    
+    private DNone LineNone;
+    
+    final List<String> list_Line;
+    
+    final Context LineContext = new Context();
+    
+    final StringValue LineValue;
+    
+    private DSeparator CharSeparator;
+    
+    private DBeforeFirst CharBeforeFirst;
+    
+    private DAfterLast CharAfterLast;
+    
+    private DNone CharNone;
+    
+    final List<String> list_Char;
+    
+    final Context CharContext = new Context();
+    
+    final StringValue CharValue;
+    
+    private DSeparator RefLineSeparator;
+    
+    private DBeforeFirst RefLineBeforeFirst;
+    
+    private DAfterLast RefLineAfterLast;
+    
+    private DNone RefLineNone;
+    
+    final List<String> list_RefLine;
+    
+    final Context RefLineContext = new Context();
+    
+    final StringValue RefLineValue;
+    
+    private DSeparator RefCharSeparator;
+    
+    private DBeforeFirst RefCharBeforeFirst;
+    
+    private DAfterLast RefCharAfterLast;
+    
+    private DNone RefCharNone;
+    
+    final List<String> list_RefChar;
+    
+    final Context RefCharContext = new Context();
+    
+    final StringValue RefCharValue;
     
     private DSeparator VersionSeparator;
     
@@ -30,221 +84,443 @@ public  class MDuplicateDeclaration extends Macro{
     
     private DNone VersionNone;
     
-    MDuplicateDeclaration(String pName, String pLine, String pChar, String pRefLine, String pRefChar, Macros macros){
+    final List<String> list_Version;
+    
+    final Context VersionContext = new Context();
+    
+    final StringValue VersionValue;
+    
+    MDuplicateDeclaration(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPName(pName);
-        this.setPLine(pLine);
-        this.setPChar(pChar);
-        this.setPRefLine(pRefLine);
-        this.setPRefChar(pRefChar);
+        this.list_Name = new LinkedList<>();
+        this.list_Line = new LinkedList<>();
+        this.list_Char = new LinkedList<>();
+        this.list_RefLine = new LinkedList<>();
+        this.list_RefChar = new LinkedList<>();
         this.list_Version = new LinkedList<>();
         
-        this.VersionValue = new InternalValue(this.list_Version, this.VersionContext);
+        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+        this.LineValue = new StringValue(this.list_Line, this.LineContext);
+        this.CharValue = new StringValue(this.list_Char, this.CharContext);
+        this.RefLineValue = new StringValue(this.list_RefLine, this.RefLineContext);
+        this.RefCharValue = new StringValue(this.list_RefChar, this.RefCharContext);
+        this.VersionValue = new StringValue(this.list_Version, this.VersionContext);
     }
     
-    private void setPName( String pName ){
-        if(pName == null){
+    public void addAllName(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Name");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Name");
+            }
     
-        this.field_Name = pName;
+            this.list_Name.add(string);
+        }
     }
     
-    private void setPLine( String pLine ){
-        if(pLine == null){
+    public void addName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Name");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_Name.add(string);
+    }
+    
+    public void addAllLine(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Line");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Line");
+            }
     
-        this.field_Line = pLine;
+            this.list_Line.add(string);
+        }
     }
     
-    private void setPChar( String pChar ){
-        if(pChar == null){
+    public void addLine(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Line");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_Line.add(string);
+    }
+    
+    public void addAllChar(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Char");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Char");
+            }
     
-        this.field_Char = pChar;
+            this.list_Char.add(string);
+        }
     }
     
-    private void setPRefLine( String pRefLine ){
-        if(pRefLine == null){
+    public void addChar(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_Char.add(string);
+    }
+    
+    public void addAllRefLine(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("RefLine");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("RefLine");
+            }
     
-        this.field_RefLine = pRefLine;
+            this.list_RefLine.add(string);
+        }
     }
     
-    private void setPRefChar( String pRefChar ){
-        if(pRefChar == null){
-            throw ObjectMacroException.parameterNull("RefChar");
+    public void addRefLine(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("RefLine");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.field_RefChar = pRefChar;
+        this.list_RefLine.add(string);
+    }
+    
+    public void addAllRefChar(
+                    List<String> strings){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("RefChar");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("RefChar");
+            }
+    
+            this.list_RefChar.add(string);
+        }
+    }
+    
+    public void addRefChar(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("RefChar");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_RefChar.add(string);
     }
     
     public void addAllVersion(
-                    List<Macro> macros){
+                    List<String> strings){
     
         if(macros == null){
             throw ObjectMacroException.parameterNull("Version");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("DuplicateDeclaration");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
-        
-        int i = 0;
-        
-        for(Macro macro : macros) {
-            if(macro == null) {
-                throw ObjectMacroException.macroNull(i, "Version");
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Version");
             }
-        
-            if(this.getMacros() != macro.getMacros()){
-                throw ObjectMacroException.diffMacros();
-            }
-        
-            this.verifyTypeVersion(macro);
-            this.list_Version.add(macro);
-            this.children.add(macro);
-            Macro.cycleDetector.detectCycle(this, macro);
-        
-            i++;
+    
+            this.list_Version.add(string);
         }
     }
     
-    
-    void verifyTypeVersion (Macro macro) {
-        macro.apply(new InternalsInitializer("Version"){
-            @Override
-            void setPlainText(MPlainText mPlainText){
-            
-                
-                
-            }
-        });
-    }
-    
-    public void addVersion(MPlainText macro){
-        if(macro == null){
+    public void addVersion(String string){
+        if(string == null){
             throw ObjectMacroException.parameterNull("Version");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("DuplicateDeclaration");
-        }
-        
-        if(this.getMacros() != macro.getMacros()){
-            throw ObjectMacroException.diffMacros();
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.list_Version.add(macro);
-        this.children.add(macro);
-        Macro.cycleDetector.detectCycle(this, macro);
+        this.list_Version.add(string);
     }
     
-    String buildName(){
-    
-        return this.field_Name;
-    }
-    
-    String buildLine(){
-    
-        return this.field_Line;
-    }
-    
-    String buildChar(){
-    
-        return this.field_Char;
-    }
-    
-    String buildRefLine(){
-    
-        return this.field_RefLine;
-    }
-    
-    String buildRefChar(){
-    
-        return this.field_RefChar;
-    }
-    
-    private String buildVersion(){
+    private String buildName() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = VersionContext;
-        List<Macro> macros = this.list_Version;
+        List<String> strings = this.list_Name;
     
         int i = 0;
-        int nb_macros = macros.size();
-        String expansion = null;
+        int nb_strings = strings.size();
     
-        if(this.VersionNone != null){
-            sb.append(this.VersionNone.apply(i, "", nb_macros));
+        if(this.NameNone != null) {
+            sb.append(this.NameNone.apply(i, "", nb_strings));
         }
     
-        for(Macro macro : macros){
-            expansion = macro.build(local_context);
+        for(String string : strings) {
     
-            if(this.VersionBeforeFirst != null){
-                expansion = this.VersionBeforeFirst.apply(i, expansion, nb_macros);
+            if(this.NameBeforeFirst != null) {
+                string = this.NameBeforeFirst.apply(i, string, nb_strings);
             }
     
-            if(this.VersionAfterLast != null){
-                expansion = this.VersionAfterLast.apply(i, expansion, nb_macros);
+            if(this.NameAfterLast != null) {
+                string = this.NameAfterLast.apply(i, string, nb_strings);
             }
     
-            if(this.VersionSeparator != null){
-                expansion = this.VersionSeparator.apply(i, expansion, nb_macros);
+            if(this.NameSeparator != null) {
+                string = this.NameSeparator.apply(i, string, nb_strings);
             }
     
-            sb.append(expansion);
+            sb.append(string);
             i++;
         }
     
         return sb.toString();
     }
     
-    String getName(){
+    private String buildLine() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Line;
     
-        return this.field_Name;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.LineNone != null) {
+            sb.append(this.LineNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.LineBeforeFirst != null) {
+                string = this.LineBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.LineAfterLast != null) {
+                string = this.LineAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.LineSeparator != null) {
+                string = this.LineSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getLine(){
+    private String buildChar() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Char;
     
-        return this.field_Line;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.CharNone != null) {
+            sb.append(this.CharNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.CharBeforeFirst != null) {
+                string = this.CharBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.CharAfterLast != null) {
+                string = this.CharAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.CharSeparator != null) {
+                string = this.CharSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getChar(){
+    private String buildRefLine() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_RefLine;
     
-        return this.field_Char;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.RefLineNone != null) {
+            sb.append(this.RefLineNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.RefLineBeforeFirst != null) {
+                string = this.RefLineBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.RefLineAfterLast != null) {
+                string = this.RefLineAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.RefLineSeparator != null) {
+                string = this.RefLineSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getRefLine(){
+    private String buildRefChar() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_RefChar;
     
-        return this.field_RefLine;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.RefCharNone != null) {
+            sb.append(this.RefCharNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.RefCharBeforeFirst != null) {
+                string = this.RefCharBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.RefCharAfterLast != null) {
+                string = this.RefCharAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.RefCharSeparator != null) {
+                string = this.RefCharSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getRefChar(){
+    private String buildVersion() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Version;
     
-        return this.field_RefChar;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.VersionNone != null) {
+            sb.append(this.VersionNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.VersionBeforeFirst != null) {
+                string = this.VersionBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.VersionAfterLast != null) {
+                string = this.VersionAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.VersionSeparator != null) {
+                string = this.VersionSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    private InternalValue getVersion(){
+    StringValue getName() {
+        return this.NameValue;
+    }
+    
+    StringValue getLine() {
+        return this.LineValue;
+    }
+    
+    StringValue getChar() {
+        return this.CharValue;
+    }
+    
+    StringValue getRefLine() {
+        return this.RefLineValue;
+    }
+    
+    StringValue getRefChar() {
+        return this.RefCharValue;
+    }
+    
+    StringValue getVersion() {
         return this.VersionValue;
     }
-    private void initVersionInternals(Context context){
-        for(Macro macro : this.list_Version){
-            macro.apply(new InternalsInitializer("Version"){
-                @Override
-                void setPlainText(MPlainText mPlainText){
-                
-                    
-                    
-                }
-            });
-        }
+    
+    
+    private void initNameDirectives() {
+        
     }
     
-    private void initVersionDirectives(){
+    private void initLineDirectives() {
+        
+    }
+    
+    private void initCharDirectives() {
+        
+    }
+    
+    private void initRefLineDirectives() {
+        
+    }
+    
+    private void initRefCharDirectives() {
+        
+    }
+    
+    private void initVersionDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append("in version: ");
         this.VersionBeforeFirst = new DBeforeFirst(sb1.toString());
@@ -252,36 +528,39 @@ public  class MDuplicateDeclaration extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setDuplicateDeclaration(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initNameDirectives();
+        initLineDirectives();
+        initCharDirectives();
+        initRefLineDirectives();
+        initRefCharDirectives();
         initVersionDirectives();
-        
-        initVersionInternals(null);
     
         StringBuilder sb0 = new StringBuilder();
     
         MSemanticErrorHead m1 = this.getMacros().newSemanticErrorHead();
+        
         
         
         sb0.append(m1.build(null));
@@ -313,7 +592,6 @@ public  class MDuplicateDeclaration extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

@@ -4,15 +4,21 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MRedefinedInternalsSetter extends Macro{
+public class MRedefinedInternalsSetter extends Macro {
     
-    String field_MacroName;
+    private DSeparator MacroNameSeparator;
     
-    final List<Macro> list_TextParts;
+    private DBeforeFirst MacroNameBeforeFirst;
     
-    final Context TextPartsContext = new Context();
+    private DAfterLast MacroNameAfterLast;
     
-    final InternalValue TextPartsValue;
+    private DNone MacroNameNone;
+    
+    final List<String> list_MacroName;
+    
+    final Context MacroNameContext = new Context();
+    
+    final StringValue MacroNameValue;
     
     private DSeparator TextPartsSeparator;
     
@@ -22,11 +28,25 @@ public  class MRedefinedInternalsSetter extends Macro{
     
     private DNone TextPartsNone;
     
-    final List<Macro> list_SetInternals;
+    final List<Macro> list_TextParts;
     
-    final Context SetInternalsContext = new Context();
+    final Context TextPartsContext = new Context();
     
-    final InternalValue SetInternalsValue;
+    final MacroValue TextPartsValue;
+    
+    private DSeparator SingleStringElementsSeparator;
+    
+    private DBeforeFirst SingleStringElementsBeforeFirst;
+    
+    private DAfterLast SingleStringElementsAfterLast;
+    
+    private DNone SingleStringElementsNone;
+    
+    final List<Macro> list_SingleStringElements;
+    
+    final Context SingleStringElementsContext = new Context();
+    
+    final MacroValue SingleStringElementsValue;
     
     private DSeparator SetInternalsSeparator;
     
@@ -36,24 +56,54 @@ public  class MRedefinedInternalsSetter extends Macro{
     
     private DNone SetInternalsNone;
     
-    MRedefinedInternalsSetter(String pMacroName, Macros macros){
+    final List<Macro> list_SetInternals;
+    
+    final Context SetInternalsContext = new Context();
+    
+    final MacroValue SetInternalsValue;
+    
+    MRedefinedInternalsSetter(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPMacroName(pMacroName);
+        this.list_MacroName = new LinkedList<>();
         this.list_TextParts = new LinkedList<>();
+        this.list_SingleStringElements = new LinkedList<>();
         this.list_SetInternals = new LinkedList<>();
         
-        this.TextPartsValue = new InternalValue(this.list_TextParts, this.TextPartsContext);
-        this.SetInternalsValue = new InternalValue(this.list_SetInternals, this.SetInternalsContext);
+        this.MacroNameValue = new StringValue(this.list_MacroName, this.MacroNameContext);
+        this.TextPartsValue = new MacroValue(this.list_TextParts, this.TextPartsContext);
+        this.SingleStringElementsValue = new MacroValue(this.list_SingleStringElements, this.SingleStringElementsContext);
+        this.SetInternalsValue = new MacroValue(this.list_SetInternals, this.SetInternalsContext);
     }
     
-    private void setPMacroName( String pMacroName ){
-        if(pMacroName == null){
+    public void addAllMacroName(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("MacroName");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("MacroName");
+            }
     
-        this.field_MacroName = pMacroName;
+            this.list_MacroName.add(string);
+        }
+    }
+    
+    public void addMacroName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("MacroName");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_MacroName.add(string);
     }
     
     public void addAllTextParts(
@@ -62,8 +112,8 @@ public  class MRedefinedInternalsSetter extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("RedefinedInternalsSetter");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -73,7 +123,7 @@ public  class MRedefinedInternalsSetter extends Macro{
                 throw ObjectMacroException.macroNull(i, "TextParts");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -91,37 +141,37 @@ public  class MRedefinedInternalsSetter extends Macro{
         macro.apply(new InternalsInitializer("TextParts"){
             @Override
             void setInitStringBuilder(MInitStringBuilder mInitStringBuilder){
+                
             
-                
-                
+            
             }
             
             @Override
             void setStringPart(MStringPart mStringPart){
+                
             
-                
-                
+            
             }
             
             @Override
             void setParamInsertPart(MParamInsertPart mParamInsertPart){
+                
             
-                
-                
+            
             }
             
             @Override
             void setEolPart(MEolPart mEolPart){
+                
             
-                
-                
+            
             }
             
             @Override
             void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
+                
             
-                
-                
+            
             }
         });
     }
@@ -130,11 +180,11 @@ public  class MRedefinedInternalsSetter extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("RedefinedInternalsSetter");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -147,11 +197,11 @@ public  class MRedefinedInternalsSetter extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("RedefinedInternalsSetter");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -164,11 +214,11 @@ public  class MRedefinedInternalsSetter extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("RedefinedInternalsSetter");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -181,11 +231,11 @@ public  class MRedefinedInternalsSetter extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("RedefinedInternalsSetter");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -198,15 +248,74 @@ public  class MRedefinedInternalsSetter extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("RedefinedInternalsSetter");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
         this.list_TextParts.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+    
+    public void addAllSingleStringElements(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("SingleStringElements");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "SingleStringElements");
+            }
+        
+            if(this.getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeSingleStringElements(macro);
+            this.list_SingleStringElements.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeSingleStringElements (Macro macro) {
+        macro.apply(new InternalsInitializer("SingleStringElements"){
+            @Override
+            void setNewStringValue(MNewStringValue mNewStringValue){
+                
+            
+            
+            }
+        });
+    }
+    
+    public void addSingleStringElements(MNewStringValue macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("SingleStringElements");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        
+        if(this.getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+    
+        this.list_SingleStringElements.add(macro);
         this.children.add(macro);
         Macro.cycleDetector.detectCycle(this, macro);
     }
@@ -217,8 +326,8 @@ public  class MRedefinedInternalsSetter extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("SetInternals");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("RedefinedInternalsSetter");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -228,7 +337,7 @@ public  class MRedefinedInternalsSetter extends Macro{
                 throw ObjectMacroException.macroNull(i, "SetInternals");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -246,9 +355,9 @@ public  class MRedefinedInternalsSetter extends Macro{
         macro.apply(new InternalsInitializer("SetInternals"){
             @Override
             void setSetInternal(MSetInternal mSetInternal){
+                
             
-                
-                
+            
             }
         });
     }
@@ -257,11 +366,11 @@ public  class MRedefinedInternalsSetter extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("SetInternals");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("RedefinedInternalsSetter");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -270,36 +379,63 @@ public  class MRedefinedInternalsSetter extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    String buildMacroName(){
+    private String buildMacroName() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_MacroName;
     
-        return this.field_MacroName;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.MacroNameNone != null) {
+            sb.append(this.MacroNameNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.MacroNameBeforeFirst != null) {
+                string = this.MacroNameBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.MacroNameAfterLast != null) {
+                string = this.MacroNameAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.MacroNameSeparator != null) {
+                string = this.MacroNameSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    private String buildTextParts(){
+    private String buildTextParts() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = TextPartsContext;
+        Context local_context = this.TextPartsContext;
         List<Macro> macros = this.list_TextParts;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.TextPartsNone != null){
+        if(this.TextPartsNone != null) {
             sb.append(this.TextPartsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.TextPartsBeforeFirst != null){
+            if(this.TextPartsBeforeFirst != null) {
                 expansion = this.TextPartsBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.TextPartsAfterLast != null){
+            if(this.TextPartsAfterLast != null) {
                 expansion = this.TextPartsAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.TextPartsSeparator != null){
+            if(this.TextPartsSeparator != null) {
                 expansion = this.TextPartsSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -310,31 +446,66 @@ public  class MRedefinedInternalsSetter extends Macro{
         return sb.toString();
     }
     
-    private String buildSetInternals(){
+    private String buildSingleStringElements() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = SetInternalsContext;
+        Context local_context = this.SingleStringElementsContext;
+        List<Macro> macros = this.list_SingleStringElements;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+    
+        if(this.SingleStringElementsNone != null) {
+            sb.append(this.SingleStringElementsNone.apply(i, "", nb_macros));
+        }
+    
+        for(Macro macro : macros) {
+            expansion = macro.build(local_context);
+    
+            if(this.SingleStringElementsBeforeFirst != null) {
+                expansion = this.SingleStringElementsBeforeFirst.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.SingleStringElementsAfterLast != null) {
+                expansion = this.SingleStringElementsAfterLast.apply(i, expansion, nb_macros);
+            }
+    
+            if(this.SingleStringElementsSeparator != null) {
+                expansion = this.SingleStringElementsSeparator.apply(i, expansion, nb_macros);
+            }
+    
+            sb.append(expansion);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    private String buildSetInternals() {
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.SetInternalsContext;
         List<Macro> macros = this.list_SetInternals;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.SetInternalsNone != null){
+        if(this.SetInternalsNone != null) {
             sb.append(this.SetInternalsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.SetInternalsBeforeFirst != null){
+            if(this.SetInternalsBeforeFirst != null) {
                 expansion = this.SetInternalsBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.SetInternalsAfterLast != null){
+            if(this.SetInternalsAfterLast != null) {
                 expansion = this.SetInternalsAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.SetInternalsSeparator != null){
+            if(this.SetInternalsSeparator != null) {
                 expansion = this.SetInternalsSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -345,65 +516,81 @@ public  class MRedefinedInternalsSetter extends Macro{
         return sb.toString();
     }
     
-    String getMacroName(){
-    
-        return this.field_MacroName;
+    StringValue getMacroName() {
+        return this.MacroNameValue;
     }
     
-    private InternalValue getTextParts(){
+    MacroValue getTextParts() {
         return this.TextPartsValue;
     }
     
-    private InternalValue getSetInternals(){
+    MacroValue getSingleStringElements() {
+        return this.SingleStringElementsValue;
+    }
+    
+    MacroValue getSetInternals() {
         return this.SetInternalsValue;
     }
-    private void initTextPartsInternals(Context context){
-        for(Macro macro : this.list_TextParts){
+    private void initTextPartsInternals(Context context) {
+        for(Macro macro : this.list_TextParts) {
             macro.apply(new InternalsInitializer("TextParts"){
                 @Override
                 void setInitStringBuilder(MInitStringBuilder mInitStringBuilder){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setStringPart(MStringPart mStringPart){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setParamInsertPart(MParamInsertPart mParamInsertPart){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setEolPart(MEolPart mEolPart){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setInsertMacroPart(MInsertMacroPart mInsertMacroPart){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initSetInternalsInternals(Context context){
-        for(Macro macro : this.list_SetInternals){
+    private void initSingleStringElementsInternals(Context context) {
+        for(Macro macro : this.list_SingleStringElements) {
+            macro.apply(new InternalsInitializer("SingleStringElements"){
+                @Override
+                void setNewStringValue(MNewStringValue mNewStringValue){
+                    
+                
+                
+                }
+            });
+        }
+    }
+    
+    private void initSetInternalsInternals(Context context) {
+        for(Macro macro : this.list_SetInternals) {
             macro.apply(new InternalsInitializer("SetInternals"){
                 @Override
                 void setSetInternal(MSetInternal mSetInternal){
-                
+                    
                     
                     mSetInternal.setVarName(SetInternalsContext, getMacroName());
                 }
@@ -411,14 +598,25 @@ public  class MRedefinedInternalsSetter extends Macro{
         }
     }
     
-    private void initTextPartsDirectives(){
+    private void initMacroNameDirectives() {
+        
+    }
+    
+    private void initTextPartsDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.TextPartsSeparator = new DSeparator(sb1.toString());
         this.TextPartsValue.setSeparator(this.TextPartsSeparator);
     }
     
-    private void initSetInternalsDirectives(){
+    private void initSingleStringElementsDirectives() {
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.SingleStringElementsSeparator = new DSeparator(sb1.toString());
+        this.SingleStringElementsValue.setSeparator(this.SingleStringElementsSeparator);
+    }
+    
+    private void initSetInternalsDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.SetInternalsSeparator = new DSeparator(sb1.toString());
@@ -426,33 +624,35 @@ public  class MRedefinedInternalsSetter extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setRedefinedInternalsSetter(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initMacroNameDirectives();
         initTextPartsDirectives();
+        initSingleStringElementsDirectives();
         initSetInternalsDirectives();
         
         initTextPartsInternals(null);
+        initSingleStringElementsInternals(null);
         initSetInternalsInternals(null);
     
         StringBuilder sb0 = new StringBuilder();
@@ -468,12 +668,16 @@ public  class MRedefinedInternalsSetter extends Macro{
         sb0.append(")");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    ");
-        sb0.append(buildTextParts());
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    ");
-        sb0.append(buildSetInternals());
+        StringBuilder sb1 = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("    ");
+        indentations.add(sb2.toString());
+        sb1.append(buildTextParts());
+        sb1.append(LINE_SEPARATOR);
+        sb1.append(buildSingleStringElements());
+        sb1.append(LINE_SEPARATOR);
+        sb1.append(buildSetInternals());
+        sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
     
@@ -485,7 +689,6 @@ public  class MRedefinedInternalsSetter extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

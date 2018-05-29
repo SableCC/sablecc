@@ -28,13 +28,21 @@ public class Main {
 
         System.out.print("======== Main Test ===========\n");
         Macros m = new Macros();
-        MA ma = m.newA("First argument of MA");
+        MA ma = m.newA();
+        ma.addX("First argument of MA");
         List<Macro> macros = new ArrayList<>();
-        MB mb = m.newB("la");
-        MB mb2 = m.newB("First argument in MB0");
+        MB mb = m.newB();
+        mb.addO("la");
+        MB mb2 = m.newB();
+        mb2.addO("First argument in MB0");
         macros.add(mb2);
-        macros.add(m.newB("First argument in MB1"));
-        macros.add(m.newB("First argument in MB2"));
+        MB mb3 = m.newB();
+        MB mb4 = m.newB();
+        macros.add(mb3);
+        macros.add(mb4);
+
+        mb3.addO("First argument in MB1");
+        mb4.addO("First argument in MB2");
 
         try{
             mb.addS(m.newC());

@@ -46,8 +46,16 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MSuperDirective", this._paramName);
     }
     
-    void setClassInternalValue(MClassInternalValue mClassInternalValue) {
-        throw ObjectMacroException.incorrectType("MClassInternalValue", this._paramName);
+    void setClassValue(MClassValue mClassValue) {
+        throw ObjectMacroException.incorrectType("MClassValue", this._paramName);
+    }
+    
+    void setClassMacroValue(MClassMacroValue mClassMacroValue) {
+        throw ObjectMacroException.incorrectType("MClassMacroValue", this._paramName);
+    }
+    
+    void setClassStringValue(MClassStringValue mClassStringValue) {
+        throw ObjectMacroException.incorrectType("MClassStringValue", this._paramName);
     }
     
     void setClassCacheBuilder(MClassCacheBuilder mClassCacheBuilder) {
@@ -90,24 +98,20 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MConstructor", this._paramName);
     }
     
-    void setInitMacroInternal(MInitMacroInternal mInitMacroInternal) {
-        throw ObjectMacroException.incorrectType("MInitMacroInternal", this._paramName);
+    void setInitInternal(MInitInternal mInitInternal) {
+        throw ObjectMacroException.incorrectType("MInitInternal", this._paramName);
     }
     
-    void setInitMacroParam(MInitMacroParam mInitMacroParam) {
-        throw ObjectMacroException.incorrectType("MInitMacroParam", this._paramName);
+    void setInitParam(MInitParam mInitParam) {
+        throw ObjectMacroException.incorrectType("MInitParam", this._paramName);
     }
     
-    void setInitStringInternal(MInitStringInternal mInitStringInternal) {
-        throw ObjectMacroException.incorrectType("MInitStringInternal", this._paramName);
+    void setInitMacroValue(MInitMacroValue mInitMacroValue) {
+        throw ObjectMacroException.incorrectType("MInitMacroValue", this._paramName);
     }
     
-    void setInitInternalValue(MInitInternalValue mInitInternalValue) {
-        throw ObjectMacroException.incorrectType("MInitInternalValue", this._paramName);
-    }
-    
-    void setSetParam(MSetParam mSetParam) {
-        throw ObjectMacroException.incorrectType("MSetParam", this._paramName);
+    void setInitStringValue(MInitStringValue mInitStringValue) {
+        throw ObjectMacroException.incorrectType("MInitStringValue", this._paramName);
     }
     
     void setSetMacrosCall(MSetMacrosCall mSetMacrosCall) {
@@ -118,12 +122,20 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MSuperCall", this._paramName);
     }
     
-    void setSingleAdd(MSingleAdd mSingleAdd) {
-        throw ObjectMacroException.incorrectType("MSingleAdd", this._paramName);
+    void setSingleMacroAdd(MSingleMacroAdd mSingleMacroAdd) {
+        throw ObjectMacroException.incorrectType("MSingleMacroAdd", this._paramName);
     }
     
-    void setAddAll(MAddAll mAddAll) {
-        throw ObjectMacroException.incorrectType("MAddAll", this._paramName);
+    void setSingleStringAdd(MSingleStringAdd mSingleStringAdd) {
+        throw ObjectMacroException.incorrectType("MSingleStringAdd", this._paramName);
+    }
+    
+    void setAddAllMacro(MAddAllMacro mAddAllMacro) {
+        throw ObjectMacroException.incorrectType("MAddAllMacro", this._paramName);
+    }
+    
+    void setAddAllString(MAddAllString mAddAllString) {
+        throw ObjectMacroException.incorrectType("MAddAllString", this._paramName);
     }
     
     void setTypeVerifier(MTypeVerifier mTypeVerifier) {
@@ -142,10 +154,6 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MIsBuilt", this._paramName);
     }
     
-    void setParamStringRefBuilder(MParamStringRefBuilder mParamStringRefBuilder) {
-        throw ObjectMacroException.incorrectType("MParamStringRefBuilder", this._paramName);
-    }
-    
     void setParamMacroRefBuilder(MParamMacroRefBuilder mParamMacroRefBuilder) {
         throw ObjectMacroException.incorrectType("MParamMacroRefBuilder", this._paramName);
     }
@@ -158,10 +166,6 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MInternalMacroSetter", this._paramName);
     }
     
-    void setParamStringSetter(MParamStringSetter mParamStringSetter) {
-        throw ObjectMacroException.incorrectType("MParamStringSetter", this._paramName);
-    }
-    
     void setParamMacroRef(MParamMacroRef mParamMacroRef) {
         throw ObjectMacroException.incorrectType("MParamMacroRef", this._paramName);
     }
@@ -172,6 +176,18 @@ class InternalsInitializer {
     
     void setParamStringRef(MParamStringRef mParamStringRef) {
         throw ObjectMacroException.incorrectType("MParamStringRef", this._paramName);
+    }
+    
+    void setParamStringRefBuilder(MParamStringRefBuilder mParamStringRefBuilder) {
+        throw ObjectMacroException.incorrectType("MParamStringRefBuilder", this._paramName);
+    }
+    
+    void setInternalStringRef(MInternalStringRef mInternalStringRef) {
+        throw ObjectMacroException.incorrectType("MInternalStringRef", this._paramName);
+    }
+    
+    void setInternalStringRefBuilder(MInternalStringRefBuilder mInternalStringRefBuilder) {
+        throw ObjectMacroException.incorrectType("MInternalStringRefBuilder", this._paramName);
     }
     
     void setInternalStringSetter(MInternalStringSetter mInternalStringSetter) {
@@ -246,8 +262,12 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MContextField", this._paramName);
     }
     
-    void setInternalMacrosValueField(MInternalMacrosValueField mInternalMacrosValueField) {
-        throw ObjectMacroException.incorrectType("MInternalMacrosValueField", this._paramName);
+    void setMacroValueField(MMacroValueField mMacroValueField) {
+        throw ObjectMacroException.incorrectType("MMacroValueField", this._paramName);
+    }
+    
+    void setStringValueField(MStringValueField mStringValueField) {
+        throw ObjectMacroException.incorrectType("MStringValueField", this._paramName);
     }
     
     void setDirectiveFields(MDirectiveFields mDirectiveFields) {
@@ -290,8 +310,8 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MSetInternal", this._paramName);
     }
     
-    void setStringBuilderBuild(MStringBuilderBuild mStringBuilderBuild) {
-        throw ObjectMacroException.incorrectType("MStringBuilderBuild", this._paramName);
+    void setNewStringValue(MNewStringValue mNewStringValue) {
+        throw ObjectMacroException.incorrectType("MNewStringValue", this._paramName);
     }
     
     void setParamRef(MParamRef mParamRef) {
@@ -300,6 +320,10 @@ class InternalsInitializer {
     
     void setAddIndent(MAddIndent mAddIndent) {
         throw ObjectMacroException.incorrectType("MAddIndent", this._paramName);
+    }
+    
+    void setStringValueArg(MStringValueArg mStringValueArg) {
+        throw ObjectMacroException.incorrectType("MStringValueArg", this._paramName);
     }
     
     void setStringValue(MStringValue mStringValue) {
@@ -316,10 +340,6 @@ class InternalsInitializer {
     
     void setParamArg(MParamArg mParamArg) {
         throw ObjectMacroException.incorrectType("MParamArg", this._paramName);
-    }
-    
-    void setPlainText(MPlainText mPlainText) {
-        throw ObjectMacroException.incorrectType("MPlainText", this._paramName);
     }
     
     void setContextParam(MContextParam mContextParam) {

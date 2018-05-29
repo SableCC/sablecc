@@ -4,85 +4,211 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MIndentTokenMisused extends Macro{
+public class MIndentTokenMisused extends Macro {
     
-    String field_Line;
+    private DSeparator LineSeparator;
     
-    String field_Char;
+    private DBeforeFirst LineBeforeFirst;
     
-    MIndentTokenMisused(String pLine, String pChar, Macros macros){
+    private DAfterLast LineAfterLast;
+    
+    private DNone LineNone;
+    
+    final List<String> list_Line;
+    
+    final Context LineContext = new Context();
+    
+    final StringValue LineValue;
+    
+    private DSeparator CharSeparator;
+    
+    private DBeforeFirst CharBeforeFirst;
+    
+    private DAfterLast CharAfterLast;
+    
+    private DNone CharNone;
+    
+    final List<String> list_Char;
+    
+    final Context CharContext = new Context();
+    
+    final StringValue CharValue;
+    
+    MIndentTokenMisused(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPLine(pLine);
-        this.setPChar(pChar);
+        this.list_Line = new LinkedList<>();
+        this.list_Char = new LinkedList<>();
+        
+        this.LineValue = new StringValue(this.list_Line, this.LineContext);
+        this.CharValue = new StringValue(this.list_Char, this.CharContext);
     }
     
-    private void setPLine( String pLine ){
-        if(pLine == null){
+    public void addAllLine(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Line");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Line");
+            }
     
-        this.field_Line = pLine;
+            this.list_Line.add(string);
+        }
     }
     
-    private void setPChar( String pChar ){
-        if(pChar == null){
-            throw ObjectMacroException.parameterNull("Char");
+    public void addLine(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Line");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.field_Char = pChar;
+        this.list_Line.add(string);
     }
     
-    String buildLine(){
+    public void addAllChar(
+                    List<String> strings){
     
-        return this.field_Line;
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Char");
+            }
+    
+            this.list_Char.add(string);
+        }
     }
     
-    String buildChar(){
+    public void addChar(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_Char;
+        this.list_Char.add(string);
     }
     
-    String getLine(){
+    private String buildLine() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Line;
     
-        return this.field_Line;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.LineNone != null) {
+            sb.append(this.LineNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.LineBeforeFirst != null) {
+                string = this.LineBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.LineAfterLast != null) {
+                string = this.LineAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.LineSeparator != null) {
+                string = this.LineSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getChar(){
+    private String buildChar() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Char;
     
-        return this.field_Char;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.CharNone != null) {
+            sb.append(this.CharNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.CharBeforeFirst != null) {
+                string = this.CharBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.CharAfterLast != null) {
+                string = this.CharAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.CharSeparator != null) {
+                string = this.CharSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getLine() {
+        return this.LineValue;
+    }
+    
+    StringValue getChar() {
+        return this.CharValue;
     }
     
     
+    private void initLineDirectives() {
+        
+    }
+    
+    private void initCharDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setIndentTokenMisused(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
-    
-    
+        initLineDirectives();
+        initCharDirectives();
     
         StringBuilder sb0 = new StringBuilder();
     
@@ -107,7 +233,6 @@ public  class MIndentTokenMisused extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){
