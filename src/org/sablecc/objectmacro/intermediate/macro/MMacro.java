@@ -7,12 +7,6 @@ import java.util.*;
 public class MMacro
         extends Macro {
 
-    final List<Macro> list_MacroName;
-
-    final Context MacroNameContext = new Context();
-
-    final InternalValue MacroNameValue;
-
     private DSeparator MacroNameSeparator;
 
     private DBeforeFirst MacroNameBeforeFirst;
@@ -21,11 +15,11 @@ public class MMacro
 
     private DNone MacroNameNone;
 
-    final List<Macro> list_ParentName;
+    final List<Macro> list_MacroName;
 
-    final Context ParentNameContext = new Context();
+    final Context MacroNameContext = new Context();
 
-    final InternalValue ParentNameValue;
+    final MacroValue MacroNameValue;
 
     private DSeparator ParentNameSeparator;
 
@@ -35,11 +29,11 @@ public class MMacro
 
     private DNone ParentNameNone;
 
-    final List<Macro> list_IsAbstract;
+    final List<Macro> list_ParentName;
 
-    final Context IsAbstractContext = new Context();
+    final Context ParentNameContext = new Context();
 
-    final InternalValue IsAbstractValue;
+    final MacroValue ParentNameValue;
 
     private DSeparator IsAbstractSeparator;
 
@@ -49,11 +43,11 @@ public class MMacro
 
     private DNone IsAbstractNone;
 
-    final List<Macro> list_IsAllVersionned;
+    final List<Macro> list_IsAbstract;
 
-    final Context IsAllVersionnedContext = new Context();
+    final Context IsAbstractContext = new Context();
 
-    final InternalValue IsAllVersionnedValue;
+    final MacroValue IsAbstractValue;
 
     private DSeparator IsAllVersionnedSeparator;
 
@@ -63,11 +57,11 @@ public class MMacro
 
     private DNone IsAllVersionnedNone;
 
-    final List<Macro> list_Parameters;
+    final List<Macro> list_IsAllVersionned;
 
-    final Context ParametersContext = new Context();
+    final Context IsAllVersionnedContext = new Context();
 
-    final InternalValue ParametersValue;
+    final MacroValue IsAllVersionnedValue;
 
     private DSeparator ParametersSeparator;
 
@@ -77,11 +71,11 @@ public class MMacro
 
     private DNone ParametersNone;
 
-    final List<Macro> list_Internals;
+    final List<Macro> list_Parameters;
 
-    final Context InternalsContext = new Context();
+    final Context ParametersContext = new Context();
 
-    final InternalValue InternalsValue;
+    final MacroValue ParametersValue;
 
     private DSeparator InternalsSeparator;
 
@@ -91,11 +85,11 @@ public class MMacro
 
     private DNone InternalsNone;
 
-    final List<Macro> list_Body;
+    final List<Macro> list_Internals;
 
-    final Context BodyContext = new Context();
+    final Context InternalsContext = new Context();
 
-    final InternalValue BodyValue;
+    final MacroValue InternalsValue;
 
     private DSeparator BodySeparator;
 
@@ -105,11 +99,11 @@ public class MMacro
 
     private DNone BodyNone;
 
-    final List<Macro> list_Versions;
+    final List<Macro> list_Body;
 
-    final Context VersionsContext = new Context();
+    final Context BodyContext = new Context();
 
-    final InternalValue VersionsValue;
+    final MacroValue BodyValue;
 
     private DSeparator VersionsSeparator;
 
@@ -118,6 +112,12 @@ public class MMacro
     private DAfterLast VersionsAfterLast;
 
     private DNone VersionsNone;
+
+    final List<Macro> list_Versions;
+
+    final Context VersionsContext = new Context();
+
+    final MacroValue VersionsValue;
 
     MMacro(
             Macros macros) {
@@ -133,20 +133,20 @@ public class MMacro
         this.list_Versions = new LinkedList<>();
 
         this.MacroNameValue
-                = new InternalValue(this.list_MacroName, this.MacroNameContext);
-        this.ParentNameValue = new InternalValue(this.list_ParentName,
-                this.ParentNameContext);
-        this.IsAbstractValue = new InternalValue(this.list_IsAbstract,
-                this.IsAbstractContext);
-        this.IsAllVersionnedValue = new InternalValue(this.list_IsAllVersionned,
+                = new MacroValue(this.list_MacroName, this.MacroNameContext);
+        this.ParentNameValue
+                = new MacroValue(this.list_ParentName, this.ParentNameContext);
+        this.IsAbstractValue
+                = new MacroValue(this.list_IsAbstract, this.IsAbstractContext);
+        this.IsAllVersionnedValue = new MacroValue(this.list_IsAllVersionned,
                 this.IsAllVersionnedContext);
-        this.ParametersValue = new InternalValue(this.list_Parameters,
-                this.ParametersContext);
+        this.ParametersValue
+                = new MacroValue(this.list_Parameters, this.ParametersContext);
         this.InternalsValue
-                = new InternalValue(this.list_Internals, this.InternalsContext);
-        this.BodyValue = new InternalValue(this.list_Body, this.BodyContext);
+                = new MacroValue(this.list_Internals, this.InternalsContext);
+        this.BodyValue = new MacroValue(this.list_Body, this.BodyContext);
         this.VersionsValue
-                = new InternalValue(this.list_Versions, this.VersionsContext);
+                = new MacroValue(this.list_Versions, this.VersionsContext);
     }
 
     public void addAllMacroName(
@@ -156,7 +156,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("MacroName");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -199,7 +200,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("MacroName");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -218,7 +220,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("ParentName");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -261,7 +264,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("ParentName");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -280,7 +284,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("IsAbstract");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -323,7 +328,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("IsAbstract");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -342,7 +348,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("IsAllVersionned");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -385,7 +392,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("IsAllVersionned");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -404,7 +412,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Parameters");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -447,7 +456,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Parameters");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -466,7 +476,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Internals");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -509,7 +520,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Internals");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -528,7 +540,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Body");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -601,7 +614,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Body");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -620,7 +634,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Body");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -639,7 +654,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Body");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -658,7 +674,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Body");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -677,7 +694,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Body");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -696,7 +714,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Body");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -715,7 +734,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Versions");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -758,7 +778,8 @@ public class MMacro
             throw ObjectMacroException.parameterNull("Versions");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Macro");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -1079,42 +1100,42 @@ public class MMacro
         return sb.toString();
     }
 
-    private InternalValue getMacroName() {
+    MacroValue getMacroName() {
 
         return this.MacroNameValue;
     }
 
-    private InternalValue getParentName() {
+    MacroValue getParentName() {
 
         return this.ParentNameValue;
     }
 
-    private InternalValue getIsAbstract() {
+    MacroValue getIsAbstract() {
 
         return this.IsAbstractValue;
     }
 
-    private InternalValue getIsAllVersionned() {
+    MacroValue getIsAllVersionned() {
 
         return this.IsAllVersionnedValue;
     }
 
-    private InternalValue getParameters() {
+    MacroValue getParameters() {
 
         return this.ParametersValue;
     }
 
-    private InternalValue getInternals() {
+    MacroValue getInternals() {
 
         return this.InternalsValue;
     }
 
-    private InternalValue getBody() {
+    MacroValue getBody() {
 
         return this.BodyValue;
     }
 
-    private InternalValue getVersions() {
+    MacroValue getVersions() {
 
         return this.VersionsValue;
     }
@@ -1360,15 +1381,22 @@ public class MMacro
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         initMacroNameDirectives();
+        initMacroNameDirectives();
+        initParentNameDirectives();
         initParentNameDirectives();
         initIsAbstractDirectives();
+        initIsAbstractDirectives();
+        initIsAllVersionnedDirectives();
         initIsAllVersionnedDirectives();
         initParametersDirectives();
+        initParametersDirectives();
+        initInternalsDirectives();
         initInternalsDirectives();
         initBodyDirectives();
+        initBodyDirectives();
+        initVersionsDirectives();
         initVersionsDirectives();
 
         initMacroNameInternals(null);

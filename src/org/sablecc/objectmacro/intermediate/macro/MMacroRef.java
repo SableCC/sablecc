@@ -7,12 +7,6 @@ import java.util.*;
 public class MMacroRef
         extends Macro {
 
-    final List<Macro> list_ReferencedMacroName;
-
-    final Context ReferencedMacroNameContext = new Context();
-
-    final InternalValue ReferencedMacroNameValue;
-
     private DSeparator ReferencedMacroNameSeparator;
 
     private DBeforeFirst ReferencedMacroNameBeforeFirst;
@@ -21,11 +15,11 @@ public class MMacroRef
 
     private DNone ReferencedMacroNameNone;
 
-    final List<Macro> list_Arguments;
+    final List<Macro> list_ReferencedMacroName;
 
-    final Context ArgumentsContext = new Context();
+    final Context ReferencedMacroNameContext = new Context();
 
-    final InternalValue ArgumentsValue;
+    final MacroValue ReferencedMacroNameValue;
 
     private DSeparator ArgumentsSeparator;
 
@@ -35,6 +29,12 @@ public class MMacroRef
 
     private DNone ArgumentsNone;
 
+    final List<Macro> list_Arguments;
+
+    final Context ArgumentsContext = new Context();
+
+    final MacroValue ArgumentsValue;
+
     MMacroRef(
             Macros macros) {
 
@@ -42,10 +42,10 @@ public class MMacroRef
         this.list_ReferencedMacroName = new LinkedList<>();
         this.list_Arguments = new LinkedList<>();
 
-        this.ReferencedMacroNameValue = new InternalValue(
+        this.ReferencedMacroNameValue = new MacroValue(
                 this.list_ReferencedMacroName, this.ReferencedMacroNameContext);
         this.ArgumentsValue
-                = new InternalValue(this.list_Arguments, this.ArgumentsContext);
+                = new MacroValue(this.list_Arguments, this.ArgumentsContext);
     }
 
     public void addAllReferencedMacroName(
@@ -55,7 +55,8 @@ public class MMacroRef
             throw ObjectMacroException.parameterNull("ReferencedMacroName");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroRef");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -98,7 +99,8 @@ public class MMacroRef
             throw ObjectMacroException.parameterNull("ReferencedMacroName");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroRef");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -117,7 +119,8 @@ public class MMacroRef
             throw ObjectMacroException.parameterNull("Arguments");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroRef");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -160,7 +163,8 @@ public class MMacroRef
             throw ObjectMacroException.parameterNull("Arguments");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroRef");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -250,12 +254,12 @@ public class MMacroRef
         return sb.toString();
     }
 
-    private InternalValue getReferencedMacroName() {
+    MacroValue getReferencedMacroName() {
 
         return this.ReferencedMacroNameValue;
     }
 
-    private InternalValue getArguments() {
+    MacroValue getArguments() {
 
         return this.ArgumentsValue;
     }
@@ -320,9 +324,10 @@ public class MMacroRef
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         initReferencedMacroNameDirectives();
+        initReferencedMacroNameDirectives();
+        initArgumentsDirectives();
         initArgumentsDirectives();
 
         initReferencedMacroNameInternals(null);

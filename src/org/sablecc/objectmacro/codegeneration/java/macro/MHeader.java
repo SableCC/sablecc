@@ -35,7 +35,6 @@ public class MHeader
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         StringBuilder sb0 = new StringBuilder();
 

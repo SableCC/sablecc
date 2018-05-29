@@ -7,34 +7,106 @@ import java.util.*;
 public class MInternalMacroRefBuilder
         extends Macro {
 
-    String field_InternalName;
+    private DSeparator InternalNameSeparator;
+
+    private DBeforeFirst InternalNameBeforeFirst;
+
+    private DAfterLast InternalNameAfterLast;
+
+    private DNone InternalNameNone;
+
+    final List<String> list_InternalName;
+
+    final Context InternalNameContext = new Context();
+
+    final StringValue InternalNameValue;
 
     MInternalMacroRefBuilder(
-            String pInternalName,
             Macros macros) {
 
         setMacros(macros);
-        setPInternalName(pInternalName);
+        this.list_InternalName = new LinkedList<>();
+
+        this.InternalNameValue = new StringValue(this.list_InternalName,
+                this.InternalNameContext);
     }
 
-    private void setPInternalName(
-            String pInternalName) {
+    public void addAllInternalName(
+            List<String> strings) {
 
-        if (pInternalName == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("InternalName");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("InternalName");
+            }
 
-        this.field_InternalName = pInternalName;
+            this.list_InternalName.add(string);
+        }
     }
 
-    String buildInternalName() {
+    public void addInternalName(
+            String string) {
 
-        return this.field_InternalName;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("InternalName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_InternalName.add(string);
     }
 
-    String getInternalName() {
+    private String buildInternalName() {
 
-        return this.field_InternalName;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_InternalName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.InternalNameNone != null) {
+            sb.append(this.InternalNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.InternalNameBeforeFirst != null) {
+                string = this.InternalNameBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.InternalNameAfterLast != null) {
+                string = this.InternalNameAfterLast.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.InternalNameSeparator != null) {
+                string = this.InternalNameSeparator.apply(i, string,
+                        nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getInternalName() {
+
+        return this.InternalNameValue;
+    }
+
+    private void initInternalNameDirectives() {
+
     }
 
     @Override
@@ -59,17 +131,18 @@ public class MInternalMacroRefBuilder
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initInternalNameDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("private String build");
         sb0.append(buildInternalName());
-        sb0.append("(Context context)");
+        sb0.append("(Context context) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    InternalValue macros = this.list_");
+        sb0.append("    MacroValue macros = this.list_");
         sb0.append(buildInternalName());
         sb0.append(".get(context);");
         sb0.append(LINE_SEPARATOR);

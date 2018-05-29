@@ -7,12 +7,6 @@ import java.util.*;
 public class MMacroFactory
         extends Macro {
 
-    final List<Macro> list_DefaultVersion;
-
-    final Context DefaultVersionContext = new Context();
-
-    final InternalValue DefaultVersionValue;
-
     private DSeparator DefaultVersionSeparator;
 
     private DBeforeFirst DefaultVersionBeforeFirst;
@@ -21,11 +15,11 @@ public class MMacroFactory
 
     private DNone DefaultVersionNone;
 
-    final List<Macro> list_PackageDeclaration;
+    final List<Macro> list_DefaultVersion;
 
-    final Context PackageDeclarationContext = new Context();
+    final Context DefaultVersionContext = new Context();
 
-    final InternalValue PackageDeclarationValue;
+    final MacroValue DefaultVersionValue;
 
     private DSeparator PackageDeclarationSeparator;
 
@@ -35,11 +29,11 @@ public class MMacroFactory
 
     private DNone PackageDeclarationNone;
 
-    final List<Macro> list_NewMacroMethods;
+    final List<Macro> list_PackageDeclaration;
 
-    final Context NewMacroMethodsContext = new Context();
+    final Context PackageDeclarationContext = new Context();
 
-    final InternalValue NewMacroMethodsValue;
+    final MacroValue PackageDeclarationValue;
 
     private DSeparator NewMacroMethodsSeparator;
 
@@ -49,6 +43,12 @@ public class MMacroFactory
 
     private DNone NewMacroMethodsNone;
 
+    final List<Macro> list_NewMacroMethods;
+
+    final Context NewMacroMethodsContext = new Context();
+
+    final MacroValue NewMacroMethodsValue;
+
     MMacroFactory(
             Macros macros) {
 
@@ -57,11 +57,11 @@ public class MMacroFactory
         this.list_PackageDeclaration = new LinkedList<>();
         this.list_NewMacroMethods = new LinkedList<>();
 
-        this.DefaultVersionValue = new InternalValue(this.list_DefaultVersion,
+        this.DefaultVersionValue = new MacroValue(this.list_DefaultVersion,
                 this.DefaultVersionContext);
-        this.PackageDeclarationValue = new InternalValue(
+        this.PackageDeclarationValue = new MacroValue(
                 this.list_PackageDeclaration, this.PackageDeclarationContext);
-        this.NewMacroMethodsValue = new InternalValue(this.list_NewMacroMethods,
+        this.NewMacroMethodsValue = new MacroValue(this.list_NewMacroMethods,
                 this.NewMacroMethodsContext);
     }
 
@@ -72,7 +72,8 @@ public class MMacroFactory
             throw ObjectMacroException.parameterNull("DefaultVersion");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroFactory");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -115,7 +116,8 @@ public class MMacroFactory
             throw ObjectMacroException.parameterNull("DefaultVersion");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroFactory");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -134,7 +136,8 @@ public class MMacroFactory
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroFactory");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -177,7 +180,8 @@ public class MMacroFactory
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroFactory");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -196,7 +200,8 @@ public class MMacroFactory
             throw ObjectMacroException.parameterNull("NewMacroMethods");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroFactory");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -239,7 +244,8 @@ public class MMacroFactory
             throw ObjectMacroException.parameterNull("NewMacroMethods");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroFactory");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -368,17 +374,17 @@ public class MMacroFactory
         return sb.toString();
     }
 
-    private InternalValue getDefaultVersion() {
+    MacroValue getDefaultVersion() {
 
         return this.DefaultVersionValue;
     }
 
-    private InternalValue getPackageDeclaration() {
+    MacroValue getPackageDeclaration() {
 
         return this.PackageDeclarationValue;
     }
 
-    private InternalValue getNewMacroMethods() {
+    MacroValue getNewMacroMethods() {
 
         return this.NewMacroMethodsValue;
     }
@@ -481,7 +487,6 @@ public class MMacroFactory
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         initDefaultVersionDirectives();
         initPackageDeclarationDirectives();
@@ -504,8 +509,9 @@ public class MMacroFactory
         sb0.append(m2.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("public class Macros");
+        sb0.append("public class Macros ");
         sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("    private VERSIONS version;");
         sb0.append(LINE_SEPARATOR);

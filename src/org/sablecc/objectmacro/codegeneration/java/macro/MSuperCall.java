@@ -7,10 +7,108 @@ import java.util.*;
 public class MSuperCall
         extends Macro {
 
+    private DSeparator ParametersSeparator;
+
+    private DBeforeFirst ParametersBeforeFirst;
+
+    private DAfterLast ParametersAfterLast;
+
+    private DNone ParametersNone;
+
+    final List<String> list_Parameters;
+
+    final Context ParametersContext = new Context();
+
+    final StringValue ParametersValue;
+
     MSuperCall(
             Macros macros) {
 
         setMacros(macros);
+        this.list_Parameters = new LinkedList<>();
+
+        this.ParametersValue
+                = new StringValue(this.list_Parameters, this.ParametersContext);
+    }
+
+    public void addAllParameters(
+            List<String> strings) {
+
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("Parameters");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Parameters");
+            }
+
+            this.list_Parameters.add(string);
+        }
+    }
+
+    public void addParameters(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Parameters");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Parameters.add(string);
+    }
+
+    private String buildParameters() {
+
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Parameters;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ParametersNone != null) {
+            sb.append(this.ParametersNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ParametersBeforeFirst != null) {
+                string = this.ParametersBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.ParametersAfterLast != null) {
+                string = this.ParametersAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ParametersSeparator != null) {
+                string = this.ParametersSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getParameters() {
+
+        return this.ParametersValue;
+    }
+
+    private void initParametersDirectives() {
+
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(", ");
+        this.ParametersSeparator = new DSeparator(sb1.toString());
+        this.ParametersValue.setSeparator(this.ParametersSeparator);
     }
 
     @Override
@@ -35,11 +133,14 @@ public class MSuperCall
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initParametersDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append("super();");
+        sb0.append("super(");
+        sb0.append(buildParameters());
+        sb0.append(");");
 
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();

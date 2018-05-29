@@ -7,12 +7,6 @@ import java.util.*;
 public class MName
         extends Macro {
 
-    final List<Macro> list_Value;
-
-    final Context ValueContext = new Context();
-
-    final InternalValue ValueValue;
-
     private DSeparator ValueSeparator;
 
     private DBeforeFirst ValueBeforeFirst;
@@ -21,13 +15,19 @@ public class MName
 
     private DNone ValueNone;
 
+    final List<Macro> list_Value;
+
+    final Context ValueContext = new Context();
+
+    final MacroValue ValueValue;
+
     MName(
             Macros macros) {
 
         setMacros(macros);
         this.list_Value = new LinkedList<>();
 
-        this.ValueValue = new InternalValue(this.list_Value, this.ValueContext);
+        this.ValueValue = new MacroValue(this.list_Value, this.ValueContext);
     }
 
     public void addAllValue(
@@ -37,7 +37,8 @@ public class MName
             throw ObjectMacroException.parameterNull("Value");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Name");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -80,7 +81,8 @@ public class MName
             throw ObjectMacroException.parameterNull("Value");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Name");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -129,7 +131,7 @@ public class MName
         return sb.toString();
     }
 
-    private InternalValue getValue() {
+    MacroValue getValue() {
 
         return this.ValueValue;
     }
@@ -188,8 +190,8 @@ public class MName
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initValueDirectives();
         initValueDirectives();
 
         initValueInternals(null);

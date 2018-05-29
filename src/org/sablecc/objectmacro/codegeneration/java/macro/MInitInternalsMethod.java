@@ -7,13 +7,19 @@ import java.util.*;
 public class MInitInternalsMethod
         extends Macro {
 
-    String field_ParamName;
+    private DSeparator ParamNameSeparator;
 
-    final List<Macro> list_ApplyInternalsInitializer;
+    private DBeforeFirst ParamNameBeforeFirst;
 
-    final Context ApplyInternalsInitializerContext = new Context();
+    private DAfterLast ParamNameAfterLast;
 
-    final InternalValue ApplyInternalsInitializerValue;
+    private DNone ParamNameNone;
+
+    final List<String> list_ParamName;
+
+    final Context ParamNameContext = new Context();
+
+    final StringValue ParamNameValue;
 
     private DSeparator ApplyInternalsInitializerSeparator;
 
@@ -23,27 +29,57 @@ public class MInitInternalsMethod
 
     private DNone ApplyInternalsInitializerNone;
 
+    final List<Macro> list_ApplyInternalsInitializer;
+
+    final Context ApplyInternalsInitializerContext = new Context();
+
+    final MacroValue ApplyInternalsInitializerValue;
+
     MInitInternalsMethod(
-            String pParamName,
             Macros macros) {
 
         setMacros(macros);
-        setPParamName(pParamName);
+        this.list_ParamName = new LinkedList<>();
         this.list_ApplyInternalsInitializer = new LinkedList<>();
 
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
         this.ApplyInternalsInitializerValue
-                = new InternalValue(this.list_ApplyInternalsInitializer,
+                = new MacroValue(this.list_ApplyInternalsInitializer,
                         this.ApplyInternalsInitializerContext);
     }
 
-    private void setPParamName(
-            String pParamName) {
+    public void addAllParamName(
+            List<String> strings) {
 
-        if (pParamName == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("ParamName");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("ParamName");
+            }
 
-        this.field_ParamName = pParamName;
+            this.list_ParamName.add(string);
+        }
+    }
+
+    public void addParamName(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_ParamName.add(string);
     }
 
     public void addAllApplyInternalsInitializer(
@@ -54,7 +90,8 @@ public class MInitInternalsMethod
                     .parameterNull("ApplyInternalsInitializer");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InitInternalsMethod");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -99,7 +136,8 @@ public class MInitInternalsMethod
                     .parameterNull("ApplyInternalsInitializer");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InitInternalsMethod");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -111,9 +149,37 @@ public class MInitInternalsMethod
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    String buildParamName() {
+    private String buildParamName() {
 
-        return this.field_ParamName;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ParamName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
     private String buildApplyInternalsInitializer() {
@@ -156,12 +222,12 @@ public class MInitInternalsMethod
         return sb.toString();
     }
 
-    String getParamName() {
+    StringValue getParamName() {
 
-        return this.field_ParamName;
+        return this.ParamNameValue;
     }
 
-    private InternalValue getApplyInternalsInitializer() {
+    MacroValue getApplyInternalsInitializer() {
 
         return this.ApplyInternalsInitializerValue;
     }
@@ -182,6 +248,10 @@ public class MInitInternalsMethod
                 }
             });
         }
+    }
+
+    private void initParamNameDirectives() {
+
     }
 
     private void initApplyInternalsInitializerDirectives() {
@@ -216,8 +286,8 @@ public class MInitInternalsMethod
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initParamNameDirectives();
         initApplyInternalsInitializerDirectives();
 
         initApplyInternalsInitializerInternals(null);
@@ -226,12 +296,12 @@ public class MInitInternalsMethod
 
         sb0.append("private void init");
         sb0.append(buildParamName());
-        sb0.append("Internals(Context context)");
+        sb0.append("Internals(Context context) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    for(Macro macro : this.list_");
         sb0.append(buildParamName());
-        sb0.append(")");
+        sb0.append(") ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();

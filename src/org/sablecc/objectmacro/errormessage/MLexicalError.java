@@ -7,82 +7,285 @@ import java.util.*;
 public class MLexicalError
         extends Macro {
 
-    String field_Line;
+    private DSeparator LineSeparator;
 
-    String field_Char;
+    private DBeforeFirst LineBeforeFirst;
 
-    String field_Message;
+    private DAfterLast LineAfterLast;
+
+    private DNone LineNone;
+
+    final List<String> list_Line;
+
+    final Context LineContext = new Context();
+
+    final StringValue LineValue;
+
+    private DSeparator CharSeparator;
+
+    private DBeforeFirst CharBeforeFirst;
+
+    private DAfterLast CharAfterLast;
+
+    private DNone CharNone;
+
+    final List<String> list_Char;
+
+    final Context CharContext = new Context();
+
+    final StringValue CharValue;
+
+    private DSeparator MessageSeparator;
+
+    private DBeforeFirst MessageBeforeFirst;
+
+    private DAfterLast MessageAfterLast;
+
+    private DNone MessageNone;
+
+    final List<String> list_Message;
+
+    final Context MessageContext = new Context();
+
+    final StringValue MessageValue;
 
     MLexicalError(
-            String pLine,
-            String pChar,
-            String pMessage,
             Macros macros) {
 
         setMacros(macros);
-        setPLine(pLine);
-        setPChar(pChar);
-        setPMessage(pMessage);
+        this.list_Line = new LinkedList<>();
+        this.list_Char = new LinkedList<>();
+        this.list_Message = new LinkedList<>();
+
+        this.LineValue = new StringValue(this.list_Line, this.LineContext);
+        this.CharValue = new StringValue(this.list_Char, this.CharContext);
+        this.MessageValue
+                = new StringValue(this.list_Message, this.MessageContext);
     }
 
-    private void setPLine(
-            String pLine) {
+    public void addAllLine(
+            List<String> strings) {
 
-        if (pLine == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Line");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Line");
+            }
 
-        this.field_Line = pLine;
+            this.list_Line.add(string);
+        }
     }
 
-    private void setPChar(
-            String pChar) {
+    public void addLine(
+            String string) {
 
-        if (pChar == null) {
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Line");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Line.add(string);
+    }
+
+    public void addAllChar(
+            List<String> strings) {
+
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Char");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Char");
+            }
 
-        this.field_Char = pChar;
+            this.list_Char.add(string);
+        }
     }
 
-    private void setPMessage(
-            String pMessage) {
+    public void addChar(
+            String string) {
 
-        if (pMessage == null) {
-            throw ObjectMacroException.parameterNull("Message");
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_Message = pMessage;
+        this.list_Char.add(string);
     }
 
-    String buildLine() {
+    public void addAllMessage(
+            List<String> strings) {
 
-        return this.field_Line;
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("Message");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Message");
+            }
+
+            this.list_Message.add(string);
+        }
     }
 
-    String buildChar() {
+    public void addMessage(
+            String string) {
 
-        return this.field_Char;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Message");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Message.add(string);
     }
 
-    String buildMessage() {
+    private String buildLine() {
 
-        return this.field_Message;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Line;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.LineNone != null) {
+            sb.append(this.LineNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.LineBeforeFirst != null) {
+                string = this.LineBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.LineAfterLast != null) {
+                string = this.LineAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.LineSeparator != null) {
+                string = this.LineSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getLine() {
+    private String buildChar() {
 
-        return this.field_Line;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Char;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.CharNone != null) {
+            sb.append(this.CharNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.CharBeforeFirst != null) {
+                string = this.CharBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.CharAfterLast != null) {
+                string = this.CharAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.CharSeparator != null) {
+                string = this.CharSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getChar() {
+    private String buildMessage() {
 
-        return this.field_Char;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Message;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.MessageNone != null) {
+            sb.append(this.MessageNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.MessageBeforeFirst != null) {
+                string = this.MessageBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.MessageAfterLast != null) {
+                string = this.MessageAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.MessageSeparator != null) {
+                string = this.MessageSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getMessage() {
+    StringValue getLine() {
 
-        return this.field_Message;
+        return this.LineValue;
+    }
+
+    StringValue getChar() {
+
+        return this.CharValue;
+    }
+
+    StringValue getMessage() {
+
+        return this.MessageValue;
+    }
+
+    private void initLineDirectives() {
+
+    }
+
+    private void initCharDirectives() {
+
+    }
+
+    private void initMessageDirectives() {
+
     }
 
     @Override
@@ -107,7 +310,10 @@ public class MLexicalError
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initLineDirectives();
+        initCharDirectives();
+        initMessageDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

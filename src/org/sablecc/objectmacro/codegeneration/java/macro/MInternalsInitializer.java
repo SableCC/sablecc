@@ -7,12 +7,6 @@ import java.util.*;
 public class MInternalsInitializer
         extends Macro {
 
-    final List<Macro> list_PackageDeclaration;
-
-    final Context PackageDeclarationContext = new Context();
-
-    final InternalValue PackageDeclarationValue;
-
     private DSeparator PackageDeclarationSeparator;
 
     private DBeforeFirst PackageDeclarationBeforeFirst;
@@ -21,11 +15,11 @@ public class MInternalsInitializer
 
     private DNone PackageDeclarationNone;
 
-    final List<Macro> list_ParentInternalSetters;
+    final List<Macro> list_PackageDeclaration;
 
-    final Context ParentInternalSettersContext = new Context();
+    final Context PackageDeclarationContext = new Context();
 
-    final InternalValue ParentInternalSettersValue;
+    final MacroValue PackageDeclarationValue;
 
     private DSeparator ParentInternalSettersSeparator;
 
@@ -35,6 +29,12 @@ public class MInternalsInitializer
 
     private DNone ParentInternalSettersNone;
 
+    final List<Macro> list_ParentInternalSetters;
+
+    final Context ParentInternalSettersContext = new Context();
+
+    final MacroValue ParentInternalSettersValue;
+
     MInternalsInitializer(
             Macros macros) {
 
@@ -42,10 +42,10 @@ public class MInternalsInitializer
         this.list_PackageDeclaration = new LinkedList<>();
         this.list_ParentInternalSetters = new LinkedList<>();
 
-        this.PackageDeclarationValue = new InternalValue(
+        this.PackageDeclarationValue = new MacroValue(
                 this.list_PackageDeclaration, this.PackageDeclarationContext);
         this.ParentInternalSettersValue
-                = new InternalValue(this.list_ParentInternalSetters,
+                = new MacroValue(this.list_ParentInternalSetters,
                         this.ParentInternalSettersContext);
     }
 
@@ -56,7 +56,8 @@ public class MInternalsInitializer
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InternalsInitializer");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -99,7 +100,8 @@ public class MInternalsInitializer
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InternalsInitializer");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -118,7 +120,8 @@ public class MInternalsInitializer
             throw ObjectMacroException.parameterNull("ParentInternalSetters");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InternalsInitializer");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -162,7 +165,8 @@ public class MInternalsInitializer
             throw ObjectMacroException.parameterNull("ParentInternalSetters");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InternalsInitializer");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -252,12 +256,12 @@ public class MInternalsInitializer
         return sb.toString();
     }
 
-    private InternalValue getPackageDeclaration() {
+    MacroValue getPackageDeclaration() {
 
         return this.PackageDeclarationValue;
     }
 
-    private InternalValue getParentInternalSetters() {
+    MacroValue getParentInternalSetters() {
 
         return this.ParentInternalSettersValue;
     }
@@ -333,7 +337,6 @@ public class MInternalsInitializer
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         initPackageDeclarationDirectives();
         initParentInternalSettersDirectives();

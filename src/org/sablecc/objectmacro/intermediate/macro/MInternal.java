@@ -7,12 +7,6 @@ import java.util.*;
 public class MInternal
         extends Macro {
 
-    final List<Macro> list_InternalName;
-
-    final Context InternalNameContext = new Context();
-
-    final InternalValue InternalNameValue;
-
     private DSeparator InternalNameSeparator;
 
     private DBeforeFirst InternalNameBeforeFirst;
@@ -21,11 +15,11 @@ public class MInternal
 
     private DNone InternalNameNone;
 
-    final List<Macro> list_Type;
+    final List<Macro> list_InternalName;
 
-    final Context TypeContext = new Context();
+    final Context InternalNameContext = new Context();
 
-    final InternalValue TypeValue;
+    final MacroValue InternalNameValue;
 
     private DSeparator TypeSeparator;
 
@@ -35,11 +29,11 @@ public class MInternal
 
     private DNone TypeNone;
 
-    final List<Macro> list_Directives;
+    final List<Macro> list_Type;
 
-    final Context DirectivesContext = new Context();
+    final Context TypeContext = new Context();
 
-    final InternalValue DirectivesValue;
+    final MacroValue TypeValue;
 
     private DSeparator DirectivesSeparator;
 
@@ -49,6 +43,12 @@ public class MInternal
 
     private DNone DirectivesNone;
 
+    final List<Macro> list_Directives;
+
+    final Context DirectivesContext = new Context();
+
+    final MacroValue DirectivesValue;
+
     MInternal(
             Macros macros) {
 
@@ -57,11 +57,11 @@ public class MInternal
         this.list_Type = new LinkedList<>();
         this.list_Directives = new LinkedList<>();
 
-        this.InternalNameValue = new InternalValue(this.list_InternalName,
+        this.InternalNameValue = new MacroValue(this.list_InternalName,
                 this.InternalNameContext);
-        this.TypeValue = new InternalValue(this.list_Type, this.TypeContext);
-        this.DirectivesValue = new InternalValue(this.list_Directives,
-                this.DirectivesContext);
+        this.TypeValue = new MacroValue(this.list_Type, this.TypeContext);
+        this.DirectivesValue
+                = new MacroValue(this.list_Directives, this.DirectivesContext);
     }
 
     public void addAllInternalName(
@@ -71,7 +71,8 @@ public class MInternal
             throw ObjectMacroException.parameterNull("InternalName");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Internal");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -114,7 +115,8 @@ public class MInternal
             throw ObjectMacroException.parameterNull("InternalName");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Internal");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -133,7 +135,8 @@ public class MInternal
             throw ObjectMacroException.parameterNull("Type");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Internal");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -182,7 +185,8 @@ public class MInternal
             throw ObjectMacroException.parameterNull("Type");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Internal");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -201,7 +205,8 @@ public class MInternal
             throw ObjectMacroException.parameterNull("Type");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Internal");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -220,7 +225,8 @@ public class MInternal
             throw ObjectMacroException.parameterNull("Directives");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Internal");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -263,7 +269,8 @@ public class MInternal
             throw ObjectMacroException.parameterNull("Directives");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Internal");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -389,17 +396,17 @@ public class MInternal
         return sb.toString();
     }
 
-    private InternalValue getInternalName() {
+    MacroValue getInternalName() {
 
         return this.InternalNameValue;
     }
 
-    private InternalValue getType() {
+    MacroValue getType() {
 
         return this.TypeValue;
     }
 
-    private InternalValue getDirectives() {
+    MacroValue getDirectives() {
 
         return this.DirectivesValue;
     }
@@ -493,10 +500,12 @@ public class MInternal
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         initInternalNameDirectives();
+        initInternalNameDirectives();
         initTypeDirectives();
+        initTypeDirectives();
+        initDirectivesDirectives();
         initDirectivesDirectives();
 
         initInternalNameInternals(null);

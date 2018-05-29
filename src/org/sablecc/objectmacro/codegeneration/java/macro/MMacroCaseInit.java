@@ -7,109 +7,225 @@ import java.util.*;
 public class MMacroCaseInit
         extends Macro {
 
-    String field_Version;
+    private DSeparator VersionSeparator;
 
-    String field_VersionClassName;
+    private DBeforeFirst VersionBeforeFirst;
 
-    private Map<Context, String> field_ClassName = new LinkedHashMap<>();
+    private DAfterLast VersionAfterLast;
 
-    private Map<Context, InternalValue> list_Args = new LinkedHashMap<>();
+    private DNone VersionNone;
+
+    final List<String> list_Version;
+
+    final Context VersionContext = new Context();
+
+    final StringValue VersionValue;
+
+    private DSeparator VersionClassNameSeparator;
+
+    private DBeforeFirst VersionClassNameBeforeFirst;
+
+    private DAfterLast VersionClassNameAfterLast;
+
+    private DNone VersionClassNameNone;
+
+    final List<String> list_VersionClassName;
+
+    final Context VersionClassNameContext = new Context();
+
+    final StringValue VersionClassNameValue;
+
+    private Map<Context, StringValue> list_ClassName = new LinkedHashMap<>();
 
     MMacroCaseInit(
-            String pVersion,
-            String pVersionClassName,
             Macros macros) {
 
         setMacros(macros);
-        setPVersion(pVersion);
-        setPVersionClassName(pVersionClassName);
+        this.list_Version = new LinkedList<>();
+        this.list_VersionClassName = new LinkedList<>();
+        this.list_ClassName = new LinkedHashMap<>();
+
+        this.VersionValue
+                = new StringValue(this.list_Version, this.VersionContext);
+        this.VersionClassNameValue = new StringValue(this.list_VersionClassName,
+                this.VersionClassNameContext);
     }
 
-    private void setPVersion(
-            String pVersion) {
+    public void addAllVersion(
+            List<String> strings) {
 
-        if (pVersion == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Version");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Version");
+            }
 
-        this.field_Version = pVersion;
+            this.list_Version.add(string);
+        }
     }
 
-    private void setPVersionClassName(
-            String pVersionClassName) {
+    public void addVersion(
+            String string) {
 
-        if (pVersionClassName == null) {
-            throw ObjectMacroException.parameterNull("VersionClassName");
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Version");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_VersionClassName = pVersionClassName;
+        this.list_Version.add(string);
+    }
+
+    public void addAllVersionClassName(
+            List<String> strings) {
+
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("VersionClassName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("VersionClassName");
+            }
+
+            this.list_VersionClassName.add(string);
+        }
+    }
+
+    public void addVersionClassName(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("VersionClassName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_VersionClassName.add(string);
     }
 
     void setClassName(
             Context context,
-            String value) {
+            StringValue value) {
 
         if (value == null) {
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_ClassName.put(context, value);
+        this.list_ClassName.put(context, value);
     }
 
-    void setArgs(
-            Context context,
-            InternalValue internal_value) {
+    private String buildVersion() {
 
-        if (internal_value == null) {
-            throw new RuntimeException("macros cannot be null");
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Version;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.VersionNone != null) {
+            sb.append(this.VersionNone.apply(i, "", nb_strings));
         }
 
-        this.list_Args.put(context, internal_value);
+        for (String string : strings) {
+
+            if (this.VersionBeforeFirst != null) {
+                string = this.VersionBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.VersionAfterLast != null) {
+                string = this.VersionAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.VersionSeparator != null) {
+                string = this.VersionSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String buildVersion() {
+    private String buildVersionClassName() {
 
-        return this.field_Version;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_VersionClassName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.VersionClassNameNone != null) {
+            sb.append(this.VersionClassNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.VersionClassNameBeforeFirst != null) {
+                string = this.VersionClassNameBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.VersionClassNameAfterLast != null) {
+                string = this.VersionClassNameAfterLast.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.VersionClassNameSeparator != null) {
+                string = this.VersionClassNameSeparator.apply(i, string,
+                        nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String buildVersionClassName() {
-
-        return this.field_VersionClassName;
-    }
-
-    String buildClassName(
+    private String buildClassName(
             Context context) {
 
-        return this.field_ClassName.get(context);
+        StringValue stringValue = this.list_ClassName.get(context);
+        return stringValue.build();
     }
 
-    private String buildArgs(
+    StringValue getVersion() {
+
+        return this.VersionValue;
+    }
+
+    StringValue getVersionClassName() {
+
+        return this.VersionClassNameValue;
+    }
+
+    private StringValue getClassName(
             Context context) {
 
-        InternalValue macros = this.list_Args.get(context);
-        return macros.build();
+        return this.list_ClassName.get(context);
     }
 
-    String getVersion() {
+    private void initVersionDirectives() {
 
-        return this.field_Version;
     }
 
-    String getVersionClassName() {
+    private void initVersionClassNameDirectives() {
 
-        return this.field_VersionClassName;
-    }
-
-    String getClassName(
-            Context context) {
-
-        return this.field_ClassName.get(context);
-    }
-
-    private InternalValue getArgs(
-            Context context) {
-
-        return this.list_Args.get(context);
     }
 
     @Override
@@ -136,7 +252,9 @@ public class MMacroCaseInit
         }
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initVersionDirectives();
+        initVersionClassNameDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -148,9 +266,7 @@ public class MMacroCaseInit
         sb0.append(buildClassName(context));
         sb0.append(" = new M");
         sb0.append(buildVersionClassName());
-        sb0.append("(");
-        sb0.append(buildArgs(context));
-        sb0.append(" this);");
+        sb0.append("(this);");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    break;");
 

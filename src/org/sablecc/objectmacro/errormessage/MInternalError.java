@@ -7,58 +7,196 @@ import java.util.*;
 public class MInternalError
         extends Macro {
 
-    String field_StackTrace;
+    private DSeparator StackTraceSeparator;
 
-    String field_Message;
+    private DBeforeFirst StackTraceBeforeFirst;
+
+    private DAfterLast StackTraceAfterLast;
+
+    private DNone StackTraceNone;
+
+    final List<String> list_StackTrace;
+
+    final Context StackTraceContext = new Context();
+
+    final StringValue StackTraceValue;
+
+    private DSeparator MessageSeparator;
+
+    private DBeforeFirst MessageBeforeFirst;
+
+    private DAfterLast MessageAfterLast;
+
+    private DNone MessageNone;
+
+    final List<String> list_Message;
+
+    final Context MessageContext = new Context();
+
+    final StringValue MessageValue;
 
     MInternalError(
-            String pStackTrace,
-            String pMessage,
             Macros macros) {
 
         setMacros(macros);
-        setPStackTrace(pStackTrace);
-        setPMessage(pMessage);
+        this.list_StackTrace = new LinkedList<>();
+        this.list_Message = new LinkedList<>();
+
+        this.StackTraceValue
+                = new StringValue(this.list_StackTrace, this.StackTraceContext);
+        this.MessageValue
+                = new StringValue(this.list_Message, this.MessageContext);
     }
 
-    private void setPStackTrace(
-            String pStackTrace) {
+    public void addAllStackTrace(
+            List<String> strings) {
 
-        if (pStackTrace == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("StackTrace");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("StackTrace");
+            }
 
-        this.field_StackTrace = pStackTrace;
+            this.list_StackTrace.add(string);
+        }
     }
 
-    private void setPMessage(
-            String pMessage) {
+    public void addStackTrace(
+            String string) {
 
-        if (pMessage == null) {
-            throw ObjectMacroException.parameterNull("Message");
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("StackTrace");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_Message = pMessage;
+        this.list_StackTrace.add(string);
     }
 
-    String buildStackTrace() {
+    public void addAllMessage(
+            List<String> strings) {
 
-        return this.field_StackTrace;
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("Message");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Message");
+            }
+
+            this.list_Message.add(string);
+        }
     }
 
-    String buildMessage() {
+    public void addMessage(
+            String string) {
 
-        return this.field_Message;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Message");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Message.add(string);
     }
 
-    String getStackTrace() {
+    private String buildStackTrace() {
 
-        return this.field_StackTrace;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_StackTrace;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.StackTraceNone != null) {
+            sb.append(this.StackTraceNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.StackTraceBeforeFirst != null) {
+                string = this.StackTraceBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.StackTraceAfterLast != null) {
+                string = this.StackTraceAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.StackTraceSeparator != null) {
+                string = this.StackTraceSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getMessage() {
+    private String buildMessage() {
 
-        return this.field_Message;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Message;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.MessageNone != null) {
+            sb.append(this.MessageNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.MessageBeforeFirst != null) {
+                string = this.MessageBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.MessageAfterLast != null) {
+                string = this.MessageAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.MessageSeparator != null) {
+                string = this.MessageSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getStackTrace() {
+
+        return this.StackTraceValue;
+    }
+
+    StringValue getMessage() {
+
+        return this.MessageValue;
+    }
+
+    private void initStackTraceDirectives() {
+
+    }
+
+    private void initMessageDirectives() {
+
     }
 
     @Override
@@ -83,7 +221,9 @@ public class MInternalError
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initStackTraceDirectives();
+        initMessageDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

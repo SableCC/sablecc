@@ -258,9 +258,65 @@ abstract class Directive {
 }
 {End}
 
-# =============== class_internal_value =========
+# =============== class_value ===========
 
-Macro class_internal_value
+Macro class_value
+    Param
+        package_declaration: package_declaration, before_first="\n";
+{Body}
+{Insert: header}
+{package_declaration}
+
+abstract class Value {
+
+    DAfterLast dAfterLast;
+
+    DBeforeFirst dBeforeFirst;
+
+    DSeparator dSeparator;
+
+    DNone dNone;
+
+    final Context context;
+
+    String cache;
+
+    Value(Context context) {
+
+        this.context = context;
+    }
+
+    abstract String build();
+
+    void setNone(
+                DNone none) {
+
+        this.dNone = none;
+    }
+
+    void setBeforeFirst(
+            DBeforeFirst dBeforeFirst) {
+
+        this.dBeforeFirst = dBeforeFirst;
+    }
+
+    void setAfterLast(
+            DAfterLast dAfterLast) {
+
+        this.dAfterLast = dAfterLast;
+    }
+
+    void setSeparator(
+            DSeparator dSeparator) {
+
+        this.dSeparator = dSeparator;
+    }
+}
+{End}
+
+# =============== class_macro_value =========
+
+Macro class_macro_value
     Param
         package_declaration: package_declaration, before_first="\n";
 {Body}
@@ -268,33 +324,22 @@ Macro class_internal_value
 {package_declaration}
 {Insert: import_java_util}
 
-class InternalValue {
+class MacroValue extends Value {
 
     private final List<Macro> macros;
 
-    private DAfterLast dAfterLast;
-
-    private DBeforeFirst dBeforeFirst;
-
-    private DSeparator dSeparator;
-
-    private DNone dNone;
-
-    private final Context context;
-
-    private String cache;
-
-    InternalValue(
+    MacroValue(
             List<Macro> macros,
-            Context context){
+            Context context) {
 
+        super(context);
         this.macros = macros;
-        this.context = context;
     }
 
-    String build(){
+    @Override
+    String build() {
 
-        if(this.cache != null){
+        if(this.cache != null) {
             return this.cache;
         }
 
@@ -302,23 +347,23 @@ class InternalValue {
         int i = 0;
         int nb_macros = this.macros.size();
 
-        if(this.dNone != null){
+        if(this.dNone != null) {
             sb.append(this.dNone.apply(i, "", nb_macros));
         }
 
-        for(Macro macro : this.macros){
+        for(Macro macro : this.macros) {
             String expansion = macro.build(this.context);
 
-            if(this.dBeforeFirst != null){
-                expansion = dBeforeFirst.apply(i, expansion, nb_macros);
+            if(this.dBeforeFirst != null) {
+                expansion = this.dBeforeFirst.apply(i, expansion, nb_macros);
             }
 
-            if(dAfterLast != null){
-                expansion = dAfterLast.apply(i, expansion, nb_macros);
+            if(this.dAfterLast != null) {
+                expansion = this.dAfterLast.apply(i, expansion, nb_macros);
             }
 
-            if(this.dSeparator != null){
-                expansion = dSeparator.apply(i, expansion, nb_macros);
+            if(this.dSeparator != null) {
+                expansion = this.dSeparator.apply(i, expansion, nb_macros);
             }
 
             sb.append(expansion);
@@ -328,29 +373,66 @@ class InternalValue {
         this.cache = sb.toString();
         return this.cache;
     }
+}
+{End}
 
-    void setNone(
-                DNone none){
+# =============== class_string_value =========
 
-        this.dNone = none;
+Macro class_string_value
+    Param
+        package_declaration: package_declaration, before_first="\n";
+{Body}
+{Insert: header}
+{package_declaration}
+{Insert: import_java_util}
+
+class StringValue extends Value {
+
+    private final List<String> strings;
+
+    StringValue(
+            List<String> strings,
+            Context context) {
+
+        super(context);
+        this.strings = strings;
     }
 
-    void setBeforeFirst(
-            DBeforeFirst dBeforeFirst){
+    @Override
+    String build() {
 
-        this.dBeforeFirst = dBeforeFirst;
-    }
+        if(this.cache != null) {
+            return this.cache;
+        }
 
-    void setAfterLast(
-            DAfterLast dAfterLast){
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        int nb_strings = this.strings.size();
 
-        this.dAfterLast = dAfterLast;
-    }
+        if(this.dNone != null){
+            sb.append(this.dNone.apply(i, "", nb_strings));
+        }
 
-    void setSeparator(
-            DSeparator dSeparator){
+        for(String string : this.strings){
 
-        this.dSeparator = dSeparator;
+            if(this.dBeforeFirst != null){
+                string = this.dBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if(this.dAfterLast != null){
+                string = this.dAfterLast.apply(i, string, nb_strings);
+            }
+
+            if(this.dSeparator != null){
+                string = this.dSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        this.cache = sb.toString();
+        return this.cache;
     }
 }
 {End}
@@ -385,7 +467,7 @@ class CacheBuilder {
 Macro version_enumeration
     Param
         package_declaration: package_declaration, before_first="\n";
-        versions: plain_text, separator=", ";
+        versions: String, separator=", ";
 {Body}
 {Insert: header}
 {package_declaration}
@@ -413,7 +495,8 @@ Macro macro_factory
 {package_declaration}
 {Insert: import_java_util}
 
-public class Macros{
+public class Macros {
+
     private VERSIONS version;
 
     public Macros(
@@ -440,11 +523,9 @@ public class Macros{
 Macro macro_creator_method
     Param
         class_name: String;
-        args: param_arg, separator=", ", after_last=", ";
-        parameters: string_param, separator=", ";
-        version_factory: switch_version(class_name, args), before_first="\n", none="m{class_name} = new M{class_name}({args}this);";
+        version_factory: switch_version(class_name), before_first="\n", none="m{class_name} = new M{class_name}(this);";
 {Body}
-public M{class_name} new{class_name}({parameters}){
+public M{class_name} new{class_name}(){
     M{class_name} m{class_name};
 
 {Indent: "\t"}
@@ -459,12 +540,11 @@ public M{class_name} new{class_name}({parameters}){
 
 Macro switch_version
     Param
-        version_cases: macro_case_init(class_name, args), separator="\n";
+        version_cases: macro_case_init(class_name), separator="\n";
     Internal
         class_name: String;
-        args: param_arg;
 {Body}
-switch(this.version){
+switch(this.version) {
 {Indent: "\t"}
 {version_cases}
 {End}
@@ -481,10 +561,9 @@ Macro macro_case_init
         version_class_name: String;
     Internal
         class_name: String;
-        args: param_arg;
 {Body}
 case {version} :
-    m{class_name} = new M{version_class_name}({args} this);
+    m{class_name} = new M{version_class_name}(this);
     break;
 {End}
 
@@ -510,23 +589,24 @@ Macro macro
         package_declaration: package_declaration, before_first="\n";
         fields: param_macro_field, param_string_field, internal_macro_field, internal_string_field, directive_fields, separator="\n\n", before_first="\n";
         constructor: constructor(class_name), before_first="\n";
-        setters: single_add, add_all, abstract_type_verifier, type_verifier, param_string_setter, internal_string_setter, internal_macro_setter, separator="\n\n", before_first="\n";
-        builders: param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, separator="\n\n", before_first="\n";
-        getters: param_string_ref, param_macro_ref, internal_macro_ref, separator="\n\n", before_first="\n";
+        setters: single_macro_add, add_all_macro, single_string_add, add_all_string, abstract_type_verifier, type_verifier, internal_string_setter, internal_macro_setter, separator="\n\n", before_first="\n";
+        builders: param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, internal_string_ref_builder, separator="\n\n", before_first="\n";
+        getters: param_string_ref, param_macro_ref, internal_macro_ref, internal_string_ref, separator="\n\n", before_first="\n";
         init_internals_methods: init_internals_method, separator="\n\n";
         init_directives: init_directives, separator="\n\n", before_first="\n";
         redefined_apply_initializer: redefined_apply_initializer(class_name);
         macro_builders: macro_builder, abstract_builder, empty_builder_with_context, separator="\n\n", before_first="\n";
-        abstract: abstract;
+        abstract: abstract, after_last=" ";
         applied_version: applied_version, before_first="\n";
         init_macros_method: set_macros_method, before_first="\n";
+        public: public, after_last=" ";
 {Body}
 {Insert: header}
 {package_declaration}
 
 {Insert: import_java_util}
 {applied_version}
-public {abstract} class M{class_name} extends M{parent_class}{
+{public}{abstract}class M{class_name} extends M{parent_class} {
 {Indent: "\t"}
 {fields}
 {constructor}
@@ -537,7 +617,6 @@ public {abstract} class M{class_name} extends M{parent_class}{
 {init_directives}
 {redefined_apply_initializer}
 {macro_builders}
-
 {init_macros_method}
 {End}
 }
@@ -547,7 +626,7 @@ public {abstract} class M{class_name} extends M{parent_class}{
 
 Macro applied_version
     Param
-        versions: plain_text, separator=", ";
+        versions: String, separator=", ";
 {Body}
 // Class applied to version(s) : {versions}
 {End}
@@ -560,9 +639,9 @@ Macro applied_version
 
 Macro constructor
     Param
-        field_initializers: set_param, init_macro_param, init_macro_internal, init_string_internal, set_macros_call("macros"), before_first="\n", separator="\n";
-        parameters: string_param, macros_param("macros"), separator=", ";
-        internal_values_initializers: init_internal_value, before_first="\n", separator="\n";
+        field_initializers: init_param, init_internal, set_macros_call("macros"), before_first="\n", separator="\n";
+        parameters: macros_param("macros");
+        values_initializers: init_macro_value, init_string_value, before_first="\n", separator="\n";
         super: super_call, before_first="\n";
     Internal
         class_name: String;
@@ -571,55 +650,45 @@ M{class_name}({parameters}){
 {Indent: "\t"}
 {super}
 {field_initializers}
-{internal_values_initializers}
+{values_initializers}
 {End}
 }
 {End}
 
-# ========== init_macro_internal ===========
+# ========== init_internal ===========
 
-Macro init_macro_internal
+Macro init_internal
     Param
         name: String;
 {Body}
 this.list_{name} = new LinkedHashMap<>();
 {End}
 
-# ========== init_macro_param ===========
+# ========== init_param ===========
 
-Macro init_macro_param
+Macro init_param
     Param
         name: String;
 {Body}
 this.list_{name} = new LinkedList<>();
 {End}
 
-# ========== init_string_internal ===========
+# ========== init_macro_value ============
 
-Macro init_string_internal
-    Param
-        name: String;
-{Body}
-this.field_{name} = new LinkedHashMap<>();
-{End}
-
-# ========== init_internal_value ============
-
-Macro init_internal_value
+Macro init_macro_value
     Param
         param_name: String;
 {Body}
-this.{param_name}Value = new InternalValue(this.list_{param_name}, this.{param_name}Context);
+this.{param_name}Value = new MacroValue(this.list_{param_name}, this.{param_name}Context);
 {End}
 
-# ========== set_param ==========
+# ========== init_string_value ============
 
-Macro set_param
+Macro init_string_value
     Param
-        name: String;
-        set_param: param_arg;
+        param_name: String;
 {Body}
-this.setP{name}({set_param});
+this.{param_name}Value = new StringValue(this.list_{param_name}, this.{param_name}Context);
 {End}
 
 # ========== set_macros_call ==========
@@ -634,20 +703,21 @@ this.setMacros({macros_param_name});
 # ========== super_call ========
 
 Macro super_call
+    Param
+        parameters: String, separator=", ";
 {Body}
-super();
+super({parameters});
 {End}
 
 # ================================================================
 # ===================== MACRO FUNCTIONS ==========================
 # ================================================================
 
-# ========= single_add ===========
+# ========= single_macro_add ===========
 
-Macro single_add
+Macro single_macro_add
     Param
         referenced_macro_name: String;
-        current_macro_name: String;
         param_name: String;
 {Body}
 public void add{param_name}(M{referenced_macro_name} macro){
@@ -655,7 +725,7 @@ public void add{param_name}(M{referenced_macro_name} macro){
         throw ObjectMacroException.parameterNull("{param_name}");
     }
 {Indent: "\t"}
-{Insert: is_built(current_macro_name)}
+{Insert: is_built}
 
 {Insert: factory_comparison("macro")}
 {End}
@@ -666,11 +736,29 @@ public void add{param_name}(M{referenced_macro_name} macro){
 }
 {End}
 
-# ============= add_all ==============
+# ========= single_string_add ===========
 
-Macro add_all
+Macro single_string_add
     Param
-        macro_name: String;
+        param_name: String;
+{Body}
+public void add{param_name}(String string){
+    if(string == null){
+        throw ObjectMacroException.parameterNull("{param_name}");
+    }
+{Indent: "\t"}
+{Insert: is_built}
+
+{End}
+
+    this.list_{param_name}.add(string);
+}
+{End}
+
+# ============= add_all_macro ==============
+
+Macro add_all_macro
+    Param
         param_name: String;
 {Body}
 public void addAll{param_name}(
@@ -680,7 +768,7 @@ public void addAll{param_name}(
         throw ObjectMacroException.parameterNull("{param_name}");
     }
 {Indent: "\t"}
-{Insert: is_built(macro_name)}
+{Insert: is_built}
 
 int i = 0;
 
@@ -702,6 +790,31 @@ for(Macro macro : macros) {
 }
 
 {End}
+}
+{End}
+
+# ============= add_all_string ==============
+
+Macro add_all_string
+    Param
+        param_name: String;
+{Body}
+public void addAll{param_name}(
+                List<String> strings){
+
+    if(macros == null){
+        throw ObjectMacroException.parameterNull("{param_name}");
+    }
+{Indent: "\t"}
+{Insert: is_built}
+{End}
+    for(String string : strings) {
+        if(string == null) {
+            throw ObjectMacroException.parameterNull("{param_name}");
+        }
+
+        this.list_{param_name}.add(string);
+    }
 }
 {End}
 
@@ -736,7 +849,7 @@ Macro factory_comparison
     Internal
         var_name: String;
 {Body}
-if(this.getMacros() != {var_name}.getMacros()){
+if(this.getMacros() != {var_name}.getMacros()) {
     throw ObjectMacroException.diffMacros();
 }
 {End}
@@ -744,25 +857,9 @@ if(this.getMacros() != {var_name}.getMacros()){
 # =========== is_built ===========
 
 Macro is_built
-    Internal
-        macro_name: String;
 {Body}
-if(this.cacheBuilder != null){
-    throw ObjectMacroException.cannotModify("{macro_name}");
-}
-{End}
-
-# =========== param_string_ref_builder =============
-
-Macro param_string_ref_builder
-    Param
-    name: String;
-    context_param: context_param;
-    get_internal_tail: get_internal_tail;
-{Body}
-String build{name}({context_param}){
-
-    return this.field_{name}{get_internal_tail};
+if(this.cacheBuilder != null) {
+    throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
 }
 {End}
 
@@ -771,9 +868,9 @@ String build{name}({context_param}){
 Macro param_macro_ref_builder
     Param
         name: String;
-        context_name: plain_text, none="context";
+        context_name: String, none="context", before_first="this.";
 {Body}
-private String build{name}(){
+private String build{name}() {
     StringBuilder sb = new StringBuilder();
     Context local_context = {context_name};
     List<Macro> macros = this.list_{name};
@@ -782,22 +879,22 @@ private String build{name}(){
     int nb_macros = macros.size();
     String expansion = null;
 
-    if(this.{name}None != null){
+    if(this.{name}None != null) {
         sb.append(this.{name}None.apply(i, "", nb_macros));
     }
 
-    for(Macro macro : macros){
+    for(Macro macro : macros) {
         expansion = macro.build(local_context);
 
-        if(this.{name}BeforeFirst != null){
+        if(this.{name}BeforeFirst != null) {
             expansion = this.{name}BeforeFirst.apply(i, expansion, nb_macros);
         }
 
-        if(this.{name}AfterLast != null){
+        if(this.{name}AfterLast != null) {
             expansion = this.{name}AfterLast.apply(i, expansion, nb_macros);
         }
 
-        if(this.{name}Separator != null){
+        if(this.{name}Separator != null) {
             expansion = this.{name}Separator.apply(i, expansion, nb_macros);
         }
 
@@ -815,9 +912,9 @@ Macro internal_macro_ref_builder
     Param
         internal_name: String;
 {Body}
-private String build{internal_name}(Context context){
+private String build{internal_name}(Context context) {
 
-    InternalValue macros = this.list_{internal_name}.get(context);
+    MacroValue macros = this.list_{internal_name}.get(context);
     return macros.build();
 }
 {End}
@@ -830,30 +927,13 @@ Macro internal_macro_setter
 {Body}
 void set{param_name}(
             Context context,
-            InternalValue internal_value) {
+            MacroValue macro_value) {
 
-    if(internal_value == null){
+    if(macro_value == null){
         throw new RuntimeException("macros cannot be null");
     }
 
-    this.list_{param_name}.put(context, internal_value);
-}
-{End}
-
-# =========== param_string_setter =========
-
-Macro param_string_setter
-    Param
-        name: String;
-        string_param: string_param;
-        param_arg: param_arg;
-{Body}
-private void setP{name}( {string_param} ){
-    if({param_arg} == null){
-        throw ObjectMacroException.parameterNull("{name}");
-    }
-
-    this.field_{name} = {param_arg};
+    this.list_{param_name}.put(context, macro_value);
 }
 {End}
 
@@ -863,7 +943,7 @@ Macro param_macro_ref
     Param
         name: String;
 {Body}
-private InternalValue get{name}(){
+MacroValue get{name}() {
     return this.{name}Value;
 }
 {End}
@@ -874,22 +954,84 @@ Macro internal_macro_ref
     Param
         param_name: String;
 {Body}
-private InternalValue get{param_name}(Context context){
+private MacroValue get{param_name}(Context context) {
     return this.list_{param_name}.get(context);
 }
 {End}
+
 
 # ========== param_string_ref ==============
 
 Macro param_string_ref
     Param
         name: String;
-        context_param: context_param;
-        get_internal_tail: get_internal_tail;
 {Body}
-String get{name}({context_param}){
+StringValue get{name}() {
+    return this.{name}Value;
+}
+{End}
 
-    return this.field_{name}{get_internal_tail};
+# ========== param_string_ref_builder ==================
+
+Macro param_string_ref_builder
+    Param
+        name: String;
+{Body}
+private String build{name}() {
+    StringBuilder sb = new StringBuilder();
+    List<String> strings = this.list_{name};
+
+    int i = 0;
+    int nb_strings = strings.size();
+
+    if(this.{name}None != null) {
+        sb.append(this.{name}None.apply(i, "", nb_strings));
+    }
+
+    for(String string : strings) {
+
+        if(this.{name}BeforeFirst != null) {
+            string = this.{name}BeforeFirst.apply(i, string, nb_strings);
+        }
+
+        if(this.{name}AfterLast != null) {
+            string = this.{name}AfterLast.apply(i, string, nb_strings);
+        }
+
+        if(this.{name}Separator != null) {
+            string = this.{name}Separator.apply(i, string, nb_strings);
+        }
+
+        sb.append(string);
+        i++;
+    }
+
+    return sb.toString();
+}
+{End}
+
+# ========== internal_string_ref ==============
+
+Macro internal_string_ref
+    Param
+        name: String;
+{Body}
+private StringValue get{name}(Context context) {
+
+    return this.list_{name}.get(context);
+}
+{End}
+
+# =========== internal_string_ref_builder ================
+
+Macro internal_string_ref_builder
+    Param
+        internal_name: String;
+{Body}
+private String build{internal_name}(Context context) {
+
+    StringValue stringValue = this.list_{internal_name}.get(context);
+    return stringValue.build();
 }
 {End}
 
@@ -901,13 +1043,13 @@ Macro internal_string_setter
 {Body}
 void set{name}(
         Context context,
-        String value) {
+        StringValue value) {
 
     if(value == null){
         throw new RuntimeException("value cannot be null here");
     }
 
-    this.field_{name}.put(context, value);
+    this.list_{name}.put(context, value);
 }
 {End}
 
@@ -918,8 +1060,8 @@ Macro init_internals_method
         param_name: String;
         apply_internals_initializer: apply_internals_initializer(param_name), separator = "\n";
 {Body}
-private void init{param_name}Internals(Context context){
-    for(Macro macro : this.list_{param_name}){
+private void init{param_name}Internals(Context context) {
+    for(Macro macro : this.list_{param_name}) {
 {Indent: "\t\t"}
 {apply_internals_initializer}
 {End}
@@ -934,7 +1076,7 @@ Macro init_directives
         param_name: String;
         new_directives: new_directive(param_name);
 {Body}
-private void init{param_name}Directives(){
+private void init{param_name}Directives() {
 {Indent: "\t"}
 {new_directives}
 {End}
@@ -988,22 +1130,21 @@ Macro macro_builder
         override: override;
 {Body}
 {override}
-{public}String build({context_param}){
+{public}String build({context_param}) {
 
     CacheBuilder cache_builder = {context_cache_builder};
 
-    if(cache_builder == null){
+    if(cache_builder == null) {
         cache_builder = new CacheBuilder();
     }
-    else if(cache_builder.getExpansion() == null){
+    else if(cache_builder.getExpansion() == null) {
         throw new InternalException("Cycle detection detected lately");
     }
-    else{
+    else {
         return cache_builder.getExpansion();
     }
     {new_cache_builder};
     List<String> indentations = new LinkedList<>();
-    StringBuilder sbIndentation = new StringBuilder();
 
 {Indent: "\t"}
 {directives_calls}
@@ -1076,7 +1217,7 @@ Macro redefined_apply_initializer
 {Body}
 @Override
 void apply(
-        InternalsInitializer internalsInitializer){
+        InternalsInitializer internalsInitializer) {
 
     internalsInitializer.set{class_name}(this);
 }
@@ -1096,16 +1237,20 @@ final List<Macro> list_{param_name};
 
 {Insert: context_field(param_name)}
 
-{Insert: internal_macros_value_field(param_name)}
+{Insert: macro_value_field(param_name)}
 {End}
 
 # ========== param_string_field ==========
 
 Macro param_string_field
     Param
-        name: String;
+        param_name: String;
 {Body}
-String field_{name};
+final List<String> list_{param_name};
+
+{Insert: context_field(param_name)}
+
+{Insert: string_value_field(param_name)}
 {End}
 
 # ========== internal_macro_field ==========
@@ -1114,7 +1259,7 @@ Macro internal_macro_field
     Param
         name: String;
 {Body}
-private Map<Context, InternalValue> list_{name} = new LinkedHashMap<>();
+private Map<Context, MacroValue> list_{name} = new LinkedHashMap<>();
 {End}
 
 # ========== internal_string_field ==========
@@ -1123,7 +1268,7 @@ Macro internal_string_field
     Param
         name: String;
 {Body}
-private Map<Context, String> field_{name} = new LinkedHashMap<>();
+private Map<Context, StringValue> list_{name} = new LinkedHashMap<>();
 {End}
 
 # ========== context_field =========
@@ -1135,13 +1280,22 @@ Macro context_field
 final Context {param_name}Context = new Context();
 {End}
 
-# =========== internal_macros_value_field ========
+# =========== macro_value_field ========
 
-Macro internal_macros_value_field
+Macro macro_value_field
     Internal
         param_name: String;
 {Body}
-final InternalValue {param_name}Value;
+final MacroValue {param_name}Value;
+{End}
+
+# =========== string_value_field ========
+
+Macro string_value_field
+    Internal
+        param_name: String;
+{Body}
+final StringValue {param_name}Value;
 {End}
 
 # ========== directive_fields ==========
@@ -1185,13 +1339,16 @@ Macro redefined_internals_setter
     Param
         macro_name: String;
         text_parts: init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part, separator="\n";
+        single_string_elements: new_string_value, separator="\n";
         set_internals: set_internal(macro_name), separator="\n";
 {Body}
 @Override
 void set{macro_name}(M{macro_name} m{macro_name}){
-
-    {text_parts}
-    {set_internals}
+{Indent: "\t"}
+{text_parts}
+{single_string_elements}
+{set_internals}
+{End}
 }
 {End}
 
@@ -1243,14 +1400,17 @@ sb{index_builder}.append(applyIndent(sb{index_indent}.toString(), indentations.r
 
 Macro insert_macro_part
     Param
-        name: String;
+        referenced_macro_name: String;
+        enclosing_class_name: String, after_last=".", before_first="M";
         index_builder: String;
         index_insert: String;
         macro_body_parts: init_string_builder, string_part, param_insert_part, eol_part, insert_macro_part, separator="\n";
         set_internals: set_internal(index_insert), separator="\n";
+        single_element_lists: new_string_value, separator="\n";
 {Body}
-M{name} m{index_insert} = this.getMacros().new{name}();
+M{referenced_macro_name} m{index_insert} = {enclosing_class_name}this.getMacros().new{referenced_macro_name}();
 {macro_body_parts}
+{single_element_lists}
 {set_internals}
 sb{index_builder}.append(m{index_insert}.build(null));
 {End}
@@ -1270,20 +1430,20 @@ Macro set_internal
     Param
         param_name: String;
         context: String;
-        set_params: param_ref, string_builder_build;
+        set_params: param_ref, string_value_arg;
     Internal
         var_name: String;
 {Body}
 m{var_name}.set{param_name}({context}, {set_params});
 {End}
 
-# ========== string_builder_build ==========
+# ========== new_string_value ==========
 
-Macro string_builder_build
+Macro new_string_value
     Param
         index_builder: String;
 {Body}
-sb{index_builder}.toString()
+StringValue value{index_builder} = new StringValue(new ArrayList<>(Collections.singletonList(sb{index_builder}.toString())), null);
 {End}
 
 # =========== param_ref ===========
@@ -1291,7 +1451,7 @@ sb{index_builder}.toString()
 Macro param_ref
     Param
         name: String;
-        get_params: context_arg, plain_text;
+        get_params: String;
 {Body}
 get{name}({get_params})
 {End}
@@ -1311,6 +1471,15 @@ indentations.add(sb{index_builder}.toString());
 # ===================================================
 # ===================== OTHER =======================
 # ===================================================
+
+# ========== string_value_arg =======
+
+Macro string_value_arg
+    Param
+        index: String;
+{Body}
+value{index}
+{End}
 
 # ========== string_value ========
 
@@ -1346,15 +1515,6 @@ Macro param_arg
         name: String;
 {Body}
 p{name}
-{End}
-
-# =========== plain_text =============
-
-Macro plain_text
-    Param
-        plain_text: String;
-{Body}
-{plain_text}
 {End}
 
 # ======== context_param ============

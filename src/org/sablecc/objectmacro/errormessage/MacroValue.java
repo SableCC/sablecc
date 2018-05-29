@@ -4,30 +4,20 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-class InternalValue {
+class MacroValue
+        extends Value {
 
     private final List<Macro> macros;
 
-    private DAfterLast dAfterLast;
-
-    private DBeforeFirst dBeforeFirst;
-
-    private DSeparator dSeparator;
-
-    private DNone dNone;
-
-    private final Context context;
-
-    private String cache;
-
-    InternalValue(
+    MacroValue(
             List<Macro> macros,
             Context context) {
 
+        super(context);
         this.macros = macros;
-        this.context = context;
     }
 
+    @Override
     String build() {
 
         if (this.cache != null) {
@@ -63,29 +53,5 @@ class InternalValue {
 
         this.cache = sb.toString();
         return this.cache;
-    }
-
-    void setNone(
-            DNone none) {
-
-        this.dNone = none;
-    }
-
-    void setBeforeFirst(
-            DBeforeFirst dBeforeFirst) {
-
-        this.dBeforeFirst = dBeforeFirst;
-    }
-
-    void setAfterLast(
-            DAfterLast dAfterLast) {
-
-        this.dAfterLast = dAfterLast;
-    }
-
-    void setSeparator(
-            DSeparator dSeparator) {
-
-        this.dSeparator = dSeparator;
     }
 }

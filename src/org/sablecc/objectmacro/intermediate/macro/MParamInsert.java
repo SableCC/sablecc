@@ -7,12 +7,6 @@ import java.util.*;
 public class MParamInsert
         extends Macro {
 
-    final List<Macro> list_ReferencedParam;
-
-    final Context ReferencedParamContext = new Context();
-
-    final InternalValue ReferencedParamValue;
-
     private DSeparator ReferencedParamSeparator;
 
     private DBeforeFirst ReferencedParamBeforeFirst;
@@ -21,13 +15,19 @@ public class MParamInsert
 
     private DNone ReferencedParamNone;
 
+    final List<Macro> list_ReferencedParam;
+
+    final Context ReferencedParamContext = new Context();
+
+    final MacroValue ReferencedParamValue;
+
     MParamInsert(
             Macros macros) {
 
         setMacros(macros);
         this.list_ReferencedParam = new LinkedList<>();
 
-        this.ReferencedParamValue = new InternalValue(this.list_ReferencedParam,
+        this.ReferencedParamValue = new MacroValue(this.list_ReferencedParam,
                 this.ReferencedParamContext);
     }
 
@@ -38,7 +38,8 @@ public class MParamInsert
             throw ObjectMacroException.parameterNull("ReferencedParam");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("ParamInsert");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -81,7 +82,8 @@ public class MParamInsert
             throw ObjectMacroException.parameterNull("ReferencedParam");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("ParamInsert");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -132,7 +134,7 @@ public class MParamInsert
         return sb.toString();
     }
 
-    private InternalValue getReferencedParam() {
+    MacroValue getReferencedParam() {
 
         return this.ReferencedParamValue;
     }
@@ -178,8 +180,8 @@ public class MParamInsert
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initReferencedParamDirectives();
         initReferencedParamDirectives();
 
         initReferencedParamInternals(null);

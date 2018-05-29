@@ -7,34 +7,106 @@ import java.util.*;
 public class MInvalidArgument
         extends Macro {
 
-    String field_ArgumentText;
+    private DSeparator ArgumentTextSeparator;
+
+    private DBeforeFirst ArgumentTextBeforeFirst;
+
+    private DAfterLast ArgumentTextAfterLast;
+
+    private DNone ArgumentTextNone;
+
+    final List<String> list_ArgumentText;
+
+    final Context ArgumentTextContext = new Context();
+
+    final StringValue ArgumentTextValue;
 
     MInvalidArgument(
-            String pArgumentText,
             Macros macros) {
 
         setMacros(macros);
-        setPArgumentText(pArgumentText);
+        this.list_ArgumentText = new LinkedList<>();
+
+        this.ArgumentTextValue = new StringValue(this.list_ArgumentText,
+                this.ArgumentTextContext);
     }
 
-    private void setPArgumentText(
-            String pArgumentText) {
+    public void addAllArgumentText(
+            List<String> strings) {
 
-        if (pArgumentText == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("ArgumentText");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("ArgumentText");
+            }
 
-        this.field_ArgumentText = pArgumentText;
+            this.list_ArgumentText.add(string);
+        }
     }
 
-    String buildArgumentText() {
+    public void addArgumentText(
+            String string) {
 
-        return this.field_ArgumentText;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("ArgumentText");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_ArgumentText.add(string);
     }
 
-    String getArgumentText() {
+    private String buildArgumentText() {
 
-        return this.field_ArgumentText;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ArgumentText;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ArgumentTextNone != null) {
+            sb.append(this.ArgumentTextNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ArgumentTextBeforeFirst != null) {
+                string = this.ArgumentTextBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.ArgumentTextAfterLast != null) {
+                string = this.ArgumentTextAfterLast.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.ArgumentTextSeparator != null) {
+                string = this.ArgumentTextSeparator.apply(i, string,
+                        nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getArgumentText() {
+
+        return this.ArgumentTextValue;
+    }
+
+    private void initArgumentTextDirectives() {
+
     }
 
     @Override
@@ -59,7 +131,8 @@ public class MInvalidArgument
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initArgumentTextDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

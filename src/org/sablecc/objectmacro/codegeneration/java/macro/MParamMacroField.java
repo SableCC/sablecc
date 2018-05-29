@@ -7,34 +7,103 @@ import java.util.*;
 public class MParamMacroField
         extends Macro {
 
-    String field_ParamName;
+    private DSeparator ParamNameSeparator;
+
+    private DBeforeFirst ParamNameBeforeFirst;
+
+    private DAfterLast ParamNameAfterLast;
+
+    private DNone ParamNameNone;
+
+    final List<String> list_ParamName;
+
+    final Context ParamNameContext = new Context();
+
+    final StringValue ParamNameValue;
 
     MParamMacroField(
-            String pParamName,
             Macros macros) {
 
         setMacros(macros);
-        setPParamName(pParamName);
+        this.list_ParamName = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
     }
 
-    private void setPParamName(
-            String pParamName) {
+    public void addAllParamName(
+            List<String> strings) {
 
-        if (pParamName == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("ParamName");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("ParamName");
+            }
 
-        this.field_ParamName = pParamName;
+            this.list_ParamName.add(string);
+        }
     }
 
-    String buildParamName() {
+    public void addParamName(
+            String string) {
 
-        return this.field_ParamName;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_ParamName.add(string);
     }
 
-    String getParamName() {
+    private String buildParamName() {
 
-        return this.field_ParamName;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ParamName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getParamName() {
+
+        return this.ParamNameValue;
+    }
+
+    private void initParamNameDirectives() {
+
     }
 
     @Override
@@ -59,7 +128,8 @@ public class MParamMacroField
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initParamNameDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -74,8 +144,7 @@ public class MParamMacroField
         sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        MInternalMacrosValueField m2
-                = getMacros().newInternalMacrosValueField();
+        MMacroValueField m2 = getMacros().newMacroValueField();
 
         m2.setParamName(null, getParamName());
         sb0.append(m2.build(null));

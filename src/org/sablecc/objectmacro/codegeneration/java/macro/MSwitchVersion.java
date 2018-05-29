@@ -7,12 +7,6 @@ import java.util.*;
 public class MSwitchVersion
         extends Macro {
 
-    final List<Macro> list_VersionCases;
-
-    final Context VersionCasesContext = new Context();
-
-    final InternalValue VersionCasesValue;
-
     private DSeparator VersionCasesSeparator;
 
     private DBeforeFirst VersionCasesBeforeFirst;
@@ -21,17 +15,22 @@ public class MSwitchVersion
 
     private DNone VersionCasesNone;
 
-    private Map<Context, String> field_ClassName = new LinkedHashMap<>();
+    final List<Macro> list_VersionCases;
 
-    private Map<Context, InternalValue> list_Args = new LinkedHashMap<>();
+    final Context VersionCasesContext = new Context();
+
+    final MacroValue VersionCasesValue;
+
+    private Map<Context, StringValue> list_ClassName = new LinkedHashMap<>();
 
     MSwitchVersion(
             Macros macros) {
 
         setMacros(macros);
         this.list_VersionCases = new LinkedList<>();
+        this.list_ClassName = new LinkedHashMap<>();
 
-        this.VersionCasesValue = new InternalValue(this.list_VersionCases,
+        this.VersionCasesValue = new MacroValue(this.list_VersionCases,
                 this.VersionCasesContext);
     }
 
@@ -42,7 +41,8 @@ public class MSwitchVersion
             throw ObjectMacroException.parameterNull("VersionCases");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("SwitchVersion");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -85,7 +85,8 @@ public class MSwitchVersion
             throw ObjectMacroException.parameterNull("VersionCases");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("SwitchVersion");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -99,24 +100,13 @@ public class MSwitchVersion
 
     void setClassName(
             Context context,
-            String value) {
+            StringValue value) {
 
         if (value == null) {
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_ClassName.put(context, value);
-    }
-
-    void setArgs(
-            Context context,
-            InternalValue internal_value) {
-
-        if (internal_value == null) {
-            throw new RuntimeException("macros cannot be null");
-        }
-
-        this.list_Args.put(context, internal_value);
+        this.list_ClassName.put(context, value);
     }
 
     private String buildVersionCases() {
@@ -158,34 +148,22 @@ public class MSwitchVersion
         return sb.toString();
     }
 
-    String buildClassName(
+    private String buildClassName(
             Context context) {
 
-        return this.field_ClassName.get(context);
+        StringValue stringValue = this.list_ClassName.get(context);
+        return stringValue.build();
     }
 
-    private String buildArgs(
-            Context context) {
-
-        InternalValue macros = this.list_Args.get(context);
-        return macros.build();
-    }
-
-    private InternalValue getVersionCases() {
+    MacroValue getVersionCases() {
 
         return this.VersionCasesValue;
     }
 
-    String getClassName(
+    private StringValue getClassName(
             Context context) {
 
-        return this.field_ClassName.get(context);
-    }
-
-    private InternalValue getArgs(
-            Context context) {
-
-        return this.list_Args.get(context);
+        return this.list_ClassName.get(context);
     }
 
     private void initVersionCasesInternals(
@@ -201,9 +179,6 @@ public class MSwitchVersion
                     mMacroCaseInit.setClassName(
                             MSwitchVersion.this.VersionCasesContext,
                             getClassName(context));
-                    mMacroCaseInit.setArgs(
-                            MSwitchVersion.this.VersionCasesContext,
-                            getArgs(context));
                 }
             });
         }
@@ -241,7 +216,6 @@ public class MSwitchVersion
         }
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         initVersionCasesDirectives();
 
@@ -249,7 +223,7 @@ public class MSwitchVersion
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append("switch(this.version)");
+        sb0.append("switch(this.version) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();

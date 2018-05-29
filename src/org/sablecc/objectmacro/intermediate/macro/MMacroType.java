@@ -7,12 +7,6 @@ import java.util.*;
 public class MMacroType
         extends Macro {
 
-    final List<Macro> list_References;
-
-    final Context ReferencesContext = new Context();
-
-    final InternalValue ReferencesValue;
-
     private DSeparator ReferencesSeparator;
 
     private DBeforeFirst ReferencesBeforeFirst;
@@ -21,14 +15,20 @@ public class MMacroType
 
     private DNone ReferencesNone;
 
+    final List<Macro> list_References;
+
+    final Context ReferencesContext = new Context();
+
+    final MacroValue ReferencesValue;
+
     MMacroType(
             Macros macros) {
 
         setMacros(macros);
         this.list_References = new LinkedList<>();
 
-        this.ReferencesValue = new InternalValue(this.list_References,
-                this.ReferencesContext);
+        this.ReferencesValue
+                = new MacroValue(this.list_References, this.ReferencesContext);
     }
 
     public void addAllReferences(
@@ -38,7 +38,8 @@ public class MMacroType
             throw ObjectMacroException.parameterNull("References");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroType");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -81,7 +82,8 @@ public class MMacroType
             throw ObjectMacroException.parameterNull("References");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroType");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -132,7 +134,7 @@ public class MMacroType
         return sb.toString();
     }
 
-    private InternalValue getReferences() {
+    MacroValue getReferences() {
 
         return this.ReferencesValue;
     }
@@ -178,8 +180,8 @@ public class MMacroType
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initReferencesDirectives();
         initReferencesDirectives();
 
         initReferencesInternals(null);

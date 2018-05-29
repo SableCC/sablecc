@@ -21,8 +21,11 @@ import java.io.*;
 import java.util.*;
 
 import org.sablecc.exception.InternalException;
+import org.sablecc.objectmacro.errormessage.*;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.intermediate.macro.*;
+import org.sablecc.objectmacro.intermediate.macro.Macro;
+import org.sablecc.objectmacro.intermediate.macro.Macros;
 import org.sablecc.objectmacro.structure.*;
 import org.sablecc.objectmacro.structure.Directive;
 import org.sablecc.objectmacro.syntax3.lexer.*;
@@ -65,17 +68,22 @@ public class ObjectMacro {
         }
         catch (CompilerException e) {
             System.err.print(e.getMessage());
+            System.err.println();
             System.err.flush();
             System.exit(1);
         }
         catch (ParserException e) {
             int start = e.getMessage().indexOf(' ');
-            System.err.print(errorFactory.newSyntaxError(
-                    e.getToken().getLine() + "", e.getToken().getPos() + "",
-                    e.getToken().getClass().getSimpleName().substring(1)
-                            .toLowerCase(),
-                    e.getToken().getText(), e.getMessage().substring(start))
-                    .build());
+            MSyntaxError mSyntaxError = errorFactory.newSyntaxError();
+            mSyntaxError.addChar(e.getToken().getPos() + "");
+            mSyntaxError.addLine(e.getToken().getLine() + "");
+            mSyntaxError.addMessage(e.getMessage().substring(start));
+            mSyntaxError.addTokenText(e.getToken().getText());
+            mSyntaxError.addTokenType(e.getToken().getClass().getSimpleName()
+                    .substring(1).toLowerCase());
+
+            System.err.print(mSyntaxError.build());
+            System.err.println();
             System.err.flush();
             System.exit(1);
         }
@@ -89,20 +97,29 @@ public class ObjectMacro {
             String pos = e.getMessage().substring(start, end);
 
             start = e.getMessage().indexOf(' ') + 1;
+            MLexicalError lexical_error = errorFactory.newLexicalError();
+            lexical_error.addLine(line);
+            lexical_error.addChar(pos);
+            lexical_error.addMessage(e.getMessage().substring(start));
 
-            System.err.print(errorFactory
-                    .newLexicalError(line, pos, e.getMessage().substring(start))
-                    .build());
+            System.err.print(lexical_error.build());
+            System.err.println();
             System.err.flush();
             System.exit(1);
         }
         catch (InternalException e) {
+            int start = e.getMessage().indexOf(' ') + 1;
+
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             pw.flush();
-            System.err.print(errorFactory
-                    .newInternalError(sw.toString(), e.getMessage()).build());
+            MInternalError mInternalError = errorFactory.newInternalError();
+            mInternalError.addStackTrace(sw.toString());
+            mInternalError.addStackTrace(e.getMessage().substring(start));
+
+            System.err.print(mInternalError.build());
+            System.err.println();
             System.err.flush();
             System.exit(1);
         }
@@ -364,8 +381,9 @@ public class ObjectMacro {
             mIntermediateRepresentation.addVersionDefinition(mVersions);
 
             for (MacroVersion version : globalIndex.getAllVersions()) {
-                mVersions.addVersions(
-                        factory.newSimpleName(version.getName().getText()));
+                MSimpleName mSimpleName = factory.newSimpleName();
+                mSimpleName.addName(version.getName().getText());
+                mVersions.addVersions(mSimpleName);
             }
         }
 
@@ -425,7 +443,8 @@ public class ObjectMacro {
         MName name = factory.newName();
         String splittedMacroName[] = Utils.splitName(identifier);
         for (String part : splittedMacroName) {
-            MSimpleName simpleName = factory.newSimpleName(part);
+            MSimpleName simpleName = factory.newSimpleName();
+            simpleName.addName(part);
             name.addValue(simpleName);
         }
 
@@ -492,8 +511,9 @@ public class ObjectMacro {
 
             mMacro.addVersions(mVersions);
             for (MacroVersion version : versions) {
-                mVersions.addVersions(
-                        factory.newSimpleName(version.getName().getText()));
+                MSimpleName mSimpleName = factory.newSimpleName();
+                mSimpleName.addName(version.getName().getText());
+                mVersions.addVersions(mSimpleName);
             }
         }
 
@@ -566,7 +586,9 @@ public class ObjectMacro {
 
                 if (escapeMacroBodyPart.getTextEscape().getText()
                         .equals("{{")) {
-                    mMacro.addBody(factory.newStringPart("{"));
+                    MStringPart mStringPart = factory.newStringPart();
+                    mStringPart.addText("{");
+                    mMacro.addBody(mStringPart);
                 }
                 else {
                     throw new InternalException("case unhandled");
@@ -578,7 +600,10 @@ public class ObjectMacro {
                 String macroTextPart = textBodyPart.getTextPart().getText();
                 macroTextPart = macroTextPart.replace("\\", "\\\\");
                 macroTextPart = macroTextPart.replace("'", "\\'");
-                mMacro.addBody(factory.newStringPart(macroTextPart));
+                MStringPart mStringPart = factory.newStringPart();
+                mStringPart.addText(macroTextPart);
+
+                mMacro.addBody(mStringPart);
             }
             else if (bodyPart instanceof AInsertMacroBodyPart) {
                 AInsertMacroBodyPart insertPart
@@ -600,7 +625,9 @@ public class ObjectMacro {
                 MName mName = factory.newName();
 
                 for (String part : varNames) {
-                    mName.addValue(factory.newSimpleName(part));
+                    MSimpleName mSimpleName = factory.newSimpleName();
+                    mSimpleName.addName(part);
+                    mName.addValue(mSimpleName);
                 }
 
                 MParamInsert mParamInsert = factory.newParamInsert();
@@ -640,7 +667,9 @@ public class ObjectMacro {
                         = ((ATextStringPart) stringPart).getText().getText();
 
                 stringPartText = stringPartText.replaceAll("'", "\\\\'");
-                macro_string_parts.add(factory.newStringPart(stringPartText));
+                MStringPart mStringPart = factory.newStringPart();
+                mStringPart.addText(stringPartText);
+                macro_string_parts.add(mStringPart);
             }
             else if (stringPart instanceof AInsertStringPart) {
                 AMacroReference macro_node
@@ -662,7 +691,9 @@ public class ObjectMacro {
                 mParamInsert.addReferencedParam(name);
 
                 for (String part : splittedVarName) {
-                    name.addValue(factory.newSimpleName(part));
+                    MSimpleName mSimpleName = factory.newSimpleName();
+                    mSimpleName.addName(part);
+                    name.addValue(mSimpleName);
                 }
 
                 macro_string_parts.add(mParamInsert);
@@ -671,20 +702,22 @@ public class ObjectMacro {
                 AEscapeStringPart escapeStringPart
                         = (AEscapeStringPart) stringPart;
                 String text = escapeStringPart.getStringEscape().getText();
+                MStringPart mStringPart = factory.newStringPart();
 
                 if (text.equals("\\\\")) {
-                    macro_string_parts.add(factory.newStringPart("\\"));
+                    mStringPart.addText("\\");
+                    macro_string_parts.add(mStringPart);
                 }
                 else if (text.equals("\\n")) {
                     macro_string_parts.add(factory.newEolPart());
                 }
                 else if (text.equals("\\t")) {
-                    macro_string_parts
-                            .add(factory.newStringPart(DEFAULT_TABULATION));
+                    mStringPart.addText(DEFAULT_TABULATION);
+                    macro_string_parts.add(mStringPart);
                 }
                 else if (text.startsWith("\\")) {
-                    macro_string_parts.add(factory
-                            .newStringPart(text.substring(text.length() - 1)));
+                    mStringPart.addText(text.substring(text.length() - 1));
+                    macro_string_parts.add(mStringPart);
                 }
                 else {
                     throw new InternalException("case unhandled");
@@ -719,9 +752,8 @@ public class ObjectMacro {
             if (argument instanceof AStringStaticValue) {
                 AStringStaticValue stringValue = (AStringStaticValue) argument;
 
-                MTextArgument textArgument
-                        = factory.newTextArgument(paramNames.get(i));
-
+                MTextArgument textArgument = factory.newTextArgument();
+                textArgument.addParamName(paramNames.get(i));
                 List<Macro> text_parts
                         = createTextParts(stringValue.getParts());
 
@@ -732,8 +764,8 @@ public class ObjectMacro {
             else if (argument instanceof AVarStaticValue) {
                 AVarStaticValue varValue = (AVarStaticValue) argument;
 
-                MVarArgument varArgument
-                        = factory.newVarArgument(paramNames.get(i));
+                MVarArgument varArgument = factory.newVarArgument();
+                varArgument.addParamName(paramNames.get(i));
                 varArgument.addReferencedParam(
                         buildName(varValue.getIdentifier()));
                 mArgs.addArguments(varArgument);

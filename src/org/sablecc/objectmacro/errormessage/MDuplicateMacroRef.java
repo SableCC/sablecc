@@ -7,106 +7,375 @@ import java.util.*;
 public class MDuplicateMacroRef
         extends Macro {
 
-    String field_Param;
+    private DSeparator ParamSeparator;
 
-    String field_Macro;
+    private DBeforeFirst ParamBeforeFirst;
 
-    String field_Line;
+    private DAfterLast ParamAfterLast;
 
-    String field_Char;
+    private DNone ParamNone;
+
+    final List<String> list_Param;
+
+    final Context ParamContext = new Context();
+
+    final StringValue ParamValue;
+
+    private DSeparator MacroSeparator;
+
+    private DBeforeFirst MacroBeforeFirst;
+
+    private DAfterLast MacroAfterLast;
+
+    private DNone MacroNone;
+
+    final List<String> list_Macro;
+
+    final Context MacroContext = new Context();
+
+    final StringValue MacroValue;
+
+    private DSeparator LineSeparator;
+
+    private DBeforeFirst LineBeforeFirst;
+
+    private DAfterLast LineAfterLast;
+
+    private DNone LineNone;
+
+    final List<String> list_Line;
+
+    final Context LineContext = new Context();
+
+    final StringValue LineValue;
+
+    private DSeparator CharSeparator;
+
+    private DBeforeFirst CharBeforeFirst;
+
+    private DAfterLast CharAfterLast;
+
+    private DNone CharNone;
+
+    final List<String> list_Char;
+
+    final Context CharContext = new Context();
+
+    final StringValue CharValue;
 
     MDuplicateMacroRef(
-            String pParam,
-            String pMacro,
-            String pLine,
-            String pChar,
             Macros macros) {
 
         setMacros(macros);
-        setPParam(pParam);
-        setPMacro(pMacro);
-        setPLine(pLine);
-        setPChar(pChar);
+        this.list_Param = new LinkedList<>();
+        this.list_Macro = new LinkedList<>();
+        this.list_Line = new LinkedList<>();
+        this.list_Char = new LinkedList<>();
+
+        this.ParamValue = new StringValue(this.list_Param, this.ParamContext);
+        this.MacroValue = new StringValue(this.list_Macro, this.MacroContext);
+        this.LineValue = new StringValue(this.list_Line, this.LineContext);
+        this.CharValue = new StringValue(this.list_Char, this.CharContext);
     }
 
-    private void setPParam(
-            String pParam) {
+    public void addAllParam(
+            List<String> strings) {
 
-        if (pParam == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Param");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Param");
+            }
 
-        this.field_Param = pParam;
+            this.list_Param.add(string);
+        }
     }
 
-    private void setPMacro(
-            String pMacro) {
+    public void addParam(
+            String string) {
 
-        if (pMacro == null) {
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Param");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Param.add(string);
+    }
+
+    public void addAllMacro(
+            List<String> strings) {
+
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Macro");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Macro");
+            }
 
-        this.field_Macro = pMacro;
+            this.list_Macro.add(string);
+        }
     }
 
-    private void setPLine(
-            String pLine) {
+    public void addMacro(
+            String string) {
 
-        if (pLine == null) {
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Macro");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Macro.add(string);
+    }
+
+    public void addAllLine(
+            List<String> strings) {
+
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Line");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Line");
+            }
 
-        this.field_Line = pLine;
+            this.list_Line.add(string);
+        }
     }
 
-    private void setPChar(
-            String pChar) {
+    public void addLine(
+            String string) {
 
-        if (pChar == null) {
-            throw ObjectMacroException.parameterNull("Char");
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Line");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_Char = pChar;
+        this.list_Line.add(string);
     }
 
-    String buildParam() {
+    public void addAllChar(
+            List<String> strings) {
 
-        return this.field_Param;
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Char");
+            }
+
+            this.list_Char.add(string);
+        }
     }
 
-    String buildMacro() {
+    public void addChar(
+            String string) {
 
-        return this.field_Macro;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Char.add(string);
     }
 
-    String buildLine() {
+    private String buildParam() {
 
-        return this.field_Line;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Param;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ParamNone != null) {
+            sb.append(this.ParamNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ParamBeforeFirst != null) {
+                string = this.ParamBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamAfterLast != null) {
+                string = this.ParamAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamSeparator != null) {
+                string = this.ParamSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String buildChar() {
+    private String buildMacro() {
 
-        return this.field_Char;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Macro;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.MacroNone != null) {
+            sb.append(this.MacroNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.MacroBeforeFirst != null) {
+                string = this.MacroBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.MacroAfterLast != null) {
+                string = this.MacroAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.MacroSeparator != null) {
+                string = this.MacroSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getParam() {
+    private String buildLine() {
 
-        return this.field_Param;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Line;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.LineNone != null) {
+            sb.append(this.LineNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.LineBeforeFirst != null) {
+                string = this.LineBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.LineAfterLast != null) {
+                string = this.LineAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.LineSeparator != null) {
+                string = this.LineSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getMacro() {
+    private String buildChar() {
 
-        return this.field_Macro;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Char;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.CharNone != null) {
+            sb.append(this.CharNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.CharBeforeFirst != null) {
+                string = this.CharBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.CharAfterLast != null) {
+                string = this.CharAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.CharSeparator != null) {
+                string = this.CharSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getLine() {
+    StringValue getParam() {
 
-        return this.field_Line;
+        return this.ParamValue;
     }
 
-    String getChar() {
+    StringValue getMacro() {
 
-        return this.field_Char;
+        return this.MacroValue;
+    }
+
+    StringValue getLine() {
+
+        return this.LineValue;
+    }
+
+    StringValue getChar() {
+
+        return this.CharValue;
+    }
+
+    private void initParamDirectives() {
+
+    }
+
+    private void initMacroDirectives() {
+
+    }
+
+    private void initLineDirectives() {
+
+    }
+
+    private void initCharDirectives() {
+
     }
 
     @Override
@@ -131,7 +400,11 @@ public class MDuplicateMacroRef
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initParamDirectives();
+        initMacroDirectives();
+        initLineDirectives();
+        initCharDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

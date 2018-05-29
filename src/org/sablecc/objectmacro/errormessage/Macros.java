@@ -21,40 +21,29 @@ public class Macros {
         this.version = null;
     }
 
-    public MSyntaxError newSyntaxError(
-            String pLine,
-            String pChar,
-            String pTokenType,
-            String pTokenText,
-            String pMessage) {
+    public MSyntaxError newSyntaxError() {
 
         MSyntaxError mSyntaxError;
 
-        mSyntaxError = new MSyntaxError(pLine, pChar, pTokenType, pTokenText,
-                pMessage, this);
+        mSyntaxError = new MSyntaxError(this);
 
         return mSyntaxError;
     }
 
-    public MLexicalError newLexicalError(
-            String pLine,
-            String pChar,
-            String pMessage) {
+    public MLexicalError newLexicalError() {
 
         MLexicalError mLexicalError;
 
-        mLexicalError = new MLexicalError(pLine, pChar, pMessage, this);
+        mLexicalError = new MLexicalError(this);
 
         return mLexicalError;
     }
 
-    public MInternalError newInternalError(
-            String pStackTrace,
-            String pMessage) {
+    public MInternalError newInternalError() {
 
         MInternalError mInternalError;
 
-        mInternalError = new MInternalError(pStackTrace, pMessage, this);
+        mInternalError = new MInternalError(this);
 
         return mInternalError;
     }
@@ -77,90 +66,74 @@ public class Macros {
         return mCommandLineErrorTail;
     }
 
-    public MInvalidArgument newInvalidArgument(
-            String pArgumentText) {
+    public MInvalidArgument newInvalidArgument() {
 
         MInvalidArgument mInvalidArgument;
 
-        mInvalidArgument = new MInvalidArgument(pArgumentText, this);
+        mInvalidArgument = new MInvalidArgument(this);
 
         return mInvalidArgument;
     }
 
-    public MMissingLongOptionOperand newMissingLongOptionOperand(
-            String pOptionName,
-            String pOperandName) {
+    public MMissingLongOptionOperand newMissingLongOptionOperand() {
 
         MMissingLongOptionOperand mMissingLongOptionOperand;
 
-        mMissingLongOptionOperand = new MMissingLongOptionOperand(pOptionName,
-                pOperandName, this);
+        mMissingLongOptionOperand = new MMissingLongOptionOperand(this);
 
         return mMissingLongOptionOperand;
     }
 
-    public MMissingShortOptionOperand newMissingShortOptionOperand(
-            String pOptionName,
-            String pOperandName) {
+    public MMissingShortOptionOperand newMissingShortOptionOperand() {
 
         MMissingShortOptionOperand mMissingShortOptionOperand;
 
-        mMissingShortOptionOperand = new MMissingShortOptionOperand(pOptionName,
-                pOperandName, this);
+        mMissingShortOptionOperand = new MMissingShortOptionOperand(this);
 
         return mMissingShortOptionOperand;
     }
 
-    public MInvalidLongOption newInvalidLongOption(
-            String pOptionName) {
+    public MInvalidLongOption newInvalidLongOption() {
 
         MInvalidLongOption mInvalidLongOption;
 
-        mInvalidLongOption = new MInvalidLongOption(pOptionName, this);
+        mInvalidLongOption = new MInvalidLongOption(this);
 
         return mInvalidLongOption;
     }
 
-    public MSpuriousLongOptionOperand newSpuriousLongOptionOperand(
-            String pOptionName,
-            String pOperandText) {
+    public MSpuriousLongOptionOperand newSpuriousLongOptionOperand() {
 
         MSpuriousLongOptionOperand mSpuriousLongOptionOperand;
 
-        mSpuriousLongOptionOperand = new MSpuriousLongOptionOperand(pOptionName,
-                pOperandText, this);
+        mSpuriousLongOptionOperand = new MSpuriousLongOptionOperand(this);
 
         return mSpuriousLongOptionOperand;
     }
 
-    public MInvalidShortOption newInvalidShortOption(
-            String pOptionName) {
+    public MInvalidShortOption newInvalidShortOption() {
 
         MInvalidShortOption mInvalidShortOption;
 
-        mInvalidShortOption = new MInvalidShortOption(pOptionName, this);
+        mInvalidShortOption = new MInvalidShortOption(this);
 
         return mInvalidShortOption;
     }
 
-    public MSpuriousShortOptionOperand newSpuriousShortOptionOperand(
-            String pOptionName,
-            String pOperandText) {
+    public MSpuriousShortOptionOperand newSpuriousShortOptionOperand() {
 
         MSpuriousShortOptionOperand mSpuriousShortOptionOperand;
 
-        mSpuriousShortOptionOperand = new MSpuriousShortOptionOperand(
-                pOptionName, pOperandText, this);
+        mSpuriousShortOptionOperand = new MSpuriousShortOptionOperand(this);
 
         return mSpuriousShortOptionOperand;
     }
 
-    public MUnknownTarget newUnknownTarget(
-            String pTarget) {
+    public MUnknownTarget newUnknownTarget() {
 
         MUnknownTarget mUnknownTarget;
 
-        mUnknownTarget = new MUnknownTarget(pTarget, this);
+        mUnknownTarget = new MUnknownTarget(this);
 
         return mUnknownTarget;
     }
@@ -174,66 +147,56 @@ public class Macros {
         return mInvalidArgumentCount;
     }
 
-    public MInvalidObjectmacroSuffix newInvalidObjectmacroSuffix(
-            String pFileName) {
+    public MInvalidObjectmacroSuffix newInvalidObjectmacroSuffix() {
 
         MInvalidObjectmacroSuffix mInvalidObjectmacroSuffix;
 
-        mInvalidObjectmacroSuffix
-                = new MInvalidObjectmacroSuffix(pFileName, this);
+        mInvalidObjectmacroSuffix = new MInvalidObjectmacroSuffix(this);
 
         return mInvalidObjectmacroSuffix;
     }
 
-    public MInvalidIntermediateSuffix newInvalidIntermediateSuffix(
-            String pFileName) {
+    public MInvalidIntermediateSuffix newInvalidIntermediateSuffix() {
 
         MInvalidIntermediateSuffix mInvalidIntermediateSuffix;
 
-        mInvalidIntermediateSuffix
-                = new MInvalidIntermediateSuffix(pFileName, this);
+        mInvalidIntermediateSuffix = new MInvalidIntermediateSuffix(this);
 
         return mInvalidIntermediateSuffix;
     }
 
-    public MMissingMacroFile newMissingMacroFile(
-            String pFileName) {
+    public MMissingMacroFile newMissingMacroFile() {
 
         MMissingMacroFile mMissingMacroFile;
 
-        mMissingMacroFile = new MMissingMacroFile(pFileName, this);
+        mMissingMacroFile = new MMissingMacroFile(this);
 
         return mMissingMacroFile;
     }
 
-    public MMacroNotFile newMacroNotFile(
-            String pFileName) {
+    public MMacroNotFile newMacroNotFile() {
 
         MMacroNotFile mMacroNotFile;
 
-        mMacroNotFile = new MMacroNotFile(pFileName, this);
+        mMacroNotFile = new MMacroNotFile(this);
 
         return mMacroNotFile;
     }
 
-    public MInputError newInputError(
-            String pFileName,
-            String pMessage) {
+    public MInputError newInputError() {
 
         MInputError mInputError;
 
-        mInputError = new MInputError(pFileName, pMessage, this);
+        mInputError = new MInputError(this);
 
         return mInputError;
     }
 
-    public MOutputError newOutputError(
-            String pFileName,
-            String pMessage) {
+    public MOutputError newOutputError() {
 
         MOutputError mOutputError;
 
-        mOutputError = new MOutputError(pFileName, pMessage, this);
+        mOutputError = new MOutputError(this);
 
         return mOutputError;
     }
@@ -247,296 +210,201 @@ public class Macros {
         return mSemanticErrorHead;
     }
 
-    public MUnknownMacro newUnknownMacro(
-            String pName,
-            String pLine,
-            String pChar) {
+    public MUnknownMacro newUnknownMacro() {
 
         MUnknownMacro mUnknownMacro;
 
-        mUnknownMacro = new MUnknownMacro(pName, pLine, pChar, this);
+        mUnknownMacro = new MUnknownMacro(this);
 
         return mUnknownMacro;
     }
 
-    public MPlainText newPlainText(
-            String pString) {
+    public MPlainText newPlainText() {
 
         MPlainText mPlainText;
 
-        mPlainText = new MPlainText(pString, this);
+        mPlainText = new MPlainText(this);
 
         return mPlainText;
     }
 
-    public MUnknownVersion newUnknownVersion(
-            String pName,
-            String pLine,
-            String pChar) {
+    public MUnknownVersion newUnknownVersion() {
 
         MUnknownVersion mUnknownVersion;
 
-        mUnknownVersion = new MUnknownVersion(pName, pLine, pChar, this);
+        mUnknownVersion = new MUnknownVersion(this);
 
         return mUnknownVersion;
     }
 
-    public MDuplicateDeclaration newDuplicateDeclaration(
-            String pName,
-            String pLine,
-            String pChar,
-            String pRefLine,
-            String pRefChar) {
+    public MDuplicateDeclaration newDuplicateDeclaration() {
 
         MDuplicateDeclaration mDuplicateDeclaration;
 
-        mDuplicateDeclaration = new MDuplicateDeclaration(pName, pLine, pChar,
-                pRefLine, pRefChar, this);
+        mDuplicateDeclaration = new MDuplicateDeclaration(this);
 
         return mDuplicateDeclaration;
     }
 
-    public MDuplicateMacroVersionDeclaration newDuplicateMacroVersionDeclaration(
-            String pName,
-            String pLine,
-            String pChar,
-            String pRefLine,
-            String pRefChar,
-            String pVersion) {
+    public MDuplicateMacroVersionDeclaration newDuplicateMacroVersionDeclaration() {
 
         MDuplicateMacroVersionDeclaration mDuplicateMacroVersionDeclaration;
 
         mDuplicateMacroVersionDeclaration
-                = new MDuplicateMacroVersionDeclaration(pName, pLine, pChar,
-                        pRefLine, pRefChar, pVersion, this);
+                = new MDuplicateMacroVersionDeclaration(this);
 
         return mDuplicateMacroVersionDeclaration;
     }
 
-    public MDuplicateOption newDuplicateOption(
-            String pName,
-            String pLine,
-            String pChar,
-            String pRefLine,
-            String pRefChar) {
+    public MDuplicateOption newDuplicateOption() {
 
         MDuplicateOption mDuplicateOption;
 
-        mDuplicateOption = new MDuplicateOption(pName, pLine, pChar, pRefLine,
-                pRefChar, this);
+        mDuplicateOption = new MDuplicateOption(this);
 
         return mDuplicateOption;
     }
 
-    public MConflictingOption newConflictingOption(
-            String pName,
-            String pLine,
-            String pChar,
-            String pRefName,
-            String pRefLine,
-            String pRefChar) {
+    public MConflictingOption newConflictingOption() {
 
         MConflictingOption mConflictingOption;
 
-        mConflictingOption = new MConflictingOption(pName, pLine, pChar,
-                pRefName, pRefLine, pRefChar, this);
+        mConflictingOption = new MConflictingOption(this);
 
         return mConflictingOption;
     }
 
-    public MUnknownOption newUnknownOption(
-            String pName,
-            String pLine,
-            String pChar) {
+    public MUnknownOption newUnknownOption() {
 
         MUnknownOption mUnknownOption;
 
-        mUnknownOption = new MUnknownOption(pName, pLine, pChar, this);
+        mUnknownOption = new MUnknownOption(this);
 
         return mUnknownOption;
     }
 
-    public MEndMismatch newEndMismatch(
-            String pName,
-            String pLine,
-            String pChar,
-            String pRefName,
-            String pRefLine,
-            String pRefChar) {
+    public MEndMismatch newEndMismatch() {
 
         MEndMismatch mEndMismatch;
 
-        mEndMismatch = new MEndMismatch(pName, pLine, pChar, pRefName, pRefLine,
-                pRefChar, this);
+        mEndMismatch = new MEndMismatch(this);
 
         return mEndMismatch;
     }
 
-    public MUnknownParam newUnknownParam(
-            String pName,
-            String pLine,
-            String pChar) {
+    public MUnknownParam newUnknownParam() {
 
         MUnknownParam mUnknownParam;
 
-        mUnknownParam = new MUnknownParam(pName, pLine, pChar, this);
+        mUnknownParam = new MUnknownParam(this);
 
         return mUnknownParam;
     }
 
-    public MParamCyclicReference newParamCyclicReference(
-            String pReference,
-            String pLine,
-            String pChar,
-            String pContext,
-            String pContextLine,
-            String pContextChar) {
+    public MParamCyclicReference newParamCyclicReference() {
 
         MParamCyclicReference mParamCyclicReference;
 
-        mParamCyclicReference = new MParamCyclicReference(pReference, pLine,
-                pChar, pContext, pContextLine, pContextChar, this);
+        mParamCyclicReference = new MParamCyclicReference(this);
 
         return mParamCyclicReference;
     }
 
-    public MSelfReference newSelfReference(
-            String pReference,
-            String pLine,
-            String pChar,
-            String pContext,
-            String pContextLine,
-            String pContextChar) {
+    public MSelfReference newSelfReference() {
 
         MSelfReference mSelfReference;
 
-        mSelfReference = new MSelfReference(pReference, pLine, pChar, pContext,
-                pContextLine, pContextChar, this);
+        mSelfReference = new MSelfReference(this);
 
         return mSelfReference;
     }
 
-    public MUnusedTextBlock newUnusedTextBlock(
-            String pName,
-            String pLine,
-            String pChar) {
+    public MUnusedTextBlock newUnusedTextBlock() {
 
         MUnusedTextBlock mUnusedTextBlock;
 
-        mUnusedTextBlock = new MUnusedTextBlock(pName, pLine, pChar, this);
+        mUnusedTextBlock = new MUnusedTextBlock(this);
 
         return mUnusedTextBlock;
     }
 
-    public MUnusedParam newUnusedParam(
-            String pName,
-            String pLine,
-            String pChar) {
+    public MUnusedParam newUnusedParam() {
 
         MUnusedParam mUnusedParam;
 
-        mUnusedParam = new MUnusedParam(pName, pLine, pChar, this);
+        mUnusedParam = new MUnusedParam(this);
 
         return mUnusedParam;
     }
 
-    public MIncorrectArgumentCount newIncorrectArgumentCount(
-            String pLine,
-            String pChar,
-            String pExpectedCount,
-            String pCurrentCount) {
+    public MIncorrectArgumentCount newIncorrectArgumentCount() {
 
         MIncorrectArgumentCount mIncorrectArgumentCount;
 
-        mIncorrectArgumentCount = new MIncorrectArgumentCount(pLine, pChar,
-                pExpectedCount, pCurrentCount, this);
+        mIncorrectArgumentCount = new MIncorrectArgumentCount(this);
 
         return mIncorrectArgumentCount;
     }
 
-    public MIncorrectArgumentType newIncorrectArgumentType(
-            String pExpected,
-            String pFound,
-            String pLine,
-            String pChar) {
+    public MIncorrectArgumentType newIncorrectArgumentType() {
 
         MIncorrectArgumentType mIncorrectArgumentType;
 
-        mIncorrectArgumentType = new MIncorrectArgumentType(pExpected, pFound,
-                pLine, pChar, this);
+        mIncorrectArgumentType = new MIncorrectArgumentType(this);
 
         return mIncorrectArgumentType;
     }
 
-    public MCannotCreateDirectory newCannotCreateDirectory(
-            String pLocation) {
+    public MCannotCreateDirectory newCannotCreateDirectory() {
 
         MCannotCreateDirectory mCannotCreateDirectory;
 
-        mCannotCreateDirectory = new MCannotCreateDirectory(pLocation, this);
+        mCannotCreateDirectory = new MCannotCreateDirectory(this);
 
         return mCannotCreateDirectory;
     }
 
-    public MBodyTokenMisused newBodyTokenMisused(
-            String pLine,
-            String pChar) {
+    public MBodyTokenMisused newBodyTokenMisused() {
 
         MBodyTokenMisused mBodyTokenMisused;
 
-        mBodyTokenMisused = new MBodyTokenMisused(pLine, pChar, this);
+        mBodyTokenMisused = new MBodyTokenMisused(this);
 
         return mBodyTokenMisused;
     }
 
-    public MIndentTokenMisused newIndentTokenMisused(
-            String pLine,
-            String pChar) {
+    public MIndentTokenMisused newIndentTokenMisused() {
 
         MIndentTokenMisused mIndentTokenMisused;
 
-        mIndentTokenMisused = new MIndentTokenMisused(pLine, pChar, this);
+        mIndentTokenMisused = new MIndentTokenMisused(this);
 
         return mIndentTokenMisused;
     }
 
-    public MDuplicateMacroRef newDuplicateMacroRef(
-            String pParam,
-            String pMacro,
-            String pLine,
-            String pChar) {
+    public MDuplicateMacroRef newDuplicateMacroRef() {
 
         MDuplicateMacroRef mDuplicateMacroRef;
 
-        mDuplicateMacroRef
-                = new MDuplicateMacroRef(pParam, pMacro, pLine, pChar, this);
+        mDuplicateMacroRef = new MDuplicateMacroRef(this);
 
         return mDuplicateMacroRef;
     }
 
-    public MIncorrectMacroType newIncorrectMacroType(
-            String pExpected,
-            String pFound,
-            String pIndex,
-            String pLine,
-            String pChar) {
+    public MIncorrectMacroType newIncorrectMacroType() {
 
         MIncorrectMacroType mIncorrectMacroType;
 
-        mIncorrectMacroType = new MIncorrectMacroType(pExpected, pFound, pIndex,
-                pLine, pChar, this);
+        mIncorrectMacroType = new MIncorrectMacroType(this);
 
         return mIncorrectMacroType;
     }
 
-    public MInvalidInsert newInvalidInsert(
-            String pLine,
-            String pChar,
-            String pName) {
+    public MInvalidInsert newInvalidInsert() {
 
         MInvalidInsert mInvalidInsert;
 
-        mInvalidInsert = new MInvalidInsert(pLine, pChar, pName, this);
+        mInvalidInsert = new MInvalidInsert(this);
 
         return mInvalidInsert;
     }

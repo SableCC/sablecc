@@ -7,17 +7,61 @@ import java.util.*;
 public class MInsertMacroPart
         extends Macro {
 
-    String field_Name;
+    private DSeparator ReferencedMacroNameSeparator;
 
-    String field_IndexBuilder;
+    private DBeforeFirst ReferencedMacroNameBeforeFirst;
 
-    String field_IndexInsert;
+    private DAfterLast ReferencedMacroNameAfterLast;
 
-    final List<Macro> list_MacroBodyParts;
+    private DNone ReferencedMacroNameNone;
 
-    final Context MacroBodyPartsContext = new Context();
+    final List<String> list_ReferencedMacroName;
 
-    final InternalValue MacroBodyPartsValue;
+    final Context ReferencedMacroNameContext = new Context();
+
+    final StringValue ReferencedMacroNameValue;
+
+    private DSeparator EnclosingClassNameSeparator;
+
+    private DBeforeFirst EnclosingClassNameBeforeFirst;
+
+    private DAfterLast EnclosingClassNameAfterLast;
+
+    private DNone EnclosingClassNameNone;
+
+    final List<String> list_EnclosingClassName;
+
+    final Context EnclosingClassNameContext = new Context();
+
+    final StringValue EnclosingClassNameValue;
+
+    private DSeparator IndexBuilderSeparator;
+
+    private DBeforeFirst IndexBuilderBeforeFirst;
+
+    private DAfterLast IndexBuilderAfterLast;
+
+    private DNone IndexBuilderNone;
+
+    final List<String> list_IndexBuilder;
+
+    final Context IndexBuilderContext = new Context();
+
+    final StringValue IndexBuilderValue;
+
+    private DSeparator IndexInsertSeparator;
+
+    private DBeforeFirst IndexInsertBeforeFirst;
+
+    private DAfterLast IndexInsertAfterLast;
+
+    private DNone IndexInsertNone;
+
+    final List<String> list_IndexInsert;
+
+    final Context IndexInsertContext = new Context();
+
+    final StringValue IndexInsertValue;
 
     private DSeparator MacroBodyPartsSeparator;
 
@@ -27,11 +71,11 @@ public class MInsertMacroPart
 
     private DNone MacroBodyPartsNone;
 
-    final List<Macro> list_SetInternals;
+    final List<Macro> list_MacroBodyParts;
 
-    final Context SetInternalsContext = new Context();
+    final Context MacroBodyPartsContext = new Context();
 
-    final InternalValue SetInternalsValue;
+    final MacroValue MacroBodyPartsValue;
 
     private DSeparator SetInternalsSeparator;
 
@@ -41,53 +85,184 @@ public class MInsertMacroPart
 
     private DNone SetInternalsNone;
 
+    final List<Macro> list_SetInternals;
+
+    final Context SetInternalsContext = new Context();
+
+    final MacroValue SetInternalsValue;
+
+    private DSeparator SingleElementListsSeparator;
+
+    private DBeforeFirst SingleElementListsBeforeFirst;
+
+    private DAfterLast SingleElementListsAfterLast;
+
+    private DNone SingleElementListsNone;
+
+    final List<Macro> list_SingleElementLists;
+
+    final Context SingleElementListsContext = new Context();
+
+    final MacroValue SingleElementListsValue;
+
     MInsertMacroPart(
-            String pName,
-            String pIndexBuilder,
-            String pIndexInsert,
             Macros macros) {
 
         setMacros(macros);
-        setPName(pName);
-        setPIndexBuilder(pIndexBuilder);
-        setPIndexInsert(pIndexInsert);
+        this.list_ReferencedMacroName = new LinkedList<>();
+        this.list_EnclosingClassName = new LinkedList<>();
+        this.list_IndexBuilder = new LinkedList<>();
+        this.list_IndexInsert = new LinkedList<>();
         this.list_MacroBodyParts = new LinkedList<>();
         this.list_SetInternals = new LinkedList<>();
+        this.list_SingleElementLists = new LinkedList<>();
 
-        this.MacroBodyPartsValue = new InternalValue(this.list_MacroBodyParts,
+        this.ReferencedMacroNameValue = new StringValue(
+                this.list_ReferencedMacroName, this.ReferencedMacroNameContext);
+        this.EnclosingClassNameValue = new StringValue(
+                this.list_EnclosingClassName, this.EnclosingClassNameContext);
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
+        this.IndexInsertValue = new StringValue(this.list_IndexInsert,
+                this.IndexInsertContext);
+        this.MacroBodyPartsValue = new MacroValue(this.list_MacroBodyParts,
                 this.MacroBodyPartsContext);
-        this.SetInternalsValue = new InternalValue(this.list_SetInternals,
+        this.SetInternalsValue = new MacroValue(this.list_SetInternals,
                 this.SetInternalsContext);
+        this.SingleElementListsValue = new MacroValue(
+                this.list_SingleElementLists, this.SingleElementListsContext);
     }
 
-    private void setPName(
-            String pName) {
+    public void addAllReferencedMacroName(
+            List<String> strings) {
 
-        if (pName == null) {
-            throw ObjectMacroException.parameterNull("Name");
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("ReferencedMacroName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("ReferencedMacroName");
+            }
+
+            this.list_ReferencedMacroName.add(string);
+        }
+    }
+
+    public void addReferencedMacroName(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("ReferencedMacroName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_Name = pName;
+        this.list_ReferencedMacroName.add(string);
     }
 
-    private void setPIndexBuilder(
-            String pIndexBuilder) {
+    public void addAllEnclosingClassName(
+            List<String> strings) {
 
-        if (pIndexBuilder == null) {
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("EnclosingClassName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("EnclosingClassName");
+            }
+
+            this.list_EnclosingClassName.add(string);
+        }
+    }
+
+    public void addEnclosingClassName(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("EnclosingClassName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_EnclosingClassName.add(string);
+    }
+
+    public void addAllIndexBuilder(
+            List<String> strings) {
+
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("IndexBuilder");
+            }
 
-        this.field_IndexBuilder = pIndexBuilder;
+            this.list_IndexBuilder.add(string);
+        }
     }
 
-    private void setPIndexInsert(
-            String pIndexInsert) {
+    public void addIndexBuilder(
+            String string) {
 
-        if (pIndexInsert == null) {
-            throw ObjectMacroException.parameterNull("IndexInsert");
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_IndexInsert = pIndexInsert;
+        this.list_IndexBuilder.add(string);
+    }
+
+    public void addAllIndexInsert(
+            List<String> strings) {
+
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("IndexInsert");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("IndexInsert");
+            }
+
+            this.list_IndexInsert.add(string);
+        }
+    }
+
+    public void addIndexInsert(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("IndexInsert");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_IndexInsert.add(string);
     }
 
     public void addAllMacroBodyParts(
@@ -97,7 +272,8 @@ public class MInsertMacroPart
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InsertMacroPart");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -164,7 +340,8 @@ public class MInsertMacroPart
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InsertMacroPart");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -183,7 +360,8 @@ public class MInsertMacroPart
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InsertMacroPart");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -202,7 +380,8 @@ public class MInsertMacroPart
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InsertMacroPart");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -221,7 +400,8 @@ public class MInsertMacroPart
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InsertMacroPart");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -240,7 +420,8 @@ public class MInsertMacroPart
             throw ObjectMacroException.parameterNull("MacroBodyParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InsertMacroPart");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -259,7 +440,8 @@ public class MInsertMacroPart
             throw ObjectMacroException.parameterNull("SetInternals");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InsertMacroPart");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -302,7 +484,8 @@ public class MInsertMacroPart
             throw ObjectMacroException.parameterNull("SetInternals");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InsertMacroPart");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -314,19 +497,210 @@ public class MInsertMacroPart
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    String buildName() {
+    public void addAllSingleElementLists(
+            List<Macro> macros) {
 
-        return this.field_Name;
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("SingleElementLists");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "SingleElementLists");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeSingleElementLists(macro);
+            this.list_SingleElementLists.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
     }
 
-    String buildIndexBuilder() {
+    void verifyTypeSingleElementLists(
+            Macro macro) {
 
-        return this.field_IndexBuilder;
+        macro.apply(new InternalsInitializer("SingleElementLists") {
+
+            @Override
+            void setNewStringValue(
+                    MNewStringValue mNewStringValue) {
+
+            }
+        });
     }
 
-    String buildIndexInsert() {
+    public void addSingleElementLists(
+            MNewStringValue macro) {
 
-        return this.field_IndexInsert;
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("SingleElementLists");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
+        this.list_SingleElementLists.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+
+    private String buildReferencedMacroName() {
+
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ReferencedMacroName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ReferencedMacroNameNone != null) {
+            sb.append(this.ReferencedMacroNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ReferencedMacroNameBeforeFirst != null) {
+                string = this.ReferencedMacroNameBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.ReferencedMacroNameAfterLast != null) {
+                string = this.ReferencedMacroNameAfterLast.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.ReferencedMacroNameSeparator != null) {
+                string = this.ReferencedMacroNameSeparator.apply(i, string,
+                        nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    private String buildEnclosingClassName() {
+
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_EnclosingClassName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.EnclosingClassNameNone != null) {
+            sb.append(this.EnclosingClassNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.EnclosingClassNameBeforeFirst != null) {
+                string = this.EnclosingClassNameBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.EnclosingClassNameAfterLast != null) {
+                string = this.EnclosingClassNameAfterLast.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.EnclosingClassNameSeparator != null) {
+                string = this.EnclosingClassNameSeparator.apply(i, string,
+                        nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    private String buildIndexBuilder() {
+
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_IndexBuilder;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.IndexBuilderNone != null) {
+            sb.append(this.IndexBuilderNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.IndexBuilderBeforeFirst != null) {
+                string = this.IndexBuilderBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.IndexBuilderAfterLast != null) {
+                string = this.IndexBuilderAfterLast.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.IndexBuilderSeparator != null) {
+                string = this.IndexBuilderSeparator.apply(i, string,
+                        nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    private String buildIndexInsert() {
+
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_IndexInsert;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.IndexInsertNone != null) {
+            sb.append(this.IndexInsertNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.IndexInsertBeforeFirst != null) {
+                string = this.IndexInsertBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.IndexInsertAfterLast != null) {
+                string = this.IndexInsertAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.IndexInsertSeparator != null) {
+                string = this.IndexInsertSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
     private String buildMacroBodyParts() {
@@ -407,29 +781,78 @@ public class MInsertMacroPart
         return sb.toString();
     }
 
-    String getName() {
+    private String buildSingleElementLists() {
 
-        return this.field_Name;
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.SingleElementListsContext;
+        List<Macro> macros = this.list_SingleElementLists;
+
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if (this.SingleElementListsNone != null) {
+            sb.append(this.SingleElementListsNone.apply(i, "", nb_macros));
+        }
+
+        for (Macro macro : macros) {
+            expansion = macro.build(local_context);
+
+            if (this.SingleElementListsBeforeFirst != null) {
+                expansion = this.SingleElementListsBeforeFirst.apply(i,
+                        expansion, nb_macros);
+            }
+
+            if (this.SingleElementListsAfterLast != null) {
+                expansion = this.SingleElementListsAfterLast.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.SingleElementListsSeparator != null) {
+                expansion = this.SingleElementListsSeparator.apply(i, expansion,
+                        nb_macros);
+            }
+
+            sb.append(expansion);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getIndexBuilder() {
+    StringValue getReferencedMacroName() {
 
-        return this.field_IndexBuilder;
+        return this.ReferencedMacroNameValue;
     }
 
-    String getIndexInsert() {
+    StringValue getEnclosingClassName() {
 
-        return this.field_IndexInsert;
+        return this.EnclosingClassNameValue;
     }
 
-    private InternalValue getMacroBodyParts() {
+    StringValue getIndexBuilder() {
+
+        return this.IndexBuilderValue;
+    }
+
+    StringValue getIndexInsert() {
+
+        return this.IndexInsertValue;
+    }
+
+    MacroValue getMacroBodyParts() {
 
         return this.MacroBodyPartsValue;
     }
 
-    private InternalValue getSetInternals() {
+    MacroValue getSetInternals() {
 
         return this.SetInternalsValue;
+    }
+
+    MacroValue getSingleElementLists() {
+
+        return this.SingleElementListsValue;
     }
 
     private void initMacroBodyPartsInternals(
@@ -489,6 +912,47 @@ public class MInsertMacroPart
         }
     }
 
+    private void initSingleElementListsInternals(
+            Context context) {
+
+        for (Macro macro : this.list_SingleElementLists) {
+            macro.apply(new InternalsInitializer("SingleElementLists") {
+
+                @Override
+                void setNewStringValue(
+                        MNewStringValue mNewStringValue) {
+
+                }
+            });
+        }
+    }
+
+    private void initReferencedMacroNameDirectives() {
+
+    }
+
+    private void initEnclosingClassNameDirectives() {
+
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(".");
+        this.EnclosingClassNameAfterLast = new DAfterLast(sb1.toString());
+        this.EnclosingClassNameValue
+                .setAfterLast(this.EnclosingClassNameAfterLast);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("M");
+        this.EnclosingClassNameBeforeFirst = new DBeforeFirst(sb2.toString());
+        this.EnclosingClassNameValue
+                .setBeforeFirst(this.EnclosingClassNameBeforeFirst);
+    }
+
+    private void initIndexBuilderDirectives() {
+
+    }
+
+    private void initIndexInsertDirectives() {
+
+    }
+
     private void initMacroBodyPartsDirectives() {
 
         StringBuilder sb1 = new StringBuilder();
@@ -503,6 +967,15 @@ public class MInsertMacroPart
         sb1.append(LINE_SEPARATOR);
         this.SetInternalsSeparator = new DSeparator(sb1.toString());
         this.SetInternalsValue.setSeparator(this.SetInternalsSeparator);
+    }
+
+    private void initSingleElementListsDirectives() {
+
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.SingleElementListsSeparator = new DSeparator(sb1.toString());
+        this.SingleElementListsValue
+                .setSeparator(this.SingleElementListsSeparator);
     }
 
     @Override
@@ -527,25 +1000,34 @@ public class MInsertMacroPart
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initReferencedMacroNameDirectives();
+        initEnclosingClassNameDirectives();
+        initIndexBuilderDirectives();
+        initIndexInsertDirectives();
         initMacroBodyPartsDirectives();
         initSetInternalsDirectives();
+        initSingleElementListsDirectives();
 
         initMacroBodyPartsInternals(null);
         initSetInternalsInternals(null);
+        initSingleElementListsInternals(null);
 
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("M");
-        sb0.append(buildName());
+        sb0.append(buildReferencedMacroName());
         sb0.append(" m");
         sb0.append(buildIndexInsert());
-        sb0.append(" = this.getMacros().new");
-        sb0.append(buildName());
+        sb0.append(" = ");
+        sb0.append(buildEnclosingClassName());
+        sb0.append("this.getMacros().new");
+        sb0.append(buildReferencedMacroName());
         sb0.append("();");
         sb0.append(LINE_SEPARATOR);
         sb0.append(buildMacroBodyParts());
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(buildSingleElementLists());
         sb0.append(LINE_SEPARATOR);
         sb0.append(buildSetInternals());
         sb0.append(LINE_SEPARATOR);

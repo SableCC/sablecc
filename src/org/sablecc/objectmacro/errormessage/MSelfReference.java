@@ -7,154 +7,563 @@ import java.util.*;
 public class MSelfReference
         extends Macro {
 
-    String field_Reference;
+    private DSeparator ReferenceSeparator;
 
-    String field_Line;
+    private DBeforeFirst ReferenceBeforeFirst;
 
-    String field_Char;
+    private DAfterLast ReferenceAfterLast;
 
-    String field_Context;
+    private DNone ReferenceNone;
 
-    String field_ContextLine;
+    final List<String> list_Reference;
 
-    String field_ContextChar;
+    final Context ReferenceContext = new Context();
+
+    final StringValue ReferenceValue;
+
+    private DSeparator LineSeparator;
+
+    private DBeforeFirst LineBeforeFirst;
+
+    private DAfterLast LineAfterLast;
+
+    private DNone LineNone;
+
+    final List<String> list_Line;
+
+    final Context LineContext = new Context();
+
+    final StringValue LineValue;
+
+    private DSeparator CharSeparator;
+
+    private DBeforeFirst CharBeforeFirst;
+
+    private DAfterLast CharAfterLast;
+
+    private DNone CharNone;
+
+    final List<String> list_Char;
+
+    final Context CharContext = new Context();
+
+    final StringValue CharValue;
+
+    private DSeparator ContextSeparator;
+
+    private DBeforeFirst ContextBeforeFirst;
+
+    private DAfterLast ContextAfterLast;
+
+    private DNone ContextNone;
+
+    final List<String> list_Context;
+
+    final Context ContextContext = new Context();
+
+    final StringValue ContextValue;
+
+    private DSeparator ContextLineSeparator;
+
+    private DBeforeFirst ContextLineBeforeFirst;
+
+    private DAfterLast ContextLineAfterLast;
+
+    private DNone ContextLineNone;
+
+    final List<String> list_ContextLine;
+
+    final Context ContextLineContext = new Context();
+
+    final StringValue ContextLineValue;
+
+    private DSeparator ContextCharSeparator;
+
+    private DBeforeFirst ContextCharBeforeFirst;
+
+    private DAfterLast ContextCharAfterLast;
+
+    private DNone ContextCharNone;
+
+    final List<String> list_ContextChar;
+
+    final Context ContextCharContext = new Context();
+
+    final StringValue ContextCharValue;
 
     MSelfReference(
-            String pReference,
-            String pLine,
-            String pChar,
-            String pContext,
-            String pContextLine,
-            String pContextChar,
             Macros macros) {
 
         setMacros(macros);
-        setPReference(pReference);
-        setPLine(pLine);
-        setPChar(pChar);
-        setPContext(pContext);
-        setPContextLine(pContextLine);
-        setPContextChar(pContextChar);
+        this.list_Reference = new LinkedList<>();
+        this.list_Line = new LinkedList<>();
+        this.list_Char = new LinkedList<>();
+        this.list_Context = new LinkedList<>();
+        this.list_ContextLine = new LinkedList<>();
+        this.list_ContextChar = new LinkedList<>();
+
+        this.ReferenceValue
+                = new StringValue(this.list_Reference, this.ReferenceContext);
+        this.LineValue = new StringValue(this.list_Line, this.LineContext);
+        this.CharValue = new StringValue(this.list_Char, this.CharContext);
+        this.ContextValue
+                = new StringValue(this.list_Context, this.ContextContext);
+        this.ContextLineValue = new StringValue(this.list_ContextLine,
+                this.ContextLineContext);
+        this.ContextCharValue = new StringValue(this.list_ContextChar,
+                this.ContextCharContext);
     }
 
-    private void setPReference(
-            String pReference) {
+    public void addAllReference(
+            List<String> strings) {
 
-        if (pReference == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Reference");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Reference");
+            }
 
-        this.field_Reference = pReference;
+            this.list_Reference.add(string);
+        }
     }
 
-    private void setPLine(
-            String pLine) {
+    public void addReference(
+            String string) {
 
-        if (pLine == null) {
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Reference");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Reference.add(string);
+    }
+
+    public void addAllLine(
+            List<String> strings) {
+
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Line");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Line");
+            }
 
-        this.field_Line = pLine;
+            this.list_Line.add(string);
+        }
     }
 
-    private void setPChar(
-            String pChar) {
+    public void addLine(
+            String string) {
 
-        if (pChar == null) {
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Line");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Line.add(string);
+    }
+
+    public void addAllChar(
+            List<String> strings) {
+
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Char");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Char");
+            }
 
-        this.field_Char = pChar;
+            this.list_Char.add(string);
+        }
     }
 
-    private void setPContext(
-            String pContext) {
+    public void addChar(
+            String string) {
 
-        if (pContext == null) {
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Char.add(string);
+    }
+
+    public void addAllContext(
+            List<String> strings) {
+
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Context");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Context");
+            }
 
-        this.field_Context = pContext;
+            this.list_Context.add(string);
+        }
     }
 
-    private void setPContextLine(
-            String pContextLine) {
+    public void addContext(
+            String string) {
 
-        if (pContextLine == null) {
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Context");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Context.add(string);
+    }
+
+    public void addAllContextLine(
+            List<String> strings) {
+
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("ContextLine");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("ContextLine");
+            }
 
-        this.field_ContextLine = pContextLine;
+            this.list_ContextLine.add(string);
+        }
     }
 
-    private void setPContextChar(
-            String pContextChar) {
+    public void addContextLine(
+            String string) {
 
-        if (pContextChar == null) {
-            throw ObjectMacroException.parameterNull("ContextChar");
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("ContextLine");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_ContextChar = pContextChar;
+        this.list_ContextLine.add(string);
     }
 
-    String buildReference() {
+    public void addAllContextChar(
+            List<String> strings) {
 
-        return this.field_Reference;
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("ContextChar");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("ContextChar");
+            }
+
+            this.list_ContextChar.add(string);
+        }
     }
 
-    String buildLine() {
+    public void addContextChar(
+            String string) {
 
-        return this.field_Line;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("ContextChar");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_ContextChar.add(string);
     }
 
-    String buildChar() {
+    private String buildReference() {
 
-        return this.field_Char;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Reference;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ReferenceNone != null) {
+            sb.append(this.ReferenceNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ReferenceBeforeFirst != null) {
+                string = this.ReferenceBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ReferenceAfterLast != null) {
+                string = this.ReferenceAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ReferenceSeparator != null) {
+                string = this.ReferenceSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String buildContext() {
+    private String buildLine() {
 
-        return this.field_Context;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Line;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.LineNone != null) {
+            sb.append(this.LineNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.LineBeforeFirst != null) {
+                string = this.LineBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.LineAfterLast != null) {
+                string = this.LineAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.LineSeparator != null) {
+                string = this.LineSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String buildContextLine() {
+    private String buildChar() {
 
-        return this.field_ContextLine;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Char;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.CharNone != null) {
+            sb.append(this.CharNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.CharBeforeFirst != null) {
+                string = this.CharBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.CharAfterLast != null) {
+                string = this.CharAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.CharSeparator != null) {
+                string = this.CharSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String buildContextChar() {
+    private String buildContext() {
 
-        return this.field_ContextChar;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Context;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ContextNone != null) {
+            sb.append(this.ContextNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ContextBeforeFirst != null) {
+                string = this.ContextBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ContextAfterLast != null) {
+                string = this.ContextAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ContextSeparator != null) {
+                string = this.ContextSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getReference() {
+    private String buildContextLine() {
 
-        return this.field_Reference;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ContextLine;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ContextLineNone != null) {
+            sb.append(this.ContextLineNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ContextLineBeforeFirst != null) {
+                string = this.ContextLineBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.ContextLineAfterLast != null) {
+                string = this.ContextLineAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ContextLineSeparator != null) {
+                string = this.ContextLineSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getLine() {
+    private String buildContextChar() {
 
-        return this.field_Line;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ContextChar;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ContextCharNone != null) {
+            sb.append(this.ContextCharNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ContextCharBeforeFirst != null) {
+                string = this.ContextCharBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.ContextCharAfterLast != null) {
+                string = this.ContextCharAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ContextCharSeparator != null) {
+                string = this.ContextCharSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getChar() {
+    StringValue getReference() {
 
-        return this.field_Char;
+        return this.ReferenceValue;
     }
 
-    String getContext() {
+    StringValue getLine() {
 
-        return this.field_Context;
+        return this.LineValue;
     }
 
-    String getContextLine() {
+    StringValue getChar() {
 
-        return this.field_ContextLine;
+        return this.CharValue;
     }
 
-    String getContextChar() {
+    StringValue getContext() {
 
-        return this.field_ContextChar;
+        return this.ContextValue;
+    }
+
+    StringValue getContextLine() {
+
+        return this.ContextLineValue;
+    }
+
+    StringValue getContextChar() {
+
+        return this.ContextCharValue;
+    }
+
+    private void initReferenceDirectives() {
+
+    }
+
+    private void initLineDirectives() {
+
+    }
+
+    private void initCharDirectives() {
+
+    }
+
+    private void initContextDirectives() {
+
+    }
+
+    private void initContextLineDirectives() {
+
+    }
+
+    private void initContextCharDirectives() {
+
     }
 
     @Override
@@ -179,7 +588,13 @@ public class MSelfReference
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initReferenceDirectives();
+        initLineDirectives();
+        initCharDirectives();
+        initContextDirectives();
+        initContextLineDirectives();
+        initContextCharDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

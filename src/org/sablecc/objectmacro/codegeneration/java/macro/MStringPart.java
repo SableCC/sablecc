@@ -7,58 +7,198 @@ import java.util.*;
 public class MStringPart
         extends Macro {
 
-    String field_String;
+    private DSeparator StringSeparator;
 
-    String field_IndexBuilder;
+    private DBeforeFirst StringBeforeFirst;
+
+    private DAfterLast StringAfterLast;
+
+    private DNone StringNone;
+
+    final List<String> list_String;
+
+    final Context StringContext = new Context();
+
+    final StringValue StringValue;
+
+    private DSeparator IndexBuilderSeparator;
+
+    private DBeforeFirst IndexBuilderBeforeFirst;
+
+    private DAfterLast IndexBuilderAfterLast;
+
+    private DNone IndexBuilderNone;
+
+    final List<String> list_IndexBuilder;
+
+    final Context IndexBuilderContext = new Context();
+
+    final StringValue IndexBuilderValue;
 
     MStringPart(
-            String pString,
-            String pIndexBuilder,
             Macros macros) {
 
         setMacros(macros);
-        setPString(pString);
-        setPIndexBuilder(pIndexBuilder);
+        this.list_String = new LinkedList<>();
+        this.list_IndexBuilder = new LinkedList<>();
+
+        this.StringValue
+                = new StringValue(this.list_String, this.StringContext);
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
     }
 
-    private void setPString(
-            String pString) {
+    public void addAllString(
+            List<String> strings) {
 
-        if (pString == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("String");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("String");
+            }
 
-        this.field_String = pString;
+            this.list_String.add(string);
+        }
     }
 
-    private void setPIndexBuilder(
-            String pIndexBuilder) {
+    public void addString(
+            String string) {
 
-        if (pIndexBuilder == null) {
-            throw ObjectMacroException.parameterNull("IndexBuilder");
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("String");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_IndexBuilder = pIndexBuilder;
+        this.list_String.add(string);
     }
 
-    String buildString() {
+    public void addAllIndexBuilder(
+            List<String> strings) {
 
-        return this.field_String;
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("IndexBuilder");
+            }
+
+            this.list_IndexBuilder.add(string);
+        }
     }
 
-    String buildIndexBuilder() {
+    public void addIndexBuilder(
+            String string) {
 
-        return this.field_IndexBuilder;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_IndexBuilder.add(string);
     }
 
-    String getString() {
+    private String buildString() {
 
-        return this.field_String;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_String;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.StringNone != null) {
+            sb.append(this.StringNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.StringBeforeFirst != null) {
+                string = this.StringBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.StringAfterLast != null) {
+                string = this.StringAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.StringSeparator != null) {
+                string = this.StringSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getIndexBuilder() {
+    private String buildIndexBuilder() {
 
-        return this.field_IndexBuilder;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_IndexBuilder;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.IndexBuilderNone != null) {
+            sb.append(this.IndexBuilderNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.IndexBuilderBeforeFirst != null) {
+                string = this.IndexBuilderBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.IndexBuilderAfterLast != null) {
+                string = this.IndexBuilderAfterLast.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.IndexBuilderSeparator != null) {
+                string = this.IndexBuilderSeparator.apply(i, string,
+                        nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getString() {
+
+        return this.StringValue;
+    }
+
+    StringValue getIndexBuilder() {
+
+        return this.IndexBuilderValue;
+    }
+
+    private void initStringDirectives() {
+
+    }
+
+    private void initIndexBuilderDirectives() {
+
     }
 
     @Override
@@ -83,7 +223,9 @@ public class MStringPart
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initStringDirectives();
+        initIndexBuilderDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

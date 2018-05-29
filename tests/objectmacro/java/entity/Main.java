@@ -65,24 +65,45 @@ public class Main {
     private static MEntity createEntity(
             String entity_name){
 
-        MEntity mEntity = m.newEntity(entity_name);
-        mEntity.addPackage(m.newPackageDeclaration("entities"));
-        MSetter setter = m.newSetter("id_" + entity_name.toLowerCase(), Integer.class.getSimpleName());
-        MGetter getter = m.newGetter("id_" + entity_name.toLowerCase(), Integer.class.getSimpleName());
+        MEntity mEntity = m.newEntity();
+        mEntity.addName(entity_name);
+        MPackageDeclaration mPackageDeclaration = m.newPackageDeclaration();
+        mPackageDeclaration.addPackageName("entities");
+        mEntity.addPackage(mPackageDeclaration);
+
+        MSetter setter = m.newSetter();
+        setter.addName("id_" + entity_name.toLowerCase());
+        setter.addName(Integer.class.getSimpleName());
+
+        MGetter getter = m.newGetter();
+        getter.addName("id_" + entity_name.toLowerCase());
+        getter.addName(Integer.class.getSimpleName());
 
         mEntity.addAttributes(createId("id_" + entity_name.toLowerCase(), "AUTO"));
         mEntity.addAccessors(setter);
         mEntity.addAccessors(getter);
 
         mEntity.addAttributes(createAttribute("A", Integer.class.getSimpleName(), false));
-        setter = m.newSetter("A", Integer.class.getSimpleName());
-        getter = m.newGetter("A", Integer.class.getSimpleName());
+        setter = m.newSetter();
+        setter.addName("A" + entity_name.toLowerCase());
+        setter.addName(Integer.class.getSimpleName());
+
+        getter = m.newGetter();
+        getter.addName("A" + entity_name.toLowerCase());
+        getter.addName(Integer.class.getSimpleName());
+
         mEntity.addAccessors(setter);
         mEntity.addAccessors(getter);
 
         mEntity.addAttributes(createAttribute("B", String.class.getSimpleName(), true));
-        setter = m.newSetter("B", String.class.getSimpleName());
-        getter = m.newGetter("B", String.class.getSimpleName());
+        setter = m.newSetter();
+        setter.addName("B" + entity_name.toLowerCase());
+        setter.addName(Integer.class.getSimpleName());
+
+        getter = m.newGetter();
+        getter.addName("B" + entity_name.toLowerCase());
+        getter.addName(Integer.class.getSimpleName());
+
         mEntity.addAccessors(setter);
         mEntity.addAccessors(getter);
 
@@ -93,11 +114,14 @@ public class Main {
             String name,
             String generation_strategy){
 
-        MAttribute mAttribute = m.newAttribute(name, "Integer");
+        MAttribute mAttribute = m.newAttribute();
+        mAttribute.addName(name);
+        mAttribute.addType(Integer.class.getSimpleName());
         MPrimaryKey mPrimaryKey = m.newPrimaryKey();
         MIdIncrementationStrategy mIdIncrementationStrategy = null;
         if(!generation_strategy.equals("")){
-            mIdIncrementationStrategy = m.newIdIncrementationStrategy(generation_strategy);
+            mIdIncrementationStrategy = m.newIdIncrementationStrategy();
+            mIdIncrementationStrategy.addStrategy(generation_strategy);
         }
 
         mAttribute.addNotNull(m.newNotNull());
@@ -118,7 +142,9 @@ public class Main {
             String type,
             boolean notNull){
 
-        MAttribute mAttribute = m.newAttribute(name, type);
+        MAttribute mAttribute = m.newAttribute();
+        mAttribute.addName(name);
+        mAttribute.addType(type);
         if(notNull) {
             mAttribute.addNotNull(m.newNotNull());
         }

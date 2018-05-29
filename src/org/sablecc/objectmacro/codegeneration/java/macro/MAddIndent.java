@@ -7,13 +7,19 @@ import java.util.*;
 public class MAddIndent
         extends Macro {
 
-    String field_IndexBuilder;
+    private DSeparator IndexBuilderSeparator;
 
-    final List<Macro> list_IndentParts;
+    private DBeforeFirst IndexBuilderBeforeFirst;
 
-    final Context IndentPartsContext = new Context();
+    private DAfterLast IndexBuilderAfterLast;
 
-    final InternalValue IndentPartsValue;
+    private DNone IndexBuilderNone;
+
+    final List<String> list_IndexBuilder;
+
+    final Context IndexBuilderContext = new Context();
+
+    final StringValue IndexBuilderValue;
 
     private DSeparator IndentPartsSeparator;
 
@@ -23,26 +29,56 @@ public class MAddIndent
 
     private DNone IndentPartsNone;
 
+    final List<Macro> list_IndentParts;
+
+    final Context IndentPartsContext = new Context();
+
+    final MacroValue IndentPartsValue;
+
     MAddIndent(
-            String pIndexBuilder,
             Macros macros) {
 
         setMacros(macros);
-        setPIndexBuilder(pIndexBuilder);
+        this.list_IndexBuilder = new LinkedList<>();
         this.list_IndentParts = new LinkedList<>();
 
-        this.IndentPartsValue = new InternalValue(this.list_IndentParts,
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
+        this.IndentPartsValue = new MacroValue(this.list_IndentParts,
                 this.IndentPartsContext);
     }
 
-    private void setPIndexBuilder(
-            String pIndexBuilder) {
+    public void addAllIndexBuilder(
+            List<String> strings) {
 
-        if (pIndexBuilder == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("IndexBuilder");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("IndexBuilder");
+            }
 
-        this.field_IndexBuilder = pIndexBuilder;
+            this.list_IndexBuilder.add(string);
+        }
+    }
+
+    public void addIndexBuilder(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_IndexBuilder.add(string);
     }
 
     public void addAllIndentParts(
@@ -52,7 +88,8 @@ public class MAddIndent
             throw ObjectMacroException.parameterNull("IndentParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("AddIndent");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -119,7 +156,8 @@ public class MAddIndent
             throw ObjectMacroException.parameterNull("IndentParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("AddIndent");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -138,7 +176,8 @@ public class MAddIndent
             throw ObjectMacroException.parameterNull("IndentParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("AddIndent");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -157,7 +196,8 @@ public class MAddIndent
             throw ObjectMacroException.parameterNull("IndentParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("AddIndent");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -176,7 +216,8 @@ public class MAddIndent
             throw ObjectMacroException.parameterNull("IndentParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("AddIndent");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -195,7 +236,8 @@ public class MAddIndent
             throw ObjectMacroException.parameterNull("IndentParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("AddIndent");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -207,9 +249,40 @@ public class MAddIndent
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    String buildIndexBuilder() {
+    private String buildIndexBuilder() {
 
-        return this.field_IndexBuilder;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_IndexBuilder;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.IndexBuilderNone != null) {
+            sb.append(this.IndexBuilderNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.IndexBuilderBeforeFirst != null) {
+                string = this.IndexBuilderBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.IndexBuilderAfterLast != null) {
+                string = this.IndexBuilderAfterLast.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.IndexBuilderSeparator != null) {
+                string = this.IndexBuilderSeparator.apply(i, string,
+                        nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
     private String buildIndentParts() {
@@ -251,12 +324,12 @@ public class MAddIndent
         return sb.toString();
     }
 
-    String getIndexBuilder() {
+    StringValue getIndexBuilder() {
 
-        return this.field_IndexBuilder;
+        return this.IndexBuilderValue;
     }
 
-    private InternalValue getIndentParts() {
+    MacroValue getIndentParts() {
 
         return this.IndentPartsValue;
     }
@@ -300,6 +373,10 @@ public class MAddIndent
         }
     }
 
+    private void initIndexBuilderDirectives() {
+
+    }
+
     private void initIndentPartsDirectives() {
 
         StringBuilder sb1 = new StringBuilder();
@@ -330,8 +407,8 @@ public class MAddIndent
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initIndexBuilderDirectives();
         initIndentPartsDirectives();
 
         initIndentPartsInternals(null);

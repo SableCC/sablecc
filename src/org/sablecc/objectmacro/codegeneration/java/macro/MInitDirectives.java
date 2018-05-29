@@ -7,13 +7,19 @@ import java.util.*;
 public class MInitDirectives
         extends Macro {
 
-    String field_ParamName;
+    private DSeparator ParamNameSeparator;
 
-    final List<Macro> list_NewDirectives;
+    private DBeforeFirst ParamNameBeforeFirst;
 
-    final Context NewDirectivesContext = new Context();
+    private DAfterLast ParamNameAfterLast;
 
-    final InternalValue NewDirectivesValue;
+    private DNone ParamNameNone;
+
+    final List<String> list_ParamName;
+
+    final Context ParamNameContext = new Context();
+
+    final StringValue ParamNameValue;
 
     private DSeparator NewDirectivesSeparator;
 
@@ -23,26 +29,56 @@ public class MInitDirectives
 
     private DNone NewDirectivesNone;
 
+    final List<Macro> list_NewDirectives;
+
+    final Context NewDirectivesContext = new Context();
+
+    final MacroValue NewDirectivesValue;
+
     MInitDirectives(
-            String pParamName,
             Macros macros) {
 
         setMacros(macros);
-        setPParamName(pParamName);
+        this.list_ParamName = new LinkedList<>();
         this.list_NewDirectives = new LinkedList<>();
 
-        this.NewDirectivesValue = new InternalValue(this.list_NewDirectives,
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.NewDirectivesValue = new MacroValue(this.list_NewDirectives,
                 this.NewDirectivesContext);
     }
 
-    private void setPParamName(
-            String pParamName) {
+    public void addAllParamName(
+            List<String> strings) {
 
-        if (pParamName == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("ParamName");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("ParamName");
+            }
 
-        this.field_ParamName = pParamName;
+            this.list_ParamName.add(string);
+        }
+    }
+
+    public void addParamName(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_ParamName.add(string);
     }
 
     public void addAllNewDirectives(
@@ -52,7 +88,8 @@ public class MInitDirectives
             throw ObjectMacroException.parameterNull("NewDirectives");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InitDirectives");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -95,7 +132,8 @@ public class MInitDirectives
             throw ObjectMacroException.parameterNull("NewDirectives");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("InitDirectives");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -107,9 +145,37 @@ public class MInitDirectives
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    String buildParamName() {
+    private String buildParamName() {
 
-        return this.field_ParamName;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ParamName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
     private String buildNewDirectives() {
@@ -151,12 +217,12 @@ public class MInitDirectives
         return sb.toString();
     }
 
-    String getParamName() {
+    StringValue getParamName() {
 
-        return this.field_ParamName;
+        return this.ParamNameValue;
     }
 
-    private InternalValue getNewDirectives() {
+    MacroValue getNewDirectives() {
 
         return this.NewDirectivesValue;
     }
@@ -177,6 +243,10 @@ public class MInitDirectives
                 }
             });
         }
+    }
+
+    private void initParamNameDirectives() {
+
     }
 
     private void initNewDirectivesDirectives() {
@@ -205,8 +275,8 @@ public class MInitDirectives
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initParamNameDirectives();
         initNewDirectivesDirectives();
 
         initNewDirectivesInternals(null);
@@ -215,7 +285,7 @@ public class MInitDirectives
 
         sb0.append("private void init");
         sb0.append(buildParamName());
-        sb0.append("Directives()");
+        sb0.append("Directives() ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();

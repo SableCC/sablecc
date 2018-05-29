@@ -7,12 +7,6 @@ import java.util.*;
 public class MParentName
         extends Macro {
 
-    final List<Macro> list_Parent;
-
-    final Context ParentContext = new Context();
-
-    final InternalValue ParentValue;
-
     private DSeparator ParentSeparator;
 
     private DBeforeFirst ParentBeforeFirst;
@@ -21,14 +15,19 @@ public class MParentName
 
     private DNone ParentNone;
 
+    final List<Macro> list_Parent;
+
+    final Context ParentContext = new Context();
+
+    final MacroValue ParentValue;
+
     MParentName(
             Macros macros) {
 
         setMacros(macros);
         this.list_Parent = new LinkedList<>();
 
-        this.ParentValue
-                = new InternalValue(this.list_Parent, this.ParentContext);
+        this.ParentValue = new MacroValue(this.list_Parent, this.ParentContext);
     }
 
     public void addAllParent(
@@ -38,7 +37,8 @@ public class MParentName
             throw ObjectMacroException.parameterNull("Parent");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("ParentName");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -81,7 +81,8 @@ public class MParentName
             throw ObjectMacroException.parameterNull("Parent");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("ParentName");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -130,7 +131,7 @@ public class MParentName
         return sb.toString();
     }
 
-    private InternalValue getParent() {
+    MacroValue getParent() {
 
         return this.ParentValue;
     }
@@ -176,8 +177,8 @@ public class MParentName
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initParentDirectives();
         initParentDirectives();
 
         initParentInternals(null);

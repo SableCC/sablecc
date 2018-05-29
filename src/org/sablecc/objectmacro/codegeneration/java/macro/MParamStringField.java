@@ -7,34 +7,103 @@ import java.util.*;
 public class MParamStringField
         extends Macro {
 
-    String field_Name;
+    private DSeparator ParamNameSeparator;
+
+    private DBeforeFirst ParamNameBeforeFirst;
+
+    private DAfterLast ParamNameAfterLast;
+
+    private DNone ParamNameNone;
+
+    final List<String> list_ParamName;
+
+    final Context ParamNameContext = new Context();
+
+    final StringValue ParamNameValue;
 
     MParamStringField(
-            String pName,
             Macros macros) {
 
         setMacros(macros);
-        setPName(pName);
+        this.list_ParamName = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
     }
 
-    private void setPName(
-            String pName) {
+    public void addAllParamName(
+            List<String> strings) {
 
-        if (pName == null) {
-            throw ObjectMacroException.parameterNull("Name");
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("ParamName");
+            }
+
+            this.list_ParamName.add(string);
+        }
+    }
+
+    public void addParamName(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_Name = pName;
+        this.list_ParamName.add(string);
     }
 
-    String buildName() {
+    private String buildParamName() {
 
-        return this.field_Name;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ParamName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getName() {
+    StringValue getParamName() {
 
-        return this.field_Name;
+        return this.ParamNameValue;
+    }
+
+    private void initParamNameDirectives() {
+
     }
 
     @Override
@@ -59,13 +128,26 @@ public class MParamStringField
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initParamNameDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append("String field_");
-        sb0.append(buildName());
+        sb0.append("final List<String> list_");
+        sb0.append(buildParamName());
         sb0.append(";");
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        MContextField m1 = getMacros().newContextField();
+
+        m1.setParamName(null, getParamName());
+        sb0.append(m1.build(null));
+        sb0.append(LINE_SEPARATOR);
+        sb0.append(LINE_SEPARATOR);
+        MStringValueField m2 = getMacros().newStringValueField();
+
+        m2.setParamName(null, getParamName());
+        sb0.append(m2.build(null));
 
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();

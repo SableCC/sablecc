@@ -7,58 +7,195 @@ import java.util.*;
 public class MOutputError
         extends Macro {
 
-    String field_FileName;
+    private DSeparator FileNameSeparator;
 
-    String field_Message;
+    private DBeforeFirst FileNameBeforeFirst;
+
+    private DAfterLast FileNameAfterLast;
+
+    private DNone FileNameNone;
+
+    final List<String> list_FileName;
+
+    final Context FileNameContext = new Context();
+
+    final StringValue FileNameValue;
+
+    private DSeparator MessageSeparator;
+
+    private DBeforeFirst MessageBeforeFirst;
+
+    private DAfterLast MessageAfterLast;
+
+    private DNone MessageNone;
+
+    final List<String> list_Message;
+
+    final Context MessageContext = new Context();
+
+    final StringValue MessageValue;
 
     MOutputError(
-            String pFileName,
-            String pMessage,
             Macros macros) {
 
         setMacros(macros);
-        setPFileName(pFileName);
-        setPMessage(pMessage);
+        this.list_FileName = new LinkedList<>();
+        this.list_Message = new LinkedList<>();
+
+        this.FileNameValue
+                = new StringValue(this.list_FileName, this.FileNameContext);
+        this.MessageValue
+                = new StringValue(this.list_Message, this.MessageContext);
     }
 
-    private void setPFileName(
-            String pFileName) {
+    public void addAllFileName(
+            List<String> strings) {
 
-        if (pFileName == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("FileName");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("FileName");
+            }
 
-        this.field_FileName = pFileName;
+            this.list_FileName.add(string);
+        }
     }
 
-    private void setPMessage(
-            String pMessage) {
+    public void addFileName(
+            String string) {
 
-        if (pMessage == null) {
-            throw ObjectMacroException.parameterNull("Message");
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("FileName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_Message = pMessage;
+        this.list_FileName.add(string);
     }
 
-    String buildFileName() {
+    public void addAllMessage(
+            List<String> strings) {
 
-        return this.field_FileName;
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("Message");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Message");
+            }
+
+            this.list_Message.add(string);
+        }
     }
 
-    String buildMessage() {
+    public void addMessage(
+            String string) {
 
-        return this.field_Message;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Message");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Message.add(string);
     }
 
-    String getFileName() {
+    private String buildFileName() {
 
-        return this.field_FileName;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_FileName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.FileNameNone != null) {
+            sb.append(this.FileNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.FileNameBeforeFirst != null) {
+                string = this.FileNameBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.FileNameAfterLast != null) {
+                string = this.FileNameAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.FileNameSeparator != null) {
+                string = this.FileNameSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getMessage() {
+    private String buildMessage() {
 
-        return this.field_Message;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Message;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.MessageNone != null) {
+            sb.append(this.MessageNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.MessageBeforeFirst != null) {
+                string = this.MessageBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.MessageAfterLast != null) {
+                string = this.MessageAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.MessageSeparator != null) {
+                string = this.MessageSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getFileName() {
+
+        return this.FileNameValue;
+    }
+
+    StringValue getMessage() {
+
+        return this.MessageValue;
+    }
+
+    private void initFileNameDirectives() {
+
+    }
+
+    private void initMessageDirectives() {
+
     }
 
     @Override
@@ -83,7 +220,9 @@ public class MOutputError
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initFileNameDirectives();
+        initMessageDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

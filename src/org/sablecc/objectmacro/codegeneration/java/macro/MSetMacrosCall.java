@@ -7,35 +7,38 @@ import java.util.*;
 public class MSetMacrosCall
         extends Macro {
 
-    private Map<Context, String> field_MacrosParamName = new LinkedHashMap<>();
+    private Map<Context, StringValue> list_MacrosParamName
+            = new LinkedHashMap<>();
 
     MSetMacrosCall(
             Macros macros) {
 
         setMacros(macros);
+        this.list_MacrosParamName = new LinkedHashMap<>();
     }
 
     void setMacrosParamName(
             Context context,
-            String value) {
+            StringValue value) {
 
         if (value == null) {
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_MacrosParamName.put(context, value);
+        this.list_MacrosParamName.put(context, value);
     }
 
-    String buildMacrosParamName(
+    private String buildMacrosParamName(
             Context context) {
 
-        return this.field_MacrosParamName.get(context);
+        StringValue stringValue = this.list_MacrosParamName.get(context);
+        return stringValue.build();
     }
 
-    String getMacrosParamName(
+    private StringValue getMacrosParamName(
             Context context) {
 
-        return this.field_MacrosParamName.get(context);
+        return this.list_MacrosParamName.get(context);
     }
 
     @Override
@@ -62,7 +65,6 @@ public class MSetMacrosCall
         }
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         StringBuilder sb0 = new StringBuilder();
 

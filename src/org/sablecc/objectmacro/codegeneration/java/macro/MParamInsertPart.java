@@ -7,15 +7,33 @@ import java.util.*;
 public class MParamInsertPart
         extends Macro {
 
-    String field_ParamName;
+    private DSeparator ParamNameSeparator;
 
-    String field_IndexBuilder;
+    private DBeforeFirst ParamNameBeforeFirst;
 
-    final List<Macro> list_ContextArg;
+    private DAfterLast ParamNameAfterLast;
 
-    final Context ContextArgContext = new Context();
+    private DNone ParamNameNone;
 
-    final InternalValue ContextArgValue;
+    final List<String> list_ParamName;
+
+    final Context ParamNameContext = new Context();
+
+    final StringValue ParamNameValue;
+
+    private DSeparator IndexBuilderSeparator;
+
+    private DBeforeFirst IndexBuilderBeforeFirst;
+
+    private DAfterLast IndexBuilderAfterLast;
+
+    private DNone IndexBuilderNone;
+
+    final List<String> list_IndexBuilder;
+
+    final Context IndexBuilderContext = new Context();
+
+    final StringValue IndexBuilderValue;
 
     private DSeparator ContextArgSeparator;
 
@@ -25,38 +43,92 @@ public class MParamInsertPart
 
     private DNone ContextArgNone;
 
+    final List<Macro> list_ContextArg;
+
+    final Context ContextArgContext = new Context();
+
+    final MacroValue ContextArgValue;
+
     MParamInsertPart(
-            String pParamName,
-            String pIndexBuilder,
             Macros macros) {
 
         setMacros(macros);
-        setPParamName(pParamName);
-        setPIndexBuilder(pIndexBuilder);
+        this.list_ParamName = new LinkedList<>();
+        this.list_IndexBuilder = new LinkedList<>();
         this.list_ContextArg = new LinkedList<>();
 
-        this.ContextArgValue = new InternalValue(this.list_ContextArg,
-                this.ContextArgContext);
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
+        this.ContextArgValue
+                = new MacroValue(this.list_ContextArg, this.ContextArgContext);
     }
 
-    private void setPParamName(
-            String pParamName) {
+    public void addAllParamName(
+            List<String> strings) {
 
-        if (pParamName == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("ParamName");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("ParamName");
+            }
 
-        this.field_ParamName = pParamName;
+            this.list_ParamName.add(string);
+        }
     }
 
-    private void setPIndexBuilder(
-            String pIndexBuilder) {
+    public void addParamName(
+            String string) {
 
-        if (pIndexBuilder == null) {
-            throw ObjectMacroException.parameterNull("IndexBuilder");
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_IndexBuilder = pIndexBuilder;
+        this.list_ParamName.add(string);
+    }
+
+    public void addAllIndexBuilder(
+            List<String> strings) {
+
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("IndexBuilder");
+            }
+
+            this.list_IndexBuilder.add(string);
+        }
+    }
+
+    public void addIndexBuilder(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_IndexBuilder.add(string);
     }
 
     public void addAllContextArg(
@@ -66,7 +138,8 @@ public class MParamInsertPart
             throw ObjectMacroException.parameterNull("ContextArg");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("ParamInsertPart");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -109,7 +182,8 @@ public class MParamInsertPart
             throw ObjectMacroException.parameterNull("ContextArg");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("ParamInsertPart");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -121,14 +195,73 @@ public class MParamInsertPart
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
-    String buildParamName() {
+    private String buildParamName() {
 
-        return this.field_ParamName;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ParamName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String buildIndexBuilder() {
+    private String buildIndexBuilder() {
 
-        return this.field_IndexBuilder;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_IndexBuilder;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.IndexBuilderNone != null) {
+            sb.append(this.IndexBuilderNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.IndexBuilderBeforeFirst != null) {
+                string = this.IndexBuilderBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.IndexBuilderAfterLast != null) {
+                string = this.IndexBuilderAfterLast.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.IndexBuilderSeparator != null) {
+                string = this.IndexBuilderSeparator.apply(i, string,
+                        nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
     private String buildContextArg() {
@@ -170,17 +303,17 @@ public class MParamInsertPart
         return sb.toString();
     }
 
-    String getParamName() {
+    StringValue getParamName() {
 
-        return this.field_ParamName;
+        return this.ParamNameValue;
     }
 
-    String getIndexBuilder() {
+    StringValue getIndexBuilder() {
 
-        return this.field_IndexBuilder;
+        return this.IndexBuilderValue;
     }
 
-    private InternalValue getContextArg() {
+    MacroValue getContextArg() {
 
         return this.ContextArgValue;
     }
@@ -198,6 +331,14 @@ public class MParamInsertPart
                 }
             });
         }
+    }
+
+    private void initParamNameDirectives() {
+
+    }
+
+    private void initIndexBuilderDirectives() {
+
     }
 
     private void initContextArgDirectives() {
@@ -226,8 +367,9 @@ public class MParamInsertPart
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initParamNameDirectives();
+        initIndexBuilderDirectives();
         initContextArgDirectives();
 
         initContextArgInternals(null);

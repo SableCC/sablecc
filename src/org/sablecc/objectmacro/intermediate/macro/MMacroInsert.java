@@ -7,12 +7,6 @@ import java.util.*;
 public class MMacroInsert
         extends Macro {
 
-    final List<Macro> list_ReferencedMacro;
-
-    final Context ReferencedMacroContext = new Context();
-
-    final InternalValue ReferencedMacroValue;
-
     private DSeparator ReferencedMacroSeparator;
 
     private DBeforeFirst ReferencedMacroBeforeFirst;
@@ -21,13 +15,19 @@ public class MMacroInsert
 
     private DNone ReferencedMacroNone;
 
+    final List<Macro> list_ReferencedMacro;
+
+    final Context ReferencedMacroContext = new Context();
+
+    final MacroValue ReferencedMacroValue;
+
     MMacroInsert(
             Macros macros) {
 
         setMacros(macros);
         this.list_ReferencedMacro = new LinkedList<>();
 
-        this.ReferencedMacroValue = new InternalValue(this.list_ReferencedMacro,
+        this.ReferencedMacroValue = new MacroValue(this.list_ReferencedMacro,
                 this.ReferencedMacroContext);
     }
 
@@ -38,7 +38,8 @@ public class MMacroInsert
             throw ObjectMacroException.parameterNull("ReferencedMacro");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroInsert");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -81,7 +82,8 @@ public class MMacroInsert
             throw ObjectMacroException.parameterNull("ReferencedMacro");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("MacroInsert");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -132,7 +134,7 @@ public class MMacroInsert
         return sb.toString();
     }
 
-    private InternalValue getReferencedMacro() {
+    MacroValue getReferencedMacro() {
 
         return this.ReferencedMacroValue;
     }
@@ -178,8 +180,8 @@ public class MMacroInsert
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initReferencedMacroDirectives();
         initReferencedMacroDirectives();
 
         initReferencedMacroInternals(null);

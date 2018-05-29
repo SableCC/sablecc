@@ -7,130 +7,467 @@ import java.util.*;
 public class MIncorrectMacroType
         extends Macro {
 
-    String field_Expected;
+    private DSeparator ExpectedSeparator;
 
-    String field_Found;
+    private DBeforeFirst ExpectedBeforeFirst;
 
-    String field_Index;
+    private DAfterLast ExpectedAfterLast;
 
-    String field_Line;
+    private DNone ExpectedNone;
 
-    String field_Char;
+    final List<String> list_Expected;
+
+    final Context ExpectedContext = new Context();
+
+    final StringValue ExpectedValue;
+
+    private DSeparator FoundSeparator;
+
+    private DBeforeFirst FoundBeforeFirst;
+
+    private DAfterLast FoundAfterLast;
+
+    private DNone FoundNone;
+
+    final List<String> list_Found;
+
+    final Context FoundContext = new Context();
+
+    final StringValue FoundValue;
+
+    private DSeparator IndexSeparator;
+
+    private DBeforeFirst IndexBeforeFirst;
+
+    private DAfterLast IndexAfterLast;
+
+    private DNone IndexNone;
+
+    final List<String> list_Index;
+
+    final Context IndexContext = new Context();
+
+    final StringValue IndexValue;
+
+    private DSeparator LineSeparator;
+
+    private DBeforeFirst LineBeforeFirst;
+
+    private DAfterLast LineAfterLast;
+
+    private DNone LineNone;
+
+    final List<String> list_Line;
+
+    final Context LineContext = new Context();
+
+    final StringValue LineValue;
+
+    private DSeparator CharSeparator;
+
+    private DBeforeFirst CharBeforeFirst;
+
+    private DAfterLast CharAfterLast;
+
+    private DNone CharNone;
+
+    final List<String> list_Char;
+
+    final Context CharContext = new Context();
+
+    final StringValue CharValue;
 
     MIncorrectMacroType(
-            String pExpected,
-            String pFound,
-            String pIndex,
-            String pLine,
-            String pChar,
             Macros macros) {
 
         setMacros(macros);
-        setPExpected(pExpected);
-        setPFound(pFound);
-        setPIndex(pIndex);
-        setPLine(pLine);
-        setPChar(pChar);
+        this.list_Expected = new LinkedList<>();
+        this.list_Found = new LinkedList<>();
+        this.list_Index = new LinkedList<>();
+        this.list_Line = new LinkedList<>();
+        this.list_Char = new LinkedList<>();
+
+        this.ExpectedValue
+                = new StringValue(this.list_Expected, this.ExpectedContext);
+        this.FoundValue = new StringValue(this.list_Found, this.FoundContext);
+        this.IndexValue = new StringValue(this.list_Index, this.IndexContext);
+        this.LineValue = new StringValue(this.list_Line, this.LineContext);
+        this.CharValue = new StringValue(this.list_Char, this.CharContext);
     }
 
-    private void setPExpected(
-            String pExpected) {
+    public void addAllExpected(
+            List<String> strings) {
 
-        if (pExpected == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Expected");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Expected");
+            }
 
-        this.field_Expected = pExpected;
+            this.list_Expected.add(string);
+        }
     }
 
-    private void setPFound(
-            String pFound) {
+    public void addExpected(
+            String string) {
 
-        if (pFound == null) {
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Expected");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Expected.add(string);
+    }
+
+    public void addAllFound(
+            List<String> strings) {
+
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Found");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Found");
+            }
 
-        this.field_Found = pFound;
+            this.list_Found.add(string);
+        }
     }
 
-    private void setPIndex(
-            String pIndex) {
+    public void addFound(
+            String string) {
 
-        if (pIndex == null) {
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Found");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Found.add(string);
+    }
+
+    public void addAllIndex(
+            List<String> strings) {
+
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Index");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Index");
+            }
 
-        this.field_Index = pIndex;
+            this.list_Index.add(string);
+        }
     }
 
-    private void setPLine(
-            String pLine) {
+    public void addIndex(
+            String string) {
 
-        if (pLine == null) {
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Index");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Index.add(string);
+    }
+
+    public void addAllLine(
+            List<String> strings) {
+
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Line");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Line");
+            }
 
-        this.field_Line = pLine;
+            this.list_Line.add(string);
+        }
     }
 
-    private void setPChar(
-            String pChar) {
+    public void addLine(
+            String string) {
 
-        if (pChar == null) {
-            throw ObjectMacroException.parameterNull("Char");
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Line");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_Char = pChar;
+        this.list_Line.add(string);
     }
 
-    String buildExpected() {
+    public void addAllChar(
+            List<String> strings) {
 
-        return this.field_Expected;
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Char");
+            }
+
+            this.list_Char.add(string);
+        }
     }
 
-    String buildFound() {
+    public void addChar(
+            String string) {
 
-        return this.field_Found;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Char.add(string);
     }
 
-    String buildIndex() {
+    private String buildExpected() {
 
-        return this.field_Index;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Expected;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ExpectedNone != null) {
+            sb.append(this.ExpectedNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ExpectedBeforeFirst != null) {
+                string = this.ExpectedBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ExpectedAfterLast != null) {
+                string = this.ExpectedAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ExpectedSeparator != null) {
+                string = this.ExpectedSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String buildLine() {
+    private String buildFound() {
 
-        return this.field_Line;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Found;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.FoundNone != null) {
+            sb.append(this.FoundNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.FoundBeforeFirst != null) {
+                string = this.FoundBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.FoundAfterLast != null) {
+                string = this.FoundAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.FoundSeparator != null) {
+                string = this.FoundSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String buildChar() {
+    private String buildIndex() {
 
-        return this.field_Char;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Index;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.IndexNone != null) {
+            sb.append(this.IndexNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.IndexBeforeFirst != null) {
+                string = this.IndexBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.IndexAfterLast != null) {
+                string = this.IndexAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.IndexSeparator != null) {
+                string = this.IndexSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getExpected() {
+    private String buildLine() {
 
-        return this.field_Expected;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Line;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.LineNone != null) {
+            sb.append(this.LineNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.LineBeforeFirst != null) {
+                string = this.LineBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.LineAfterLast != null) {
+                string = this.LineAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.LineSeparator != null) {
+                string = this.LineSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getFound() {
+    private String buildChar() {
 
-        return this.field_Found;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Char;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.CharNone != null) {
+            sb.append(this.CharNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.CharBeforeFirst != null) {
+                string = this.CharBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.CharAfterLast != null) {
+                string = this.CharAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.CharSeparator != null) {
+                string = this.CharSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getIndex() {
+    StringValue getExpected() {
 
-        return this.field_Index;
+        return this.ExpectedValue;
     }
 
-    String getLine() {
+    StringValue getFound() {
 
-        return this.field_Line;
+        return this.FoundValue;
     }
 
-    String getChar() {
+    StringValue getIndex() {
 
-        return this.field_Char;
+        return this.IndexValue;
+    }
+
+    StringValue getLine() {
+
+        return this.LineValue;
+    }
+
+    StringValue getChar() {
+
+        return this.CharValue;
+    }
+
+    private void initExpectedDirectives() {
+
+    }
+
+    private void initFoundDirectives() {
+
+    }
+
+    private void initIndexDirectives() {
+
+    }
+
+    private void initLineDirectives() {
+
+    }
+
+    private void initCharDirectives() {
+
     }
 
     @Override
@@ -155,7 +492,12 @@ public class MIncorrectMacroType
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initExpectedDirectives();
+        initFoundDirectives();
+        initIndexDirectives();
+        initLineDirectives();
+        initCharDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

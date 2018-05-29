@@ -7,34 +7,103 @@ import java.util.*;
 public class MCannotCreateDirectory
         extends Macro {
 
-    String field_Location;
+    private DSeparator LocationSeparator;
+
+    private DBeforeFirst LocationBeforeFirst;
+
+    private DAfterLast LocationAfterLast;
+
+    private DNone LocationNone;
+
+    final List<String> list_Location;
+
+    final Context LocationContext = new Context();
+
+    final StringValue LocationValue;
 
     MCannotCreateDirectory(
-            String pLocation,
             Macros macros) {
 
         setMacros(macros);
-        setPLocation(pLocation);
+        this.list_Location = new LinkedList<>();
+
+        this.LocationValue
+                = new StringValue(this.list_Location, this.LocationContext);
     }
 
-    private void setPLocation(
-            String pLocation) {
+    public void addAllLocation(
+            List<String> strings) {
 
-        if (pLocation == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Location");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Location");
+            }
 
-        this.field_Location = pLocation;
+            this.list_Location.add(string);
+        }
     }
 
-    String buildLocation() {
+    public void addLocation(
+            String string) {
 
-        return this.field_Location;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Location");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Location.add(string);
     }
 
-    String getLocation() {
+    private String buildLocation() {
 
-        return this.field_Location;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Location;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.LocationNone != null) {
+            sb.append(this.LocationNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.LocationBeforeFirst != null) {
+                string = this.LocationBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.LocationAfterLast != null) {
+                string = this.LocationAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.LocationSeparator != null) {
+                string = this.LocationSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getLocation() {
+
+        return this.LocationValue;
+    }
+
+    private void initLocationDirectives() {
+
     }
 
     @Override
@@ -59,7 +128,8 @@ public class MCannotCreateDirectory
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initLocationDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

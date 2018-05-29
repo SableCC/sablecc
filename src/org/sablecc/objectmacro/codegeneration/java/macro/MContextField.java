@@ -7,35 +7,37 @@ import java.util.*;
 public class MContextField
         extends Macro {
 
-    private Map<Context, String> field_ParamName = new LinkedHashMap<>();
+    private Map<Context, StringValue> list_ParamName = new LinkedHashMap<>();
 
     MContextField(
             Macros macros) {
 
         setMacros(macros);
+        this.list_ParamName = new LinkedHashMap<>();
     }
 
     void setParamName(
             Context context,
-            String value) {
+            StringValue value) {
 
         if (value == null) {
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_ParamName.put(context, value);
+        this.list_ParamName.put(context, value);
     }
 
-    String buildParamName(
+    private String buildParamName(
             Context context) {
 
-        return this.field_ParamName.get(context);
+        StringValue stringValue = this.list_ParamName.get(context);
+        return stringValue.build();
     }
 
-    String getParamName(
+    private StringValue getParamName(
             Context context) {
 
-        return this.field_ParamName.get(context);
+        return this.list_ParamName.get(context);
     }
 
     @Override
@@ -62,7 +64,6 @@ public class MContextField
         }
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         StringBuilder sb0 = new StringBuilder();
 

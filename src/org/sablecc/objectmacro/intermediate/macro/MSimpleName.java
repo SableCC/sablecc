@@ -7,34 +7,102 @@ import java.util.*;
 public class MSimpleName
         extends Macro {
 
-    String field_Name;
+    private DSeparator NameSeparator;
+
+    private DBeforeFirst NameBeforeFirst;
+
+    private DAfterLast NameAfterLast;
+
+    private DNone NameNone;
+
+    final List<String> list_Name;
+
+    final Context NameContext = new Context();
+
+    final StringValue NameValue;
 
     MSimpleName(
-            String pName,
             Macros macros) {
 
         setMacros(macros);
-        setPName(pName);
+        this.list_Name = new LinkedList<>();
+
+        this.NameValue = new StringValue(this.list_Name, this.NameContext);
     }
 
-    private void setPName(
-            String pName) {
+    public void addAllName(
+            List<String> strings) {
 
-        if (pName == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Name");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Name");
+            }
 
-        this.field_Name = pName;
+            this.list_Name.add(string);
+        }
     }
 
-    String buildName() {
+    public void addName(
+            String string) {
 
-        return this.field_Name;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Name");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Name.add(string);
     }
 
-    String getName() {
+    private String buildName() {
 
-        return this.field_Name;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Name;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.NameNone != null) {
+            sb.append(this.NameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.NameBeforeFirst != null) {
+                string = this.NameBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.NameAfterLast != null) {
+                string = this.NameAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.NameSeparator != null) {
+                string = this.NameSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getName() {
+
+        return this.NameValue;
+    }
+
+    private void initNameDirectives() {
+
     }
 
     @Override
@@ -59,7 +127,8 @@ public class MSimpleName
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initNameDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

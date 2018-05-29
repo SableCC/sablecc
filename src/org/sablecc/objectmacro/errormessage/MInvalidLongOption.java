@@ -7,34 +7,104 @@ import java.util.*;
 public class MInvalidLongOption
         extends Macro {
 
-    String field_OptionName;
+    private DSeparator OptionNameSeparator;
+
+    private DBeforeFirst OptionNameBeforeFirst;
+
+    private DAfterLast OptionNameAfterLast;
+
+    private DNone OptionNameNone;
+
+    final List<String> list_OptionName;
+
+    final Context OptionNameContext = new Context();
+
+    final StringValue OptionNameValue;
 
     MInvalidLongOption(
-            String pOptionName,
             Macros macros) {
 
         setMacros(macros);
-        setPOptionName(pOptionName);
+        this.list_OptionName = new LinkedList<>();
+
+        this.OptionNameValue
+                = new StringValue(this.list_OptionName, this.OptionNameContext);
     }
 
-    private void setPOptionName(
-            String pOptionName) {
+    public void addAllOptionName(
+            List<String> strings) {
 
-        if (pOptionName == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("OptionName");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("OptionName");
+            }
 
-        this.field_OptionName = pOptionName;
+            this.list_OptionName.add(string);
+        }
     }
 
-    String buildOptionName() {
+    public void addOptionName(
+            String string) {
 
-        return this.field_OptionName;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("OptionName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_OptionName.add(string);
     }
 
-    String getOptionName() {
+    private String buildOptionName() {
 
-        return this.field_OptionName;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_OptionName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.OptionNameNone != null) {
+            sb.append(this.OptionNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.OptionNameBeforeFirst != null) {
+                string = this.OptionNameBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.OptionNameAfterLast != null) {
+                string = this.OptionNameAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.OptionNameSeparator != null) {
+                string = this.OptionNameSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getOptionName() {
+
+        return this.OptionNameValue;
+    }
+
+    private void initOptionNameDirectives() {
+
     }
 
     @Override
@@ -59,7 +129,8 @@ public class MInvalidLongOption
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initOptionNameDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

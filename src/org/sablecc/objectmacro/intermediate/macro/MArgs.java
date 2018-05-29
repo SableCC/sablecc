@@ -7,12 +7,6 @@ import java.util.*;
 public class MArgs
         extends Macro {
 
-    final List<Macro> list_Arguments;
-
-    final Context ArgumentsContext = new Context();
-
-    final InternalValue ArgumentsValue;
-
     private DSeparator ArgumentsSeparator;
 
     private DBeforeFirst ArgumentsBeforeFirst;
@@ -21,6 +15,12 @@ public class MArgs
 
     private DNone ArgumentsNone;
 
+    final List<Macro> list_Arguments;
+
+    final Context ArgumentsContext = new Context();
+
+    final MacroValue ArgumentsValue;
+
     MArgs(
             Macros macros) {
 
@@ -28,7 +28,7 @@ public class MArgs
         this.list_Arguments = new LinkedList<>();
 
         this.ArgumentsValue
-                = new InternalValue(this.list_Arguments, this.ArgumentsContext);
+                = new MacroValue(this.list_Arguments, this.ArgumentsContext);
     }
 
     public void addAllArguments(
@@ -38,7 +38,8 @@ public class MArgs
             throw ObjectMacroException.parameterNull("Arguments");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Args");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -87,7 +88,8 @@ public class MArgs
             throw ObjectMacroException.parameterNull("Arguments");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Args");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -106,7 +108,8 @@ public class MArgs
             throw ObjectMacroException.parameterNull("Arguments");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Args");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -157,7 +160,7 @@ public class MArgs
         return sb.toString();
     }
 
-    private InternalValue getArguments() {
+    MacroValue getArguments() {
 
         return this.ArgumentsValue;
     }
@@ -213,8 +216,8 @@ public class MArgs
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initArgumentsDirectives();
         initArgumentsDirectives();
 
         initArgumentsInternals(null);

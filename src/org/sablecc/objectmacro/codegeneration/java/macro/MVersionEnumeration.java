@@ -7,12 +7,6 @@ import java.util.*;
 public class MVersionEnumeration
         extends Macro {
 
-    final List<Macro> list_PackageDeclaration;
-
-    final Context PackageDeclarationContext = new Context();
-
-    final InternalValue PackageDeclarationValue;
-
     private DSeparator PackageDeclarationSeparator;
 
     private DBeforeFirst PackageDeclarationBeforeFirst;
@@ -21,11 +15,11 @@ public class MVersionEnumeration
 
     private DNone PackageDeclarationNone;
 
-    final List<Macro> list_Versions;
+    final List<Macro> list_PackageDeclaration;
 
-    final Context VersionsContext = new Context();
+    final Context PackageDeclarationContext = new Context();
 
-    final InternalValue VersionsValue;
+    final MacroValue PackageDeclarationValue;
 
     private DSeparator VersionsSeparator;
 
@@ -35,6 +29,12 @@ public class MVersionEnumeration
 
     private DNone VersionsNone;
 
+    final List<String> list_Versions;
+
+    final Context VersionsContext = new Context();
+
+    final StringValue VersionsValue;
+
     MVersionEnumeration(
             Macros macros) {
 
@@ -42,10 +42,10 @@ public class MVersionEnumeration
         this.list_PackageDeclaration = new LinkedList<>();
         this.list_Versions = new LinkedList<>();
 
-        this.PackageDeclarationValue = new InternalValue(
+        this.PackageDeclarationValue = new MacroValue(
                 this.list_PackageDeclaration, this.PackageDeclarationContext);
         this.VersionsValue
-                = new InternalValue(this.list_Versions, this.VersionsContext);
+                = new StringValue(this.list_Versions, this.VersionsContext);
     }
 
     public void addAllPackageDeclaration(
@@ -55,7 +55,8 @@ public class MVersionEnumeration
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("VersionEnumeration");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -98,7 +99,8 @@ public class MVersionEnumeration
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("VersionEnumeration");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -111,65 +113,36 @@ public class MVersionEnumeration
     }
 
     public void addAllVersions(
-            List<Macro> macros) {
+            List<String> strings) {
 
-        if (macros == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Versions");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("VersionEnumeration");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
-
-        int i = 0;
-
-        for (Macro macro : macros) {
-            if (macro == null) {
-                throw ObjectMacroException.macroNull(i, "Versions");
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Versions");
             }
 
-            if (getMacros() != macro.getMacros()) {
-                throw ObjectMacroException.diffMacros();
-            }
-
-            verifyTypeVersions(macro);
-            this.list_Versions.add(macro);
-            this.children.add(macro);
-            Macro.cycleDetector.detectCycle(this, macro);
-
-            i++;
+            this.list_Versions.add(string);
         }
-    }
-
-    void verifyTypeVersions(
-            Macro macro) {
-
-        macro.apply(new InternalsInitializer("Versions") {
-
-            @Override
-            void setPlainText(
-                    MPlainText mPlainText) {
-
-            }
-        });
     }
 
     public void addVersions(
-            MPlainText macro) {
+            String string) {
 
-        if (macro == null) {
+        if (string == null) {
             throw ObjectMacroException.parameterNull("Versions");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("VersionEnumeration");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        if (getMacros() != macro.getMacros()) {
-            throw ObjectMacroException.diffMacros();
-        }
-
-        this.list_Versions.add(macro);
-        this.children.add(macro);
-        Macro.cycleDetector.detectCycle(this, macro);
+        this.list_Versions.add(string);
     }
 
     private String buildPackageDeclaration() {
@@ -214,48 +187,42 @@ public class MVersionEnumeration
     private String buildVersions() {
 
         StringBuilder sb = new StringBuilder();
-        Context local_context = this.VersionsContext;
-        List<Macro> macros = this.list_Versions;
+        List<String> strings = this.list_Versions;
 
         int i = 0;
-        int nb_macros = macros.size();
-        String expansion = null;
+        int nb_strings = strings.size();
 
         if (this.VersionsNone != null) {
-            sb.append(this.VersionsNone.apply(i, "", nb_macros));
+            sb.append(this.VersionsNone.apply(i, "", nb_strings));
         }
 
-        for (Macro macro : macros) {
-            expansion = macro.build(local_context);
+        for (String string : strings) {
 
             if (this.VersionsBeforeFirst != null) {
-                expansion = this.VersionsBeforeFirst.apply(i, expansion,
-                        nb_macros);
+                string = this.VersionsBeforeFirst.apply(i, string, nb_strings);
             }
 
             if (this.VersionsAfterLast != null) {
-                expansion
-                        = this.VersionsAfterLast.apply(i, expansion, nb_macros);
+                string = this.VersionsAfterLast.apply(i, string, nb_strings);
             }
 
             if (this.VersionsSeparator != null) {
-                expansion
-                        = this.VersionsSeparator.apply(i, expansion, nb_macros);
+                string = this.VersionsSeparator.apply(i, string, nb_strings);
             }
 
-            sb.append(expansion);
+            sb.append(string);
             i++;
         }
 
         return sb.toString();
     }
 
-    private InternalValue getPackageDeclaration() {
+    MacroValue getPackageDeclaration() {
 
         return this.PackageDeclarationValue;
     }
 
-    private InternalValue getVersions() {
+    StringValue getVersions() {
 
         return this.VersionsValue;
     }
@@ -269,21 +236,6 @@ public class MVersionEnumeration
                 @Override
                 void setPackageDeclaration(
                         MPackageDeclaration mPackageDeclaration) {
-
-                }
-            });
-        }
-    }
-
-    private void initVersionsInternals(
-            Context context) {
-
-        for (Macro macro : this.list_Versions) {
-            macro.apply(new InternalsInitializer("Versions") {
-
-                @Override
-                void setPlainText(
-                        MPlainText mPlainText) {
 
                 }
             });
@@ -329,13 +281,11 @@ public class MVersionEnumeration
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         initPackageDeclarationDirectives();
         initVersionsDirectives();
 
         initPackageDeclarationInternals(null);
-        initVersionsInternals(null);
 
         StringBuilder sb0 = new StringBuilder();
 

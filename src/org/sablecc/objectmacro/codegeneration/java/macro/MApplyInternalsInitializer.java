@@ -7,12 +7,6 @@ import java.util.*;
 public class MApplyInternalsInitializer
         extends Macro {
 
-    final List<Macro> list_RedefinedInternalsSetter;
-
-    final Context RedefinedInternalsSetterContext = new Context();
-
-    final InternalValue RedefinedInternalsSetterValue;
-
     private DSeparator RedefinedInternalsSetterSeparator;
 
     private DBeforeFirst RedefinedInternalsSetterBeforeFirst;
@@ -21,16 +15,23 @@ public class MApplyInternalsInitializer
 
     private DNone RedefinedInternalsSetterNone;
 
-    private Map<Context, String> field_ParamName = new LinkedHashMap<>();
+    final List<Macro> list_RedefinedInternalsSetter;
+
+    final Context RedefinedInternalsSetterContext = new Context();
+
+    final MacroValue RedefinedInternalsSetterValue;
+
+    private Map<Context, StringValue> list_ParamName = new LinkedHashMap<>();
 
     MApplyInternalsInitializer(
             Macros macros) {
 
         setMacros(macros);
         this.list_RedefinedInternalsSetter = new LinkedList<>();
+        this.list_ParamName = new LinkedHashMap<>();
 
         this.RedefinedInternalsSetterValue
-                = new InternalValue(this.list_RedefinedInternalsSetter,
+                = new MacroValue(this.list_RedefinedInternalsSetter,
                         this.RedefinedInternalsSetterContext);
     }
 
@@ -43,7 +44,7 @@ public class MApplyInternalsInitializer
         }
         if (this.cacheBuilder != null) {
             throw ObjectMacroException
-                    .cannotModify("ApplyInternalsInitializer");
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -89,7 +90,7 @@ public class MApplyInternalsInitializer
         }
         if (this.cacheBuilder != null) {
             throw ObjectMacroException
-                    .cannotModify("ApplyInternalsInitializer");
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -103,13 +104,13 @@ public class MApplyInternalsInitializer
 
     void setParamName(
             Context context,
-            String value) {
+            StringValue value) {
 
         if (value == null) {
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_ParamName.put(context, value);
+        this.list_ParamName.put(context, value);
     }
 
     private String buildRedefinedInternalsSetter() {
@@ -152,21 +153,22 @@ public class MApplyInternalsInitializer
         return sb.toString();
     }
 
-    String buildParamName(
+    private String buildParamName(
             Context context) {
 
-        return this.field_ParamName.get(context);
+        StringValue stringValue = this.list_ParamName.get(context);
+        return stringValue.build();
     }
 
-    private InternalValue getRedefinedInternalsSetter() {
+    MacroValue getRedefinedInternalsSetter() {
 
         return this.RedefinedInternalsSetterValue;
     }
 
-    String getParamName(
+    private StringValue getParamName(
             Context context) {
 
-        return this.field_ParamName.get(context);
+        return this.list_ParamName.get(context);
     }
 
     private void initRedefinedInternalsSetterInternals(
@@ -218,7 +220,6 @@ public class MApplyInternalsInitializer
         }
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         initRedefinedInternalsSetterDirectives();
 

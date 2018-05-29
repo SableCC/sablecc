@@ -20,7 +20,8 @@ Macro class
     Param
         name : String;
         enums : enum, separator="\n\n";
-        test : for("aaaa");
+        un_autre: String;
+        test : for(un_autre);
 {Body}
 public class {name}{{
 {enums}
@@ -33,7 +34,8 @@ Macro for
     Param
         class_name : String;
         parameter_name : String;
-        rests : for("lala");
+        test: String;
+        rests : for(test);
     Internal
         lala : String;
 {Body}
@@ -48,7 +50,8 @@ Macro for
     Param
         class_name : String;
         parameter_name : String;
-        rests : for("test");
+        test: String;
+        rests : for(test);
     Internal
         lala : String;
 {Body}

@@ -4,68 +4,113 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MAddAll
+public class MAddAllMacro
         extends Macro {
 
-    String field_MacroName;
+    private DSeparator ParamNameSeparator;
 
-    String field_ParamName;
+    private DBeforeFirst ParamNameBeforeFirst;
 
-    MAddAll(
-            String pMacroName,
-            String pParamName,
+    private DAfterLast ParamNameAfterLast;
+
+    private DNone ParamNameNone;
+
+    final List<String> list_ParamName;
+
+    final Context ParamNameContext = new Context();
+
+    final StringValue ParamNameValue;
+
+    MAddAllMacro(
             Macros macros) {
 
         setMacros(macros);
-        setPMacroName(pMacroName);
-        setPParamName(pParamName);
+        this.list_ParamName = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
     }
 
-    private void setPMacroName(
-            String pMacroName) {
+    public void addAllParamName(
+            List<String> strings) {
 
-        if (pMacroName == null) {
-            throw ObjectMacroException.parameterNull("MacroName");
-        }
-
-        this.field_MacroName = pMacroName;
-    }
-
-    private void setPParamName(
-            String pParamName) {
-
-        if (pParamName == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("ParamName");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("ParamName");
+            }
 
-        this.field_ParamName = pParamName;
+            this.list_ParamName.add(string);
+        }
     }
 
-    String buildMacroName() {
+    public void addParamName(
+            String string) {
 
-        return this.field_MacroName;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_ParamName.add(string);
     }
 
-    String buildParamName() {
+    private String buildParamName() {
 
-        return this.field_ParamName;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ParamName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String getMacroName() {
+    StringValue getParamName() {
 
-        return this.field_MacroName;
+        return this.ParamNameValue;
     }
 
-    String getParamName() {
+    private void initParamNameDirectives() {
 
-        return this.field_ParamName;
     }
 
     @Override
     void apply(
             InternalsInitializer internalsInitializer) {
 
-        internalsInitializer.setAddAll(this);
+        internalsInitializer.setAddAllMacro(this);
     }
 
     public String build() {
@@ -83,7 +128,8 @@ public class MAddAll
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initParamNameDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -110,7 +156,6 @@ public class MAddAll
         indentations.add(sb2.toString());
         MIsBuilt m1 = getMacros().newIsBuilt();
 
-        m1.setMacroName(null, getMacroName());
         sb1.append(m1.build(null));
         sb1.append(LINE_SEPARATOR);
         sb1.append(LINE_SEPARATOR);
@@ -137,7 +182,10 @@ public class MAddAll
         MFactoryComparison m2 = getMacros().newFactoryComparison();
         StringBuilder sb5 = new StringBuilder();
         sb5.append("macro");
-        m2.setVarName(null, sb5.toString());
+        StringValue value5 = new StringValue(
+                new ArrayList<>(Collections.singletonList(sb5.toString())),
+                null);
+        m2.setVarName(null, value5);
         sb3.append(m2.build(null));
         sb1.append(applyIndent(sb3.toString(),
                 indentations.remove(indentations.size() - 1)));

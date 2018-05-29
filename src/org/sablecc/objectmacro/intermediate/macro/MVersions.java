@@ -7,12 +7,6 @@ import java.util.*;
 public class MVersions
         extends Macro {
 
-    final List<Macro> list_Versions;
-
-    final Context VersionsContext = new Context();
-
-    final InternalValue VersionsValue;
-
     private DSeparator VersionsSeparator;
 
     private DBeforeFirst VersionsBeforeFirst;
@@ -21,6 +15,12 @@ public class MVersions
 
     private DNone VersionsNone;
 
+    final List<Macro> list_Versions;
+
+    final Context VersionsContext = new Context();
+
+    final MacroValue VersionsValue;
+
     MVersions(
             Macros macros) {
 
@@ -28,7 +28,7 @@ public class MVersions
         this.list_Versions = new LinkedList<>();
 
         this.VersionsValue
-                = new InternalValue(this.list_Versions, this.VersionsContext);
+                = new MacroValue(this.list_Versions, this.VersionsContext);
     }
 
     public void addAllVersions(
@@ -38,7 +38,8 @@ public class MVersions
             throw ObjectMacroException.parameterNull("Versions");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Versions");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -81,7 +82,8 @@ public class MVersions
             throw ObjectMacroException.parameterNull("Versions");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Versions");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -132,7 +134,7 @@ public class MVersions
         return sb.toString();
     }
 
-    private InternalValue getVersions() {
+    MacroValue getVersions() {
 
         return this.VersionsValue;
     }
@@ -183,8 +185,8 @@ public class MVersions
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initVersionsDirectives();
         initVersionsDirectives();
 
         initVersionsInternals(null);

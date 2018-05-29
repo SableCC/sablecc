@@ -7,34 +7,103 @@ import java.util.*;
 public class MStringValue
         extends Macro {
 
-    String field_String;
+    private DSeparator StringSeparator;
+
+    private DBeforeFirst StringBeforeFirst;
+
+    private DAfterLast StringAfterLast;
+
+    private DNone StringNone;
+
+    final List<String> list_String;
+
+    final Context StringContext = new Context();
+
+    final StringValue StringValue;
 
     MStringValue(
-            String pString,
             Macros macros) {
 
         setMacros(macros);
-        setPString(pString);
+        this.list_String = new LinkedList<>();
+
+        this.StringValue
+                = new StringValue(this.list_String, this.StringContext);
     }
 
-    private void setPString(
-            String pString) {
+    public void addAllString(
+            List<String> strings) {
 
-        if (pString == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("String");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("String");
+            }
 
-        this.field_String = pString;
+            this.list_String.add(string);
+        }
     }
 
-    String buildString() {
+    public void addString(
+            String string) {
 
-        return this.field_String;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("String");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_String.add(string);
     }
 
-    String getString() {
+    private String buildString() {
 
-        return this.field_String;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_String;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.StringNone != null) {
+            sb.append(this.StringNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.StringBeforeFirst != null) {
+                string = this.StringBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.StringAfterLast != null) {
+                string = this.StringAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.StringSeparator != null) {
+                string = this.StringSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getString() {
+
+        return this.StringValue;
+    }
+
+    private void initStringDirectives() {
+
     }
 
     @Override
@@ -59,7 +128,8 @@ public class MStringValue
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initStringDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

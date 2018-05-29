@@ -7,34 +7,102 @@ import java.util.*;
 public class MStringPart
         extends Macro {
 
-    String field_Text;
+    private DSeparator TextSeparator;
+
+    private DBeforeFirst TextBeforeFirst;
+
+    private DAfterLast TextAfterLast;
+
+    private DNone TextNone;
+
+    final List<String> list_Text;
+
+    final Context TextContext = new Context();
+
+    final StringValue TextValue;
 
     MStringPart(
-            String pText,
             Macros macros) {
 
         setMacros(macros);
-        setPText(pText);
+        this.list_Text = new LinkedList<>();
+
+        this.TextValue = new StringValue(this.list_Text, this.TextContext);
     }
 
-    private void setPText(
-            String pText) {
+    public void addAllText(
+            List<String> strings) {
 
-        if (pText == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Text");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Text");
+            }
 
-        this.field_Text = pText;
+            this.list_Text.add(string);
+        }
     }
 
-    String buildText() {
+    public void addText(
+            String string) {
 
-        return this.field_Text;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Text");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Text.add(string);
     }
 
-    String getText() {
+    private String buildText() {
 
-        return this.field_Text;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Text;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.TextNone != null) {
+            sb.append(this.TextNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.TextBeforeFirst != null) {
+                string = this.TextBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.TextAfterLast != null) {
+                string = this.TextAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.TextSeparator != null) {
+                string = this.TextSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getText() {
+
+        return this.TextValue;
+    }
+
+    private void initTextDirectives() {
+
     }
 
     @Override
@@ -59,7 +127,8 @@ public class MStringPart
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initTextDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

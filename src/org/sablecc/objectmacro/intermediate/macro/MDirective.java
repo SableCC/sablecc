@@ -7,12 +7,6 @@ import java.util.*;
 public class MDirective
         extends Macro {
 
-    final List<Macro> list_DirectiveName;
-
-    final Context DirectiveNameContext = new Context();
-
-    final InternalValue DirectiveNameValue;
-
     private DSeparator DirectiveNameSeparator;
 
     private DBeforeFirst DirectiveNameBeforeFirst;
@@ -21,11 +15,11 @@ public class MDirective
 
     private DNone DirectiveNameNone;
 
-    final List<Macro> list_DirectiveTextParts;
+    final List<Macro> list_DirectiveName;
 
-    final Context DirectiveTextPartsContext = new Context();
+    final Context DirectiveNameContext = new Context();
 
-    final InternalValue DirectiveTextPartsValue;
+    final MacroValue DirectiveNameValue;
 
     private DSeparator DirectiveTextPartsSeparator;
 
@@ -35,6 +29,12 @@ public class MDirective
 
     private DNone DirectiveTextPartsNone;
 
+    final List<Macro> list_DirectiveTextParts;
+
+    final Context DirectiveTextPartsContext = new Context();
+
+    final MacroValue DirectiveTextPartsValue;
+
     MDirective(
             Macros macros) {
 
@@ -42,9 +42,9 @@ public class MDirective
         this.list_DirectiveName = new LinkedList<>();
         this.list_DirectiveTextParts = new LinkedList<>();
 
-        this.DirectiveNameValue = new InternalValue(this.list_DirectiveName,
+        this.DirectiveNameValue = new MacroValue(this.list_DirectiveName,
                 this.DirectiveNameContext);
-        this.DirectiveTextPartsValue = new InternalValue(
+        this.DirectiveTextPartsValue = new MacroValue(
                 this.list_DirectiveTextParts, this.DirectiveTextPartsContext);
     }
 
@@ -55,7 +55,8 @@ public class MDirective
             throw ObjectMacroException.parameterNull("DirectiveName");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Directive");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -98,7 +99,8 @@ public class MDirective
             throw ObjectMacroException.parameterNull("DirectiveName");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Directive");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -117,7 +119,8 @@ public class MDirective
             throw ObjectMacroException.parameterNull("DirectiveTextParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Directive");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -178,7 +181,8 @@ public class MDirective
             throw ObjectMacroException.parameterNull("DirectiveTextParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Directive");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -197,7 +201,8 @@ public class MDirective
             throw ObjectMacroException.parameterNull("DirectiveTextParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Directive");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -216,7 +221,8 @@ public class MDirective
             throw ObjectMacroException.parameterNull("DirectiveTextParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Directive");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -235,7 +241,8 @@ public class MDirective
             throw ObjectMacroException.parameterNull("DirectiveTextParts");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("Directive");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -325,12 +332,12 @@ public class MDirective
         return sb.toString();
     }
 
-    private InternalValue getDirectiveName() {
+    MacroValue getDirectiveName() {
 
         return this.DirectiveNameValue;
     }
 
-    private InternalValue getDirectiveTextParts() {
+    MacroValue getDirectiveTextParts() {
 
         return this.DirectiveTextPartsValue;
     }
@@ -413,9 +420,10 @@ public class MDirective
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         initDirectiveNameDirectives();
+        initDirectiveNameDirectives();
+        initDirectiveTextPartsDirectives();
         initDirectiveTextPartsDirectives();
 
         initDirectiveNameInternals(null);

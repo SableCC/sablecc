@@ -7,15 +7,33 @@ import java.util.*;
 public class MSetInternal
         extends Macro {
 
-    String field_ParamName;
+    private DSeparator ParamNameSeparator;
 
-    String field_Context;
+    private DBeforeFirst ParamNameBeforeFirst;
 
-    final List<Macro> list_SetParams;
+    private DAfterLast ParamNameAfterLast;
 
-    final Context SetParamsContext = new Context();
+    private DNone ParamNameNone;
 
-    final InternalValue SetParamsValue;
+    final List<String> list_ParamName;
+
+    final Context ParamNameContext = new Context();
+
+    final StringValue ParamNameValue;
+
+    private DSeparator ContextSeparator;
+
+    private DBeforeFirst ContextBeforeFirst;
+
+    private DAfterLast ContextAfterLast;
+
+    private DNone ContextNone;
+
+    final List<String> list_Context;
+
+    final Context ContextContext = new Context();
+
+    final StringValue ContextValue;
 
     private DSeparator SetParamsSeparator;
 
@@ -25,40 +43,95 @@ public class MSetInternal
 
     private DNone SetParamsNone;
 
-    private Map<Context, String> field_VarName = new LinkedHashMap<>();
+    final List<Macro> list_SetParams;
+
+    final Context SetParamsContext = new Context();
+
+    final MacroValue SetParamsValue;
+
+    private Map<Context, StringValue> list_VarName = new LinkedHashMap<>();
 
     MSetInternal(
-            String pParamName,
-            String pContext,
             Macros macros) {
 
         setMacros(macros);
-        setPParamName(pParamName);
-        setPContext(pContext);
+        this.list_ParamName = new LinkedList<>();
+        this.list_Context = new LinkedList<>();
         this.list_SetParams = new LinkedList<>();
+        this.list_VarName = new LinkedHashMap<>();
 
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.ContextValue
+                = new StringValue(this.list_Context, this.ContextContext);
         this.SetParamsValue
-                = new InternalValue(this.list_SetParams, this.SetParamsContext);
+                = new MacroValue(this.list_SetParams, this.SetParamsContext);
     }
 
-    private void setPParamName(
-            String pParamName) {
+    public void addAllParamName(
+            List<String> strings) {
 
-        if (pParamName == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("ParamName");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("ParamName");
+            }
 
-        this.field_ParamName = pParamName;
+            this.list_ParamName.add(string);
+        }
     }
 
-    private void setPContext(
-            String pContext) {
+    public void addParamName(
+            String string) {
 
-        if (pContext == null) {
-            throw ObjectMacroException.parameterNull("Context");
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
-        this.field_Context = pContext;
+        this.list_ParamName.add(string);
+    }
+
+    public void addAllContext(
+            List<String> strings) {
+
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("Context");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Context");
+            }
+
+            this.list_Context.add(string);
+        }
+    }
+
+    public void addContext(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Context");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Context.add(string);
     }
 
     public void addAllSetParams(
@@ -68,7 +141,8 @@ public class MSetInternal
             throw ObjectMacroException.parameterNull("SetParams");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("SetInternal");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -103,8 +177,8 @@ public class MSetInternal
             }
 
             @Override
-            void setStringBuilderBuild(
-                    MStringBuilderBuild mStringBuilderBuild) {
+            void setStringValueArg(
+                    MStringValueArg mStringValueArg) {
 
             }
         });
@@ -117,7 +191,8 @@ public class MSetInternal
             throw ObjectMacroException.parameterNull("SetParams");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("SetInternal");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -130,13 +205,14 @@ public class MSetInternal
     }
 
     public void addSetParams(
-            MStringBuilderBuild macro) {
+            MStringValueArg macro) {
 
         if (macro == null) {
             throw ObjectMacroException.parameterNull("SetParams");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("SetInternal");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -150,23 +226,79 @@ public class MSetInternal
 
     void setVarName(
             Context context,
-            String value) {
+            StringValue value) {
 
         if (value == null) {
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_VarName.put(context, value);
+        this.list_VarName.put(context, value);
     }
 
-    String buildParamName() {
+    private String buildParamName() {
 
-        return this.field_ParamName;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ParamName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
-    String buildContext() {
+    private String buildContext() {
 
-        return this.field_Context;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Context;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.ContextNone != null) {
+            sb.append(this.ContextNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.ContextBeforeFirst != null) {
+                string = this.ContextBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.ContextAfterLast != null) {
+                string = this.ContextAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.ContextSeparator != null) {
+                string = this.ContextSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
     }
 
     private String buildSetParams() {
@@ -208,31 +340,32 @@ public class MSetInternal
         return sb.toString();
     }
 
-    String buildVarName(
+    private String buildVarName(
             Context context) {
 
-        return this.field_VarName.get(context);
+        StringValue stringValue = this.list_VarName.get(context);
+        return stringValue.build();
     }
 
-    String getParamName() {
+    StringValue getParamName() {
 
-        return this.field_ParamName;
+        return this.ParamNameValue;
     }
 
-    String getContext() {
+    StringValue getContext() {
 
-        return this.field_Context;
+        return this.ContextValue;
     }
 
-    private InternalValue getSetParams() {
+    MacroValue getSetParams() {
 
         return this.SetParamsValue;
     }
 
-    String getVarName(
+    private StringValue getVarName(
             Context context) {
 
-        return this.field_VarName.get(context);
+        return this.list_VarName.get(context);
     }
 
     private void initSetParamsInternals(
@@ -248,12 +381,20 @@ public class MSetInternal
                 }
 
                 @Override
-                void setStringBuilderBuild(
-                        MStringBuilderBuild mStringBuilderBuild) {
+                void setStringValueArg(
+                        MStringValueArg mStringValueArg) {
 
                 }
             });
         }
+    }
+
+    private void initParamNameDirectives() {
+
+    }
+
+    private void initContextDirectives() {
+
     }
 
     private void initSetParamsDirectives() {
@@ -284,8 +425,9 @@ public class MSetInternal
         }
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
+        initParamNameDirectives();
+        initContextDirectives();
         initSetParamsDirectives();
 
         initSetParamsInternals(context);

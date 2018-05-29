@@ -7,34 +7,104 @@ import java.util.*;
 public class MPackageDeclaration
         extends Macro {
 
-    String field_PackageName;
+    private DSeparator PackageNameSeparator;
+
+    private DBeforeFirst PackageNameBeforeFirst;
+
+    private DAfterLast PackageNameAfterLast;
+
+    private DNone PackageNameNone;
+
+    final List<String> list_PackageName;
+
+    final Context PackageNameContext = new Context();
+
+    final StringValue PackageNameValue;
 
     MPackageDeclaration(
-            String pPackageName,
             Macros macros) {
 
         setMacros(macros);
-        setPPackageName(pPackageName);
+        this.list_PackageName = new LinkedList<>();
+
+        this.PackageNameValue = new StringValue(this.list_PackageName,
+                this.PackageNameContext);
     }
 
-    private void setPPackageName(
-            String pPackageName) {
+    public void addAllPackageName(
+            List<String> strings) {
 
-        if (pPackageName == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("PackageName");
         }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("PackageName");
+            }
 
-        this.field_PackageName = pPackageName;
+            this.list_PackageName.add(string);
+        }
     }
 
-    String buildPackageName() {
+    public void addPackageName(
+            String string) {
 
-        return this.field_PackageName;
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("PackageName");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_PackageName.add(string);
     }
 
-    String getPackageName() {
+    private String buildPackageName() {
 
-        return this.field_PackageName;
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_PackageName;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.PackageNameNone != null) {
+            sb.append(this.PackageNameNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.PackageNameBeforeFirst != null) {
+                string = this.PackageNameBeforeFirst.apply(i, string,
+                        nb_strings);
+            }
+
+            if (this.PackageNameAfterLast != null) {
+                string = this.PackageNameAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.PackageNameSeparator != null) {
+                string = this.PackageNameSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    StringValue getPackageName() {
+
+        return this.PackageNameValue;
+    }
+
+    private void initPackageNameDirectives() {
+
     }
 
     @Override
@@ -59,7 +129,8 @@ public class MPackageDeclaration
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
+
+        initPackageNameDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

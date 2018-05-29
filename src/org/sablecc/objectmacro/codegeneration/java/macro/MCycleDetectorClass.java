@@ -7,12 +7,6 @@ import java.util.*;
 public class MCycleDetectorClass
         extends Macro {
 
-    final List<Macro> list_PackageDeclaration;
-
-    final Context PackageDeclarationContext = new Context();
-
-    final InternalValue PackageDeclarationValue;
-
     private DSeparator PackageDeclarationSeparator;
 
     private DBeforeFirst PackageDeclarationBeforeFirst;
@@ -21,13 +15,19 @@ public class MCycleDetectorClass
 
     private DNone PackageDeclarationNone;
 
+    final List<Macro> list_PackageDeclaration;
+
+    final Context PackageDeclarationContext = new Context();
+
+    final MacroValue PackageDeclarationValue;
+
     MCycleDetectorClass(
             Macros macros) {
 
         setMacros(macros);
         this.list_PackageDeclaration = new LinkedList<>();
 
-        this.PackageDeclarationValue = new InternalValue(
+        this.PackageDeclarationValue = new MacroValue(
                 this.list_PackageDeclaration, this.PackageDeclarationContext);
     }
 
@@ -38,7 +38,8 @@ public class MCycleDetectorClass
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("CycleDetectorClass");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         int i = 0;
@@ -81,7 +82,8 @@ public class MCycleDetectorClass
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
         if (this.cacheBuilder != null) {
-            throw ObjectMacroException.cannotModify("CycleDetectorClass");
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
         }
 
         if (getMacros() != macro.getMacros()) {
@@ -132,7 +134,7 @@ public class MCycleDetectorClass
         return sb.toString();
     }
 
-    private InternalValue getPackageDeclaration() {
+    MacroValue getPackageDeclaration() {
 
         return this.PackageDeclarationValue;
     }
@@ -183,7 +185,6 @@ public class MCycleDetectorClass
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         initPackageDeclarationDirectives();
 

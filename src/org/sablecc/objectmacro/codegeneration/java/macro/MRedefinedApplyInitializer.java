@@ -7,35 +7,37 @@ import java.util.*;
 public class MRedefinedApplyInitializer
         extends Macro {
 
-    private Map<Context, String> field_ClassName = new LinkedHashMap<>();
+    private Map<Context, StringValue> list_ClassName = new LinkedHashMap<>();
 
     MRedefinedApplyInitializer(
             Macros macros) {
 
         setMacros(macros);
+        this.list_ClassName = new LinkedHashMap<>();
     }
 
     void setClassName(
             Context context,
-            String value) {
+            StringValue value) {
 
         if (value == null) {
             throw new RuntimeException("value cannot be null here");
         }
 
-        this.field_ClassName.put(context, value);
+        this.list_ClassName.put(context, value);
     }
 
-    String buildClassName(
+    private String buildClassName(
             Context context) {
 
-        return this.field_ClassName.get(context);
+        StringValue stringValue = this.list_ClassName.get(context);
+        return stringValue.build();
     }
 
-    String getClassName(
+    private StringValue getClassName(
             Context context) {
 
-        return this.field_ClassName.get(context);
+        return this.list_ClassName.get(context);
     }
 
     @Override
@@ -62,7 +64,6 @@ public class MRedefinedApplyInitializer
         }
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -70,7 +71,7 @@ public class MRedefinedApplyInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append("void apply(");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("        InternalsInitializer internalsInitializer)");
+        sb0.append("        InternalsInitializer internalsInitializer) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
