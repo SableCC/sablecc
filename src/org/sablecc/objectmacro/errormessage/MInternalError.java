@@ -4,85 +4,211 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MInternalError extends Macro{
+public class MInternalError extends Macro {
     
-    String field_StackTrace;
+    private DSeparator StackTraceSeparator;
     
-    String field_Message;
+    private DBeforeFirst StackTraceBeforeFirst;
     
-    MInternalError(String pStackTrace, String pMessage, Macros macros){
+    private DAfterLast StackTraceAfterLast;
+    
+    private DNone StackTraceNone;
+    
+    final List<String> list_StackTrace;
+    
+    final Context StackTraceContext = new Context();
+    
+    final StringValue StackTraceValue;
+    
+    private DSeparator MessageSeparator;
+    
+    private DBeforeFirst MessageBeforeFirst;
+    
+    private DAfterLast MessageAfterLast;
+    
+    private DNone MessageNone;
+    
+    final List<String> list_Message;
+    
+    final Context MessageContext = new Context();
+    
+    final StringValue MessageValue;
+    
+    MInternalError(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPStackTrace(pStackTrace);
-        this.setPMessage(pMessage);
+        this.list_StackTrace = new LinkedList<>();
+        this.list_Message = new LinkedList<>();
+        
+        this.StackTraceValue = new StringValue(this.list_StackTrace, this.StackTraceContext);
+        this.MessageValue = new StringValue(this.list_Message, this.MessageContext);
     }
     
-    private void setPStackTrace( String pStackTrace ){
-        if(pStackTrace == null){
+    public void addAllStackTrace(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("StackTrace");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("StackTrace");
+            }
     
-        this.field_StackTrace = pStackTrace;
+            this.list_StackTrace.add(string);
+        }
     }
     
-    private void setPMessage( String pMessage ){
-        if(pMessage == null){
-            throw ObjectMacroException.parameterNull("Message");
+    public void addStackTrace(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("StackTrace");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.field_Message = pMessage;
+        this.list_StackTrace.add(string);
     }
     
-    String buildStackTrace(){
+    public void addAllMessage(
+                    List<String> strings){
     
-        return this.field_StackTrace;
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("Message");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Message");
+            }
+    
+            this.list_Message.add(string);
+        }
     }
     
-    String buildMessage(){
+    public void addMessage(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Message");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_Message;
+        this.list_Message.add(string);
     }
     
-    String getStackTrace(){
+    private String buildStackTrace() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_StackTrace;
     
-        return this.field_StackTrace;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.StackTraceNone != null) {
+            sb.append(this.StackTraceNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.StackTraceBeforeFirst != null) {
+                string = this.StackTraceBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.StackTraceAfterLast != null) {
+                string = this.StackTraceAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.StackTraceSeparator != null) {
+                string = this.StackTraceSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getMessage(){
+    private String buildMessage() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Message;
     
-        return this.field_Message;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.MessageNone != null) {
+            sb.append(this.MessageNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.MessageBeforeFirst != null) {
+                string = this.MessageBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.MessageAfterLast != null) {
+                string = this.MessageAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.MessageSeparator != null) {
+                string = this.MessageSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getStackTrace() {
+        return this.StackTraceValue;
+    }
+    
+    StringValue getMessage() {
+        return this.MessageValue;
     }
     
     
+    private void initStackTraceDirectives() {
+        
+    }
+    
+    private void initMessageDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setInternalError(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
-    
-    
+        initStackTraceDirectives();
+        initMessageDirectives();
     
         StringBuilder sb0 = new StringBuilder();
     
@@ -110,7 +236,6 @@ public  class MInternalError extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

@@ -3,7 +3,8 @@
 package org.sablecc.objectmacro.intermediate.macro;
 import java.util.*;
 
-public class Macros{
+public class Macros {
+
     private VERSIONS version;
 
     public Macros(
@@ -84,18 +85,18 @@ public class Macros{
         return mArgs;
     }
     
-    public MVarArgument newVarArgument(String pParamName){
+    public MVarArgument newVarArgument(){
         MVarArgument mVarArgument;
     
-        mVarArgument = new MVarArgument(pParamName, this);
+        mVarArgument = new MVarArgument(this);
     
         return mVarArgument;
     }
     
-    public MTextArgument newTextArgument(String pParamName){
+    public MTextArgument newTextArgument(){
         MTextArgument mTextArgument;
     
-        mTextArgument = new MTextArgument(pParamName, this);
+        mTextArgument = new MTextArgument(this);
     
         return mTextArgument;
     }
@@ -108,10 +109,10 @@ public class Macros{
         return mParamName;
     }
     
-    public MStringPart newStringPart(String pText){
+    public MStringPart newStringPart(){
         MStringPart mStringPart;
     
-        mStringPart = new MStringPart(pText, this);
+        mStringPart = new MStringPart(this);
     
         return mStringPart;
     }
@@ -164,10 +165,10 @@ public class Macros{
         return mDirective;
     }
     
-    public MSimpleName newSimpleName(String pName){
+    public MSimpleName newSimpleName(){
         MSimpleName mSimpleName;
     
-        mSimpleName = new MSimpleName(pName, this);
+        mSimpleName = new MSimpleName(this);
     
         return mSimpleName;
     }

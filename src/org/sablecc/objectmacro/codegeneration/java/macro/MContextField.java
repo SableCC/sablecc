@@ -4,62 +4,63 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MContextField extends Macro{
+public class MContextField extends Macro {
     
-    private Map<Context, String> field_ParamName = new LinkedHashMap<>();
+    private Map<Context, StringValue> list_ParamName = new LinkedHashMap<>();
     
     MContextField(Macros macros){
         
         
         this.setMacros(macros);
+        this.list_ParamName = new LinkedHashMap<>();
     }
     
     void setParamName(
             Context context,
-            String value) {
+            StringValue value) {
     
         if(value == null){
             throw new RuntimeException("value cannot be null here");
         }
     
-        this.field_ParamName.put(context, value);
+        this.list_ParamName.put(context, value);
     }
     
-    String buildParamName(Context context){
+    private String buildParamName(Context context) {
     
-        return this.field_ParamName.get(context);
+        StringValue stringValue = this.list_ParamName.get(context);
+        return stringValue.build();
     }
     
-    String getParamName(Context context){
+    private StringValue getParamName(Context context) {
     
-        return this.field_ParamName.get(context);
+        return this.list_ParamName.get(context);
     }
     
     
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setContextField(this);
     }
     
     
-    String build(Context context){
+    String build(Context context) {
     
         CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
         
     
@@ -74,7 +75,6 @@ public  class MContextField extends Macro{
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

@@ -4,68 +4,132 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MCannotCreateDirectory extends Macro{
+public class MCannotCreateDirectory extends Macro {
     
-    String field_Location;
+    private DSeparator LocationSeparator;
     
-    MCannotCreateDirectory(String pLocation, Macros macros){
+    private DBeforeFirst LocationBeforeFirst;
+    
+    private DAfterLast LocationAfterLast;
+    
+    private DNone LocationNone;
+    
+    final List<String> list_Location;
+    
+    final Context LocationContext = new Context();
+    
+    final StringValue LocationValue;
+    
+    MCannotCreateDirectory(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPLocation(pLocation);
+        this.list_Location = new LinkedList<>();
+        
+        this.LocationValue = new StringValue(this.list_Location, this.LocationContext);
     }
     
-    private void setPLocation( String pLocation ){
-        if(pLocation == null){
+    public void addAllLocation(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Location");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Location");
+            }
     
-        this.field_Location = pLocation;
+            this.list_Location.add(string);
+        }
     }
     
-    String buildLocation(){
+    public void addLocation(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Location");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_Location;
+        this.list_Location.add(string);
     }
     
-    String getLocation(){
+    private String buildLocation() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Location;
     
-        return this.field_Location;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.LocationNone != null) {
+            sb.append(this.LocationNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.LocationBeforeFirst != null) {
+                string = this.LocationBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.LocationAfterLast != null) {
+                string = this.LocationAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.LocationSeparator != null) {
+                string = this.LocationSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getLocation() {
+        return this.LocationValue;
     }
     
     
+    private void initLocationDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setCannotCreateDirectory(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
+        initLocationDirectives();
     
     
     
         StringBuilder sb0 = new StringBuilder();
     
         MCommandLineErrorHead m1 = this.getMacros().newCommandLineErrorHead();
+        
         
         
         sb0.append(m1.build(null));
@@ -79,6 +143,7 @@ public  class MCannotCreateDirectory extends Macro{
         MCommandLineErrorTail m2 = this.getMacros().newCommandLineErrorTail();
         
         
+        
         sb0.append(m2.build(null));
     
         cache_builder.setExpansion(sb0.toString());
@@ -89,7 +154,6 @@ public  class MCannotCreateDirectory extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

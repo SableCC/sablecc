@@ -4,89 +4,216 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MSpuriousShortOptionOperand extends Macro{
+public class MSpuriousShortOptionOperand extends Macro {
     
-    String field_OptionName;
+    private DSeparator OptionNameSeparator;
     
-    String field_OperandText;
+    private DBeforeFirst OptionNameBeforeFirst;
     
-    MSpuriousShortOptionOperand(String pOptionName, String pOperandText, Macros macros){
+    private DAfterLast OptionNameAfterLast;
+    
+    private DNone OptionNameNone;
+    
+    final List<String> list_OptionName;
+    
+    final Context OptionNameContext = new Context();
+    
+    final StringValue OptionNameValue;
+    
+    private DSeparator OperandTextSeparator;
+    
+    private DBeforeFirst OperandTextBeforeFirst;
+    
+    private DAfterLast OperandTextAfterLast;
+    
+    private DNone OperandTextNone;
+    
+    final List<String> list_OperandText;
+    
+    final Context OperandTextContext = new Context();
+    
+    final StringValue OperandTextValue;
+    
+    MSpuriousShortOptionOperand(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPOptionName(pOptionName);
-        this.setPOperandText(pOperandText);
+        this.list_OptionName = new LinkedList<>();
+        this.list_OperandText = new LinkedList<>();
+        
+        this.OptionNameValue = new StringValue(this.list_OptionName, this.OptionNameContext);
+        this.OperandTextValue = new StringValue(this.list_OperandText, this.OperandTextContext);
     }
     
-    private void setPOptionName( String pOptionName ){
-        if(pOptionName == null){
+    public void addAllOptionName(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("OptionName");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("OptionName");
+            }
     
-        this.field_OptionName = pOptionName;
+            this.list_OptionName.add(string);
+        }
     }
     
-    private void setPOperandText( String pOperandText ){
-        if(pOperandText == null){
-            throw ObjectMacroException.parameterNull("OperandText");
+    public void addOptionName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("OptionName");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.field_OperandText = pOperandText;
+        this.list_OptionName.add(string);
     }
     
-    String buildOptionName(){
+    public void addAllOperandText(
+                    List<String> strings){
     
-        return this.field_OptionName;
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("OperandText");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("OperandText");
+            }
+    
+            this.list_OperandText.add(string);
+        }
     }
     
-    String buildOperandText(){
+    public void addOperandText(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("OperandText");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_OperandText;
+        this.list_OperandText.add(string);
     }
     
-    String getOptionName(){
+    private String buildOptionName() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_OptionName;
     
-        return this.field_OptionName;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.OptionNameNone != null) {
+            sb.append(this.OptionNameNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.OptionNameBeforeFirst != null) {
+                string = this.OptionNameBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.OptionNameAfterLast != null) {
+                string = this.OptionNameAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.OptionNameSeparator != null) {
+                string = this.OptionNameSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getOperandText(){
+    private String buildOperandText() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_OperandText;
     
-        return this.field_OperandText;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.OperandTextNone != null) {
+            sb.append(this.OperandTextNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.OperandTextBeforeFirst != null) {
+                string = this.OperandTextBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.OperandTextAfterLast != null) {
+                string = this.OperandTextAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.OperandTextSeparator != null) {
+                string = this.OperandTextSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getOptionName() {
+        return this.OptionNameValue;
+    }
+    
+    StringValue getOperandText() {
+        return this.OperandTextValue;
     }
     
     
+    private void initOptionNameDirectives() {
+        
+    }
+    
+    private void initOperandTextDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setSpuriousShortOptionOperand(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
-    
-    
+        initOptionNameDirectives();
+        initOperandTextDirectives();
     
         StringBuilder sb0 = new StringBuilder();
     
         MCommandLineErrorHead m1 = this.getMacros().newCommandLineErrorHead();
+        
         
         
         sb0.append(m1.build(null));
@@ -105,6 +232,7 @@ public  class MSpuriousShortOptionOperand extends Macro{
         MCommandLineErrorTail m2 = this.getMacros().newCommandLineErrorTail();
         
         
+        
         sb0.append(m2.build(null));
     
         cache_builder.setExpansion(sb0.toString());
@@ -115,7 +243,6 @@ public  class MSpuriousShortOptionOperand extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

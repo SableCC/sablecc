@@ -4,68 +4,132 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MUnknownTarget extends Macro{
+public class MUnknownTarget extends Macro {
     
-    String field_Target;
+    private DSeparator TargetSeparator;
     
-    MUnknownTarget(String pTarget, Macros macros){
+    private DBeforeFirst TargetBeforeFirst;
+    
+    private DAfterLast TargetAfterLast;
+    
+    private DNone TargetNone;
+    
+    final List<String> list_Target;
+    
+    final Context TargetContext = new Context();
+    
+    final StringValue TargetValue;
+    
+    MUnknownTarget(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPTarget(pTarget);
+        this.list_Target = new LinkedList<>();
+        
+        this.TargetValue = new StringValue(this.list_Target, this.TargetContext);
     }
     
-    private void setPTarget( String pTarget ){
-        if(pTarget == null){
+    public void addAllTarget(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Target");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Target");
+            }
     
-        this.field_Target = pTarget;
+            this.list_Target.add(string);
+        }
     }
     
-    String buildTarget(){
+    public void addTarget(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Target");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_Target;
+        this.list_Target.add(string);
     }
     
-    String getTarget(){
+    private String buildTarget() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Target;
     
-        return this.field_Target;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.TargetNone != null) {
+            sb.append(this.TargetNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.TargetBeforeFirst != null) {
+                string = this.TargetBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.TargetAfterLast != null) {
+                string = this.TargetAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.TargetSeparator != null) {
+                string = this.TargetSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getTarget() {
+        return this.TargetValue;
     }
     
     
+    private void initTargetDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setUnknownTarget(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
+        initTargetDirectives();
     
     
     
         StringBuilder sb0 = new StringBuilder();
     
         MCommandLineErrorHead m1 = this.getMacros().newCommandLineErrorHead();
+        
         
         
         sb0.append(m1.build(null));
@@ -84,6 +148,7 @@ public  class MUnknownTarget extends Macro{
         MCommandLineErrorTail m2 = this.getMacros().newCommandLineErrorTail();
         
         
+        
         sb0.append(m2.build(null));
     
         cache_builder.setExpansion(sb0.toString());
@@ -94,7 +159,6 @@ public  class MUnknownTarget extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

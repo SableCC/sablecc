@@ -26,8 +26,10 @@ public class ParameterNull {
     public static void main(
             String[] args){
 
+        Macros macros = new Macros();
+
         System.out.println("---------- Parameter null ----------");
-        MA ma = new MA("First argument of MA");
+        MA ma = macros.newA();
 
         try{
             ma.addZ(null);

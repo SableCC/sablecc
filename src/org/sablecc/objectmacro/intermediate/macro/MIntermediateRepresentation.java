@@ -4,13 +4,7 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public  class MIntermediateRepresentation extends Macro{
-    
-    final List<Macro> list_DefinedMacros;
-    
-    final Context DefinedMacrosContext = new Context();
-    
-    final InternalValue DefinedMacrosValue;
+public class MIntermediateRepresentation extends Macro {
     
     private DSeparator DefinedMacrosSeparator;
     
@@ -20,11 +14,11 @@ public  class MIntermediateRepresentation extends Macro{
     
     private DNone DefinedMacrosNone;
     
-    final List<Macro> list_VersionDefinition;
+    final List<Macro> list_DefinedMacros;
     
-    final Context VersionDefinitionContext = new Context();
+    final Context DefinedMacrosContext = new Context();
     
-    final InternalValue VersionDefinitionValue;
+    final MacroValue DefinedMacrosValue;
     
     private DSeparator VersionDefinitionSeparator;
     
@@ -34,6 +28,12 @@ public  class MIntermediateRepresentation extends Macro{
     
     private DNone VersionDefinitionNone;
     
+    final List<Macro> list_VersionDefinition;
+    
+    final Context VersionDefinitionContext = new Context();
+    
+    final MacroValue VersionDefinitionValue;
+    
     MIntermediateRepresentation(Macros macros){
         
         
@@ -41,8 +41,8 @@ public  class MIntermediateRepresentation extends Macro{
         this.list_DefinedMacros = new LinkedList<>();
         this.list_VersionDefinition = new LinkedList<>();
         
-        this.DefinedMacrosValue = new InternalValue(this.list_DefinedMacros, this.DefinedMacrosContext);
-        this.VersionDefinitionValue = new InternalValue(this.list_VersionDefinition, this.VersionDefinitionContext);
+        this.DefinedMacrosValue = new MacroValue(this.list_DefinedMacros, this.DefinedMacrosContext);
+        this.VersionDefinitionValue = new MacroValue(this.list_VersionDefinition, this.VersionDefinitionContext);
     }
     
     public void addAllDefinedMacros(
@@ -51,8 +51,8 @@ public  class MIntermediateRepresentation extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("DefinedMacros");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("IntermediateRepresentation");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -62,7 +62,7 @@ public  class MIntermediateRepresentation extends Macro{
                 throw ObjectMacroException.macroNull(i, "DefinedMacros");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -80,9 +80,9 @@ public  class MIntermediateRepresentation extends Macro{
         macro.apply(new InternalsInitializer("DefinedMacros"){
             @Override
             void setMacro(MMacro mMacro){
+                
             
-                
-                
+            
             }
         });
     }
@@ -91,11 +91,11 @@ public  class MIntermediateRepresentation extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("DefinedMacros");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("IntermediateRepresentation");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -110,8 +110,8 @@ public  class MIntermediateRepresentation extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("VersionDefinition");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("IntermediateRepresentation");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -121,7 +121,7 @@ public  class MIntermediateRepresentation extends Macro{
                 throw ObjectMacroException.macroNull(i, "VersionDefinition");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -139,9 +139,9 @@ public  class MIntermediateRepresentation extends Macro{
         macro.apply(new InternalsInitializer("VersionDefinition"){
             @Override
             void setVersions(MVersions mVersions){
+                
             
-                
-                
+            
             }
         });
     }
@@ -150,11 +150,11 @@ public  class MIntermediateRepresentation extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("VersionDefinition");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("IntermediateRepresentation");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -163,31 +163,31 @@ public  class MIntermediateRepresentation extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    private String buildDefinedMacros(){
+    private String buildDefinedMacros() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = DefinedMacrosContext;
+        Context local_context = this.DefinedMacrosContext;
         List<Macro> macros = this.list_DefinedMacros;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.DefinedMacrosNone != null){
+        if(this.DefinedMacrosNone != null) {
             sb.append(this.DefinedMacrosNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.DefinedMacrosBeforeFirst != null){
+            if(this.DefinedMacrosBeforeFirst != null) {
                 expansion = this.DefinedMacrosBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.DefinedMacrosAfterLast != null){
+            if(this.DefinedMacrosAfterLast != null) {
                 expansion = this.DefinedMacrosAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.DefinedMacrosSeparator != null){
+            if(this.DefinedMacrosSeparator != null) {
                 expansion = this.DefinedMacrosSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -198,31 +198,31 @@ public  class MIntermediateRepresentation extends Macro{
         return sb.toString();
     }
     
-    private String buildVersionDefinition(){
+    private String buildVersionDefinition() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = VersionDefinitionContext;
+        Context local_context = this.VersionDefinitionContext;
         List<Macro> macros = this.list_VersionDefinition;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.VersionDefinitionNone != null){
+        if(this.VersionDefinitionNone != null) {
             sb.append(this.VersionDefinitionNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.VersionDefinitionBeforeFirst != null){
+            if(this.VersionDefinitionBeforeFirst != null) {
                 expansion = this.VersionDefinitionBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.VersionDefinitionAfterLast != null){
+            if(this.VersionDefinitionAfterLast != null) {
                 expansion = this.VersionDefinitionAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.VersionDefinitionSeparator != null){
+            if(this.VersionDefinitionSeparator != null) {
                 expansion = this.VersionDefinitionSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -233,40 +233,40 @@ public  class MIntermediateRepresentation extends Macro{
         return sb.toString();
     }
     
-    private InternalValue getDefinedMacros(){
+    MacroValue getDefinedMacros() {
         return this.DefinedMacrosValue;
     }
     
-    private InternalValue getVersionDefinition(){
+    MacroValue getVersionDefinition() {
         return this.VersionDefinitionValue;
     }
-    private void initDefinedMacrosInternals(Context context){
-        for(Macro macro : this.list_DefinedMacros){
+    private void initDefinedMacrosInternals(Context context) {
+        for(Macro macro : this.list_DefinedMacros) {
             macro.apply(new InternalsInitializer("DefinedMacros"){
                 @Override
                 void setMacro(MMacro mMacro){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initVersionDefinitionInternals(Context context){
-        for(Macro macro : this.list_VersionDefinition){
+    private void initVersionDefinitionInternals(Context context) {
+        for(Macro macro : this.list_VersionDefinition) {
             macro.apply(new InternalsInitializer("VersionDefinition"){
                 @Override
                 void setVersions(MVersions mVersions){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initDefinedMacrosDirectives(){
+    private void initDefinedMacrosDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.DefinedMacrosSeparator = new DSeparator(sb1.toString());
@@ -276,35 +276,36 @@ public  class MIntermediateRepresentation extends Macro{
         this.DefinedMacrosValue.setBeforeFirst(this.DefinedMacrosBeforeFirst);
     }
     
-    private void initVersionDefinitionDirectives(){
+    private void initVersionDefinitionDirectives() {
         
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setIntermediateRepresentation(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
         initDefinedMacrosDirectives();
+        initDefinedMacrosDirectives();
+        initVersionDefinitionDirectives();
         initVersionDefinitionDirectives();
         
         initDefinedMacrosInternals(null);
@@ -324,7 +325,6 @@ public  class MIntermediateRepresentation extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

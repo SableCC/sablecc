@@ -4,68 +4,132 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MInvalidIntermediateSuffix extends Macro{
+public class MInvalidIntermediateSuffix extends Macro {
     
-    String field_FileName;
+    private DSeparator FileNameSeparator;
     
-    MInvalidIntermediateSuffix(String pFileName, Macros macros){
+    private DBeforeFirst FileNameBeforeFirst;
+    
+    private DAfterLast FileNameAfterLast;
+    
+    private DNone FileNameNone;
+    
+    final List<String> list_FileName;
+    
+    final Context FileNameContext = new Context();
+    
+    final StringValue FileNameValue;
+    
+    MInvalidIntermediateSuffix(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPFileName(pFileName);
+        this.list_FileName = new LinkedList<>();
+        
+        this.FileNameValue = new StringValue(this.list_FileName, this.FileNameContext);
     }
     
-    private void setPFileName( String pFileName ){
-        if(pFileName == null){
+    public void addAllFileName(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("FileName");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("FileName");
+            }
     
-        this.field_FileName = pFileName;
+            this.list_FileName.add(string);
+        }
     }
     
-    String buildFileName(){
+    public void addFileName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("FileName");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_FileName;
+        this.list_FileName.add(string);
     }
     
-    String getFileName(){
+    private String buildFileName() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_FileName;
     
-        return this.field_FileName;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.FileNameNone != null) {
+            sb.append(this.FileNameNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.FileNameBeforeFirst != null) {
+                string = this.FileNameBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.FileNameAfterLast != null) {
+                string = this.FileNameAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.FileNameSeparator != null) {
+                string = this.FileNameSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getFileName() {
+        return this.FileNameValue;
     }
     
     
+    private void initFileNameDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setInvalidIntermediateSuffix(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
+        initFileNameDirectives();
     
     
     
         StringBuilder sb0 = new StringBuilder();
     
         MCommandLineErrorHead m1 = this.getMacros().newCommandLineErrorHead();
+        
         
         
         sb0.append(m1.build(null));
@@ -79,6 +143,7 @@ public  class MInvalidIntermediateSuffix extends Macro{
         MCommandLineErrorTail m2 = this.getMacros().newCommandLineErrorTail();
         
         
+        
         sb0.append(m2.build(null));
     
         cache_builder.setExpansion(sb0.toString());
@@ -89,7 +154,6 @@ public  class MInvalidIntermediateSuffix extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

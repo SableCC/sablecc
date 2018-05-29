@@ -4,68 +4,132 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MInvalidArgument extends Macro{
+public class MInvalidArgument extends Macro {
     
-    String field_ArgumentText;
+    private DSeparator ArgumentTextSeparator;
     
-    MInvalidArgument(String pArgumentText, Macros macros){
+    private DBeforeFirst ArgumentTextBeforeFirst;
+    
+    private DAfterLast ArgumentTextAfterLast;
+    
+    private DNone ArgumentTextNone;
+    
+    final List<String> list_ArgumentText;
+    
+    final Context ArgumentTextContext = new Context();
+    
+    final StringValue ArgumentTextValue;
+    
+    MInvalidArgument(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPArgumentText(pArgumentText);
+        this.list_ArgumentText = new LinkedList<>();
+        
+        this.ArgumentTextValue = new StringValue(this.list_ArgumentText, this.ArgumentTextContext);
     }
     
-    private void setPArgumentText( String pArgumentText ){
-        if(pArgumentText == null){
+    public void addAllArgumentText(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("ArgumentText");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("ArgumentText");
+            }
     
-        this.field_ArgumentText = pArgumentText;
+            this.list_ArgumentText.add(string);
+        }
     }
     
-    String buildArgumentText(){
+    public void addArgumentText(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("ArgumentText");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_ArgumentText;
+        this.list_ArgumentText.add(string);
     }
     
-    String getArgumentText(){
+    private String buildArgumentText() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ArgumentText;
     
-        return this.field_ArgumentText;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.ArgumentTextNone != null) {
+            sb.append(this.ArgumentTextNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.ArgumentTextBeforeFirst != null) {
+                string = this.ArgumentTextBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.ArgumentTextAfterLast != null) {
+                string = this.ArgumentTextAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.ArgumentTextSeparator != null) {
+                string = this.ArgumentTextSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getArgumentText() {
+        return this.ArgumentTextValue;
     }
     
     
+    private void initArgumentTextDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setInvalidArgument(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
+        initArgumentTextDirectives();
     
     
     
         StringBuilder sb0 = new StringBuilder();
     
         MCommandLineErrorHead m1 = this.getMacros().newCommandLineErrorHead();
+        
         
         
         sb0.append(m1.build(null));
@@ -82,6 +146,7 @@ public  class MInvalidArgument extends Macro{
         MCommandLineErrorTail m2 = this.getMacros().newCommandLineErrorTail();
         
         
+        
         sb0.append(m2.build(null));
     
         cache_builder.setExpansion(sb0.toString());
@@ -92,7 +157,6 @@ public  class MInvalidArgument extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

@@ -4,131 +4,388 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public  class MIncorrectArgumentCount extends Macro{
+public class MIncorrectArgumentCount extends Macro {
     
-    String field_Line;
+    private DSeparator LineSeparator;
     
-    String field_Char;
+    private DBeforeFirst LineBeforeFirst;
     
-    String field_ExpectedCount;
+    private DAfterLast LineAfterLast;
     
-    String field_CurrentCount;
+    private DNone LineNone;
     
-    MIncorrectArgumentCount(String pLine, String pChar, String pExpectedCount, String pCurrentCount, Macros macros){
+    final List<String> list_Line;
+    
+    final Context LineContext = new Context();
+    
+    final StringValue LineValue;
+    
+    private DSeparator CharSeparator;
+    
+    private DBeforeFirst CharBeforeFirst;
+    
+    private DAfterLast CharAfterLast;
+    
+    private DNone CharNone;
+    
+    final List<String> list_Char;
+    
+    final Context CharContext = new Context();
+    
+    final StringValue CharValue;
+    
+    private DSeparator ExpectedCountSeparator;
+    
+    private DBeforeFirst ExpectedCountBeforeFirst;
+    
+    private DAfterLast ExpectedCountAfterLast;
+    
+    private DNone ExpectedCountNone;
+    
+    final List<String> list_ExpectedCount;
+    
+    final Context ExpectedCountContext = new Context();
+    
+    final StringValue ExpectedCountValue;
+    
+    private DSeparator CurrentCountSeparator;
+    
+    private DBeforeFirst CurrentCountBeforeFirst;
+    
+    private DAfterLast CurrentCountAfterLast;
+    
+    private DNone CurrentCountNone;
+    
+    final List<String> list_CurrentCount;
+    
+    final Context CurrentCountContext = new Context();
+    
+    final StringValue CurrentCountValue;
+    
+    MIncorrectArgumentCount(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPLine(pLine);
-        this.setPChar(pChar);
-        this.setPExpectedCount(pExpectedCount);
-        this.setPCurrentCount(pCurrentCount);
+        this.list_Line = new LinkedList<>();
+        this.list_Char = new LinkedList<>();
+        this.list_ExpectedCount = new LinkedList<>();
+        this.list_CurrentCount = new LinkedList<>();
+        
+        this.LineValue = new StringValue(this.list_Line, this.LineContext);
+        this.CharValue = new StringValue(this.list_Char, this.CharContext);
+        this.ExpectedCountValue = new StringValue(this.list_ExpectedCount, this.ExpectedCountContext);
+        this.CurrentCountValue = new StringValue(this.list_CurrentCount, this.CurrentCountContext);
     }
     
-    private void setPLine( String pLine ){
-        if(pLine == null){
+    public void addAllLine(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Line");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Line");
+            }
     
-        this.field_Line = pLine;
+            this.list_Line.add(string);
+        }
     }
     
-    private void setPChar( String pChar ){
-        if(pChar == null){
+    public void addLine(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Line");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_Line.add(string);
+    }
+    
+    public void addAllChar(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("Char");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Char");
+            }
     
-        this.field_Char = pChar;
+            this.list_Char.add(string);
+        }
     }
     
-    private void setPExpectedCount( String pExpectedCount ){
-        if(pExpectedCount == null){
+    public void addChar(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("Char");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_Char.add(string);
+    }
+    
+    public void addAllExpectedCount(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("ExpectedCount");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("ExpectedCount");
+            }
     
-        this.field_ExpectedCount = pExpectedCount;
+            this.list_ExpectedCount.add(string);
+        }
     }
     
-    private void setPCurrentCount( String pCurrentCount ){
-        if(pCurrentCount == null){
-            throw ObjectMacroException.parameterNull("CurrentCount");
+    public void addExpectedCount(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("ExpectedCount");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.field_CurrentCount = pCurrentCount;
+        this.list_ExpectedCount.add(string);
     }
     
-    String buildLine(){
+    public void addAllCurrentCount(
+                    List<String> strings){
     
-        return this.field_Line;
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("CurrentCount");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("CurrentCount");
+            }
+    
+            this.list_CurrentCount.add(string);
+        }
     }
     
-    String buildChar(){
+    public void addCurrentCount(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("CurrentCount");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_Char;
+        this.list_CurrentCount.add(string);
     }
     
-    String buildExpectedCount(){
+    private String buildLine() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Line;
     
-        return this.field_ExpectedCount;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.LineNone != null) {
+            sb.append(this.LineNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.LineBeforeFirst != null) {
+                string = this.LineBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.LineAfterLast != null) {
+                string = this.LineAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.LineSeparator != null) {
+                string = this.LineSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String buildCurrentCount(){
+    private String buildChar() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Char;
     
-        return this.field_CurrentCount;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.CharNone != null) {
+            sb.append(this.CharNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.CharBeforeFirst != null) {
+                string = this.CharBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.CharAfterLast != null) {
+                string = this.CharAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.CharSeparator != null) {
+                string = this.CharSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getLine(){
+    private String buildExpectedCount() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ExpectedCount;
     
-        return this.field_Line;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.ExpectedCountNone != null) {
+            sb.append(this.ExpectedCountNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.ExpectedCountBeforeFirst != null) {
+                string = this.ExpectedCountBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.ExpectedCountAfterLast != null) {
+                string = this.ExpectedCountAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.ExpectedCountSeparator != null) {
+                string = this.ExpectedCountSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getChar(){
+    private String buildCurrentCount() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_CurrentCount;
     
-        return this.field_Char;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.CurrentCountNone != null) {
+            sb.append(this.CurrentCountNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.CurrentCountBeforeFirst != null) {
+                string = this.CurrentCountBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.CurrentCountAfterLast != null) {
+                string = this.CurrentCountAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.CurrentCountSeparator != null) {
+                string = this.CurrentCountSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    String getExpectedCount(){
-    
-        return this.field_ExpectedCount;
+    StringValue getLine() {
+        return this.LineValue;
     }
     
-    String getCurrentCount(){
+    StringValue getChar() {
+        return this.CharValue;
+    }
     
-        return this.field_CurrentCount;
+    StringValue getExpectedCount() {
+        return this.ExpectedCountValue;
+    }
+    
+    StringValue getCurrentCount() {
+        return this.CurrentCountValue;
     }
     
     
+    private void initLineDirectives() {
+        
+    }
+    
+    private void initCharDirectives() {
+        
+    }
+    
+    private void initExpectedCountDirectives() {
+        
+    }
+    
+    private void initCurrentCountDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setIncorrectArgumentCount(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
-    
-    
+        initLineDirectives();
+        initCharDirectives();
+        initExpectedCountDirectives();
+        initCurrentCountDirectives();
     
         StringBuilder sb0 = new StringBuilder();
     
         MSemanticErrorHead m1 = this.getMacros().newSemanticErrorHead();
+        
         
         
         sb0.append(m1.build(null));
@@ -154,7 +411,6 @@ public  class MIncorrectArgumentCount extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

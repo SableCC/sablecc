@@ -4,15 +4,21 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public  class MVarArgument extends Macro{
+public class MVarArgument extends Macro {
     
-    String field_ParamName;
+    private DSeparator ParamNameSeparator;
     
-    final List<Macro> list_ReferencedParam;
+    private DBeforeFirst ParamNameBeforeFirst;
     
-    final Context ReferencedParamContext = new Context();
+    private DAfterLast ParamNameAfterLast;
     
-    final InternalValue ReferencedParamValue;
+    private DNone ParamNameNone;
+    
+    final List<String> list_ParamName;
+    
+    final Context ParamNameContext = new Context();
+    
+    final StringValue ParamNameValue;
     
     private DSeparator ReferencedParamSeparator;
     
@@ -22,22 +28,50 @@ public  class MVarArgument extends Macro{
     
     private DNone ReferencedParamNone;
     
-    MVarArgument(String pParamName, Macros macros){
+    final List<Macro> list_ReferencedParam;
+    
+    final Context ReferencedParamContext = new Context();
+    
+    final MacroValue ReferencedParamValue;
+    
+    MVarArgument(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPParamName(pParamName);
+        this.list_ParamName = new LinkedList<>();
         this.list_ReferencedParam = new LinkedList<>();
         
-        this.ReferencedParamValue = new InternalValue(this.list_ReferencedParam, this.ReferencedParamContext);
+        this.ParamNameValue = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.ReferencedParamValue = new MacroValue(this.list_ReferencedParam, this.ReferencedParamContext);
     }
     
-    private void setPParamName( String pParamName ){
-        if(pParamName == null){
+    public void addAllParamName(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("ParamName");
+            }
     
-        this.field_ParamName = pParamName;
+            this.list_ParamName.add(string);
+        }
+    }
+    
+    public void addParamName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_ParamName.add(string);
     }
     
     public void addAllReferencedParam(
@@ -46,8 +80,8 @@ public  class MVarArgument extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("ReferencedParam");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("VarArgument");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -57,7 +91,7 @@ public  class MVarArgument extends Macro{
                 throw ObjectMacroException.macroNull(i, "ReferencedParam");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -75,9 +109,9 @@ public  class MVarArgument extends Macro{
         macro.apply(new InternalsInitializer("ReferencedParam"){
             @Override
             void setName(MName mName){
+                
             
-                
-                
+            
             }
         });
     }
@@ -86,11 +120,11 @@ public  class MVarArgument extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("ReferencedParam");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("VarArgument");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -99,36 +133,63 @@ public  class MVarArgument extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    String buildParamName(){
+    private String buildParamName() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ParamName;
     
-        return this.field_ParamName;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    private String buildReferencedParam(){
+    private String buildReferencedParam() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = ReferencedParamContext;
+        Context local_context = this.ReferencedParamContext;
         List<Macro> macros = this.list_ReferencedParam;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.ReferencedParamNone != null){
+        if(this.ReferencedParamNone != null) {
             sb.append(this.ReferencedParamNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.ReferencedParamBeforeFirst != null){
+            if(this.ReferencedParamBeforeFirst != null) {
                 expansion = this.ReferencedParamBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.ReferencedParamAfterLast != null){
+            if(this.ReferencedParamAfterLast != null) {
                 expansion = this.ReferencedParamAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.ReferencedParamSeparator != null){
+            if(this.ReferencedParamSeparator != null) {
                 expansion = this.ReferencedParamSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -139,55 +200,59 @@ public  class MVarArgument extends Macro{
         return sb.toString();
     }
     
-    String getParamName(){
-    
-        return this.field_ParamName;
+    StringValue getParamName() {
+        return this.ParamNameValue;
     }
     
-    private InternalValue getReferencedParam(){
+    MacroValue getReferencedParam() {
         return this.ReferencedParamValue;
     }
-    private void initReferencedParamInternals(Context context){
-        for(Macro macro : this.list_ReferencedParam){
+    private void initReferencedParamInternals(Context context) {
+        for(Macro macro : this.list_ReferencedParam) {
             macro.apply(new InternalsInitializer("ReferencedParam"){
                 @Override
                 void setName(MName mName){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initReferencedParamDirectives(){
+    private void initParamNameDirectives() {
+        
+    }
+    
+    private void initReferencedParamDirectives() {
         
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setVarArgument(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initParamNameDirectives();
+        initReferencedParamDirectives();
         initReferencedParamDirectives();
         
         initReferencedParamInternals(null);
@@ -202,6 +267,7 @@ public  class MVarArgument extends Macro{
         sb2.append("    ");
         indentations.add(sb2.toString());
         MParamName m1 = this.getMacros().newParamName();
+        
         
         m1.setName(null, getParamName());
         sb1.append(m1.build(null));
@@ -219,7 +285,6 @@ public  class MVarArgument extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

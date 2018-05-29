@@ -4,13 +4,7 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public  class MArgs extends Macro{
-    
-    final List<Macro> list_Arguments;
-    
-    final Context ArgumentsContext = new Context();
-    
-    final InternalValue ArgumentsValue;
+public class MArgs extends Macro {
     
     private DSeparator ArgumentsSeparator;
     
@@ -20,13 +14,19 @@ public  class MArgs extends Macro{
     
     private DNone ArgumentsNone;
     
+    final List<Macro> list_Arguments;
+    
+    final Context ArgumentsContext = new Context();
+    
+    final MacroValue ArgumentsValue;
+    
     MArgs(Macros macros){
         
         
         this.setMacros(macros);
         this.list_Arguments = new LinkedList<>();
         
-        this.ArgumentsValue = new InternalValue(this.list_Arguments, this.ArgumentsContext);
+        this.ArgumentsValue = new MacroValue(this.list_Arguments, this.ArgumentsContext);
     }
     
     public void addAllArguments(
@@ -35,8 +35,8 @@ public  class MArgs extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Arguments");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Args");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -46,7 +46,7 @@ public  class MArgs extends Macro{
                 throw ObjectMacroException.macroNull(i, "Arguments");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -64,16 +64,16 @@ public  class MArgs extends Macro{
         macro.apply(new InternalsInitializer("Arguments"){
             @Override
             void setVarArgument(MVarArgument mVarArgument){
+                
             
-                
-                
+            
             }
             
             @Override
             void setTextArgument(MTextArgument mTextArgument){
+                
             
-                
-                
+            
             }
         });
     }
@@ -82,11 +82,11 @@ public  class MArgs extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Arguments");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Args");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -99,11 +99,11 @@ public  class MArgs extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Arguments");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Args");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -112,31 +112,31 @@ public  class MArgs extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    private String buildArguments(){
+    private String buildArguments() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = ArgumentsContext;
+        Context local_context = this.ArgumentsContext;
         List<Macro> macros = this.list_Arguments;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.ArgumentsNone != null){
+        if(this.ArgumentsNone != null) {
             sb.append(this.ArgumentsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.ArgumentsBeforeFirst != null){
+            if(this.ArgumentsBeforeFirst != null) {
                 expansion = this.ArgumentsBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.ArgumentsAfterLast != null){
+            if(this.ArgumentsAfterLast != null) {
                 expansion = this.ArgumentsAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.ArgumentsSeparator != null){
+            if(this.ArgumentsSeparator != null) {
                 expansion = this.ArgumentsSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -147,30 +147,30 @@ public  class MArgs extends Macro{
         return sb.toString();
     }
     
-    private InternalValue getArguments(){
+    MacroValue getArguments() {
         return this.ArgumentsValue;
     }
-    private void initArgumentsInternals(Context context){
-        for(Macro macro : this.list_Arguments){
+    private void initArgumentsInternals(Context context) {
+        for(Macro macro : this.list_Arguments) {
             macro.apply(new InternalsInitializer("Arguments"){
                 @Override
                 void setVarArgument(MVarArgument mVarArgument){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setTextArgument(MTextArgument mTextArgument){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initArgumentsDirectives(){
+    private void initArgumentsDirectives() {
         StringBuilder sb3 = new StringBuilder();
         sb3.append(", ");
         this.ArgumentsSeparator = new DSeparator(sb3.toString());
@@ -178,29 +178,29 @@ public  class MArgs extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setArgs(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initArgumentsDirectives();
         initArgumentsDirectives();
         
         initArgumentsInternals(null);
@@ -227,7 +227,6 @@ public  class MArgs extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

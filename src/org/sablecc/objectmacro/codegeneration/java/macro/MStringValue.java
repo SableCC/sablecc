@@ -4,62 +4,125 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MStringValue extends Macro{
+public class MStringValue extends Macro {
     
-    String field_String;
+    private DSeparator StringSeparator;
     
-    MStringValue(String pString, Macros macros){
+    private DBeforeFirst StringBeforeFirst;
+    
+    private DAfterLast StringAfterLast;
+    
+    private DNone StringNone;
+    
+    final List<String> list_String;
+    
+    final Context StringContext = new Context();
+    
+    final StringValue StringValue;
+    
+    MStringValue(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPString(pString);
+        this.list_String = new LinkedList<>();
+        
+        this.StringValue = new StringValue(this.list_String, this.StringContext);
     }
     
-    private void setPString( String pString ){
-        if(pString == null){
+    public void addAllString(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("String");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("String");
+            }
     
-        this.field_String = pString;
+            this.list_String.add(string);
+        }
     }
     
-    String buildString(){
+    public void addString(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("String");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
     
-        return this.field_String;
+        this.list_String.add(string);
     }
     
-    String getString(){
+    private String buildString() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_String;
     
-        return this.field_String;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.StringNone != null) {
+            sb.append(this.StringNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.StringBeforeFirst != null) {
+                string = this.StringBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.StringAfterLast != null) {
+                string = this.StringAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.StringSeparator != null) {
+                string = this.StringSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getString() {
+        return this.StringValue;
     }
     
     
+    private void initStringDirectives() {
+        
+    }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setStringValue(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
-        
+        initStringDirectives();
     
     
     
@@ -77,7 +140,6 @@ public  class MStringValue extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

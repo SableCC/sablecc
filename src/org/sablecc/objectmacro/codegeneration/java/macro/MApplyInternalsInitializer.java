@@ -4,13 +4,7 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MApplyInternalsInitializer extends Macro{
-    
-    final List<Macro> list_RedefinedInternalsSetter;
-    
-    final Context RedefinedInternalsSetterContext = new Context();
-    
-    final InternalValue RedefinedInternalsSetterValue;
+public class MApplyInternalsInitializer extends Macro {
     
     private DSeparator RedefinedInternalsSetterSeparator;
     
@@ -20,15 +14,22 @@ public  class MApplyInternalsInitializer extends Macro{
     
     private DNone RedefinedInternalsSetterNone;
     
-    private Map<Context, String> field_ParamName = new LinkedHashMap<>();
+    final List<Macro> list_RedefinedInternalsSetter;
+    
+    final Context RedefinedInternalsSetterContext = new Context();
+    
+    final MacroValue RedefinedInternalsSetterValue;
+    
+    private Map<Context, StringValue> list_ParamName = new LinkedHashMap<>();
     
     MApplyInternalsInitializer(Macros macros){
         
         
         this.setMacros(macros);
         this.list_RedefinedInternalsSetter = new LinkedList<>();
+        this.list_ParamName = new LinkedHashMap<>();
         
-        this.RedefinedInternalsSetterValue = new InternalValue(this.list_RedefinedInternalsSetter, this.RedefinedInternalsSetterContext);
+        this.RedefinedInternalsSetterValue = new MacroValue(this.list_RedefinedInternalsSetter, this.RedefinedInternalsSetterContext);
     }
     
     public void addAllRedefinedInternalsSetter(
@@ -37,8 +38,8 @@ public  class MApplyInternalsInitializer extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("RedefinedInternalsSetter");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("ApplyInternalsInitializer");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -48,7 +49,7 @@ public  class MApplyInternalsInitializer extends Macro{
                 throw ObjectMacroException.macroNull(i, "RedefinedInternalsSetter");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -66,9 +67,9 @@ public  class MApplyInternalsInitializer extends Macro{
         macro.apply(new InternalsInitializer("RedefinedInternalsSetter"){
             @Override
             void setRedefinedInternalsSetter(MRedefinedInternalsSetter mRedefinedInternalsSetter){
+                
             
-                
-                
+            
             }
         });
     }
@@ -77,11 +78,11 @@ public  class MApplyInternalsInitializer extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("RedefinedInternalsSetter");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("ApplyInternalsInitializer");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -92,40 +93,40 @@ public  class MApplyInternalsInitializer extends Macro{
     
     void setParamName(
             Context context,
-            String value) {
+            StringValue value) {
     
         if(value == null){
             throw new RuntimeException("value cannot be null here");
         }
     
-        this.field_ParamName.put(context, value);
+        this.list_ParamName.put(context, value);
     }
     
-    private String buildRedefinedInternalsSetter(){
+    private String buildRedefinedInternalsSetter() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = RedefinedInternalsSetterContext;
+        Context local_context = this.RedefinedInternalsSetterContext;
         List<Macro> macros = this.list_RedefinedInternalsSetter;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.RedefinedInternalsSetterNone != null){
+        if(this.RedefinedInternalsSetterNone != null) {
             sb.append(this.RedefinedInternalsSetterNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.RedefinedInternalsSetterBeforeFirst != null){
+            if(this.RedefinedInternalsSetterBeforeFirst != null) {
                 expansion = this.RedefinedInternalsSetterBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.RedefinedInternalsSetterAfterLast != null){
+            if(this.RedefinedInternalsSetterAfterLast != null) {
                 expansion = this.RedefinedInternalsSetterAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.RedefinedInternalsSetterSeparator != null){
+            if(this.RedefinedInternalsSetterSeparator != null) {
                 expansion = this.RedefinedInternalsSetterSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -136,33 +137,34 @@ public  class MApplyInternalsInitializer extends Macro{
         return sb.toString();
     }
     
-    String buildParamName(Context context){
+    private String buildParamName(Context context) {
     
-        return this.field_ParamName.get(context);
+        StringValue stringValue = this.list_ParamName.get(context);
+        return stringValue.build();
     }
     
-    private InternalValue getRedefinedInternalsSetter(){
+    MacroValue getRedefinedInternalsSetter() {
         return this.RedefinedInternalsSetterValue;
     }
     
-    String getParamName(Context context){
+    private StringValue getParamName(Context context) {
     
-        return this.field_ParamName.get(context);
+        return this.list_ParamName.get(context);
     }
-    private void initRedefinedInternalsSetterInternals(Context context){
-        for(Macro macro : this.list_RedefinedInternalsSetter){
+    private void initRedefinedInternalsSetterInternals(Context context) {
+        for(Macro macro : this.list_RedefinedInternalsSetter) {
             macro.apply(new InternalsInitializer("RedefinedInternalsSetter"){
                 @Override
                 void setRedefinedInternalsSetter(MRedefinedInternalsSetter mRedefinedInternalsSetter){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initRedefinedInternalsSetterDirectives(){
+    private void initRedefinedInternalsSetterDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         sb1.append(LINE_SEPARATOR);
@@ -171,28 +173,27 @@ public  class MApplyInternalsInitializer extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setApplyInternalsInitializer(this);
     }
     
     
-    String build(Context context){
+    String build(Context context) {
     
         CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
         initRedefinedInternalsSetterDirectives();
         
@@ -217,7 +218,6 @@ public  class MApplyInternalsInitializer extends Macro{
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

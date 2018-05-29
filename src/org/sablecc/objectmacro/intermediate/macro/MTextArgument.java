@@ -4,15 +4,21 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public  class MTextArgument extends Macro{
+public class MTextArgument extends Macro {
     
-    String field_ParamName;
+    private DSeparator ParamNameSeparator;
     
-    final List<Macro> list_TextParts;
+    private DBeforeFirst ParamNameBeforeFirst;
     
-    final Context TextPartsContext = new Context();
+    private DAfterLast ParamNameAfterLast;
     
-    final InternalValue TextPartsValue;
+    private DNone ParamNameNone;
+    
+    final List<String> list_ParamName;
+    
+    final Context ParamNameContext = new Context();
+    
+    final StringValue ParamNameValue;
     
     private DSeparator TextPartsSeparator;
     
@@ -22,22 +28,50 @@ public  class MTextArgument extends Macro{
     
     private DNone TextPartsNone;
     
-    MTextArgument(String pParamName, Macros macros){
+    final List<Macro> list_TextParts;
+    
+    final Context TextPartsContext = new Context();
+    
+    final MacroValue TextPartsValue;
+    
+    MTextArgument(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPParamName(pParamName);
+        this.list_ParamName = new LinkedList<>();
         this.list_TextParts = new LinkedList<>();
         
-        this.TextPartsValue = new InternalValue(this.list_TextParts, this.TextPartsContext);
+        this.ParamNameValue = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.TextPartsValue = new MacroValue(this.list_TextParts, this.TextPartsContext);
     }
     
-    private void setPParamName( String pParamName ){
-        if(pParamName == null){
+    public void addAllParamName(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("ParamName");
+            }
     
-        this.field_ParamName = pParamName;
+            this.list_ParamName.add(string);
+        }
+    }
+    
+    public void addParamName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_ParamName.add(string);
     }
     
     public void addAllTextParts(
@@ -46,8 +80,8 @@ public  class MTextArgument extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("TextArgument");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -57,7 +91,7 @@ public  class MTextArgument extends Macro{
                 throw ObjectMacroException.macroNull(i, "TextParts");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -75,30 +109,30 @@ public  class MTextArgument extends Macro{
         macro.apply(new InternalsInitializer("TextParts"){
             @Override
             void setStringPart(MStringPart mStringPart){
+                
             
-                
-                
+            
             }
             
             @Override
             void setEolPart(MEolPart mEolPart){
+                
             
-                
-                
+            
             }
             
             @Override
             void setParamInsert(MParamInsert mParamInsert){
+                
             
-                
-                
+            
             }
             
             @Override
             void setMacroInsert(MMacroInsert mMacroInsert){
+                
             
-                
-                
+            
             }
         });
     }
@@ -107,11 +141,11 @@ public  class MTextArgument extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("TextArgument");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -124,11 +158,11 @@ public  class MTextArgument extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("TextArgument");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -141,11 +175,11 @@ public  class MTextArgument extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("TextArgument");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -158,11 +192,11 @@ public  class MTextArgument extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("TextParts");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("TextArgument");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -171,36 +205,63 @@ public  class MTextArgument extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    String buildParamName(){
+    private String buildParamName() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ParamName;
     
-        return this.field_ParamName;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    private String buildTextParts(){
+    private String buildTextParts() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = TextPartsContext;
+        Context local_context = this.TextPartsContext;
         List<Macro> macros = this.list_TextParts;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.TextPartsNone != null){
+        if(this.TextPartsNone != null) {
             sb.append(this.TextPartsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.TextPartsBeforeFirst != null){
+            if(this.TextPartsBeforeFirst != null) {
                 expansion = this.TextPartsBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.TextPartsAfterLast != null){
+            if(this.TextPartsAfterLast != null) {
                 expansion = this.TextPartsAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.TextPartsSeparator != null){
+            if(this.TextPartsSeparator != null) {
                 expansion = this.TextPartsSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -211,49 +272,52 @@ public  class MTextArgument extends Macro{
         return sb.toString();
     }
     
-    String getParamName(){
-    
-        return this.field_ParamName;
+    StringValue getParamName() {
+        return this.ParamNameValue;
     }
     
-    private InternalValue getTextParts(){
+    MacroValue getTextParts() {
         return this.TextPartsValue;
     }
-    private void initTextPartsInternals(Context context){
-        for(Macro macro : this.list_TextParts){
+    private void initTextPartsInternals(Context context) {
+        for(Macro macro : this.list_TextParts) {
             macro.apply(new InternalsInitializer("TextParts"){
                 @Override
                 void setStringPart(MStringPart mStringPart){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setEolPart(MEolPart mEolPart){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setParamInsert(MParamInsert mParamInsert){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setMacroInsert(MMacroInsert mMacroInsert){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initTextPartsDirectives(){
+    private void initParamNameDirectives() {
+        
+    }
+    
+    private void initTextPartsDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.TextPartsSeparator = new DSeparator(sb1.toString());
@@ -261,29 +325,30 @@ public  class MTextArgument extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setTextArgument(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initParamNameDirectives();
+        initTextPartsDirectives();
         initTextPartsDirectives();
         
         initTextPartsInternals(null);
@@ -298,6 +363,7 @@ public  class MTextArgument extends Macro{
         sb2.append("    ");
         indentations.add(sb2.toString());
         MParamName m1 = this.getMacros().newParamName();
+        
         
         m1.setName(null, getParamName());
         sb1.append(m1.build(null));
@@ -315,7 +381,6 @@ public  class MTextArgument extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

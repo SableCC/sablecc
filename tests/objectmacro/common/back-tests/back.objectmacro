@@ -119,32 +119,29 @@ Macro k
 
 Macro final_output
     Param
-        authors : author, before_first="=================\n=== COMPOSERS ===\n=================\n", separator="\n\n";
+        authors : author, before_first="COMPOSERS\n=========\n\n", separator="\n", after_last="\n";
+        details : composer_detail, before_first="DETAILS\n=========\n\n", separator="\n\n", after_last="\n";
 {Body}
-{Indent: "  "}
 {authors}
-{End}
+{details}
 {End}
 
 Macro author
     Param
         name : String;
-        details : detail, separator="\n";
 {Body}
-{Indent: "  - "}
-{details}
-{Indent: "\t"}
-Composer : {name}
-{End}
-{End}
+ - {name}
 {End}
 
-Macro detail
+Macro composer_detail
     Param
-        attribute : String;
-        value : String;
+        name : String;
+        birth : String;
+        death : String;
 {Body}
-{attribute} : {value}
+COMPOSER: {name}
+BIRTH: {birth}
+DEATH: {death}
 {End}
 
 Macro end

@@ -57,7 +57,7 @@ public class ObjectMacroBack {
     public static void main(
             String[] args) {
 
-        Macros factory = new Macros();
+        Macros errorFactory = new Macros();
 
         try {
             ObjectMacroBack.compile(args);
@@ -69,11 +69,15 @@ public class ObjectMacroBack {
         }
         catch (ParserException e) {
             int start = e.getMessage().indexOf(' ');
-            System.err.print(factory.newSyntaxError(e.getToken().getLine() + "",
-                    e.getToken().getPos() + "",
-                    e.getToken().getClass().getSimpleName().substring(1)
-                            .toLowerCase(),
-                    e.getToken().getText(), e.getMessage().substring(start)).build());
+            MSyntaxError mSyntaxError = errorFactory.newSyntaxError();
+            mSyntaxError.addChar(e.getToken().getPos() + "");
+            mSyntaxError.addLine(e.getToken().getLine() + "");
+            mSyntaxError.addMessage(e.getMessage().substring(start));
+            mSyntaxError.addTokenText(e.getToken().getText());
+            mSyntaxError.addTokenType(e.getToken().getClass().getSimpleName().substring(1).toLowerCase());
+
+            System.err.print(mSyntaxError.build());
+            System.err.println();
             System.err.flush();
             System.exit(1);
         }
@@ -87,18 +91,29 @@ public class ObjectMacroBack {
             String pos = e.getMessage().substring(start, end);
 
             start = e.getMessage().indexOf(' ') + 1;
+            MLexicalError lexical_error = errorFactory.newLexicalError();
+            lexical_error.addLine(line);
+            lexical_error.addChar(pos);
+            lexical_error.addMessage(e.getMessage().substring(start));
 
-            System.err.print(factory.newLexicalError(line, pos,
-                    e.getMessage().substring(start)).build());
+            System.err.print(lexical_error.build());
+            System.err.println();
             System.err.flush();
             System.exit(1);
         }
         catch (InternalException e) {
+            int start = e.getMessage().indexOf(' ') + 1;
+
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             pw.flush();
-            System.err.print(factory.newInternalError(sw.toString(), e.getMessage()).build());
+            MInternalError mInternalError = errorFactory.newInternalError();
+            mInternalError.addStackTrace(sw.toString());
+            mInternalError.addStackTrace(e.getMessage().substring(start));
+
+            System.err.print(mInternalError.build());
+            System.err.println();
             System.err.flush();
             System.exit(1);
         }

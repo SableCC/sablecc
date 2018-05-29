@@ -4,62 +4,63 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MRedefinedApplyInitializer extends Macro{
+public class MRedefinedApplyInitializer extends Macro {
     
-    private Map<Context, String> field_ClassName = new LinkedHashMap<>();
+    private Map<Context, StringValue> list_ClassName = new LinkedHashMap<>();
     
     MRedefinedApplyInitializer(Macros macros){
         
         
         this.setMacros(macros);
+        this.list_ClassName = new LinkedHashMap<>();
     }
     
     void setClassName(
             Context context,
-            String value) {
+            StringValue value) {
     
         if(value == null){
             throw new RuntimeException("value cannot be null here");
         }
     
-        this.field_ClassName.put(context, value);
+        this.list_ClassName.put(context, value);
     }
     
-    String buildClassName(Context context){
+    private String buildClassName(Context context) {
     
-        return this.field_ClassName.get(context);
+        StringValue stringValue = this.list_ClassName.get(context);
+        return stringValue.build();
     }
     
-    String getClassName(Context context){
+    private StringValue getClassName(Context context) {
     
-        return this.field_ClassName.get(context);
+        return this.list_ClassName.get(context);
     }
     
     
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setRedefinedApplyInitializer(this);
     }
     
     
-    String build(Context context){
+    String build(Context context) {
     
         CacheBuilder cache_builder = this.cacheBuilders.get(context);
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
         
     
@@ -71,7 +72,7 @@ public  class MRedefinedApplyInitializer extends Macro{
         sb0.append(LINE_SEPARATOR);
         sb0.append("void apply(");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("        InternalsInitializer internalsInitializer)");
+        sb0.append("        InternalsInitializer internalsInitializer) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
@@ -84,7 +85,6 @@ public  class MRedefinedApplyInitializer extends Macro{
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

@@ -61,7 +61,9 @@ public class UtilsGenerationWalker extends
         MExInternalException mExInternalException = this.factory.newExInternalException();
         MMacroInternalException mMacroInternalException = this.factory.newMacroInternalException();
 
-        MClassInternalValue mClassInternalValue = this.factory.newClassInternalValue();
+        MClassValue mClassValue = this.factory.newClassValue();
+        MClassMacroValue mClassMacroValue = this.factory.newClassMacroValue();
+        MClassStringValue mClassStringValue = this.factory.newClassStringValue();
         MClassCacheBuilder mClassCacheBuilder = this.factory.newClassCacheBuilder();
         MCycleDetectorClass mTarjanClass = this.factory.newCycleDetectorClass();
 
@@ -73,8 +75,8 @@ public class UtilsGenerationWalker extends
 
         if (!this.ir.getDestinationPackage().equals("")) {
             String destinationPackage = this.ir.getDestinationPackage();
-            MPackageDeclaration mPackageDeclaration = this.factory.newPackageDeclaration(
-                    destinationPackage);
+            MPackageDeclaration mPackageDeclaration = this.factory.newPackageDeclaration();
+            mPackageDeclaration.addPackageName(destinationPackage);
             mContext.addPackageDeclaration(mPackageDeclaration);
             mIncorrectType.addPackageDeclaration(mPackageDeclaration);
             mParameterNull.addPackageDeclaration(mPackageDeclaration);
@@ -83,7 +85,9 @@ public class UtilsGenerationWalker extends
             mCyclicReference.addPackageDeclaration(mPackageDeclaration);
             mCannotModify.addPackageDeclaration(mPackageDeclaration);
             mObjectMacroException.addPackageDeclaration(mPackageDeclaration);
-            mClassInternalValue.addPackageDeclaration(mPackageDeclaration);
+            mClassValue.addPackageDeclaration(mPackageDeclaration);
+            mClassMacroValue.addPackageDeclaration(mPackageDeclaration);
+            mClassStringValue.addPackageDeclaration(mPackageDeclaration);
             mSuperDirective.addPackageDeclaration(mPackageDeclaration);
             mClassAfterLast.addPackageDeclaration(mPackageDeclaration);
             mClassBeforeFirst.addPackageDeclaration(mPackageDeclaration);
@@ -113,8 +117,12 @@ public class UtilsGenerationWalker extends
                 mCannotModify.build());
         GenerationUtils.writeFile(this.packageDirectory,
                 "ObjectMacroException.java", mObjectMacroException.build());
-        GenerationUtils.writeFile(this.packageDirectory, "InternalValue.java",
-                mClassInternalValue.build());
+        GenerationUtils.writeFile(this.packageDirectory, "Value.java",
+                mClassValue.build());
+        GenerationUtils.writeFile(this.packageDirectory, "MacroValue.java",
+                mClassMacroValue.build());
+        GenerationUtils.writeFile(this.packageDirectory, "StringValue.java",
+                mClassStringValue.build());
         GenerationUtils.writeFile(this.packageDirectory, "Directive.java",
                 mSuperDirective.build());
         GenerationUtils.writeFile(this.packageDirectory, "DAfterLast.java",

@@ -4,13 +4,7 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MAppliedVersion extends Macro{
-    
-    final List<Macro> list_Versions;
-    
-    final Context VersionsContext = new Context();
-    
-    final InternalValue VersionsValue;
+public class MAppliedVersion extends Macro {
     
     private DSeparator VersionsSeparator;
     
@@ -20,126 +14,88 @@ public  class MAppliedVersion extends Macro{
     
     private DNone VersionsNone;
     
+    final List<String> list_Versions;
+    
+    final Context VersionsContext = new Context();
+    
+    final StringValue VersionsValue;
+    
     MAppliedVersion(Macros macros){
         
         
         this.setMacros(macros);
         this.list_Versions = new LinkedList<>();
         
-        this.VersionsValue = new InternalValue(this.list_Versions, this.VersionsContext);
+        this.VersionsValue = new StringValue(this.list_Versions, this.VersionsContext);
     }
     
     public void addAllVersions(
-                    List<Macro> macros){
+                    List<String> strings){
     
         if(macros == null){
             throw ObjectMacroException.parameterNull("Versions");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("AppliedVersion");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
-        
-        int i = 0;
-        
-        for(Macro macro : macros) {
-            if(macro == null) {
-                throw ObjectMacroException.macroNull(i, "Versions");
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("Versions");
             }
-        
-            if(this.getMacros() != macro.getMacros()){
-                throw ObjectMacroException.diffMacros();
-            }
-        
-            this.verifyTypeVersions(macro);
-            this.list_Versions.add(macro);
-            this.children.add(macro);
-            Macro.cycleDetector.detectCycle(this, macro);
-        
-            i++;
+    
+            this.list_Versions.add(string);
         }
     }
     
-    
-    void verifyTypeVersions (Macro macro) {
-        macro.apply(new InternalsInitializer("Versions"){
-            @Override
-            void setPlainText(MPlainText mPlainText){
-            
-                
-                
-            }
-        });
-    }
-    
-    public void addVersions(MPlainText macro){
-        if(macro == null){
+    public void addVersions(String string){
+        if(string == null){
             throw ObjectMacroException.parameterNull("Versions");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("AppliedVersion");
-        }
-        
-        if(this.getMacros() != macro.getMacros()){
-            throw ObjectMacroException.diffMacros();
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.list_Versions.add(macro);
-        this.children.add(macro);
-        Macro.cycleDetector.detectCycle(this, macro);
+        this.list_Versions.add(string);
     }
     
-    private String buildVersions(){
+    private String buildVersions() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = VersionsContext;
-        List<Macro> macros = this.list_Versions;
+        List<String> strings = this.list_Versions;
     
         int i = 0;
-        int nb_macros = macros.size();
-        String expansion = null;
+        int nb_strings = strings.size();
     
-        if(this.VersionsNone != null){
-            sb.append(this.VersionsNone.apply(i, "", nb_macros));
+        if(this.VersionsNone != null) {
+            sb.append(this.VersionsNone.apply(i, "", nb_strings));
         }
     
-        for(Macro macro : macros){
-            expansion = macro.build(local_context);
+        for(String string : strings) {
     
-            if(this.VersionsBeforeFirst != null){
-                expansion = this.VersionsBeforeFirst.apply(i, expansion, nb_macros);
+            if(this.VersionsBeforeFirst != null) {
+                string = this.VersionsBeforeFirst.apply(i, string, nb_strings);
             }
     
-            if(this.VersionsAfterLast != null){
-                expansion = this.VersionsAfterLast.apply(i, expansion, nb_macros);
+            if(this.VersionsAfterLast != null) {
+                string = this.VersionsAfterLast.apply(i, string, nb_strings);
             }
     
-            if(this.VersionsSeparator != null){
-                expansion = this.VersionsSeparator.apply(i, expansion, nb_macros);
+            if(this.VersionsSeparator != null) {
+                string = this.VersionsSeparator.apply(i, string, nb_strings);
             }
     
-            sb.append(expansion);
+            sb.append(string);
             i++;
         }
     
         return sb.toString();
     }
     
-    private InternalValue getVersions(){
+    StringValue getVersions() {
         return this.VersionsValue;
     }
-    private void initVersionsInternals(Context context){
-        for(Macro macro : this.list_Versions){
-            macro.apply(new InternalsInitializer("Versions"){
-                @Override
-                void setPlainText(MPlainText mPlainText){
-                
-                    
-                    
-                }
-            });
-        }
-    }
     
-    private void initVersionsDirectives(){
+    
+    private void initVersionsDirectives() {
         StringBuilder sb3 = new StringBuilder();
         sb3.append(", ");
         this.VersionsSeparator = new DSeparator(sb3.toString());
@@ -147,32 +103,31 @@ public  class MAppliedVersion extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setAppliedVersion(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
         initVersionsDirectives();
-        
-        initVersionsInternals(null);
+    
+    
     
         StringBuilder sb0 = new StringBuilder();
     
@@ -187,7 +142,6 @@ public  class MAppliedVersion extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

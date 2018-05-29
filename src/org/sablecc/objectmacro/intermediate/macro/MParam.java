@@ -4,13 +4,7 @@ package org.sablecc.objectmacro.intermediate.macro;
 
 import java.util.*;
 
-public  class MParam extends Macro{
-    
-    final List<Macro> list_ParamName;
-    
-    final Context ParamNameContext = new Context();
-    
-    final InternalValue ParamNameValue;
+public class MParam extends Macro {
     
     private DSeparator ParamNameSeparator;
     
@@ -20,11 +14,11 @@ public  class MParam extends Macro{
     
     private DNone ParamNameNone;
     
-    final List<Macro> list_Type;
+    final List<Macro> list_ParamName;
     
-    final Context TypeContext = new Context();
+    final Context ParamNameContext = new Context();
     
-    final InternalValue TypeValue;
+    final MacroValue ParamNameValue;
     
     private DSeparator TypeSeparator;
     
@@ -34,11 +28,11 @@ public  class MParam extends Macro{
     
     private DNone TypeNone;
     
-    final List<Macro> list_Directives;
+    final List<Macro> list_Type;
     
-    final Context DirectivesContext = new Context();
+    final Context TypeContext = new Context();
     
-    final InternalValue DirectivesValue;
+    final MacroValue TypeValue;
     
     private DSeparator DirectivesSeparator;
     
@@ -48,6 +42,12 @@ public  class MParam extends Macro{
     
     private DNone DirectivesNone;
     
+    final List<Macro> list_Directives;
+    
+    final Context DirectivesContext = new Context();
+    
+    final MacroValue DirectivesValue;
+    
     MParam(Macros macros){
         
         
@@ -56,9 +56,9 @@ public  class MParam extends Macro{
         this.list_Type = new LinkedList<>();
         this.list_Directives = new LinkedList<>();
         
-        this.ParamNameValue = new InternalValue(this.list_ParamName, this.ParamNameContext);
-        this.TypeValue = new InternalValue(this.list_Type, this.TypeContext);
-        this.DirectivesValue = new InternalValue(this.list_Directives, this.DirectivesContext);
+        this.ParamNameValue = new MacroValue(this.list_ParamName, this.ParamNameContext);
+        this.TypeValue = new MacroValue(this.list_Type, this.TypeContext);
+        this.DirectivesValue = new MacroValue(this.list_Directives, this.DirectivesContext);
     }
     
     public void addAllParamName(
@@ -67,8 +67,8 @@ public  class MParam extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Param");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -78,7 +78,7 @@ public  class MParam extends Macro{
                 throw ObjectMacroException.macroNull(i, "ParamName");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -96,9 +96,9 @@ public  class MParam extends Macro{
         macro.apply(new InternalsInitializer("ParamName"){
             @Override
             void setName(MName mName){
+                
             
-                
-                
+            
             }
         });
     }
@@ -107,11 +107,11 @@ public  class MParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Param");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -126,8 +126,8 @@ public  class MParam extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Type");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Param");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -137,7 +137,7 @@ public  class MParam extends Macro{
                 throw ObjectMacroException.macroNull(i, "Type");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -155,16 +155,16 @@ public  class MParam extends Macro{
         macro.apply(new InternalsInitializer("Type"){
             @Override
             void setStringType(MStringType mStringType){
+                
             
-                
-                
+            
             }
             
             @Override
             void setMacroType(MMacroType mMacroType){
+                
             
-                
-                
+            
             }
         });
     }
@@ -173,11 +173,11 @@ public  class MParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Type");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Param");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -190,11 +190,11 @@ public  class MParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Type");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Param");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -209,8 +209,8 @@ public  class MParam extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("Directives");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Param");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -220,7 +220,7 @@ public  class MParam extends Macro{
                 throw ObjectMacroException.macroNull(i, "Directives");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -238,9 +238,9 @@ public  class MParam extends Macro{
         macro.apply(new InternalsInitializer("Directives"){
             @Override
             void setDirective(MDirective mDirective){
+                
             
-                
-                
+            
             }
         });
     }
@@ -249,11 +249,11 @@ public  class MParam extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("Directives");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("Param");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -262,31 +262,31 @@ public  class MParam extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    private String buildParamName(){
+    private String buildParamName() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = ParamNameContext;
+        Context local_context = this.ParamNameContext;
         List<Macro> macros = this.list_ParamName;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.ParamNameNone != null){
+        if(this.ParamNameNone != null) {
             sb.append(this.ParamNameNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.ParamNameBeforeFirst != null){
+            if(this.ParamNameBeforeFirst != null) {
                 expansion = this.ParamNameBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.ParamNameAfterLast != null){
+            if(this.ParamNameAfterLast != null) {
                 expansion = this.ParamNameAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.ParamNameSeparator != null){
+            if(this.ParamNameSeparator != null) {
                 expansion = this.ParamNameSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -297,31 +297,31 @@ public  class MParam extends Macro{
         return sb.toString();
     }
     
-    private String buildType(){
+    private String buildType() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = TypeContext;
+        Context local_context = this.TypeContext;
         List<Macro> macros = this.list_Type;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.TypeNone != null){
+        if(this.TypeNone != null) {
             sb.append(this.TypeNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.TypeBeforeFirst != null){
+            if(this.TypeBeforeFirst != null) {
                 expansion = this.TypeBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.TypeAfterLast != null){
+            if(this.TypeAfterLast != null) {
                 expansion = this.TypeAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.TypeSeparator != null){
+            if(this.TypeSeparator != null) {
                 expansion = this.TypeSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -332,31 +332,31 @@ public  class MParam extends Macro{
         return sb.toString();
     }
     
-    private String buildDirectives(){
+    private String buildDirectives() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = DirectivesContext;
+        Context local_context = this.DirectivesContext;
         List<Macro> macros = this.list_Directives;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.DirectivesNone != null){
+        if(this.DirectivesNone != null) {
             sb.append(this.DirectivesNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.DirectivesBeforeFirst != null){
+            if(this.DirectivesBeforeFirst != null) {
                 expansion = this.DirectivesBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.DirectivesAfterLast != null){
+            if(this.DirectivesAfterLast != null) {
                 expansion = this.DirectivesAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.DirectivesSeparator != null){
+            if(this.DirectivesSeparator != null) {
                 expansion = this.DirectivesSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -367,72 +367,72 @@ public  class MParam extends Macro{
         return sb.toString();
     }
     
-    private InternalValue getParamName(){
+    MacroValue getParamName() {
         return this.ParamNameValue;
     }
     
-    private InternalValue getType(){
+    MacroValue getType() {
         return this.TypeValue;
     }
     
-    private InternalValue getDirectives(){
+    MacroValue getDirectives() {
         return this.DirectivesValue;
     }
-    private void initParamNameInternals(Context context){
-        for(Macro macro : this.list_ParamName){
+    private void initParamNameInternals(Context context) {
+        for(Macro macro : this.list_ParamName) {
             macro.apply(new InternalsInitializer("ParamName"){
                 @Override
                 void setName(MName mName){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initTypeInternals(Context context){
-        for(Macro macro : this.list_Type){
+    private void initTypeInternals(Context context) {
+        for(Macro macro : this.list_Type) {
             macro.apply(new InternalsInitializer("Type"){
                 @Override
                 void setStringType(MStringType mStringType){
+                    
                 
-                    
-                    
+                
                 }
                 
                 @Override
                 void setMacroType(MMacroType mMacroType){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initDirectivesInternals(Context context){
-        for(Macro macro : this.list_Directives){
+    private void initDirectivesInternals(Context context) {
+        for(Macro macro : this.list_Directives) {
             macro.apply(new InternalsInitializer("Directives"){
                 @Override
                 void setDirective(MDirective mDirective){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initParamNameDirectives(){
+    private void initParamNameDirectives() {
         
     }
     
-    private void initTypeDirectives(){
+    private void initTypeDirectives() {
         
     }
     
-    private void initDirectivesDirectives(){
+    private void initDirectivesDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(", ");
         sb1.append(LINE_SEPARATOR);
@@ -441,31 +441,33 @@ public  class MParam extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setParam(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
         initParamNameDirectives();
+        initParamNameDirectives();
         initTypeDirectives();
+        initTypeDirectives();
+        initDirectivesDirectives();
         initDirectivesDirectives();
         
         initParamNameInternals(null);
@@ -498,7 +500,6 @@ public  class MParam extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

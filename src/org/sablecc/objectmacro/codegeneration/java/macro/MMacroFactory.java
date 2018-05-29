@@ -4,13 +4,7 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MMacroFactory extends Macro{
-    
-    final List<Macro> list_DefaultVersion;
-    
-    final Context DefaultVersionContext = new Context();
-    
-    final InternalValue DefaultVersionValue;
+public class MMacroFactory extends Macro {
     
     private DSeparator DefaultVersionSeparator;
     
@@ -20,11 +14,11 @@ public  class MMacroFactory extends Macro{
     
     private DNone DefaultVersionNone;
     
-    final List<Macro> list_PackageDeclaration;
+    final List<Macro> list_DefaultVersion;
     
-    final Context PackageDeclarationContext = new Context();
+    final Context DefaultVersionContext = new Context();
     
-    final InternalValue PackageDeclarationValue;
+    final MacroValue DefaultVersionValue;
     
     private DSeparator PackageDeclarationSeparator;
     
@@ -34,11 +28,11 @@ public  class MMacroFactory extends Macro{
     
     private DNone PackageDeclarationNone;
     
-    final List<Macro> list_NewMacroMethods;
+    final List<Macro> list_PackageDeclaration;
     
-    final Context NewMacroMethodsContext = new Context();
+    final Context PackageDeclarationContext = new Context();
     
-    final InternalValue NewMacroMethodsValue;
+    final MacroValue PackageDeclarationValue;
     
     private DSeparator NewMacroMethodsSeparator;
     
@@ -48,6 +42,12 @@ public  class MMacroFactory extends Macro{
     
     private DNone NewMacroMethodsNone;
     
+    final List<Macro> list_NewMacroMethods;
+    
+    final Context NewMacroMethodsContext = new Context();
+    
+    final MacroValue NewMacroMethodsValue;
+    
     MMacroFactory(Macros macros){
         
         
@@ -56,9 +56,9 @@ public  class MMacroFactory extends Macro{
         this.list_PackageDeclaration = new LinkedList<>();
         this.list_NewMacroMethods = new LinkedList<>();
         
-        this.DefaultVersionValue = new InternalValue(this.list_DefaultVersion, this.DefaultVersionContext);
-        this.PackageDeclarationValue = new InternalValue(this.list_PackageDeclaration, this.PackageDeclarationContext);
-        this.NewMacroMethodsValue = new InternalValue(this.list_NewMacroMethods, this.NewMacroMethodsContext);
+        this.DefaultVersionValue = new MacroValue(this.list_DefaultVersion, this.DefaultVersionContext);
+        this.PackageDeclarationValue = new MacroValue(this.list_PackageDeclaration, this.PackageDeclarationContext);
+        this.NewMacroMethodsValue = new MacroValue(this.list_NewMacroMethods, this.NewMacroMethodsContext);
     }
     
     public void addAllDefaultVersion(
@@ -67,8 +67,8 @@ public  class MMacroFactory extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("DefaultVersion");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroFactory");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -78,7 +78,7 @@ public  class MMacroFactory extends Macro{
                 throw ObjectMacroException.macroNull(i, "DefaultVersion");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -96,9 +96,9 @@ public  class MMacroFactory extends Macro{
         macro.apply(new InternalsInitializer("DefaultVersion"){
             @Override
             void setVersion(MVersion mVersion){
+                
             
-                
-                
+            
             }
         });
     }
@@ -107,11 +107,11 @@ public  class MMacroFactory extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("DefaultVersion");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroFactory");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -126,8 +126,8 @@ public  class MMacroFactory extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroFactory");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -137,7 +137,7 @@ public  class MMacroFactory extends Macro{
                 throw ObjectMacroException.macroNull(i, "PackageDeclaration");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -155,9 +155,9 @@ public  class MMacroFactory extends Macro{
         macro.apply(new InternalsInitializer("PackageDeclaration"){
             @Override
             void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
+                
             
-                
-                
+            
             }
         });
     }
@@ -166,11 +166,11 @@ public  class MMacroFactory extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("PackageDeclaration");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroFactory");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -185,8 +185,8 @@ public  class MMacroFactory extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("NewMacroMethods");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroFactory");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -196,7 +196,7 @@ public  class MMacroFactory extends Macro{
                 throw ObjectMacroException.macroNull(i, "NewMacroMethods");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -214,9 +214,9 @@ public  class MMacroFactory extends Macro{
         macro.apply(new InternalsInitializer("NewMacroMethods"){
             @Override
             void setMacroCreatorMethod(MMacroCreatorMethod mMacroCreatorMethod){
+                
             
-                
-                
+            
             }
         });
     }
@@ -225,11 +225,11 @@ public  class MMacroFactory extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("NewMacroMethods");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("MacroFactory");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -238,31 +238,31 @@ public  class MMacroFactory extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    private String buildDefaultVersion(){
+    private String buildDefaultVersion() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = DefaultVersionContext;
+        Context local_context = this.DefaultVersionContext;
         List<Macro> macros = this.list_DefaultVersion;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.DefaultVersionNone != null){
+        if(this.DefaultVersionNone != null) {
             sb.append(this.DefaultVersionNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.DefaultVersionBeforeFirst != null){
+            if(this.DefaultVersionBeforeFirst != null) {
                 expansion = this.DefaultVersionBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.DefaultVersionAfterLast != null){
+            if(this.DefaultVersionAfterLast != null) {
                 expansion = this.DefaultVersionAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.DefaultVersionSeparator != null){
+            if(this.DefaultVersionSeparator != null) {
                 expansion = this.DefaultVersionSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -273,31 +273,31 @@ public  class MMacroFactory extends Macro{
         return sb.toString();
     }
     
-    private String buildPackageDeclaration(){
+    private String buildPackageDeclaration() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = PackageDeclarationContext;
+        Context local_context = this.PackageDeclarationContext;
         List<Macro> macros = this.list_PackageDeclaration;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.PackageDeclarationNone != null){
+        if(this.PackageDeclarationNone != null) {
             sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.PackageDeclarationBeforeFirst != null){
+            if(this.PackageDeclarationBeforeFirst != null) {
                 expansion = this.PackageDeclarationBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.PackageDeclarationAfterLast != null){
+            if(this.PackageDeclarationAfterLast != null) {
                 expansion = this.PackageDeclarationAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.PackageDeclarationSeparator != null){
+            if(this.PackageDeclarationSeparator != null) {
                 expansion = this.PackageDeclarationSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -308,31 +308,31 @@ public  class MMacroFactory extends Macro{
         return sb.toString();
     }
     
-    private String buildNewMacroMethods(){
+    private String buildNewMacroMethods() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = NewMacroMethodsContext;
+        Context local_context = this.NewMacroMethodsContext;
         List<Macro> macros = this.list_NewMacroMethods;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.NewMacroMethodsNone != null){
+        if(this.NewMacroMethodsNone != null) {
             sb.append(this.NewMacroMethodsNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.NewMacroMethodsBeforeFirst != null){
+            if(this.NewMacroMethodsBeforeFirst != null) {
                 expansion = this.NewMacroMethodsBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.NewMacroMethodsAfterLast != null){
+            if(this.NewMacroMethodsAfterLast != null) {
                 expansion = this.NewMacroMethodsAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.NewMacroMethodsSeparator != null){
+            if(this.NewMacroMethodsSeparator != null) {
                 expansion = this.NewMacroMethodsSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -343,71 +343,71 @@ public  class MMacroFactory extends Macro{
         return sb.toString();
     }
     
-    private InternalValue getDefaultVersion(){
+    MacroValue getDefaultVersion() {
         return this.DefaultVersionValue;
     }
     
-    private InternalValue getPackageDeclaration(){
+    MacroValue getPackageDeclaration() {
         return this.PackageDeclarationValue;
     }
     
-    private InternalValue getNewMacroMethods(){
+    MacroValue getNewMacroMethods() {
         return this.NewMacroMethodsValue;
     }
-    private void initDefaultVersionInternals(Context context){
-        for(Macro macro : this.list_DefaultVersion){
+    private void initDefaultVersionInternals(Context context) {
+        for(Macro macro : this.list_DefaultVersion) {
             macro.apply(new InternalsInitializer("DefaultVersion"){
                 @Override
                 void setVersion(MVersion mVersion){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initPackageDeclarationInternals(Context context){
-        for(Macro macro : this.list_PackageDeclaration){
+    private void initPackageDeclarationInternals(Context context) {
+        for(Macro macro : this.list_PackageDeclaration) {
             macro.apply(new InternalsInitializer("PackageDeclaration"){
                 @Override
                 void setPackageDeclaration(MPackageDeclaration mPackageDeclaration){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initNewMacroMethodsInternals(Context context){
-        for(Macro macro : this.list_NewMacroMethods){
+    private void initNewMacroMethodsInternals(Context context) {
+        for(Macro macro : this.list_NewMacroMethods) {
             macro.apply(new InternalsInitializer("NewMacroMethods"){
                 @Override
                 void setMacroCreatorMethod(MMacroCreatorMethod mMacroCreatorMethod){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initDefaultVersionDirectives(){
+    private void initDefaultVersionDirectives() {
         StringBuilder sb3 = new StringBuilder();
         sb3.append("null");
         this.DefaultVersionNone = new DNone(sb3.toString());
         this.DefaultVersionValue.setNone(this.DefaultVersionNone);
     }
     
-    private void initPackageDeclarationDirectives(){
+    private void initPackageDeclarationDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.PackageDeclarationBeforeFirst = new DBeforeFirst(sb1.toString());
         this.PackageDeclarationValue.setBeforeFirst(this.PackageDeclarationBeforeFirst);
     }
     
-    private void initNewMacroMethodsDirectives(){
+    private void initNewMacroMethodsDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         sb1.append(LINE_SEPARATOR);
@@ -419,28 +419,27 @@ public  class MMacroFactory extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setMacroFactory(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
         initDefaultVersionDirectives();
         initPackageDeclarationDirectives();
@@ -455,6 +454,7 @@ public  class MMacroFactory extends Macro{
         MHeader m1 = this.getMacros().newHeader();
         
         
+        
         sb0.append(m1.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(buildPackageDeclaration());
@@ -462,11 +462,13 @@ public  class MMacroFactory extends Macro{
         MImportJavaUtil m2 = this.getMacros().newImportJavaUtil();
         
         
+        
         sb0.append(m2.build(null));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("public class Macros");
+        sb0.append("public class Macros ");
         sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("    private VERSIONS version;");
         sb0.append(LINE_SEPARATOR);
@@ -516,7 +518,6 @@ public  class MMacroFactory extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

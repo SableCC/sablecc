@@ -4,17 +4,35 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MParamInsertPart extends Macro{
+public class MParamInsertPart extends Macro {
     
-    String field_ParamName;
+    private DSeparator ParamNameSeparator;
     
-    String field_IndexBuilder;
+    private DBeforeFirst ParamNameBeforeFirst;
     
-    final List<Macro> list_ContextArg;
+    private DAfterLast ParamNameAfterLast;
     
-    final Context ContextArgContext = new Context();
+    private DNone ParamNameNone;
     
-    final InternalValue ContextArgValue;
+    final List<String> list_ParamName;
+    
+    final Context ParamNameContext = new Context();
+    
+    final StringValue ParamNameValue;
+    
+    private DSeparator IndexBuilderSeparator;
+    
+    private DBeforeFirst IndexBuilderBeforeFirst;
+    
+    private DAfterLast IndexBuilderAfterLast;
+    
+    private DNone IndexBuilderNone;
+    
+    final List<String> list_IndexBuilder;
+    
+    final Context IndexBuilderContext = new Context();
+    
+    final StringValue IndexBuilderValue;
     
     private DSeparator ContextArgSeparator;
     
@@ -24,31 +42,81 @@ public  class MParamInsertPart extends Macro{
     
     private DNone ContextArgNone;
     
-    MParamInsertPart(String pParamName, String pIndexBuilder, Macros macros){
+    final List<Macro> list_ContextArg;
+    
+    final Context ContextArgContext = new Context();
+    
+    final MacroValue ContextArgValue;
+    
+    MParamInsertPart(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPParamName(pParamName);
-        this.setPIndexBuilder(pIndexBuilder);
+        this.list_ParamName = new LinkedList<>();
+        this.list_IndexBuilder = new LinkedList<>();
         this.list_ContextArg = new LinkedList<>();
         
-        this.ContextArgValue = new InternalValue(this.list_ContextArg, this.ContextArgContext);
+        this.ParamNameValue = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder, this.IndexBuilderContext);
+        this.ContextArgValue = new MacroValue(this.list_ContextArg, this.ContextArgContext);
     }
     
-    private void setPParamName( String pParamName ){
-        if(pParamName == null){
+    public void addAllParamName(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("ParamName");
+            }
     
-        this.field_ParamName = pParamName;
+            this.list_ParamName.add(string);
+        }
     }
     
-    private void setPIndexBuilder( String pIndexBuilder ){
-        if(pIndexBuilder == null){
-            throw ObjectMacroException.parameterNull("IndexBuilder");
+    public void addParamName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.field_IndexBuilder = pIndexBuilder;
+        this.list_ParamName.add(string);
+    }
+    
+    public void addAllIndexBuilder(
+                    List<String> strings){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("IndexBuilder");
+            }
+    
+            this.list_IndexBuilder.add(string);
+        }
+    }
+    
+    public void addIndexBuilder(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("IndexBuilder");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_IndexBuilder.add(string);
     }
     
     public void addAllContextArg(
@@ -57,8 +125,8 @@ public  class MParamInsertPart extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("ContextArg");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("ParamInsertPart");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -68,7 +136,7 @@ public  class MParamInsertPart extends Macro{
                 throw ObjectMacroException.macroNull(i, "ContextArg");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -86,9 +154,9 @@ public  class MParamInsertPart extends Macro{
         macro.apply(new InternalsInitializer("ContextArg"){
             @Override
             void setContextArg(MContextArg mContextArg){
+                
             
-                
-                
+            
             }
         });
     }
@@ -97,11 +165,11 @@ public  class MParamInsertPart extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("ContextArg");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("ParamInsertPart");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -110,41 +178,95 @@ public  class MParamInsertPart extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    String buildParamName(){
-    
-        return this.field_ParamName;
-    }
-    
-    String buildIndexBuilder(){
-    
-        return this.field_IndexBuilder;
-    }
-    
-    private String buildContextArg(){
+    private String buildParamName() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = ContextArgContext;
+        List<String> strings = this.list_ParamName;
+    
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    private String buildIndexBuilder() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_IndexBuilder;
+    
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.IndexBuilderNone != null) {
+            sb.append(this.IndexBuilderNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.IndexBuilderBeforeFirst != null) {
+                string = this.IndexBuilderBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.IndexBuilderAfterLast != null) {
+                string = this.IndexBuilderAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.IndexBuilderSeparator != null) {
+                string = this.IndexBuilderSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    private String buildContextArg() {
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.ContextArgContext;
         List<Macro> macros = this.list_ContextArg;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.ContextArgNone != null){
+        if(this.ContextArgNone != null) {
             sb.append(this.ContextArgNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.ContextArgBeforeFirst != null){
+            if(this.ContextArgBeforeFirst != null) {
                 expansion = this.ContextArgBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.ContextArgAfterLast != null){
+            if(this.ContextArgAfterLast != null) {
                 expansion = this.ContextArgAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.ContextArgSeparator != null){
+            if(this.ContextArgSeparator != null) {
                 expansion = this.ContextArgSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -155,60 +277,67 @@ public  class MParamInsertPart extends Macro{
         return sb.toString();
     }
     
-    String getParamName(){
-    
-        return this.field_ParamName;
+    StringValue getParamName() {
+        return this.ParamNameValue;
     }
     
-    String getIndexBuilder(){
-    
-        return this.field_IndexBuilder;
+    StringValue getIndexBuilder() {
+        return this.IndexBuilderValue;
     }
     
-    private InternalValue getContextArg(){
+    MacroValue getContextArg() {
         return this.ContextArgValue;
     }
-    private void initContextArgInternals(Context context){
-        for(Macro macro : this.list_ContextArg){
+    private void initContextArgInternals(Context context) {
+        for(Macro macro : this.list_ContextArg) {
             macro.apply(new InternalsInitializer("ContextArg"){
                 @Override
                 void setContextArg(MContextArg mContextArg){
+                    
                 
-                    
-                    
+                
                 }
             });
         }
     }
     
-    private void initContextArgDirectives(){
+    private void initParamNameDirectives() {
+        
+    }
+    
+    private void initIndexBuilderDirectives() {
+        
+    }
+    
+    private void initContextArgDirectives() {
         
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setParamInsertPart(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initParamNameDirectives();
+        initIndexBuilderDirectives();
         initContextArgDirectives();
         
         initContextArgInternals(null);
@@ -231,7 +360,6 @@ public  class MParamInsertPart extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){

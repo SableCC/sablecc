@@ -4,15 +4,21 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public  class MInitInternalsMethod extends Macro{
+public class MInitInternalsMethod extends Macro {
     
-    String field_ParamName;
+    private DSeparator ParamNameSeparator;
     
-    final List<Macro> list_ApplyInternalsInitializer;
+    private DBeforeFirst ParamNameBeforeFirst;
     
-    final Context ApplyInternalsInitializerContext = new Context();
+    private DAfterLast ParamNameAfterLast;
     
-    final InternalValue ApplyInternalsInitializerValue;
+    private DNone ParamNameNone;
+    
+    final List<String> list_ParamName;
+    
+    final Context ParamNameContext = new Context();
+    
+    final StringValue ParamNameValue;
     
     private DSeparator ApplyInternalsInitializerSeparator;
     
@@ -22,22 +28,50 @@ public  class MInitInternalsMethod extends Macro{
     
     private DNone ApplyInternalsInitializerNone;
     
-    MInitInternalsMethod(String pParamName, Macros macros){
+    final List<Macro> list_ApplyInternalsInitializer;
+    
+    final Context ApplyInternalsInitializerContext = new Context();
+    
+    final MacroValue ApplyInternalsInitializerValue;
+    
+    MInitInternalsMethod(Macros macros){
         
         
         this.setMacros(macros);
-        this.setPParamName(pParamName);
+        this.list_ParamName = new LinkedList<>();
         this.list_ApplyInternalsInitializer = new LinkedList<>();
         
-        this.ApplyInternalsInitializerValue = new InternalValue(this.list_ApplyInternalsInitializer, this.ApplyInternalsInitializerContext);
+        this.ParamNameValue = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.ApplyInternalsInitializerValue = new MacroValue(this.list_ApplyInternalsInitializer, this.ApplyInternalsInitializerContext);
     }
     
-    private void setPParamName( String pParamName ){
-        if(pParamName == null){
+    public void addAllParamName(
+                    List<String> strings){
+    
+        if(macros == null){
             throw ObjectMacroException.parameterNull("ParamName");
         }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("ParamName");
+            }
     
-        this.field_ParamName = pParamName;
+            this.list_ParamName.add(string);
+        }
+    }
+    
+    public void addParamName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("ParamName");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_ParamName.add(string);
     }
     
     public void addAllApplyInternalsInitializer(
@@ -46,8 +80,8 @@ public  class MInitInternalsMethod extends Macro{
         if(macros == null){
             throw ObjectMacroException.parameterNull("ApplyInternalsInitializer");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("InitInternalsMethod");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
         int i = 0;
@@ -57,7 +91,7 @@ public  class MInitInternalsMethod extends Macro{
                 throw ObjectMacroException.macroNull(i, "ApplyInternalsInitializer");
             }
         
-            if(this.getMacros() != macro.getMacros()){
+            if(this.getMacros() != macro.getMacros()) {
                 throw ObjectMacroException.diffMacros();
             }
         
@@ -75,9 +109,9 @@ public  class MInitInternalsMethod extends Macro{
         macro.apply(new InternalsInitializer("ApplyInternalsInitializer"){
             @Override
             void setApplyInternalsInitializer(MApplyInternalsInitializer mApplyInternalsInitializer){
+                
             
-                
-                
+            
             }
         });
     }
@@ -86,11 +120,11 @@ public  class MInitInternalsMethod extends Macro{
         if(macro == null){
             throw ObjectMacroException.parameterNull("ApplyInternalsInitializer");
         }
-        if(this.cacheBuilder != null){
-            throw ObjectMacroException.cannotModify("InitInternalsMethod");
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         
-        if(this.getMacros() != macro.getMacros()){
+        if(this.getMacros() != macro.getMacros()) {
             throw ObjectMacroException.diffMacros();
         }
     
@@ -99,36 +133,63 @@ public  class MInitInternalsMethod extends Macro{
         Macro.cycleDetector.detectCycle(this, macro);
     }
     
-    String buildParamName(){
+    private String buildParamName() {
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_ParamName;
     
-        return this.field_ParamName;
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        if(this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
+        }
+    
+        for(String string : strings) {
+    
+            if(this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
+            }
+    
+            if(this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
+            }
+    
+            if(this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
+            }
+    
+            sb.append(string);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    private String buildApplyInternalsInitializer(){
+    private String buildApplyInternalsInitializer() {
         StringBuilder sb = new StringBuilder();
-        Context local_context = ApplyInternalsInitializerContext;
+        Context local_context = this.ApplyInternalsInitializerContext;
         List<Macro> macros = this.list_ApplyInternalsInitializer;
     
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
     
-        if(this.ApplyInternalsInitializerNone != null){
+        if(this.ApplyInternalsInitializerNone != null) {
             sb.append(this.ApplyInternalsInitializerNone.apply(i, "", nb_macros));
         }
     
-        for(Macro macro : macros){
+        for(Macro macro : macros) {
             expansion = macro.build(local_context);
     
-            if(this.ApplyInternalsInitializerBeforeFirst != null){
+            if(this.ApplyInternalsInitializerBeforeFirst != null) {
                 expansion = this.ApplyInternalsInitializerBeforeFirst.apply(i, expansion, nb_macros);
             }
     
-            if(this.ApplyInternalsInitializerAfterLast != null){
+            if(this.ApplyInternalsInitializerAfterLast != null) {
                 expansion = this.ApplyInternalsInitializerAfterLast.apply(i, expansion, nb_macros);
             }
     
-            if(this.ApplyInternalsInitializerSeparator != null){
+            if(this.ApplyInternalsInitializerSeparator != null) {
                 expansion = this.ApplyInternalsInitializerSeparator.apply(i, expansion, nb_macros);
             }
     
@@ -139,20 +200,19 @@ public  class MInitInternalsMethod extends Macro{
         return sb.toString();
     }
     
-    String getParamName(){
-    
-        return this.field_ParamName;
+    StringValue getParamName() {
+        return this.ParamNameValue;
     }
     
-    private InternalValue getApplyInternalsInitializer(){
+    MacroValue getApplyInternalsInitializer() {
         return this.ApplyInternalsInitializerValue;
     }
-    private void initApplyInternalsInitializerInternals(Context context){
-        for(Macro macro : this.list_ApplyInternalsInitializer){
+    private void initApplyInternalsInitializerInternals(Context context) {
+        for(Macro macro : this.list_ApplyInternalsInitializer) {
             macro.apply(new InternalsInitializer("ApplyInternalsInitializer"){
                 @Override
                 void setApplyInternalsInitializer(MApplyInternalsInitializer mApplyInternalsInitializer){
-                
+                    
                     
                     mApplyInternalsInitializer.setParamName(ApplyInternalsInitializerContext, getParamName());
                 }
@@ -160,7 +220,11 @@ public  class MInitInternalsMethod extends Macro{
         }
     }
     
-    private void initApplyInternalsInitializerDirectives(){
+    private void initParamNameDirectives() {
+        
+    }
+    
+    private void initApplyInternalsInitializerDirectives() {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.ApplyInternalsInitializerSeparator = new DSeparator(sb1.toString());
@@ -168,29 +232,29 @@ public  class MInitInternalsMethod extends Macro{
     }
     @Override
     void apply(
-            InternalsInitializer internalsInitializer){
+            InternalsInitializer internalsInitializer) {
     
         internalsInitializer.setInitInternalsMethod(this);
     }
     
     
-    public String build(){
+    public String build() {
     
         CacheBuilder cache_builder = this.cacheBuilder;
     
-        if(cache_builder == null){
+        if(cache_builder == null) {
             cache_builder = new CacheBuilder();
         }
-        else if(cache_builder.getExpansion() == null){
+        else if(cache_builder.getExpansion() == null) {
             throw new InternalException("Cycle detection detected lately");
         }
-        else{
+        else {
             return cache_builder.getExpansion();
         }
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
-        StringBuilder sbIndentation = new StringBuilder();
     
+        initParamNameDirectives();
         initApplyInternalsInitializerDirectives();
         
         initApplyInternalsInitializerInternals(null);
@@ -199,12 +263,12 @@ public  class MInitInternalsMethod extends Macro{
     
         sb0.append("private void init");
         sb0.append(buildParamName());
-        sb0.append("Internals(Context context)");
+        sb0.append("Internals(Context context) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    for(Macro macro : this.list_");
         sb0.append(buildParamName());
-        sb0.append(")");
+        sb0.append(") ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb1 = new StringBuilder();
@@ -227,7 +291,6 @@ public  class MInitInternalsMethod extends Macro{
     String build(Context context) {
         return build();
     }
-    
     
     private void setMacros(Macros macros){
         if(macros == null){
