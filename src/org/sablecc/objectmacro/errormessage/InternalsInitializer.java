@@ -256,10 +256,10 @@ class InternalsInitializer {
                 this._paramName);
     }
 
-    void setIncorrectArgumentCount(
-            MIncorrectArgumentCount mIncorrectArgumentCount) {
+    void setIncorrectNumberArgument(
+            MIncorrectNumberArgument mIncorrectNumberArgument) {
 
-        throw ObjectMacroException.incorrectType("MIncorrectArgumentCount",
+        throw ObjectMacroException.incorrectType("MIncorrectNumberArgument",
                 this._paramName);
     }
 
@@ -309,6 +309,27 @@ class InternalsInitializer {
             MInvalidInsert mInvalidInsert) {
 
         throw ObjectMacroException.incorrectType("MInvalidInsert",
+                this._paramName);
+    }
+
+    void setMissingParameter(
+            MMissingParameter mMissingParameter) {
+
+        throw ObjectMacroException.incorrectType("MMissingParameter",
+                this._paramName);
+    }
+
+    void setMissingInternal(
+            MMissingInternal mMissingInternal) {
+
+        throw ObjectMacroException.incorrectType("MMissingInternal",
+                this._paramName);
+    }
+
+    void setIncorrectParameterType(
+            MIncorrectParameterType mIncorrectParameterType) {
+
+        throw ObjectMacroException.incorrectType("MIncorrectParameterType",
                 this._paramName);
     }
 

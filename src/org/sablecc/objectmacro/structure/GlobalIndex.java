@@ -109,6 +109,21 @@ public class GlobalIndex {
         return macroInfo;
     }
 
+    public MacroInfo getMacro(
+            TIdentifier identifier) {
+
+        if (identifier == null) {
+            throw new InternalException("identifier may not be null");
+        }
+
+        MacroInfo macroInfo = getMacroOrNull(identifier);
+        if (macroInfo == null) {
+            throw CompilerException.unknownMacro(identifier);
+        }
+
+        return macroInfo;
+    }
+
     boolean macroExists(
             TIdentifier macro_name) {
 

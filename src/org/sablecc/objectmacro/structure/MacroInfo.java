@@ -131,7 +131,7 @@ public class MacroInfo {
         return param;
     }
 
-    public void containsParam(
+    public boolean containsParam(
             Param param) {
 
         if (param == null) {
@@ -140,9 +140,7 @@ public class MacroInfo {
 
         Param declaration = getParamOrNull(param.getNameDeclaration());
 
-        if (declaration == null) {
-            throw CompilerException.unknownParam(param.getNameDeclaration());
-        }
+        return declaration != null;
     }
 
     public void setParamUsed(

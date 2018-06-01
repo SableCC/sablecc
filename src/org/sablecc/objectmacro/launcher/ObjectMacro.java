@@ -328,6 +328,8 @@ public class ObjectMacro {
                 ast.apply(new DirectiveCollector(globalIndex, version));
                 ast.apply(new VarVerifier(globalIndex, version));
             }
+            ast.apply(new ParametersVerifier(globalIndex));
+            ast.apply(new InternalsVerifier(globalIndex));
         }
         else {
             ast.apply(new DeclarationCollector(globalIndex));
@@ -738,7 +740,7 @@ public class ObjectMacro {
         MacroInfo macro_referenced;
 
         if (globalIndex.hasVersions()) {
-            macro_referenced = getMacro(node.getName());
+            macro_referenced = getMacro(node);
         }
         else {
             macro_referenced = globalIndex.getMacro(node.getName(), null);
@@ -803,15 +805,17 @@ public class ObjectMacro {
     }
 
     private static MacroInfo getMacro(
-            TIdentifier name) {
+            AMacroReference macro_reference) {
 
         Iterator<MacroVersion> versionIterator
                 = macroInfo.getVersions().iterator();
         MacroInfo toReturn = null;
         while (versionIterator.hasNext()) {
             MacroVersion macroVersion = versionIterator.next();
-            toReturn = macroVersion.getMacroOrNull(name);
-            if (toReturn != null && toReturn.getAllInternals().size() > 0) {
+            toReturn = macroVersion.getMacroOrNull(macro_reference.getName());
+            if (toReturn != null && toReturn.getAllInternals().size() > 0
+                    && toReturn.getAllInternals().size() == macro_reference
+                            .getValues().size()) {
                 break;
             }
         }

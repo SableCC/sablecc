@@ -19,6 +19,8 @@
 mkdir -p tests/objectmacro/common/intermediate
 
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/cyclic_reference.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/cyclic_reference2.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/cyclic_reference3.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/double_parameter_declaration.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/escape.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/escape2.objectmacro
@@ -35,6 +37,18 @@ java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/ob
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/text_after_end_body.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/refused/text_after_end_body2.objectmacro
 
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/alternative_displays/refused/duplicate_version.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/alternative_displays/refused/incorrect_number_argument.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/alternative_displays/refused/incorrect_number_internal.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/alternative_displays/refused/incorrect_parameter_type.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/alternative_displays/refused/internals_verification.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/alternative_displays/refused/macro_parameter_verification.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/alternative_displays/refused/missing_macro_version.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/alternative_displays/refused/missing_parameter.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/alternative_displays/refused/string_parameter_verification.objectmacro
+
 set -e
 
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/alternative_displays/different_number_internals.objectmacro
+java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/alternative_displays/insert_in_versionned_macro.objectmacro
 java -jar lib/objectmacro.jar -d tests/objectmacro/common/intermediate/ tests/objectmacro/common/front-tests/accepted/test.objectmacro

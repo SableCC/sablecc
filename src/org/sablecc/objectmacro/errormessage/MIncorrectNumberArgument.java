@@ -4,7 +4,7 @@ package org.sablecc.objectmacro.errormessage;
 
 import java.util.*;
 
-public class MIncorrectArgumentCount
+public class MIncorrectNumberArgument
         extends Macro {
 
     private DSeparator LineSeparator;
@@ -63,7 +63,21 @@ public class MIncorrectArgumentCount
 
     final StringValue CurrentCountValue;
 
-    MIncorrectArgumentCount(
+    private DSeparator VersionSeparator;
+
+    private DBeforeFirst VersionBeforeFirst;
+
+    private DAfterLast VersionAfterLast;
+
+    private DNone VersionNone;
+
+    final List<String> list_Version;
+
+    final Context VersionContext = new Context();
+
+    final StringValue VersionValue;
+
+    MIncorrectNumberArgument(
             Macros macros) {
 
         setMacros(macros);
@@ -71,6 +85,7 @@ public class MIncorrectArgumentCount
         this.list_Char = new LinkedList<>();
         this.list_ExpectedCount = new LinkedList<>();
         this.list_CurrentCount = new LinkedList<>();
+        this.list_Version = new LinkedList<>();
 
         this.LineValue = new StringValue(this.list_Line, this.LineContext);
         this.CharValue = new StringValue(this.list_Char, this.CharContext);
@@ -78,6 +93,8 @@ public class MIncorrectArgumentCount
                 this.ExpectedCountContext);
         this.CurrentCountValue = new StringValue(this.list_CurrentCount,
                 this.CurrentCountContext);
+        this.VersionValue
+                = new StringValue(this.list_Version, this.VersionContext);
     }
 
     public void addAllLine(
@@ -210,6 +227,39 @@ public class MIncorrectArgumentCount
         }
 
         this.list_CurrentCount.add(string);
+    }
+
+    public void addAllVersion(
+            List<String> strings) {
+
+        if (this.macros == null) {
+            throw ObjectMacroException.parameterNull("Version");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Version");
+            }
+
+            this.list_Version.add(string);
+        }
+    }
+
+    public void addVersion(
+            String string) {
+
+        if (string == null) {
+            throw ObjectMacroException.parameterNull("Version");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        this.list_Version.add(string);
     }
 
     private String buildLine() {
@@ -350,6 +400,39 @@ public class MIncorrectArgumentCount
         return sb.toString();
     }
 
+    private String buildVersion() {
+
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_Version;
+
+        int i = 0;
+        int nb_strings = strings.size();
+
+        if (this.VersionNone != null) {
+            sb.append(this.VersionNone.apply(i, "", nb_strings));
+        }
+
+        for (String string : strings) {
+
+            if (this.VersionBeforeFirst != null) {
+                string = this.VersionBeforeFirst.apply(i, string, nb_strings);
+            }
+
+            if (this.VersionAfterLast != null) {
+                string = this.VersionAfterLast.apply(i, string, nb_strings);
+            }
+
+            if (this.VersionSeparator != null) {
+                string = this.VersionSeparator.apply(i, string, nb_strings);
+            }
+
+            sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
     StringValue getLine() {
 
         return this.LineValue;
@@ -370,6 +453,11 @@ public class MIncorrectArgumentCount
         return this.CurrentCountValue;
     }
 
+    StringValue getVersion() {
+
+        return this.VersionValue;
+    }
+
     private void initLineDirectives() {
 
     }
@@ -386,11 +474,19 @@ public class MIncorrectArgumentCount
 
     }
 
+    private void initVersionDirectives() {
+
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(" in version: ");
+        this.VersionBeforeFirst = new DBeforeFirst(sb1.toString());
+        this.VersionValue.setBeforeFirst(this.VersionBeforeFirst);
+    }
+
     @Override
     void apply(
             InternalsInitializer internalsInitializer) {
 
-        internalsInitializer.setIncorrectArgumentCount(this);
+        internalsInitializer.setIncorrectNumberArgument(this);
     }
 
     public String build() {
@@ -413,6 +509,7 @@ public class MIncorrectArgumentCount
         initCharDirectives();
         initExpectedCountDirectives();
         initCurrentCountDirectives();
+        initVersionDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -431,7 +528,9 @@ public class MIncorrectArgumentCount
         sb0.append(buildCurrentCount());
         sb0.append(" arguments, instead of ");
         sb0.append(buildExpectedCount());
-        sb0.append(" arguments.");
+        sb0.append(" arguments");
+        sb0.append(buildVersion());
+        sb0.append(".");
 
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();

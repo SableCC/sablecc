@@ -18,6 +18,7 @@
 
 ant -f ant-files/
 mkdir -p tests/objectmacro/common/intermediate
+mkdir -p intermediate
 
 ./utils/run-front-tests
 ./utils/run-back-tests

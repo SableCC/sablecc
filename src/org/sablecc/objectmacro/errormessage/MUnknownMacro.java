@@ -57,11 +57,11 @@ public class MUnknownMacro
 
     private DNone VersionsNone;
 
-    final List<Macro> list_Versions;
+    final List<String> list_Versions;
 
     final Context VersionsContext = new Context();
 
-    final MacroValue VersionsValue;
+    final StringValue VersionsValue;
 
     MUnknownMacro(
             Macros macros) {
@@ -76,7 +76,7 @@ public class MUnknownMacro
         this.LineValue = new StringValue(this.list_Line, this.LineContext);
         this.CharValue = new StringValue(this.list_Char, this.CharContext);
         this.VersionsValue
-                = new MacroValue(this.list_Versions, this.VersionsContext);
+                = new StringValue(this.list_Versions, this.VersionsContext);
     }
 
     public void addAllName(
@@ -179,53 +179,28 @@ public class MUnknownMacro
     }
 
     public void addAllVersions(
-            List<Macro> macros) {
+            List<String> strings) {
 
-        if (macros == null) {
+        if (this.macros == null) {
             throw ObjectMacroException.parameterNull("Versions");
         }
         if (this.cacheBuilder != null) {
             throw ObjectMacroException
                     .cannotModify(this.getClass().getSimpleName());
         }
-
-        int i = 0;
-
-        for (Macro macro : macros) {
-            if (macro == null) {
-                throw ObjectMacroException.macroNull(i, "Versions");
+        for (String string : strings) {
+            if (string == null) {
+                throw ObjectMacroException.parameterNull("Versions");
             }
 
-            if (getMacros() != macro.getMacros()) {
-                throw ObjectMacroException.diffMacros();
-            }
-
-            verifyTypeVersions(macro);
-            this.list_Versions.add(macro);
-            this.children.add(macro);
-            Macro.cycleDetector.detectCycle(this, macro);
-
-            i++;
+            this.list_Versions.add(string);
         }
-    }
-
-    void verifyTypeVersions(
-            Macro macro) {
-
-        macro.apply(new InternalsInitializer("Versions") {
-
-            @Override
-            void setPlainText(
-                    MPlainText mPlainText) {
-
-            }
-        });
     }
 
     public void addVersions(
-            MPlainText macro) {
+            String string) {
 
-        if (macro == null) {
+        if (string == null) {
             throw ObjectMacroException.parameterNull("Versions");
         }
         if (this.cacheBuilder != null) {
@@ -233,13 +208,7 @@ public class MUnknownMacro
                     .cannotModify(this.getClass().getSimpleName());
         }
 
-        if (getMacros() != macro.getMacros()) {
-            throw ObjectMacroException.diffMacros();
-        }
-
-        this.list_Versions.add(macro);
-        this.children.add(macro);
-        Macro.cycleDetector.detectCycle(this, macro);
+        this.list_Versions.add(string);
     }
 
     private String buildName() {
@@ -344,36 +313,30 @@ public class MUnknownMacro
     private String buildVersions() {
 
         StringBuilder sb = new StringBuilder();
-        Context local_context = this.VersionsContext;
-        List<Macro> macros = this.list_Versions;
+        List<String> strings = this.list_Versions;
 
         int i = 0;
-        int nb_macros = macros.size();
-        String expansion = null;
+        int nb_strings = strings.size();
 
         if (this.VersionsNone != null) {
-            sb.append(this.VersionsNone.apply(i, "", nb_macros));
+            sb.append(this.VersionsNone.apply(i, "", nb_strings));
         }
 
-        for (Macro macro : macros) {
-            expansion = macro.build(local_context);
+        for (String string : strings) {
 
             if (this.VersionsBeforeFirst != null) {
-                expansion = this.VersionsBeforeFirst.apply(i, expansion,
-                        nb_macros);
+                string = this.VersionsBeforeFirst.apply(i, string, nb_strings);
             }
 
             if (this.VersionsAfterLast != null) {
-                expansion
-                        = this.VersionsAfterLast.apply(i, expansion, nb_macros);
+                string = this.VersionsAfterLast.apply(i, string, nb_strings);
             }
 
             if (this.VersionsSeparator != null) {
-                expansion
-                        = this.VersionsSeparator.apply(i, expansion, nb_macros);
+                string = this.VersionsSeparator.apply(i, string, nb_strings);
             }
 
-            sb.append(expansion);
+            sb.append(string);
             i++;
         }
 
@@ -395,24 +358,9 @@ public class MUnknownMacro
         return this.CharValue;
     }
 
-    MacroValue getVersions() {
+    StringValue getVersions() {
 
         return this.VersionsValue;
-    }
-
-    private void initVersionsInternals(
-            Context context) {
-
-        for (Macro macro : this.list_Versions) {
-            macro.apply(new InternalsInitializer("Versions") {
-
-                @Override
-                void setPlainText(
-                        MPlainText mPlainText) {
-
-                }
-            });
-        }
     }
 
     private void initNameDirectives() {
@@ -434,7 +382,7 @@ public class MUnknownMacro
         this.VersionsNone = new DNone(sb1.toString());
         this.VersionsValue.setNone(this.VersionsNone);
         StringBuilder sb2 = new StringBuilder();
-        sb2.append("in version: ");
+        sb2.append(" in version: ");
         this.VersionsBeforeFirst = new DBeforeFirst(sb2.toString());
         this.VersionsValue.setBeforeFirst(this.VersionsBeforeFirst);
         StringBuilder sb3 = new StringBuilder();
@@ -474,9 +422,6 @@ public class MUnknownMacro
         initLineDirectives();
         initCharDirectives();
         initVersionsDirectives();
-        initVersionsDirectives();
-
-        initVersionsInternals(null);
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -493,7 +438,7 @@ public class MUnknownMacro
         sb0.append(LINE_SEPARATOR);
         sb0.append("Macro \"");
         sb0.append(buildName());
-        sb0.append("\" does not exist ");
+        sb0.append("\" does not exist");
         sb0.append(buildVersions());
 
         cache_builder.setExpansion(sb0.toString());

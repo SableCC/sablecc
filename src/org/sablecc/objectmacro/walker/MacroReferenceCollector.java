@@ -69,9 +69,6 @@ public class MacroReferenceCollector
 
         this.currentMacroInfo = this.globalIndex.getMacro(node.getName(),
                 this.currentVersion);
-        if (this.currentMacroInfo == null) {
-            throw CompilerException.unknownMacro(node.getName());
-        }
     }
 
     @Override

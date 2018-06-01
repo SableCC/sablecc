@@ -20,12 +20,13 @@ Macro class
     Param
         name : String;
         enums : enum, separator="\n\n";
-        un_autre: String;
-        test : for(un_autre);
+        test : for("lala");
 {Body}
 public class {name}{{
 {enums}
 }
+
+{test}
 {End}
 
 Macro for
@@ -42,6 +43,7 @@ Macro for
 for({class_name} p{class_name} : {parameter_name}){{
 {rests}
 }
+{lala}
 {End}
 
 Macro for
@@ -58,6 +60,8 @@ Macro for
 for(int i = 0; i < {parameter_name}; i++){{
 {rests}
 }
+{class_name}
+{lala}
 {End}
 
 Macro enum

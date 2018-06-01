@@ -309,13 +309,13 @@ Macro unknown_macro
         name: String;
         line: String;
         char: String;
-        versions: plain_text, none = ".", before_first="in version: ", after_last=".", separator=", ";
+        versions: String, none = ".", before_first=" in version: ", after_last=".", separator=", ";
 {Body}
 {Insert: semantic_error_head}
 
 Line: {line}
 Char: {char}
-Macro "{name}" does not exist {versions}
+Macro "{name}" does not exist{versions}
 {End}
 
 # ============ plain_text =============
@@ -531,20 +531,21 @@ Char: {char}
 The "{name}" parameter is not used.
 {End}
 
-# ========== incorrect_argument_count ==========
+# ========== incorrect_number_argument ==========
 
-Macro incorrect_argument_count
+Macro incorrect_number_argument
     Param
         line: String;
         char: String;
         expected_count: String;
         current_count: String;
+        version: String, before_first=" in version: ";
 {Body}
 {Insert: semantic_error_head}
 
 Line: {line}
 Char: {char}
-The macro reference has {current_count} arguments, instead of {expected_count} arguments.
+The macro reference has {current_count} arguments, instead of {expected_count} arguments{version}.
 {End}
 
 # ========== incorrect_argument_type ==========
@@ -652,4 +653,56 @@ Char : {char}
 Macro '{name}' cannot be inserted because it also has parameters.
 {End}
 
+# =========== missing_parameter ========
 
+Macro missing_parameter
+    Param
+        line: String;
+        char: String;
+        macro_name: String;
+        version: String;
+        parameter_name: String;
+        type: String, separator=", ";
+{Body}
+{Insert: semantic_error_head}
+
+Line : {line}
+Char : {char}
+Macro '{macro_name}' version '{version}' must have a parameter named '{parameter_name}' of type '{type}'.
+{End}
+
+# =========== missing_internal ========
+
+Macro missing_internal
+    Param
+        line: String;
+        char: String;
+        macro_name: String;
+        version: String;
+        internal_name: String;
+        type: String, separator=", ";
+{Body}
+{Insert: semantic_error_head}
+
+Line : {line}
+Char : {char}
+Macro '{macro_name}' version '{version}' must have an internal named '{internal_name}' of type '{type}'.
+{End}
+
+# ============ incorrect_parameter_type ==========
+
+Macro incorrect_parameter_type
+    Param
+        line: String;
+        char: String;
+        macro_name: String;
+        version: String;
+        parameter: String;
+        type: String, separator=", ";
+{Body}
+{Insert: semantic_error_head}
+
+Line : {line}
+Char : {char}
+Parameter '{parameter}' in macro '{macro_name}' version '{version}' must be of type '{type}'.
+{End}

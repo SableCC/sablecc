@@ -217,6 +217,23 @@ public class CompilerException
         return new CompilerException(unknownMacro.build());
     }
 
+    public static CompilerException unknownMacro(
+            TIdentifier identifier,
+            MacroVersion version) {
+
+        if (version == null) {
+            return unknownMacro(identifier);
+        }
+
+        MUnknownMacro unknownMacro = factory.newUnknownMacro();
+        unknownMacro.addChar(identifier.getPos() + "");
+        unknownMacro.addLine(identifier.getLine() + "");
+        unknownMacro.addName(identifier.getText());
+        unknownMacro.addVersions(version.getName().getText());
+
+        return new CompilerException(unknownMacro.build());
+    }
+
     public static CompilerException unknownVersion(
             TIdentifier identifier) {
 
@@ -394,7 +411,7 @@ public class CompilerException
         return new CompilerException(mUnusedParam.build());
     }
 
-    public static CompilerException incorrectArgumentCount(
+    public static CompilerException incorrectNumberArgument(
             AMacroReference declaration,
             MacroInfo macro_referenced) {
 
@@ -404,14 +421,36 @@ public class CompilerException
                 = String.valueOf(macro_referenced.getAllInternals().size());
         String currentCount = String.valueOf(declaration.getValues().size());
 
-        MIncorrectArgumentCount mIncorrectArgumentCount
-                = factory.newIncorrectArgumentCount();
-        mIncorrectArgumentCount.addLine(line);
-        mIncorrectArgumentCount.addChar(pos);
-        mIncorrectArgumentCount.addExpectedCount(expectedCount);
-        mIncorrectArgumentCount.addCurrentCount(currentCount);
+        MIncorrectNumberArgument mIncorrectNumberArgument
+                = factory.newIncorrectNumberArgument();
+        mIncorrectNumberArgument.addLine(line);
+        mIncorrectNumberArgument.addChar(pos);
+        mIncorrectNumberArgument.addExpectedCount(expectedCount);
+        mIncorrectNumberArgument.addCurrentCount(currentCount);
 
-        return new CompilerException(mIncorrectArgumentCount.build());
+        return new CompilerException(mIncorrectNumberArgument.build());
+    }
+
+    public static CompilerException incorrectNumberArgument(
+            AMacroReference declaration,
+            MacroInfo macro_referenced,
+            MacroVersion version) {
+
+        String line = String.valueOf(declaration.getName().getLine());
+        String pos = String.valueOf(declaration.getName().getPos());
+        String expectedCount
+                = String.valueOf(macro_referenced.getAllInternals().size());
+        String currentCount = String.valueOf(declaration.getValues().size());
+
+        MIncorrectNumberArgument mIncorrectNumberArgument
+                = factory.newIncorrectNumberArgument();
+        mIncorrectNumberArgument.addLine(line);
+        mIncorrectNumberArgument.addChar(pos);
+        mIncorrectNumberArgument.addExpectedCount(expectedCount);
+        mIncorrectNumberArgument.addCurrentCount(currentCount);
+        mIncorrectNumberArgument.addVersion(version.getName().getText());
+
+        return new CompilerException(mIncorrectNumberArgument.build());
     }
 
     public static CompilerException incorrectArgumentType(
@@ -528,5 +567,76 @@ public class CompilerException
         mInvalidInsert.addName(name.getText());
 
         return new CompilerException(mInvalidInsert.build());
+    }
+
+    public static CompilerException missingParameter(
+            TIdentifier macro_name,
+            MacroVersion version,
+            Param param) {
+
+        MMissingParameter missing_parameter = factory.newMissingParameter();
+        missing_parameter.addLine(macro_name.getLine() + "");
+        missing_parameter.addChar(macro_name.getPos() + "");
+        missing_parameter.addMacroName(macro_name.getText());
+        missing_parameter.addVersion(version.getName().getText());
+        missing_parameter.addParameterName(param.getName());
+
+        if (param.isString()) {
+            missing_parameter.addType("String");
+        }
+        else {
+            for (AMacroReference macro_reference : param.getMacroReferences()) {
+                missing_parameter.addType(macro_reference.getName().getText());
+            }
+        }
+
+        return new CompilerException(missing_parameter.build());
+    }
+
+    public static CompilerException missingInternal(
+            TIdentifier macro_name,
+            MacroVersion version,
+            Param param) {
+
+        MMissingInternal missing_internal = factory.newMissingInternal();
+        missing_internal.addLine(macro_name.getLine() + "");
+        missing_internal.addChar(macro_name.getPos() + "");
+        missing_internal.addMacroName(macro_name.getText());
+        missing_internal.addVersion(version.getName().getText());
+        missing_internal.addInternalName(param.getName());
+
+        if (param.isString()) {
+            missing_internal.addType("String");
+        }
+        else {
+            for (AMacroReference macro_reference : param.getMacroReferences()) {
+                missing_internal.addType(macro_reference.getName().getText());
+            }
+        }
+
+        return new CompilerException(missing_internal.build());
+    }
+
+    public static CompilerException incorrectParameterType(
+            Param param,
+            TIdentifier macro_name,
+            MacroVersion macro_version,
+            List<String> expected_types) {
+
+        MIncorrectParameterType incorrectParameterType
+                = factory.newIncorrectParameterType();
+        incorrectParameterType
+                .addChar(param.getNameDeclaration().getPos() + "");
+        incorrectParameterType
+                .addLine(param.getNameDeclaration().getLine() + "");
+        incorrectParameterType.addMacroName(macro_name.getText());
+        incorrectParameterType.addParameter(param.getName());
+        incorrectParameterType.addVersion(macro_version.getName().getText());
+
+        for (String type : expected_types) {
+            incorrectParameterType.addType(type);
+        }
+
+        return new CompilerException(incorrectParameterType.build());
     }
 }
