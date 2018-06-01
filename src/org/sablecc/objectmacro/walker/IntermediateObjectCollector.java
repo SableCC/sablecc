@@ -57,20 +57,4 @@ public class IntermediateObjectCollector
             super.caseAMacro(node);
         }
     }
-
-    @Override
-    public void caseAParam(
-            AParam node) {
-
-        Param param = this.currentMacroInfo.getParam(node.getName());
-
-        for(MacroVersion version : this.globalIndex.getAllVersions()){
-            MacroInfo versionned_macro = version.getMacroOrNull(this.currentMacroInfo
-                    .getNameDeclaration());
-
-            if(this.currentMacroInfo != versionned_macro){
-                versionned_macro.containsParam(param);
-            }
-        }
-    }
 }

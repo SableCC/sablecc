@@ -68,7 +68,7 @@ public class MacroReferenceCollector extends
         //Looking if this macro contains the current version
         if(this.currentVersion != null
                 && node.getVersions().size() > 0
-                && !Utils.containsVersion(node.getVersions(), this.currentVersion)){
+                && !Utils.containsVersion(node.getVersions(), this.currentVersion)) {
             return;
         }
 
@@ -80,9 +80,6 @@ public class MacroReferenceCollector extends
             AMacro node) {
 
         this.currentMacroInfo = this.globalIndex.getMacro(node.getName(), this.currentVersion);
-        if(this.currentMacroInfo == null){
-            throw CompilerException.unknownMacro(node.getName());
-        }
     }
 
     @Override
