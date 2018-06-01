@@ -49,7 +49,7 @@ public class MacroVersion {
             throw new InternalException("macroInfo may not be null");
         }
 
-        MacroInfo firstDeclaration = this.macros.get(macroInfo.getName());
+        MacroInfo firstDeclaration = getMacroOrNull(macroInfo.getNameDeclaration());
         if(firstDeclaration != null){
             throw CompilerException.duplicateDeclaration(
                     macroInfo.getNameDeclaration(), firstDeclaration.getNameDeclaration(), this);
@@ -68,7 +68,7 @@ public class MacroVersion {
 
         MacroInfo found = this.macros.get(macro_name.getText());
         if(found == null){
-            throw CompilerException.unknownMacro(macro_name);
+            throw CompilerException.unknownMacro(macro_name, this);
         }
 
         return found;

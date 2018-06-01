@@ -71,9 +71,6 @@ public class DirectiveCollector extends
             AMacro node) {
 
         this.currentMacroInfo = this.globalIndex.getMacro(node.getName(), this.currentVersion);
-        if(this.currentMacroInfo == null){
-            throw CompilerException.unknownMacro(node.getName());
-        }
     }
 
     @Override

@@ -301,12 +301,12 @@ public class Macros {
         return mUnusedParam;
     }
     
-    public MIncorrectArgumentCount newIncorrectArgumentCount(){
-        MIncorrectArgumentCount mIncorrectArgumentCount;
+    public MIncorrectNumberArgument newIncorrectNumberArgument(){
+        MIncorrectNumberArgument mIncorrectNumberArgument;
     
-        mIncorrectArgumentCount = new MIncorrectArgumentCount(this);
+        mIncorrectNumberArgument = new MIncorrectNumberArgument(this);
     
-        return mIncorrectArgumentCount;
+        return mIncorrectNumberArgument;
     }
     
     public MIncorrectArgumentType newIncorrectArgumentType(){
@@ -363,5 +363,29 @@ public class Macros {
         mInvalidInsert = new MInvalidInsert(this);
     
         return mInvalidInsert;
+    }
+    
+    public MMissingParameter newMissingParameter(){
+        MMissingParameter mMissingParameter;
+    
+        mMissingParameter = new MMissingParameter(this);
+    
+        return mMissingParameter;
+    }
+    
+    public MMissingInternal newMissingInternal(){
+        MMissingInternal mMissingInternal;
+    
+        mMissingInternal = new MMissingInternal(this);
+    
+        return mMissingInternal;
+    }
+    
+    public MIncorrectParameterType newIncorrectParameterType(){
+        MIncorrectParameterType mIncorrectParameterType;
+    
+        mIncorrectParameterType = new MIncorrectParameterType(this);
+    
+        return mIncorrectParameterType;
     }
 }

@@ -150,8 +150,8 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MUnusedParam", this._paramName);
     }
     
-    void setIncorrectArgumentCount(MIncorrectArgumentCount mIncorrectArgumentCount) {
-        throw ObjectMacroException.incorrectType("MIncorrectArgumentCount", this._paramName);
+    void setIncorrectNumberArgument(MIncorrectNumberArgument mIncorrectNumberArgument) {
+        throw ObjectMacroException.incorrectType("MIncorrectNumberArgument", this._paramName);
     }
     
     void setIncorrectArgumentType(MIncorrectArgumentType mIncorrectArgumentType) {
@@ -180,6 +180,18 @@ class InternalsInitializer {
     
     void setInvalidInsert(MInvalidInsert mInvalidInsert) {
         throw ObjectMacroException.incorrectType("MInvalidInsert", this._paramName);
+    }
+    
+    void setMissingParameter(MMissingParameter mMissingParameter) {
+        throw ObjectMacroException.incorrectType("MMissingParameter", this._paramName);
+    }
+    
+    void setMissingInternal(MMissingInternal mMissingInternal) {
+        throw ObjectMacroException.incorrectType("MMissingInternal", this._paramName);
+    }
+    
+    void setIncorrectParameterType(MIncorrectParameterType mIncorrectParameterType) {
+        throw ObjectMacroException.incorrectType("MIncorrectParameterType", this._paramName);
     }
 
     void setObjectMacroUserErrorHead(MObjectMacroUserErrorHead mObjectMacroUserErrorHead) {

@@ -97,7 +97,7 @@ public class VarVerifier extends
 
                 referencedMacro = this.globalIndex.getMacro(node.getName(), version);
                 if(nbArguments != referencedMacro.getAllInternals().size()){
-                    throw CompilerException.incorrectArgumentCount(node, referencedMacro);
+                    throw CompilerException.incorrectNumberArgument(node, referencedMacro, version);
                 }
             }
         }
@@ -105,7 +105,7 @@ public class VarVerifier extends
         referencedMacro = this.globalIndex.getMacro(node.getName(), this.currentVersion);
         int nbInternals = referencedMacro.getAllInternals().size();
         if(nbArguments != nbInternals){
-            throw CompilerException.incorrectArgumentCount(node, referencedMacro);
+            throw CompilerException.incorrectNumberArgument(node, referencedMacro);
         }
 
         this.internalsList = new Internal[nbInternals];
