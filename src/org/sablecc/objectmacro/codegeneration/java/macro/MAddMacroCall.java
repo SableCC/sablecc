@@ -2,7 +2,7 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 import java.util.*;
-public class MSingleStringAdd extends Macro {
+public class MAddMacroCall extends Macro {
     
     private DSeparator ParamNameSeparator;
     
@@ -18,7 +18,7 @@ public class MSingleStringAdd extends Macro {
     
     final StringValue ParamNameValue;
     
-    MSingleStringAdd(Macros macros){
+    MAddMacroCall(Macros macros){
         
         this.setMacros(macros);
         this.list_ParamName = new LinkedList<>();
@@ -26,7 +26,7 @@ public class MSingleStringAdd extends Macro {
         this.ParamNameValue = new StringValue(this.list_ParamName, this.ParamNameContext);
     }
     
-    MSingleStringAdd(String pParamName, Macros macros){
+    MAddMacroCall(String pParamName, Macros macros){
         
         this.setMacros(macros);
         this.list_ParamName = new LinkedList<>();
@@ -111,7 +111,7 @@ public class MSingleStringAdd extends Macro {
     void apply(
             InternalsInitializer internalsInitializer) {
     
-        internalsInitializer.setSingleStringAdd(this);
+        internalsInitializer.setAddMacroCall(this);
     }
     
     
@@ -136,36 +136,16 @@ public class MSingleStringAdd extends Macro {
     
         StringBuilder sb0 = new StringBuilder();
         
-        sb0.append("public void add");
+        sb0.append("if (p");
         sb0.append(buildParamName());
-        sb0.append("(String string)");
+        sb0.append(" != null) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    if(string == null)");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        throw ObjectMacroException.parameterNull(\"");
+        sb0.append("    this.addAll");
         sb0.append(buildParamName());
-        sb0.append("\");");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    }");
-        sb0.append(LINE_SEPARATOR);
-        StringBuilder sb1 = new StringBuilder();
-        StringBuilder sb2 = new StringBuilder();
-        sb2.append("    ");
-        indentations.add(sb2.toString());
-        MIsBuilt m1 = this.getMacros().newIsBuilt();
-        
-        
-        
-        sb1.append(m1.build(null));
-        sb1.append(LINE_SEPARATOR);
-        sb0.append(applyIndent(sb1.toString(), indentations.remove(indentations.size() - 1)));
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    this.list_");
+        sb0.append("(p");
         sb0.append(buildParamName());
-        sb0.append(".add(string);");
+        sb0.append(");");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
         cache_builder.setExpansion(sb0.toString());
