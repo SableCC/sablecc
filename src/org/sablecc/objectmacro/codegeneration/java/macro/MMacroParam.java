@@ -2,94 +2,94 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 import java.util.*;
-public class MMacroArg extends Macro {
+public class MMacroParam extends Macro {
     
-    private DSeparator NameSeparator;
+    private DSeparator ParamNameSeparator;
     
-    private DBeforeFirst NameBeforeFirst;
+    private DBeforeFirst ParamNameBeforeFirst;
     
-    private DAfterLast NameAfterLast;
+    private DAfterLast ParamNameAfterLast;
     
-    private DNone NameNone;
+    private DNone ParamNameNone;
     
-    final List<String> list_Name;
+    final List<String> list_ParamName;
     
-    final Context NameContext = new Context();
+    final Context ParamNameContext = new Context();
     
-    final StringValue NameValue;
+    final StringValue ParamNameValue;
     
-    MMacroArg(Macros macros){
+    MMacroParam(Macros macros){
         
         this.setMacros(macros);
-        this.list_Name = new LinkedList<>();
+        this.list_ParamName = new LinkedList<>();
         
-        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+        this.ParamNameValue = new StringValue(this.list_ParamName, this.ParamNameContext);
     }
     
-    MMacroArg(String pName, Macros macros){
+    MMacroParam(String pParamName, Macros macros){
         
         this.setMacros(macros);
-        this.list_Name = new LinkedList<>();
+        this.list_ParamName = new LinkedList<>();
         
-        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+        this.ParamNameValue = new StringValue(this.list_ParamName, this.ParamNameContext);
         
-        if (pName != null) {
-            this.addName(pName);
+        if (pParamName != null) {
+            this.addParamName(pParamName);
         }
     }
     
-    public void addAllName(
+    public void addAllParamName(
                     List<String> strings){
     
         if(macros == null){
-            throw ObjectMacroException.parameterNull("Name");
+            throw ObjectMacroException.parameterNull("ParamName");
         }
         if(this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         for(String string : strings) {
             if(string == null) {
-                throw ObjectMacroException.parameterNull("Name");
+                throw ObjectMacroException.parameterNull("ParamName");
             }
     
-            this.list_Name.add(string);
+            this.list_ParamName.add(string);
         }
     }
     
-    public void addName(String string){
+    public void addParamName(String string){
         if(string == null){
-            throw ObjectMacroException.parameterNull("Name");
+            throw ObjectMacroException.parameterNull("ParamName");
         }
         if(this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.list_Name.add(string);
+        this.list_ParamName.add(string);
     }
     
-    private String buildName() {
+    private String buildParamName() {
         StringBuilder sb = new StringBuilder();
-        List<String> strings = this.list_Name;
+        List<String> strings = this.list_ParamName;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.NameNone != null) {
-            sb.append(this.NameNone.apply(i, "", nb_strings));
+        if(this.ParamNameNone != null) {
+            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
         }
     
         for(String string : strings) {
     
-            if(this.NameBeforeFirst != null) {
-                string = this.NameBeforeFirst.apply(i, string, nb_strings);
+            if(this.ParamNameBeforeFirst != null) {
+                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
             }
     
-            if(this.NameAfterLast != null) {
-                string = this.NameAfterLast.apply(i, string, nb_strings);
+            if(this.ParamNameAfterLast != null) {
+                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
             }
     
-            if(this.NameSeparator != null) {
-                string = this.NameSeparator.apply(i, string, nb_strings);
+            if(this.ParamNameSeparator != null) {
+                string = this.ParamNameSeparator.apply(i, string, nb_strings);
             }
     
             sb.append(string);
@@ -99,11 +99,11 @@ public class MMacroArg extends Macro {
         return sb.toString();
     }
     
-    StringValue getName() {
-        return this.NameValue;
+    StringValue getParamName() {
+        return this.ParamNameValue;
     }
     
-    private void initNameDirectives() {
+    private void initParamNameDirectives() {
         
     }
     
@@ -111,7 +111,7 @@ public class MMacroArg extends Macro {
     void apply(
             InternalsInitializer internalsInitializer) {
     
-        internalsInitializer.setMacroArg(this);
+        internalsInitializer.setMacroParam(this);
     }
     
     
@@ -132,12 +132,12 @@ public class MMacroArg extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
-        initNameDirectives();
+        initParamNameDirectives();
     
         StringBuilder sb0 = new StringBuilder();
         
-        sb0.append("list_");
-        sb0.append(buildName());
+        sb0.append("List<Macro> p");
+        sb0.append(buildParamName());
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
