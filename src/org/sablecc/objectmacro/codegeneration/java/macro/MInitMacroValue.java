@@ -31,6 +31,21 @@ public class MInitMacroValue
                 = new StringValue(this.list_ParamName, this.ParamNameContext);
     }
 
+    MInitMacroValue(
+            String pParamName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ParamName = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+
+        if (pParamName != null) {
+            addParamName(pParamName);
+        }
+    }
+
     public void addAllParamName(
             List<String> strings) {
 
@@ -140,7 +155,6 @@ public class MInitMacroValue
         sb0.append(", this.");
         sb0.append(buildParamName());
         sb0.append("Context);");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

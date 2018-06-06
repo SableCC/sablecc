@@ -47,6 +47,27 @@ public class MParamMacroRefBuilder
                 this.ContextNameContext);
     }
 
+    MParamMacroRefBuilder(
+            String pName,
+            String pContextName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_Name = new LinkedList<>();
+        this.list_ContextName = new LinkedList<>();
+
+        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+        this.ContextNameValue = new StringValue(this.list_ContextName,
+                this.ContextNameContext);
+
+        if (pName != null) {
+            addName(pName);
+        }
+        if (pContextName != null) {
+            addContextName(pContextName);
+        }
+    }
+
     public void addAllName(
             List<String> strings) {
 
@@ -321,7 +342,6 @@ public class MParamMacroRefBuilder
         sb0.append("    return sb.toString();");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -62,6 +62,7 @@ public class MMacrosParam
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -69,7 +70,6 @@ public class MMacrosParam
 
         sb0.append("Macros ");
         sb0.append(buildName(context));
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

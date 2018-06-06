@@ -48,6 +48,28 @@ public class MInitDirectives
                 this.NewDirectivesContext);
     }
 
+    MInitDirectives(
+            String pParamName,
+            List<Macro> pNewDirectives,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ParamName = new LinkedList<>();
+        this.list_NewDirectives = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.NewDirectivesValue = new MacroValue(this.list_NewDirectives,
+                this.NewDirectivesContext);
+        if (pNewDirectives != null) {
+            addAllNewDirectives(pNewDirectives);
+        }
+
+        if (pParamName != null) {
+            addParamName(pParamName);
+        }
+    }
+
     public void addAllParamName(
             List<String> strings) {
 
@@ -297,7 +319,6 @@ public class MInitDirectives
                 indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

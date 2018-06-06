@@ -39,7 +39,6 @@ public class MGetInternalTail
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append(".get(context)");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -62,6 +62,7 @@ public class MStringValueField
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -70,7 +71,6 @@ public class MStringValueField
         sb0.append("final StringValue ");
         sb0.append(buildParamName(context));
         sb0.append("Value;");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

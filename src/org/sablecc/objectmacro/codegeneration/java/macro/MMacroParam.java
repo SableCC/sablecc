@@ -4,7 +4,7 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 
 import java.util.*;
 
-public class MParamMacroField
+public class MMacroParam
         extends Macro {
 
     private DSeparator ParamNameSeparator;
@@ -21,7 +21,7 @@ public class MParamMacroField
 
     final StringValue ParamNameValue;
 
-    MParamMacroField(
+    MMacroParam(
             Macros macros) {
 
         setMacros(macros);
@@ -31,7 +31,7 @@ public class MParamMacroField
                 = new StringValue(this.list_ParamName, this.ParamNameContext);
     }
 
-    MParamMacroField(
+    MMacroParam(
             String pParamName,
             Macros macros) {
 
@@ -125,7 +125,7 @@ public class MParamMacroField
     void apply(
             InternalsInitializer internalsInitializer) {
 
-        internalsInitializer.setParamMacroField(this);
+        internalsInitializer.setMacroParam(this);
     }
 
     public String build() {
@@ -148,21 +148,8 @@ public class MParamMacroField
 
         StringBuilder sb0 = new StringBuilder();
 
-        sb0.append("final List<Macro> list_");
+        sb0.append("List<Macro> p");
         sb0.append(buildParamName());
-        sb0.append(";");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        MContextField m1 = getMacros().newContextField();
-
-        m1.setParamName(null, getParamName());
-        sb0.append(m1.build(null));
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        MMacroValueField m2 = getMacros().newMacroValueField();
-
-        m2.setParamName(null, getParamName());
-        sb0.append(m2.build(null));
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

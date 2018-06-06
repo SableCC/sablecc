@@ -39,7 +39,6 @@ public class MAbstract
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("abstract");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

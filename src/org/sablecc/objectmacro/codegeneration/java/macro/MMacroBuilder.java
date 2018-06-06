@@ -149,6 +149,68 @@ public class MMacroBuilder
                 = new MacroValue(this.list_Override, this.OverrideContext);
     }
 
+    MMacroBuilder(
+            List<Macro> pContextParam,
+            List<Macro> pContextCacheBuilder,
+            List<Macro> pNewCacheBuilder,
+            List<Macro> pDirectivesCalls,
+            List<Macro> pInternalsCalls,
+            List<Macro> pMacroBodyParts,
+            List<Macro> pPublic,
+            List<Macro> pOverride,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ContextParam = new LinkedList<>();
+        this.list_ContextCacheBuilder = new LinkedList<>();
+        this.list_NewCacheBuilder = new LinkedList<>();
+        this.list_DirectivesCalls = new LinkedList<>();
+        this.list_InternalsCalls = new LinkedList<>();
+        this.list_MacroBodyParts = new LinkedList<>();
+        this.list_Public = new LinkedList<>();
+        this.list_Override = new LinkedList<>();
+
+        this.ContextParamValue = new MacroValue(this.list_ContextParam,
+                this.ContextParamContext);
+        this.ContextCacheBuilderValue = new MacroValue(
+                this.list_ContextCacheBuilder, this.ContextCacheBuilderContext);
+        this.NewCacheBuilderValue = new MacroValue(this.list_NewCacheBuilder,
+                this.NewCacheBuilderContext);
+        this.DirectivesCallsValue = new MacroValue(this.list_DirectivesCalls,
+                this.DirectivesCallsContext);
+        this.InternalsCallsValue = new MacroValue(this.list_InternalsCalls,
+                this.InternalsCallsContext);
+        this.MacroBodyPartsValue = new MacroValue(this.list_MacroBodyParts,
+                this.MacroBodyPartsContext);
+        this.PublicValue = new MacroValue(this.list_Public, this.PublicContext);
+        this.OverrideValue
+                = new MacroValue(this.list_Override, this.OverrideContext);
+        if (pContextParam != null) {
+            addAllContextParam(pContextParam);
+        }
+        if (pContextCacheBuilder != null) {
+            addAllContextCacheBuilder(pContextCacheBuilder);
+        }
+        if (pNewCacheBuilder != null) {
+            addAllNewCacheBuilder(pNewCacheBuilder);
+        }
+        if (pDirectivesCalls != null) {
+            addAllDirectivesCalls(pDirectivesCalls);
+        }
+        if (pInternalsCalls != null) {
+            addAllInternalsCalls(pInternalsCalls);
+        }
+        if (pMacroBodyParts != null) {
+            addAllMacroBodyParts(pMacroBodyParts);
+        }
+        if (pPublic != null) {
+            addAllPublic(pPublic);
+        }
+        if (pOverride != null) {
+            addAllOverride(pOverride);
+        }
+    }
+
     public void addAllContextParam(
             List<Macro> macros) {
 
@@ -1341,6 +1403,11 @@ public class MMacroBuilder
         sb1.append("this.cacheBuilder = cache_builder");
         this.NewCacheBuilderNone = new DNone(sb1.toString());
         this.NewCacheBuilderValue.setNone(this.NewCacheBuilderNone);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(LINE_SEPARATOR);
+        this.NewCacheBuilderBeforeFirst = new DBeforeFirst(sb2.toString());
+        this.NewCacheBuilderValue
+                .setBeforeFirst(this.NewCacheBuilderBeforeFirst);
     }
 
     private void initDirectivesCallsDirectives() {
@@ -1349,6 +1416,15 @@ public class MMacroBuilder
         sb1.append(LINE_SEPARATOR);
         this.DirectivesCallsSeparator = new DSeparator(sb1.toString());
         this.DirectivesCallsValue.setSeparator(this.DirectivesCallsSeparator);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(LINE_SEPARATOR);
+        this.DirectivesCallsBeforeFirst = new DBeforeFirst(sb2.toString());
+        this.DirectivesCallsValue
+                .setBeforeFirst(this.DirectivesCallsBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(LINE_SEPARATOR);
+        this.DirectivesCallsAfterLast = new DAfterLast(sb3.toString());
+        this.DirectivesCallsValue.setAfterLast(this.DirectivesCallsAfterLast);
     }
 
     private void initInternalsCallsDirectives() {
@@ -1357,6 +1433,14 @@ public class MMacroBuilder
         sb1.append(LINE_SEPARATOR);
         this.InternalsCallsSeparator = new DSeparator(sb1.toString());
         this.InternalsCallsValue.setSeparator(this.InternalsCallsSeparator);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(LINE_SEPARATOR);
+        this.InternalsCallsBeforeFirst = new DBeforeFirst(sb2.toString());
+        this.InternalsCallsValue.setBeforeFirst(this.InternalsCallsBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(LINE_SEPARATOR);
+        this.InternalsCallsAfterLast = new DAfterLast(sb3.toString());
+        this.InternalsCallsValue.setAfterLast(this.InternalsCallsAfterLast);
     }
 
     private void initMacroBodyPartsDirectives() {
@@ -1365,6 +1449,14 @@ public class MMacroBuilder
         sb1.append(LINE_SEPARATOR);
         this.MacroBodyPartsSeparator = new DSeparator(sb1.toString());
         this.MacroBodyPartsValue.setSeparator(this.MacroBodyPartsSeparator);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(LINE_SEPARATOR);
+        this.MacroBodyPartsBeforeFirst = new DBeforeFirst(sb2.toString());
+        this.MacroBodyPartsValue.setBeforeFirst(this.MacroBodyPartsBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(LINE_SEPARATOR);
+        this.MacroBodyPartsAfterLast = new DAfterLast(sb3.toString());
+        this.MacroBodyPartsValue.setAfterLast(this.MacroBodyPartsAfterLast);
     }
 
     private void initPublicDirectives() {
@@ -1470,15 +1562,12 @@ public class MMacroBuilder
         sb2.append("    ");
         indentations.add(sb2.toString());
         sb1.append(buildDirectivesCalls());
-        sb1.append(LINE_SEPARATOR);
-        sb1.append(LINE_SEPARATOR);
         sb1.append(buildInternalsCalls());
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("    StringBuilder sb0 = new StringBuilder();");
-        sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         StringBuilder sb3 = new StringBuilder();
         StringBuilder sb4 = new StringBuilder();
@@ -1488,13 +1577,11 @@ public class MMacroBuilder
         sb0.append(applyIndent(sb3.toString(),
                 indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
         sb0.append("    cache_builder.setExpansion(sb0.toString());");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    return sb0.toString();");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

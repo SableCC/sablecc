@@ -23,15 +23,34 @@ public class MSwitchVersion
 
     private Map<Context, StringValue> list_ClassName = new LinkedHashMap<>();
 
+    private Map<Context, MacroValue> list_Args = new LinkedHashMap<>();
+
     MSwitchVersion(
             Macros macros) {
 
         setMacros(macros);
         this.list_VersionCases = new LinkedList<>();
         this.list_ClassName = new LinkedHashMap<>();
+        this.list_Args = new LinkedHashMap<>();
 
         this.VersionCasesValue = new MacroValue(this.list_VersionCases,
                 this.VersionCasesContext);
+    }
+
+    MSwitchVersion(
+            List<Macro> pVersionCases,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_VersionCases = new LinkedList<>();
+        this.list_ClassName = new LinkedHashMap<>();
+        this.list_Args = new LinkedHashMap<>();
+
+        this.VersionCasesValue = new MacroValue(this.list_VersionCases,
+                this.VersionCasesContext);
+        if (pVersionCases != null) {
+            addAllVersionCases(pVersionCases);
+        }
     }
 
     public void addAllVersionCases(
@@ -109,6 +128,17 @@ public class MSwitchVersion
         this.list_ClassName.put(context, value);
     }
 
+    void setArgs(
+            Context context,
+            MacroValue macro_value) {
+
+        if (macro_value == null) {
+            throw new RuntimeException("macros cannot be null");
+        }
+
+        this.list_Args.put(context, macro_value);
+    }
+
     private String buildVersionCases() {
 
         StringBuilder sb = new StringBuilder();
@@ -155,6 +185,13 @@ public class MSwitchVersion
         return stringValue.build();
     }
 
+    private String buildArgs(
+            Context context) {
+
+        MacroValue macros = this.list_Args.get(context);
+        return macros.build();
+    }
+
     MacroValue getVersionCases() {
 
         return this.VersionCasesValue;
@@ -164,6 +201,12 @@ public class MSwitchVersion
             Context context) {
 
         return this.list_ClassName.get(context);
+    }
+
+    private MacroValue getArgs(
+            Context context) {
+
+        return this.list_Args.get(context);
     }
 
     private void initVersionCasesInternals(
@@ -179,6 +222,9 @@ public class MSwitchVersion
                     mMacroCaseInit.setClassName(
                             MSwitchVersion.this.VersionCasesContext,
                             getClassName(context));
+                    mMacroCaseInit.setArgs(
+                            MSwitchVersion.this.VersionCasesContext,
+                            getArgs(context));
                 }
             });
         }
@@ -214,6 +260,7 @@ public class MSwitchVersion
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -239,7 +286,6 @@ public class MSwitchVersion
         sb0.append("        throw new RuntimeException(\"unknown version\");");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -30,6 +30,20 @@ public class MParamArg
         this.NameValue = new StringValue(this.list_Name, this.NameContext);
     }
 
+    MParamArg(
+            String pName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_Name = new LinkedList<>();
+
+        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+
+        if (pName != null) {
+            addName(pName);
+        }
+    }
+
     public void addAllName(
             List<String> strings) {
 
@@ -134,7 +148,6 @@ public class MParamArg
 
         sb0.append("p");
         sb0.append(buildName());
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

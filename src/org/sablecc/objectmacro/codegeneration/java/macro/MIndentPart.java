@@ -48,6 +48,28 @@ public class MIndentPart
                 this.IndexIndentContext);
     }
 
+    MIndentPart(
+            String pIndexBuilder,
+            String pIndexIndent,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_IndexBuilder = new LinkedList<>();
+        this.list_IndexIndent = new LinkedList<>();
+
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
+        this.IndexIndentValue = new StringValue(this.list_IndexIndent,
+                this.IndexIndentContext);
+
+        if (pIndexBuilder != null) {
+            addIndexBuilder(pIndexBuilder);
+        }
+        if (pIndexIndent != null) {
+            addIndexIndent(pIndexIndent);
+        }
+    }
+
     public void addAllIndexBuilder(
             List<String> strings) {
 
@@ -236,7 +258,6 @@ public class MIndentPart
         sb0.append(buildIndexIndent());
         sb0.append(
                 ".toString(), indentations.remove(indentations.size() - 1)));");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -31,6 +31,21 @@ public class MPackageDeclaration
                 this.PackageNameContext);
     }
 
+    MPackageDeclaration(
+            String pPackageName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_PackageName = new LinkedList<>();
+
+        this.PackageNameValue = new StringValue(this.list_PackageName,
+                this.PackageNameContext);
+
+        if (pPackageName != null) {
+            addPackageName(pPackageName);
+        }
+    }
+
     public void addAllPackageName(
             List<String> strings) {
 
@@ -137,7 +152,6 @@ public class MPackageDeclaration
         sb0.append("package ");
         sb0.append(buildPackageName());
         sb0.append(";");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -48,6 +48,28 @@ public class MStringPart
                 this.IndexBuilderContext);
     }
 
+    MStringPart(
+            String pString,
+            String pIndexBuilder,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_String = new LinkedList<>();
+        this.list_IndexBuilder = new LinkedList<>();
+
+        this.StringValue
+                = new StringValue(this.list_String, this.StringContext);
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
+
+        if (pString != null) {
+            addString(pString);
+        }
+        if (pIndexBuilder != null) {
+            addIndexBuilder(pIndexBuilder);
+        }
+    }
+
     public void addAllString(
             List<String> strings) {
 
@@ -234,7 +256,6 @@ public class MStringPart
         sb0.append(".append(\"");
         sb0.append(buildString());
         sb0.append("\");");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -65,6 +65,35 @@ public class MParamInsertPart
                 = new MacroValue(this.list_ContextArg, this.ContextArgContext);
     }
 
+    MParamInsertPart(
+            String pParamName,
+            String pIndexBuilder,
+            List<Macro> pContextArg,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ParamName = new LinkedList<>();
+        this.list_IndexBuilder = new LinkedList<>();
+        this.list_ContextArg = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
+        this.ContextArgValue
+                = new MacroValue(this.list_ContextArg, this.ContextArgContext);
+        if (pContextArg != null) {
+            addAllContextArg(pContextArg);
+        }
+
+        if (pParamName != null) {
+            addParamName(pParamName);
+        }
+        if (pIndexBuilder != null) {
+            addIndexBuilder(pIndexBuilder);
+        }
+    }
+
     public void addAllParamName(
             List<String> strings) {
 
@@ -383,7 +412,6 @@ public class MParamInsertPart
         sb0.append("(");
         sb0.append(buildContextArg());
         sb0.append("));");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

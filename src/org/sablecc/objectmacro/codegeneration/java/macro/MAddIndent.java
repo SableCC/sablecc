@@ -48,6 +48,28 @@ public class MAddIndent
                 this.IndentPartsContext);
     }
 
+    MAddIndent(
+            String pIndexBuilder,
+            List<Macro> pIndentParts,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_IndexBuilder = new LinkedList<>();
+        this.list_IndentParts = new LinkedList<>();
+
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
+        this.IndentPartsValue = new MacroValue(this.list_IndentParts,
+                this.IndentPartsContext);
+        if (pIndentParts != null) {
+            addAllIndentParts(pIndentParts);
+        }
+
+        if (pIndexBuilder != null) {
+            addIndexBuilder(pIndexBuilder);
+        }
+    }
+
     public void addAllIndexBuilder(
             List<String> strings) {
 
@@ -424,7 +446,6 @@ public class MAddIndent
         sb0.append("indentations.add(sb");
         sb0.append(buildIndexBuilder());
         sb0.append(".toString());");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

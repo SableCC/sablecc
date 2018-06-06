@@ -62,6 +62,7 @@ public class MFactoryComparison
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -75,7 +76,6 @@ public class MFactoryComparison
         sb0.append("    throw ObjectMacroException.diffMacros();");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

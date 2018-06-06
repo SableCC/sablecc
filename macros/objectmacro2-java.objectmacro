@@ -523,9 +523,11 @@ public class Macros {
 Macro macro_creator_method
     Param
         class_name: String;
-        version_factory: switch_version(class_name), before_first="\n", none="m{class_name} = new M{class_name}(this);";
+        args: param_arg, separator=", ", after_last=", ";
+        version_factory: switch_version(class_name, args), before_first="\n", none="m{class_name} = new M{class_name}({args}this);";
+        parameters: macro_param, string_param, separator=", ";
 {Body}
-public M{class_name} new{class_name}(){
+public M{class_name} new{class_name}({parameters}){
     M{class_name} m{class_name};
 
 {Indent: "\t"}
@@ -540,9 +542,10 @@ public M{class_name} new{class_name}(){
 
 Macro switch_version
     Param
-        version_cases: macro_case_init(class_name), separator="\n";
+        version_cases: macro_case_init(class_name, args), separator="\n";
     Internal
         class_name: String;
+        args: param_arg;
 {Body}
 switch(this.version) {
 {Indent: "\t"}
@@ -561,9 +564,10 @@ Macro macro_case_init
         version_class_name: String;
     Internal
         class_name: String;
+        args: param_arg;
 {Body}
 case {version} :
-    m{class_name} = new M{version_class_name}(this);
+    m{class_name} = new M{version_class_name}({args}this);
     break;
 {End}
 
@@ -586,37 +590,36 @@ Macro macro
     Param
         class_name: String;
         parent_class: String;
-        package_declaration: package_declaration, before_first="\n";
-        fields: param_macro_field, param_string_field, internal_macro_field, internal_string_field, directive_fields, separator="\n\n", before_first="\n";
-        constructor: constructor(class_name), before_first="\n";
-        setters: single_macro_add, add_all_macro, single_string_add, add_all_string, abstract_type_verifier, type_verifier, internal_string_setter, internal_macro_setter, separator="\n\n", before_first="\n";
-        builders: param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, internal_string_ref_builder, separator="\n\n", before_first="\n";
-        getters: param_string_ref, param_macro_ref, internal_macro_ref, internal_string_ref, separator="\n\n", before_first="\n";
-        init_internals_methods: init_internals_method, separator="\n\n";
-        init_directives: init_directives, separator="\n\n", before_first="\n";
-        redefined_apply_initializer: redefined_apply_initializer(class_name);
-        macro_builders: macro_builder, abstract_builder, empty_builder_with_context, separator="\n\n", before_first="\n";
-        abstract: abstract, after_last=" ";
-        applied_version: applied_version, before_first="\n";
-        init_macros_method: set_macros_method, before_first="\n";
         public: public, after_last=" ";
+        abstract: abstract, after_last=" ";
+        package_declaration: package_declaration, before_first="\n";
+        fields: param_macro_field, param_string_field, internal_macro_field, internal_string_field, directive_fields, separator="\n\n", before_first="\n", after_last="\n";
+        constructor: constructor(class_name), before_first="\n", after_last="\n", separator="\n\n";
+        setters: single_macro_add, add_all_macro, single_string_add, add_all_string, abstract_type_verifier, type_verifier, internal_string_setter, internal_macro_setter, separator="\n\n", before_first="\n", after_last="\n";
+        builders: param_string_ref_builder, param_macro_ref_builder, internal_macro_ref_builder, internal_string_ref_builder, separator="\n\n", before_first="\n", after_last="\n";
+        getters: param_string_ref, param_macro_ref, internal_macro_ref, internal_string_ref, separator="\n\n", before_first="\n", after_last="\n";
+        init_internals_methods: init_internals_method, separator="\n\n", before_first="\n", after_last="\n";
+        init_directives: init_directives, separator="\n\n", before_first="\n", after_last="\n";
+        redefined_apply_initializer: redefined_apply_initializer(class_name), before_first="\n", after_last="\n";
+        macro_builders: macro_builder, abstract_builder, empty_builder_with_context, separator="\n\n", before_first="\n", after_last="\n";
+        applied_version: applied_version, before_first="\n\n";
+        init_macros_method: set_macros_method, before_first="\n", after_last="\n";
 {Body}
 {Insert: header}
 {package_declaration}
-
-{Insert: import_java_util}
+{Insert: import_java_util}#
 {applied_version}
 {public}{abstract}class M{class_name} extends M{parent_class} {
 {Indent: "\t"}
-{fields}
-{constructor}
-{setters}
-{builders}
-{getters}
-{init_internals_methods}
-{init_directives}
-{redefined_apply_initializer}
-{macro_builders}
+{fields}#
+{constructor}#
+{setters}#
+{builders}#
+{getters}#
+{init_internals_methods}#
+{init_directives}#
+{redefined_apply_initializer}#
+{macro_builders}#
 {init_macros_method}
 {End}
 }
@@ -639,18 +642,22 @@ Macro applied_version
 
 Macro constructor
     Param
-        field_initializers: init_param, init_internal, set_macros_call("macros"), before_first="\n", separator="\n";
-        parameters: macros_param("macros");
-        values_initializers: init_macro_value, init_string_value, before_first="\n", separator="\n";
-        super: super_call, before_first="\n";
+        field_initializers: init_param, init_internal, set_macros_call("macros"), before_first="\n", separator="\n", after_last="\n";
+        parameters: string_param, macro_param, macros_param("macros"), separator=", ";
+        values_initializers: init_macro_value, init_string_value, before_first="\n", separator="\n", after_last="\n";
+        super: super_call, before_first="\n", after_last="\n";
+        add_macros: add_macro_call, separator="\n", after_last="\n";
+        add_strings: add_string_call, separator="\n", before_first="\n";
     Internal
         class_name: String;
 {Body}
 M{class_name}({parameters}){
 {Indent: "\t"}
-{super}
-{field_initializers}
-{values_initializers}
+{super}#
+{field_initializers}#
+{values_initializers}#
+{add_macros}#
+{add_strings}
 {End}
 }
 {End}
@@ -707,6 +714,28 @@ Macro super_call
         parameters: String, separator=", ";
 {Body}
 super({parameters});
+{End}
+
+# ========== add_macro_call =========
+
+Macro add_macro_call
+    Param
+        param_name: String;
+{Body}
+if (p{param_name} != null) {
+    this.addAll{param_name}(p{param_name});
+}
+{End}
+
+# ========== add_string_call =========
+
+Macro add_string_call
+    Param
+        param_name: String;
+{Body}
+if (p{param_name} != null) {
+    this.add{param_name}(p{param_name});
+}
 {End}
 
 # ================================================================
@@ -1122,10 +1151,10 @@ Macro macro_builder
     Param
         context_param: context_param;
         context_cache_builder: context_cache_builder, none="this.cacheBuilder";
-        new_cache_builder: new_cache_builder, none="this.cacheBuilder = cache_builder";
-        directives_calls: init_directive_call, separator="\n";
-        internals_calls: init_internals_call, separator="\n";
-        macro_body_parts: init_string_builder, string_part, param_insert_part,  eol_part, insert_macro_part, add_indent, indent_part, separator="\n";
+        new_cache_builder: new_cache_builder, none="this.cacheBuilder = cache_builder", before_first="\n";
+        directives_calls: init_directive_call, separator="\n", before_first="\n", after_last="\n";
+        internals_calls: init_internals_call, separator="\n", before_first="\n", after_last="\n";
+        macro_body_parts: init_string_builder, string_part, param_insert_part,  eol_part, insert_macro_part, add_indent, indent_part, separator="\n", before_first="\n", after_last="\n";
         public: public, after_last=" ";
         override: override;
 {Body}
@@ -1147,17 +1176,14 @@ Macro macro_builder
     List<String> indentations = new LinkedList<>();
 
 {Indent: "\t"}
-{directives_calls}
-
+{directives_calls}#
 {internals_calls}
 {End}
 
     StringBuilder sb0 = new StringBuilder();
-
 {Indent: "\t"}
 {macro_body_parts}
 {End}
-
     cache_builder.setExpansion(sb0.toString());
     return sb0.toString();
 }
@@ -1542,9 +1568,18 @@ Macro get_internal_tail
 
 Macro string_param
     Param
-    name: String;
+        name: String;
 {Body}
 String p{name}
+{End}
+
+# ========== macro_param ==========
+
+Macro macro_param
+    Param
+        param_name: String;
+{Body}
+List<Macro> p{param_name}
 {End}
 
 # ========== abstract ===========

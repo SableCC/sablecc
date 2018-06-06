@@ -35,6 +35,22 @@ public class MApplyInternalsInitializer
                         this.RedefinedInternalsSetterContext);
     }
 
+    MApplyInternalsInitializer(
+            List<Macro> pRedefinedInternalsSetter,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_RedefinedInternalsSetter = new LinkedList<>();
+        this.list_ParamName = new LinkedHashMap<>();
+
+        this.RedefinedInternalsSetterValue
+                = new MacroValue(this.list_RedefinedInternalsSetter,
+                        this.RedefinedInternalsSetterContext);
+        if (pRedefinedInternalsSetter != null) {
+            addAllRedefinedInternalsSetter(pRedefinedInternalsSetter);
+        }
+    }
+
     public void addAllRedefinedInternalsSetter(
             List<Macro> macros) {
 
@@ -218,6 +234,7 @@ public class MApplyInternalsInitializer
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -241,7 +258,6 @@ public class MApplyInternalsInitializer
                 indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
         sb0.append("});");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

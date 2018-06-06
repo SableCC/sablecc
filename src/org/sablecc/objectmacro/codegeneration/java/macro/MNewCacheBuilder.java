@@ -39,7 +39,6 @@ public class MNewCacheBuilder
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("this.cacheBuilders.put(context, cache_builder)");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

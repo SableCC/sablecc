@@ -30,6 +30,20 @@ public class MParentInternalsSetter
         this.NameValue = new StringValue(this.list_Name, this.NameContext);
     }
 
+    MParentInternalsSetter(
+            String pName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_Name = new LinkedList<>();
+
+        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+
+        if (pName != null) {
+            addName(pName);
+        }
+    }
+
     public void addAllName(
             List<String> strings) {
 
@@ -146,7 +160,6 @@ public class MParentInternalsSetter
         sb0.append("\", this._paramName);");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

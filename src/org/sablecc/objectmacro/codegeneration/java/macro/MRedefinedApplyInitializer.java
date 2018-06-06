@@ -62,6 +62,7 @@ public class MRedefinedApplyInitializer
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -80,7 +81,6 @@ public class MRedefinedApplyInitializer
         sb0.append("(this);");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

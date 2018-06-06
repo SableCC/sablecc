@@ -63,6 +63,34 @@ public class MConstructor
 
     final MacroValue SuperValue;
 
+    private DSeparator AddMacrosSeparator;
+
+    private DBeforeFirst AddMacrosBeforeFirst;
+
+    private DAfterLast AddMacrosAfterLast;
+
+    private DNone AddMacrosNone;
+
+    final List<Macro> list_AddMacros;
+
+    final Context AddMacrosContext = new Context();
+
+    final MacroValue AddMacrosValue;
+
+    private DSeparator AddStringsSeparator;
+
+    private DBeforeFirst AddStringsBeforeFirst;
+
+    private DAfterLast AddStringsAfterLast;
+
+    private DNone AddStringsNone;
+
+    final List<Macro> list_AddStrings;
+
+    final Context AddStringsContext = new Context();
+
+    final MacroValue AddStringsValue;
+
     private Map<Context, StringValue> list_ClassName = new LinkedHashMap<>();
 
     MConstructor(
@@ -73,6 +101,8 @@ public class MConstructor
         this.list_Parameters = new LinkedList<>();
         this.list_ValuesInitializers = new LinkedList<>();
         this.list_Super = new LinkedList<>();
+        this.list_AddMacros = new LinkedList<>();
+        this.list_AddStrings = new LinkedList<>();
         this.list_ClassName = new LinkedHashMap<>();
 
         this.FieldInitializersValue = new MacroValue(
@@ -82,6 +112,59 @@ public class MConstructor
         this.ValuesInitializersValue = new MacroValue(
                 this.list_ValuesInitializers, this.ValuesInitializersContext);
         this.SuperValue = new MacroValue(this.list_Super, this.SuperContext);
+        this.AddMacrosValue
+                = new MacroValue(this.list_AddMacros, this.AddMacrosContext);
+        this.AddStringsValue
+                = new MacroValue(this.list_AddStrings, this.AddStringsContext);
+    }
+
+    MConstructor(
+            List<Macro> pFieldInitializers,
+            List<Macro> pParameters,
+            List<Macro> pValuesInitializers,
+            List<Macro> pSuper,
+            List<Macro> pAddMacros,
+            List<Macro> pAddStrings,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_FieldInitializers = new LinkedList<>();
+        this.list_Parameters = new LinkedList<>();
+        this.list_ValuesInitializers = new LinkedList<>();
+        this.list_Super = new LinkedList<>();
+        this.list_AddMacros = new LinkedList<>();
+        this.list_AddStrings = new LinkedList<>();
+        this.list_ClassName = new LinkedHashMap<>();
+
+        this.FieldInitializersValue = new MacroValue(
+                this.list_FieldInitializers, this.FieldInitializersContext);
+        this.ParametersValue
+                = new MacroValue(this.list_Parameters, this.ParametersContext);
+        this.ValuesInitializersValue = new MacroValue(
+                this.list_ValuesInitializers, this.ValuesInitializersContext);
+        this.SuperValue = new MacroValue(this.list_Super, this.SuperContext);
+        this.AddMacrosValue
+                = new MacroValue(this.list_AddMacros, this.AddMacrosContext);
+        this.AddStringsValue
+                = new MacroValue(this.list_AddStrings, this.AddStringsContext);
+        if (pFieldInitializers != null) {
+            addAllFieldInitializers(pFieldInitializers);
+        }
+        if (pParameters != null) {
+            addAllParameters(pParameters);
+        }
+        if (pValuesInitializers != null) {
+            addAllValuesInitializers(pValuesInitializers);
+        }
+        if (pSuper != null) {
+            addAllSuper(pSuper);
+        }
+        if (pAddMacros != null) {
+            addAllAddMacros(pAddMacros);
+        }
+        if (pAddStrings != null) {
+            addAllAddStrings(pAddStrings);
+        }
     }
 
     public void addAllFieldInitializers(
@@ -237,11 +320,63 @@ public class MConstructor
         macro.apply(new InternalsInitializer("Parameters") {
 
             @Override
+            void setStringParam(
+                    MStringParam mStringParam) {
+
+            }
+
+            @Override
+            void setMacroParam(
+                    MMacroParam mMacroParam) {
+
+            }
+
+            @Override
             void setMacrosParam(
                     MMacrosParam mMacrosParam) {
 
             }
         });
+    }
+
+    public void addParameters(
+            MStringParam macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("Parameters");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
+        this.list_Parameters.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+
+    public void addParameters(
+            MMacroParam macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("Parameters");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
+        this.list_Parameters.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
 
     public void addParameters(
@@ -418,6 +553,134 @@ public class MConstructor
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
+    public void addAllAddMacros(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("AddMacros");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "AddMacros");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeAddMacros(macro);
+            this.list_AddMacros.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeAddMacros(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("AddMacros") {
+
+            @Override
+            void setAddMacroCall(
+                    MAddMacroCall mAddMacroCall) {
+
+            }
+        });
+    }
+
+    public void addAddMacros(
+            MAddMacroCall macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("AddMacros");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
+        this.list_AddMacros.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+
+    public void addAllAddStrings(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("AddStrings");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "AddStrings");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeAddStrings(macro);
+            this.list_AddStrings.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeAddStrings(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("AddStrings") {
+
+            @Override
+            void setAddStringCall(
+                    MAddStringCall mAddStringCall) {
+
+            }
+        });
+    }
+
+    public void addAddStrings(
+            MAddStringCall macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("AddStrings");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
+        this.list_AddStrings.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+
     void setClassName(
             Context context,
             StringValue value) {
@@ -583,6 +846,84 @@ public class MConstructor
         return sb.toString();
     }
 
+    private String buildAddMacros() {
+
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.AddMacrosContext;
+        List<Macro> macros = this.list_AddMacros;
+
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if (this.AddMacrosNone != null) {
+            sb.append(this.AddMacrosNone.apply(i, "", nb_macros));
+        }
+
+        for (Macro macro : macros) {
+            expansion = macro.build(local_context);
+
+            if (this.AddMacrosBeforeFirst != null) {
+                expansion = this.AddMacrosBeforeFirst.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.AddMacrosAfterLast != null) {
+                expansion = this.AddMacrosAfterLast.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.AddMacrosSeparator != null) {
+                expansion = this.AddMacrosSeparator.apply(i, expansion,
+                        nb_macros);
+            }
+
+            sb.append(expansion);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    private String buildAddStrings() {
+
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.AddStringsContext;
+        List<Macro> macros = this.list_AddStrings;
+
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if (this.AddStringsNone != null) {
+            sb.append(this.AddStringsNone.apply(i, "", nb_macros));
+        }
+
+        for (Macro macro : macros) {
+            expansion = macro.build(local_context);
+
+            if (this.AddStringsBeforeFirst != null) {
+                expansion = this.AddStringsBeforeFirst.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.AddStringsAfterLast != null) {
+                expansion = this.AddStringsAfterLast.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.AddStringsSeparator != null) {
+                expansion = this.AddStringsSeparator.apply(i, expansion,
+                        nb_macros);
+            }
+
+            sb.append(expansion);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
     private String buildClassName(
             Context context) {
 
@@ -608,6 +949,16 @@ public class MConstructor
     MacroValue getSuper() {
 
         return this.SuperValue;
+    }
+
+    MacroValue getAddMacros() {
+
+        return this.AddMacrosValue;
+    }
+
+    MacroValue getAddStrings() {
+
+        return this.AddStringsValue;
     }
 
     private StringValue getClassName(
@@ -638,14 +989,14 @@ public class MConstructor
                 void setSetMacrosCall(
                         MSetMacrosCall mSetMacrosCall) {
 
-                    StringBuilder sb3 = new StringBuilder();
-                    sb3.append("macros");
-                    StringValue value3 = new StringValue(
+                    StringBuilder sb4 = new StringBuilder();
+                    sb4.append("macros");
+                    StringValue value4 = new StringValue(
                             new ArrayList<>(
-                                    Collections.singletonList(sb3.toString())),
+                                    Collections.singletonList(sb4.toString())),
                             null);
                     mSetMacrosCall.setMacrosParamName(
-                            MConstructor.this.FieldInitializersContext, value3);
+                            MConstructor.this.FieldInitializersContext, value4);
                 }
             });
         }
@@ -658,17 +1009,29 @@ public class MConstructor
             macro.apply(new InternalsInitializer("Parameters") {
 
                 @Override
+                void setStringParam(
+                        MStringParam mStringParam) {
+
+                }
+
+                @Override
+                void setMacroParam(
+                        MMacroParam mMacroParam) {
+
+                }
+
+                @Override
                 void setMacrosParam(
                         MMacrosParam mMacrosParam) {
 
-                    StringBuilder sb1 = new StringBuilder();
-                    sb1.append("macros");
-                    StringValue value1 = new StringValue(
+                    StringBuilder sb2 = new StringBuilder();
+                    sb2.append("macros");
+                    StringValue value2 = new StringValue(
                             new ArrayList<>(
-                                    Collections.singletonList(sb1.toString())),
+                                    Collections.singletonList(sb2.toString())),
                             null);
                     mMacrosParam.setName(MConstructor.this.ParametersContext,
-                            value1);
+                            value2);
                 }
             });
         }
@@ -710,6 +1073,36 @@ public class MConstructor
         }
     }
 
+    private void initAddMacrosInternals(
+            Context context) {
+
+        for (Macro macro : this.list_AddMacros) {
+            macro.apply(new InternalsInitializer("AddMacros") {
+
+                @Override
+                void setAddMacroCall(
+                        MAddMacroCall mAddMacroCall) {
+
+                }
+            });
+        }
+    }
+
+    private void initAddStringsInternals(
+            Context context) {
+
+        for (Macro macro : this.list_AddStrings) {
+            macro.apply(new InternalsInitializer("AddStrings") {
+
+                @Override
+                void setAddStringCall(
+                        MAddStringCall mAddStringCall) {
+
+                }
+            });
+        }
+    }
+
     private void initFieldInitializersDirectives() {
 
         StringBuilder sb1 = new StringBuilder();
@@ -722,10 +1115,19 @@ public class MConstructor
         this.FieldInitializersSeparator = new DSeparator(sb2.toString());
         this.FieldInitializersValue
                 .setSeparator(this.FieldInitializersSeparator);
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(LINE_SEPARATOR);
+        this.FieldInitializersAfterLast = new DAfterLast(sb3.toString());
+        this.FieldInitializersValue
+                .setAfterLast(this.FieldInitializersAfterLast);
     }
 
     private void initParametersDirectives() {
 
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(", ");
+        this.ParametersSeparator = new DSeparator(sb1.toString());
+        this.ParametersValue.setSeparator(this.ParametersSeparator);
     }
 
     private void initValuesInitializersDirectives() {
@@ -740,6 +1142,11 @@ public class MConstructor
         this.ValuesInitializersSeparator = new DSeparator(sb2.toString());
         this.ValuesInitializersValue
                 .setSeparator(this.ValuesInitializersSeparator);
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(LINE_SEPARATOR);
+        this.ValuesInitializersAfterLast = new DAfterLast(sb3.toString());
+        this.ValuesInitializersValue
+                .setAfterLast(this.ValuesInitializersAfterLast);
     }
 
     private void initSuperDirectives() {
@@ -748,6 +1155,34 @@ public class MConstructor
         sb1.append(LINE_SEPARATOR);
         this.SuperBeforeFirst = new DBeforeFirst(sb1.toString());
         this.SuperValue.setBeforeFirst(this.SuperBeforeFirst);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(LINE_SEPARATOR);
+        this.SuperAfterLast = new DAfterLast(sb2.toString());
+        this.SuperValue.setAfterLast(this.SuperAfterLast);
+    }
+
+    private void initAddMacrosDirectives() {
+
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.AddMacrosSeparator = new DSeparator(sb1.toString());
+        this.AddMacrosValue.setSeparator(this.AddMacrosSeparator);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(LINE_SEPARATOR);
+        this.AddMacrosAfterLast = new DAfterLast(sb2.toString());
+        this.AddMacrosValue.setAfterLast(this.AddMacrosAfterLast);
+    }
+
+    private void initAddStringsDirectives() {
+
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.AddStringsSeparator = new DSeparator(sb1.toString());
+        this.AddStringsValue.setSeparator(this.AddStringsSeparator);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(LINE_SEPARATOR);
+        this.AddStringsBeforeFirst = new DBeforeFirst(sb2.toString());
+        this.AddStringsValue.setBeforeFirst(this.AddStringsBeforeFirst);
     }
 
     @Override
@@ -772,6 +1207,7 @@ public class MConstructor
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -779,11 +1215,15 @@ public class MConstructor
         initParametersDirectives();
         initValuesInitializersDirectives();
         initSuperDirectives();
+        initAddMacrosDirectives();
+        initAddStringsDirectives();
 
         initFieldInitializersInternals(context);
         initParametersInternals(context);
         initValuesInitializersInternals(context);
         initSuperInternals(context);
+        initAddMacrosInternals(context);
+        initAddStringsInternals(context);
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -799,15 +1239,14 @@ public class MConstructor
         sb2.append("    ");
         indentations.add(sb2.toString());
         sb1.append(buildSuper());
-        sb1.append(LINE_SEPARATOR);
         sb1.append(buildFieldInitializers());
-        sb1.append(LINE_SEPARATOR);
         sb1.append(buildValuesInitializers());
+        sb1.append(buildAddMacros());
+        sb1.append(buildAddStrings());
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

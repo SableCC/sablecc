@@ -65,6 +65,34 @@ public class MMacroFactory
                 this.NewMacroMethodsContext);
     }
 
+    MMacroFactory(
+            List<Macro> pDefaultVersion,
+            List<Macro> pPackageDeclaration,
+            List<Macro> pNewMacroMethods,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_DefaultVersion = new LinkedList<>();
+        this.list_PackageDeclaration = new LinkedList<>();
+        this.list_NewMacroMethods = new LinkedList<>();
+
+        this.DefaultVersionValue = new MacroValue(this.list_DefaultVersion,
+                this.DefaultVersionContext);
+        this.PackageDeclarationValue = new MacroValue(
+                this.list_PackageDeclaration, this.PackageDeclarationContext);
+        this.NewMacroMethodsValue = new MacroValue(this.list_NewMacroMethods,
+                this.NewMacroMethodsContext);
+        if (pDefaultVersion != null) {
+            addAllDefaultVersion(pDefaultVersion);
+        }
+        if (pPackageDeclaration != null) {
+            addAllPackageDeclaration(pPackageDeclaration);
+        }
+        if (pNewMacroMethods != null) {
+            addAllNewMacroMethods(pNewMacroMethods);
+        }
+    }
+
     public void addAllDefaultVersion(
             List<Macro> macros) {
 
@@ -553,7 +581,6 @@ public class MMacroFactory
                 indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -48,6 +48,28 @@ public class MInitInternalsCall
                 = new MacroValue(this.list_ContextArg, this.ContextArgContext);
     }
 
+    MInitInternalsCall(
+            String pParamName,
+            List<Macro> pContextArg,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ParamName = new LinkedList<>();
+        this.list_ContextArg = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.ContextArgValue
+                = new MacroValue(this.list_ContextArg, this.ContextArgContext);
+        if (pContextArg != null) {
+            addAllContextArg(pContextArg);
+        }
+
+        if (pParamName != null) {
+            addParamName(pParamName);
+        }
+    }
+
     public void addAllParamName(
             List<String> strings) {
 
@@ -289,7 +311,6 @@ public class MInitInternalsCall
         sb0.append("Internals(");
         sb0.append(buildContextArg());
         sb0.append(");");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -31,6 +31,21 @@ public class MInitStringBuilder
                 this.IndexBuilderContext);
     }
 
+    MInitStringBuilder(
+            String pIndexBuilder,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_IndexBuilder = new LinkedList<>();
+
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
+
+        if (pIndexBuilder != null) {
+            addIndexBuilder(pIndexBuilder);
+        }
+    }
+
     public void addAllIndexBuilder(
             List<String> strings) {
 
@@ -139,7 +154,6 @@ public class MInitStringBuilder
         sb0.append("StringBuilder sb");
         sb0.append(buildIndexBuilder());
         sb0.append(" = new StringBuilder();");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

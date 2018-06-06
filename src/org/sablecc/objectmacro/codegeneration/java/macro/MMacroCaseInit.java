@@ -37,6 +37,8 @@ public class MMacroCaseInit
 
     private Map<Context, StringValue> list_ClassName = new LinkedHashMap<>();
 
+    private Map<Context, MacroValue> list_Args = new LinkedHashMap<>();
+
     MMacroCaseInit(
             Macros macros) {
 
@@ -44,11 +46,36 @@ public class MMacroCaseInit
         this.list_Version = new LinkedList<>();
         this.list_VersionClassName = new LinkedList<>();
         this.list_ClassName = new LinkedHashMap<>();
+        this.list_Args = new LinkedHashMap<>();
 
         this.VersionValue
                 = new StringValue(this.list_Version, this.VersionContext);
         this.VersionClassNameValue = new StringValue(this.list_VersionClassName,
                 this.VersionClassNameContext);
+    }
+
+    MMacroCaseInit(
+            String pVersion,
+            String pVersionClassName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_Version = new LinkedList<>();
+        this.list_VersionClassName = new LinkedList<>();
+        this.list_ClassName = new LinkedHashMap<>();
+        this.list_Args = new LinkedHashMap<>();
+
+        this.VersionValue
+                = new StringValue(this.list_Version, this.VersionContext);
+        this.VersionClassNameValue = new StringValue(this.list_VersionClassName,
+                this.VersionClassNameContext);
+
+        if (pVersion != null) {
+            addVersion(pVersion);
+        }
+        if (pVersionClassName != null) {
+            addVersionClassName(pVersionClassName);
+        }
     }
 
     public void addAllVersion(
@@ -128,6 +155,17 @@ public class MMacroCaseInit
         this.list_ClassName.put(context, value);
     }
 
+    void setArgs(
+            Context context,
+            MacroValue macro_value) {
+
+        if (macro_value == null) {
+            throw new RuntimeException("macros cannot be null");
+        }
+
+        this.list_Args.put(context, macro_value);
+    }
+
     private String buildVersion() {
 
         StringBuilder sb = new StringBuilder();
@@ -204,6 +242,13 @@ public class MMacroCaseInit
         return stringValue.build();
     }
 
+    private String buildArgs(
+            Context context) {
+
+        MacroValue macros = this.list_Args.get(context);
+        return macros.build();
+    }
+
     StringValue getVersion() {
 
         return this.VersionValue;
@@ -218,6 +263,12 @@ public class MMacroCaseInit
             Context context) {
 
         return this.list_ClassName.get(context);
+    }
+
+    private MacroValue getArgs(
+            Context context) {
+
+        return this.list_Args.get(context);
     }
 
     private void initVersionDirectives() {
@@ -250,6 +301,7 @@ public class MMacroCaseInit
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -266,10 +318,11 @@ public class MMacroCaseInit
         sb0.append(buildClassName(context));
         sb0.append(" = new M");
         sb0.append(buildVersionClassName());
-        sb0.append("(this);");
+        sb0.append("(");
+        sb0.append(buildArgs(context));
+        sb0.append("this);");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    break;");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

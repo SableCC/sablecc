@@ -31,6 +31,21 @@ public class MParamStringField
                 = new StringValue(this.list_ParamName, this.ParamNameContext);
     }
 
+    MParamStringField(
+            String pParamName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ParamName = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+
+        if (pParamName != null) {
+            addParamName(pParamName);
+        }
+    }
+
     public void addAllParamName(
             List<String> strings) {
 
@@ -148,7 +163,6 @@ public class MParamStringField
 
         m2.setParamName(null, getParamName());
         sb0.append(m2.build(null));
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

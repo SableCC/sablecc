@@ -48,6 +48,28 @@ public class MSingleMacroAdd
                 = new StringValue(this.list_ParamName, this.ParamNameContext);
     }
 
+    MSingleMacroAdd(
+            String pReferencedMacroName,
+            String pParamName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ReferencedMacroName = new LinkedList<>();
+        this.list_ParamName = new LinkedList<>();
+
+        this.ReferencedMacroNameValue = new StringValue(
+                this.list_ReferencedMacroName, this.ReferencedMacroNameContext);
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+
+        if (pReferencedMacroName != null) {
+            addReferencedMacroName(pReferencedMacroName);
+        }
+        if (pParamName != null) {
+            addParamName(pParamName);
+        }
+    }
+
     public void addAllReferencedMacroName(
             List<String> strings) {
 
@@ -275,7 +297,6 @@ public class MSingleMacroAdd
         sb0.append("    Macro.cycleDetector.detectCycle(this, macro);");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

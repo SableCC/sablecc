@@ -49,6 +49,28 @@ public class MInternalsInitializer
                         this.ParentInternalSettersContext);
     }
 
+    MInternalsInitializer(
+            List<Macro> pPackageDeclaration,
+            List<Macro> pParentInternalSetters,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_PackageDeclaration = new LinkedList<>();
+        this.list_ParentInternalSetters = new LinkedList<>();
+
+        this.PackageDeclarationValue = new MacroValue(
+                this.list_PackageDeclaration, this.PackageDeclarationContext);
+        this.ParentInternalSettersValue
+                = new MacroValue(this.list_ParentInternalSetters,
+                        this.ParentInternalSettersContext);
+        if (pPackageDeclaration != null) {
+            addAllPackageDeclaration(pPackageDeclaration);
+        }
+        if (pParentInternalSetters != null) {
+            addAllParentInternalSetters(pParentInternalSetters);
+        }
+    }
+
     public void addAllPackageDeclaration(
             List<Macro> macros) {
 
@@ -468,7 +490,6 @@ public class MInternalsInitializer
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

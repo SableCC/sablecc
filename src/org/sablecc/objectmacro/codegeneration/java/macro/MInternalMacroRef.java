@@ -31,6 +31,21 @@ public class MInternalMacroRef
                 = new StringValue(this.list_ParamName, this.ParamNameContext);
     }
 
+    MInternalMacroRef(
+            String pParamName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ParamName = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+
+        if (pParamName != null) {
+            addParamName(pParamName);
+        }
+    }
+
     public void addAllParamName(
             List<String> strings) {
 
@@ -143,7 +158,6 @@ public class MInternalMacroRef
         sb0.append(".get(context);");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

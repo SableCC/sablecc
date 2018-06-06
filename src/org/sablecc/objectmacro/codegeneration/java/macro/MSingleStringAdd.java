@@ -31,6 +31,21 @@ public class MSingleStringAdd
                 = new StringValue(this.list_ParamName, this.ParamNameContext);
     }
 
+    MSingleStringAdd(
+            String pParamName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ParamName = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+
+        if (pParamName != null) {
+            addParamName(pParamName);
+        }
+    }
+
     public void addAllParamName(
             List<String> strings) {
 
@@ -164,7 +179,6 @@ public class MSingleStringAdd
         sb0.append(".add(string);");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

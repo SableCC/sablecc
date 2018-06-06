@@ -63,6 +63,7 @@ public class MSetMacrosCall
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -71,7 +72,6 @@ public class MSetMacrosCall
         sb0.append("this.setMacros(");
         sb0.append(buildMacrosParamName(context));
         sb0.append(");");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -48,6 +48,28 @@ public class MVersionEnumeration
                 = new StringValue(this.list_Versions, this.VersionsContext);
     }
 
+    MVersionEnumeration(
+            List<Macro> pPackageDeclaration,
+            String pVersions,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_PackageDeclaration = new LinkedList<>();
+        this.list_Versions = new LinkedList<>();
+
+        this.PackageDeclarationValue = new MacroValue(
+                this.list_PackageDeclaration, this.PackageDeclarationContext);
+        this.VersionsValue
+                = new StringValue(this.list_Versions, this.VersionsContext);
+        if (pPackageDeclaration != null) {
+            addAllPackageDeclaration(pPackageDeclaration);
+        }
+
+        if (pVersions != null) {
+            addVersions(pVersions);
+        }
+    }
+
     public void addAllPackageDeclaration(
             List<Macro> macros) {
 
@@ -308,7 +330,6 @@ public class MVersionEnumeration
                 indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -31,6 +31,21 @@ public class MNewStringValue
                 this.IndexBuilderContext);
     }
 
+    MNewStringValue(
+            String pIndexBuilder,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_IndexBuilder = new LinkedList<>();
+
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
+
+        if (pIndexBuilder != null) {
+            addIndexBuilder(pIndexBuilder);
+        }
+    }
+
     public void addAllIndexBuilder(
             List<String> strings) {
 
@@ -142,7 +157,6 @@ public class MNewStringValue
                 " = new StringValue(new ArrayList<>(Collections.singletonList(sb");
         sb0.append(buildIndexBuilder());
         sb0.append(".toString())), null);");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

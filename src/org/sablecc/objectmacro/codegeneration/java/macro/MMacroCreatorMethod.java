@@ -21,6 +21,20 @@ public class MMacroCreatorMethod
 
     final StringValue ClassNameValue;
 
+    private DSeparator ArgsSeparator;
+
+    private DBeforeFirst ArgsBeforeFirst;
+
+    private DAfterLast ArgsAfterLast;
+
+    private DNone ArgsNone;
+
+    final List<Macro> list_Args;
+
+    final Context ArgsContext = new Context();
+
+    final MacroValue ArgsValue;
+
     private DSeparator VersionFactorySeparator;
 
     private DBeforeFirst VersionFactoryBeforeFirst;
@@ -35,17 +49,71 @@ public class MMacroCreatorMethod
 
     final MacroValue VersionFactoryValue;
 
+    private DSeparator ParametersSeparator;
+
+    private DBeforeFirst ParametersBeforeFirst;
+
+    private DAfterLast ParametersAfterLast;
+
+    private DNone ParametersNone;
+
+    final List<Macro> list_Parameters;
+
+    final Context ParametersContext = new Context();
+
+    final MacroValue ParametersValue;
+
     MMacroCreatorMethod(
             Macros macros) {
 
         setMacros(macros);
         this.list_ClassName = new LinkedList<>();
+        this.list_Args = new LinkedList<>();
         this.list_VersionFactory = new LinkedList<>();
+        this.list_Parameters = new LinkedList<>();
 
         this.ClassNameValue
                 = new StringValue(this.list_ClassName, this.ClassNameContext);
+        this.ArgsValue = new MacroValue(this.list_Args, this.ArgsContext);
         this.VersionFactoryValue = new MacroValue(this.list_VersionFactory,
                 this.VersionFactoryContext);
+        this.ParametersValue
+                = new MacroValue(this.list_Parameters, this.ParametersContext);
+    }
+
+    MMacroCreatorMethod(
+            String pClassName,
+            List<Macro> pArgs,
+            List<Macro> pVersionFactory,
+            List<Macro> pParameters,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ClassName = new LinkedList<>();
+        this.list_Args = new LinkedList<>();
+        this.list_VersionFactory = new LinkedList<>();
+        this.list_Parameters = new LinkedList<>();
+
+        this.ClassNameValue
+                = new StringValue(this.list_ClassName, this.ClassNameContext);
+        this.ArgsValue = new MacroValue(this.list_Args, this.ArgsContext);
+        this.VersionFactoryValue = new MacroValue(this.list_VersionFactory,
+                this.VersionFactoryContext);
+        this.ParametersValue
+                = new MacroValue(this.list_Parameters, this.ParametersContext);
+        if (pArgs != null) {
+            addAllArgs(pArgs);
+        }
+        if (pVersionFactory != null) {
+            addAllVersionFactory(pVersionFactory);
+        }
+        if (pParameters != null) {
+            addAllParameters(pParameters);
+        }
+
+        if (pClassName != null) {
+            addClassName(pClassName);
+        }
     }
 
     public void addAllClassName(
@@ -79,6 +147,70 @@ public class MMacroCreatorMethod
         }
 
         this.list_ClassName.add(string);
+    }
+
+    public void addAllArgs(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("Args");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "Args");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeArgs(macro);
+            this.list_Args.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeArgs(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("Args") {
+
+            @Override
+            void setParamArg(
+                    MParamArg mParamArg) {
+
+            }
+        });
+    }
+
+    public void addArgs(
+            MParamArg macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("Args");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
+        this.list_Args.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
     }
 
     public void addAllVersionFactory(
@@ -145,6 +277,96 @@ public class MMacroCreatorMethod
         Macro.cycleDetector.detectCycle(this, macro);
     }
 
+    public void addAllParameters(
+            List<Macro> macros) {
+
+        if (macros == null) {
+            throw ObjectMacroException.parameterNull("Parameters");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        int i = 0;
+
+        for (Macro macro : macros) {
+            if (macro == null) {
+                throw ObjectMacroException.macroNull(i, "Parameters");
+            }
+
+            if (getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+
+            verifyTypeParameters(macro);
+            this.list_Parameters.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+
+            i++;
+        }
+    }
+
+    void verifyTypeParameters(
+            Macro macro) {
+
+        macro.apply(new InternalsInitializer("Parameters") {
+
+            @Override
+            void setMacroParam(
+                    MMacroParam mMacroParam) {
+
+            }
+
+            @Override
+            void setStringParam(
+                    MStringParam mStringParam) {
+
+            }
+        });
+    }
+
+    public void addParameters(
+            MMacroParam macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("Parameters");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
+        this.list_Parameters.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+
+    public void addParameters(
+            MStringParam macro) {
+
+        if (macro == null) {
+            throw ObjectMacroException.parameterNull("Parameters");
+        }
+        if (this.cacheBuilder != null) {
+            throw ObjectMacroException
+                    .cannotModify(this.getClass().getSimpleName());
+        }
+
+        if (getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+
+        this.list_Parameters.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+
     private String buildClassName() {
 
         StringBuilder sb = new StringBuilder();
@@ -172,6 +394,42 @@ public class MMacroCreatorMethod
             }
 
             sb.append(string);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    private String buildArgs() {
+
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.ArgsContext;
+        List<Macro> macros = this.list_Args;
+
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if (this.ArgsNone != null) {
+            sb.append(this.ArgsNone.apply(i, "", nb_macros));
+        }
+
+        for (Macro macro : macros) {
+            expansion = macro.build(local_context);
+
+            if (this.ArgsBeforeFirst != null) {
+                expansion = this.ArgsBeforeFirst.apply(i, expansion, nb_macros);
+            }
+
+            if (this.ArgsAfterLast != null) {
+                expansion = this.ArgsAfterLast.apply(i, expansion, nb_macros);
+            }
+
+            if (this.ArgsSeparator != null) {
+                expansion = this.ArgsSeparator.apply(i, expansion, nb_macros);
+            }
+
+            sb.append(expansion);
             i++;
         }
 
@@ -217,14 +475,78 @@ public class MMacroCreatorMethod
         return sb.toString();
     }
 
+    private String buildParameters() {
+
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.ParametersContext;
+        List<Macro> macros = this.list_Parameters;
+
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+
+        if (this.ParametersNone != null) {
+            sb.append(this.ParametersNone.apply(i, "", nb_macros));
+        }
+
+        for (Macro macro : macros) {
+            expansion = macro.build(local_context);
+
+            if (this.ParametersBeforeFirst != null) {
+                expansion = this.ParametersBeforeFirst.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.ParametersAfterLast != null) {
+                expansion = this.ParametersAfterLast.apply(i, expansion,
+                        nb_macros);
+            }
+
+            if (this.ParametersSeparator != null) {
+                expansion = this.ParametersSeparator.apply(i, expansion,
+                        nb_macros);
+            }
+
+            sb.append(expansion);
+            i++;
+        }
+
+        return sb.toString();
+    }
+
     StringValue getClassName() {
 
         return this.ClassNameValue;
     }
 
+    MacroValue getArgs() {
+
+        return this.ArgsValue;
+    }
+
     MacroValue getVersionFactory() {
 
         return this.VersionFactoryValue;
+    }
+
+    MacroValue getParameters() {
+
+        return this.ParametersValue;
+    }
+
+    private void initArgsInternals(
+            Context context) {
+
+        for (Macro macro : this.list_Args) {
+            macro.apply(new InternalsInitializer("Args") {
+
+                @Override
+                void setParamArg(
+                        MParamArg mParamArg) {
+
+                }
+            });
+        }
     }
 
     private void initVersionFactoryInternals(
@@ -240,6 +562,30 @@ public class MMacroCreatorMethod
                     mSwitchVersion.setClassName(
                             MMacroCreatorMethod.this.VersionFactoryContext,
                             getClassName());
+                    mSwitchVersion.setArgs(
+                            MMacroCreatorMethod.this.VersionFactoryContext,
+                            getArgs());
+                }
+            });
+        }
+    }
+
+    private void initParametersInternals(
+            Context context) {
+
+        for (Macro macro : this.list_Parameters) {
+            macro.apply(new InternalsInitializer("Parameters") {
+
+                @Override
+                void setMacroParam(
+                        MMacroParam mMacroParam) {
+
+                }
+
+                @Override
+                void setStringParam(
+                        MStringParam mStringParam) {
+
                 }
             });
         }
@@ -247,6 +593,18 @@ public class MMacroCreatorMethod
 
     private void initClassNameDirectives() {
 
+    }
+
+    private void initArgsDirectives() {
+
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(", ");
+        this.ArgsSeparator = new DSeparator(sb1.toString());
+        this.ArgsValue.setSeparator(this.ArgsSeparator);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(", ");
+        this.ArgsAfterLast = new DAfterLast(sb2.toString());
+        this.ArgsValue.setAfterLast(this.ArgsAfterLast);
     }
 
     private void initVersionFactoryDirectives() {
@@ -260,9 +618,19 @@ public class MMacroCreatorMethod
         sb2.append(buildClassName());
         sb2.append(" = new M");
         sb2.append(buildClassName());
-        sb2.append("(this);");
+        sb2.append("(");
+        sb2.append(buildArgs());
+        sb2.append("this);");
         this.VersionFactoryNone = new DNone(sb2.toString());
         this.VersionFactoryValue.setNone(this.VersionFactoryNone);
+    }
+
+    private void initParametersDirectives() {
+
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(", ");
+        this.ParametersSeparator = new DSeparator(sb1.toString());
+        this.ParametersValue.setSeparator(this.ParametersSeparator);
     }
 
     @Override
@@ -289,9 +657,13 @@ public class MMacroCreatorMethod
         List<String> indentations = new LinkedList<>();
 
         initClassNameDirectives();
+        initArgsDirectives();
         initVersionFactoryDirectives();
+        initParametersDirectives();
 
+        initArgsInternals(null);
         initVersionFactoryInternals(null);
+        initParametersInternals(null);
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -299,7 +671,9 @@ public class MMacroCreatorMethod
         sb0.append(buildClassName());
         sb0.append(" new");
         sb0.append(buildClassName());
-        sb0.append("()");
+        sb0.append("(");
+        sb0.append(buildParameters());
+        sb0.append(")");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    M");
@@ -323,7 +697,6 @@ public class MMacroCreatorMethod
         sb0.append(";");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

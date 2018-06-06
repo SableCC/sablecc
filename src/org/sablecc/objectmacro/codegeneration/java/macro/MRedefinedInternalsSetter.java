@@ -83,6 +83,43 @@ public class MRedefinedInternalsSetter
                 this.SetInternalsContext);
     }
 
+    MRedefinedInternalsSetter(
+            String pMacroName,
+            List<Macro> pTextParts,
+            List<Macro> pSingleStringElements,
+            List<Macro> pSetInternals,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_MacroName = new LinkedList<>();
+        this.list_TextParts = new LinkedList<>();
+        this.list_SingleStringElements = new LinkedList<>();
+        this.list_SetInternals = new LinkedList<>();
+
+        this.MacroNameValue
+                = new StringValue(this.list_MacroName, this.MacroNameContext);
+        this.TextPartsValue
+                = new MacroValue(this.list_TextParts, this.TextPartsContext);
+        this.SingleStringElementsValue
+                = new MacroValue(this.list_SingleStringElements,
+                        this.SingleStringElementsContext);
+        this.SetInternalsValue = new MacroValue(this.list_SetInternals,
+                this.SetInternalsContext);
+        if (pTextParts != null) {
+            addAllTextParts(pTextParts);
+        }
+        if (pSingleStringElements != null) {
+            addAllSingleStringElements(pSingleStringElements);
+        }
+        if (pSetInternals != null) {
+            addAllSetInternals(pSetInternals);
+        }
+
+        if (pMacroName != null) {
+            addMacroName(pMacroName);
+        }
+    }
+
     public void addAllMacroName(
             List<String> strings) {
 
@@ -741,7 +778,6 @@ public class MRedefinedInternalsSetter
                 indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -202,6 +202,20 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MSuperCall", this._paramName);
     }
 
+    void setAddMacroCall(
+            MAddMacroCall mAddMacroCall) {
+
+        throw ObjectMacroException.incorrectType("MAddMacroCall",
+                this._paramName);
+    }
+
+    void setAddStringCall(
+            MAddStringCall mAddStringCall) {
+
+        throw ObjectMacroException.incorrectType("MAddStringCall",
+                this._paramName);
+    }
+
     void setSingleMacroAdd(
             MSingleMacroAdd mSingleMacroAdd) {
 
@@ -605,6 +619,13 @@ class InternalsInitializer {
             MStringParam mStringParam) {
 
         throw ObjectMacroException.incorrectType("MStringParam",
+                this._paramName);
+    }
+
+    void setMacroParam(
+            MMacroParam mMacroParam) {
+
+        throw ObjectMacroException.incorrectType("MMacroParam",
                 this._paramName);
     }
 

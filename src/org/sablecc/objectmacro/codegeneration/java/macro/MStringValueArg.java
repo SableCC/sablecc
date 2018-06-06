@@ -30,6 +30,20 @@ public class MStringValueArg
         this.IndexValue = new StringValue(this.list_Index, this.IndexContext);
     }
 
+    MStringValueArg(
+            String pIndex,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_Index = new LinkedList<>();
+
+        this.IndexValue = new StringValue(this.list_Index, this.IndexContext);
+
+        if (pIndex != null) {
+            addIndex(pIndex);
+        }
+    }
+
     public void addAllIndex(
             List<String> strings) {
 
@@ -134,7 +148,6 @@ public class MStringValueArg
 
         sb0.append("value");
         sb0.append(buildIndex());
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

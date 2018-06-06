@@ -65,6 +65,35 @@ public class MTypeVerifier
                 = new MacroValue(this.list_Override, this.OverrideContext);
     }
 
+    MTypeVerifier(
+            String pParamName,
+            List<Macro> pTypeVerification,
+            List<Macro> pOverride,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ParamName = new LinkedList<>();
+        this.list_TypeVerification = new LinkedList<>();
+        this.list_Override = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.TypeVerificationValue = new MacroValue(this.list_TypeVerification,
+                this.TypeVerificationContext);
+        this.OverrideValue
+                = new MacroValue(this.list_Override, this.OverrideContext);
+        if (pTypeVerification != null) {
+            addAllTypeVerification(pTypeVerification);
+        }
+        if (pOverride != null) {
+            addAllOverride(pOverride);
+        }
+
+        if (pParamName != null) {
+            addParamName(pParamName);
+        }
+    }
+
     public void addAllParamName(
             List<String> strings) {
 
@@ -445,7 +474,6 @@ public class MTypeVerifier
                 indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

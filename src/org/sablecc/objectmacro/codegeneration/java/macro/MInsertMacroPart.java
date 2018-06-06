@@ -133,6 +133,63 @@ public class MInsertMacroPart
                 this.list_SingleElementLists, this.SingleElementListsContext);
     }
 
+    MInsertMacroPart(
+            String pReferencedMacroName,
+            String pEnclosingClassName,
+            String pIndexBuilder,
+            String pIndexInsert,
+            List<Macro> pMacroBodyParts,
+            List<Macro> pSetInternals,
+            List<Macro> pSingleElementLists,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ReferencedMacroName = new LinkedList<>();
+        this.list_EnclosingClassName = new LinkedList<>();
+        this.list_IndexBuilder = new LinkedList<>();
+        this.list_IndexInsert = new LinkedList<>();
+        this.list_MacroBodyParts = new LinkedList<>();
+        this.list_SetInternals = new LinkedList<>();
+        this.list_SingleElementLists = new LinkedList<>();
+
+        this.ReferencedMacroNameValue = new StringValue(
+                this.list_ReferencedMacroName, this.ReferencedMacroNameContext);
+        this.EnclosingClassNameValue = new StringValue(
+                this.list_EnclosingClassName, this.EnclosingClassNameContext);
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
+        this.IndexInsertValue = new StringValue(this.list_IndexInsert,
+                this.IndexInsertContext);
+        this.MacroBodyPartsValue = new MacroValue(this.list_MacroBodyParts,
+                this.MacroBodyPartsContext);
+        this.SetInternalsValue = new MacroValue(this.list_SetInternals,
+                this.SetInternalsContext);
+        this.SingleElementListsValue = new MacroValue(
+                this.list_SingleElementLists, this.SingleElementListsContext);
+        if (pMacroBodyParts != null) {
+            addAllMacroBodyParts(pMacroBodyParts);
+        }
+        if (pSetInternals != null) {
+            addAllSetInternals(pSetInternals);
+        }
+        if (pSingleElementLists != null) {
+            addAllSingleElementLists(pSingleElementLists);
+        }
+
+        if (pReferencedMacroName != null) {
+            addReferencedMacroName(pReferencedMacroName);
+        }
+        if (pEnclosingClassName != null) {
+            addEnclosingClassName(pEnclosingClassName);
+        }
+        if (pIndexBuilder != null) {
+            addIndexBuilder(pIndexBuilder);
+        }
+        if (pIndexInsert != null) {
+            addIndexInsert(pIndexInsert);
+        }
+    }
+
     public void addAllReferencedMacroName(
             List<String> strings) {
 
@@ -1036,7 +1093,6 @@ public class MInsertMacroPart
         sb0.append(".append(m");
         sb0.append(buildIndexInsert());
         sb0.append(".build(null));");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

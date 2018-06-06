@@ -31,6 +31,21 @@ public class MStringValue
                 = new StringValue(this.list_String, this.StringContext);
     }
 
+    MStringValue(
+            String pString,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_String = new LinkedList<>();
+
+        this.StringValue
+                = new StringValue(this.list_String, this.StringContext);
+
+        if (pString != null) {
+            addString(pString);
+        }
+    }
+
     public void addAllString(
             List<String> strings) {
 
@@ -136,7 +151,6 @@ public class MStringValue
         sb0.append("\"");
         sb0.append(buildString());
         sb0.append("\"");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

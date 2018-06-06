@@ -30,6 +30,20 @@ public class MInitInternal
         this.NameValue = new StringValue(this.list_Name, this.NameContext);
     }
 
+    MInitInternal(
+            String pName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_Name = new LinkedList<>();
+
+        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+
+        if (pName != null) {
+            addName(pName);
+        }
+    }
+
     public void addAllName(
             List<String> strings) {
 
@@ -135,7 +149,6 @@ public class MInitInternal
         sb0.append("this.list_");
         sb0.append(buildName());
         sb0.append(" = new LinkedHashMap<>();");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

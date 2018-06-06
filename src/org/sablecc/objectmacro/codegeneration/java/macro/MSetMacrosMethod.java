@@ -53,7 +53,6 @@ public class MSetMacrosMethod
         sb0.append("    this.macros = macros;");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

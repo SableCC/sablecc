@@ -31,6 +31,21 @@ public class MAppliedVersion
                 = new StringValue(this.list_Versions, this.VersionsContext);
     }
 
+    MAppliedVersion(
+            String pVersions,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_Versions = new LinkedList<>();
+
+        this.VersionsValue
+                = new StringValue(this.list_Versions, this.VersionsContext);
+
+        if (pVersions != null) {
+            addVersions(pVersions);
+        }
+    }
+
     public void addAllVersions(
             List<String> strings) {
 
@@ -139,7 +154,6 @@ public class MAppliedVersion
 
         sb0.append("// Class applied to version(s) : ");
         sb0.append(buildVersions());
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

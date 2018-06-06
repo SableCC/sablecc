@@ -31,6 +31,21 @@ public class MInternalMacroRefBuilder
                 this.InternalNameContext);
     }
 
+    MInternalMacroRefBuilder(
+            String pInternalName,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_InternalName = new LinkedList<>();
+
+        this.InternalNameValue = new StringValue(this.list_InternalName,
+                this.InternalNameContext);
+
+        if (pInternalName != null) {
+            addInternalName(pInternalName);
+        }
+    }
+
     public void addAllInternalName(
             List<String> strings) {
 
@@ -149,7 +164,6 @@ public class MInternalMacroRefBuilder
         sb0.append("    return macros.build();");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

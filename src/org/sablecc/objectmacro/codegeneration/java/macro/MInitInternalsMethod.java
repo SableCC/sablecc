@@ -49,6 +49,29 @@ public class MInitInternalsMethod
                         this.ApplyInternalsInitializerContext);
     }
 
+    MInitInternalsMethod(
+            String pParamName,
+            List<Macro> pApplyInternalsInitializer,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ParamName = new LinkedList<>();
+        this.list_ApplyInternalsInitializer = new LinkedList<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.ApplyInternalsInitializerValue
+                = new MacroValue(this.list_ApplyInternalsInitializer,
+                        this.ApplyInternalsInitializerContext);
+        if (pApplyInternalsInitializer != null) {
+            addAllApplyInternalsInitializer(pApplyInternalsInitializer);
+        }
+
+        if (pParamName != null) {
+            addParamName(pParamName);
+        }
+    }
+
     public void addAllParamName(
             List<String> strings) {
 
@@ -316,7 +339,6 @@ public class MInitInternalsMethod
         sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

@@ -47,6 +47,27 @@ public class MParamRef
                 = new StringValue(this.list_GetParams, this.GetParamsContext);
     }
 
+    MParamRef(
+            String pName,
+            String pGetParams,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_Name = new LinkedList<>();
+        this.list_GetParams = new LinkedList<>();
+
+        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+        this.GetParamsValue
+                = new StringValue(this.list_GetParams, this.GetParamsContext);
+
+        if (pName != null) {
+            addName(pName);
+        }
+        if (pGetParams != null) {
+            addGetParams(pGetParams);
+        }
+    }
+
     public void addAllName(
             List<String> strings) {
 
@@ -230,7 +251,6 @@ public class MParamRef
         sb0.append("(");
         sb0.append(buildGetParams());
         sb0.append(")");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

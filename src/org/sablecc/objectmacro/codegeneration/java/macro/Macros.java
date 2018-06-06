@@ -2,6 +2,8 @@
 
 package org.sablecc.objectmacro.codegeneration.java.macro;
 
+import java.util.*;
+
 public class Macros {
 
     private VERSIONS version;
@@ -39,6 +41,16 @@ public class Macros {
         return mPackageDeclaration;
     }
 
+    public MPackageDeclaration newPackageDeclaration(
+            String pPackageName) {
+
+        MPackageDeclaration mPackageDeclaration;
+
+        mPackageDeclaration = new MPackageDeclaration(pPackageName, this);
+
+        return mPackageDeclaration;
+    }
+
     public MImportJavaUtil newImportJavaUtil() {
 
         MImportJavaUtil mImportJavaUtil;
@@ -57,11 +69,33 @@ public class Macros {
         return mContext;
     }
 
+    public MContext newContext(
+            List<Macro> pPackageDeclaration) {
+
+        MContext mContext;
+
+        mContext = new MContext(pPackageDeclaration, this);
+
+        return mContext;
+    }
+
     public MInternalsInitializer newInternalsInitializer() {
 
         MInternalsInitializer mInternalsInitializer;
 
         mInternalsInitializer = new MInternalsInitializer(this);
+
+        return mInternalsInitializer;
+    }
+
+    public MInternalsInitializer newInternalsInitializer(
+            List<Macro> pPackageDeclaration,
+            List<Macro> pParentInternalSetters) {
+
+        MInternalsInitializer mInternalsInitializer;
+
+        mInternalsInitializer = new MInternalsInitializer(pPackageDeclaration,
+                pParentInternalSetters, this);
 
         return mInternalsInitializer;
     }
@@ -75,11 +109,32 @@ public class Macros {
         return mParentInternalsSetter;
     }
 
+    public MParentInternalsSetter newParentInternalsSetter(
+            String pName) {
+
+        MParentInternalsSetter mParentInternalsSetter;
+
+        mParentInternalsSetter = new MParentInternalsSetter(pName, this);
+
+        return mParentInternalsSetter;
+    }
+
     public MCycleDetectorClass newCycleDetectorClass() {
 
         MCycleDetectorClass mCycleDetectorClass;
 
         mCycleDetectorClass = new MCycleDetectorClass(this);
+
+        return mCycleDetectorClass;
+    }
+
+    public MCycleDetectorClass newCycleDetectorClass(
+            List<Macro> pPackageDeclaration) {
+
+        MCycleDetectorClass mCycleDetectorClass;
+
+        mCycleDetectorClass
+                = new MCycleDetectorClass(pPackageDeclaration, this);
 
         return mCycleDetectorClass;
     }
@@ -93,11 +148,31 @@ public class Macros {
         return mSuperMacro;
     }
 
+    public MSuperMacro newSuperMacro(
+            List<Macro> pPackageDeclaration) {
+
+        MSuperMacro mSuperMacro;
+
+        mSuperMacro = new MSuperMacro(pPackageDeclaration, this);
+
+        return mSuperMacro;
+    }
+
     public MSuperDirective newSuperDirective() {
 
         MSuperDirective mSuperDirective;
 
         mSuperDirective = new MSuperDirective(this);
+
+        return mSuperDirective;
+    }
+
+    public MSuperDirective newSuperDirective(
+            List<Macro> pPackageDeclaration) {
+
+        MSuperDirective mSuperDirective;
+
+        mSuperDirective = new MSuperDirective(pPackageDeclaration, this);
 
         return mSuperDirective;
     }
@@ -111,11 +186,31 @@ public class Macros {
         return mClassValue;
     }
 
+    public MClassValue newClassValue(
+            List<Macro> pPackageDeclaration) {
+
+        MClassValue mClassValue;
+
+        mClassValue = new MClassValue(pPackageDeclaration, this);
+
+        return mClassValue;
+    }
+
     public MClassMacroValue newClassMacroValue() {
 
         MClassMacroValue mClassMacroValue;
 
         mClassMacroValue = new MClassMacroValue(this);
+
+        return mClassMacroValue;
+    }
+
+    public MClassMacroValue newClassMacroValue(
+            List<Macro> pPackageDeclaration) {
+
+        MClassMacroValue mClassMacroValue;
+
+        mClassMacroValue = new MClassMacroValue(pPackageDeclaration, this);
 
         return mClassMacroValue;
     }
@@ -129,11 +224,31 @@ public class Macros {
         return mClassStringValue;
     }
 
+    public MClassStringValue newClassStringValue(
+            List<Macro> pPackageDeclaration) {
+
+        MClassStringValue mClassStringValue;
+
+        mClassStringValue = new MClassStringValue(pPackageDeclaration, this);
+
+        return mClassStringValue;
+    }
+
     public MClassCacheBuilder newClassCacheBuilder() {
 
         MClassCacheBuilder mClassCacheBuilder;
 
         mClassCacheBuilder = new MClassCacheBuilder(this);
+
+        return mClassCacheBuilder;
+    }
+
+    public MClassCacheBuilder newClassCacheBuilder(
+            List<Macro> pPackageDeclaration) {
+
+        MClassCacheBuilder mClassCacheBuilder;
+
+        mClassCacheBuilder = new MClassCacheBuilder(pPackageDeclaration, this);
 
         return mClassCacheBuilder;
     }
@@ -147,11 +262,36 @@ public class Macros {
         return mVersionEnumeration;
     }
 
+    public MVersionEnumeration newVersionEnumeration(
+            List<Macro> pPackageDeclaration,
+            String pVersions) {
+
+        MVersionEnumeration mVersionEnumeration;
+
+        mVersionEnumeration
+                = new MVersionEnumeration(pPackageDeclaration, pVersions, this);
+
+        return mVersionEnumeration;
+    }
+
     public MMacroFactory newMacroFactory() {
 
         MMacroFactory mMacroFactory;
 
         mMacroFactory = new MMacroFactory(this);
+
+        return mMacroFactory;
+    }
+
+    public MMacroFactory newMacroFactory(
+            List<Macro> pDefaultVersion,
+            List<Macro> pPackageDeclaration,
+            List<Macro> pNewMacroMethods) {
+
+        MMacroFactory mMacroFactory;
+
+        mMacroFactory = new MMacroFactory(pDefaultVersion, pPackageDeclaration,
+                pNewMacroMethods, this);
 
         return mMacroFactory;
     }
@@ -165,11 +305,35 @@ public class Macros {
         return mMacroCreatorMethod;
     }
 
+    public MMacroCreatorMethod newMacroCreatorMethod(
+            String pClassName,
+            List<Macro> pArgs,
+            List<Macro> pVersionFactory,
+            List<Macro> pParameters) {
+
+        MMacroCreatorMethod mMacroCreatorMethod;
+
+        mMacroCreatorMethod = new MMacroCreatorMethod(pClassName, pArgs,
+                pVersionFactory, pParameters, this);
+
+        return mMacroCreatorMethod;
+    }
+
     public MSwitchVersion newSwitchVersion() {
 
         MSwitchVersion mSwitchVersion;
 
         mSwitchVersion = new MSwitchVersion(this);
+
+        return mSwitchVersion;
+    }
+
+    public MSwitchVersion newSwitchVersion(
+            List<Macro> pVersionCases) {
+
+        MSwitchVersion mSwitchVersion;
+
+        mSwitchVersion = new MSwitchVersion(pVersionCases, this);
 
         return mSwitchVersion;
     }
@@ -183,11 +347,32 @@ public class Macros {
         return mMacroCaseInit;
     }
 
+    public MMacroCaseInit newMacroCaseInit(
+            String pVersion,
+            String pVersionClassName) {
+
+        MMacroCaseInit mMacroCaseInit;
+
+        mMacroCaseInit = new MMacroCaseInit(pVersion, pVersionClassName, this);
+
+        return mMacroCaseInit;
+    }
+
     public MVersion newVersion() {
 
         MVersion mVersion;
 
         mVersion = new MVersion(this);
+
+        return mVersion;
+    }
+
+    public MVersion newVersion(
+            String pDefaultCase) {
+
+        MVersion mVersion;
+
+        mVersion = new MVersion(pDefaultCase, this);
 
         return mVersion;
     }
@@ -201,11 +386,50 @@ public class Macros {
         return mMacro;
     }
 
+    public MMacro newMacro(
+            String pClassName,
+            String pParentClass,
+            List<Macro> pPublic,
+            List<Macro> pAbstract,
+            List<Macro> pPackageDeclaration,
+            List<Macro> pFields,
+            List<Macro> pConstructor,
+            List<Macro> pSetters,
+            List<Macro> pBuilders,
+            List<Macro> pGetters,
+            List<Macro> pInitInternalsMethods,
+            List<Macro> pInitDirectives,
+            List<Macro> pRedefinedApplyInitializer,
+            List<Macro> pMacroBuilders,
+            List<Macro> pAppliedVersion,
+            List<Macro> pInitMacrosMethod) {
+
+        MMacro mMacro;
+
+        mMacro = new MMacro(pClassName, pParentClass, pPublic, pAbstract,
+                pPackageDeclaration, pFields, pConstructor, pSetters, pBuilders,
+                pGetters, pInitInternalsMethods, pInitDirectives,
+                pRedefinedApplyInitializer, pMacroBuilders, pAppliedVersion,
+                pInitMacrosMethod, this);
+
+        return mMacro;
+    }
+
     public MAppliedVersion newAppliedVersion() {
 
         MAppliedVersion mAppliedVersion;
 
         mAppliedVersion = new MAppliedVersion(this);
+
+        return mAppliedVersion;
+    }
+
+    public MAppliedVersion newAppliedVersion(
+            String pVersions) {
+
+        MAppliedVersion mAppliedVersion;
+
+        mAppliedVersion = new MAppliedVersion(pVersions, this);
 
         return mAppliedVersion;
     }
@@ -219,11 +443,37 @@ public class Macros {
         return mConstructor;
     }
 
+    public MConstructor newConstructor(
+            List<Macro> pFieldInitializers,
+            List<Macro> pParameters,
+            List<Macro> pValuesInitializers,
+            List<Macro> pSuper,
+            List<Macro> pAddMacros,
+            List<Macro> pAddStrings) {
+
+        MConstructor mConstructor;
+
+        mConstructor = new MConstructor(pFieldInitializers, pParameters,
+                pValuesInitializers, pSuper, pAddMacros, pAddStrings, this);
+
+        return mConstructor;
+    }
+
     public MInitInternal newInitInternal() {
 
         MInitInternal mInitInternal;
 
         mInitInternal = new MInitInternal(this);
+
+        return mInitInternal;
+    }
+
+    public MInitInternal newInitInternal(
+            String pName) {
+
+        MInitInternal mInitInternal;
+
+        mInitInternal = new MInitInternal(pName, this);
 
         return mInitInternal;
     }
@@ -237,6 +487,16 @@ public class Macros {
         return mInitParam;
     }
 
+    public MInitParam newInitParam(
+            String pName) {
+
+        MInitParam mInitParam;
+
+        mInitParam = new MInitParam(pName, this);
+
+        return mInitParam;
+    }
+
     public MInitMacroValue newInitMacroValue() {
 
         MInitMacroValue mInitMacroValue;
@@ -246,11 +506,31 @@ public class Macros {
         return mInitMacroValue;
     }
 
+    public MInitMacroValue newInitMacroValue(
+            String pParamName) {
+
+        MInitMacroValue mInitMacroValue;
+
+        mInitMacroValue = new MInitMacroValue(pParamName, this);
+
+        return mInitMacroValue;
+    }
+
     public MInitStringValue newInitStringValue() {
 
         MInitStringValue mInitStringValue;
 
         mInitStringValue = new MInitStringValue(this);
+
+        return mInitStringValue;
+    }
+
+    public MInitStringValue newInitStringValue(
+            String pParamName) {
+
+        MInitStringValue mInitStringValue;
+
+        mInitStringValue = new MInitStringValue(pParamName, this);
 
         return mInitStringValue;
     }
@@ -273,11 +553,71 @@ public class Macros {
         return mSuperCall;
     }
 
+    public MSuperCall newSuperCall(
+            String pParameters) {
+
+        MSuperCall mSuperCall;
+
+        mSuperCall = new MSuperCall(pParameters, this);
+
+        return mSuperCall;
+    }
+
+    public MAddMacroCall newAddMacroCall() {
+
+        MAddMacroCall mAddMacroCall;
+
+        mAddMacroCall = new MAddMacroCall(this);
+
+        return mAddMacroCall;
+    }
+
+    public MAddMacroCall newAddMacroCall(
+            String pParamName) {
+
+        MAddMacroCall mAddMacroCall;
+
+        mAddMacroCall = new MAddMacroCall(pParamName, this);
+
+        return mAddMacroCall;
+    }
+
+    public MAddStringCall newAddStringCall() {
+
+        MAddStringCall mAddStringCall;
+
+        mAddStringCall = new MAddStringCall(this);
+
+        return mAddStringCall;
+    }
+
+    public MAddStringCall newAddStringCall(
+            String pParamName) {
+
+        MAddStringCall mAddStringCall;
+
+        mAddStringCall = new MAddStringCall(pParamName, this);
+
+        return mAddStringCall;
+    }
+
     public MSingleMacroAdd newSingleMacroAdd() {
 
         MSingleMacroAdd mSingleMacroAdd;
 
         mSingleMacroAdd = new MSingleMacroAdd(this);
+
+        return mSingleMacroAdd;
+    }
+
+    public MSingleMacroAdd newSingleMacroAdd(
+            String pReferencedMacroName,
+            String pParamName) {
+
+        MSingleMacroAdd mSingleMacroAdd;
+
+        mSingleMacroAdd
+                = new MSingleMacroAdd(pReferencedMacroName, pParamName, this);
 
         return mSingleMacroAdd;
     }
@@ -291,11 +631,31 @@ public class Macros {
         return mSingleStringAdd;
     }
 
+    public MSingleStringAdd newSingleStringAdd(
+            String pParamName) {
+
+        MSingleStringAdd mSingleStringAdd;
+
+        mSingleStringAdd = new MSingleStringAdd(pParamName, this);
+
+        return mSingleStringAdd;
+    }
+
     public MAddAllMacro newAddAllMacro() {
 
         MAddAllMacro mAddAllMacro;
 
         mAddAllMacro = new MAddAllMacro(this);
+
+        return mAddAllMacro;
+    }
+
+    public MAddAllMacro newAddAllMacro(
+            String pParamName) {
+
+        MAddAllMacro mAddAllMacro;
+
+        mAddAllMacro = new MAddAllMacro(pParamName, this);
 
         return mAddAllMacro;
     }
@@ -309,6 +669,16 @@ public class Macros {
         return mAddAllString;
     }
 
+    public MAddAllString newAddAllString(
+            String pParamName) {
+
+        MAddAllString mAddAllString;
+
+        mAddAllString = new MAddAllString(pParamName, this);
+
+        return mAddAllString;
+    }
+
     public MTypeVerifier newTypeVerifier() {
 
         MTypeVerifier mTypeVerifier;
@@ -318,11 +688,34 @@ public class Macros {
         return mTypeVerifier;
     }
 
+    public MTypeVerifier newTypeVerifier(
+            String pParamName,
+            List<Macro> pTypeVerification,
+            List<Macro> pOverride) {
+
+        MTypeVerifier mTypeVerifier;
+
+        mTypeVerifier = new MTypeVerifier(pParamName, pTypeVerification,
+                pOverride, this);
+
+        return mTypeVerifier;
+    }
+
     public MAbstractTypeVerifier newAbstractTypeVerifier() {
 
         MAbstractTypeVerifier mAbstractTypeVerifier;
 
         mAbstractTypeVerifier = new MAbstractTypeVerifier(this);
+
+        return mAbstractTypeVerifier;
+    }
+
+    public MAbstractTypeVerifier newAbstractTypeVerifier(
+            String pParamName) {
+
+        MAbstractTypeVerifier mAbstractTypeVerifier;
+
+        mAbstractTypeVerifier = new MAbstractTypeVerifier(pParamName, this);
 
         return mAbstractTypeVerifier;
     }
@@ -354,11 +747,34 @@ public class Macros {
         return mParamMacroRefBuilder;
     }
 
+    public MParamMacroRefBuilder newParamMacroRefBuilder(
+            String pName,
+            String pContextName) {
+
+        MParamMacroRefBuilder mParamMacroRefBuilder;
+
+        mParamMacroRefBuilder
+                = new MParamMacroRefBuilder(pName, pContextName, this);
+
+        return mParamMacroRefBuilder;
+    }
+
     public MInternalMacroRefBuilder newInternalMacroRefBuilder() {
 
         MInternalMacroRefBuilder mInternalMacroRefBuilder;
 
         mInternalMacroRefBuilder = new MInternalMacroRefBuilder(this);
+
+        return mInternalMacroRefBuilder;
+    }
+
+    public MInternalMacroRefBuilder newInternalMacroRefBuilder(
+            String pInternalName) {
+
+        MInternalMacroRefBuilder mInternalMacroRefBuilder;
+
+        mInternalMacroRefBuilder
+                = new MInternalMacroRefBuilder(pInternalName, this);
 
         return mInternalMacroRefBuilder;
     }
@@ -372,11 +788,31 @@ public class Macros {
         return mInternalMacroSetter;
     }
 
+    public MInternalMacroSetter newInternalMacroSetter(
+            String pParamName) {
+
+        MInternalMacroSetter mInternalMacroSetter;
+
+        mInternalMacroSetter = new MInternalMacroSetter(pParamName, this);
+
+        return mInternalMacroSetter;
+    }
+
     public MParamMacroRef newParamMacroRef() {
 
         MParamMacroRef mParamMacroRef;
 
         mParamMacroRef = new MParamMacroRef(this);
+
+        return mParamMacroRef;
+    }
+
+    public MParamMacroRef newParamMacroRef(
+            String pName) {
+
+        MParamMacroRef mParamMacroRef;
+
+        mParamMacroRef = new MParamMacroRef(pName, this);
 
         return mParamMacroRef;
     }
@@ -390,11 +826,31 @@ public class Macros {
         return mInternalMacroRef;
     }
 
+    public MInternalMacroRef newInternalMacroRef(
+            String pParamName) {
+
+        MInternalMacroRef mInternalMacroRef;
+
+        mInternalMacroRef = new MInternalMacroRef(pParamName, this);
+
+        return mInternalMacroRef;
+    }
+
     public MParamStringRef newParamStringRef() {
 
         MParamStringRef mParamStringRef;
 
         mParamStringRef = new MParamStringRef(this);
+
+        return mParamStringRef;
+    }
+
+    public MParamStringRef newParamStringRef(
+            String pName) {
+
+        MParamStringRef mParamStringRef;
+
+        mParamStringRef = new MParamStringRef(pName, this);
 
         return mParamStringRef;
     }
@@ -408,11 +864,31 @@ public class Macros {
         return mParamStringRefBuilder;
     }
 
+    public MParamStringRefBuilder newParamStringRefBuilder(
+            String pName) {
+
+        MParamStringRefBuilder mParamStringRefBuilder;
+
+        mParamStringRefBuilder = new MParamStringRefBuilder(pName, this);
+
+        return mParamStringRefBuilder;
+    }
+
     public MInternalStringRef newInternalStringRef() {
 
         MInternalStringRef mInternalStringRef;
 
         mInternalStringRef = new MInternalStringRef(this);
+
+        return mInternalStringRef;
+    }
+
+    public MInternalStringRef newInternalStringRef(
+            String pName) {
+
+        MInternalStringRef mInternalStringRef;
+
+        mInternalStringRef = new MInternalStringRef(pName, this);
 
         return mInternalStringRef;
     }
@@ -426,11 +902,32 @@ public class Macros {
         return mInternalStringRefBuilder;
     }
 
+    public MInternalStringRefBuilder newInternalStringRefBuilder(
+            String pInternalName) {
+
+        MInternalStringRefBuilder mInternalStringRefBuilder;
+
+        mInternalStringRefBuilder
+                = new MInternalStringRefBuilder(pInternalName, this);
+
+        return mInternalStringRefBuilder;
+    }
+
     public MInternalStringSetter newInternalStringSetter() {
 
         MInternalStringSetter mInternalStringSetter;
 
         mInternalStringSetter = new MInternalStringSetter(this);
+
+        return mInternalStringSetter;
+    }
+
+    public MInternalStringSetter newInternalStringSetter(
+            String pName) {
+
+        MInternalStringSetter mInternalStringSetter;
+
+        mInternalStringSetter = new MInternalStringSetter(pName, this);
 
         return mInternalStringSetter;
     }
@@ -444,6 +941,18 @@ public class Macros {
         return mInitInternalsMethod;
     }
 
+    public MInitInternalsMethod newInitInternalsMethod(
+            String pParamName,
+            List<Macro> pApplyInternalsInitializer) {
+
+        MInitInternalsMethod mInitInternalsMethod;
+
+        mInitInternalsMethod = new MInitInternalsMethod(pParamName,
+                pApplyInternalsInitializer, this);
+
+        return mInitInternalsMethod;
+    }
+
     public MInitDirectives newInitDirectives() {
 
         MInitDirectives mInitDirectives;
@@ -453,11 +962,35 @@ public class Macros {
         return mInitDirectives;
     }
 
+    public MInitDirectives newInitDirectives(
+            String pParamName,
+            List<Macro> pNewDirectives) {
+
+        MInitDirectives mInitDirectives;
+
+        mInitDirectives = new MInitDirectives(pParamName, pNewDirectives, this);
+
+        return mInitDirectives;
+    }
+
     public MNewDirective newNewDirective() {
 
         MNewDirective mNewDirective;
 
         mNewDirective = new MNewDirective(this);
+
+        return mNewDirective;
+    }
+
+    public MNewDirective newNewDirective(
+            String pDirectiveName,
+            String pIndexBuilder,
+            List<Macro> pTextParts) {
+
+        MNewDirective mNewDirective;
+
+        mNewDirective = new MNewDirective(pDirectiveName, pIndexBuilder,
+                pTextParts, this);
 
         return mNewDirective;
     }
@@ -480,6 +1013,25 @@ public class Macros {
         return mMacroBuilder;
     }
 
+    public MMacroBuilder newMacroBuilder(
+            List<Macro> pContextParam,
+            List<Macro> pContextCacheBuilder,
+            List<Macro> pNewCacheBuilder,
+            List<Macro> pDirectivesCalls,
+            List<Macro> pInternalsCalls,
+            List<Macro> pMacroBodyParts,
+            List<Macro> pPublic,
+            List<Macro> pOverride) {
+
+        MMacroBuilder mMacroBuilder;
+
+        mMacroBuilder = new MMacroBuilder(pContextParam, pContextCacheBuilder,
+                pNewCacheBuilder, pDirectivesCalls, pInternalsCalls,
+                pMacroBodyParts, pPublic, pOverride, this);
+
+        return mMacroBuilder;
+    }
+
     public MInitDirectiveCall newInitDirectiveCall() {
 
         MInitDirectiveCall mInitDirectiveCall;
@@ -489,11 +1041,33 @@ public class Macros {
         return mInitDirectiveCall;
     }
 
+    public MInitDirectiveCall newInitDirectiveCall(
+            String pParamName) {
+
+        MInitDirectiveCall mInitDirectiveCall;
+
+        mInitDirectiveCall = new MInitDirectiveCall(pParamName, this);
+
+        return mInitDirectiveCall;
+    }
+
     public MInitInternalsCall newInitInternalsCall() {
 
         MInitInternalsCall mInitInternalsCall;
 
         mInitInternalsCall = new MInitInternalsCall(this);
+
+        return mInitInternalsCall;
+    }
+
+    public MInitInternalsCall newInitInternalsCall(
+            String pParamName,
+            List<Macro> pContextArg) {
+
+        MInitInternalsCall mInitInternalsCall;
+
+        mInitInternalsCall
+                = new MInitInternalsCall(pParamName, pContextArg, this);
 
         return mInitInternalsCall;
     }
@@ -552,11 +1126,31 @@ public class Macros {
         return mParamMacroField;
     }
 
+    public MParamMacroField newParamMacroField(
+            String pParamName) {
+
+        MParamMacroField mParamMacroField;
+
+        mParamMacroField = new MParamMacroField(pParamName, this);
+
+        return mParamMacroField;
+    }
+
     public MParamStringField newParamStringField() {
 
         MParamStringField mParamStringField;
 
         mParamStringField = new MParamStringField(this);
+
+        return mParamStringField;
+    }
+
+    public MParamStringField newParamStringField(
+            String pParamName) {
+
+        MParamStringField mParamStringField;
+
+        mParamStringField = new MParamStringField(pParamName, this);
 
         return mParamStringField;
     }
@@ -570,11 +1164,31 @@ public class Macros {
         return mInternalMacroField;
     }
 
+    public MInternalMacroField newInternalMacroField(
+            String pName) {
+
+        MInternalMacroField mInternalMacroField;
+
+        mInternalMacroField = new MInternalMacroField(pName, this);
+
+        return mInternalMacroField;
+    }
+
     public MInternalStringField newInternalStringField() {
 
         MInternalStringField mInternalStringField;
 
         mInternalStringField = new MInternalStringField(this);
+
+        return mInternalStringField;
+    }
+
+    public MInternalStringField newInternalStringField(
+            String pName) {
+
+        MInternalStringField mInternalStringField;
+
+        mInternalStringField = new MInternalStringField(pName, this);
 
         return mInternalStringField;
     }
@@ -615,11 +1229,32 @@ public class Macros {
         return mDirectiveFields;
     }
 
+    public MDirectiveFields newDirectiveFields(
+            String pParamName) {
+
+        MDirectiveFields mDirectiveFields;
+
+        mDirectiveFields = new MDirectiveFields(pParamName, this);
+
+        return mDirectiveFields;
+    }
+
     public MApplyInternalsInitializer newApplyInternalsInitializer() {
 
         MApplyInternalsInitializer mApplyInternalsInitializer;
 
         mApplyInternalsInitializer = new MApplyInternalsInitializer(this);
+
+        return mApplyInternalsInitializer;
+    }
+
+    public MApplyInternalsInitializer newApplyInternalsInitializer(
+            List<Macro> pRedefinedInternalsSetter) {
+
+        MApplyInternalsInitializer mApplyInternalsInitializer;
+
+        mApplyInternalsInitializer = new MApplyInternalsInitializer(
+                pRedefinedInternalsSetter, this);
 
         return mApplyInternalsInitializer;
     }
@@ -633,11 +1268,36 @@ public class Macros {
         return mRedefinedInternalsSetter;
     }
 
+    public MRedefinedInternalsSetter newRedefinedInternalsSetter(
+            String pMacroName,
+            List<Macro> pTextParts,
+            List<Macro> pSingleStringElements,
+            List<Macro> pSetInternals) {
+
+        MRedefinedInternalsSetter mRedefinedInternalsSetter;
+
+        mRedefinedInternalsSetter = new MRedefinedInternalsSetter(pMacroName,
+                pTextParts, pSingleStringElements, pSetInternals, this);
+
+        return mRedefinedInternalsSetter;
+    }
+
     public MStringPart newStringPart() {
 
         MStringPart mStringPart;
 
         mStringPart = new MStringPart(this);
+
+        return mStringPart;
+    }
+
+    public MStringPart newStringPart(
+            String pString,
+            String pIndexBuilder) {
+
+        MStringPart mStringPart;
+
+        mStringPart = new MStringPart(pString, pIndexBuilder, this);
 
         return mStringPart;
     }
@@ -651,11 +1311,34 @@ public class Macros {
         return mEolPart;
     }
 
+    public MEolPart newEolPart(
+            String pIndexBuilder) {
+
+        MEolPart mEolPart;
+
+        mEolPart = new MEolPart(pIndexBuilder, this);
+
+        return mEolPart;
+    }
+
     public MParamInsertPart newParamInsertPart() {
 
         MParamInsertPart mParamInsertPart;
 
         mParamInsertPart = new MParamInsertPart(this);
+
+        return mParamInsertPart;
+    }
+
+    public MParamInsertPart newParamInsertPart(
+            String pParamName,
+            String pIndexBuilder,
+            List<Macro> pContextArg) {
+
+        MParamInsertPart mParamInsertPart;
+
+        mParamInsertPart = new MParamInsertPart(pParamName, pIndexBuilder,
+                pContextArg, this);
 
         return mParamInsertPart;
     }
@@ -669,11 +1352,40 @@ public class Macros {
         return mIndentPart;
     }
 
+    public MIndentPart newIndentPart(
+            String pIndexBuilder,
+            String pIndexIndent) {
+
+        MIndentPart mIndentPart;
+
+        mIndentPart = new MIndentPart(pIndexBuilder, pIndexIndent, this);
+
+        return mIndentPart;
+    }
+
     public MInsertMacroPart newInsertMacroPart() {
 
         MInsertMacroPart mInsertMacroPart;
 
         mInsertMacroPart = new MInsertMacroPart(this);
+
+        return mInsertMacroPart;
+    }
+
+    public MInsertMacroPart newInsertMacroPart(
+            String pReferencedMacroName,
+            String pEnclosingClassName,
+            String pIndexBuilder,
+            String pIndexInsert,
+            List<Macro> pMacroBodyParts,
+            List<Macro> pSetInternals,
+            List<Macro> pSingleElementLists) {
+
+        MInsertMacroPart mInsertMacroPart;
+
+        mInsertMacroPart = new MInsertMacroPart(pReferencedMacroName,
+                pEnclosingClassName, pIndexBuilder, pIndexInsert,
+                pMacroBodyParts, pSetInternals, pSingleElementLists, this);
 
         return mInsertMacroPart;
     }
@@ -687,11 +1399,33 @@ public class Macros {
         return mInitStringBuilder;
     }
 
+    public MInitStringBuilder newInitStringBuilder(
+            String pIndexBuilder) {
+
+        MInitStringBuilder mInitStringBuilder;
+
+        mInitStringBuilder = new MInitStringBuilder(pIndexBuilder, this);
+
+        return mInitStringBuilder;
+    }
+
     public MSetInternal newSetInternal() {
 
         MSetInternal mSetInternal;
 
         mSetInternal = new MSetInternal(this);
+
+        return mSetInternal;
+    }
+
+    public MSetInternal newSetInternal(
+            String pParamName,
+            String pContext,
+            List<Macro> pSetParams) {
+
+        MSetInternal mSetInternal;
+
+        mSetInternal = new MSetInternal(pParamName, pContext, pSetParams, this);
 
         return mSetInternal;
     }
@@ -705,11 +1439,32 @@ public class Macros {
         return mNewStringValue;
     }
 
+    public MNewStringValue newNewStringValue(
+            String pIndexBuilder) {
+
+        MNewStringValue mNewStringValue;
+
+        mNewStringValue = new MNewStringValue(pIndexBuilder, this);
+
+        return mNewStringValue;
+    }
+
     public MParamRef newParamRef() {
 
         MParamRef mParamRef;
 
         mParamRef = new MParamRef(this);
+
+        return mParamRef;
+    }
+
+    public MParamRef newParamRef(
+            String pName,
+            String pGetParams) {
+
+        MParamRef mParamRef;
+
+        mParamRef = new MParamRef(pName, pGetParams, this);
 
         return mParamRef;
     }
@@ -723,11 +1478,32 @@ public class Macros {
         return mAddIndent;
     }
 
+    public MAddIndent newAddIndent(
+            String pIndexBuilder,
+            List<Macro> pIndentParts) {
+
+        MAddIndent mAddIndent;
+
+        mAddIndent = new MAddIndent(pIndexBuilder, pIndentParts, this);
+
+        return mAddIndent;
+    }
+
     public MStringValueArg newStringValueArg() {
 
         MStringValueArg mStringValueArg;
 
         mStringValueArg = new MStringValueArg(this);
+
+        return mStringValueArg;
+    }
+
+    public MStringValueArg newStringValueArg(
+            String pIndex) {
+
+        MStringValueArg mStringValueArg;
+
+        mStringValueArg = new MStringValueArg(pIndex, this);
 
         return mStringValueArg;
     }
@@ -741,11 +1517,31 @@ public class Macros {
         return mStringValue;
     }
 
+    public MStringValue newStringValue(
+            String pString) {
+
+        MStringValue mStringValue;
+
+        mStringValue = new MStringValue(pString, this);
+
+        return mStringValue;
+    }
+
     public MMacroArg newMacroArg() {
 
         MMacroArg mMacroArg;
 
         mMacroArg = new MMacroArg(this);
+
+        return mMacroArg;
+    }
+
+    public MMacroArg newMacroArg(
+            String pName) {
+
+        MMacroArg mMacroArg;
+
+        mMacroArg = new MMacroArg(pName, this);
 
         return mMacroArg;
     }
@@ -759,11 +1555,31 @@ public class Macros {
         return mStringArg;
     }
 
+    public MStringArg newStringArg(
+            String pName) {
+
+        MStringArg mStringArg;
+
+        mStringArg = new MStringArg(pName, this);
+
+        return mStringArg;
+    }
+
     public MParamArg newParamArg() {
 
         MParamArg mParamArg;
 
         mParamArg = new MParamArg(this);
+
+        return mParamArg;
+    }
+
+    public MParamArg newParamArg(
+            String pName) {
+
+        MParamArg mParamArg;
+
+        mParamArg = new MParamArg(pName, this);
 
         return mParamArg;
     }
@@ -802,6 +1618,35 @@ public class Macros {
         mStringParam = new MStringParam(this);
 
         return mStringParam;
+    }
+
+    public MStringParam newStringParam(
+            String pName) {
+
+        MStringParam mStringParam;
+
+        mStringParam = new MStringParam(pName, this);
+
+        return mStringParam;
+    }
+
+    public MMacroParam newMacroParam() {
+
+        MMacroParam mMacroParam;
+
+        mMacroParam = new MMacroParam(this);
+
+        return mMacroParam;
+    }
+
+    public MMacroParam newMacroParam(
+            String pParamName) {
+
+        MMacroParam mMacroParam;
+
+        mMacroParam = new MMacroParam(pParamName, this);
+
+        return mMacroParam;
     }
 
     public MAbstract newAbstract() {
@@ -849,11 +1694,31 @@ public class Macros {
         return mClassNone;
     }
 
+    public MClassNone newClassNone(
+            List<Macro> pPackageDeclaration) {
+
+        MClassNone mClassNone;
+
+        mClassNone = new MClassNone(pPackageDeclaration, this);
+
+        return mClassNone;
+    }
+
     public MClassBeforeFirst newClassBeforeFirst() {
 
         MClassBeforeFirst mClassBeforeFirst;
 
         mClassBeforeFirst = new MClassBeforeFirst(this);
+
+        return mClassBeforeFirst;
+    }
+
+    public MClassBeforeFirst newClassBeforeFirst(
+            List<Macro> pPackageDeclaration) {
+
+        MClassBeforeFirst mClassBeforeFirst;
+
+        mClassBeforeFirst = new MClassBeforeFirst(pPackageDeclaration, this);
 
         return mClassBeforeFirst;
     }
@@ -867,11 +1732,31 @@ public class Macros {
         return mClassAfterLast;
     }
 
+    public MClassAfterLast newClassAfterLast(
+            List<Macro> pPackageDeclaration) {
+
+        MClassAfterLast mClassAfterLast;
+
+        mClassAfterLast = new MClassAfterLast(pPackageDeclaration, this);
+
+        return mClassAfterLast;
+    }
+
     public MClassSeparator newClassSeparator() {
 
         MClassSeparator mClassSeparator;
 
         mClassSeparator = new MClassSeparator(this);
+
+        return mClassSeparator;
+    }
+
+    public MClassSeparator newClassSeparator(
+            List<Macro> pPackageDeclaration) {
+
+        MClassSeparator mClassSeparator;
+
+        mClassSeparator = new MClassSeparator(pPackageDeclaration, this);
 
         return mClassSeparator;
     }
@@ -885,11 +1770,33 @@ public class Macros {
         return mExInternalException;
     }
 
+    public MExInternalException newExInternalException(
+            List<Macro> pPackageDeclaration) {
+
+        MExInternalException mExInternalException;
+
+        mExInternalException
+                = new MExInternalException(pPackageDeclaration, this);
+
+        return mExInternalException;
+    }
+
     public MExObjectMacroException newExObjectMacroException() {
 
         MExObjectMacroException mExObjectMacroException;
 
         mExObjectMacroException = new MExObjectMacroException(this);
+
+        return mExObjectMacroException;
+    }
+
+    public MExObjectMacroException newExObjectMacroException(
+            List<Macro> pPackageDeclaration) {
+
+        MExObjectMacroException mExObjectMacroException;
+
+        mExObjectMacroException
+                = new MExObjectMacroException(pPackageDeclaration, this);
 
         return mExObjectMacroException;
     }
@@ -903,11 +1810,32 @@ public class Macros {
         return mExIncorrectType;
     }
 
+    public MExIncorrectType newExIncorrectType(
+            List<Macro> pPackageDeclaration) {
+
+        MExIncorrectType mExIncorrectType;
+
+        mExIncorrectType = new MExIncorrectType(pPackageDeclaration, this);
+
+        return mExIncorrectType;
+    }
+
     public MExObjectMacroErrorHead newExObjectMacroErrorHead() {
 
         MExObjectMacroErrorHead mExObjectMacroErrorHead;
 
         mExObjectMacroErrorHead = new MExObjectMacroErrorHead(this);
+
+        return mExObjectMacroErrorHead;
+    }
+
+    public MExObjectMacroErrorHead newExObjectMacroErrorHead(
+            List<Macro> pPackageDeclaration) {
+
+        MExObjectMacroErrorHead mExObjectMacroErrorHead;
+
+        mExObjectMacroErrorHead
+                = new MExObjectMacroErrorHead(pPackageDeclaration, this);
 
         return mExObjectMacroErrorHead;
     }
@@ -921,11 +1849,31 @@ public class Macros {
         return mExParameterNull;
     }
 
+    public MExParameterNull newExParameterNull(
+            List<Macro> pPackageDeclaration) {
+
+        MExParameterNull mExParameterNull;
+
+        mExParameterNull = new MExParameterNull(pPackageDeclaration, this);
+
+        return mExParameterNull;
+    }
+
     public MExMacroNullInList newExMacroNullInList() {
 
         MExMacroNullInList mExMacroNullInList;
 
         mExMacroNullInList = new MExMacroNullInList(this);
+
+        return mExMacroNullInList;
+    }
+
+    public MExMacroNullInList newExMacroNullInList(
+            List<Macro> pPackageDeclaration) {
+
+        MExMacroNullInList mExMacroNullInList;
+
+        mExMacroNullInList = new MExMacroNullInList(pPackageDeclaration, this);
 
         return mExMacroNullInList;
     }
@@ -939,11 +1887,31 @@ public class Macros {
         return mExCannotModify;
     }
 
+    public MExCannotModify newExCannotModify(
+            List<Macro> pPackageDeclaration) {
+
+        MExCannotModify mExCannotModify;
+
+        mExCannotModify = new MExCannotModify(pPackageDeclaration, this);
+
+        return mExCannotModify;
+    }
+
     public MExCyclicReference newExCyclicReference() {
 
         MExCyclicReference mExCyclicReference;
 
         mExCyclicReference = new MExCyclicReference(this);
+
+        return mExCyclicReference;
+    }
+
+    public MExCyclicReference newExCyclicReference(
+            List<Macro> pPackageDeclaration) {
+
+        MExCyclicReference mExCyclicReference;
+
+        mExCyclicReference = new MExCyclicReference(pPackageDeclaration, this);
 
         return mExCyclicReference;
     }
@@ -957,6 +1925,16 @@ public class Macros {
         return mExVersionNull;
     }
 
+    public MExVersionNull newExVersionNull(
+            List<Macro> pPackageDeclaration) {
+
+        MExVersionNull mExVersionNull;
+
+        mExVersionNull = new MExVersionNull(pPackageDeclaration, this);
+
+        return mExVersionNull;
+    }
+
     public MMacroInternalException newMacroInternalException() {
 
         MMacroInternalException mMacroInternalException;
@@ -966,11 +1944,33 @@ public class Macros {
         return mMacroInternalException;
     }
 
+    public MMacroInternalException newMacroInternalException(
+            List<Macro> pPackageDeclaration) {
+
+        MMacroInternalException mMacroInternalException;
+
+        mMacroInternalException
+                = new MMacroInternalException(pPackageDeclaration, this);
+
+        return mMacroInternalException;
+    }
+
     public MExVersionsDifferent newExVersionsDifferent() {
 
         MExVersionsDifferent mExVersionsDifferent;
 
         mExVersionsDifferent = new MExVersionsDifferent(this);
+
+        return mExVersionsDifferent;
+    }
+
+    public MExVersionsDifferent newExVersionsDifferent(
+            List<Macro> pPackageDeclaration) {
+
+        MExVersionsDifferent mExVersionsDifferent;
+
+        mExVersionsDifferent
+                = new MExVersionsDifferent(pPackageDeclaration, this);
 
         return mExVersionsDifferent;
     }

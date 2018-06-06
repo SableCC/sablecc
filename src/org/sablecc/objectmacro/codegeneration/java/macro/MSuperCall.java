@@ -31,6 +31,21 @@ public class MSuperCall
                 = new StringValue(this.list_Parameters, this.ParametersContext);
     }
 
+    MSuperCall(
+            String pParameters,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_Parameters = new LinkedList<>();
+
+        this.ParametersValue
+                = new StringValue(this.list_Parameters, this.ParametersContext);
+
+        if (pParameters != null) {
+            addParameters(pParameters);
+        }
+    }
+
     public void addAllParameters(
             List<String> strings) {
 
@@ -141,7 +156,6 @@ public class MSuperCall
         sb0.append("super(");
         sb0.append(buildParameters());
         sb0.append(");");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

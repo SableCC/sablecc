@@ -62,6 +62,7 @@ public class MContextField
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -70,7 +71,6 @@ public class MContextField
         sb0.append("final Context ");
         sb0.append(buildParamName(context));
         sb0.append("Context = new Context();");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

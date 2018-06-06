@@ -68,6 +68,36 @@ public class MNewDirective
                 = new MacroValue(this.list_TextParts, this.TextPartsContext);
     }
 
+    MNewDirective(
+            String pDirectiveName,
+            String pIndexBuilder,
+            List<Macro> pTextParts,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_DirectiveName = new LinkedList<>();
+        this.list_IndexBuilder = new LinkedList<>();
+        this.list_TextParts = new LinkedList<>();
+        this.list_ParamName = new LinkedHashMap<>();
+
+        this.DirectiveNameValue = new StringValue(this.list_DirectiveName,
+                this.DirectiveNameContext);
+        this.IndexBuilderValue = new StringValue(this.list_IndexBuilder,
+                this.IndexBuilderContext);
+        this.TextPartsValue
+                = new MacroValue(this.list_TextParts, this.TextPartsContext);
+        if (pTextParts != null) {
+            addAllTextParts(pTextParts);
+        }
+
+        if (pDirectiveName != null) {
+            addDirectiveName(pDirectiveName);
+        }
+        if (pIndexBuilder != null) {
+            addIndexBuilder(pIndexBuilder);
+        }
+    }
+
     public void addAllDirectiveName(
             List<String> strings) {
 
@@ -497,6 +527,7 @@ public class MNewDirective
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -531,7 +562,6 @@ public class MNewDirective
         sb0.append(buildParamName(context));
         sb0.append(buildDirectiveName());
         sb0.append(");");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

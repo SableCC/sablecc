@@ -31,6 +31,21 @@ public class MVersion
                 this.DefaultCaseContext);
     }
 
+    MVersion(
+            String pDefaultCase,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_DefaultCase = new LinkedList<>();
+
+        this.DefaultCaseValue = new StringValue(this.list_DefaultCase,
+                this.DefaultCaseContext);
+
+        if (pDefaultCase != null) {
+            addDefaultCase(pDefaultCase);
+        }
+    }
+
     public void addAllDefaultCase(
             List<String> strings) {
 
@@ -136,7 +151,6 @@ public class MVersion
 
         sb0.append("VERSIONS.");
         sb0.append(buildDefaultCase());
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

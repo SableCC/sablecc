@@ -68,6 +68,36 @@ public class MSetInternal
                 = new MacroValue(this.list_SetParams, this.SetParamsContext);
     }
 
+    MSetInternal(
+            String pParamName,
+            String pContext,
+            List<Macro> pSetParams,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_ParamName = new LinkedList<>();
+        this.list_Context = new LinkedList<>();
+        this.list_SetParams = new LinkedList<>();
+        this.list_VarName = new LinkedHashMap<>();
+
+        this.ParamNameValue
+                = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.ContextValue
+                = new StringValue(this.list_Context, this.ContextContext);
+        this.SetParamsValue
+                = new MacroValue(this.list_SetParams, this.SetParamsContext);
+        if (pSetParams != null) {
+            addAllSetParams(pSetParams);
+        }
+
+        if (pParamName != null) {
+            addParamName(pParamName);
+        }
+        if (pContext != null) {
+            addContext(pContext);
+        }
+    }
+
     public void addAllParamName(
             List<String> strings) {
 
@@ -423,6 +453,7 @@ public class MSetInternal
         else {
             return cache_builder.getExpansion();
         }
+
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
@@ -443,7 +474,6 @@ public class MSetInternal
         sb0.append(", ");
         sb0.append(buildSetParams());
         sb0.append(");");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

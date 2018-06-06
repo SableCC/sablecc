@@ -39,7 +39,6 @@ public class MImportJavaUtil
         StringBuilder sb0 = new StringBuilder();
 
         sb0.append("import java.util.*;");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }

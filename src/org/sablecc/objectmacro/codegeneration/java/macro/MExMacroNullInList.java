@@ -31,6 +31,20 @@ public class MExMacroNullInList
                 this.list_PackageDeclaration, this.PackageDeclarationContext);
     }
 
+    MExMacroNullInList(
+            List<Macro> pPackageDeclaration,
+            Macros macros) {
+
+        setMacros(macros);
+        this.list_PackageDeclaration = new LinkedList<>();
+
+        this.PackageDeclarationValue = new MacroValue(
+                this.list_PackageDeclaration, this.PackageDeclarationContext);
+        if (pPackageDeclaration != null) {
+            addAllPackageDeclaration(pPackageDeclaration);
+        }
+    }
+
     public void addAllPackageDeclaration(
             List<Macro> macros) {
 
@@ -382,7 +396,6 @@ public class MExMacroNullInList
         sb0.append("    }");
         sb0.append(LINE_SEPARATOR);
         sb0.append("}");
-
         cache_builder.setExpansion(sb0.toString());
         return sb0.toString();
     }
