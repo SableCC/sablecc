@@ -144,26 +144,7 @@ public class MSingleMacroAdd
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.ReferencedMacroNameNone != null) {
-            sb.append(this.ReferencedMacroNameNone.apply(i, "", nb_strings));
-        }
-
         for (String string : strings) {
-
-            if (this.ReferencedMacroNameBeforeFirst != null) {
-                string = this.ReferencedMacroNameBeforeFirst.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.ReferencedMacroNameAfterLast != null) {
-                string = this.ReferencedMacroNameAfterLast.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.ReferencedMacroNameSeparator != null) {
-                string = this.ReferencedMacroNameSeparator.apply(i, string,
-                        nb_strings);
-            }
 
             sb.append(string);
             i++;
@@ -180,23 +161,7 @@ public class MSingleMacroAdd
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.ParamNameNone != null) {
-            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
-        }
-
         for (String string : strings) {
-
-            if (this.ParamNameBeforeFirst != null) {
-                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
-            }
-
-            if (this.ParamNameAfterLast != null) {
-                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
-            }
-
-            if (this.ParamNameSeparator != null) {
-                string = this.ParamNameSeparator.apply(i, string, nb_strings);
-            }
 
             sb.append(string);
             i++;

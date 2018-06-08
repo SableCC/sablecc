@@ -174,23 +174,7 @@ public class MMacroCaseInit
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.VersionNone != null) {
-            sb.append(this.VersionNone.apply(i, "", nb_strings));
-        }
-
         for (String string : strings) {
-
-            if (this.VersionBeforeFirst != null) {
-                string = this.VersionBeforeFirst.apply(i, string, nb_strings);
-            }
-
-            if (this.VersionAfterLast != null) {
-                string = this.VersionAfterLast.apply(i, string, nb_strings);
-            }
-
-            if (this.VersionSeparator != null) {
-                string = this.VersionSeparator.apply(i, string, nb_strings);
-            }
 
             sb.append(string);
             i++;
@@ -207,26 +191,7 @@ public class MMacroCaseInit
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.VersionClassNameNone != null) {
-            sb.append(this.VersionClassNameNone.apply(i, "", nb_strings));
-        }
-
         for (String string : strings) {
-
-            if (this.VersionClassNameBeforeFirst != null) {
-                string = this.VersionClassNameBeforeFirst.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.VersionClassNameAfterLast != null) {
-                string = this.VersionClassNameAfterLast.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.VersionClassNameSeparator != null) {
-                string = this.VersionClassNameSeparator.apply(i, string,
-                        nb_strings);
-            }
 
             sb.append(string);
             i++;

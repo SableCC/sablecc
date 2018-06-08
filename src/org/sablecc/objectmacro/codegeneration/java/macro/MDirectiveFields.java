@@ -87,23 +87,7 @@ public class MDirectiveFields
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.ParamNameNone != null) {
-            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
-        }
-
         for (String string : strings) {
-
-            if (this.ParamNameBeforeFirst != null) {
-                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
-            }
-
-            if (this.ParamNameAfterLast != null) {
-                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
-            }
-
-            if (this.ParamNameSeparator != null) {
-                string = this.ParamNameSeparator.apply(i, string, nb_strings);
-            }
 
             sb.append(string);
             i++;

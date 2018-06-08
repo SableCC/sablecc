@@ -85,23 +85,7 @@ public class MInitInternal
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.NameNone != null) {
-            sb.append(this.NameNone.apply(i, "", nb_strings));
-        }
-
         for (String string : strings) {
-
-            if (this.NameBeforeFirst != null) {
-                string = this.NameBeforeFirst.apply(i, string, nb_strings);
-            }
-
-            if (this.NameAfterLast != null) {
-                string = this.NameAfterLast.apply(i, string, nb_strings);
-            }
-
-            if (this.NameSeparator != null) {
-                string = this.NameSeparator.apply(i, string, nb_strings);
-            }
 
             sb.append(string);
             i++;

@@ -139,29 +139,15 @@ public class MApplyInternalsInitializer
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.RedefinedInternalsSetterNone != null) {
-            sb.append(
-                    this.RedefinedInternalsSetterNone.apply(i, "", nb_macros));
+        if (this.RedefinedInternalsSetterSeparator == null) {
+            initRedefinedInternalsSetterDirectives();
         }
 
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if (this.RedefinedInternalsSetterBeforeFirst != null) {
-                expansion = this.RedefinedInternalsSetterBeforeFirst.apply(i,
-                        expansion, nb_macros);
-            }
-
-            if (this.RedefinedInternalsSetterAfterLast != null) {
-                expansion = this.RedefinedInternalsSetterAfterLast.apply(i,
-                        expansion, nb_macros);
-            }
-
-            if (this.RedefinedInternalsSetterSeparator != null) {
-                expansion = this.RedefinedInternalsSetterSeparator.apply(i,
-                        expansion, nb_macros);
-            }
-
+            expansion = this.RedefinedInternalsSetterSeparator.apply(i,
+                    expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -238,9 +224,9 @@ public class MApplyInternalsInitializer
         this.cacheBuilders.put(context, cache_builder);
         List<String> indentations = new LinkedList<>();
 
-        initRedefinedInternalsSetterDirectives();
-
         initRedefinedInternalsSetterInternals(context);
+
+        initRedefinedInternalsSetterDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 

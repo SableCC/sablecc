@@ -87,24 +87,13 @@ public class MSuperCall
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.ParametersNone != null) {
-            sb.append(this.ParametersNone.apply(i, "", nb_strings));
+        if (this.ParametersSeparator == null) {
+            initParametersDirectives();
         }
 
         for (String string : strings) {
 
-            if (this.ParametersBeforeFirst != null) {
-                string = this.ParametersBeforeFirst.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.ParametersAfterLast != null) {
-                string = this.ParametersAfterLast.apply(i, string, nb_strings);
-            }
-
-            if (this.ParametersSeparator != null) {
-                string = this.ParametersSeparator.apply(i, string, nb_strings);
-            }
+            string = this.ParametersSeparator.apply(i, string, nb_strings);
 
             sb.append(string);
             i++;

@@ -660,8 +660,35 @@ public class CodeGenerationWalker
 
             if (!this.currentMacroIsAbstract) {
                 MParamStringRefBuilder mParamStringRefBuilder
-                        = this.factory.newParamStringRefBuilder(param_name);
+                        = this.factory.newParamStringRefBuilder(param_name,
+                                null, null, null, null);
                 this.currentMacroToBuild.addBuilders(mParamStringRefBuilder);
+
+                if (node.getDirectives().size() > 0) {
+                    for (PDirective directive_production : node
+                            .getDirectives()) {
+
+                        ADirective directive_node
+                                = (ADirective) directive_production;
+                        String directive_name = GenerationUtils
+                                .buildNameCamelCase(directive_node.getNames());
+
+                        if (directive_name.equals("None")) {
+                            mParamStringRefBuilder.addNoneDirectiveApply(
+                                    this.factory.newNoneDirective());
+                        }
+                        else {
+                            mParamStringRefBuilder
+                                    .addDirectivesName(directive_name);
+                            mParamStringRefBuilder.addDirectivesAppliers(
+                                    this.factory.newDirectiveApplier(
+                                            directive_name));
+                        }
+                    }
+
+                    mParamStringRefBuilder.addDirectivesInitVerification(
+                            this.factory.newDirectivesInitVerification());
+                }
 
                 if (this.currentParameteredConstructor != null) {
                     this.currentParameteredConstructor.addParameters(
@@ -674,8 +701,8 @@ public class CodeGenerationWalker
         else if (node.getType() instanceof AMacroRefsType) {
 
             this.currentParamMacroRefBuilder
-                    = this.factory.newParamMacroRefBuilder();
-            this.currentParamMacroRefBuilder.addName(param_name);
+                    = this.factory.newParamMacroRefBuilder(param_name, null,
+                            null, null, null, null);
 
             if (this.currentMacroIsAbstract
                     || this.currentMacroIsAllVersionned) {
@@ -708,6 +735,35 @@ public class CodeGenerationWalker
                         .addBuilders(this.currentParamMacroRefBuilder);
                 this.currentParamMacroRefBuilder.addContextName(
                         param_name.concat(GenerationUtils.CONTEXT_STRING));
+
+                if (node.getDirectives().size() > 0) {
+                    for (PDirective directive_production : node
+                            .getDirectives()) {
+
+                        ADirective directive_node
+                                = (ADirective) directive_production;
+                        String directive_name = GenerationUtils
+                                .buildNameCamelCase(directive_node.getNames());
+                        this.currentParamMacroRefBuilder
+                                .addDirectivesName(directive_name);
+
+                        if (directive_name.equals("None")) {
+                            this.currentParamMacroRefBuilder
+                                    .addNoneDirectiveApply(
+                                            this.factory.newNoneDirective());
+                        }
+                        else {
+                            this.currentParamMacroRefBuilder
+                                    .addDirectivesAppliers(
+                                            this.factory.newDirectiveApplier(
+                                                    directive_name));
+                        }
+                    }
+
+                    this.currentParamMacroRefBuilder
+                            .addDirectivesInitVerification(this.factory
+                                    .newDirectivesInitVerification());
+                }
 
                 this.indexBuilder = 0;
 

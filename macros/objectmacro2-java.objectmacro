@@ -523,8 +523,8 @@ public class Macros {
 Macro macro_creator_method
     Param
         class_name: String;
-        args: param_arg, separator=", ", after_last=", ";
         version_factory: switch_version(class_name, args), before_first="\n", none="m{class_name} = new M{class_name}({args}this);";
+        args: param_arg, separator=", ", after_last=", ";
         parameters: macro_param, string_param, separator=", ";
 {Body}
 public M{class_name} new{class_name}({parameters}){
@@ -892,41 +892,75 @@ if(this.cacheBuilder != null) {
 }
 {End}
 
+# ========== directive_applier ==========
+
+Macro directive_applier
+    Param
+        directive_name: String;
+    Internal
+        index: String;
+        size_var_name: String;
+        local_var: String;
+        parameter_name: String;
+{Body}
+{local_var} = this.{parameter_name}{directive_name}.apply({index}, {local_var}, {size_var_name});
+{End}
+
+# ========= none_directive ==========
+
+Macro none_directive
+    Internal
+        string_builder_name: String;
+        index: String;
+        size_var_name: String;
+        parameter_name: String;
+{Body}
+{string_builder_name}.append(this.{parameter_name}None.apply({index}, "", {size_var_name}));
+{End}
+
+# ========= directives_init_verification ========
+
+Macro directives_init_verification
+    Internal
+        param_name: String;
+        directives_name: String;
+{Body}
+if({directives_name}) {
+    init{param_name}Directives();
+}
+{End}
+
+
 # ========== param_macro_ref_builder ==================
 
 Macro param_macro_ref_builder
     Param
-        name: String;
+        param_name: String;
         context_name: String, none="context", before_first="this.";
+        directives_name: String, before_first="this.{param_name}", separator=" == null || this.{param_name}", after_last=" == null";
+        directives_init_verification: directives_init_verification(param_name, directives_name), before_first="\n";
+        none_directive_apply: none_directive("sb", "i", "nb_macros", param_name), before_first="\n";
+        directives_appliers: directive_applier("i", "nb_macros", "expansion", param_name), separator="\n", before_first="\n", after_last="\n";
 {Body}
-private String build{name}() {
+private String build{param_name}() {
+
     StringBuilder sb = new StringBuilder();
     Context local_context = {context_name};
-    List<Macro> macros = this.list_{name};
+    List<Macro> macros = this.list_{param_name};
 
     int i = 0;
     int nb_macros = macros.size();
     String expansion = null;
-
-    if(this.{name}None != null) {
-        sb.append(this.{name}None.apply(i, "", nb_macros));
-    }
+{Indent: "\t"}
+{directives_init_verification}
+{End}
+    {none_directive_apply}#
 
     for(Macro macro : macros) {
         expansion = macro.build(local_context);
-
-        if(this.{name}BeforeFirst != null) {
-            expansion = this.{name}BeforeFirst.apply(i, expansion, nb_macros);
-        }
-
-        if(this.{name}AfterLast != null) {
-            expansion = this.{name}AfterLast.apply(i, expansion, nb_macros);
-        }
-
-        if(this.{name}Separator != null) {
-            expansion = this.{name}Separator.apply(i, expansion, nb_macros);
-        }
-
+{Indent:"\t\t"}
+{directives_appliers}
+{End}
         sb.append(expansion);
         i++;
     }
@@ -988,7 +1022,6 @@ private MacroValue get{param_name}(Context context) {
 }
 {End}
 
-
 # ========== param_string_ref ==============
 
 Macro param_string_ref
@@ -1004,33 +1037,25 @@ StringValue get{name}() {
 
 Macro param_string_ref_builder
     Param
-        name: String;
+        param_name: String;
+        directives_name: String, before_first="this.{param_name}", separator=" == null || this.{param_name}", after_last=" == null";
+        directives_init_verification: directives_init_verification(param_name, directives_name), before_first="\n";
+        none_directive_apply: none_directive("sb", "i", "nb_strings", param_name), before_first="\n";
+        directives_appliers: directive_applier("i", "nb_strings", "string", param_name), separator="\n", before_first="\n", after_last="\n";
 {Body}
-private String build{name}() {
+private String build{param_name}() {
+
     StringBuilder sb = new StringBuilder();
-    List<String> strings = this.list_{name};
+    List<String> strings = this.list_{param_name};
 
     int i = 0;
     int nb_strings = strings.size();
 
-    if(this.{name}None != null) {
-        sb.append(this.{name}None.apply(i, "", nb_strings));
-    }
+    {directives_init_verification}
+    {none_directive_apply}
 
     for(String string : strings) {
-
-        if(this.{name}BeforeFirst != null) {
-            string = this.{name}BeforeFirst.apply(i, string, nb_strings);
-        }
-
-        if(this.{name}AfterLast != null) {
-            string = this.{name}AfterLast.apply(i, string, nb_strings);
-        }
-
-        if(this.{name}Separator != null) {
-            string = this.{name}Separator.apply(i, string, nb_strings);
-        }
-
+        {directives_appliers}
         sb.append(string);
         i++;
     }
@@ -1103,7 +1128,7 @@ private void init{param_name}Internals(Context context) {
 Macro init_directives
     Param
         param_name: String;
-        new_directives: new_directive(param_name);
+        new_directives: new_directive(param_name), separator="\n";
 {Body}
 private void init{param_name}Directives() {
 {Indent: "\t"}
@@ -1176,8 +1201,8 @@ Macro macro_builder
     List<String> indentations = new LinkedList<>();
 
 {Indent: "\t"}
-{directives_calls}#
-{internals_calls}
+{internals_calls}#
+{directives_calls}
 {End}
 
     StringBuilder sb0 = new StringBuilder();

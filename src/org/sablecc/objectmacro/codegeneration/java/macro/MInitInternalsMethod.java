@@ -180,23 +180,7 @@ public class MInitInternalsMethod
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.ParamNameNone != null) {
-            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
-        }
-
         for (String string : strings) {
-
-            if (this.ParamNameBeforeFirst != null) {
-                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
-            }
-
-            if (this.ParamNameAfterLast != null) {
-                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
-            }
-
-            if (this.ParamNameSeparator != null) {
-                string = this.ParamNameSeparator.apply(i, string, nb_strings);
-            }
 
             sb.append(string);
             i++;
@@ -215,29 +199,15 @@ public class MInitInternalsMethod
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.ApplyInternalsInitializerNone != null) {
-            sb.append(
-                    this.ApplyInternalsInitializerNone.apply(i, "", nb_macros));
+        if (this.ApplyInternalsInitializerSeparator == null) {
+            initApplyInternalsInitializerDirectives();
         }
 
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if (this.ApplyInternalsInitializerBeforeFirst != null) {
-                expansion = this.ApplyInternalsInitializerBeforeFirst.apply(i,
-                        expansion, nb_macros);
-            }
-
-            if (this.ApplyInternalsInitializerAfterLast != null) {
-                expansion = this.ApplyInternalsInitializerAfterLast.apply(i,
-                        expansion, nb_macros);
-            }
-
-            if (this.ApplyInternalsInitializerSeparator != null) {
-                expansion = this.ApplyInternalsInitializerSeparator.apply(i,
-                        expansion, nb_macros);
-            }
-
+            expansion = this.ApplyInternalsInitializerSeparator.apply(i,
+                    expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -310,10 +280,10 @@ public class MInitInternalsMethod
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
 
+        initApplyInternalsInitializerInternals(null);
+
         initParamNameDirectives();
         initApplyInternalsInitializerDirectives();
-
-        initApplyInternalsInitializerInternals(null);
 
         StringBuilder sb0 = new StringBuilder();
 

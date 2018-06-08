@@ -626,26 +626,7 @@ public class MInsertMacroPart
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.ReferencedMacroNameNone != null) {
-            sb.append(this.ReferencedMacroNameNone.apply(i, "", nb_strings));
-        }
-
         for (String string : strings) {
-
-            if (this.ReferencedMacroNameBeforeFirst != null) {
-                string = this.ReferencedMacroNameBeforeFirst.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.ReferencedMacroNameAfterLast != null) {
-                string = this.ReferencedMacroNameAfterLast.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.ReferencedMacroNameSeparator != null) {
-                string = this.ReferencedMacroNameSeparator.apply(i, string,
-                        nb_strings);
-            }
 
             sb.append(string);
             i++;
@@ -662,26 +643,17 @@ public class MInsertMacroPart
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.EnclosingClassNameNone != null) {
-            sb.append(this.EnclosingClassNameNone.apply(i, "", nb_strings));
+        if (this.EnclosingClassNameAfterLast == null
+                || this.EnclosingClassNameBeforeFirst == null) {
+            initEnclosingClassNameDirectives();
         }
 
         for (String string : strings) {
 
-            if (this.EnclosingClassNameBeforeFirst != null) {
-                string = this.EnclosingClassNameBeforeFirst.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.EnclosingClassNameAfterLast != null) {
-                string = this.EnclosingClassNameAfterLast.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.EnclosingClassNameSeparator != null) {
-                string = this.EnclosingClassNameSeparator.apply(i, string,
-                        nb_strings);
-            }
+            string = this.EnclosingClassNameAfterLast.apply(i, string,
+                    nb_strings);
+            string = this.EnclosingClassNameBeforeFirst.apply(i, string,
+                    nb_strings);
 
             sb.append(string);
             i++;
@@ -698,26 +670,7 @@ public class MInsertMacroPart
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.IndexBuilderNone != null) {
-            sb.append(this.IndexBuilderNone.apply(i, "", nb_strings));
-        }
-
         for (String string : strings) {
-
-            if (this.IndexBuilderBeforeFirst != null) {
-                string = this.IndexBuilderBeforeFirst.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.IndexBuilderAfterLast != null) {
-                string = this.IndexBuilderAfterLast.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.IndexBuilderSeparator != null) {
-                string = this.IndexBuilderSeparator.apply(i, string,
-                        nb_strings);
-            }
 
             sb.append(string);
             i++;
@@ -734,24 +687,7 @@ public class MInsertMacroPart
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.IndexInsertNone != null) {
-            sb.append(this.IndexInsertNone.apply(i, "", nb_strings));
-        }
-
         for (String string : strings) {
-
-            if (this.IndexInsertBeforeFirst != null) {
-                string = this.IndexInsertBeforeFirst.apply(i, string,
-                        nb_strings);
-            }
-
-            if (this.IndexInsertAfterLast != null) {
-                string = this.IndexInsertAfterLast.apply(i, string, nb_strings);
-            }
-
-            if (this.IndexInsertSeparator != null) {
-                string = this.IndexInsertSeparator.apply(i, string, nb_strings);
-            }
 
             sb.append(string);
             i++;
@@ -770,28 +706,15 @@ public class MInsertMacroPart
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.MacroBodyPartsNone != null) {
-            sb.append(this.MacroBodyPartsNone.apply(i, "", nb_macros));
+        if (this.MacroBodyPartsSeparator == null) {
+            initMacroBodyPartsDirectives();
         }
 
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if (this.MacroBodyPartsBeforeFirst != null) {
-                expansion = this.MacroBodyPartsBeforeFirst.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.MacroBodyPartsAfterLast != null) {
-                expansion = this.MacroBodyPartsAfterLast.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.MacroBodyPartsSeparator != null) {
-                expansion = this.MacroBodyPartsSeparator.apply(i, expansion,
-                        nb_macros);
-            }
-
+            expansion = this.MacroBodyPartsSeparator.apply(i, expansion,
+                    nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -809,28 +732,15 @@ public class MInsertMacroPart
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.SetInternalsNone != null) {
-            sb.append(this.SetInternalsNone.apply(i, "", nb_macros));
+        if (this.SetInternalsSeparator == null) {
+            initSetInternalsDirectives();
         }
 
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if (this.SetInternalsBeforeFirst != null) {
-                expansion = this.SetInternalsBeforeFirst.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.SetInternalsAfterLast != null) {
-                expansion = this.SetInternalsAfterLast.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.SetInternalsSeparator != null) {
-                expansion = this.SetInternalsSeparator.apply(i, expansion,
-                        nb_macros);
-            }
-
+            expansion
+                    = this.SetInternalsSeparator.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -848,28 +758,15 @@ public class MInsertMacroPart
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.SingleElementListsNone != null) {
-            sb.append(this.SingleElementListsNone.apply(i, "", nb_macros));
+        if (this.SingleElementListsSeparator == null) {
+            initSingleElementListsDirectives();
         }
 
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if (this.SingleElementListsBeforeFirst != null) {
-                expansion = this.SingleElementListsBeforeFirst.apply(i,
-                        expansion, nb_macros);
-            }
-
-            if (this.SingleElementListsAfterLast != null) {
-                expansion = this.SingleElementListsAfterLast.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.SingleElementListsSeparator != null) {
-                expansion = this.SingleElementListsSeparator.apply(i, expansion,
-                        nb_macros);
-            }
-
+            expansion = this.SingleElementListsSeparator.apply(i, expansion,
+                    nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1058,6 +955,10 @@ public class MInsertMacroPart
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
 
+        initMacroBodyPartsInternals(null);
+        initSetInternalsInternals(null);
+        initSingleElementListsInternals(null);
+
         initReferencedMacroNameDirectives();
         initEnclosingClassNameDirectives();
         initIndexBuilderDirectives();
@@ -1065,10 +966,6 @@ public class MInsertMacroPart
         initMacroBodyPartsDirectives();
         initSetInternalsDirectives();
         initSingleElementListsDirectives();
-
-        initMacroBodyPartsInternals(null);
-        initSetInternalsInternals(null);
-        initSingleElementListsInternals(null);
 
         StringBuilder sb0 = new StringBuilder();
 

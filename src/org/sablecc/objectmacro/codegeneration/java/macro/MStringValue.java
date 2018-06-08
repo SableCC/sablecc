@@ -87,23 +87,7 @@ public class MStringValue
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.StringNone != null) {
-            sb.append(this.StringNone.apply(i, "", nb_strings));
-        }
-
         for (String string : strings) {
-
-            if (this.StringBeforeFirst != null) {
-                string = this.StringBeforeFirst.apply(i, string, nb_strings);
-            }
-
-            if (this.StringAfterLast != null) {
-                string = this.StringAfterLast.apply(i, string, nb_strings);
-            }
-
-            if (this.StringSeparator != null) {
-                string = this.StringSeparator.apply(i, string, nb_strings);
-            }
 
             sb.append(string);
             i++;

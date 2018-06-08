@@ -87,23 +87,13 @@ public class MAppliedVersion
         int i = 0;
         int nb_strings = strings.size();
 
-        if (this.VersionsNone != null) {
-            sb.append(this.VersionsNone.apply(i, "", nb_strings));
+        if (this.VersionsSeparator == null) {
+            initVersionsDirectives();
         }
 
         for (String string : strings) {
 
-            if (this.VersionsBeforeFirst != null) {
-                string = this.VersionsBeforeFirst.apply(i, string, nb_strings);
-            }
-
-            if (this.VersionsAfterLast != null) {
-                string = this.VersionsAfterLast.apply(i, string, nb_strings);
-            }
-
-            if (this.VersionsSeparator != null) {
-                string = this.VersionsSeparator.apply(i, string, nb_strings);
-            }
+            string = this.VersionsSeparator.apply(i, string, nb_strings);
 
             sb.append(string);
             i++;

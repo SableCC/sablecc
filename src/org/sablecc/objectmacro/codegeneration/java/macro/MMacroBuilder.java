@@ -889,27 +889,8 @@ public class MMacroBuilder
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.ContextParamNone != null) {
-            sb.append(this.ContextParamNone.apply(i, "", nb_macros));
-        }
-
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
-
-            if (this.ContextParamBeforeFirst != null) {
-                expansion = this.ContextParamBeforeFirst.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.ContextParamAfterLast != null) {
-                expansion = this.ContextParamAfterLast.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.ContextParamSeparator != null) {
-                expansion = this.ContextParamSeparator.apply(i, expansion,
-                        nb_macros);
-            }
 
             sb.append(expansion);
             i++;
@@ -928,27 +909,13 @@ public class MMacroBuilder
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.ContextCacheBuilderNone != null) {
-            sb.append(this.ContextCacheBuilderNone.apply(i, "", nb_macros));
+        if (this.ContextCacheBuilderNone == null) {
+            initContextCacheBuilderDirectives();
         }
 
+        sb.append(this.ContextCacheBuilderNone.apply(i, "", nb_macros));
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
-
-            if (this.ContextCacheBuilderBeforeFirst != null) {
-                expansion = this.ContextCacheBuilderBeforeFirst.apply(i,
-                        expansion, nb_macros);
-            }
-
-            if (this.ContextCacheBuilderAfterLast != null) {
-                expansion = this.ContextCacheBuilderAfterLast.apply(i,
-                        expansion, nb_macros);
-            }
-
-            if (this.ContextCacheBuilderSeparator != null) {
-                expansion = this.ContextCacheBuilderSeparator.apply(i,
-                        expansion, nb_macros);
-            }
 
             sb.append(expansion);
             i++;
@@ -967,28 +934,17 @@ public class MMacroBuilder
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.NewCacheBuilderNone != null) {
-            sb.append(this.NewCacheBuilderNone.apply(i, "", nb_macros));
+        if (this.NewCacheBuilderNone == null
+                || this.NewCacheBuilderBeforeFirst == null) {
+            initNewCacheBuilderDirectives();
         }
 
+        sb.append(this.NewCacheBuilderNone.apply(i, "", nb_macros));
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if (this.NewCacheBuilderBeforeFirst != null) {
-                expansion = this.NewCacheBuilderBeforeFirst.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.NewCacheBuilderAfterLast != null) {
-                expansion = this.NewCacheBuilderAfterLast.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.NewCacheBuilderSeparator != null) {
-                expansion = this.NewCacheBuilderSeparator.apply(i, expansion,
-                        nb_macros);
-            }
-
+            expansion = this.NewCacheBuilderBeforeFirst.apply(i, expansion,
+                    nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1006,28 +962,21 @@ public class MMacroBuilder
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.DirectivesCallsNone != null) {
-            sb.append(this.DirectivesCallsNone.apply(i, "", nb_macros));
+        if (this.DirectivesCallsSeparator == null
+                || this.DirectivesCallsBeforeFirst == null
+                || this.DirectivesCallsAfterLast == null) {
+            initDirectivesCallsDirectives();
         }
 
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if (this.DirectivesCallsBeforeFirst != null) {
-                expansion = this.DirectivesCallsBeforeFirst.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.DirectivesCallsAfterLast != null) {
-                expansion = this.DirectivesCallsAfterLast.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.DirectivesCallsSeparator != null) {
-                expansion = this.DirectivesCallsSeparator.apply(i, expansion,
-                        nb_macros);
-            }
-
+            expansion = this.DirectivesCallsSeparator.apply(i, expansion,
+                    nb_macros);
+            expansion = this.DirectivesCallsBeforeFirst.apply(i, expansion,
+                    nb_macros);
+            expansion = this.DirectivesCallsAfterLast.apply(i, expansion,
+                    nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1045,28 +994,21 @@ public class MMacroBuilder
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.InternalsCallsNone != null) {
-            sb.append(this.InternalsCallsNone.apply(i, "", nb_macros));
+        if (this.InternalsCallsSeparator == null
+                || this.InternalsCallsBeforeFirst == null
+                || this.InternalsCallsAfterLast == null) {
+            initInternalsCallsDirectives();
         }
 
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if (this.InternalsCallsBeforeFirst != null) {
-                expansion = this.InternalsCallsBeforeFirst.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.InternalsCallsAfterLast != null) {
-                expansion = this.InternalsCallsAfterLast.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.InternalsCallsSeparator != null) {
-                expansion = this.InternalsCallsSeparator.apply(i, expansion,
-                        nb_macros);
-            }
-
+            expansion = this.InternalsCallsSeparator.apply(i, expansion,
+                    nb_macros);
+            expansion = this.InternalsCallsBeforeFirst.apply(i, expansion,
+                    nb_macros);
+            expansion = this.InternalsCallsAfterLast.apply(i, expansion,
+                    nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1084,28 +1026,21 @@ public class MMacroBuilder
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.MacroBodyPartsNone != null) {
-            sb.append(this.MacroBodyPartsNone.apply(i, "", nb_macros));
+        if (this.MacroBodyPartsSeparator == null
+                || this.MacroBodyPartsBeforeFirst == null
+                || this.MacroBodyPartsAfterLast == null) {
+            initMacroBodyPartsDirectives();
         }
 
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if (this.MacroBodyPartsBeforeFirst != null) {
-                expansion = this.MacroBodyPartsBeforeFirst.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.MacroBodyPartsAfterLast != null) {
-                expansion = this.MacroBodyPartsAfterLast.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.MacroBodyPartsSeparator != null) {
-                expansion = this.MacroBodyPartsSeparator.apply(i, expansion,
-                        nb_macros);
-            }
-
+            expansion = this.MacroBodyPartsSeparator.apply(i, expansion,
+                    nb_macros);
+            expansion = this.MacroBodyPartsBeforeFirst.apply(i, expansion,
+                    nb_macros);
+            expansion = this.MacroBodyPartsAfterLast.apply(i, expansion,
+                    nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1123,26 +1058,14 @@ public class MMacroBuilder
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.PublicNone != null) {
-            sb.append(this.PublicNone.apply(i, "", nb_macros));
+        if (this.PublicAfterLast == null) {
+            initPublicDirectives();
         }
 
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
 
-            if (this.PublicBeforeFirst != null) {
-                expansion
-                        = this.PublicBeforeFirst.apply(i, expansion, nb_macros);
-            }
-
-            if (this.PublicAfterLast != null) {
-                expansion = this.PublicAfterLast.apply(i, expansion, nb_macros);
-            }
-
-            if (this.PublicSeparator != null) {
-                expansion = this.PublicSeparator.apply(i, expansion, nb_macros);
-            }
-
+            expansion = this.PublicAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1160,27 +1083,8 @@ public class MMacroBuilder
         int nb_macros = macros.size();
         String expansion = null;
 
-        if (this.OverrideNone != null) {
-            sb.append(this.OverrideNone.apply(i, "", nb_macros));
-        }
-
         for (Macro macro : macros) {
             expansion = macro.build(local_context);
-
-            if (this.OverrideBeforeFirst != null) {
-                expansion = this.OverrideBeforeFirst.apply(i, expansion,
-                        nb_macros);
-            }
-
-            if (this.OverrideAfterLast != null) {
-                expansion
-                        = this.OverrideAfterLast.apply(i, expansion, nb_macros);
-            }
-
-            if (this.OverrideSeparator != null) {
-                expansion
-                        = this.OverrideSeparator.apply(i, expansion, nb_macros);
-            }
 
             sb.append(expansion);
             i++;
@@ -1494,15 +1398,6 @@ public class MMacroBuilder
         this.cacheBuilder = cache_builder;
         List<String> indentations = new LinkedList<>();
 
-        initContextParamDirectives();
-        initContextCacheBuilderDirectives();
-        initNewCacheBuilderDirectives();
-        initDirectivesCallsDirectives();
-        initInternalsCallsDirectives();
-        initMacroBodyPartsDirectives();
-        initPublicDirectives();
-        initOverrideDirectives();
-
         initContextParamInternals(null);
         initContextCacheBuilderInternals(null);
         initNewCacheBuilderInternals(null);
@@ -1511,6 +1406,15 @@ public class MMacroBuilder
         initMacroBodyPartsInternals(null);
         initPublicInternals(null);
         initOverrideInternals(null);
+
+        initContextParamDirectives();
+        initContextCacheBuilderDirectives();
+        initNewCacheBuilderDirectives();
+        initDirectivesCallsDirectives();
+        initInternalsCallsDirectives();
+        initMacroBodyPartsDirectives();
+        initPublicDirectives();
+        initOverrideDirectives();
 
         StringBuilder sb0 = new StringBuilder();
 
@@ -1561,8 +1465,8 @@ public class MMacroBuilder
         StringBuilder sb2 = new StringBuilder();
         sb2.append("    ");
         indentations.add(sb2.toString());
-        sb1.append(buildDirectivesCalls());
         sb1.append(buildInternalsCalls());
+        sb1.append(buildDirectivesCalls());
         sb0.append(applyIndent(sb1.toString(),
                 indentations.remove(indentations.size() - 1)));
         sb0.append(LINE_SEPARATOR);
