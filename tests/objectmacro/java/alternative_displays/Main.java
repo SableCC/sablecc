@@ -17,6 +17,7 @@ public class Main {
         MFor mFor = m.newFor();
         mFor.addClassName("String");
         mFor.addParameterName("strings");
+        mClass.addTest(mFor);
 
         MEnum mEnum = m.newEnum();
         mEnum.addEnumName("ENUM");

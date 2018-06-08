@@ -148,6 +148,7 @@ public class MVersionEnumeration extends Macro {
     }
     
     private String buildPackageDeclaration() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.PackageDeclarationContext;
         List<Macro> macros = this.list_PackageDeclaration;
@@ -155,26 +156,15 @@ public class MVersionEnumeration extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.PackageDeclarationNone != null) {
-            sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
+        
+        if(this.PackageDeclarationBeforeFirst == null) {
+            initPackageDeclarationDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.PackageDeclarationBeforeFirst != null) {
-                expansion = this.PackageDeclarationBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.PackageDeclarationAfterLast != null) {
-                expansion = this.PackageDeclarationAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.PackageDeclarationSeparator != null) {
-                expansion = this.PackageDeclarationSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.PackageDeclarationBeforeFirst.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -183,29 +173,22 @@ public class MVersionEnumeration extends Macro {
     }
     
     private String buildVersions() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_Versions;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.VersionsNone != null) {
-            sb.append(this.VersionsNone.apply(i, "", nb_strings));
-        }
+        
+    if(this.VersionsSeparator == null) {
+        initVersionsDirectives();
+    }
+        
     
         for(String string : strings) {
-    
-            if(this.VersionsBeforeFirst != null) {
-                string = this.VersionsBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.VersionsAfterLast != null) {
-                string = this.VersionsAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.VersionsSeparator != null) {
-                string = this.VersionsSeparator.apply(i, string, nb_strings);
-            }
+            
+    string = this.VersionsSeparator.apply(i, string, nb_strings);
     
             sb.append(string);
             i++;
@@ -274,10 +257,10 @@ public class MVersionEnumeration extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
+        initPackageDeclarationInternals(null);
+        
         initPackageDeclarationDirectives();
         initVersionsDirectives();
-        
-        initPackageDeclarationInternals(null);
     
         StringBuilder sb0 = new StringBuilder();
         

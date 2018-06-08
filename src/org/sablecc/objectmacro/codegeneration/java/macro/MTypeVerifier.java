@@ -228,30 +228,18 @@ public class MTypeVerifier extends Macro {
     }
     
     private String buildParamName() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_ParamName;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.ParamNameNone != null) {
-            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.ParamNameBeforeFirst != null) {
-                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.ParamNameAfterLast != null) {
-                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.ParamNameSeparator != null) {
-                string = this.ParamNameSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -260,6 +248,7 @@ public class MTypeVerifier extends Macro {
     }
     
     private String buildTypeVerification() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.TypeVerificationContext;
         List<Macro> macros = this.list_TypeVerification;
@@ -267,26 +256,11 @@ public class MTypeVerifier extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.TypeVerificationNone != null) {
-            sb.append(this.TypeVerificationNone.apply(i, "", nb_macros));
-        }
-    
+        
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.TypeVerificationBeforeFirst != null) {
-                expansion = this.TypeVerificationBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.TypeVerificationAfterLast != null) {
-                expansion = this.TypeVerificationAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.TypeVerificationSeparator != null) {
-                expansion = this.TypeVerificationSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
             sb.append(expansion);
             i++;
         }
@@ -295,6 +269,7 @@ public class MTypeVerifier extends Macro {
     }
     
     private String buildOverride() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.OverrideContext;
         List<Macro> macros = this.list_Override;
@@ -302,26 +277,11 @@ public class MTypeVerifier extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.OverrideNone != null) {
-            sb.append(this.OverrideNone.apply(i, "", nb_macros));
-        }
-    
+        
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.OverrideBeforeFirst != null) {
-                expansion = this.OverrideBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.OverrideAfterLast != null) {
-                expansion = this.OverrideAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.OverrideSeparator != null) {
-                expansion = this.OverrideSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
             sb.append(expansion);
             i++;
         }
@@ -404,12 +364,12 @@ public class MTypeVerifier extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
+        initTypeVerificationInternals(null);
+        initOverrideInternals(null);
+        
         initParamNameDirectives();
         initTypeVerificationDirectives();
         initOverrideDirectives();
-        
-        initTypeVerificationInternals(null);
-        initOverrideInternals(null);
     
         StringBuilder sb0 = new StringBuilder();
         

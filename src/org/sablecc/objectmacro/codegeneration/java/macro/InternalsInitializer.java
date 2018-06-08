@@ -162,6 +162,18 @@ class InternalsInitializer {
         throw ObjectMacroException.incorrectType("MIsBuilt", this._paramName);
     }
     
+    void setDirectiveApplier(MDirectiveApplier mDirectiveApplier) {
+        throw ObjectMacroException.incorrectType("MDirectiveApplier", this._paramName);
+    }
+    
+    void setNoneDirective(MNoneDirective mNoneDirective) {
+        throw ObjectMacroException.incorrectType("MNoneDirective", this._paramName);
+    }
+    
+    void setDirectivesInitVerification(MDirectivesInitVerification mDirectivesInitVerification) {
+        throw ObjectMacroException.incorrectType("MDirectivesInitVerification", this._paramName);
+    }
+    
     void setParamMacroRefBuilder(MParamMacroRefBuilder mParamMacroRefBuilder) {
         throw ObjectMacroException.incorrectType("MParamMacroRefBuilder", this._paramName);
     }

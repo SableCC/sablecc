@@ -148,30 +148,18 @@ public class MInitInternalsCall extends Macro {
     }
     
     private String buildParamName() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_ParamName;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.ParamNameNone != null) {
-            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.ParamNameBeforeFirst != null) {
-                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.ParamNameAfterLast != null) {
-                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.ParamNameSeparator != null) {
-                string = this.ParamNameSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -180,6 +168,7 @@ public class MInitInternalsCall extends Macro {
     }
     
     private String buildContextArg() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.ContextArgContext;
         List<Macro> macros = this.list_ContextArg;
@@ -187,26 +176,15 @@ public class MInitInternalsCall extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.ContextArgNone != null) {
-            sb.append(this.ContextArgNone.apply(i, "", nb_macros));
+        
+        if(this.ContextArgNone == null) {
+            initContextArgDirectives();
         }
-    
+        
+    sb.append(this.ContextArgNone.apply(i, "", nb_macros));
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.ContextArgBeforeFirst != null) {
-                expansion = this.ContextArgBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.ContextArgAfterLast != null) {
-                expansion = this.ContextArgAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.ContextArgSeparator != null) {
-                expansion = this.ContextArgSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
             sb.append(expansion);
             i++;
         }
@@ -271,10 +249,10 @@ public class MInitInternalsCall extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
+        initContextArgInternals(null);
+        
         initParamNameDirectives();
         initContextArgDirectives();
-        
-        initContextArgInternals(null);
     
         StringBuilder sb0 = new StringBuilder();
         

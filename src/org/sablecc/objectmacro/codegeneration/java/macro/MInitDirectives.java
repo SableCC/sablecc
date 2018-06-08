@@ -148,30 +148,18 @@ public class MInitDirectives extends Macro {
     }
     
     private String buildParamName() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_ParamName;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.ParamNameNone != null) {
-            sb.append(this.ParamNameNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.ParamNameBeforeFirst != null) {
-                string = this.ParamNameBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.ParamNameAfterLast != null) {
-                string = this.ParamNameAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.ParamNameSeparator != null) {
-                string = this.ParamNameSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -180,6 +168,7 @@ public class MInitDirectives extends Macro {
     }
     
     private String buildNewDirectives() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.NewDirectivesContext;
         List<Macro> macros = this.list_NewDirectives;
@@ -187,26 +176,15 @@ public class MInitDirectives extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.NewDirectivesNone != null) {
-            sb.append(this.NewDirectivesNone.apply(i, "", nb_macros));
+        
+        if(this.NewDirectivesSeparator == null) {
+            initNewDirectivesDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.NewDirectivesBeforeFirst != null) {
-                expansion = this.NewDirectivesBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.NewDirectivesAfterLast != null) {
-                expansion = this.NewDirectivesAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.NewDirectivesSeparator != null) {
-                expansion = this.NewDirectivesSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.NewDirectivesSeparator.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -240,7 +218,10 @@ public class MInitDirectives extends Macro {
     }
     
     private void initNewDirectivesDirectives() {
-        
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.NewDirectivesSeparator = new DSeparator(sb1.toString());
+        this.NewDirectivesValue.setSeparator(this.NewDirectivesSeparator);
     }
     
     @Override
@@ -268,10 +249,10 @@ public class MInitDirectives extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
+        initNewDirectivesInternals(null);
+        
         initParamNameDirectives();
         initNewDirectivesDirectives();
-        
-        initNewDirectivesInternals(null);
     
         StringBuilder sb0 = new StringBuilder();
         

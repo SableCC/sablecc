@@ -97,6 +97,7 @@ public class MClassMacroValue extends Macro {
     }
     
     private String buildPackageDeclaration() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.PackageDeclarationContext;
         List<Macro> macros = this.list_PackageDeclaration;
@@ -104,26 +105,15 @@ public class MClassMacroValue extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.PackageDeclarationNone != null) {
-            sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
+        
+        if(this.PackageDeclarationBeforeFirst == null) {
+            initPackageDeclarationDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.PackageDeclarationBeforeFirst != null) {
-                expansion = this.PackageDeclarationBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.PackageDeclarationAfterLast != null) {
-                expansion = this.PackageDeclarationAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.PackageDeclarationSeparator != null) {
-                expansion = this.PackageDeclarationSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.PackageDeclarationBeforeFirst.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -180,9 +170,9 @@ public class MClassMacroValue extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
-        initPackageDeclarationDirectives();
-        
         initPackageDeclarationInternals(null);
+        
+        initPackageDeclarationDirectives();
     
         StringBuilder sb0 = new StringBuilder();
         

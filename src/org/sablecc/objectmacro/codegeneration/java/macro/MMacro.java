@@ -1694,30 +1694,18 @@ public class MMacro extends Macro {
     }
     
     private String buildClassName() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_ClassName;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.ClassNameNone != null) {
-            sb.append(this.ClassNameNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.ClassNameBeforeFirst != null) {
-                string = this.ClassNameBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.ClassNameAfterLast != null) {
-                string = this.ClassNameAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.ClassNameSeparator != null) {
-                string = this.ClassNameSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -1726,30 +1714,18 @@ public class MMacro extends Macro {
     }
     
     private String buildParentClass() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_ParentClass;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.ParentClassNone != null) {
-            sb.append(this.ParentClassNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.ParentClassBeforeFirst != null) {
-                string = this.ParentClassBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.ParentClassAfterLast != null) {
-                string = this.ParentClassAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.ParentClassSeparator != null) {
-                string = this.ParentClassSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -1758,6 +1734,7 @@ public class MMacro extends Macro {
     }
     
     private String buildPublic() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.PublicContext;
         List<Macro> macros = this.list_Public;
@@ -1765,26 +1742,15 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.PublicNone != null) {
-            sb.append(this.PublicNone.apply(i, "", nb_macros));
+        
+        if(this.PublicAfterLast == null) {
+            initPublicDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.PublicBeforeFirst != null) {
-                expansion = this.PublicBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.PublicAfterLast != null) {
-                expansion = this.PublicAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.PublicSeparator != null) {
-                expansion = this.PublicSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.PublicAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1793,6 +1759,7 @@ public class MMacro extends Macro {
     }
     
     private String buildAbstract() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.AbstractContext;
         List<Macro> macros = this.list_Abstract;
@@ -1800,26 +1767,15 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.AbstractNone != null) {
-            sb.append(this.AbstractNone.apply(i, "", nb_macros));
+        
+        if(this.AbstractAfterLast == null) {
+            initAbstractDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.AbstractBeforeFirst != null) {
-                expansion = this.AbstractBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.AbstractAfterLast != null) {
-                expansion = this.AbstractAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.AbstractSeparator != null) {
-                expansion = this.AbstractSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.AbstractAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1828,6 +1784,7 @@ public class MMacro extends Macro {
     }
     
     private String buildPackageDeclaration() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.PackageDeclarationContext;
         List<Macro> macros = this.list_PackageDeclaration;
@@ -1835,26 +1792,15 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.PackageDeclarationNone != null) {
-            sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
+        
+        if(this.PackageDeclarationBeforeFirst == null) {
+            initPackageDeclarationDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.PackageDeclarationBeforeFirst != null) {
-                expansion = this.PackageDeclarationBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.PackageDeclarationAfterLast != null) {
-                expansion = this.PackageDeclarationAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.PackageDeclarationSeparator != null) {
-                expansion = this.PackageDeclarationSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.PackageDeclarationBeforeFirst.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1863,6 +1809,7 @@ public class MMacro extends Macro {
     }
     
     private String buildFields() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.FieldsContext;
         List<Macro> macros = this.list_Fields;
@@ -1870,26 +1817,17 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.FieldsNone != null) {
-            sb.append(this.FieldsNone.apply(i, "", nb_macros));
+        
+        if(this.FieldsSeparator == null || this.FieldsBeforeFirst == null || this.FieldsAfterLast == null) {
+            initFieldsDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.FieldsBeforeFirst != null) {
-                expansion = this.FieldsBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.FieldsAfterLast != null) {
-                expansion = this.FieldsAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.FieldsSeparator != null) {
-                expansion = this.FieldsSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.FieldsSeparator.apply(i, expansion, nb_macros);
+            expansion = this.FieldsBeforeFirst.apply(i, expansion, nb_macros);
+            expansion = this.FieldsAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1898,6 +1836,7 @@ public class MMacro extends Macro {
     }
     
     private String buildConstructor() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.ConstructorContext;
         List<Macro> macros = this.list_Constructor;
@@ -1905,26 +1844,17 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.ConstructorNone != null) {
-            sb.append(this.ConstructorNone.apply(i, "", nb_macros));
+        
+        if(this.ConstructorBeforeFirst == null || this.ConstructorAfterLast == null || this.ConstructorSeparator == null) {
+            initConstructorDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.ConstructorBeforeFirst != null) {
-                expansion = this.ConstructorBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.ConstructorAfterLast != null) {
-                expansion = this.ConstructorAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.ConstructorSeparator != null) {
-                expansion = this.ConstructorSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.ConstructorBeforeFirst.apply(i, expansion, nb_macros);
+            expansion = this.ConstructorAfterLast.apply(i, expansion, nb_macros);
+            expansion = this.ConstructorSeparator.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1933,6 +1863,7 @@ public class MMacro extends Macro {
     }
     
     private String buildSetters() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.SettersContext;
         List<Macro> macros = this.list_Setters;
@@ -1940,26 +1871,17 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.SettersNone != null) {
-            sb.append(this.SettersNone.apply(i, "", nb_macros));
+        
+        if(this.SettersSeparator == null || this.SettersBeforeFirst == null || this.SettersAfterLast == null) {
+            initSettersDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.SettersBeforeFirst != null) {
-                expansion = this.SettersBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.SettersAfterLast != null) {
-                expansion = this.SettersAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.SettersSeparator != null) {
-                expansion = this.SettersSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.SettersSeparator.apply(i, expansion, nb_macros);
+            expansion = this.SettersBeforeFirst.apply(i, expansion, nb_macros);
+            expansion = this.SettersAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -1968,6 +1890,7 @@ public class MMacro extends Macro {
     }
     
     private String buildBuilders() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.BuildersContext;
         List<Macro> macros = this.list_Builders;
@@ -1975,26 +1898,17 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.BuildersNone != null) {
-            sb.append(this.BuildersNone.apply(i, "", nb_macros));
+        
+        if(this.BuildersSeparator == null || this.BuildersBeforeFirst == null || this.BuildersAfterLast == null) {
+            initBuildersDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.BuildersBeforeFirst != null) {
-                expansion = this.BuildersBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.BuildersAfterLast != null) {
-                expansion = this.BuildersAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.BuildersSeparator != null) {
-                expansion = this.BuildersSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.BuildersSeparator.apply(i, expansion, nb_macros);
+            expansion = this.BuildersBeforeFirst.apply(i, expansion, nb_macros);
+            expansion = this.BuildersAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -2003,6 +1917,7 @@ public class MMacro extends Macro {
     }
     
     private String buildGetters() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.GettersContext;
         List<Macro> macros = this.list_Getters;
@@ -2010,26 +1925,17 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.GettersNone != null) {
-            sb.append(this.GettersNone.apply(i, "", nb_macros));
+        
+        if(this.GettersSeparator == null || this.GettersBeforeFirst == null || this.GettersAfterLast == null) {
+            initGettersDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.GettersBeforeFirst != null) {
-                expansion = this.GettersBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.GettersAfterLast != null) {
-                expansion = this.GettersAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.GettersSeparator != null) {
-                expansion = this.GettersSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.GettersSeparator.apply(i, expansion, nb_macros);
+            expansion = this.GettersBeforeFirst.apply(i, expansion, nb_macros);
+            expansion = this.GettersAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -2038,6 +1944,7 @@ public class MMacro extends Macro {
     }
     
     private String buildInitInternalsMethods() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.InitInternalsMethodsContext;
         List<Macro> macros = this.list_InitInternalsMethods;
@@ -2045,26 +1952,17 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.InitInternalsMethodsNone != null) {
-            sb.append(this.InitInternalsMethodsNone.apply(i, "", nb_macros));
+        
+        if(this.InitInternalsMethodsSeparator == null || this.InitInternalsMethodsBeforeFirst == null || this.InitInternalsMethodsAfterLast == null) {
+            initInitInternalsMethodsDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.InitInternalsMethodsBeforeFirst != null) {
-                expansion = this.InitInternalsMethodsBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.InitInternalsMethodsAfterLast != null) {
-                expansion = this.InitInternalsMethodsAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.InitInternalsMethodsSeparator != null) {
-                expansion = this.InitInternalsMethodsSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.InitInternalsMethodsSeparator.apply(i, expansion, nb_macros);
+            expansion = this.InitInternalsMethodsBeforeFirst.apply(i, expansion, nb_macros);
+            expansion = this.InitInternalsMethodsAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -2073,6 +1971,7 @@ public class MMacro extends Macro {
     }
     
     private String buildInitDirectives() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.InitDirectivesContext;
         List<Macro> macros = this.list_InitDirectives;
@@ -2080,26 +1979,17 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.InitDirectivesNone != null) {
-            sb.append(this.InitDirectivesNone.apply(i, "", nb_macros));
+        
+        if(this.InitDirectivesSeparator == null || this.InitDirectivesBeforeFirst == null || this.InitDirectivesAfterLast == null) {
+            initInitDirectivesDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.InitDirectivesBeforeFirst != null) {
-                expansion = this.InitDirectivesBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.InitDirectivesAfterLast != null) {
-                expansion = this.InitDirectivesAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.InitDirectivesSeparator != null) {
-                expansion = this.InitDirectivesSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.InitDirectivesSeparator.apply(i, expansion, nb_macros);
+            expansion = this.InitDirectivesBeforeFirst.apply(i, expansion, nb_macros);
+            expansion = this.InitDirectivesAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -2108,6 +1998,7 @@ public class MMacro extends Macro {
     }
     
     private String buildRedefinedApplyInitializer() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.RedefinedApplyInitializerContext;
         List<Macro> macros = this.list_RedefinedApplyInitializer;
@@ -2115,26 +2006,16 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.RedefinedApplyInitializerNone != null) {
-            sb.append(this.RedefinedApplyInitializerNone.apply(i, "", nb_macros));
+        
+        if(this.RedefinedApplyInitializerBeforeFirst == null || this.RedefinedApplyInitializerAfterLast == null) {
+            initRedefinedApplyInitializerDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.RedefinedApplyInitializerBeforeFirst != null) {
-                expansion = this.RedefinedApplyInitializerBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.RedefinedApplyInitializerAfterLast != null) {
-                expansion = this.RedefinedApplyInitializerAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.RedefinedApplyInitializerSeparator != null) {
-                expansion = this.RedefinedApplyInitializerSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.RedefinedApplyInitializerBeforeFirst.apply(i, expansion, nb_macros);
+            expansion = this.RedefinedApplyInitializerAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -2143,6 +2024,7 @@ public class MMacro extends Macro {
     }
     
     private String buildMacroBuilders() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.MacroBuildersContext;
         List<Macro> macros = this.list_MacroBuilders;
@@ -2150,26 +2032,17 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.MacroBuildersNone != null) {
-            sb.append(this.MacroBuildersNone.apply(i, "", nb_macros));
+        
+        if(this.MacroBuildersSeparator == null || this.MacroBuildersBeforeFirst == null || this.MacroBuildersAfterLast == null) {
+            initMacroBuildersDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.MacroBuildersBeforeFirst != null) {
-                expansion = this.MacroBuildersBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.MacroBuildersAfterLast != null) {
-                expansion = this.MacroBuildersAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.MacroBuildersSeparator != null) {
-                expansion = this.MacroBuildersSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.MacroBuildersSeparator.apply(i, expansion, nb_macros);
+            expansion = this.MacroBuildersBeforeFirst.apply(i, expansion, nb_macros);
+            expansion = this.MacroBuildersAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -2178,6 +2051,7 @@ public class MMacro extends Macro {
     }
     
     private String buildAppliedVersion() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.AppliedVersionContext;
         List<Macro> macros = this.list_AppliedVersion;
@@ -2185,26 +2059,15 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.AppliedVersionNone != null) {
-            sb.append(this.AppliedVersionNone.apply(i, "", nb_macros));
+        
+        if(this.AppliedVersionBeforeFirst == null) {
+            initAppliedVersionDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.AppliedVersionBeforeFirst != null) {
-                expansion = this.AppliedVersionBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.AppliedVersionAfterLast != null) {
-                expansion = this.AppliedVersionAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.AppliedVersionSeparator != null) {
-                expansion = this.AppliedVersionSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.AppliedVersionBeforeFirst.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -2213,6 +2076,7 @@ public class MMacro extends Macro {
     }
     
     private String buildInitMacrosMethod() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.InitMacrosMethodContext;
         List<Macro> macros = this.list_InitMacrosMethod;
@@ -2220,26 +2084,16 @@ public class MMacro extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.InitMacrosMethodNone != null) {
-            sb.append(this.InitMacrosMethodNone.apply(i, "", nb_macros));
+        
+        if(this.InitMacrosMethodBeforeFirst == null || this.InitMacrosMethodAfterLast == null) {
+            initInitMacrosMethodDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.InitMacrosMethodBeforeFirst != null) {
-                expansion = this.InitMacrosMethodBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.InitMacrosMethodAfterLast != null) {
-                expansion = this.InitMacrosMethodAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.InitMacrosMethodSeparator != null) {
-                expansion = this.InitMacrosMethodSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.InitMacrosMethodBeforeFirst.apply(i, expansion, nb_macros);
+            expansion = this.InitMacrosMethodAfterLast.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -2660,10 +2514,12 @@ public class MMacro extends Macro {
         sb1.append(LINE_SEPARATOR);
         sb1.append(LINE_SEPARATOR);
         this.FieldsSeparator = new DSeparator(sb1.toString());
-        this.FieldsValue.setSeparator(this.FieldsSeparator);StringBuilder sb2 = new StringBuilder();
+        this.FieldsValue.setSeparator(this.FieldsSeparator);
+        StringBuilder sb2 = new StringBuilder();
         sb2.append(LINE_SEPARATOR);
         this.FieldsBeforeFirst = new DBeforeFirst(sb2.toString());
-        this.FieldsValue.setBeforeFirst(this.FieldsBeforeFirst);StringBuilder sb3 = new StringBuilder();
+        this.FieldsValue.setBeforeFirst(this.FieldsBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
         sb3.append(LINE_SEPARATOR);
         this.FieldsAfterLast = new DAfterLast(sb3.toString());
         this.FieldsValue.setAfterLast(this.FieldsAfterLast);
@@ -2673,10 +2529,12 @@ public class MMacro extends Macro {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.ConstructorBeforeFirst = new DBeforeFirst(sb1.toString());
-        this.ConstructorValue.setBeforeFirst(this.ConstructorBeforeFirst);StringBuilder sb2 = new StringBuilder();
+        this.ConstructorValue.setBeforeFirst(this.ConstructorBeforeFirst);
+        StringBuilder sb2 = new StringBuilder();
         sb2.append(LINE_SEPARATOR);
         this.ConstructorAfterLast = new DAfterLast(sb2.toString());
-        this.ConstructorValue.setAfterLast(this.ConstructorAfterLast);StringBuilder sb3 = new StringBuilder();
+        this.ConstructorValue.setAfterLast(this.ConstructorAfterLast);
+        StringBuilder sb3 = new StringBuilder();
         sb3.append(LINE_SEPARATOR);
         sb3.append(LINE_SEPARATOR);
         this.ConstructorSeparator = new DSeparator(sb3.toString());
@@ -2688,10 +2546,12 @@ public class MMacro extends Macro {
         sb1.append(LINE_SEPARATOR);
         sb1.append(LINE_SEPARATOR);
         this.SettersSeparator = new DSeparator(sb1.toString());
-        this.SettersValue.setSeparator(this.SettersSeparator);StringBuilder sb2 = new StringBuilder();
+        this.SettersValue.setSeparator(this.SettersSeparator);
+        StringBuilder sb2 = new StringBuilder();
         sb2.append(LINE_SEPARATOR);
         this.SettersBeforeFirst = new DBeforeFirst(sb2.toString());
-        this.SettersValue.setBeforeFirst(this.SettersBeforeFirst);StringBuilder sb3 = new StringBuilder();
+        this.SettersValue.setBeforeFirst(this.SettersBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
         sb3.append(LINE_SEPARATOR);
         this.SettersAfterLast = new DAfterLast(sb3.toString());
         this.SettersValue.setAfterLast(this.SettersAfterLast);
@@ -2702,10 +2562,12 @@ public class MMacro extends Macro {
         sb1.append(LINE_SEPARATOR);
         sb1.append(LINE_SEPARATOR);
         this.BuildersSeparator = new DSeparator(sb1.toString());
-        this.BuildersValue.setSeparator(this.BuildersSeparator);StringBuilder sb2 = new StringBuilder();
+        this.BuildersValue.setSeparator(this.BuildersSeparator);
+        StringBuilder sb2 = new StringBuilder();
         sb2.append(LINE_SEPARATOR);
         this.BuildersBeforeFirst = new DBeforeFirst(sb2.toString());
-        this.BuildersValue.setBeforeFirst(this.BuildersBeforeFirst);StringBuilder sb3 = new StringBuilder();
+        this.BuildersValue.setBeforeFirst(this.BuildersBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
         sb3.append(LINE_SEPARATOR);
         this.BuildersAfterLast = new DAfterLast(sb3.toString());
         this.BuildersValue.setAfterLast(this.BuildersAfterLast);
@@ -2716,10 +2578,12 @@ public class MMacro extends Macro {
         sb1.append(LINE_SEPARATOR);
         sb1.append(LINE_SEPARATOR);
         this.GettersSeparator = new DSeparator(sb1.toString());
-        this.GettersValue.setSeparator(this.GettersSeparator);StringBuilder sb2 = new StringBuilder();
+        this.GettersValue.setSeparator(this.GettersSeparator);
+        StringBuilder sb2 = new StringBuilder();
         sb2.append(LINE_SEPARATOR);
         this.GettersBeforeFirst = new DBeforeFirst(sb2.toString());
-        this.GettersValue.setBeforeFirst(this.GettersBeforeFirst);StringBuilder sb3 = new StringBuilder();
+        this.GettersValue.setBeforeFirst(this.GettersBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
         sb3.append(LINE_SEPARATOR);
         this.GettersAfterLast = new DAfterLast(sb3.toString());
         this.GettersValue.setAfterLast(this.GettersAfterLast);
@@ -2730,10 +2594,12 @@ public class MMacro extends Macro {
         sb1.append(LINE_SEPARATOR);
         sb1.append(LINE_SEPARATOR);
         this.InitInternalsMethodsSeparator = new DSeparator(sb1.toString());
-        this.InitInternalsMethodsValue.setSeparator(this.InitInternalsMethodsSeparator);StringBuilder sb2 = new StringBuilder();
+        this.InitInternalsMethodsValue.setSeparator(this.InitInternalsMethodsSeparator);
+        StringBuilder sb2 = new StringBuilder();
         sb2.append(LINE_SEPARATOR);
         this.InitInternalsMethodsBeforeFirst = new DBeforeFirst(sb2.toString());
-        this.InitInternalsMethodsValue.setBeforeFirst(this.InitInternalsMethodsBeforeFirst);StringBuilder sb3 = new StringBuilder();
+        this.InitInternalsMethodsValue.setBeforeFirst(this.InitInternalsMethodsBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
         sb3.append(LINE_SEPARATOR);
         this.InitInternalsMethodsAfterLast = new DAfterLast(sb3.toString());
         this.InitInternalsMethodsValue.setAfterLast(this.InitInternalsMethodsAfterLast);
@@ -2744,10 +2610,12 @@ public class MMacro extends Macro {
         sb1.append(LINE_SEPARATOR);
         sb1.append(LINE_SEPARATOR);
         this.InitDirectivesSeparator = new DSeparator(sb1.toString());
-        this.InitDirectivesValue.setSeparator(this.InitDirectivesSeparator);StringBuilder sb2 = new StringBuilder();
+        this.InitDirectivesValue.setSeparator(this.InitDirectivesSeparator);
+        StringBuilder sb2 = new StringBuilder();
         sb2.append(LINE_SEPARATOR);
         this.InitDirectivesBeforeFirst = new DBeforeFirst(sb2.toString());
-        this.InitDirectivesValue.setBeforeFirst(this.InitDirectivesBeforeFirst);StringBuilder sb3 = new StringBuilder();
+        this.InitDirectivesValue.setBeforeFirst(this.InitDirectivesBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
         sb3.append(LINE_SEPARATOR);
         this.InitDirectivesAfterLast = new DAfterLast(sb3.toString());
         this.InitDirectivesValue.setAfterLast(this.InitDirectivesAfterLast);
@@ -2757,7 +2625,8 @@ public class MMacro extends Macro {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.RedefinedApplyInitializerBeforeFirst = new DBeforeFirst(sb1.toString());
-        this.RedefinedApplyInitializerValue.setBeforeFirst(this.RedefinedApplyInitializerBeforeFirst);StringBuilder sb2 = new StringBuilder();
+        this.RedefinedApplyInitializerValue.setBeforeFirst(this.RedefinedApplyInitializerBeforeFirst);
+        StringBuilder sb2 = new StringBuilder();
         sb2.append(LINE_SEPARATOR);
         this.RedefinedApplyInitializerAfterLast = new DAfterLast(sb2.toString());
         this.RedefinedApplyInitializerValue.setAfterLast(this.RedefinedApplyInitializerAfterLast);
@@ -2768,10 +2637,12 @@ public class MMacro extends Macro {
         sb1.append(LINE_SEPARATOR);
         sb1.append(LINE_SEPARATOR);
         this.MacroBuildersSeparator = new DSeparator(sb1.toString());
-        this.MacroBuildersValue.setSeparator(this.MacroBuildersSeparator);StringBuilder sb2 = new StringBuilder();
+        this.MacroBuildersValue.setSeparator(this.MacroBuildersSeparator);
+        StringBuilder sb2 = new StringBuilder();
         sb2.append(LINE_SEPARATOR);
         this.MacroBuildersBeforeFirst = new DBeforeFirst(sb2.toString());
-        this.MacroBuildersValue.setBeforeFirst(this.MacroBuildersBeforeFirst);StringBuilder sb3 = new StringBuilder();
+        this.MacroBuildersValue.setBeforeFirst(this.MacroBuildersBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
         sb3.append(LINE_SEPARATOR);
         this.MacroBuildersAfterLast = new DAfterLast(sb3.toString());
         this.MacroBuildersValue.setAfterLast(this.MacroBuildersAfterLast);
@@ -2789,7 +2660,8 @@ public class MMacro extends Macro {
         StringBuilder sb1 = new StringBuilder();
         sb1.append(LINE_SEPARATOR);
         this.InitMacrosMethodBeforeFirst = new DBeforeFirst(sb1.toString());
-        this.InitMacrosMethodValue.setBeforeFirst(this.InitMacrosMethodBeforeFirst);StringBuilder sb2 = new StringBuilder();
+        this.InitMacrosMethodValue.setBeforeFirst(this.InitMacrosMethodBeforeFirst);
+        StringBuilder sb2 = new StringBuilder();
         sb2.append(LINE_SEPARATOR);
         this.InitMacrosMethodAfterLast = new DAfterLast(sb2.toString());
         this.InitMacrosMethodValue.setAfterLast(this.InitMacrosMethodAfterLast);
@@ -2820,6 +2692,21 @@ public class MMacro extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
+        initPublicInternals(null);
+        initAbstractInternals(null);
+        initPackageDeclarationInternals(null);
+        initFieldsInternals(null);
+        initConstructorInternals(null);
+        initSettersInternals(null);
+        initBuildersInternals(null);
+        initGettersInternals(null);
+        initInitInternalsMethodsInternals(null);
+        initInitDirectivesInternals(null);
+        initRedefinedApplyInitializerInternals(null);
+        initMacroBuildersInternals(null);
+        initAppliedVersionInternals(null);
+        initInitMacrosMethodInternals(null);
+        
         initClassNameDirectives();
         initParentClassDirectives();
         initPublicDirectives();
@@ -2836,21 +2723,6 @@ public class MMacro extends Macro {
         initMacroBuildersDirectives();
         initAppliedVersionDirectives();
         initInitMacrosMethodDirectives();
-        
-        initPublicInternals(null);
-        initAbstractInternals(null);
-        initPackageDeclarationInternals(null);
-        initFieldsInternals(null);
-        initConstructorInternals(null);
-        initSettersInternals(null);
-        initBuildersInternals(null);
-        initGettersInternals(null);
-        initInitInternalsMethodsInternals(null);
-        initInitDirectivesInternals(null);
-        initRedefinedApplyInitializerInternals(null);
-        initMacroBuildersInternals(null);
-        initAppliedVersionInternals(null);
-        initInitMacrosMethodInternals(null);
     
         StringBuilder sb0 = new StringBuilder();
         

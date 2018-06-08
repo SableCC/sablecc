@@ -404,30 +404,18 @@ public class MRedefinedInternalsSetter extends Macro {
     }
     
     private String buildMacroName() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_MacroName;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.MacroNameNone != null) {
-            sb.append(this.MacroNameNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.MacroNameBeforeFirst != null) {
-                string = this.MacroNameBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.MacroNameAfterLast != null) {
-                string = this.MacroNameAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.MacroNameSeparator != null) {
-                string = this.MacroNameSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -436,6 +424,7 @@ public class MRedefinedInternalsSetter extends Macro {
     }
     
     private String buildTextParts() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.TextPartsContext;
         List<Macro> macros = this.list_TextParts;
@@ -443,26 +432,15 @@ public class MRedefinedInternalsSetter extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.TextPartsNone != null) {
-            sb.append(this.TextPartsNone.apply(i, "", nb_macros));
+        
+        if(this.TextPartsSeparator == null) {
+            initTextPartsDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.TextPartsBeforeFirst != null) {
-                expansion = this.TextPartsBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.TextPartsAfterLast != null) {
-                expansion = this.TextPartsAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.TextPartsSeparator != null) {
-                expansion = this.TextPartsSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.TextPartsSeparator.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -471,6 +449,7 @@ public class MRedefinedInternalsSetter extends Macro {
     }
     
     private String buildSingleStringElements() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.SingleStringElementsContext;
         List<Macro> macros = this.list_SingleStringElements;
@@ -478,26 +457,15 @@ public class MRedefinedInternalsSetter extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.SingleStringElementsNone != null) {
-            sb.append(this.SingleStringElementsNone.apply(i, "", nb_macros));
+        
+        if(this.SingleStringElementsSeparator == null) {
+            initSingleStringElementsDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.SingleStringElementsBeforeFirst != null) {
-                expansion = this.SingleStringElementsBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.SingleStringElementsAfterLast != null) {
-                expansion = this.SingleStringElementsAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.SingleStringElementsSeparator != null) {
-                expansion = this.SingleStringElementsSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.SingleStringElementsSeparator.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -506,6 +474,7 @@ public class MRedefinedInternalsSetter extends Macro {
     }
     
     private String buildSetInternals() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.SetInternalsContext;
         List<Macro> macros = this.list_SetInternals;
@@ -513,26 +482,15 @@ public class MRedefinedInternalsSetter extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.SetInternalsNone != null) {
-            sb.append(this.SetInternalsNone.apply(i, "", nb_macros));
+        
+        if(this.SetInternalsSeparator == null) {
+            initSetInternalsDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.SetInternalsBeforeFirst != null) {
-                expansion = this.SetInternalsBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.SetInternalsAfterLast != null) {
-                expansion = this.SetInternalsAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.SetInternalsSeparator != null) {
-                expansion = this.SetInternalsSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.SetInternalsSeparator.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -673,14 +631,14 @@ public class MRedefinedInternalsSetter extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
+        initTextPartsInternals(null);
+        initSingleStringElementsInternals(null);
+        initSetInternalsInternals(null);
+        
         initMacroNameDirectives();
         initTextPartsDirectives();
         initSingleStringElementsDirectives();
         initSetInternalsDirectives();
-        
-        initTextPartsInternals(null);
-        initSingleStringElementsInternals(null);
-        initSetInternalsInternals(null);
     
         StringBuilder sb0 = new StringBuilder();
         

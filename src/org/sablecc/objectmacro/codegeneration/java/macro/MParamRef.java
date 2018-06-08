@@ -118,30 +118,18 @@ public class MParamRef extends Macro {
     }
     
     private String buildName() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_Name;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.NameNone != null) {
-            sb.append(this.NameNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.NameBeforeFirst != null) {
-                string = this.NameBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.NameAfterLast != null) {
-                string = this.NameAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.NameSeparator != null) {
-                string = this.NameSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -150,30 +138,18 @@ public class MParamRef extends Macro {
     }
     
     private String buildGetParams() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_GetParams;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.GetParamsNone != null) {
-            sb.append(this.GetParamsNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.GetParamsBeforeFirst != null) {
-                string = this.GetParamsBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.GetParamsAfterLast != null) {
-                string = this.GetParamsAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.GetParamsSeparator != null) {
-                string = this.GetParamsSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }

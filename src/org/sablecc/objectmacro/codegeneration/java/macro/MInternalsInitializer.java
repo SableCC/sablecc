@@ -177,6 +177,7 @@ public class MInternalsInitializer extends Macro {
     }
     
     private String buildPackageDeclaration() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.PackageDeclarationContext;
         List<Macro> macros = this.list_PackageDeclaration;
@@ -184,26 +185,15 @@ public class MInternalsInitializer extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.PackageDeclarationNone != null) {
-            sb.append(this.PackageDeclarationNone.apply(i, "", nb_macros));
+        
+        if(this.PackageDeclarationBeforeFirst == null) {
+            initPackageDeclarationDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.PackageDeclarationBeforeFirst != null) {
-                expansion = this.PackageDeclarationBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.PackageDeclarationAfterLast != null) {
-                expansion = this.PackageDeclarationAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.PackageDeclarationSeparator != null) {
-                expansion = this.PackageDeclarationSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.PackageDeclarationBeforeFirst.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -212,6 +202,7 @@ public class MInternalsInitializer extends Macro {
     }
     
     private String buildParentInternalSetters() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.ParentInternalSettersContext;
         List<Macro> macros = this.list_ParentInternalSetters;
@@ -219,26 +210,15 @@ public class MInternalsInitializer extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.ParentInternalSettersNone != null) {
-            sb.append(this.ParentInternalSettersNone.apply(i, "", nb_macros));
+        
+        if(this.ParentInternalSettersSeparator == null) {
+            initParentInternalSettersDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.ParentInternalSettersBeforeFirst != null) {
-                expansion = this.ParentInternalSettersBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.ParentInternalSettersAfterLast != null) {
-                expansion = this.ParentInternalSettersAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.ParentInternalSettersSeparator != null) {
-                expansion = this.ParentInternalSettersSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.ParentInternalSettersSeparator.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -320,11 +300,11 @@ public class MInternalsInitializer extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
-        initPackageDeclarationDirectives();
-        initParentInternalSettersDirectives();
-        
         initPackageDeclarationInternals(null);
         initParentInternalSettersInternals(null);
+        
+        initPackageDeclarationDirectives();
+        initParentInternalSettersDirectives();
     
         StringBuilder sb0 = new StringBuilder();
         

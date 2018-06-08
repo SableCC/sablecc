@@ -68,30 +68,18 @@ public class MVersion extends Macro {
     }
     
     private String buildDefaultCase() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_DefaultCase;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.DefaultCaseNone != null) {
-            sb.append(this.DefaultCaseNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.DefaultCaseBeforeFirst != null) {
-                string = this.DefaultCaseBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.DefaultCaseAfterLast != null) {
-                string = this.DefaultCaseAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.DefaultCaseSeparator != null) {
-                string = this.DefaultCaseSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }

@@ -68,30 +68,18 @@ public class MInternalStringRefBuilder extends Macro {
     }
     
     private String buildInternalName() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_InternalName;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.InternalNameNone != null) {
-            sb.append(this.InternalNameNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.InternalNameBeforeFirst != null) {
-                string = this.InternalNameBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.InternalNameAfterLast != null) {
-                string = this.InternalNameAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.InternalNameSeparator != null) {
-                string = this.InternalNameSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
