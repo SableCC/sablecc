@@ -127,6 +127,7 @@ public class MSwitchVersion extends Macro {
     }
     
     private String buildVersionCases() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.VersionCasesContext;
         List<Macro> macros = this.list_VersionCases;
@@ -134,26 +135,15 @@ public class MSwitchVersion extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.VersionCasesNone != null) {
-            sb.append(this.VersionCasesNone.apply(i, "", nb_macros));
+        
+        if(this.VersionCasesSeparator == null) {
+            initVersionCasesDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.VersionCasesBeforeFirst != null) {
-                expansion = this.VersionCasesBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.VersionCasesAfterLast != null) {
-                expansion = this.VersionCasesAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.VersionCasesSeparator != null) {
-                expansion = this.VersionCasesSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.VersionCasesSeparator.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -233,9 +223,9 @@ public class MSwitchVersion extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
-        initVersionCasesDirectives();
-        
         initVersionCasesInternals(context);
+        
+        initVersionCasesDirectives();
     
         StringBuilder sb0 = new StringBuilder();
         

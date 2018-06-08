@@ -244,30 +244,18 @@ public class MAddIndent extends Macro {
     }
     
     private String buildIndexBuilder() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_IndexBuilder;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.IndexBuilderNone != null) {
-            sb.append(this.IndexBuilderNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.IndexBuilderBeforeFirst != null) {
-                string = this.IndexBuilderBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.IndexBuilderAfterLast != null) {
-                string = this.IndexBuilderAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.IndexBuilderSeparator != null) {
-                string = this.IndexBuilderSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -276,6 +264,7 @@ public class MAddIndent extends Macro {
     }
     
     private String buildIndentParts() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.IndentPartsContext;
         List<Macro> macros = this.list_IndentParts;
@@ -283,26 +272,15 @@ public class MAddIndent extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.IndentPartsNone != null) {
-            sb.append(this.IndentPartsNone.apply(i, "", nb_macros));
+        
+        if(this.IndentPartsSeparator == null) {
+            initIndentPartsDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.IndentPartsBeforeFirst != null) {
-                expansion = this.IndentPartsBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.IndentPartsAfterLast != null) {
-                expansion = this.IndentPartsAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.IndentPartsSeparator != null) {
-                expansion = this.IndentPartsSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.IndentPartsSeparator.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -395,10 +373,10 @@ public class MAddIndent extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
+        initIndentPartsInternals(null);
+        
         initIndexBuilderDirectives();
         initIndentPartsDirectives();
-        
-        initIndentPartsInternals(null);
     
         StringBuilder sb0 = new StringBuilder();
         

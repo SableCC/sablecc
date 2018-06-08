@@ -19,14 +19,12 @@ Version java4, java5
 Macro class
     Param
         name : String;
-        enums : enum, separator="\n\n";
-        test : for("lala");
+        enums : enum, separator="\n\n", before_first="{test}";
+        test : for("lala"), separator="\n\n";
 {Body}
 public class {name}{{
 {enums}
 }
-
-{test}
 {End}
 
 Macro for

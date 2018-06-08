@@ -285,30 +285,18 @@ public class MNewDirective extends Macro {
     }
     
     private String buildDirectiveName() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_DirectiveName;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.DirectiveNameNone != null) {
-            sb.append(this.DirectiveNameNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.DirectiveNameBeforeFirst != null) {
-                string = this.DirectiveNameBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.DirectiveNameAfterLast != null) {
-                string = this.DirectiveNameAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.DirectiveNameSeparator != null) {
-                string = this.DirectiveNameSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -317,30 +305,18 @@ public class MNewDirective extends Macro {
     }
     
     private String buildIndexBuilder() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_IndexBuilder;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.IndexBuilderNone != null) {
-            sb.append(this.IndexBuilderNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.IndexBuilderBeforeFirst != null) {
-                string = this.IndexBuilderBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.IndexBuilderAfterLast != null) {
-                string = this.IndexBuilderAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.IndexBuilderSeparator != null) {
-                string = this.IndexBuilderSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -349,6 +325,7 @@ public class MNewDirective extends Macro {
     }
     
     private String buildTextParts() {
+    
         StringBuilder sb = new StringBuilder();
         Context local_context = this.TextPartsContext;
         List<Macro> macros = this.list_TextParts;
@@ -356,26 +333,15 @@ public class MNewDirective extends Macro {
         int i = 0;
         int nb_macros = macros.size();
         String expansion = null;
-    
-        if(this.TextPartsNone != null) {
-            sb.append(this.TextPartsNone.apply(i, "", nb_macros));
+        
+        if(this.TextPartsSeparator == null) {
+            initTextPartsDirectives();
         }
-    
+        
         for(Macro macro : macros) {
             expansion = macro.build(local_context);
-    
-            if(this.TextPartsBeforeFirst != null) {
-                expansion = this.TextPartsBeforeFirst.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.TextPartsAfterLast != null) {
-                expansion = this.TextPartsAfterLast.apply(i, expansion, nb_macros);
-            }
-    
-            if(this.TextPartsSeparator != null) {
-                expansion = this.TextPartsSeparator.apply(i, expansion, nb_macros);
-            }
-    
+            
+            expansion = this.TextPartsSeparator.apply(i, expansion, nb_macros);
             sb.append(expansion);
             i++;
         }
@@ -481,11 +447,11 @@ public class MNewDirective extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
+        initTextPartsInternals(context);
+        
         initDirectiveNameDirectives();
         initIndexBuilderDirectives();
         initTextPartsDirectives();
-        
-        initTextPartsInternals(context);
     
         StringBuilder sb0 = new StringBuilder();
         

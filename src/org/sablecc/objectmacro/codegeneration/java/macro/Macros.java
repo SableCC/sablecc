@@ -253,10 +253,10 @@ public class Macros {
         return mMacroCreatorMethod;
     }
     
-    public MMacroCreatorMethod newMacroCreatorMethod(String pClassName, List<Macro> pArgs, List<Macro> pVersionFactory, List<Macro> pParameters){
+    public MMacroCreatorMethod newMacroCreatorMethod(String pClassName, List<Macro> pVersionFactory, List<Macro> pArgs, List<Macro> pParameters){
         MMacroCreatorMethod mMacroCreatorMethod;
     
-        mMacroCreatorMethod = new MMacroCreatorMethod(pClassName, pArgs, pVersionFactory, pParameters, this);
+        mMacroCreatorMethod = new MMacroCreatorMethod(pClassName, pVersionFactory, pArgs, pParameters, this);
     
         return mMacroCreatorMethod;
     }
@@ -589,6 +589,38 @@ public class Macros {
         return mIsBuilt;
     }
     
+    public MDirectiveApplier newDirectiveApplier(){
+        MDirectiveApplier mDirectiveApplier;
+    
+        mDirectiveApplier = new MDirectiveApplier(this);
+    
+        return mDirectiveApplier;
+    }
+    
+    public MDirectiveApplier newDirectiveApplier(String pDirectiveName){
+        MDirectiveApplier mDirectiveApplier;
+    
+        mDirectiveApplier = new MDirectiveApplier(pDirectiveName, this);
+    
+        return mDirectiveApplier;
+    }
+    
+    public MNoneDirective newNoneDirective(){
+        MNoneDirective mNoneDirective;
+    
+        mNoneDirective = new MNoneDirective(this);
+    
+        return mNoneDirective;
+    }
+    
+    public MDirectivesInitVerification newDirectivesInitVerification(){
+        MDirectivesInitVerification mDirectivesInitVerification;
+    
+        mDirectivesInitVerification = new MDirectivesInitVerification(this);
+    
+        return mDirectivesInitVerification;
+    }
+    
     public MParamMacroRefBuilder newParamMacroRefBuilder(){
         MParamMacroRefBuilder mParamMacroRefBuilder;
     
@@ -597,10 +629,10 @@ public class Macros {
         return mParamMacroRefBuilder;
     }
     
-    public MParamMacroRefBuilder newParamMacroRefBuilder(String pName, String pContextName){
+    public MParamMacroRefBuilder newParamMacroRefBuilder(String pParamName, String pContextName, String pDirectivesName, List<Macro> pDirectivesInitVerification, List<Macro> pNoneDirectiveApply, List<Macro> pDirectivesAppliers){
         MParamMacroRefBuilder mParamMacroRefBuilder;
     
-        mParamMacroRefBuilder = new MParamMacroRefBuilder(pName, pContextName, this);
+        mParamMacroRefBuilder = new MParamMacroRefBuilder(pParamName, pContextName, pDirectivesName, pDirectivesInitVerification, pNoneDirectiveApply, pDirectivesAppliers, this);
     
         return mParamMacroRefBuilder;
     }
@@ -693,10 +725,10 @@ public class Macros {
         return mParamStringRefBuilder;
     }
     
-    public MParamStringRefBuilder newParamStringRefBuilder(String pName){
+    public MParamStringRefBuilder newParamStringRefBuilder(String pParamName, String pDirectivesName, List<Macro> pDirectivesInitVerification, List<Macro> pNoneDirectiveApply, List<Macro> pDirectivesAppliers){
         MParamStringRefBuilder mParamStringRefBuilder;
     
-        mParamStringRefBuilder = new MParamStringRefBuilder(pName, this);
+        mParamStringRefBuilder = new MParamStringRefBuilder(pParamName, pDirectivesName, pDirectivesInitVerification, pNoneDirectiveApply, pDirectivesAppliers, this);
     
         return mParamStringRefBuilder;
     }

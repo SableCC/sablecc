@@ -4,93 +4,398 @@ package org.sablecc.objectmacro.codegeneration.java.macro;
 import java.util.*;
 public class MParamStringRefBuilder extends Macro {
     
-    private DSeparator NameSeparator;
+    private DSeparator ParamNameSeparator;
     
-    private DBeforeFirst NameBeforeFirst;
+    private DBeforeFirst ParamNameBeforeFirst;
     
-    private DAfterLast NameAfterLast;
+    private DAfterLast ParamNameAfterLast;
     
-    private DNone NameNone;
+    private DNone ParamNameNone;
     
-    final List<String> list_Name;
+    final List<String> list_ParamName;
     
-    final Context NameContext = new Context();
+    final Context ParamNameContext = new Context();
     
-    final StringValue NameValue;
+    final StringValue ParamNameValue;
+    
+    private DSeparator DirectivesNameSeparator;
+    
+    private DBeforeFirst DirectivesNameBeforeFirst;
+    
+    private DAfterLast DirectivesNameAfterLast;
+    
+    private DNone DirectivesNameNone;
+    
+    final List<String> list_DirectivesName;
+    
+    final Context DirectivesNameContext = new Context();
+    
+    final StringValue DirectivesNameValue;
+    
+    private DSeparator DirectivesInitVerificationSeparator;
+    
+    private DBeforeFirst DirectivesInitVerificationBeforeFirst;
+    
+    private DAfterLast DirectivesInitVerificationAfterLast;
+    
+    private DNone DirectivesInitVerificationNone;
+    
+    final List<Macro> list_DirectivesInitVerification;
+    
+    final Context DirectivesInitVerificationContext = new Context();
+    
+    final MacroValue DirectivesInitVerificationValue;
+    
+    private DSeparator NoneDirectiveApplySeparator;
+    
+    private DBeforeFirst NoneDirectiveApplyBeforeFirst;
+    
+    private DAfterLast NoneDirectiveApplyAfterLast;
+    
+    private DNone NoneDirectiveApplyNone;
+    
+    final List<Macro> list_NoneDirectiveApply;
+    
+    final Context NoneDirectiveApplyContext = new Context();
+    
+    final MacroValue NoneDirectiveApplyValue;
+    
+    private DSeparator DirectivesAppliersSeparator;
+    
+    private DBeforeFirst DirectivesAppliersBeforeFirst;
+    
+    private DAfterLast DirectivesAppliersAfterLast;
+    
+    private DNone DirectivesAppliersNone;
+    
+    final List<Macro> list_DirectivesAppliers;
+    
+    final Context DirectivesAppliersContext = new Context();
+    
+    final MacroValue DirectivesAppliersValue;
     
     MParamStringRefBuilder(Macros macros){
         
         this.setMacros(macros);
-        this.list_Name = new LinkedList<>();
+        this.list_ParamName = new LinkedList<>();
+        this.list_DirectivesName = new LinkedList<>();
+        this.list_DirectivesInitVerification = new LinkedList<>();
+        this.list_NoneDirectiveApply = new LinkedList<>();
+        this.list_DirectivesAppliers = new LinkedList<>();
         
-        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+        this.ParamNameValue = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.DirectivesNameValue = new StringValue(this.list_DirectivesName, this.DirectivesNameContext);
+        this.DirectivesInitVerificationValue = new MacroValue(this.list_DirectivesInitVerification, this.DirectivesInitVerificationContext);
+        this.NoneDirectiveApplyValue = new MacroValue(this.list_NoneDirectiveApply, this.NoneDirectiveApplyContext);
+        this.DirectivesAppliersValue = new MacroValue(this.list_DirectivesAppliers, this.DirectivesAppliersContext);
     }
     
-    MParamStringRefBuilder(String pName, Macros macros){
+    MParamStringRefBuilder(String pParamName, String pDirectivesName, List<Macro> pDirectivesInitVerification, List<Macro> pNoneDirectiveApply, List<Macro> pDirectivesAppliers, Macros macros){
         
         this.setMacros(macros);
-        this.list_Name = new LinkedList<>();
+        this.list_ParamName = new LinkedList<>();
+        this.list_DirectivesName = new LinkedList<>();
+        this.list_DirectivesInitVerification = new LinkedList<>();
+        this.list_NoneDirectiveApply = new LinkedList<>();
+        this.list_DirectivesAppliers = new LinkedList<>();
         
-        this.NameValue = new StringValue(this.list_Name, this.NameContext);
+        this.ParamNameValue = new StringValue(this.list_ParamName, this.ParamNameContext);
+        this.DirectivesNameValue = new StringValue(this.list_DirectivesName, this.DirectivesNameContext);
+        this.DirectivesInitVerificationValue = new MacroValue(this.list_DirectivesInitVerification, this.DirectivesInitVerificationContext);
+        this.NoneDirectiveApplyValue = new MacroValue(this.list_NoneDirectiveApply, this.NoneDirectiveApplyContext);
+        this.DirectivesAppliersValue = new MacroValue(this.list_DirectivesAppliers, this.DirectivesAppliersContext);
+        if (pDirectivesInitVerification != null) {
+            this.addAllDirectivesInitVerification(pDirectivesInitVerification);
+        }
+        if (pNoneDirectiveApply != null) {
+            this.addAllNoneDirectiveApply(pNoneDirectiveApply);
+        }
+        if (pDirectivesAppliers != null) {
+            this.addAllDirectivesAppliers(pDirectivesAppliers);
+        }
         
-        if (pName != null) {
-            this.addName(pName);
+        if (pParamName != null) {
+            this.addParamName(pParamName);
+        }
+        if (pDirectivesName != null) {
+            this.addDirectivesName(pDirectivesName);
         }
     }
     
-    public void addAllName(
+    public void addAllParamName(
                     List<String> strings){
     
         if(macros == null){
-            throw ObjectMacroException.parameterNull("Name");
+            throw ObjectMacroException.parameterNull("ParamName");
         }
         if(this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
         for(String string : strings) {
             if(string == null) {
-                throw ObjectMacroException.parameterNull("Name");
+                throw ObjectMacroException.parameterNull("ParamName");
             }
     
-            this.list_Name.add(string);
+            this.list_ParamName.add(string);
         }
     }
     
-    public void addName(String string){
+    public void addParamName(String string){
         if(string == null){
-            throw ObjectMacroException.parameterNull("Name");
+            throw ObjectMacroException.parameterNull("ParamName");
         }
         if(this.cacheBuilder != null) {
             throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
         }
     
-        this.list_Name.add(string);
+        this.list_ParamName.add(string);
     }
     
-    private String buildName() {
+    public void addAllDirectivesName(
+                    List<String> strings){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("DirectivesName");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        for(String string : strings) {
+            if(string == null) {
+                throw ObjectMacroException.parameterNull("DirectivesName");
+            }
+    
+            this.list_DirectivesName.add(string);
+        }
+    }
+    
+    public void addDirectivesName(String string){
+        if(string == null){
+            throw ObjectMacroException.parameterNull("DirectivesName");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+    
+        this.list_DirectivesName.add(string);
+    }
+    
+    public void addAllDirectivesInitVerification(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("DirectivesInitVerification");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "DirectivesInitVerification");
+            }
+        
+            if(this.getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeDirectivesInitVerification(macro);
+            this.list_DirectivesInitVerification.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeDirectivesInitVerification (Macro macro) {
+        macro.apply(new InternalsInitializer("DirectivesInitVerification"){
+            @Override
+            void setDirectivesInitVerification(MDirectivesInitVerification mDirectivesInitVerification){
+                
+            
+            
+            }
+        });
+    }
+    
+    public void addDirectivesInitVerification(MDirectivesInitVerification macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("DirectivesInitVerification");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        
+        if(this.getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+    
+        this.list_DirectivesInitVerification.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+    
+    public void addAllNoneDirectiveApply(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("NoneDirectiveApply");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "NoneDirectiveApply");
+            }
+        
+            if(this.getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeNoneDirectiveApply(macro);
+            this.list_NoneDirectiveApply.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeNoneDirectiveApply (Macro macro) {
+        macro.apply(new InternalsInitializer("NoneDirectiveApply"){
+            @Override
+            void setNoneDirective(MNoneDirective mNoneDirective){
+                
+            
+            
+            }
+        });
+    }
+    
+    public void addNoneDirectiveApply(MNoneDirective macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("NoneDirectiveApply");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        
+        if(this.getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+    
+        this.list_NoneDirectiveApply.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+    
+    public void addAllDirectivesAppliers(
+                    List<Macro> macros){
+    
+        if(macros == null){
+            throw ObjectMacroException.parameterNull("DirectivesAppliers");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        
+        int i = 0;
+        
+        for(Macro macro : macros) {
+            if(macro == null) {
+                throw ObjectMacroException.macroNull(i, "DirectivesAppliers");
+            }
+        
+            if(this.getMacros() != macro.getMacros()) {
+                throw ObjectMacroException.diffMacros();
+            }
+        
+            this.verifyTypeDirectivesAppliers(macro);
+            this.list_DirectivesAppliers.add(macro);
+            this.children.add(macro);
+            Macro.cycleDetector.detectCycle(this, macro);
+        
+            i++;
+        }
+    }
+    
+    
+    void verifyTypeDirectivesAppliers (Macro macro) {
+        macro.apply(new InternalsInitializer("DirectivesAppliers"){
+            @Override
+            void setDirectiveApplier(MDirectiveApplier mDirectiveApplier){
+                
+            
+            
+            }
+        });
+    }
+    
+    public void addDirectivesAppliers(MDirectiveApplier macro){
+        if(macro == null){
+            throw ObjectMacroException.parameterNull("DirectivesAppliers");
+        }
+        if(this.cacheBuilder != null) {
+            throw ObjectMacroException.cannotModify(this.getClass().getSimpleName());
+        }
+        
+        if(this.getMacros() != macro.getMacros()) {
+            throw ObjectMacroException.diffMacros();
+        }
+    
+        this.list_DirectivesAppliers.add(macro);
+        this.children.add(macro);
+        Macro.cycleDetector.detectCycle(this, macro);
+    }
+    
+    private String buildParamName() {
+    
         StringBuilder sb = new StringBuilder();
-        List<String> strings = this.list_Name;
+        List<String> strings = this.list_ParamName;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.NameNone != null) {
-            sb.append(this.NameNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
+            
+            sb.append(string);
+            i++;
+        }
     
-            if(this.NameBeforeFirst != null) {
-                string = this.NameBeforeFirst.apply(i, string, nb_strings);
-            }
+        return sb.toString();
+    }
     
-            if(this.NameAfterLast != null) {
-                string = this.NameAfterLast.apply(i, string, nb_strings);
-            }
+    private String buildDirectivesName() {
     
-            if(this.NameSeparator != null) {
-                string = this.NameSeparator.apply(i, string, nb_strings);
-            }
+        StringBuilder sb = new StringBuilder();
+        List<String> strings = this.list_DirectivesName;
+    
+        int i = 0;
+        int nb_strings = strings.size();
+    
+        
+    if(this.DirectivesNameBeforeFirst == null || this.DirectivesNameSeparator == null || this.DirectivesNameAfterLast == null) {
+        initDirectivesNameDirectives();
+    }
+        
+    
+        for(String string : strings) {
+            
+    string = this.DirectivesNameBeforeFirst.apply(i, string, nb_strings);
+    string = this.DirectivesNameSeparator.apply(i, string, nb_strings);
+    string = this.DirectivesNameAfterLast.apply(i, string, nb_strings);
     
             sb.append(string);
             i++;
@@ -99,12 +404,211 @@ public class MParamStringRefBuilder extends Macro {
         return sb.toString();
     }
     
-    StringValue getName() {
-        return this.NameValue;
+    private String buildDirectivesInitVerification() {
+    
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.DirectivesInitVerificationContext;
+        List<Macro> macros = this.list_DirectivesInitVerification;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+        
+        if(this.DirectivesInitVerificationBeforeFirst == null) {
+            initDirectivesInitVerificationDirectives();
+        }
+        
+        for(Macro macro : macros) {
+            expansion = macro.build(local_context);
+            
+            expansion = this.DirectivesInitVerificationBeforeFirst.apply(i, expansion, nb_macros);
+            sb.append(expansion);
+            i++;
+        }
+    
+        return sb.toString();
     }
     
-    private void initNameDirectives() {
+    private String buildNoneDirectiveApply() {
+    
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.NoneDirectiveApplyContext;
+        List<Macro> macros = this.list_NoneDirectiveApply;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
         
+        if(this.NoneDirectiveApplyBeforeFirst == null) {
+            initNoneDirectiveApplyDirectives();
+        }
+        
+        for(Macro macro : macros) {
+            expansion = macro.build(local_context);
+            
+            expansion = this.NoneDirectiveApplyBeforeFirst.apply(i, expansion, nb_macros);
+            sb.append(expansion);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    private String buildDirectivesAppliers() {
+    
+        StringBuilder sb = new StringBuilder();
+        Context local_context = this.DirectivesAppliersContext;
+        List<Macro> macros = this.list_DirectivesAppliers;
+    
+        int i = 0;
+        int nb_macros = macros.size();
+        String expansion = null;
+        
+        if(this.DirectivesAppliersSeparator == null || this.DirectivesAppliersBeforeFirst == null || this.DirectivesAppliersAfterLast == null) {
+            initDirectivesAppliersDirectives();
+        }
+        
+        for(Macro macro : macros) {
+            expansion = macro.build(local_context);
+            
+            expansion = this.DirectivesAppliersSeparator.apply(i, expansion, nb_macros);
+            expansion = this.DirectivesAppliersBeforeFirst.apply(i, expansion, nb_macros);
+            expansion = this.DirectivesAppliersAfterLast.apply(i, expansion, nb_macros);
+            sb.append(expansion);
+            i++;
+        }
+    
+        return sb.toString();
+    }
+    
+    StringValue getParamName() {
+        return this.ParamNameValue;
+    }
+    
+    StringValue getDirectivesName() {
+        return this.DirectivesNameValue;
+    }
+    
+    MacroValue getDirectivesInitVerification() {
+        return this.DirectivesInitVerificationValue;
+    }
+    
+    MacroValue getNoneDirectiveApply() {
+        return this.NoneDirectiveApplyValue;
+    }
+    
+    MacroValue getDirectivesAppliers() {
+        return this.DirectivesAppliersValue;
+    }
+    
+    private void initDirectivesInitVerificationInternals(Context context) {
+        for(Macro macro : this.list_DirectivesInitVerification) {
+            macro.apply(new InternalsInitializer("DirectivesInitVerification"){
+                @Override
+                void setDirectivesInitVerification(MDirectivesInitVerification mDirectivesInitVerification){
+                    
+                    
+                    mDirectivesInitVerification.setParamName(DirectivesInitVerificationContext, getParamName());
+                    mDirectivesInitVerification.setDirectivesName(DirectivesInitVerificationContext, getDirectivesName());
+                }
+            });
+        }
+    }
+    
+    private void initNoneDirectiveApplyInternals(Context context) {
+        for(Macro macro : this.list_NoneDirectiveApply) {
+            macro.apply(new InternalsInitializer("NoneDirectiveApply"){
+                @Override
+                void setNoneDirective(MNoneDirective mNoneDirective){
+                    StringBuilder sb2 = new StringBuilder();
+                    sb2.append("sb");
+                    StringBuilder sb3 = new StringBuilder();
+                    sb3.append("i");
+                    StringBuilder sb4 = new StringBuilder();
+                    sb4.append("nb_strings");
+                    StringValue value2 = new StringValue(new ArrayList<>(Collections.singletonList(sb2.toString())), null);
+                    StringValue value3 = new StringValue(new ArrayList<>(Collections.singletonList(sb3.toString())), null);
+                    StringValue value4 = new StringValue(new ArrayList<>(Collections.singletonList(sb4.toString())), null);
+                    mNoneDirective.setStringBuilderName(NoneDirectiveApplyContext, value2);
+                    mNoneDirective.setIndex(NoneDirectiveApplyContext, value3);
+                    mNoneDirective.setSizeVarName(NoneDirectiveApplyContext, value4);
+                    mNoneDirective.setParameterName(NoneDirectiveApplyContext, getParamName());
+                }
+            });
+        }
+    }
+    
+    private void initDirectivesAppliersInternals(Context context) {
+        for(Macro macro : this.list_DirectivesAppliers) {
+            macro.apply(new InternalsInitializer("DirectivesAppliers"){
+                @Override
+                void setDirectiveApplier(MDirectiveApplier mDirectiveApplier){
+                    StringBuilder sb4 = new StringBuilder();
+                    sb4.append("i");
+                    StringBuilder sb5 = new StringBuilder();
+                    sb5.append("nb_strings");
+                    StringBuilder sb6 = new StringBuilder();
+                    sb6.append("string");
+                    StringValue value4 = new StringValue(new ArrayList<>(Collections.singletonList(sb4.toString())), null);
+                    StringValue value5 = new StringValue(new ArrayList<>(Collections.singletonList(sb5.toString())), null);
+                    StringValue value6 = new StringValue(new ArrayList<>(Collections.singletonList(sb6.toString())), null);
+                    mDirectiveApplier.setIndex(DirectivesAppliersContext, value4);
+                    mDirectiveApplier.setSizeVarName(DirectivesAppliersContext, value5);
+                    mDirectiveApplier.setLocalVar(DirectivesAppliersContext, value6);
+                    mDirectiveApplier.setParameterName(DirectivesAppliersContext, getParamName());
+                }
+            });
+        }
+    }
+    
+    private void initParamNameDirectives() {
+        
+    }
+    
+    private void initDirectivesNameDirectives() {
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append("this.");
+        sb1.append(buildParamName());
+        this.DirectivesNameBeforeFirst = new DBeforeFirst(sb1.toString());
+        this.DirectivesNameValue.setBeforeFirst(this.DirectivesNameBeforeFirst);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(" == null || this.");
+        sb2.append(buildParamName());
+        this.DirectivesNameSeparator = new DSeparator(sb2.toString());
+        this.DirectivesNameValue.setSeparator(this.DirectivesNameSeparator);
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(" == null");
+        this.DirectivesNameAfterLast = new DAfterLast(sb3.toString());
+        this.DirectivesNameValue.setAfterLast(this.DirectivesNameAfterLast);
+    }
+    
+    private void initDirectivesInitVerificationDirectives() {
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.DirectivesInitVerificationBeforeFirst = new DBeforeFirst(sb1.toString());
+        this.DirectivesInitVerificationValue.setBeforeFirst(this.DirectivesInitVerificationBeforeFirst);
+    }
+    
+    private void initNoneDirectiveApplyDirectives() {
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.NoneDirectiveApplyBeforeFirst = new DBeforeFirst(sb1.toString());
+        this.NoneDirectiveApplyValue.setBeforeFirst(this.NoneDirectiveApplyBeforeFirst);
+    }
+    
+    private void initDirectivesAppliersDirectives() {
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(LINE_SEPARATOR);
+        this.DirectivesAppliersSeparator = new DSeparator(sb1.toString());
+        this.DirectivesAppliersValue.setSeparator(this.DirectivesAppliersSeparator);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(LINE_SEPARATOR);
+        this.DirectivesAppliersBeforeFirst = new DBeforeFirst(sb2.toString());
+        this.DirectivesAppliersValue.setBeforeFirst(this.DirectivesAppliersBeforeFirst);
+        StringBuilder sb3 = new StringBuilder();
+        sb3.append(LINE_SEPARATOR);
+        this.DirectivesAppliersAfterLast = new DAfterLast(sb3.toString());
+        this.DirectivesAppliersValue.setAfterLast(this.DirectivesAppliersAfterLast);
     }
     
     @Override
@@ -132,19 +636,28 @@ public class MParamStringRefBuilder extends Macro {
         List<String> indentations = new LinkedList<>();
     
         
-        initNameDirectives();
+        initDirectivesInitVerificationInternals(null);
+        initNoneDirectiveApplyInternals(null);
+        initDirectivesAppliersInternals(null);
+        
+        initParamNameDirectives();
+        initDirectivesNameDirectives();
+        initDirectivesInitVerificationDirectives();
+        initNoneDirectiveApplyDirectives();
+        initDirectivesAppliersDirectives();
     
         StringBuilder sb0 = new StringBuilder();
         
         sb0.append("private String build");
-        sb0.append(buildName());
+        sb0.append(buildParamName());
         sb0.append("() ");
         sb0.append("{");
+        sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("    StringBuilder sb = new StringBuilder();");
         sb0.append(LINE_SEPARATOR);
         sb0.append("    List<String> strings = this.list_");
-        sb0.append(buildName());
+        sb0.append(buildParamName());
         sb0.append(";");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
@@ -153,57 +666,18 @@ public class MParamStringRefBuilder extends Macro {
         sb0.append("    int nb_strings = strings.size();");
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
-        sb0.append("    if(this.");
-        sb0.append(buildName());
-        sb0.append("None != null) ");
-        sb0.append("{");
+        sb0.append("    ");
+        sb0.append(buildDirectivesInitVerification());
         sb0.append(LINE_SEPARATOR);
-        sb0.append("        sb.append(this.");
-        sb0.append(buildName());
-        sb0.append("None.apply(i, \"\", nb_strings));");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("    }");
+        sb0.append("    ");
+        sb0.append(buildNoneDirectiveApply());
         sb0.append(LINE_SEPARATOR);
         sb0.append(LINE_SEPARATOR);
         sb0.append("    for(String string : strings) ");
         sb0.append("{");
         sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        if(this.");
-        sb0.append(buildName());
-        sb0.append("BeforeFirst != null) ");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("            string = this.");
-        sb0.append(buildName());
-        sb0.append("BeforeFirst.apply(i, string, nb_strings);");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        }");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        if(this.");
-        sb0.append(buildName());
-        sb0.append("AfterLast != null) ");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("            string = this.");
-        sb0.append(buildName());
-        sb0.append("AfterLast.apply(i, string, nb_strings);");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        }");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        if(this.");
-        sb0.append(buildName());
-        sb0.append("Separator != null) ");
-        sb0.append("{");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("            string = this.");
-        sb0.append(buildName());
-        sb0.append("Separator.apply(i, string, nb_strings);");
-        sb0.append(LINE_SEPARATOR);
-        sb0.append("        }");
-        sb0.append(LINE_SEPARATOR);
+        sb0.append("        ");
+        sb0.append(buildDirectivesAppliers());
         sb0.append(LINE_SEPARATOR);
         sb0.append("        sb.append(string);");
         sb0.append(LINE_SEPARATOR);

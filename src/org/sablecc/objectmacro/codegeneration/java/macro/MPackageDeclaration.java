@@ -68,30 +68,18 @@ public class MPackageDeclaration extends Macro {
     }
     
     private String buildPackageName() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_PackageName;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.PackageNameNone != null) {
-            sb.append(this.PackageNameNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.PackageNameBeforeFirst != null) {
-                string = this.PackageNameBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.PackageNameAfterLast != null) {
-                string = this.PackageNameAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.PackageNameSeparator != null) {
-                string = this.PackageNameSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }

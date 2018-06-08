@@ -118,30 +118,18 @@ public class MStringPart extends Macro {
     }
     
     private String buildString() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_String;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.StringNone != null) {
-            sb.append(this.StringNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.StringBeforeFirst != null) {
-                string = this.StringBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.StringAfterLast != null) {
-                string = this.StringAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.StringSeparator != null) {
-                string = this.StringSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -150,30 +138,18 @@ public class MStringPart extends Macro {
     }
     
     private String buildIndexBuilder() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_IndexBuilder;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.IndexBuilderNone != null) {
-            sb.append(this.IndexBuilderNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.IndexBuilderBeforeFirst != null) {
-                string = this.IndexBuilderBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.IndexBuilderAfterLast != null) {
-                string = this.IndexBuilderAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.IndexBuilderSeparator != null) {
-                string = this.IndexBuilderSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }

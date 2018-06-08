@@ -118,30 +118,18 @@ public class MIndentPart extends Macro {
     }
     
     private String buildIndexBuilder() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_IndexBuilder;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.IndexBuilderNone != null) {
-            sb.append(this.IndexBuilderNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.IndexBuilderBeforeFirst != null) {
-                string = this.IndexBuilderBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.IndexBuilderAfterLast != null) {
-                string = this.IndexBuilderAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.IndexBuilderSeparator != null) {
-                string = this.IndexBuilderSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
@@ -150,30 +138,18 @@ public class MIndentPart extends Macro {
     }
     
     private String buildIndexIndent() {
+    
         StringBuilder sb = new StringBuilder();
         List<String> strings = this.list_IndexIndent;
     
         int i = 0;
         int nb_strings = strings.size();
     
-        if(this.IndexIndentNone != null) {
-            sb.append(this.IndexIndentNone.apply(i, "", nb_strings));
-        }
+        
+        
     
         for(String string : strings) {
-    
-            if(this.IndexIndentBeforeFirst != null) {
-                string = this.IndexIndentBeforeFirst.apply(i, string, nb_strings);
-            }
-    
-            if(this.IndexIndentAfterLast != null) {
-                string = this.IndexIndentAfterLast.apply(i, string, nb_strings);
-            }
-    
-            if(this.IndexIndentSeparator != null) {
-                string = this.IndexIndentSeparator.apply(i, string, nb_strings);
-            }
-    
+            
             sb.append(string);
             i++;
         }
