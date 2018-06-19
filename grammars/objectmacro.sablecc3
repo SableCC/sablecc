@@ -121,7 +121,7 @@ Tokens
   /* custom transition *->previous state */
   end = '{End}';
 
-  {macro_definition, top_level, macro_body}
+  {macro_definition, top_level}
   comment = '#' comment_char* ascii_newline?;
 
   {macro_body}
