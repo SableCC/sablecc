@@ -156,16 +156,17 @@ public class CodeGenerationWalker
     private MMacroCreatorMethod currentParameteredMacroCreatorMethod;
 
     /**
-     * Macro representing the switch statement in a macro creating method
-     * contained in the factory
+     * Map contains the switch statement in macro creating method with
+     * parameters
      */
-    private MSwitchVersion currentSwitchVersion;
+    private Map<String, MSwitchVersion> switchVersionsParametersMap
+            = new LinkedHashMap<>();
 
     /**
-     * Macro representing the switch statement in a macro creating method
-     * contained in the factory
+     * Map contains switch macros in macro creating method without parameters
      */
-    private MSwitchVersion currentParameteredSwitchVersion;
+    private Map<String, MSwitchVersion> switchVersionsMap
+            = new LinkedHashMap<>();
 
     /**
      * Previously used string builder index
@@ -340,6 +341,7 @@ public class CodeGenerationWalker
             parent_name = GenerationUtils.buildNameCamelCase(node.getParent());
         }
 
+        // Init macro for methods in the factory object
         if (!this.createdFactoryMethods.contains(macro_name)
                 && !this.createdFactoryMethods.contains(parent_name)) {
 
@@ -390,32 +392,52 @@ public class CodeGenerationWalker
             }
 
             if (!this.currentMacroIsAllVersionned) {
-                this.currentSwitchVersion = this.factory.newSwitchVersion();
-                mMacroCreatorMethod
-                        .addVersionFactory(this.currentSwitchVersion);
-                if (node.getParams().size() > 0) {
-                    this.currentParameteredSwitchVersion
+                if (!this.switchVersionsMap.containsKey(macro_name)
+                        && !this.switchVersionsMap.containsKey(parent_name)) {
+
+                    MSwitchVersion switchVersion
                             = this.factory.newSwitchVersion();
-                    this.currentParameteredMacroCreatorMethod.addVersionFactory(
-                            this.currentParameteredSwitchVersion);
+                    this.switchVersionsMap.put(macro_name, switchVersion);
+                    mMacroCreatorMethod.addVersionFactory(switchVersion);
                 }
-                else {
-                    this.currentParameteredSwitchVersion = null;
+
+                if (node.getParams().size() > 0) {
+                    if (!this.switchVersionsParametersMap
+                            .containsKey(macro_name)
+                            && !this.switchVersionsParametersMap
+                                    .containsKey(parent_name)) {
+
+                        MSwitchVersion switchVersion
+                                = this.factory.newSwitchVersion();
+                        this.switchVersionsParametersMap.put(macro_name,
+                                switchVersion);
+                        this.currentParameteredMacroCreatorMethod
+                                .addVersionFactory(switchVersion);
+                    }
                 }
+
             }
         }
 
-        if (!this.currentMacroIsAllVersionned) {
-            if (this.currentSwitchVersion != null) {
+        // add versions in switch statements
+        if (!this.currentMacroIsAllVersionned && !this.currentMacroIsAbstract) {
+
+            MSwitchVersion mSwitchVersion
+                    = this.switchVersionsMap.get(parent_name);
+            MSwitchVersion mSwitchVersionWithParameters
+                    = this.switchVersionsParametersMap.get(parent_name);
+
+            if (mSwitchVersion != null) {
                 for (TString version : node.getVersions()) {
+
                     String version_name
                             = GenerationUtils.string(version).toUpperCase();
                     MMacroCaseInit mMacroCaseInit = this.factory
                             .newMacroCaseInit(version_name, macro_name);
-                    this.currentSwitchVersion.addVersionCases(mMacroCaseInit);
+                    mSwitchVersion.addVersionCases(mMacroCaseInit);
 
-                    if (this.currentParameteredSwitchVersion != null) {
-                        this.currentParameteredSwitchVersion
+                    if (mSwitchVersionWithParameters != null) {
+                        mSwitchVersionWithParameters
                                 .addVersionCases(mMacroCaseInit);
                     }
                 }
