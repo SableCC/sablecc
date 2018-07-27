@@ -157,14 +157,14 @@ public class CodeGenerationWalker
     private MMacroCreatorMethod currentParameteredMacroCreatorMethod;
 
     /**
-     * Macro representing the switch statement in a macro creating method contained in the factory
+     * Map contains the switch statement in macro creating method with parameters
      */
-    private MSwitchVersion currentSwitchVersion;
+    private Map<String, MSwitchVersion> switchVersionsParametersMap = new LinkedHashMap<>();
 
     /**
-     * Macro representing the switch statement in a macro creating method contained in the factory
+     * Map contains switch macros in macro creating method without parameters
      */
-    private MSwitchVersion currentParameteredSwitchVersion;
+    private Map<String, MSwitchVersion> switchVersionsMap = new LinkedHashMap<>();
 
     /**
      * Previously used string builder index
@@ -338,6 +338,7 @@ public class CodeGenerationWalker
             parent_name = GenerationUtils.buildNameCamelCase(node.getParent());
         }
 
+        //Init macro for methods in the factory object
         if (!this.createdFactoryMethods.contains(macro_name)
                 && !this.createdFactoryMethods.contains(parent_name)) {
 
@@ -378,27 +379,44 @@ public class CodeGenerationWalker
             }
 
             if (!this.currentMacroIsAllVersionned) {
-                this.currentSwitchVersion = this.factory.newSwitchVersion();
-                mMacroCreatorMethod.addVersionFactory(this.currentSwitchVersion);
+                if (!this.switchVersionsMap.containsKey(macro_name)
+                        && !this.switchVersionsMap.containsKey(parent_name)) {
+
+                    MSwitchVersion switchVersion = this.factory.newSwitchVersion();
+                    this.switchVersionsMap.put(macro_name, switchVersion);
+                    mMacroCreatorMethod.addVersionFactory(switchVersion);
+                }
+
                 if(node.getParams().size() > 0) {
-                    this.currentParameteredSwitchVersion = this.factory.newSwitchVersion();
-                    this.currentParameteredMacroCreatorMethod.addVersionFactory(this.currentParameteredSwitchVersion);
+                    if (!this.switchVersionsParametersMap.containsKey(macro_name)
+                            && !this.switchVersionsParametersMap.containsKey(parent_name)) {
+
+                        MSwitchVersion switchVersion = this.factory.newSwitchVersion();
+                        this.switchVersionsParametersMap.put(macro_name, switchVersion);
+                        this.currentParameteredMacroCreatorMethod.addVersionFactory(switchVersion);
+                    }
                 }
-                else {
-                    this.currentParameteredSwitchVersion = null;
-                }
+
+
             }
         }
 
-        if (!this.currentMacroIsAllVersionned){
-            if(this.currentSwitchVersion != null) {
-                for(TString version : node.getVersions()){
+        //add versions in switch statements
+        if (!this.currentMacroIsAllVersionned
+                && !this.currentMacroIsAbstract) {
+
+            MSwitchVersion mSwitchVersion = this.switchVersionsMap.get(parent_name);
+            MSwitchVersion mSwitchVersionWithParameters = this.switchVersionsParametersMap.get(parent_name);
+
+            if(mSwitchVersion != null) {
+                for(TString version : node.getVersions()) {
+
                     String version_name = GenerationUtils.string(version).toUpperCase();
                     MMacroCaseInit mMacroCaseInit = this.factory.newMacroCaseInit(version_name, macro_name);
-                    this.currentSwitchVersion.addVersionCases(mMacroCaseInit);
+                    mSwitchVersion.addVersionCases(mMacroCaseInit);
 
-                    if (this.currentParameteredSwitchVersion != null) {
-                        this.currentParameteredSwitchVersion.addVersionCases(mMacroCaseInit);
+                    if (mSwitchVersionWithParameters != null) {
+                        mSwitchVersionWithParameters.addVersionCases(mMacroCaseInit);
                     }
                 }
             }
