@@ -23,7 +23,7 @@ import org.sablecc.exception.*;
 
 public abstract class Progeny<T> {
 
-    private final Map<T, Set<T>> childrenMap = new HashMap<T, Set<T>>();
+    private final Map<T, Set<T>> childrenMap = new HashMap<>();
 
     public Set<T> getChildren(
             T node) {

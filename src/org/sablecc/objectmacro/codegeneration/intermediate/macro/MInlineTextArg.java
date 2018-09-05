@@ -10,7 +10,7 @@ public class MInlineTextArg {
 
     private final MInlineTextArg mInlineTextArg = this;
 
-    private final List<Object> eInlineString_InlineEol = new LinkedList<Object>();
+    private final List<Object> eInlineString_InlineEol = new LinkedList<>();
 
     public MInlineTextArg(
             String pIndent) {

@@ -148,8 +148,8 @@ public class Bound
             throw new InternalError("value shouldn't be null");
         }
 
-        if (equals(MAX) && bound.equals(MIN) || equals(MIN)
-                && bound.equals(MAX)) {
+        if (equals(MAX) && bound.equals(MIN)
+                || equals(MIN) && bound.equals(MAX)) {
             throw new InternalError("Canno't add + infinite adn - infinite");
         }
 
@@ -185,8 +185,8 @@ public class Bound
             throw new InternalError("value shouldn't be null");
         }
 
-        if (equals(MAX) && bound.equals(MAX) || equals(MIN)
-                && bound.equals(MIN)) {
+        if (equals(MAX) && bound.equals(MAX)
+                || equals(MIN) && bound.equals(MIN)) {
             throw new InternalError(
                     "Canno't subtract + infinite and - infinite");
         }

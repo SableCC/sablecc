@@ -10,15 +10,16 @@ public class MSeparator {
 
     private final MExpandInsertPart mExpandInsertPart;
 
-    private final List<Object> eBrace = new LinkedList<Object>();
+    private final List<Object> eBrace = new LinkedList<>();
 
-    private final List<Object> eTextInsert = new LinkedList<Object>();
+    private final List<Object> eTextInsert = new LinkedList<>();
 
-    private final List<Object> eInlineText_ParamInsert_TextInsertString = new LinkedList<Object>();
+    private final List<Object> eInlineText_ParamInsert_TextInsertString
+            = new LinkedList<>();
 
-    private final List<Object> eTextInsertDestructor = new LinkedList<Object>();
+    private final List<Object> eTextInsertDestructor = new LinkedList<>();
 
-    private final List<Object> eBraceEnd = new LinkedList<Object>();
+    private final List<Object> eBraceEnd = new LinkedList<>();
 
     MSeparator(
             MFile mFile,
@@ -75,8 +76,8 @@ public class MSeparator {
     public MTextInsertDestructor newTextInsertDestructor(
             String pName) {
 
-        MTextInsertDestructor lTextInsertDestructor = new MTextInsertDestructor(
-                pName);
+        MTextInsertDestructor lTextInsertDestructor
+                = new MTextInsertDestructor(pName);
         this.eTextInsertDestructor.add(lTextInsertDestructor);
         return lTextInsertDestructor;
     }
@@ -149,7 +150,8 @@ public class MSeparator {
         sb.append(System.getProperty("line.separator"));
         sb.append("      struct AbstractMacro* Mtemp = temp->_elem_;");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      sizeString += List_pushback(listString, Mtemp->toString(Mtemp));");
+        sb.append(
+                "      sizeString += List_pushback(listString, Mtemp->toString(Mtemp));");
         sb.append(System.getProperty("line.separator"));
         sb.append("      temp = temp->_next_;");
         sb.append(System.getProperty("line.separator"));

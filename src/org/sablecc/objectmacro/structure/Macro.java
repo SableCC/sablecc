@@ -30,15 +30,15 @@ public class Macro
 
     private final Macro parent;
 
-    private final Set<Macro> macros = new LinkedHashSet<Macro>();
+    private final Set<Macro> macros = new LinkedHashSet<>();
 
-    private final Map<String, Macro> macroMap = new HashMap<String, Macro>();
+    private final Map<String, Macro> macroMap = new HashMap<>();
 
-    private final Set<Macro> explicitlyExpandedMacros = new LinkedHashSet<Macro>();
+    private final Set<Macro> explicitlyExpandedMacros = new LinkedHashSet<>();
 
-    private final Set<Macro> implicitlyExpandedMacros = new LinkedHashSet<Macro>();
+    private final Set<Macro> implicitlyExpandedMacros = new LinkedHashSet<>();
 
-    private final Set<ExpandSignature> expandSignatures = new LinkedHashSet<ExpandSignature>();
+    private final Set<ExpandSignature> expandSignatures = new LinkedHashSet<>();
 
     private boolean isImplicitlyExpanded;
 
@@ -140,10 +140,10 @@ public class Macro
                 && !this.parent.explicitlyExpandedMacros.contains(this);
 
         if (this.isImplicitlyExpanded) {
-            Set<Macro> macroSet = new LinkedHashSet<Macro>();
+            Set<Macro> macroSet = new LinkedHashSet<>();
             macroSet.add(this);
-            this.implicitSignature = getGlobalIndex().getExpandSignature(
-                    macroSet);
+            this.implicitSignature
+                    = getGlobalIndex().getExpandSignature(macroSet);
             this.parent.expandSignatures.add(this.implicitSignature);
             this.parent.implicitlyExpandedMacros.add(this);
             addCaller(this.parent);

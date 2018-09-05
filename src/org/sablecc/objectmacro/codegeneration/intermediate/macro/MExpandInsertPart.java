@@ -10,7 +10,8 @@ public class MExpandInsertPart {
 
     private final MExpandInsertPart mExpandInsertPart = this;
 
-    private final List<Object> eInlineTextOption_ParamInsertOption_TextInsertOption = new LinkedList<Object>();
+    private final List<Object> eInlineTextOption_ParamInsertOption_TextInsertOption
+            = new LinkedList<>();
 
     public MExpandInsertPart(
             String pName) {
@@ -34,8 +35,8 @@ public class MExpandInsertPart {
             String pOption,
             String pName) {
 
-        MParamInsertOption lParamInsertOption = new MParamInsertOption(pOption,
-                pName);
+        MParamInsertOption lParamInsertOption
+                = new MParamInsertOption(pOption, pName);
         this.eInlineTextOption_ParamInsertOption_TextInsertOption
                 .add(lParamInsertOption);
         return lParamInsertOption;

@@ -6,7 +6,7 @@ import java.util.*;
 
 public class MTextInsertPart {
 
-    private final List<Object> eTextInsert = new LinkedList<Object>();
+    private final List<Object> eTextInsert = new LinkedList<>();
 
     public MTextInsertPart() {
 

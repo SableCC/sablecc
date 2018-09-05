@@ -10,19 +10,22 @@ public class MText {
 
     private final MText mText = this;
 
-    private final List<Object> ePackageDeclaration = new LinkedList<Object>();
+    private final List<Object> ePackageDeclaration = new LinkedList<>();
 
-    private final List<Object> eParamField_SelfRefText_AncestorField = new LinkedList<Object>();
+    private final List<Object> eParamField_SelfRefText_AncestorField
+            = new LinkedList<>();
 
-    private final List<Object> eParamParam_AncestorParam = new LinkedList<Object>();
+    private final List<Object> eParamParam_AncestorParam = new LinkedList<>();
 
-    private final List<Object> eParamConstructorInit_AncestorConstructorInit = new LinkedList<Object>();
+    private final List<Object> eParamConstructorInit_AncestorConstructorInit
+            = new LinkedList<>();
 
-    private final List<Object> eParam = new LinkedList<Object>();
+    private final List<Object> eParam = new LinkedList<>();
 
-    private final List<Object> eParamRef = new LinkedList<Object>();
+    private final List<Object> eParamRef = new LinkedList<>();
 
-    private final List<Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart = new LinkedList<Object>();
+    private final List<Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart
+            = new LinkedList<>();
 
     public MText(
             String pName) {
@@ -36,8 +39,8 @@ public class MText {
     public MPackageDeclaration newPackageDeclaration(
             String pPackageName) {
 
-        MPackageDeclaration lPackageDeclaration = new MPackageDeclaration(
-                pPackageName);
+        MPackageDeclaration lPackageDeclaration
+                = new MPackageDeclaration(pPackageName);
         this.ePackageDeclaration.add(lPackageDeclaration);
         return lPackageDeclaration;
     }
@@ -84,8 +87,8 @@ public class MText {
     public MParamConstructorInit newParamConstructorInit(
             String pName) {
 
-        MParamConstructorInit lParamConstructorInit = new MParamConstructorInit(
-                pName);
+        MParamConstructorInit lParamConstructorInit
+                = new MParamConstructorInit(pName);
         this.eParamConstructorInit_AncestorConstructorInit
                 .add(lParamConstructorInit);
         return lParamConstructorInit;
@@ -94,8 +97,8 @@ public class MText {
     public MAncestorConstructorInit newAncestorConstructorInit(
             String pName) {
 
-        MAncestorConstructorInit lAncestorConstructorInit = new MAncestorConstructorInit(
-                pName);
+        MAncestorConstructorInit lAncestorConstructorInit
+                = new MAncestorConstructorInit(pName);
         this.eParamConstructorInit_AncestorConstructorInit
                 .add(lAncestorConstructorInit);
         return lAncestorConstructorInit;

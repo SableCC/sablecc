@@ -28,20 +28,20 @@ public final class CardinalityInterval
 
     private Bound upperBound;
 
-    public static final CardinalityInterval ZERO_ZERO = new CardinalityInterval(
-            Bound.ZERO, Bound.ZERO);
+    public static final CardinalityInterval ZERO_ZERO
+            = new CardinalityInterval(Bound.ZERO, Bound.ZERO);
 
-    public static final CardinalityInterval ZERO_ONE = new CardinalityInterval(
-            Bound.ZERO, Bound.ONE);
+    public static final CardinalityInterval ZERO_ONE
+            = new CardinalityInterval(Bound.ZERO, Bound.ONE);
 
-    public static final CardinalityInterval ONE_ONE = new CardinalityInterval(
-            Bound.ONE, Bound.ONE);
+    public static final CardinalityInterval ONE_ONE
+            = new CardinalityInterval(Bound.ONE, Bound.ONE);
 
-    public static final CardinalityInterval ZERO_OR_MORE = new CardinalityInterval(
-            Bound.ZERO);
+    public static final CardinalityInterval ZERO_OR_MORE
+            = new CardinalityInterval(Bound.ZERO);
 
-    public static final CardinalityInterval ONE_OR_MORE = new CardinalityInterval(
-            Bound.ONE);
+    public static final CardinalityInterval ONE_OR_MORE
+            = new CardinalityInterval(Bound.ONE);
 
     public CardinalityInterval(
             PUnaryOperator operator) {

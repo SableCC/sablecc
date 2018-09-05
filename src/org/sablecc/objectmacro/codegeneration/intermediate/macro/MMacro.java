@@ -14,17 +14,18 @@ public class MMacro {
 
     private final MMacro mMacro = this;
 
-    private final List<Object> eParam = new LinkedList<Object>();
+    private final List<Object> eParam = new LinkedList<>();
 
-    private final List<Object> eAncestorRef = new LinkedList<Object>();
+    private final List<Object> eAncestorRef = new LinkedList<>();
 
-    private final List<Object> eParamRef = new LinkedList<Object>();
+    private final List<Object> eParamRef = new LinkedList<>();
 
-    private final List<Object> eExpand = new LinkedList<Object>();
+    private final List<Object> eExpand = new LinkedList<>();
 
-    private final List<Object> eExpandedMacro = new LinkedList<Object>();
+    private final List<Object> eExpandedMacro = new LinkedList<>();
 
-    private final List<Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart = new LinkedList<Object>();
+    private final List<Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
+            = new LinkedList<>();
 
     public MMacro(
             String pName,
@@ -196,8 +197,9 @@ public class MMacro {
             sb.append(oExpandedMacro.toString());
         }
         for (Object oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart : this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart) {
-            sb.append(oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                    .toString());
+            sb.append(
+                    oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
+                            .toString());
         }
         sb.append("}");
         sb.append(System.getProperty("line.separator"));

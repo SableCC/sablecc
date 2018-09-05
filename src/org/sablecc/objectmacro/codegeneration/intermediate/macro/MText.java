@@ -12,13 +12,14 @@ public class MText {
 
     private final MText mText = this;
 
-    private final List<Object> eParam = new LinkedList<Object>();
+    private final List<Object> eParam = new LinkedList<>();
 
-    private final List<Object> eAncestorRef = new LinkedList<Object>();
+    private final List<Object> eAncestorRef = new LinkedList<>();
 
-    private final List<Object> eParamRef = new LinkedList<Object>();
+    private final List<Object> eParamRef = new LinkedList<>();
 
-    private final List<Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart = new LinkedList<Object>();
+    private final List<Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart
+            = new LinkedList<>();
 
     public MText(
             String pName,

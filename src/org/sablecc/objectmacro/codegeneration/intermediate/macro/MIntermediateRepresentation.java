@@ -6,9 +6,9 @@ import java.util.*;
 
 public class MIntermediateRepresentation {
 
-    private final List<Object> eText = new LinkedList<Object>();
+    private final List<Object> eText = new LinkedList<>();
 
-    private final List<Object> eMacro = new LinkedList<Object>();
+    private final List<Object> eMacro = new LinkedList<>();
 
     public MIntermediateRepresentation() {
 

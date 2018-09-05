@@ -57,18 +57,20 @@ public class ProductionTransformation {
             Grammar grammar,
             AProductionTransformation node) {
 
-        ProductionTransformation productionTransformation = new ProductionTransformation(
-                grammar, node);
+        ProductionTransformation productionTransformation
+                = new ProductionTransformation(grammar, node);
 
         productionTransformation.computeSignature();
 
-        Declaration declaration = grammar.getDeclarationResolution(node
-                .getProduction());
+        Declaration declaration
+                = grammar.getDeclarationResolution(node.getProduction());
 
         if (!(declaration instanceof Production)) {
-            throw SemanticException.semanticError("\""
-                    + node.getProduction().getText()
-                    + "\" is not a production.", node.getProduction());
+            throw SemanticException
+                    .semanticError(
+                            "\"" + node.getProduction().getText()
+                                    + "\" is not a production.",
+                            node.getProduction());
         }
 
         Production production = (Production) declaration;
@@ -79,17 +81,17 @@ public class ProductionTransformation {
             Grammar grammar,
             Production production) {
 
-        ProductionTransformation productionTransformation = new ProductionTransformation(
-                grammar, null);
+        ProductionTransformation productionTransformation
+                = new ProductionTransformation(grammar, null);
 
-        Production treeProduction = grammar.getTreeProduction(production
-                .getLookupName());
+        Production treeProduction
+                = grammar.getTreeProduction(production.getLookupName());
         Signature signature;
         if (treeProduction == null) {
             signature = new Signature(new ArrayList<Type>());
         }
         else {
-            ArrayList<Type> types = new ArrayList<Type>();
+            ArrayList<Type> types = new ArrayList<>();
             types.add(new Type(false, treeProduction, null, BigInteger.ONE,
                     BigInteger.ONE));
             signature = new Signature(types);
@@ -101,11 +103,11 @@ public class ProductionTransformation {
 
     private void computeSignature() {
 
-        ArrayList<Type> subtreeTypes = new ArrayList<Type>();
+        ArrayList<Type> subtreeTypes = new ArrayList<>();
         for (PElement pSubtree : this.declaration.getSubtrees()) {
             AElement subtree = (AElement) pSubtree;
-            subtreeTypes.add(this.grammar.getTypeResolution(subtree
-                    .getElementBody()));
+            subtreeTypes.add(
+                    this.grammar.getTypeResolution(subtree.getElementBody()));
         }
 
         this.signature = new Signature(subtreeTypes);

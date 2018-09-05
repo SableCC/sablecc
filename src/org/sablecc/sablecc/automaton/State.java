@@ -31,7 +31,7 @@ public final class State
     /**
      * An empty set of states.
      */
-    private static final SortedSet<State> emptyStateSet = new TreeSet<State>();
+    private static final SortedSet<State> emptyStateSet = new TreeSet<>();
 
     /**
      * The automaton of this state.
@@ -56,7 +56,7 @@ public final class State
     /**
      * The acceptations of this state.
      */
-    private SortedSet<Acceptation> acceptations = new TreeSet<Acceptation>();
+    private SortedSet<Acceptation> acceptations = new TreeSet<>();
 
     /**
      * The stability status of this state.
@@ -97,8 +97,7 @@ public final class State
         this.id = automaton.getNextStateId();
         automaton.addState(this);
 
-        this.transitions = new TreeMap<RichSymbol, SortedSet<State>>(
-                Automaton.getRichSymbolComparator());
+        this.transitions = new TreeMap<>(Automaton.getRichSymbolComparator());
 
         this.isStable = false;
     }
@@ -142,8 +141,7 @@ public final class State
             throw new InternalException("this state is not yet stable");
         }
 
-        if (richSymbol != null
-                && richSymbol != RichSymbol.END
+        if (richSymbol != null && richSymbol != RichSymbol.END
                 && !this.automaton.getAlphabet().getSymbols()
                         .contains(richSymbol.getSymbol())) {
             throw new InternalException("invalid symbol");
@@ -173,8 +171,7 @@ public final class State
             throw new InternalException("the automaton is not deterministic");
         }
 
-        if (richSymbol != null
-                && richSymbol != RichSymbol.END
+        if (richSymbol != null && richSymbol != RichSymbol.END
                 && !this.automaton.getAlphabet().getSymbols()
                         .contains(richSymbol.getSymbol())) {
             throw new InternalException("invalid symbol");
@@ -302,8 +299,8 @@ public final class State
         }
         this.transitions = Collections.unmodifiableSortedMap(this.transitions);
 
-        this.acceptations = Collections
-                .unmodifiableSortedSet(this.acceptations);
+        this.acceptations
+                = Collections.unmodifiableSortedSet(this.acceptations);
 
         this.isStable = true;
     }
@@ -325,8 +322,7 @@ public final class State
             throw new InternalException("state may not be null");
         }
 
-        if (richSymbol != null
-                && richSymbol != RichSymbol.END
+        if (richSymbol != null && richSymbol != RichSymbol.END
                 && !this.automaton.getAlphabet().getSymbols()
                         .contains(richSymbol.getSymbol())) {
             throw new InternalException("invalid symbol");
@@ -339,7 +335,7 @@ public final class State
         SortedSet<State> targets = this.transitions.get(richSymbol);
 
         if (targets == null) {
-            targets = new TreeSet<State>();
+            targets = new TreeSet<>();
             this.transitions.put(richSymbol, targets);
         }
 
@@ -401,7 +397,7 @@ public final class State
 
         if (this.epsilonReach == null) {
 
-            SortedSet<State> epsilonReach = new TreeSet<State>();
+            SortedSet<State> epsilonReach = new TreeSet<>();
             fillEpsilonReach(epsilonReach);
             this.epsilonReach = Collections.unmodifiableSortedSet(epsilonReach);
         }

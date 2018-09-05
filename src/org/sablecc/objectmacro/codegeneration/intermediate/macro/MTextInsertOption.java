@@ -10,7 +10,7 @@ public class MTextInsertOption {
 
     private final MTextInsertOption mTextInsertOption = this;
 
-    private final List<Object> eTextInsert = new LinkedList<Object>();
+    private final List<Object> eTextInsert = new LinkedList<>();
 
     public MTextInsertOption(
             String pOption) {

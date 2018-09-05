@@ -12,7 +12,7 @@ public class MMacroCreatorPrototype {
 
     private final MFile mFile;
 
-    private final List<Object> eParamParam = new LinkedList<Object>();
+    private final List<Object> eParamParam = new LinkedList<>();
 
     MMacroCreatorPrototype(
             String pName,

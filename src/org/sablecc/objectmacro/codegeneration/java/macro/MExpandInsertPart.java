@@ -10,23 +10,23 @@ public class MExpandInsertPart {
 
     private final MExpandInsertPart mExpandInsertPart = this;
 
-    private final List<Object> eNone = new LinkedList<Object>();
+    private final List<Object> eNone = new LinkedList<>();
 
-    private final List<Object> eBeforeFirst = new LinkedList<Object>();
+    private final List<Object> eBeforeFirst = new LinkedList<>();
 
-    private final List<Object> eBeforeOne = new LinkedList<Object>();
+    private final List<Object> eBeforeOne = new LinkedList<>();
 
-    private final List<Object> eBeforeMany = new LinkedList<Object>();
+    private final List<Object> eBeforeMany = new LinkedList<>();
 
-    private final List<Object> eSeparator = new LinkedList<Object>();
+    private final List<Object> eSeparator = new LinkedList<>();
 
-    private final List<Object> eNoSeparator = new LinkedList<Object>();
+    private final List<Object> eNoSeparator = new LinkedList<>();
 
-    private final List<Object> eAfterLast = new LinkedList<Object>();
+    private final List<Object> eAfterLast = new LinkedList<>();
 
-    private final List<Object> eAfterOne = new LinkedList<Object>();
+    private final List<Object> eAfterOne = new LinkedList<>();
 
-    private final List<Object> eAfterMany = new LinkedList<Object>();
+    private final List<Object> eAfterMany = new LinkedList<>();
 
     public MExpandInsertPart(
             String pName) {

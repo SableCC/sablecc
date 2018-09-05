@@ -110,7 +110,8 @@ public class Acceptation
     public String getName() {
 
         if (this.name == null) {
-            throw new InternalException("this acceptation does not have a name");
+            throw new InternalException(
+                    "this acceptation does not have a name");
         }
 
         return this.name;

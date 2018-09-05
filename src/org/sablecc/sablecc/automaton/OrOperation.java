@@ -32,7 +32,7 @@ class OrOperation {
 
     private Automaton rightAutomaton;
 
-    private Map<State, State> oldStateToNewStateMap = new HashMap<State, State>();
+    private Map<State, State> oldStateToNewStateMap = new HashMap<>();
 
     private AlphabetMergeResult alphabetMergeResult;
 
@@ -56,17 +56,17 @@ class OrOperation {
             throw new InternalException("invalid operation");
         }
 
-        this.alphabetMergeResult = leftAutomaton.getAlphabet().mergeWith(
-                rightAutomaton.getAlphabet());
+        this.alphabetMergeResult = leftAutomaton.getAlphabet()
+                .mergeWith(rightAutomaton.getAlphabet());
         this.newAlphabet = this.alphabetMergeResult.getNewAlphabet();
         this.newAutomaton = new Automaton(this.newAlphabet);
 
-        this.leftAutomaton = leftAutomaton
-                .withMergedAlphabet(this.alphabetMergeResult);
-        this.rightAutomaton = rightAutomaton
-                .withMergedAlphabet(this.alphabetMergeResult);
+        this.leftAutomaton
+                = leftAutomaton.withMergedAlphabet(this.alphabetMergeResult);
+        this.rightAutomaton
+                = rightAutomaton.withMergedAlphabet(this.alphabetMergeResult);
 
-        SortedSet<Acceptation> acceptations = new TreeSet<Acceptation>();
+        SortedSet<Acceptation> acceptations = new TreeSet<>();
         acceptations.addAll(this.leftAutomaton.getAcceptations());
         acceptations.addAll(this.rightAutomaton.getAcceptations());
         for (Acceptation acceptation : acceptations) {
@@ -76,14 +76,12 @@ class OrOperation {
         addStatesAndTransitions(this.leftAutomaton);
         addStatesAndTransitions(this.rightAutomaton);
 
-        this.newAutomaton.getStartState().addTransition(
-                null,
-                this.oldStateToNewStateMap.get(this.leftAutomaton
-                        .getStartState()));
-        this.newAutomaton.getStartState().addTransition(
-                null,
-                this.oldStateToNewStateMap.get(this.rightAutomaton
-                        .getStartState()));
+        this.newAutomaton.getStartState().addTransition(null,
+                this.oldStateToNewStateMap
+                        .get(this.leftAutomaton.getStartState()));
+        this.newAutomaton.getStartState().addTransition(null,
+                this.oldStateToNewStateMap
+                        .get(this.rightAutomaton.getStartState()));
 
         this.newAutomaton.stabilize();
     }
@@ -102,14 +100,14 @@ class OrOperation {
         }
 
         for (State oldSourceState : automaton.getStates()) {
-            State newSourceState = this.oldStateToNewStateMap
-                    .get(oldSourceState);
+            State newSourceState
+                    = this.oldStateToNewStateMap.get(oldSourceState);
             for (Map.Entry<RichSymbol, SortedSet<State>> entry : oldSourceState
                     .getTransitions().entrySet()) {
                 RichSymbol richSymbol = entry.getKey();
                 for (State oldTargetState : entry.getValue()) {
-                    State newTargetState = this.oldStateToNewStateMap
-                            .get(oldTargetState);
+                    State newTargetState
+                            = this.oldStateToNewStateMap.get(oldTargetState);
                     newSourceState.addTransition(richSymbol, newTargetState);
                 }
             }

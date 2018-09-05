@@ -24,7 +24,8 @@ public class MListC {
         sb.append("}");
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
-        sb.append("int List_pushback_MType(List* array, void* _elem_, int _bool_MType_) {");
+        sb.append(
+                "int List_pushback_MType(List* array, void* _elem_, int _bool_MType_) {");
         sb.append(System.getProperty("line.separator"));
         sb.append("  Node* node = (Node*)calloc(1, sizeof(Node));");
         sb.append(System.getProperty("line.separator"));

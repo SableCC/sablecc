@@ -42,8 +42,8 @@ public class TextInsert {
 
         this.declaration = declaration;
         this.enclosingScope = enclosingScope;
-        this.insertedTextBlock = enclosingScope.getTextBlock(declaration
-                .getName());
+        this.insertedTextBlock
+                = enclosingScope.getTextBlock(declaration.getName());
     }
 
     public ATextInsert getDeclaration() {

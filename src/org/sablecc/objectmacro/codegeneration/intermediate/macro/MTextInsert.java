@@ -12,9 +12,10 @@ public class MTextInsert {
 
     private final MTextInsert mTextInsert = this;
 
-    private final List<Object> eInlineTextArg_ParamInsertArg_TextInsertArg = new LinkedList<Object>();
+    private final List<Object> eInlineTextArg_ParamInsertArg_TextInsertArg
+            = new LinkedList<>();
 
-    private final List<Object> eAncestorRef = new LinkedList<Object>();
+    private final List<Object> eAncestorRef = new LinkedList<>();
 
     public MTextInsert(
             String pName,

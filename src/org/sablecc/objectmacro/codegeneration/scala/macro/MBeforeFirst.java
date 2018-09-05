@@ -8,7 +8,8 @@ public class MBeforeFirst {
 
     private final MExpandInsertPart mExpandInsertPart;
 
-    private final List<Object> eInlineText_ParamInsert_TextInsert = new LinkedList<Object>();
+    private final List<Object> eInlineText_ParamInsert_TextInsert
+            = new LinkedList<>();
 
     MBeforeFirst(
             MExpandInsertPart mExpandInsertPart) {

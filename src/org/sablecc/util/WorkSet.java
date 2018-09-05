@@ -28,10 +28,10 @@ import org.sablecc.exception.*;
 public class WorkSet<T> {
 
     /** The set of the already returned element. */
-    private final Set<T> done = new HashSet<T>();
+    private final Set<T> done = new HashSet<>();
 
     /** The set of elements that have not been returned. */
-    private final LinkedHashSet<T> toDo = new LinkedHashSet<T>();
+    private final LinkedHashSet<T> toDo = new LinkedHashSet<>();
 
     /**
      * Returns <code>true</code> if there is a next element.

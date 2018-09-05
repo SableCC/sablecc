@@ -43,7 +43,8 @@ public final class AlphabetMergeResult {
      * The rich symbol map. It maps each old rich symbol (in a merged alphabet)
      * to a set of new rich symbols that cover the same intervals.
      */
-    private final SortedMap<RichSymbol, SortedSet<RichSymbol>> mergedAlphabetRichSymbolMap = new TreeMap<RichSymbol, SortedSet<RichSymbol>>();
+    private final SortedMap<RichSymbol, SortedSet<RichSymbol>> mergedAlphabetRichSymbolMap
+            = new TreeMap<>();
 
     /**
      * Constructs an instance to store the result of merging an alphabet with
@@ -59,10 +60,10 @@ public final class AlphabetMergeResult {
         this.newAlphabet = alphabet;
 
         // map each symbol to a set containing itself
-        this.mergedAlphabetSymbolMap = new TreeMap<Symbol, SortedSet<Symbol>>();
+        this.mergedAlphabetSymbolMap = new TreeMap<>();
 
         for (Symbol symbol : alphabet.getSymbols()) {
-            TreeSet<Symbol> set = new TreeSet<Symbol>();
+            TreeSet<Symbol> set = new TreeSet<>();
             set.add(symbol);
             this.mergedAlphabetSymbolMap.put(symbol, set);
         }
@@ -101,11 +102,11 @@ public final class AlphabetMergeResult {
             SortedSet<Symbol> newSymbols = entry.getValue();
 
             RichSymbol oldNormalRichSymbol = oldSymbol.getNormalRichSymbol();
-            RichSymbol oldLookaheadRichSymbol = oldSymbol
-                    .getLookaheadRichSymbol();
+            RichSymbol oldLookaheadRichSymbol
+                    = oldSymbol.getLookaheadRichSymbol();
 
-            SortedSet<RichSymbol> newNormalRichSymbols = new TreeSet<RichSymbol>();
-            SortedSet<RichSymbol> newLookaheadRichSymbols = new TreeSet<RichSymbol>();
+            SortedSet<RichSymbol> newNormalRichSymbols = new TreeSet<>();
+            SortedSet<RichSymbol> newLookaheadRichSymbols = new TreeSet<>();
 
             for (Symbol newSymbol : newSymbols) {
                 newNormalRichSymbols.add(newSymbol.getNormalRichSymbol());
@@ -118,7 +119,7 @@ public final class AlphabetMergeResult {
                     newLookaheadRichSymbols);
         }
 
-        SortedSet<RichSymbol> newEndRichSymbols = new TreeSet<RichSymbol>();
+        SortedSet<RichSymbol> newEndRichSymbols = new TreeSet<>();
         newEndRichSymbols.add(RichSymbol.END);
 
         this.mergedAlphabetRichSymbolMap.put(RichSymbol.END, newEndRichSymbols);

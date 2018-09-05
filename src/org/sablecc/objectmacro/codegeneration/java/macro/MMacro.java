@@ -10,25 +10,28 @@ public class MMacro {
 
     private final MMacro mMacro = this;
 
-    private final List<Object> ePackageDeclaration = new LinkedList<Object>();
+    private final List<Object> ePackageDeclaration = new LinkedList<>();
 
-    private final List<Object> eImportJavaUtil = new LinkedList<Object>();
+    private final List<Object> eImportJavaUtil = new LinkedList<>();
 
-    private final List<Object> eParamField_SelfRefMacro_AncestorField_ExpandField = new LinkedList<Object>();
+    private final List<Object> eParamField_SelfRefMacro_AncestorField_ExpandField
+            = new LinkedList<>();
 
-    private final List<Object> ePublic = new LinkedList<Object>();
+    private final List<Object> ePublic = new LinkedList<>();
 
-    private final List<Object> eParamParam_AncestorParam = new LinkedList<Object>();
+    private final List<Object> eParamParam_AncestorParam = new LinkedList<>();
 
-    private final List<Object> eParamConstructorInit_AncestorConstructorInit = new LinkedList<Object>();
+    private final List<Object> eParamConstructorInit_AncestorConstructorInit
+            = new LinkedList<>();
 
-    private final List<Object> eMacroCreator = new LinkedList<Object>();
+    private final List<Object> eMacroCreator = new LinkedList<>();
 
-    private final List<Object> eParam = new LinkedList<Object>();
+    private final List<Object> eParam = new LinkedList<>();
 
-    private final List<Object> eParamRef = new LinkedList<Object>();
+    private final List<Object> eParamRef = new LinkedList<>();
 
-    private final List<Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart = new LinkedList<Object>();
+    private final List<Object> eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
+            = new LinkedList<>();
 
     public MMacro(
             String pName) {
@@ -42,8 +45,8 @@ public class MMacro {
     public MPackageDeclaration newPackageDeclaration(
             String pPackageName) {
 
-        MPackageDeclaration lPackageDeclaration = new MPackageDeclaration(
-                pPackageName);
+        MPackageDeclaration lPackageDeclaration
+                = new MPackageDeclaration(pPackageName);
         this.ePackageDeclaration.add(lPackageDeclaration);
         return lPackageDeclaration;
     }
@@ -116,8 +119,8 @@ public class MMacro {
     public MParamConstructorInit newParamConstructorInit(
             String pName) {
 
-        MParamConstructorInit lParamConstructorInit = new MParamConstructorInit(
-                pName);
+        MParamConstructorInit lParamConstructorInit
+                = new MParamConstructorInit(pName);
         this.eParamConstructorInit_AncestorConstructorInit
                 .add(lParamConstructorInit);
         return lParamConstructorInit;
@@ -126,8 +129,8 @@ public class MMacro {
     public MAncestorConstructorInit newAncestorConstructorInit(
             String pName) {
 
-        MAncestorConstructorInit lAncestorConstructorInit = new MAncestorConstructorInit(
-                pName);
+        MAncestorConstructorInit lAncestorConstructorInit
+                = new MAncestorConstructorInit(pName);
         this.eParamConstructorInit_AncestorConstructorInit
                 .add(lAncestorConstructorInit);
         return lAncestorConstructorInit;
@@ -233,7 +236,8 @@ public class MMacro {
         sb.append(rName());
         sb.append(" {");
         sb.append(System.getProperty("line.separator"));
-        if (this.eParamField_SelfRefMacro_AncestorField_ExpandField.size() > 0) {
+        if (this.eParamField_SelfRefMacro_AncestorField_ExpandField
+                .size() > 0) {
             sb.append(System.getProperty("line.separator"));
         }
         for (Object oParamField_SelfRefMacro_AncestorField_ExpandField : this.eParamField_SelfRefMacro_AncestorField_ExpandField) {
@@ -320,8 +324,9 @@ public class MMacro {
         sb.append("    StringBuilder sb = new StringBuilder();");
         sb.append(System.getProperty("line.separator"));
         for (Object oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart : this.eStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart) {
-            sb.append(oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
-                    .toString());
+            sb.append(
+                    oStringPart_EolPart_ParamInsertPart_TextInsertPart_ExpandInsertPart
+                            .toString());
         }
         sb.append("    return sb.toString();");
         sb.append(System.getProperty("line.separator"));

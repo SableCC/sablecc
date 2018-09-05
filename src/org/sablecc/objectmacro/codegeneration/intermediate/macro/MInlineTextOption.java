@@ -10,7 +10,7 @@ public class MInlineTextOption {
 
     private final MInlineTextOption mInlineTextOption = this;
 
-    private final List<Object> eInlineString_InlineEol = new LinkedList<Object>();
+    private final List<Object> eInlineString_InlineEol = new LinkedList<>();
 
     public MInlineTextOption(
             String pOption) {

@@ -175,7 +175,7 @@ public class CodeGenerationWalker
     public void inAText(
             AText node) {
 
-        this.listImport = new LinkedList<String>();
+        this.listImport = new LinkedList<>();
 
         this.currentFile = new MFile(string(node.getName()));
 
@@ -215,8 +215,8 @@ public class CodeGenerationWalker
     public void outAText(
             AText node) {
 
-        File destination = new File(this.packageDirectory, "M"
-                + string(node.getName()) + ".h");
+        File destination = new File(this.packageDirectory,
+                "M" + string(node.getName()) + ".h");
 
         try {
             FileWriter fw = new FileWriter(destination);
@@ -230,8 +230,8 @@ public class CodeGenerationWalker
         this.currentTextH = null;
         this.listImport = null;
 
-        destination = new File(this.packageDirectory, "M"
-                + string(node.getName()) + ".c");
+        destination = new File(this.packageDirectory,
+                "M" + string(node.getName()) + ".c");
 
         try {
             FileWriter fw = new FileWriter(destination);
@@ -250,7 +250,7 @@ public class CodeGenerationWalker
     public void inAMacro(
             AMacro node) {
 
-        this.listImport = new LinkedList<String>();
+        this.listImport = new LinkedList<>();
 
         this.currentFile = new MFile(string(node.getName()));
 
@@ -298,8 +298,8 @@ public class CodeGenerationWalker
     public void outAMacro(
             AMacro node) {
 
-        File destination = new File(this.packageDirectory, "M"
-                + string(node.getName()) + ".h");
+        File destination = new File(this.packageDirectory,
+                "M" + string(node.getName()) + ".h");
 
         try {
             FileWriter fw = new FileWriter(destination);
@@ -313,8 +313,8 @@ public class CodeGenerationWalker
         this.currentMacroH = null;
         this.listImport = null;
 
-        destination = new File(this.packageDirectory, "M"
-                + string(node.getName()) + ".c");
+        destination = new File(this.packageDirectory,
+                "M" + string(node.getName()) + ".c");
 
         try {
             FileWriter fw = new FileWriter(destination);
@@ -371,8 +371,8 @@ public class CodeGenerationWalker
 
         MMacroCreatorPrototype macroCreatorPrototype = this.currentMacroH
                 .newMacroCreatorPrototype(string(node.getName()));
-        MMacroCreator macroCreator = this.currentMacroC
-                .newMacroCreator(string(node.getName()));
+        MMacroCreator macroCreator
+                = this.currentMacroC.newMacroCreator(string(node.getName()));
 
         for (TString param : node.getParams()) {
             macroCreator.newParamParam(string(param));
@@ -527,12 +527,12 @@ public class CodeGenerationWalker
         MTextInsert oldTextInsert = this.currentTextInsert;
 
         if (oldTextInsert != null) {
-            this.currentTextInsert = oldTextInsert.newTextInsert(string(node
-                    .getName()));
+            this.currentTextInsert
+                    = oldTextInsert.newTextInsert(string(node.getName()));
         }
         else if (this.currentNone != null) {
-            this.currentTextInsert = this.currentNone.newTextInsert(string(node
-                    .getName()));
+            this.currentTextInsert
+                    = this.currentNone.newTextInsert(string(node.getName()));
             this.currentNone.newTextInsertString(string(node.getName()));
             this.currentNone.newTextInsertDestructor(string(node.getName()));
         }
@@ -549,8 +549,8 @@ public class CodeGenerationWalker
             this.currentTextInsert = this.currentBeforeFirst
                     .newTextInsert(string(node.getName()));
             this.currentBeforeFirst.newTextInsertString(string(node.getName()));
-            this.currentBeforeFirst.newTextInsertDestructor(string(node
-                    .getName()));
+            this.currentBeforeFirst
+                    .newTextInsertDestructor(string(node.getName()));
         }
         else if (this.currentAfterLast != null) {
             this.currentTextInsert = this.currentAfterLast
@@ -577,8 +577,8 @@ public class CodeGenerationWalker
             this.currentTextInsert = this.currentBeforeMany
                     .newTextInsert(string(node.getName()));
             this.currentBeforeMany.newTextInsertString(string(node.getName()));
-            this.currentBeforeMany.newTextInsertDestructor(string(node
-                    .getName()));
+            this.currentBeforeMany
+                    .newTextInsertDestructor(string(node.getName()));
         }
         else if (this.currentAfterMany != null) {
             this.currentTextInsert = this.currentAfterMany
@@ -590,10 +590,10 @@ public class CodeGenerationWalker
         else if (this.currentTextInsertPart != null) {
             this.currentTextInsert = this.currentTextInsertPart
                     .newTextInsert(string(node.getName()));
-            this.currentTextInsertPart.newTextInsertString(string(node
-                    .getName()));
-            this.currentTextInsertPart.newTextInsertDestructor(string(node
-                    .getName()));
+            this.currentTextInsertPart
+                    .newTextInsertString(string(node.getName()));
+            this.currentTextInsertPart
+                    .newTextInsertDestructor(string(node.getName()));
         }
         else {
             throw new InternalException("unhandled case");

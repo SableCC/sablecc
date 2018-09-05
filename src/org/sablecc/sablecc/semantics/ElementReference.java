@@ -117,8 +117,8 @@ public class ElementReference {
                 // override base if it is transformed
                 if (bodyBase instanceof Production) {
                     Production production = (Production) bodyBase;
-                    ProductionTransformation productionTransformation = production
-                            .getTransformation();
+                    ProductionTransformation productionTransformation
+                            = production.getTransformation();
 
                     // the transformation must be simple, as there is no subree
 
@@ -137,8 +137,8 @@ public class ElementReference {
                 // override separator if it is transformed
                 if (hasSeparator && bodySeparator instanceof Production) {
                     Production production = (Production) bodySeparator;
-                    ProductionTransformation productionTransformation = production
-                            .getTransformation();
+                    ProductionTransformation productionTransformation
+                            = production.getTransformation();
 
                     // the transformation must be simple, as there is no subree
 
@@ -167,13 +167,13 @@ public class ElementReference {
                         hasBase = true;
                         hasSeparator = false;
                         if (minMultiplicity.compareTo(BigInteger.ZERO) > 0) {
-                            minMultiplicity = minMultiplicity
-                                    .subtract(BigInteger.ONE);
+                            minMultiplicity
+                                    = minMultiplicity.subtract(BigInteger.ONE);
                         }
-                        if (maxMultiplicity != null
-                                && maxMultiplicity.compareTo(BigInteger.ZERO) > 0) {
-                            maxMultiplicity = maxMultiplicity
-                                    .subtract(BigInteger.ONE);
+                        if (maxMultiplicity != null && maxMultiplicity
+                                .compareTo(BigInteger.ZERO) > 0) {
+                            maxMultiplicity
+                                    = maxMultiplicity.subtract(BigInteger.ONE);
                         }
                     }
                 }
@@ -192,10 +192,10 @@ public class ElementReference {
                 boolean subtreeIsList = subtreeType.isList();
                 Declaration subtreeBase = subtreeType.getBase();
                 Declaration subtreeSeparator = subtreeType.getSeparator();
-                BigInteger subtreeMinMultiplicity = subtreeType
-                        .getMinMultiplicity();
-                BigInteger subtreeMaxMultiplicity = subtreeType
-                        .getMaxMultiplicity();
+                BigInteger subtreeMinMultiplicity
+                        = subtreeType.getMinMultiplicity();
+                BigInteger subtreeMaxMultiplicity
+                        = subtreeType.getMaxMultiplicity();
 
                 // fill with an initial approximation
                 isList = subtreeIsList;

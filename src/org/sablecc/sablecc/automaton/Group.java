@@ -147,7 +147,7 @@ class Group {
     boolean splitOnRichSymbol(
             RichSymbol richSymbol) {
 
-        Set<Group> destinations = new LinkedHashSet<Group>();
+        Set<Group> destinations = new LinkedHashSet<>();
 
         for (State state : this.states) {
 
@@ -172,7 +172,7 @@ class Group {
             return false;
         }
 
-        Map<Group, SortedSet<State>> stateMap = new HashMap<Group, SortedSet<State>>();
+        Map<Group, SortedSet<State>> stateMap = new HashMap<>();
 
         if (isDeadEnd()) {
             stateMap.put(this, new TreeSet<State>());
@@ -193,7 +193,7 @@ class Group {
             SortedSet<State> states = stateMap.get(destination);
 
             if (states == null) {
-                states = new TreeSet<State>();
+                states = new TreeSet<>();
                 stateMap.put(destination, states);
             }
 

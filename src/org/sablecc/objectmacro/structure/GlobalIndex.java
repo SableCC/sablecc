@@ -26,19 +26,20 @@ import org.sablecc.util.*;
 
 public class GlobalIndex {
 
-    private final Set<Macro> allMacros = new LinkedHashSet<Macro>();
+    private final Set<Macro> allMacros = new LinkedHashSet<>();
 
-    private final Set<TextBlock> allTextBlocks = new LinkedHashSet<TextBlock>();
+    private final Set<TextBlock> allTextBlocks = new LinkedHashSet<>();
 
-    private final SortedMap<String, Macro> macroMap = new TreeMap<String, Macro>();
+    private final SortedMap<String, Macro> macroMap = new TreeMap<>();
 
-    private final SortedMap<String, TextBlock> textBlockMap = new TreeMap<String, TextBlock>();
+    private final SortedMap<String, TextBlock> textBlockMap = new TreeMap<>();
 
-    private final Map<PExpand, Expand> expandMap = new HashMap<PExpand, Expand>();
+    private final Map<PExpand, Expand> expandMap = new HashMap<>();
 
-    private final Map<PTextInsert, TextInsert> textInsertMap = new HashMap<PTextInsert, TextInsert>();
+    private final Map<PTextInsert, TextInsert> textInsertMap = new HashMap<>();
 
-    private final Map<Set<Macro>, ExpandSignature> expandSignatureMap = new HashMap<Set<Macro>, ExpandSignature>();
+    private final Map<Set<Macro>, ExpandSignature> expandSignatureMap
+            = new HashMap<>();
 
     public Macro newTopMacro(
             PMacro pDeclaration) {
@@ -257,21 +258,21 @@ public class GlobalIndex {
             protected Set<Scope> getChildrenNoCache(
                     Scope scope) {
 
-                Set<Scope> children = new LinkedHashSet<Scope>();
+                Set<Scope> children = new LinkedHashSet<>();
                 children.addAll(scope.getDirectlyReferencedTextBlocks());
                 return children;
             }
         };
 
-        Set<Scope> scopes = new LinkedHashSet<Scope>();
+        Set<Scope> scopes = new LinkedHashSet<>();
         scopes.addAll(this.allMacros);
         scopes.addAll(this.allTextBlocks);
         scopes = Collections.unmodifiableSet(scopes);
 
-        ComponentFinder<Scope> componentFinder = new ComponentFinder<Scope>(
-                scopes, referencedTextBlockProgeny);
+        ComponentFinder<Scope> componentFinder
+                = new ComponentFinder<>(scopes, referencedTextBlockProgeny);
         for (Scope scope : scopes) {
-            Set<TextBlock> reach = new LinkedHashSet<TextBlock>();
+            Set<TextBlock> reach = new LinkedHashSet<>();
             for (Scope reachedTextBlock : componentFinder
                     .getReach(componentFinder.getRepresentative(scope))) {
                 reach.add((TextBlock) reachedTextBlock);

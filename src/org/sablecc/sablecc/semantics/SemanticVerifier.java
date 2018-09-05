@@ -78,10 +78,9 @@ public class SemanticVerifier {
                     AParserProduction node) {
 
                 if (node.getAlternatives().size() == 0) {
-                    throw SemanticException
-                            .semanticError(
-                                    "The production has no alternatives. An 'Empty' keyword is probably missing.",
-                                    node.getSemicolon());
+                    throw SemanticException.semanticError(
+                            "The production has no alternatives. An 'Empty' keyword is probably missing.",
+                            node.getSemicolon());
                 }
                 SemanticVerifier.this.grammar.addProduction(node);
             }
@@ -126,7 +125,8 @@ public class SemanticVerifier {
             public void caseATree(
                     ATree node) {
 
-                for (PTreeProduction treeProduction : node.getTreeProductions()) {
+                for (PTreeProduction treeProduction : node
+                        .getTreeProductions()) {
                     visit(treeProduction);
                 }
             }
@@ -137,10 +137,9 @@ public class SemanticVerifier {
                     ATreeProduction node) {
 
                 if (node.getAlternatives().size() == 0) {
-                    throw SemanticException
-                            .semanticError(
-                                    "The production has no alternatives. An 'Empty' keyword is probably missing.",
-                                    node.getSemicolon());
+                    throw SemanticException.semanticError(
+                            "The production has no alternatives. An 'Empty' keyword is probably missing.",
+                            node.getSemicolon());
                 }
                 SemanticVerifier.this.grammar.addProduction(node);
             }
@@ -164,7 +163,8 @@ public class SemanticVerifier {
             public void caseATree(
                     ATree node) {
 
-                for (PTreeProduction treeProduction : node.getTreeProductions()) {
+                for (PTreeProduction treeProduction : node
+                        .getTreeProductions()) {
                     visit(treeProduction);
                 }
             }
@@ -173,10 +173,10 @@ public class SemanticVerifier {
             public void inAParserProduction(
                     AParserProduction node) {
 
-                this.currentProduction = SemanticVerifier.this.grammar
-                        .getProduction(node);
-                this.alternatives = new ArrayList<Alternative>(node
-                        .getAlternatives().size());
+                this.currentProduction
+                        = SemanticVerifier.this.grammar.getProduction(node);
+                this.alternatives
+                        = new ArrayList<>(node.getAlternatives().size());
             }
 
             @Override
@@ -192,10 +192,10 @@ public class SemanticVerifier {
             public void inATreeProduction(
                     ATreeProduction node) {
 
-                this.currentProduction = SemanticVerifier.this.grammar
-                        .getProduction(node);
-                this.alternatives = new ArrayList<Alternative>(node
-                        .getAlternatives().size());
+                this.currentProduction
+                        = SemanticVerifier.this.grammar.getProduction(node);
+                this.alternatives
+                        = new ArrayList<>(node.getAlternatives().size());
             }
 
             @Override
@@ -211,13 +211,12 @@ public class SemanticVerifier {
             public void inAAlternative(
                     AAlternative node) {
 
-                SemanticVerifier.this.grammar.addAlternative(
-                        this.currentProduction, node);
-                this.currentAlternative = SemanticVerifier.this.grammar
-                        .getAlternative(node);
+                SemanticVerifier.this.grammar
+                        .addAlternative(this.currentProduction, node);
+                this.currentAlternative
+                        = SemanticVerifier.this.grammar.getAlternative(node);
                 this.alternatives.add(this.currentAlternative);
-                this.elements = new ArrayList<Element>(node.getElements()
-                        .size());
+                this.elements = new ArrayList<>(node.getElements().size());
             }
 
             @Override
@@ -233,10 +232,10 @@ public class SemanticVerifier {
             public void caseAElement(
                     AElement node) {
 
-                SemanticVerifier.this.grammar.addElement(
-                        this.currentAlternative, node);
-                this.elements.add(SemanticVerifier.this.grammar
-                        .getElement(node));
+                SemanticVerifier.this.grammar
+                        .addElement(this.currentAlternative, node);
+                this.elements
+                        .add(SemanticVerifier.this.grammar.getElement(node));
             }
         });
     }
@@ -259,7 +258,8 @@ public class SemanticVerifier {
                     ATree node) {
 
                 this.inTree = true;
-                for (PTreeProduction treeProduction : node.getTreeProductions()) {
+                for (PTreeProduction treeProduction : node
+                        .getTreeProductions()) {
                     visit(treeProduction);
                 }
                 this.inTree = false;
@@ -270,12 +270,12 @@ public class SemanticVerifier {
                     ANameUnit node) {
 
                 if (!this.inTree) {
-                    SemanticVerifier.this.grammar.resolveParserIdentifier(node
-                            .getIdentifier());
+                    SemanticVerifier.this.grammar
+                            .resolveParserIdentifier(node.getIdentifier());
                 }
                 else {
-                    SemanticVerifier.this.grammar.resolveTreeIdentifier(node
-                            .getIdentifier());
+                    SemanticVerifier.this.grammar
+                            .resolveTreeIdentifier(node.getIdentifier());
                 }
             }
         });
@@ -344,10 +344,11 @@ public class SemanticVerifier {
             public void caseAParserProduction(
                     AParserProduction node) {
 
-                this.currentProduction = SemanticVerifier.this.grammar
-                        .getProduction(node);
-                this.alternativesWithPrecedence = new TreeSet<String>();
-                for (PPrecedenceRule precedenceRule : node.getPrecedenceRules()) {
+                this.currentProduction
+                        = SemanticVerifier.this.grammar.getProduction(node);
+                this.alternativesWithPrecedence = new TreeSet<>();
+                for (PPrecedenceRule precedenceRule : node
+                        .getPrecedenceRules()) {
                     visit(precedenceRule);
                 }
                 this.currentProduction = null;
@@ -416,8 +417,8 @@ public class SemanticVerifier {
             public void caseAProductionTransformation(
                     AProductionTransformation node) {
 
-                SemanticVerifier.this.grammar.resolveParserIdentifier(node
-                        .getProduction());
+                SemanticVerifier.this.grammar
+                        .resolveParserIdentifier(node.getProduction());
                 for (PElement element : node.getSubtrees()) {
                     visit(element);
                 }
@@ -441,8 +442,8 @@ public class SemanticVerifier {
             public void caseANameUnit(
                     ANameUnit node) {
 
-                SemanticVerifier.this.grammar.resolveTreeIdentifier(node
-                        .getIdentifier());
+                SemanticVerifier.this.grammar
+                        .resolveTreeIdentifier(node.getIdentifier());
             }
 
             @Override
@@ -451,12 +452,12 @@ public class SemanticVerifier {
 
                 Node parent = node.parent();
                 if (parent instanceof AAlternativeTransformation) {
-                    SemanticVerifier.this.grammar.resolveParserIdentifier(node
-                            .getProduction());
+                    SemanticVerifier.this.grammar
+                            .resolveParserIdentifier(node.getProduction());
                 }
                 else if (parent instanceof ANewTransformationElement) {
-                    SemanticVerifier.this.grammar.resolveTreeIdentifier(node
-                            .getProduction());
+                    SemanticVerifier.this.grammar
+                            .resolveTreeIdentifier(node.getProduction());
                 }
                 else {
                     throw new InternalException("unhandled case");
@@ -465,9 +466,10 @@ public class SemanticVerifier {
                 Declaration declaration = SemanticVerifier.this.grammar
                         .getDeclarationResolution(node.getProduction());
                 if (!(declaration instanceof Production)) {
-                    throw SemanticException.semanticError("\""
-                            + node.getProduction().getText()
-                            + "\" is not a production.", node.getProduction());
+                    throw SemanticException.semanticError(
+                            "\"" + node.getProduction().getText()
+                                    + "\" is not a production.",
+                            node.getProduction());
                 }
 
                 SemanticVerifier.this.grammar.resolveAlternativeReference(node);
@@ -479,12 +481,12 @@ public class SemanticVerifier {
 
                 Node parent = node.parent();
                 if (parent instanceof AAlternativeTransformation) {
-                    SemanticVerifier.this.grammar.resolveParserIdentifier(node
-                            .getProduction());
+                    SemanticVerifier.this.grammar
+                            .resolveParserIdentifier(node.getProduction());
                 }
                 else if (parent instanceof ANewTransformationElement) {
-                    SemanticVerifier.this.grammar.resolveTreeIdentifier(node
-                            .getProduction());
+                    SemanticVerifier.this.grammar
+                            .resolveTreeIdentifier(node.getProduction());
                 }
                 else {
                     throw new InternalException("unhandled case");
@@ -493,9 +495,10 @@ public class SemanticVerifier {
                 Declaration declaration = SemanticVerifier.this.grammar
                         .getDeclarationResolution(node.getProduction());
                 if (!(declaration instanceof Production)) {
-                    throw SemanticException.semanticError("\""
-                            + node.getProduction().getText()
-                            + "\" is not a production.", node.getProduction());
+                    throw SemanticException.semanticError(
+                            "\"" + node.getProduction().getText()
+                                    + "\" is not a production.",
+                            node.getProduction());
                 }
                 Production production = (Production) declaration;
                 SemanticVerifier.this.grammar.resolveAlternativeIdentifier(
@@ -514,9 +517,10 @@ public class SemanticVerifier {
             public void caseAElement(
                     AElement node) {
 
-                SemanticVerifier.this.grammar.resolveType(node.getElementBody());
-                Element element = SemanticVerifier.this.grammar
-                        .getElement(node);
+                SemanticVerifier.this.grammar
+                        .resolveType(node.getElementBody());
+                Element element
+                        = SemanticVerifier.this.grammar.getElement(node);
                 if (element != null) {
                     element.setType(SemanticVerifier.this.grammar
                             .getTypeResolution(node.getElementBody()));
@@ -534,9 +538,8 @@ public class SemanticVerifier {
             public void caseAProductionTransformation(
                     AProductionTransformation node) {
 
-                ProductionTransformation
-                        .createDeclaredProductionTransformation(
-                                SemanticVerifier.this.grammar, node);
+                ProductionTransformation.createDeclaredProductionTransformation(
+                        SemanticVerifier.this.grammar, node);
             }
 
         });
@@ -555,8 +558,8 @@ public class SemanticVerifier {
             public void caseAParserProduction(
                     AParserProduction node) {
 
-                Production production = SemanticVerifier.this.grammar
-                        .getProduction(node);
+                Production production
+                        = SemanticVerifier.this.grammar.getProduction(node);
                 if (production.getTransformation() == null) {
                     ProductionTransformation
                             .createImplicitProductionTransformation(
@@ -580,8 +583,8 @@ public class SemanticVerifier {
             public void caseAElement(
                     AElement node) {
 
-                Element element = SemanticVerifier.this.grammar
-                        .getElement(node);
+                Element element
+                        = SemanticVerifier.this.grammar.getElement(node);
                 element.checkTransformation();
             }
         });

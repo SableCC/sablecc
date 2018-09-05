@@ -45,8 +45,8 @@ public class CyclicTextBlockDetector
             AMacro node) {
 
         if (this.currentScope != null) {
-            this.currentScope = ((Macro) this.currentScope).getMacro(node
-                    .getName());
+            this.currentScope
+                    = ((Macro) this.currentScope).getMacro(node.getName());
         }
         else {
             this.currentScope = this.globalIndex.getTopMacro(node.getName());
@@ -68,8 +68,8 @@ public class CyclicTextBlockDetector
             this.currentScope = this.currentScope.getTextBlock(node.getName());
         }
         else {
-            this.currentScope = this.globalIndex
-                    .getTopTextBlock(node.getName());
+            this.currentScope
+                    = this.globalIndex.getTopTextBlock(node.getName());
         }
     }
 
@@ -84,11 +84,11 @@ public class CyclicTextBlockDetector
     public void outATextInsert(
             ATextInsert node) {
 
-        TextBlock insertedTextBlock = this.currentScope.getTextInsert(node)
-                .getInsertedTextBlock();
+        TextBlock insertedTextBlock
+                = this.currentScope.getTextInsert(node).getInsertedTextBlock();
 
-        if (insertedTextBlock.getIndirectlyReferencedTextBlocks().contains(
-                this.currentScope)) {
+        if (insertedTextBlock.getIndirectlyReferencedTextBlocks()
+                .contains(this.currentScope)) {
             throw CompilerException.cyclicReference(node.getName(),
                     this.currentScope.getNameDeclaration());
         }

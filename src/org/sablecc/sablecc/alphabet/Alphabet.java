@@ -75,7 +75,7 @@ public class Alphabet {
             throw new InternalException("symbol may not be null");
         }
 
-        Collection<Symbol> symbols = new LinkedList<Symbol>();
+        Collection<Symbol> symbols = new LinkedList<>();
         symbols.add(symbol);
 
         init(symbols);
@@ -91,7 +91,7 @@ public class Alphabet {
             throw new InternalException("interval may not be null");
         }
 
-        Collection<Symbol> symbols = new LinkedList<Symbol>();
+        Collection<Symbol> symbols = new LinkedList<>();
         symbols.add(new Symbol(interval));
 
         init(symbols);
@@ -107,7 +107,7 @@ public class Alphabet {
             throw new InternalException("bound may not be null");
         }
 
-        Collection<Symbol> symbols = new LinkedList<Symbol>();
+        Collection<Symbol> symbols = new LinkedList<>();
         symbols.add(new Symbol(bound));
 
         init(symbols);
@@ -132,7 +132,7 @@ public class Alphabet {
             throw new InternalException("bound may not be null");
         }
 
-        Collection<Symbol> symbols = new LinkedList<Symbol>();
+        Collection<Symbol> symbols = new LinkedList<>();
         symbols.add(new Symbol(bound));
 
         init(symbols);
@@ -149,7 +149,7 @@ public class Alphabet {
             throw new InternalException("bound may not be null");
         }
 
-        Collection<Symbol> symbols = new LinkedList<Symbol>();
+        Collection<Symbol> symbols = new LinkedList<>();
         symbols.add(new Symbol(bound, radix));
 
         init(symbols);
@@ -160,7 +160,7 @@ public class Alphabet {
      */
     public Alphabet() {
 
-        Collection<Symbol> symbols = new LinkedList<Symbol>();
+        Collection<Symbol> symbols = new LinkedList<>();
 
         init(symbols);
     }
@@ -174,11 +174,11 @@ public class Alphabet {
     private void init(
             Collection<Symbol> symbols) {
 
-        this.symbols = Collections.unmodifiableSortedSet(new TreeSet<Symbol>(
-                symbols));
+        this.symbols
+                = Collections.unmodifiableSortedSet(new TreeSet<>(symbols));
 
         // compute interval map
-        TreeMap<Interval, Symbol> intervalMap = new TreeMap<Interval, Symbol>();
+        TreeMap<Interval, Symbol> intervalMap = new TreeMap<>();
 
         for (Symbol symbol : symbols) {
             if (symbol == null) {
@@ -193,8 +193,8 @@ public class Alphabet {
             }
         }
 
-        this.intervalToSymbolMap = Collections
-                .unmodifiableSortedMap(intervalMap);
+        this.intervalToSymbolMap
+                = Collections.unmodifiableSortedMap(intervalMap);
 
         // check for intersecting intervals
         Interval previous = null;
@@ -348,14 +348,15 @@ public class Alphabet {
         // of the new alphabet.
 
         // First, we compute a map of (symbol pair,interval set)
-        Map<Pair<Symbol, Symbol>, SortedSet<Interval>> symbolPairToIntervalSetMap = computeSymbolPairToIntervalSetMap(
-                this, alphabet);
+        Map<Pair<Symbol, Symbol>, SortedSet<Interval>> symbolPairToIntervalSetMap
+                = computeSymbolPairToIntervalSetMap(this, alphabet);
 
         // list of new symbols
-        Collection<Symbol> newSymbols = new LinkedList<Symbol>();
+        Collection<Symbol> newSymbols = new LinkedList<>();
 
         // SortedMap to map old symbols to sets of new symbols
-        SortedMap<Symbol, SortedSet<Symbol>> alphabetSymbolMap = new TreeMap<Symbol, SortedSet<Symbol>>();
+        SortedMap<Symbol, SortedSet<Symbol>> alphabetSymbolMap
+                = new TreeMap<>();
 
         for (Map.Entry<Pair<Symbol, Symbol>, SortedSet<Interval>> entry : symbolPairToIntervalSetMap
                 .entrySet()) {
@@ -372,11 +373,11 @@ public class Alphabet {
             // maps
 
             if (oldSymbol1 != null) {
-                SortedSet<Symbol> collection = alphabetSymbolMap
-                        .get(oldSymbol1);
+                SortedSet<Symbol> collection
+                        = alphabetSymbolMap.get(oldSymbol1);
 
                 if (collection == null) {
-                    collection = new TreeSet<Symbol>();
+                    collection = new TreeSet<>();
                     alphabetSymbolMap.put(oldSymbol1, collection);
                 }
 
@@ -384,11 +385,11 @@ public class Alphabet {
             }
 
             if (oldSymbol2 != null) {
-                SortedSet<Symbol> collection = alphabetSymbolMap
-                        .get(oldSymbol2);
+                SortedSet<Symbol> collection
+                        = alphabetSymbolMap.get(oldSymbol2);
 
                 if (collection == null) {
-                    collection = new TreeSet<Symbol>();
+                    collection = new TreeSet<>();
                     alphabetSymbolMap.put(oldSymbol2, collection);
                 }
 
@@ -418,7 +419,8 @@ public class Alphabet {
          * possible pairs, leading to quadratic running time.
          */
 
-        Map<Pair<Symbol, Symbol>, SortedSet<Interval>> symbolPairToIntervalSetMap = new LinkedHashMap<Pair<Symbol, Symbol>, SortedSet<Interval>>();
+        Map<Pair<Symbol, Symbol>, SortedSet<Interval>> symbolPairToIntervalSetMap
+                = new LinkedHashMap<>();
 
         /*
          * We find all intervals of new symbols by analyzing the space starting
@@ -431,14 +433,15 @@ public class Alphabet {
         Map.Entry<Interval, Symbol> entry2 = null;
 
         // iterators
-        Iterator<Map.Entry<Interval, Symbol>> i1 = alphabet1.intervalToSymbolMap
-                .entrySet().iterator();
-        Iterator<Map.Entry<Interval, Symbol>> i2 = alphabet2.intervalToSymbolMap
-                .entrySet().iterator();
+        Iterator<Map.Entry<Interval, Symbol>> i1
+                = alphabet1.intervalToSymbolMap.entrySet().iterator();
+        Iterator<Map.Entry<Interval, Symbol>> i2
+                = alphabet2.intervalToSymbolMap.entrySet().iterator();
 
         Bound lastUpperBound = null;
 
-        while (entry1 != null || entry2 != null || i1.hasNext() || i2.hasNext()) {
+        while (entry1 != null || entry2 != null || i1.hasNext()
+                || i2.hasNext()) {
             // if possible, make sure that entry1 and entry2 are filled
             if (entry1 == null && i1.hasNext()) {
                 entry1 = i1.next();
@@ -478,7 +481,8 @@ public class Alphabet {
                 Bound upperBoundCandidate2 = null;
 
                 if (entry1 != null) {
-                    if (lowerBound.compareTo(entry1.getKey().getLowerBound()) < 0) {
+                    if (lowerBound
+                            .compareTo(entry1.getKey().getLowerBound()) < 0) {
                         upperBoundCandidate1 = entry1.getKey().getLowerBound()
                                 .getPredecessor();
                     }
@@ -488,7 +492,8 @@ public class Alphabet {
                 }
 
                 if (entry2 != null) {
-                    if (lowerBound.compareTo(entry2.getKey().getLowerBound()) < 0) {
+                    if (lowerBound
+                            .compareTo(entry2.getKey().getLowerBound()) < 0) {
                         upperBoundCandidate2 = entry2.getKey().getLowerBound()
                                 .getPredecessor();
                     }
@@ -529,14 +534,13 @@ public class Alphabet {
             }
 
             if (symbol1 != null || symbol2 != null) {
-                Pair<Symbol, Symbol> symbolPair = new Pair<Symbol, Symbol>(
-                        symbol1, symbol2);
+                Pair<Symbol, Symbol> symbolPair = new Pair<>(symbol1, symbol2);
 
                 // add interval in (symbol pair,interval set) map
-                SortedSet<Interval> intervalSet = symbolPairToIntervalSetMap
-                        .get(symbolPair);
+                SortedSet<Interval> intervalSet
+                        = symbolPairToIntervalSetMap.get(symbolPair);
                 if (intervalSet == null) {
-                    intervalSet = new TreeSet<Interval>();
+                    intervalSet = new TreeSet<>();
                     symbolPairToIntervalSetMap.put(symbolPair, intervalSet);
                 }
 
@@ -547,14 +551,12 @@ public class Alphabet {
             lastUpperBound = upperBound;
 
             // update current entries
-            if (entry1 != null
-                    && lastUpperBound
-                            .compareTo(entry1.getKey().getUpperBound()) >= 0) {
+            if (entry1 != null && lastUpperBound
+                    .compareTo(entry1.getKey().getUpperBound()) >= 0) {
                 entry1 = null;
             }
-            if (entry2 != null
-                    && lastUpperBound
-                            .compareTo(entry2.getKey().getUpperBound()) >= 0) {
+            if (entry2 != null && lastUpperBound
+                    .compareTo(entry2.getKey().getUpperBound()) >= 0) {
                 entry2 = null;
             }
         }

@@ -93,8 +93,8 @@ public class Type {
             public void caseANameUnit(
                     ANameUnit node) {
 
-                Declaration declaration = grammar.getDeclarationResolution(node
-                        .getIdentifier());
+                Declaration declaration = grammar
+                        .getDeclarationResolution(node.getIdentifier());
 
                 if (this.separatorUnit) {
                     Type.this.separator = declaration;
@@ -113,8 +113,8 @@ public class Type {
             public void caseAIdentifierCharUnit(
                     AIdentifierCharUnit node) {
 
-                Expression expression = grammar.getExpressionResolution(node
-                        .getIdentifierChar());
+                Expression expression = grammar
+                        .getExpressionResolution(node.getIdentifierChar());
 
                 if (this.separatorUnit) {
                     Type.this.separator = expression;
@@ -133,8 +133,8 @@ public class Type {
             public void caseACharUnit(
                     ACharUnit node) {
 
-                Expression expression = grammar.getExpressionResolution(node
-                        .getChar());
+                Expression expression
+                        = grammar.getExpressionResolution(node.getChar());
 
                 if (this.separatorUnit) {
                     Type.this.separator = expression;
@@ -153,8 +153,8 @@ public class Type {
             public void caseAIdentifierStringUnit(
                     AIdentifierStringUnit node) {
 
-                Expression expression = grammar.getExpressionResolution(node
-                        .getIdentifierString());
+                Expression expression = grammar
+                        .getExpressionResolution(node.getIdentifierString());
 
                 if (this.separatorUnit) {
                     Type.this.separator = expression;
@@ -173,8 +173,8 @@ public class Type {
             public void caseAStringUnit(
                     AStringUnit node) {
 
-                Expression expression = grammar.getExpressionResolution(node
-                        .getString());
+                Expression expression
+                        = grammar.getExpressionResolution(node.getString());
 
                 if (this.separatorUnit) {
                     Type.this.separator = expression;
@@ -193,8 +193,8 @@ public class Type {
             public void caseAEndUnit(
                     AEndUnit node) {
 
-                Expression expression = grammar.getExpressionResolution(node
-                        .getEndKeyword());
+                Expression expression
+                        = grammar.getExpressionResolution(node.getEndKeyword());
 
                 if (this.separatorUnit) {
                     Type.this.separator = expression;
@@ -239,8 +239,8 @@ public class Type {
             public void caseANumberManyOperator(
                     ANumberManyOperator node) {
 
-                Type.this.minMultiplicity = new BigInteger(node.getNumber()
-                        .getText());
+                Type.this.minMultiplicity
+                        = new BigInteger(node.getNumber().getText());
                 Type.this.maxMultiplicity = Type.this.minMultiplicity;
                 Type.this.isList = true;
             }
@@ -249,18 +249,17 @@ public class Type {
             public void caseAIntervalManyOperator(
                     AIntervalManyOperator node) {
 
-                Type.this.minMultiplicity = new BigInteger(node.getFrom()
-                        .getText());
-                Type.this.maxMultiplicity = new BigInteger(node.getTo()
-                        .getText());
+                Type.this.minMultiplicity
+                        = new BigInteger(node.getFrom().getText());
+                Type.this.maxMultiplicity
+                        = new BigInteger(node.getTo().getText());
                 Type.this.isList = true;
 
                 if (Type.this.maxMultiplicity
                         .compareTo(Type.this.minMultiplicity) <= 0) {
-                    throw SemanticException
-                            .semanticError(
-                                    "The upper bound must be greater than the lower bound.",
-                                    node.getTo());
+                    throw SemanticException.semanticError(
+                            "The upper bound must be greater than the lower bound.",
+                            node.getTo());
                 }
             }
 
@@ -268,8 +267,8 @@ public class Type {
             public void caseAAtLeastManyOperator(
                     AAtLeastManyOperator node) {
 
-                Type.this.minMultiplicity = new BigInteger(node.getNumber()
-                        .getText());
+                Type.this.minMultiplicity
+                        = new BigInteger(node.getNumber().getText());
                 Type.this.maxMultiplicity = null;
                 Type.this.isList = true;
             }
@@ -456,8 +455,8 @@ public class Type {
                 return false;
             }
         }
-        else if (elementType.maxMultiplicity != null
-                && this.maxMultiplicity.compareTo(elementType.maxMultiplicity) > 0) {
+        else if (elementType.maxMultiplicity != null && this.maxMultiplicity
+                .compareTo(elementType.maxMultiplicity) > 0) {
             return false;
         }
 
@@ -501,7 +500,8 @@ public class Type {
             if (this.minMultiplicity.compareTo(BigInteger.ONE) > 0
                     || this.maxMultiplicity == null
                     || this.maxMultiplicity.compareTo(BigInteger.ONE) > 0
-                    || this.maxMultiplicity.compareTo(this.minMultiplicity) < 0) {
+                    || this.maxMultiplicity
+                            .compareTo(this.minMultiplicity) < 0) {
                 return false;
             }
 

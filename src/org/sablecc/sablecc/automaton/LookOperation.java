@@ -61,11 +61,11 @@ class LookOperation {
     private Automaton getLookaheadAutomation(
             Automaton normalAutomaton) {
 
-        Automaton lookaheadAutomaton = new Automaton(
-                normalAutomaton.getAlphabet());
+        Automaton lookaheadAutomaton
+                = new Automaton(normalAutomaton.getAlphabet());
         lookaheadAutomaton.addAcceptation(Acceptation.ACCEPT);
 
-        Map<State, State> normalStateToLookaheadStateMap = new HashMap<State, State>();
+        Map<State, State> normalStateToLookaheadStateMap = new HashMap<>();
 
         for (State normalState : normalAutomaton.getStates()) {
             State lookaheadState;
@@ -84,15 +84,15 @@ class LookOperation {
         }
 
         for (State normalSourceState : normalAutomaton.getStates()) {
-            State lookaheadSourceState = normalStateToLookaheadStateMap
-                    .get(normalSourceState);
+            State lookaheadSourceState
+                    = normalStateToLookaheadStateMap.get(normalSourceState);
             for (Map.Entry<RichSymbol, SortedSet<State>> entry : normalSourceState
                     .getTransitions().entrySet()) {
                 RichSymbol richSymbol = entry.getKey();
 
                 if (!richSymbol.isLookahead()) {
-                    richSymbol = richSymbol.getSymbol()
-                            .getLookaheadRichSymbol();
+                    richSymbol
+                            = richSymbol.getSymbol().getLookaheadRichSymbol();
                 }
 
                 for (State normalTargetState : entry.getValue()) {

@@ -48,7 +48,8 @@ public class MNoSeparator {
         sb.append(System.getProperty("line.separator"));
         sb.append("      struct AbstractMacro* Mtemp = temp->_elem_;");
         sb.append(System.getProperty("line.separator"));
-        sb.append("      sizeString += List_pushback(listString, Mtemp->toString(Mtemp));");
+        sb.append(
+                "      sizeString += List_pushback(listString, Mtemp->toString(Mtemp));");
         sb.append(System.getProperty("line.separator"));
         sb.append("      temp = temp->_next_;");
         sb.append(System.getProperty("line.separator"));

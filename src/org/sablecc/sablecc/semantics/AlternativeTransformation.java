@@ -35,9 +35,8 @@ public class AlternativeTransformation {
 
         this.grammar = grammar;
         this.declaration = declaration;
-        this.alternativeReference = grammar
-                .getAlternativeReferenceResolution(declaration
-                        .getAlternativeReference());
+        this.alternativeReference = grammar.getAlternativeReferenceResolution(
+                declaration.getAlternativeReference());
     }
 
     public Token getLocation() {
@@ -49,8 +48,8 @@ public class AlternativeTransformation {
             Grammar grammar,
             AAlternativeTransformation node) {
 
-        AlternativeTransformation alternativeTransformation = new AlternativeTransformation(
-                grammar, node);
+        AlternativeTransformation alternativeTransformation
+                = new AlternativeTransformation(grammar, node);
 
         alternativeTransformation.checkElementReferences();
         alternativeTransformation.createDeclaredTransformationElements();
@@ -62,7 +61,7 @@ public class AlternativeTransformation {
     private void checkElementReferences() {
 
         // collect element references
-        final List<ElementReference> elementReferences = new LinkedList<ElementReference>();
+        final List<ElementReference> elementReferences = new LinkedList<>();
         this.declaration.apply(new TreeWalker() {
 
             @Override
@@ -88,8 +87,8 @@ public class AlternativeTransformation {
 
         // check that element references are identical to elements of the
         // transformed alternative
-        Iterator<ElementReference> elementReferenceIterator = elementReferences
-                .iterator();
+        Iterator<ElementReference> elementReferenceIterator
+                = elementReferences.iterator();
         for (Element element : this.alternativeReference.getAlternative()
                 .getElements()) {
 
@@ -103,10 +102,10 @@ public class AlternativeTransformation {
             }
             else if (base instanceof Production) {
                 // non-separated type
-                ProductionTransformation productionTransformation = ((Production) base)
-                        .getTransformation();
-                ArrayList<Type> types = productionTransformation.getSignature()
-                        .getTypes();
+                ProductionTransformation productionTransformation
+                        = ((Production) base).getTransformation();
+                ArrayList<Type> types
+                        = productionTransformation.getSignature().getTypes();
                 if (types.size() == 0) {
                     simpleMatch(type, elementReferenceIterator, element);
                 }
@@ -120,23 +119,21 @@ public class AlternativeTransformation {
                                     "Expecting : " + type + "." + subtreeType,
                                     this.declaration.getSemicolon());
                         }
-                        ElementReference elementReference = elementReferenceIterator
-                                .next();
+                        ElementReference elementReference
+                                = elementReferenceIterator.next();
                         if (elementReference.getSubtree() == null) {
                             throw SemanticException.semanticError(
                                     "Expecting : " + type + "." + subtreeType,
                                     elementReference.getLocation());
                         }
-                        if (!type.equals(this.grammar
-                                .getTypeResolution(elementReference
-                                        .getElementBody()))) {
+                        if (!type.equals(this.grammar.getTypeResolution(
+                                elementReference.getElementBody()))) {
                             throw SemanticException.semanticError(
                                     "Expecting : " + type + "." + subtreeType,
                                     elementReference.getLocation());
                         }
-                        if (!subtreeType.equals(this.grammar
-                                .getTypeResolution(elementReference
-                                        .getSubtree()))) {
+                        if (!subtreeType.equals(this.grammar.getTypeResolution(
+                                elementReference.getSubtree()))) {
                             throw SemanticException.semanticError(
                                     "Expecting : " + type + "." + subtreeType,
                                     elementReference.getLocation());
@@ -173,8 +170,8 @@ public class AlternativeTransformation {
             throw SemanticException.semanticError("Expecting : " + type,
                     elementReference.getLocation());
         }
-        if (!type.equals(this.grammar.getTypeResolution(elementReference
-                .getElementBody()))) {
+        if (!type.equals(this.grammar
+                .getTypeResolution(elementReference.getElementBody()))) {
             throw SemanticException.semanticError("Expecting : " + type,
                     elementReference.getLocation());
         }
@@ -245,10 +242,11 @@ public class AlternativeTransformation {
         });
 
         // check compatibility with production transformation
-        ProductionTransformation productionTransformation = this.alternativeReference
-                .getAlternative().getProduction().getTransformation();
-        Iterator<Type> signatureTypeIterator = productionTransformation
-                .getSignature().getTypes().iterator();
+        ProductionTransformation productionTransformation
+                = this.alternativeReference.getAlternative().getProduction()
+                        .getTransformation();
+        Iterator<Type> signatureTypeIterator
+                = productionTransformation.getSignature().getTypes().iterator();
 
         for (PTransformationElement pTransformationElement : this.declaration
                 .getTransformationElements()) {
@@ -276,10 +274,11 @@ public class AlternativeTransformation {
 
         if (signatureTypeIterator.hasNext()) {
             Type signatureType = signatureTypeIterator.next();
-            throw SemanticException.semanticError(
-                    "Expecting a tranformation element of type "
-                            + signatureType + ".",
-                    this.declaration.getSemicolon());
+            throw SemanticException
+                    .semanticError(
+                            "Expecting a tranformation element of type "
+                                    + signatureType + ".",
+                            this.declaration.getSemicolon());
         }
 
     }

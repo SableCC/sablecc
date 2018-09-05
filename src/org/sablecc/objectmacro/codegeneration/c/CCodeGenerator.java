@@ -40,8 +40,9 @@ public class CCodeGenerator
             String packageName = getIr().getDestinationPackage();
             if (!packageName.equals("")) {
                 String packageDirectoryName = packageName.replace('.', '/');
-                this.packageDirectory = new File(getIr()
-                        .getDestinationDirectory(), packageDirectoryName);
+                this.packageDirectory
+                        = new File(getIr().getDestinationDirectory(),
+                                packageDirectoryName);
             }
             else {
                 this.packageDirectory = getIr().getDestinationDirectory();
@@ -65,13 +66,13 @@ public class CCodeGenerator
 
         if (!packageDirectory.exists()) {
             if (!packageDirectory.mkdirs()) {
-                CompilerException.cannotCreateDirectory(packageDirectory
-                        .toString());
+                CompilerException
+                        .cannotCreateDirectory(packageDirectory.toString());
             }
         }
 
-        CodeGenerationWalker walker = new CodeGenerationWalker(getIr(),
-                packageDirectory);
+        CodeGenerationWalker walker
+                = new CodeGenerationWalker(getIr(), packageDirectory);
         getIr().getAST().apply(walker);
     }
 }

@@ -28,25 +28,25 @@ public abstract class Scope {
 
     private final GlobalIndex globalIndex;
 
-    private final Set<Param> params = new LinkedHashSet<Param>();
+    private final Set<Param> params = new LinkedHashSet<>();
 
-    private final Map<String, Param> paramMap = new HashMap<String, Param>();
+    private final Map<String, Param> paramMap = new HashMap<>();
 
-    private final Set<TextBlock> textBlocks = new LinkedHashSet<TextBlock>();
+    private final Set<TextBlock> textBlocks = new LinkedHashSet<>();
 
-    private final Map<String, TextBlock> textBlockMap = new HashMap<String, TextBlock>();
+    private final Map<String, TextBlock> textBlockMap = new HashMap<>();
 
-    private final Set<Scope> referencedAncestors = new LinkedHashSet<Scope>();
+    private final Set<Scope> referencedAncestors = new LinkedHashSet<>();
 
     private boolean referencesSelf;
 
-    private final Set<Param> referencedParams = new LinkedHashSet<Param>();
+    private final Set<Param> referencedParams = new LinkedHashSet<>();
 
-    private final Set<TextBlock> referencedTextBlocks = new LinkedHashSet<TextBlock>();
+    private final Set<TextBlock> referencedTextBlocks = new LinkedHashSet<>();
 
     private Set<TextBlock> indirectlyReferencedTextBlocks;
 
-    private final Set<Scope> callers = new LinkedHashSet<Scope>();
+    private final Set<Scope> callers = new LinkedHashSet<>();
 
     Scope(
             GlobalIndex globalIndex) {
@@ -173,8 +173,8 @@ public abstract class Scope {
             throw new InternalException("declaration may not be null");
         }
 
-        TextInsert textInsert = this.globalIndex.getTextInsert(declaration,
-                this);
+        TextInsert textInsert
+                = this.globalIndex.getTextInsert(declaration, this);
 
         if (textInsert.getEnclosingScope() != this) {
             throw new InternalError(
@@ -277,8 +277,8 @@ public abstract class Scope {
                     "indirectlyReferencedTextBlocks is already set");
         }
 
-        this.indirectlyReferencedTextBlocks = Collections
-                .unmodifiableSet(indirectlyReferencedTextBlocks);
+        this.indirectlyReferencedTextBlocks
+                = Collections.unmodifiableSet(indirectlyReferencedTextBlocks);
     }
 
     public abstract Scope getParent();

@@ -75,10 +75,10 @@ public class Symbol
         }
 
         // sort intervals
-        SortedSet<Interval> originalSet = new TreeSet<Interval>(intervals);
+        SortedSet<Interval> originalSet = new TreeSet<>(intervals);
 
         // compute minimal set
-        SortedSet<Interval> minimalSet = new TreeSet<Interval>();
+        SortedSet<Interval> minimalSet = new TreeSet<>();
 
         Interval combinedInterval = null;
         for (Interval current : originalSet) {
@@ -121,7 +121,7 @@ public class Symbol
             throw new InternalException("interval must be provided");
         }
 
-        SortedSet<Interval> set = new TreeSet<Interval>();
+        SortedSet<Interval> set = new TreeSet<>();
         set.add(interval);
         this.intervals = Collections.unmodifiableSortedSet(set);
     }
@@ -136,7 +136,7 @@ public class Symbol
             throw new InternalException("bound must be provided");
         }
 
-        SortedSet<Interval> set = new TreeSet<Interval>();
+        SortedSet<Interval> set = new TreeSet<>();
         set.add(new Interval(bound));
         this.intervals = Collections.unmodifiableSortedSet(set);
     }
@@ -369,7 +369,7 @@ public class Symbol
                     "symbols must contain at least one element");
         }
 
-        Collection<Interval> intervals = new LinkedList<Interval>();
+        Collection<Interval> intervals = new LinkedList<>();
 
         for (Symbol symbol : symbols) {
             intervals.addAll(symbol.getIntervals());

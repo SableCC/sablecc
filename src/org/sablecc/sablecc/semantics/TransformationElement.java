@@ -149,9 +149,8 @@ public abstract class TransformationElement {
             super(grammar);
             this.declaration = declaration;
 
-            this.elementReference = this.grammar
-                    .getElementReferenceResolution(this.declaration
-                            .getElementReference());
+            this.elementReference = this.grammar.getElementReferenceResolution(
+                    this.declaration.getElementReference());
 
             this.location = this.elementReference.getLocation();
 
@@ -184,7 +183,7 @@ public abstract class TransformationElement {
 
         private Token location;
 
-        private final List<TransformationElement> children = new LinkedList<TransformationElement>();
+        private final List<TransformationElement> children = new LinkedList<>();
 
         private DeleteTransformation(
                 Grammar grammar,
@@ -197,8 +196,9 @@ public abstract class TransformationElement {
 
             for (PTransformationElement pTransformationElement : this.declaration
                     .getTransformationElements()) {
-                TransformationElement transformationElement = this.grammar
-                        .getTransformationElementResolution(pTransformationElement);
+                TransformationElement transformationElement
+                        = this.grammar.getTransformationElementResolution(
+                                pTransformationElement);
                 this.children.add(transformationElement);
             }
 
@@ -230,7 +230,7 @@ public abstract class TransformationElement {
 
         private Alternative alternative;
 
-        private final List<TransformationElement> children = new LinkedList<TransformationElement>();
+        private final List<TransformationElement> children = new LinkedList<>();
 
         private NewTransformation(
                 Grammar grammar,
@@ -241,15 +241,16 @@ public abstract class TransformationElement {
 
             this.location = this.declaration.getNewKeyword();
 
-            AlternativeReference alternativeReference = this.grammar
-                    .getAlternativeReferenceResolution(this.declaration
-                            .getAlternativeReference());
+            AlternativeReference alternativeReference
+                    = this.grammar.getAlternativeReferenceResolution(
+                            this.declaration.getAlternativeReference());
             this.alternative = alternativeReference.getAlternative();
 
             for (PTransformationElement pTransformationElement : this.declaration
                     .getTransformationElements()) {
-                TransformationElement transformationElement = this.grammar
-                        .getTransformationElementResolution(pTransformationElement);
+                TransformationElement transformationElement
+                        = this.grammar.getTransformationElementResolution(
+                                pTransformationElement);
                 this.children.add(transformationElement);
             }
 
@@ -258,11 +259,11 @@ public abstract class TransformationElement {
 
         private void computeType() {
 
-            Iterator<Element> elementIterator = this.alternative.getElements()
-                    .iterator();
+            Iterator<Element> elementIterator
+                    = this.alternative.getElements().iterator();
             for (TransformationElement transformationElement : this.children) {
-                Type transformationElementType = transformationElement
-                        .getType();
+                Type transformationElementType
+                        = transformationElement.getType();
                 // skip deleted elements (type == null)
                 if (transformationElementType != null) {
                     if (!elementIterator.hasNext()) {
@@ -272,7 +273,8 @@ public abstract class TransformationElement {
                     }
                     Element element = elementIterator.next();
                     Type elementType = element.getType();
-                    if (!transformationElementType.isAssignableTo(elementType)) {
+                    if (!transformationElementType
+                            .isAssignableTo(elementType)) {
                         throw SemanticException.semanticError(
                                 "Expecting a tranformation element of type "
                                         + elementType + ", instead of "
@@ -285,11 +287,10 @@ public abstract class TransformationElement {
             if (elementIterator.hasNext()) {
                 Element element = elementIterator.next();
                 Type elementType = element.getType();
-                throw SemanticException
-                        .semanticError(
-                                "Expecting a tranformation element of type "
-                                        + elementType + ".",
-                                this.declaration.getRPar());
+                throw SemanticException.semanticError(
+                        "Expecting a tranformation element of type "
+                                + elementType + ".",
+                        this.declaration.getRPar());
             }
 
             setType(new Type(false, this.alternative.getProduction(), null,
@@ -314,7 +315,7 @@ public abstract class TransformationElement {
 
         private Token location;
 
-        private final List<TransformationElement> children = new LinkedList<TransformationElement>();
+        private final List<TransformationElement> children = new LinkedList<>();
 
         private ListTransformation(
                 Grammar grammar,
@@ -327,8 +328,9 @@ public abstract class TransformationElement {
 
             for (PTransformationElement pTransformationElement : this.declaration
                     .getTransformationElements()) {
-                TransformationElement transformationElement = this.grammar
-                        .getTransformationElementResolution(pTransformationElement);
+                TransformationElement transformationElement
+                        = this.grammar.getTransformationElementResolution(
+                                pTransformationElement);
                 this.children.add(transformationElement);
             }
 
@@ -354,10 +356,10 @@ public abstract class TransformationElement {
 
                     Declaration childBase = childType.getBase();
                     Declaration childSeparator = childType.getSeparator();
-                    BigInteger childMinMultiplicity = childType
-                            .getMinMultiplicity();
-                    BigInteger childMaxMultiplicity = childType
-                            .getMaxMultiplicity();
+                    BigInteger childMinMultiplicity
+                            = childType.getMinMultiplicity();
+                    BigInteger childMaxMultiplicity
+                            = childType.getMaxMultiplicity();
 
                     if (baseAndSeparatorIdentified) {
 
@@ -371,12 +373,12 @@ public abstract class TransformationElement {
                                                         separator,
                                                         minMultiplicity,
                                                         maxMultiplicity)
-                                                + " prefix.", child
-                                                .getLocation());
+                                                + " prefix.",
+                                        child.getLocation());
                             }
 
-                            minMultiplicity = minMultiplicity
-                                    .add(childMinMultiplicity);
+                            minMultiplicity
+                                    = minMultiplicity.add(childMinMultiplicity);
                             if (childMaxMultiplicity == null) {
                                 maxMultiplicity = null;
                             }
@@ -393,22 +395,22 @@ public abstract class TransformationElement {
                             if (childMinMultiplicity.equals(BigInteger.ZERO)
                                     || childBase != base
                                     || childSeparator != null
-                                    && childSeparator != separator
+                                            && childSeparator != separator
                                     || childSeparator == null
-                                    && !childMaxMultiplicity
-                                            .equals(BigInteger.ONE)) {
+                                            && !childMaxMultiplicity
+                                                    .equals(BigInteger.ONE)) {
                                 throw SemanticException.semanticError(
                                         "The tranformation element is incompatible with the "
                                                 + new Type(true, base,
                                                         separator,
                                                         minMultiplicity,
                                                         maxMultiplicity)
-                                                + " prefix.", child
-                                                .getLocation());
+                                                + " prefix.",
+                                        child.getLocation());
                             }
 
-                            minMultiplicity = minMultiplicity
-                                    .add(childMinMultiplicity
+                            minMultiplicity
+                                    = minMultiplicity.add(childMinMultiplicity
                                             .subtract(BigInteger.ONE));
                             if (childMaxMultiplicity == null) {
                                 maxMultiplicity = null;
@@ -429,22 +431,22 @@ public abstract class TransformationElement {
                             if (childMinMultiplicity.equals(BigInteger.ZERO)
                                     || childBase != separator
                                     || childSeparator != null
-                                    && childSeparator != base
+                                            && childSeparator != base
                                     || childSeparator == null
-                                    && !childMaxMultiplicity
-                                            .equals(BigInteger.ONE)) {
+                                            && !childMaxMultiplicity
+                                                    .equals(BigInteger.ONE)) {
                                 throw SemanticException.semanticError(
                                         "The tranformation element is incompatible with the "
                                                 + new Type(true, base,
                                                         separator,
                                                         minMultiplicity,
                                                         maxMultiplicity)
-                                                + " prefix.", child
-                                                .getLocation());
+                                                + " prefix.",
+                                        child.getLocation());
                             }
 
-                            minMultiplicity = minMultiplicity
-                                    .add(childMinMultiplicity);
+                            minMultiplicity
+                                    = minMultiplicity.add(childMinMultiplicity);
                             if (childMaxMultiplicity == null) {
                                 maxMultiplicity = null;
                             }
@@ -474,12 +476,12 @@ public abstract class TransformationElement {
                                                         separator,
                                                         minMultiplicity,
                                                         maxMultiplicity)
-                                                + " prefix.", child
-                                                .getLocation());
+                                                + " prefix.",
+                                        child.getLocation());
                             }
 
-                            minMultiplicity = minMultiplicity
-                                    .add(childMinMultiplicity);
+                            minMultiplicity
+                                    = minMultiplicity.add(childMinMultiplicity);
 
                             if (childMaxMultiplicity == null) {
                                 maxMultiplicity = null;
@@ -508,14 +510,14 @@ public abstract class TransformationElement {
                                                         separator,
                                                         minMultiplicity,
                                                         maxMultiplicity)
-                                                + " prefix.", child
-                                                .getLocation());
+                                                + " prefix.",
+                                        child.getLocation());
                             }
 
-                            minMultiplicity = minMultiplicity
-                                    .add(BigInteger.ONE);
-                            maxMultiplicity = maxMultiplicity
-                                    .add(BigInteger.ONE);
+                            minMultiplicity
+                                    = minMultiplicity.add(BigInteger.ONE);
+                            maxMultiplicity
+                                    = maxMultiplicity.add(BigInteger.ONE);
                         }
                         else {
                             // it's a separated list
@@ -535,12 +537,12 @@ public abstract class TransformationElement {
                                                         separator,
                                                         minMultiplicity,
                                                         maxMultiplicity)
-                                                + " prefix.", child
-                                                .getLocation());
+                                                + " prefix.",
+                                        child.getLocation());
                             }
 
-                            minMultiplicity = minMultiplicity
-                                    .add(childMinMultiplicity);
+                            minMultiplicity
+                                    = minMultiplicity.add(childMinMultiplicity);
                             if (childMaxMultiplicity == null) {
                                 maxMultiplicity = null;
                             }
@@ -581,7 +583,8 @@ public abstract class TransformationElement {
                 throw SemanticException.semanticError(
                         "Expecting a tranformation element of type "
                                 + new Type(false, base, null, BigInteger.ONE,
-                                        BigInteger.ONE) + ".",
+                                        BigInteger.ONE)
+                                + ".",
                         this.declaration.getRPar());
             }
 
@@ -623,9 +626,8 @@ public abstract class TransformationElement {
 
             this.location = this.declaration.getLeftKeyword();
 
-            this.child = this.grammar
-                    .getTransformationElementResolution(declaration
-                            .getTransformationElement());
+            this.child = this.grammar.getTransformationElementResolution(
+                    declaration.getTransformationElement());
 
             computeType();
         }
@@ -634,9 +636,9 @@ public abstract class TransformationElement {
 
             Type childType = this.child.getType();
             if (!childType.isList() || childType.getSeparator() == null) {
-                throw SemanticException
-                        .semanticError("Expecting a separated list.",
-                                this.child.getLocation());
+                throw SemanticException.semanticError(
+                        "Expecting a separated list.",
+                        this.child.getLocation());
             }
             setType(new Type(true, childType.getBase(), null,
                     childType.getMinMultiplicity(),
@@ -672,9 +674,8 @@ public abstract class TransformationElement {
 
             this.location = this.declaration.getRightKeyword();
 
-            this.child = this.grammar
-                    .getTransformationElementResolution(declaration
-                            .getTransformationElement());
+            this.child = this.grammar.getTransformationElementResolution(
+                    declaration.getTransformationElement());
 
             computeType();
         }
@@ -683,9 +684,9 @@ public abstract class TransformationElement {
 
             Type childType = this.child.getType();
             if (!childType.isList() || childType.getSeparator() == null) {
-                throw SemanticException
-                        .semanticError("Expecting a separated list.",
-                                this.child.getLocation());
+                throw SemanticException.semanticError(
+                        "Expecting a separated list.",
+                        this.child.getLocation());
             }
 
             BigInteger min = childType.getMinMultiplicity();

@@ -96,8 +96,8 @@ class ArgumentExtractor
                 // yes
 
                 if (operand.getOperandText() != null) {
-                    this.optionArguments.add(new OptionArgument(option, operand
-                            .getOperandText().getText()));
+                    this.optionArguments.add(new OptionArgument(option,
+                            operand.getOperandText().getText()));
                 }
                 else {
                     this.optionArguments.add(new OptionArgument(option, ""));
@@ -156,8 +156,8 @@ class ArgumentExtractor
                 // yes
 
                 if (operand.getOperandText() != null) {
-                    this.optionArguments.add(new OptionArgument(option, operand
-                            .getOperandText().getText()));
+                    this.optionArguments.add(new OptionArgument(option,
+                            operand.getOperandText().getText()));
                 }
                 else {
                     this.optionArguments.add(new OptionArgument(option, ""));
@@ -192,8 +192,8 @@ class ArgumentExtractor
             List<OptionArgument> optionArguments,
             List<TextArgument> textArguments) {
 
-        ArgumentExtractor extractor = new ArgumentExtractor(optionArguments,
-                textArguments);
+        ArgumentExtractor extractor
+                = new ArgumentExtractor(optionArguments, textArguments);
 
         ast.apply(extractor);
 

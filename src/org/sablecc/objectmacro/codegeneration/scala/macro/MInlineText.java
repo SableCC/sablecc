@@ -6,7 +6,7 @@ import java.util.*;
 
 public class MInlineText {
 
-    private final List<Object> eInlineString_InlineEol = new LinkedList<Object>();
+    private final List<Object> eInlineString_InlineEol = new LinkedList<>();
 
     public MInlineText() {
 

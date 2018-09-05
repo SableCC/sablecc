@@ -23,7 +23,7 @@ import org.sablecc.sablecc.syntax3.node.*;
 
 public class NameSpace {
 
-    private final Map<String, Declaration> nameMap = new TreeMap<String, Declaration>();
+    private final Map<String, Declaration> nameMap = new TreeMap<>();
 
     public Declaration get(
             String name) {
@@ -37,11 +37,10 @@ public class NameSpace {
         String lookupName = declaration.getLookupName();
         if (this.nameMap.containsKey(lookupName)) {
             Token location = this.nameMap.get(lookupName).getLocation();
-            throw SemanticException.semanticError(
-                    "Another \"" + lookupName
-                            + "\" has already been declared on line "
-                            + location.getLine() + " char " + location.getPos()
-                            + ".", declaration.getLocation());
+            throw SemanticException.semanticError("Another \"" + lookupName
+                    + "\" has already been declared on line "
+                    + location.getLine() + " char " + location.getPos() + ".",
+                    declaration.getLocation());
         }
         this.nameMap.put(lookupName, declaration);
     }

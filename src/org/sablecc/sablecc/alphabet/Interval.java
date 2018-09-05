@@ -187,8 +187,8 @@ public class Interval
                 this.toString = this.lowerBound.toString();
             }
             else {
-                this.toString = "[" + this.lowerBound + ".." + this.upperBound
-                        + "]";
+                this.toString
+                        = "[" + this.lowerBound + ".." + this.upperBound + "]";
             }
         }
 

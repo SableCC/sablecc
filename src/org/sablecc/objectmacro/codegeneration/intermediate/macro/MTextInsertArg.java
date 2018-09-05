@@ -10,7 +10,7 @@ public class MTextInsertArg {
 
     private final MTextInsertArg mTextInsertArg = this;
 
-    private final List<Object> eTextInsert = new LinkedList<Object>();
+    private final List<Object> eTextInsert = new LinkedList<>();
 
     public MTextInsertArg(
             String pIndent) {

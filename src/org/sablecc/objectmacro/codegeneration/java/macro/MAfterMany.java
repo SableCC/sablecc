@@ -8,7 +8,8 @@ public class MAfterMany {
 
     private final MExpandInsertPart mExpandInsertPart;
 
-    private final List<Object> eInlineText_ParamInsert_TextInsert = new LinkedList<Object>();
+    private final List<Object> eInlineText_ParamInsert_TextInsert
+            = new LinkedList<>();
 
     MAfterMany(
             MExpandInsertPart mExpandInsertPart) {

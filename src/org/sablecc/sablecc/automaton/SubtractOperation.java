@@ -64,7 +64,7 @@ class SubtractOperation {
         Automaton rejectAutomaton = new Automaton(baseAutomaton.getAlphabet());
         rejectAutomaton.addAcceptation(Acceptation.ACCEPT);
 
-        Map<State, State> baseStateToRejectStateMap = new HashMap<State, State>();
+        Map<State, State> baseStateToRejectStateMap = new HashMap<>();
 
         for (State baseState : baseAutomaton.getStates()) {
             State rejectState;
@@ -84,23 +84,24 @@ class SubtractOperation {
         }
 
         for (State baseSourceState : baseAutomaton.getStates()) {
-            State rejectSourceState = baseStateToRejectStateMap
-                    .get(baseSourceState);
+            State rejectSourceState
+                    = baseStateToRejectStateMap.get(baseSourceState);
             for (Map.Entry<RichSymbol, SortedSet<State>> entry : baseSourceState
                     .getTransitions().entrySet()) {
                 RichSymbol richSymbol = entry.getKey();
 
                 for (State baseTargetState : entry.getValue()) {
-                    State rejectTargetState = baseStateToRejectStateMap
-                            .get(baseTargetState);
+                    State rejectTargetState
+                            = baseStateToRejectStateMap.get(baseTargetState);
 
                     if (baseSourceState.equals(baseAutomaton.getStartState())) {
                         rejectSourceState.addTransition(richSymbol,
                                 rejectTargetState);
                         if (richSymbol.isLookahead()
                                 && !richSymbol.equals(RichSymbol.END)) {
-                            rejectSourceState.addTransition(richSymbol
-                                    .getSymbol().getNormalRichSymbol(),
+                            rejectSourceState.addTransition(
+                                    richSymbol.getSymbol()
+                                            .getNormalRichSymbol(),
                                     rejectTargetState);
                         }
                     }
@@ -109,14 +110,16 @@ class SubtractOperation {
                                 rejectTargetState);
                         if (richSymbol.isLookahead()) {
                             if (!richSymbol.equals(RichSymbol.END)) {
-                                rejectSourceState.addTransition(richSymbol
-                                        .getSymbol().getNormalRichSymbol(),
+                                rejectSourceState.addTransition(
+                                        richSymbol.getSymbol()
+                                                .getNormalRichSymbol(),
                                         rejectTargetState);
                             }
                         }
                         else {
-                            rejectSourceState.addTransition(richSymbol
-                                    .getSymbol().getLookaheadRichSymbol(),
+                            rejectSourceState.addTransition(
+                                    richSymbol.getSymbol()
+                                            .getLookaheadRichSymbol(),
                                     rejectTargetState);
                         }
                     }

@@ -74,8 +74,8 @@ public class CodeGenerationWalker
     public void inAText(
             AText node) {
 
-        this.currentText = this.intermediateRepresentation.newText(node
-                .getName().getText(), booleanString(node.getSelfRef()));
+        this.currentText = this.intermediateRepresentation.newText(
+                node.getName().getText(), booleanString(node.getSelfRef()));
 
         for (TString param : node.getParams()) {
             this.currentText.newParam(param.getText(), "");
@@ -97,8 +97,8 @@ public class CodeGenerationWalker
     public void inAMacro(
             AMacro node) {
 
-        this.currentMacro = this.intermediateRepresentation.newMacro(node
-                .getName().getText(), booleanString(node.getIsPublic()),
+        this.currentMacro = this.intermediateRepresentation.newMacro(
+                node.getName().getText(), booleanString(node.getIsPublic()),
                 booleanString(node.getSelfRef()));
 
         for (TString param : node.getParams()) {
@@ -126,12 +126,12 @@ public class CodeGenerationWalker
             AParamRef node) {
 
         if (this.currentText != null) {
-            this.currentText.newParamRef(node.getName().getText(), node
-                    .getContext().getText());
+            this.currentText.newParamRef(node.getName().getText(),
+                    node.getContext().getText());
         }
         else if (this.currentMacro != null) {
-            this.currentMacro.newParamRef(node.getName().getText(), node
-                    .getContext().getText());
+            this.currentMacro.newParamRef(node.getName().getText(),
+                    node.getContext().getText());
         }
         else {
             throw new InternalException("unhandled case");
@@ -142,8 +142,8 @@ public class CodeGenerationWalker
     public void inAExpandedMacro(
             AExpandedMacro node) {
 
-        MExpandedMacro expandedMacro = this.currentMacro.newExpandedMacro(node
-                .getName().getText());
+        MExpandedMacro expandedMacro
+                = this.currentMacro.newExpandedMacro(node.getName().getText());
 
         for (TString param : node.getParams()) {
             expandedMacro.newParam(param.getText(), "  ");
@@ -290,8 +290,8 @@ public class CodeGenerationWalker
                     node.getName().getText(), this.currentIndent);
         }
         else if (this.currentTextInsertOption != null) {
-            this.currentTextInsert = this.currentTextInsertOption
-                    .newTextInsert(node.getName().getText(), this.currentIndent);
+            this.currentTextInsert = this.currentTextInsertOption.newTextInsert(
+                    node.getName().getText(), this.currentIndent);
         }
         else if (this.currentTextInsertPart != null) {
             this.currentTextInsert = this.currentTextInsertPart.newTextInsert(
@@ -350,12 +350,12 @@ public class CodeGenerationWalker
             AStringInlineText node) {
 
         if (this.currentInlineTextOption != null) {
-            this.currentInlineTextOption.newInlineString(node.getString()
-                    .getText());
+            this.currentInlineTextOption
+                    .newInlineString(node.getString().getText());
         }
         else if (this.currentInlineTextArg != null) {
-            this.currentInlineTextArg.newInlineString(node.getString()
-                    .getText());
+            this.currentInlineTextArg
+                    .newInlineString(node.getString().getText());
         }
         else {
             throw new InternalException("unhandled case");
@@ -386,8 +386,8 @@ public class CodeGenerationWalker
                     this.currentOption, node.getParamInsert().getText());
         }
         else if (node.parent() instanceof ATextInsert) {
-            this.currentTextInsert.newParamInsertArg(node.getParamInsert()
-                    .getText(), this.currentIndent);
+            this.currentTextInsert.newParamInsertArg(
+                    node.getParamInsert().getText(), this.currentIndent);
         }
         else {
             throw new InternalException("unhandled case");

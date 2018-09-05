@@ -131,8 +131,8 @@ public class CodeGenerationWalker
         this.currentText = new MText(string(node.getName()));
 
         if (!this.ir.getDestinationPackage().equals("")) {
-            this.currentText.newPackageDeclaration(this.ir
-                    .getDestinationPackage());
+            this.currentText
+                    .newPackageDeclaration(this.ir.getDestinationPackage());
         }
 
         for (TString param : node.getParams()) {
@@ -153,8 +153,8 @@ public class CodeGenerationWalker
     public void outAText(
             AText node) {
 
-        File destination = new File(this.packageDirectory, "M"
-                + string(node.getName()) + ".scala");
+        File destination = new File(this.packageDirectory,
+                "M" + string(node.getName()) + ".scala");
 
         try {
             FileWriter fw = new FileWriter(destination);
@@ -175,8 +175,8 @@ public class CodeGenerationWalker
         this.currentMacro = new MMacro(string(node.getName()));
 
         if (!this.ir.getDestinationPackage().equals("")) {
-            this.currentMacro.newPackageDeclaration(this.ir
-                    .getDestinationPackage());
+            this.currentMacro
+                    .newPackageDeclaration(this.ir.getDestinationPackage());
         }
 
         // inverse logic than in Java: by default (no keyword) the class is
@@ -222,8 +222,8 @@ public class CodeGenerationWalker
     public void outAMacro(
             AMacro node) {
 
-        File destination = new File(this.packageDirectory, "M"
-                + string(node.getName()) + ".scala");
+        File destination = new File(this.packageDirectory,
+                "M" + string(node.getName()) + ".scala");
 
         try {
             FileWriter fw = new FileWriter(destination);
@@ -258,8 +258,8 @@ public class CodeGenerationWalker
     public void outAExpandedMacro(
             AExpandedMacro node) {
 
-        MMacroCreator macroCreator = this.currentMacro
-                .newMacroCreator(string(node.getName()));
+        MMacroCreator macroCreator
+                = this.currentMacro.newMacroCreator(string(node.getName()));
 
         for (TString param : node.getParams()) {
             macroCreator.newParamParam(string(param));
@@ -349,8 +349,8 @@ public class CodeGenerationWalker
     public void caseAExpandInsert(
             AExpandInsert node) {
 
-        MExpandInsertPart currentExpandInsertPart = this.currentMacro
-                .newExpandInsertPart(string(node.getName()));
+        MExpandInsertPart currentExpandInsertPart
+                = this.currentMacro.newExpandInsertPart(string(node.getName()));
 
         if (node.getNone() != null) {
             this.currentNone = currentExpandInsertPart.newNone();
@@ -411,12 +411,12 @@ public class CodeGenerationWalker
         MTextInsert oldTextInsert = this.currentTextInsert;
 
         if (oldTextInsert != null) {
-            this.currentTextInsert = oldTextInsert.newTextInsert(string(node
-                    .getName()));
+            this.currentTextInsert
+                    = oldTextInsert.newTextInsert(string(node.getName()));
         }
         else if (this.currentNone != null) {
-            this.currentTextInsert = this.currentNone.newTextInsert(string(node
-                    .getName()));
+            this.currentTextInsert
+                    = this.currentNone.newTextInsert(string(node.getName()));
         }
         else if (this.currentSeparator != null) {
             this.currentTextInsert = this.currentSeparator

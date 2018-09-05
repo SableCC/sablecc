@@ -42,9 +42,9 @@ class ArgumentCollection {
     ArgumentCollection(
             String[] arguments) {
 
-        List<OptionArgument> optionArguments = new LinkedList<OptionArgument>();
+        List<OptionArgument> optionArguments = new LinkedList<>();
 
-        List<TextArgument> textArguments = new LinkedList<TextArgument>();
+        List<TextArgument> textArguments = new LinkedList<>();
 
         int currentArgIndex = 0;
 
@@ -64,8 +64,9 @@ class ArgumentCollection {
 
             Start ast;
             try {
-                ast = new Parser(new Lexer(new PushbackReader(new StringReader(
-                        arguments[currentArgIndex]), 1024))).parse();
+                ast = new Parser(new Lexer(new PushbackReader(
+                        new StringReader(arguments[currentArgIndex]), 1024)))
+                                .parse();
             }
             catch (Exception e) {
                 throw LauncherException

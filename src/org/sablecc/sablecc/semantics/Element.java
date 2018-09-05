@@ -43,7 +43,8 @@ public class Element
 
     private Token location;
 
-    private List<TransformationElement.ReferenceTransformation> referenceTransformations = new LinkedList<TransformationElement.ReferenceTransformation>();
+    private List<TransformationElement.ReferenceTransformation> referenceTransformations
+            = new LinkedList<>();
 
     Element(
             Grammar grammar,
@@ -57,8 +58,8 @@ public class Element
         if (declaration.getSelectionKeyword() != null) {
             this.isSelection = true;
 
-            throw SemanticException.notImplementedError(declaration
-                    .getSelectionKeyword());
+            throw SemanticException
+                    .notImplementedError(declaration.getSelectionKeyword());
         }
     }
 
@@ -118,7 +119,8 @@ public class Element
                             AIdentifierCharUnit node) {
 
                         String text = node.getIdentifierChar().getText();
-                        Element.this.name = text.substring(1, text.length() - 1);
+                        Element.this.name
+                                = text.substring(1, text.length() - 1);
                         Element.this.nameIsCached = true;
                     }
 
@@ -135,7 +137,8 @@ public class Element
                             AIdentifierStringUnit node) {
 
                         String text = node.getIdentifierString().getText();
-                        Element.this.name = text.substring(1, text.length() - 1);
+                        Element.this.name
+                                = text.substring(1, text.length() - 1);
                         Element.this.nameIsCached = true;
                     }
 
@@ -157,8 +160,8 @@ public class Element
                 });
 
                 if (!this.nameIsCached) {
-                    throw new InternalException("unhandled case: "
-                            + this.declaration);
+                    throw new InternalException(
+                            "unhandled case: " + this.declaration);
                 }
             }
         }
@@ -191,7 +194,8 @@ public class Element
                 public void defaultCase(
                         Node node) {
 
-                    if (Element.this.location == null && node instanceof Token) {
+                    if (Element.this.location == null
+                            && node instanceof Token) {
                         Element.this.location = (Token) node;
                     }
                 }
@@ -211,32 +215,26 @@ public class Element
             // production
 
             if (base instanceof Production) {
-                ProductionTransformation productionTransformation = ((Production) base)
-                        .getTransformation();
+                ProductionTransformation productionTransformation
+                        = ((Production) base).getTransformation();
                 if (!productionTransformation.isSimple()) {
-                    throw SemanticException
-                            .semanticError(
-                                    "This complex transformations is not allowed because of the complex reference on line "
-                                            + getLocation().getLine()
-                                            + " char "
-                                            + getLocation().getPos()
-                                            + ".",
-                                    productionTransformation.getLocation());
+                    throw SemanticException.semanticError(
+                            "This complex transformations is not allowed because of the complex reference on line "
+                                    + getLocation().getLine() + " char "
+                                    + getLocation().getPos() + ".",
+                            productionTransformation.getLocation());
                 }
             }
 
             if (separator instanceof Production) {
-                ProductionTransformation productionTransformation = ((Production) separator)
-                        .getTransformation();
+                ProductionTransformation productionTransformation
+                        = ((Production) separator).getTransformation();
                 if (!productionTransformation.isSimple()) {
-                    throw SemanticException
-                            .semanticError(
-                                    "This complex transformations is not allowed because of the complex reference on line "
-                                            + getLocation().getLine()
-                                            + " char "
-                                            + getLocation().getPos()
-                                            + ".",
-                                    productionTransformation.getLocation());
+                    throw SemanticException.semanticError(
+                            "This complex transformations is not allowed because of the complex reference on line "
+                                    + getLocation().getLine() + " char "
+                                    + getLocation().getPos() + ".",
+                            productionTransformation.getLocation());
                 }
             }
 
@@ -244,19 +242,16 @@ public class Element
         }
 
         if (base instanceof Production) {
-            ProductionTransformation productionTransformation = ((Production) base)
-                    .getTransformation();
+            ProductionTransformation productionTransformation
+                    = ((Production) base).getTransformation();
             if (!productionTransformation.isSimple()) {
                 // only allow complex transformations for non-list elements
                 if (this.type.isList()) {
-                    throw SemanticException
-                            .semanticError(
-                                    "This complex transformations is not allowed because of the complex reference on line "
-                                            + getLocation().getLine()
-                                            + " char "
-                                            + getLocation().getPos()
-                                            + ".",
-                                    productionTransformation.getLocation());
+                    throw SemanticException.semanticError(
+                            "This complex transformations is not allowed because of the complex reference on line "
+                                    + getLocation().getLine() + " char "
+                                    + getLocation().getPos() + ".",
+                            productionTransformation.getLocation());
                 }
             }
         }

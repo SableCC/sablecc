@@ -33,7 +33,10 @@ import org.sablecc.objectmacro.launcher.syntax3.parser.*;
 enum Option {
 
     /** List available target languages and exit. */
-    LIST_TARGETS(null, "list-targets", null,
+    LIST_TARGETS(
+            null,
+            "list-targets",
+            null,
             "display target languages and exit"),
 
     /** Set target language. */
@@ -85,10 +88,12 @@ enum Option {
     private String helpMessage;
 
     /** A mapping from each short name to its option. */
-    private static final SortedMap<String, Option> shortNameMap = new TreeMap<String, Option>();
+    private static final SortedMap<String, Option> shortNameMap
+            = new TreeMap<>();
 
     /** A mapping from each long name to its option. */
-    private static final SortedMap<String, Option> longNameMap = new TreeMap<String, Option>();
+    private static final SortedMap<String, Option> longNameMap
+            = new TreeMap<>();
 
     /**
      * Checks that there are no duplicate option names.
@@ -99,8 +104,8 @@ enum Option {
             if (option.shortName != null) {
 
                 if (shortNameMap.containsKey(option.shortName)) {
-                    throw new InternalException("duplicate short name: "
-                            + option.shortName);
+                    throw new InternalException(
+                            "duplicate short name: " + option.shortName);
                 }
 
                 shortNameMap.put(option.shortName, option);
@@ -109,8 +114,8 @@ enum Option {
             if (option.longName != null) {
 
                 if (longNameMap.containsKey(option.longName)) {
-                    throw new InternalException("duplicate long name: "
-                            + option.longName);
+                    throw new InternalException(
+                            "duplicate long name: " + option.longName);
                 }
 
                 longNameMap.put(option.longName, option);
@@ -166,12 +171,13 @@ enum Option {
         String argument = "-" + shortName;
 
         try {
-            Start ast = new Parser(new Lexer(new PushbackReader(
-                    new StringReader(argument), 1024))).parse();
+            Start ast = new Parser(new Lexer(
+                    new PushbackReader(new StringReader(argument), 1024)))
+                            .parse();
 
             // argument should be short options
-            AShortOptionsArgument shortOptionsArgument = (AShortOptionsArgument) ast
-                    .getPArgument();
+            AShortOptionsArgument shortOptionsArgument
+                    = (AShortOptionsArgument) ast.getPArgument();
 
             // single
             if (shortOptionsArgument.getShortOptions().size() != 1) {
@@ -201,15 +207,16 @@ enum Option {
         String argument = "--" + longName;
 
         try {
-            Start ast = new Parser(new Lexer(new PushbackReader(
-                    new StringReader(argument), 1024))).parse();
+            Start ast = new Parser(new Lexer(
+                    new PushbackReader(new StringReader(argument), 1024)))
+                            .parse();
 
             // argument should be long option
-            ALongOptionArgument longOptionArgument = (ALongOptionArgument) ast
-                    .getPArgument();
+            ALongOptionArgument longOptionArgument
+                    = (ALongOptionArgument) ast.getPArgument();
 
-            ALongOption longOption = (ALongOption) longOptionArgument
-                    .getLongOption();
+            ALongOption longOption
+                    = (ALongOption) longOptionArgument.getLongOption();
 
             // no operand
             if (longOption.getOperand() != null) {
@@ -417,7 +424,8 @@ enum Option {
                 }
             }
 
-            for (int i = line.toString().length(); i < longestPrefixLength; i++) {
+            for (int i = line.toString().length(); i < longestPrefixLength;
+                    i++) {
                 line.append(" ");
             }
 

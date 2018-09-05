@@ -50,8 +50,8 @@ public class AlternativeReference {
             Alternative alternative,
             Token location) {
 
-        AlternativeReference alternativeReference = new AlternativeReference(
-                grammar, alternative);
+        AlternativeReference alternativeReference
+                = new AlternativeReference(grammar, alternative);
         alternativeReference.location = location;
         return alternativeReference;
     }

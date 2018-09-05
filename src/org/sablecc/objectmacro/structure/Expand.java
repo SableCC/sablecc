@@ -67,9 +67,10 @@ public class Expand {
         this.declaration = declaration;
         this.enclosingMacro = enclosingMacro;
 
-        Set<Macro> macroSet = new LinkedHashSet<Macro>();
+        Set<Macro> macroSet = new LinkedHashSet<>();
 
-        for (PMacroReference pMacroReference : declaration.getMacroReferences()) {
+        for (PMacroReference pMacroReference : declaration
+                .getMacroReferences()) {
             AMacroReference macroReference = (AMacroReference) pMacroReference;
             Macro macro = enclosingMacro.getMacro(macroReference.getName());
             macroSet.add(macro);
@@ -128,8 +129,8 @@ public class Expand {
                 throw CompilerException.duplicateOption(option, this.afterLast);
             }
             else if (this.afterOne != null) {
-                throw CompilerException
-                        .conflictingOption(option, this.afterOne);
+                throw CompilerException.conflictingOption(option,
+                        this.afterOne);
             }
             else if (this.afterMany != null) {
                 throw CompilerException.conflictingOption(option,
@@ -165,8 +166,8 @@ public class Expand {
         else if (name.equals("before_many")) {
 
             if (this.beforeMany != null) {
-                throw CompilerException
-                        .duplicateOption(option, this.beforeMany);
+                throw CompilerException.duplicateOption(option,
+                        this.beforeMany);
             }
             else if (this.beforeFirst != null) {
                 throw CompilerException.conflictingOption(option,

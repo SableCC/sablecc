@@ -10,7 +10,8 @@ public class MTextInsert {
 
     private final MTextInsert mTextInsert = this;
 
-    private final List<Object> eInlineText_ParamInsert_TextInsert_TextInsertAncestor = new LinkedList<Object>();
+    private final List<Object> eInlineText_ParamInsert_TextInsert_TextInsertAncestor
+            = new LinkedList<>();
 
     public MTextInsert(
             String pName) {
@@ -50,7 +51,8 @@ public class MTextInsert {
     public MTextInsertAncestor newTextInsertAncestor(
             String pName) {
 
-        MTextInsertAncestor lTextInsertAncestor = new MTextInsertAncestor(pName);
+        MTextInsertAncestor lTextInsertAncestor
+                = new MTextInsertAncestor(pName);
         this.eInlineText_ParamInsert_TextInsert_TextInsertAncestor
                 .add(lTextInsertAncestor);
         return lTextInsertAncestor;

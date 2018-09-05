@@ -44,8 +44,8 @@ public class VarVerifier
             AMacro node) {
 
         if (this.currentScope != null) {
-            this.currentScope = ((Macro) this.currentScope).getMacro(node
-                    .getName());
+            this.currentScope
+                    = ((Macro) this.currentScope).getMacro(node.getName());
         }
         else {
             this.currentScope = this.globalIndex.getTopMacro(node.getName());
@@ -67,8 +67,8 @@ public class VarVerifier
             this.currentScope = this.currentScope.getTextBlock(node.getName());
         }
         else {
-            this.currentScope = this.globalIndex
-                    .getTopTextBlock(node.getName());
+            this.currentScope
+                    = this.globalIndex.getTopTextBlock(node.getName());
         }
     }
 

@@ -27,11 +27,13 @@ class DeterministicOperation {
 
     private Automaton newAutomaton;
 
-    private SortedMap<State, SortedSet<State>> stateMap = new TreeMap<State, SortedSet<State>>();
+    private SortedMap<State, SortedSet<State>> stateMap = new TreeMap<>();
 
-    private Map<SortedSet<State>, State> oldStatesToNewStateMap = new HashMap<SortedSet<State>, State>();
+    private Map<SortedSet<State>, State> oldStatesToNewStateMap
+            = new HashMap<>();
 
-    private Map<State, SortedSet<State>> newStateToOldStatesMap = new HashMap<State, SortedSet<State>>();
+    private Map<State, SortedSet<State>> newStateToOldStatesMap
+            = new HashMap<>();
 
     DeterministicOperation(
             Automaton oldAutomaton) {
@@ -47,11 +49,11 @@ class DeterministicOperation {
         oldAutomaton = oldAutomaton.withoutUnreachableStates();
 
         this.newAutomaton = new Automaton(oldAutomaton.getAlphabet());
-        WorkSet<State> workSet = new WorkSet<State>();
+        WorkSet<State> workSet = new WorkSet<>();
 
         {
-            SortedSet<State> epsilonReach = oldAutomaton.getStartState()
-                    .getEpsilonReach();
+            SortedSet<State> epsilonReach
+                    = oldAutomaton.getStartState().getEpsilonReach();
             State newState = this.newAutomaton.getStartState();
 
             map(epsilonReach, newState);
@@ -63,7 +65,8 @@ class DeterministicOperation {
             State newFromState = workSet.next();
 
             SortedSet<State> oldFromStates = getOldStates(newFromState);
-            SortedMap<RichSymbol, SortedSet<State>> newTransitions = new TreeMap<RichSymbol, SortedSet<State>>();
+            SortedMap<RichSymbol, SortedSet<State>> newTransitions
+                    = new TreeMap<>();
 
             for (State oldFromState : oldFromStates) {
                 for (Map.Entry<RichSymbol, SortedSet<State>> entry : oldFromState
@@ -71,12 +74,12 @@ class DeterministicOperation {
                     RichSymbol richSymbol = entry.getKey();
 
                     if (richSymbol != null) {
-                        SortedSet<State> newTargetStates = newTransitions
-                                .get(richSymbol);
+                        SortedSet<State> newTargetStates
+                                = newTransitions.get(richSymbol);
 
                         if (newTargetStates == null) {
 
-                            newTargetStates = new TreeSet<State>();
+                            newTargetStates = new TreeSet<>();
                             newTransitions.put(richSymbol, newTargetStates);
                         }
 
@@ -112,7 +115,7 @@ class DeterministicOperation {
     private State getNewState(
             SortedSet<State> oldStates) {
 
-        SortedSet<State> epsilonReach = new TreeSet<State>();
+        SortedSet<State> epsilonReach = new TreeSet<>();
 
         for (State oldState : oldStates) {
             epsilonReach.addAll(oldState.getEpsilonReach());
@@ -154,7 +157,7 @@ class DeterministicOperation {
             SortedSet<State> newStates = this.stateMap.get(oldState);
 
             if (newStates == null) {
-                newStates = new TreeSet<State>();
+                newStates = new TreeSet<>();
                 this.stateMap.put(oldState, newStates);
             }
 

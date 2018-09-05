@@ -38,8 +38,9 @@ public class SemanticException
     public static SemanticException notImplementedError(
             Token location) {
 
-        return new SemanticException(new MNotImplementedError(
-                location.getLine() + "", location.getPos() + "").toString(),
+        return new SemanticException(
+                new MNotImplementedError(location.getLine() + "",
+                        location.getPos() + "").toString(),
                 location);
     }
 

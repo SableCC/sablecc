@@ -10,11 +10,11 @@ public class MExpandedMacro {
 
     private final MExpandedMacro mExpandedMacro = this;
 
-    private final List<Object> eParam = new LinkedList<Object>();
+    private final List<Object> eParam = new LinkedList<>();
 
-    private final List<Object> eAncestorRef = new LinkedList<Object>();
+    private final List<Object> eAncestorRef = new LinkedList<>();
 
-    private final List<Object> eExpand = new LinkedList<Object>();
+    private final List<Object> eExpand = new LinkedList<>();
 
     public MExpandedMacro(
             String pName) {

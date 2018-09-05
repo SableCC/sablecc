@@ -66,9 +66,9 @@ public class SableCC {
             String pos = "" + e.getToken().getPos();
             int start = e.getMessage().indexOf(' ') + 1;
 
-            System.err.print(new MSyntaxError(line, pos, e.getToken()
-                    .getClass().getSimpleName().substring(1), e.getToken()
-                    .getText(), e.getMessage().substring(start)));
+            System.err.print(new MSyntaxError(line, pos,
+                    e.getToken().getClass().getSimpleName().substring(1),
+                    e.getToken().getText(), e.getMessage().substring(start)));
             System.err.flush();
             System.exit(1);
         }
@@ -77,8 +77,8 @@ public class SableCC {
             String pos = "" + e.getToken().getPos();
             int start = e.getMessage().indexOf(' ') + 1;
 
-            System.err.print(new MLexicalError(line, pos, e.getMessage()
-                    .substring(start)));
+            System.err.print(new MLexicalError(line, pos,
+                    e.getMessage().substring(start)));
             System.err.flush();
             System.exit(1);
         }
@@ -129,12 +129,12 @@ public class SableCC {
         Strictness strictness = STRICT;
 
         // supported targets
-        SortedSet<String> supportedTargets = new TreeSet<String>();
+        SortedSet<String> supportedTargets = new TreeSet<>();
         supportedTargets.add("java");
 
         // parse command line arguments
-        ArgumentCollection argumentCollection = new ArgumentCollection(
-                arguments);
+        ArgumentCollection argumentCollection
+                = new ArgumentCollection(arguments);
 
         // handle option arguments
         for (OptionArgument optionArgument : argumentCollection
@@ -218,8 +218,8 @@ public class SableCC {
                 return;
 
             default:
-                throw new InternalException("unhandled option "
-                        + optionArgument.getOption());
+                throw new InternalException(
+                        "unhandled option " + optionArgument.getOption());
             }
         }
 
@@ -234,8 +234,8 @@ public class SableCC {
         }
 
         // check argument
-        TextArgument fileNameArgument = argumentCollection.getTextArguments()
-                .get(0);
+        TextArgument fileNameArgument
+                = argumentCollection.getTextArguments().get(0);
 
         if (!fileNameArgument.getText().endsWith(".sablecc")) {
             throw LauncherException.invalidSuffix(fileNameArgument.getText());
@@ -244,8 +244,8 @@ public class SableCC {
         File grammarFile = new File(fileNameArgument.getText());
 
         if (!grammarFile.exists()) {
-            throw LauncherException.missingGrammarFile(fileNameArgument
-                    .getText());
+            throw LauncherException
+                    .missingGrammarFile(fileNameArgument.getText());
         }
 
         if (!grammarFile.isFile()) {
@@ -256,7 +256,8 @@ public class SableCC {
 
         trace.informativeln();
         trace.informativeln("SableCC version " + VERSION);
-        trace.informativeln("by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
+        trace.informativeln(
+                "by Etienne M. Gagnon <egagnon@j-meg.com> and other contributors.");
         trace.informativeln();
 
         compileFile(grammarFile, targetLanguage, destinationDirectory,
@@ -357,8 +358,9 @@ public class SableCC {
 
         trace.verboseln(" Parsing");
 
-        Start ast = new Parser(new Lexer(new PushbackReader(new StringReader(
-                text), 1024))).parse();
+        Start ast = new Parser(
+                new Lexer(new PushbackReader(new StringReader(text), 1024)))
+                        .parse();
 
         trace.verboseln(" Verifying semantics");
 
