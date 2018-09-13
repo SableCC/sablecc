@@ -176,6 +176,16 @@ public class Version {
 
     </jar>
 
+    <jar destfile="${lib.dir}/objectmacro-front.jar"
+         manifest="${manifest.dir}/OBJECTMACRO-FRONT.MF"
+         index="true"
+         compress="true"
+         level="9">
+
+      <fileset dir="${classes.dir}" excludes="org/sablecc/sablecc/**" />
+
+    </jar>
+
     <jar destfile="${lib.dir}/objectmacro-back.jar"
          manifest="${manifest.dir}/OBJECTMACRO-BACK.MF"
          index="true"
