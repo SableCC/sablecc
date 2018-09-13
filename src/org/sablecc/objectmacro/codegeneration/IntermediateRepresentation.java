@@ -33,18 +33,14 @@ public class IntermediateRepresentation {
 
     public IntermediateRepresentation(
             PIntermediateRepresentation ast,
-            File macroFile,
+            String fileName,
             File destinationDirectory,
             String destinationPackage) {
 
         this.ast = ast;
         this.destinationDirectory = destinationDirectory;
         this.destinationPackage = destinationPackage;
-
-        String macroFileName = macroFile.getName();
-        int length = macroFileName.length();
-        this.name
-                = macroFileName.substring(0, length - ".objectmacro".length());
+        this.name = fileName;
     }
 
     public PIntermediateRepresentation getAST() {
