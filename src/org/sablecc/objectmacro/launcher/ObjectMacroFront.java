@@ -21,8 +21,6 @@ import java.io.*;
 import java.util.*;
 
 import org.sablecc.exception.InternalException;
-import org.sablecc.objectmacro.codegeneration.*;
-import org.sablecc.objectmacro.codegeneration.java.*;
 import org.sablecc.objectmacro.errormessage.*;
 import org.sablecc.objectmacro.exception.*;
 import org.sablecc.objectmacro.intermediate.macro.*;
@@ -40,7 +38,7 @@ import org.sablecc.util.*;
 /**
  * The main class of ObjectMacro.
  */
-public class ObjectMacro {
+public class ObjectMacroFront {
 
     private static GlobalIndex globalIndex = null;
 
@@ -54,7 +52,7 @@ public class ObjectMacro {
     private static final Macros factory = new Macros();
 
     /** Prevents instantiation of this class. */
-    private ObjectMacro() {
+    private ObjectMacroFront() {
 
         throw new InternalException("this class may not have instances");
     }
@@ -66,7 +64,7 @@ public class ObjectMacro {
         org.sablecc.objectmacro.errormessage.Macros errorFactory
                 = new org.sablecc.objectmacro.errormessage.Macros();
         try {
-            ObjectMacro.compile(args);
+            ObjectMacroFront.compile(args);
         }
         catch (CompilerException e) {
             System.err.print(e.getMessage());
@@ -137,9 +135,6 @@ public class ObjectMacro {
             String[] arguments)
             throws ParserException, LexerException {
 
-        // default target is java
-        String targetLanguage = "java";
-
         // default destination directory is current working directory
         File destinationDirectory = new File(System.getProperty("user.dir"));
 
@@ -160,10 +155,6 @@ public class ObjectMacro {
                 .getOptionArguments()) {
 
             switch (optionArgument.getOption()) {
-
-            case TARGET:
-                targetLanguage = optionArgument.getOperand();
-                break;
 
             case DESTINATION:
                 destinationDirectory = new File(optionArgument.getOperand());
@@ -259,24 +250,18 @@ public class ObjectMacro {
             throw CompilerException.macroNotFile(textArgument.getText());
         }
 
-        String macroFileName = macroFile.getName();
-        int lengthMacroFileName = macroFileName.length();
-
-        StringReader stringReader
-                = ObjectMacro.compileFront(macroFile, strictness, verbosity);
-
-        ObjectMacro.compileBack(stringReader, targetLanguage,
-                macroFileName.substring(
-                        lengthMacroFileName - ".intermediate".length()),
-                destinationDirectory, destinationPackage, generateCode,
-                strictness, verbosity);
+        ObjectMacroFront.compile(macroFile, destinationDirectory,
+                destinationPackage, generateCode, strictness, verbosity);
     }
 
     /**
      * Compiles the provided macro file.
      */
-    private static StringReader compileFront(
+    private static void compile(
             File macroFile,
+            File destinationDirectory,
+            String destinationPackage,
+            boolean generateCode,
             Strictness strictness,
             Verbosity verbosity)
             throws ParserException, LexerException {
@@ -311,85 +296,14 @@ public class ObjectMacro {
             throw CompilerException.inputError(macroFile.toString(), e);
         }
 
-        ObjectMacro.globalIndex
-                = ObjectMacro.verifySemantics(ast, strictness, verbosity);
-
-        return ObjectMacro.generateIntermediateFile(verbosity);
-    }
-
-    private static void compileBack(
-            StringReader intermediate,
-            String targetLanguage,
-            String macroFileName,
-            File destinationDirectory,
-            String destinationPackage,
-            boolean generateCode,
-            Strictness strictness,
-            Verbosity verbosity) {
-
-        org.sablecc.objectmacro.intermediate.syntax3.node.Start ast;
-
-        try {
-            BufferedReader br = new BufferedReader(intermediate);
-            PushbackReader pbr = new PushbackReader(br, 1024);
-
-            switch (verbosity) {
-            case VERBOSE:
-                System.out.println(" Parsing");
-                break;
-            }
-
-            ast = new org.sablecc.objectmacro.intermediate.syntax3.parser.Parser(
-                    new org.sablecc.objectmacro.intermediate.syntax3.lexer.Lexer(
-                            pbr)).parse();
-
-            pbr.close();
-            br.close();
-        }
-        catch (IOException e) {
-            throw new InternalException(
-                    "Cannot read string reader for intermediate representation");
-        }
-        catch (org.sablecc.objectmacro.intermediate.syntax3.parser.ParserException ex) {
-            throw new InternalException(
-                    "Error while parsing the intermediate representation");
-        }
-        catch (org.sablecc.objectmacro.intermediate.syntax3.lexer.LexerException ex) {
-            throw new InternalException(
-                    "Error during the lexical analysis of the intermediate representation");
-        }
-
-        IntermediateRepresentation ir = new IntermediateRepresentation(
-                ast.getPIntermediateRepresentation(), macroFileName,
-                destinationDirectory, destinationPackage);
-
-        CodeGenerator codeGenerator = new JavaCodeGenerator(ir);
-        codeGenerator.generateCode();
-
-        if (targetLanguage.equals("java")) {
-            codeGenerator = new JavaCodeGenerator(ir);
-        }
-        else {
-            throw new InternalException("unhandled case");
-        }
-
-        switch (verbosity) {
-        case VERBOSE:
-            System.out.println(" Verifying target-specific semantics");
-            break;
-        }
-
-        codeGenerator.verifyTargetSpecificSemantics(strictness);
+        ObjectMacroFront.globalIndex
+                = ObjectMacroFront.verifySemantics(ast, strictness, verbosity);
 
         if (generateCode) {
-            switch (verbosity) {
-            case VERBOSE:
-                System.out.println(" Generating code");
-                break;
-            }
-
-            codeGenerator.generateCode();
+            ObjectMacroFront.generateIntermediateFile(verbosity,
+                    destinationDirectory, macroFile);
         }
+
     }
 
     private static GlobalIndex verifySemantics(
@@ -448,8 +362,10 @@ public class ObjectMacro {
         return globalIndex;
     }
 
-    private static StringReader generateIntermediateFile(
-            Verbosity verbosity) {
+    private static void generateIntermediateFile(
+            Verbosity verbosity,
+            File destinationDirectory,
+            File macroFile) {
 
         switch (verbosity) {
         case VERBOSE:
@@ -488,7 +404,23 @@ public class ObjectMacro {
                     .addDefinedMacros(createMacro(l_macroInfo));
         }
 
-        return new StringReader(mIntermediateRepresentation.build());
+        String macroFileName = macroFile.getName();
+        int length = macroFileName.length();
+
+        String name = macroFile.getName().substring(0,
+                length - ".objectmacro".length());
+
+        File destination
+                = new File(destinationDirectory, name.concat(".intermediate"));
+
+        try {
+            FileWriter fw = new FileWriter(destination);
+            fw.write(mIntermediateRepresentation.build());
+            fw.close();
+        }
+        catch (IOException e) {
+            throw CompilerException.outputError(destination.toString(), e);
+        }
     }
 
     private static Integer getIndexConcreteClass(

@@ -117,8 +117,8 @@ public class ObjectMacroBack {
             String[] arguments)
             throws ParserException, LexerException {
 
-        // default target is java-constructor
-        String targetLanguage = "java-constructor";
+        // default target is java
+        String targetLanguage = "java";
 
         // default destination directory is current working directory
         File destinationDirectory = new File(System.getProperty("user.dir"));
@@ -227,7 +227,7 @@ public class ObjectMacroBack {
         }
 
         // check target
-        if (!targetLanguage.equals("java-constructor")) {
+        if (!targetLanguage.equals("java")) {
             throw CompilerException.unknownTarget(targetLanguage);
         }
 
@@ -297,14 +297,19 @@ public class ObjectMacroBack {
             throw CompilerException.inputError(macroFile.toString(), e);
         }
 
+        String macroFileName = macroFile.getName();
+        int lengthFileName = macroFileName.length();
+
         IntermediateRepresentation ir = new IntermediateRepresentation(
-                ast.getPIntermediateRepresentation(), macroFile,
+                ast.getPIntermediateRepresentation(),
+                macroFileName.substring(0,
+                        lengthFileName - ".intermediate".length()),
                 destinationDirectory, destinationPackage);
 
         CodeGenerator codeGenerator = new JavaCodeGenerator(ir);
         codeGenerator.generateCode();
 
-        if (targetLanguage.equals("java-constructor")) {
+        if (targetLanguage.equals("java")) {
             codeGenerator = new JavaCodeGenerator(ir);
         }
         else {
